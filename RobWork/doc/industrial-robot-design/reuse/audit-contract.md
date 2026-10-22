@@ -107,6 +107,8 @@
 
 `-Head` 冻结校验数据；验收还须使用该 SHA 的脚本执行，报告记录 validator/helper/driver 摘要。CI 的 PS7/PS5.1 自测使用独立输出目录，避免互相覆盖。未执行的远程 CI/保护设置或产品数值测试须明确保留为未执行。
 
+REUSE-T01 工具审计补正：catalog 的 targetFile 除上游 src 子目录外，还允许精确的 `RobWork/RobWork/gtest/CMakeLists.txt` 与 `RobWork/RobWorkSim/gtest/CMakeLists.txt`，用于登记既有测试入口；仍要求真实文件、目标和摘要，不放开任意测试子目录。隔离自测同步检出这两个 gtest 根，避免夹具漏文件误报。该允许范围不授予产品链接带 main/全局初始化的测试入口的权限，是否适用须逐消费目标审查。
+
 ## 8. 控制复杂度与收口
 
 能直接调用就不加包装；薄适配只承担实际需要的类型/单位/坐标转换、生命周期、错误翻译与业务编排。不得建立覆盖全部 RobWork 的 facade、第二模型层、通用 backend 注册框架或每个数学运算一个接口/DTO。公共辅助只因真实共享需求提取，不能越过 owner/六类端口。

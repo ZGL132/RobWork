@@ -1,0 +1,372 @@
+FUNCTION core.convert
+DIFFERENCES core为唯一量纲/单位权威，保留已注册同量纲、有限性及结果溢出拒绝；优先Constants角度因子。DOM getUnit只提供无量纲比例，不据其命中放弃强类型token或引入loader重依赖
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp 134-152
+double convert(double v, UnitToken from, UnitToken to)
+{
+    if (!from.isValid() || !to.isValid()) {
+        fail("core/units/unregistered: ", "单位未注册（应先经 UnitToken::find）");
+    }
+    if (from.kind() != to.kind()) {
+        fail("core/units/dimension: ",
+             std::string{"量纲不匹配（"} + std::string{from.symbol()} + " → "
+                 + std::string{to.symbol()} + "）");
+    }
+    if (std::isnan(v) || std::isinf(v)) {
+        fail("core/units/convert: ", "输入非有限（NaN/±Inf 拒绝——NFR-COR-03）");
+    }
+    const double out = (v * from.siFactor()) / to.siFactor();
+    if (std::isnan(out) || std::isinf(out)) {
+        fail("core/units/convert: ", "结果溢出为非有限");
+    }
+    return out;
+}
+FUNCTION dynamics.DynamicsEnvelopeCalculator.computeRms
+DIFFERENCES 时间加权梯形积分tau²并按有效全跨度归一；本关节非Ok缺口区间零贡献但时长留分母，无样本/跨度时NaN。上游样本mean/variance不能偷换该契约；底层平方/累加/数值稳定性仍须核，非整段业务豁免
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Envelope.cpp 181-241
+double DynamicsEnvelopeCalculator::computeRms(const DynamicsSeries& series,
+                                              std::uint32_t jointIndex) const
+{
+    // ---- 第 1 步：收集该关节 Ok 行（§4.6：非 Ok 行不进统计；缺口不
+    //      插值——缺口区间零贡献，缺口时长仍保留在有效行全跨度分母中）----
+    double firstT = 0.0;             // 有效行首时刻，s
+    double lastT = 0.0;              // 有效行末时刻，s
+    double prevTau = 0.0;            // 前一有效行 τ_total²（梯形累加状态）
+    bool havePrev = false;           // 梯形状态就绪位
+    bool gapSincePrevOk = false;     // 前一 Ok 行之后是否出现过本关节非 Ok 行
+                                     //  （缺口证据——缺口区间零贡献标记）
+    double weightedSum = 0.0;        // ∫τ²dt 的分段累加（单位 量纲²·s）
+    for (const DynamicsSample& r : series.samples) {
+        if (r.jointIndex != jointIndex) {
+            continue;  // 非本关节行——与本关节统计无关（其他关节的非 Ok 行
+                       //  不构成本关节的缺口证据：多关节行按 (t,jointIndex)
+                       //  交错是正常采样形态，不是缺口）
+        }
+        if (r.numericState != SampleNumericState::Ok) {
+            // 本关节缺口行（NFR-COR-03）：不进统计，但作为"缺口证据"标记
+            // ——下一 Ok 行与上一 Ok 行之间的区间不得再按梯形插值补值。
+            gapSincePrevOk = true;
+            continue;
+        }
+        const double tau2 = r.tauTotal * r.tauTotal;  // v_i(t)²——τ_total 为统计量（§7.3）
+        if (!havePrev) {
+            // 首个有效行＝积分下界 t₀（驻留段在序列头部同样进入边界；
+            //  下界之前的缺口区间本就不在积分域内——清除证据标记）。
+            firstT = r.t;
+            prevTau = tau2;
+            havePrev = true;
+            gapSincePrevOk = false;
+        } else if (gapSincePrevOk) {
+            // 缺口区间零贡献（公共头 computeRms 契约原文"缺口区间不插值，
+            // 无数据贡献 0"——audit F-589 修复：原实现按
+            // ½(τ_k²＋τ_{k−1}²)·Δt 跨缺口梯形插值，等于假设 τ 在无数据
+            // 区间线性过渡，与登记口径相悖且高估 RMS）。分母 T_cycle 仍取
+            // 有效行全跨度——缺口时长保留在分母中，RMS 保守低估（完整
+            // 循环统计以 Complete 序列为准）。
+            prevTau = tau2;
+            gapSincePrevOk = false;
+        } else {
+            // 正常采样区间梯形时间加权：½(τ_k²＋τ_{k−1}²)·Δt——相邻有效
+            // 行对（中间无本关节缺口行）。
+            weightedSum += 0.5 * (prevTau + tau2) * (r.t - lastT);
+            prevTau = tau2;
+        }
+        lastT = r.t;  // 积分上界推进（末个有效行＝t_N）
+    }
+
+    // ---- 第 2 步：无效情形显式 NaN（§4.6/§7.3——不伪造 0）：无 Ok 行
+    //      （Empty 语义）/有效行 <2（无时间区间）/跨度 0（不可时间加权）----
+    if (!havePrev || firstT == lastT) {
+        return std::numeric_limits<double>::quiet_NaN();
+    }
+
+    // ---- 第 3 步：T_cycle＝有效行全跨度 t_N−t₀（完整循环含驻留——
+    //      驻留段时间权重进入分母；§7.3 原文口径）----
+    const double cycleS = lastT - firstT;  // s（>0——第 2 步已排除 0）
+    return std::sqrt(weightedSum / cycleS);  // 量纲随 jointType：N·m 或 N（§4.5）
+}
+FUNCTION runtime.rtcodec.Writer.u16
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 65-69
+    void u16(std::uint16_t v)
+    {
+        m_buf.push_back(static_cast<std::uint8_t>(v >> 8));
+        m_buf.push_back(static_cast<std::uint8_t>(v));
+    }
+FUNCTION runtime.rtcodec.Writer.u32
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 72-77
+    void u32(std::uint32_t v)
+    {
+        for (int i = 3; i >= 0; --i) {
+            m_buf.push_back(static_cast<std::uint8_t>((v >> (8 * i)) & 0xFFu));
+        }
+    }
+FUNCTION runtime.rtcodec.Writer.u64
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 80-85
+    void u64(std::uint64_t v)
+    {
+        for (int i = 7; i >= 0; --i) {
+            m_buf.push_back(static_cast<std::uint8_t>((v >> (8 * i)) & 0xFFu));
+        }
+    }
+FUNCTION runtime.rtcodec.Writer.f64
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 91-100
+    void f64(double v)
+    {
+        if (!std::isfinite(v)) {
+            throw RuntimeError{RuntimeErrorCode::InputInvalid,
+                               "codec/encode：遇到非有限 double（NaN/±Inf 编码入口拒绝——§4.5）"};
+        }
+        std::uint64_t bits = 0;
+        std::memcpy(&bits, &v, sizeof(bits));
+        u64(bits);
+    }
+FUNCTION runtime.rtcodec.Writer.str
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 103-107
+    void str(const std::string& s)
+    {
+        u32(static_cast<std::uint32_t>(s.size()));
+        raw(reinterpret_cast<const std::uint8_t*>(s.data()), s.size());
+    }
+FUNCTION runtime.rtcodec.Reader.u16
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 150-156
+    bool u16(std::uint16_t& v)
+    {
+        std::uint8_t b[2] = {0, 0};
+        if (!raw(b, 2)) { return false; }
+        v = static_cast<std::uint16_t>((static_cast<std::uint16_t>(b[0]) << 8) | b[1]);
+        return true;
+    }
+FUNCTION runtime.rtcodec.Reader.u32
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 158-167
+    bool u32(std::uint32_t& v)
+    {
+        std::uint8_t b[4] = {0, 0, 0, 0};
+        if (!raw(b, 4)) { return false; }
+        v = 0;
+        for (int i = 0; i < 4; ++i) {
+            v = (v << 8) | b[i];
+        }
+        return true;
+    }
+FUNCTION runtime.rtcodec.Reader.u64
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 169-178
+    bool u64(std::uint64_t& v)
+    {
+        std::uint8_t b[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+        if (!raw(b, 8)) { return false; }
+        v = 0;
+        for (int i = 0; i < 8; ++i) {
+            v = (v << 8) | b[i];
+        }
+        return true;
+    }
+FUNCTION runtime.rtcodec.Reader.f64
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 180-191
+    bool f64(double& v)
+    {
+        std::uint64_t bits = 0;
+        if (!u64(bits)) { return false; }
+        std::memcpy(&v, &bits, sizeof(v));
+        // 位模式往返不产生非有限（写入口已拒绝）——防御性复核仍保留：
+        // 手工构造的字节流可能携带 NaN 位型。
+        if (!std::isfinite(v)) {
+            return fail("非有限 double 位型（NaN/±Inf）");
+        }
+        return true;
+    }
+FUNCTION runtime.rtcodec.Reader.str
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp 193-201
+    bool str(std::string& s)
+    {
+        std::uint32_t n = 0;
+        if (!u32(n)) { return false; }
+        if (m_off + n > m_size) { return fail("字符串长度越界"); }
+        s.assign(reinterpret_cast<const char*>(m_data + m_off), n);
+        m_off += n;
+        return true;
+    }
+FUNCTION runtime.snapshotcodec.ByteReader.readU16
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 337-344
+    bool readU16(std::uint16_t* v)
+    {
+        if (!canRead(2)) { return false; }
+        *v = static_cast<std::uint16_t>(
+            (static_cast<std::uint16_t>(m_data[m_offset]) << 8) | m_data[m_offset + 1]);
+        m_offset += 2;
+        return true;
+    }
+FUNCTION runtime.snapshotcodec.ByteReader.readU32
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 347-356
+    bool readU32(std::uint32_t* v)
+    {
+        if (!canRead(4)) { return false; }
+        *v = (static_cast<std::uint32_t>(m_data[m_offset]) << 24)
+           | (static_cast<std::uint32_t>(m_data[m_offset + 1]) << 16)
+           | (static_cast<std::uint32_t>(m_data[m_offset + 2]) << 8)
+           | static_cast<std::uint32_t>(m_data[m_offset + 3]);
+        m_offset += 4;
+        return true;
+    }
+FUNCTION runtime.snapshotcodec.ByteReader.readU64
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 359-368
+    bool readU64(std::uint64_t* v)
+    {
+        if (!canRead(8)) { return false; }
+        *v = 0;
+        for (int i = 0; i < 8; ++i) {
+            *v = (*v << 8) | m_data[m_offset + static_cast<std::size_t>(i)];
+        }
+        m_offset += 8;
+        return true;
+    }
+FUNCTION runtime.snapshotcodec.ByteReader.readString
+DIFFERENCES 运行时owner持有身份/物化协议；低层显式大端与其他域重复，BINArchive主机序/格式化长度不兼容。保留rtcodec u32串长与snapshot u64串长差异、有限性/offset/bool失败语义，不为共享原语统一协议
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 382-390
+    bool readString(std::string* s)
+    {
+        std::uint64_t len = 0;
+        if (!readU64(&len)) { return false; }
+        if (len > remaining()) { return false; }
+        s->resize(static_cast<std::size_t>(len));
+        return readBytes(reinterpret_cast<std::uint8_t*>(s->empty() ? nullptr : &(*s)[0]),
+                         static_cast<std::size_t>(len));
+    }
+FUNCTION runtime.appendU16
+DIFFERENCES 外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 80-84
+void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+{
+    out.push_back(static_cast<std::uint8_t>(v >> 8));
+    out.push_back(static_cast<std::uint8_t>(v));
+}
+FUNCTION runtime.appendU32
+DIFFERENCES 外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 87-93
+void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+{
+    out.push_back(static_cast<std::uint8_t>(v >> 24));
+    out.push_back(static_cast<std::uint8_t>(v >> 16));
+    out.push_back(static_cast<std::uint8_t>(v >> 8));
+    out.push_back(static_cast<std::uint8_t>(v));
+}
+FUNCTION runtime.appendU64
+DIFFERENCES 外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 96-101
+void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+{
+    for (int shift = 56; shift >= 0; shift -= 8) {
+        out.push_back(static_cast<std::uint8_t>(v >> shift));
+    }
+}
+FUNCTION runtime.appendString
+DIFFERENCES 外层匿名namespace快照大端写原语；appendString为u64长度，复用基础字节工具不能改变snapshotIdentity/workCellCompileIdentity域与排序
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 129-133
+void appendString(std::vector<std::uint8_t>& out, const std::string& s)
+{
+    appendU64(out, static_cast<std::uint64_t>(s.size()));
+    appendBytes(out, reinterpret_cast<const std::uint8_t*>(s.data()), s.size());
+}
+FUNCTION selection.combinationCodec.ByteWriter.u32
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 177-183
+    void u32(std::uint32_t v)
+    {
+        for (int shift = 0; shift < 32; shift += 8) {
+            const std::uint8_t b = static_cast<std::uint8_t>((v >> shift) & 0xFFu);
+            raw(&b, 1);
+        }
+    }
+FUNCTION selection.combinationCodec.ByteWriter.f64
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 190-199
+    void f64(double v)
+    {
+        std::uint64_t bits = 0;
+        static_assert(sizeof(bits) == sizeof(v), "double 必须为 8 字节");
+        std::memcpy(&bits, &v, sizeof(bits));
+        for (int shift = 0; shift < 64; shift += 8) {
+            const std::uint8_t b = static_cast<std::uint8_t>((bits >> shift) & 0xFFu);
+            raw(&b, 1);
+        }
+    }
+FUNCTION selection.combinationCodec.ByteWriter.str
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 201-205
+    void str(const std::string& s)
+    {
+        u32(static_cast<std::uint32_t>(s.size()));
+        raw(s.data(), s.size());
+    }
+FUNCTION selection.combinationCodec.ByteReader.u32
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 273-282
+    std::uint32_t u32()
+    {
+        std::uint32_t v = 0;
+        for (int i = 0; i < 4; ++i) {
+            std::uint8_t b = 0;
+            raw(&b, 1);
+            v |= static_cast<std::uint32_t>(b) << (8 * i);
+        }
+        return v;
+    }
+FUNCTION selection.combinationCodec.ByteReader.f64
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 290-305
+    double f64()
+    {
+        std::uint64_t bits = 0;
+        for (int i = 0; i < 8; ++i) {
+            std::uint8_t b = 0;
+            raw(&b, 1);
+            bits |= static_cast<std::uint64_t>(b) << (8 * i);
+        }
+        double v = 0;
+        std::memcpy(&v, &bits, sizeof(v));
+        // 解码面同样拒绝非有限（对称于编码入口——防旁路字节注入）。
+        if (!isFiniteNumber(v)) {
+            throw std::invalid_argument("组合校核解码：非有限 double（NFR-COR-03）");
+        }
+        return v;
+    }
+FUNCTION selection.combinationCodec.ByteReader.str
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 306-313
+    std::string str()
+    {
+        const std::uint32_t n = u32();
+        require(n);
+        std::string s(reinterpret_cast<const char*>(m_bytes.data() + m_pos), n);
+        m_pos += n;
+        return s;
+    }
+FUNCTION selection.combinationCodec.ByteReader.u32At
+DIFFERENCES 组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp 367-372
+    std::uint32_t u32At(std::size_t pos) const
+    {
+        std::uint32_t v = 0;
+        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+        return v;
+    }
+FUNCTION selection.backfillCodec.ByteReader.u32At
+DIFFERENCES 回填普通u32/f64为显式小端，版本字段u32At仍memcpy主机序；与CombinationCheck相同隐藏差异，必须纳入跨端协议测试，不用已有F-777完成标签当豁免
+SOURCE RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp 332-337
+    std::uint32_t u32At(std::size_t pos) const
+    {
+        std::uint32_t v = 0;
+        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+        return v;
+    }

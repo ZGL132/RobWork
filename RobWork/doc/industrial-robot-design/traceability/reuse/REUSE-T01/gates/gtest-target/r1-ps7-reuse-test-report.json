@@ -1,0 +1,226 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "1CF30F2D07419BA21B8B7DA7C43331A190A3DC0E0B37C1CDE6110DD98E46A77F",
+  "helperSha256": "25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57",
+  "driverSha256": "E46CC6D6ED008506E2012588CC4ADF198BE1208EE4DE4F0594440EFA1898F3D5",
+  "expected": 142,
+  "executed": 30,
+  "notRun": 112,
+  "driverFailure": "Exception calling \"ReadAllText\" with \"1\" argument(s): \"Could not find a part of the path 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-reuse-0439029eeb7f45c5821f74238819d121\\RobWork\\RobWork\\gtest\\test-main.cpp'.\"",
+  "passed": 7,
+  "skipped": 0,
+  "failed": 23,
+  "complete": false,
+  "tests": [
+    {
+      "name": "01-clean",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "PASS",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "02-fixed-baseline",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-BASELINE",
+      "output": "REUSE-BASELINE : fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)\r\n"
+    },
+    {
+      "name": "03-all-units",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNITS",
+      "output": "REUSE-UNITS : all 20 units required\r\n"
+    },
+    {
+      "name": "04-missing-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/RobWork/src/rw/missing.hpp\r\n"
+    },
+    {
+      "name": "05-stale-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-HASH",
+      "output": "REUSE-UPSTREAM-HASH : RobWork/RobWork/src/rw/models/Device.hpp\r\n"
+    },
+    {
+      "name": "06-missing-symbol",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-SYMBOL",
+      "output": "REUSE-UPSTREAM-SYMBOL : RobWork/RobWork/src/rw/models/Device.hpp: NoSuchSymbol123\r\n"
+    },
+    {
+      "name": "07-inventory-omission",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "08-forged-blob",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "09-inventory-duplicate",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "10-inventory-unit",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "11-new-source",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "12-stale-change-hash",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "13-core-even-business",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-DUPLICATE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "14-cpp-not-governance",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-MODE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "15-missing-approval",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "16-unknown-capability",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-CAPABILITY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "17-path-traversal",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "18-missing-task-proof",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "19-task-scope",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "20-forbidden-scope",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "21-stage-not-approved",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-STAGE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "22-final-debt-rejected",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "23-governance-not-algorithm-approval",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-GOV-SCOPE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "24-upstream-readonly",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-READONLY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "25-missing-record-file",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "26-deletion-undeclared",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "27-forged-debt-closure",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "28-arbitrary-task-ready",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "29-planned-not-executable",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-TASK-STATE",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp\r\n"
+    },
+    {
+      "name": "30-forged-build-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : nonexistent: build registration missing/stale\r\n"
+    }
+  ]
+}

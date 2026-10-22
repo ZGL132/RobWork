@@ -82,6 +82,47 @@
         "tasks/foundation/CORE-T04.json",
         "units/core.md §4.4/§5.4"
       ]
+    },
+    {
+      "functionId": "core.TestMainReport.main",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 18,
+          "endLine": 23,
+          "sha256": "82585c0df15b3c5fe9c0bc4795b66a8ddb28ff577d1c5065d33631f2349671ad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+      },
+      "differences": "初始化GTest并安装既有testkit监听器，两个无Qt入口同形态。可复用现有测试构建入口而不复制main；上游sdurw-gtest-main带RobWork全局初始化与TestSuiteConfig，不可盲链且不能有双main。不是新报告算法/生产工具库",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        }
+      ],
+      "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
+      "designRefs": [
+        "AGENTS.md §4 验证留痕",
+        "units/testkit.md §7.2/§7.3"
+      ]
     }
   ]
 }

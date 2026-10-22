@@ -52,3 +52,7 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第五批独立验收冻结9fd7256cf61a7768622810ed547617a66013949b为FAIL：仅SampleGridRender::draw误挂UX-07，已对照UI-T52 acceptance 2改为UX-02/ERR-01并保留原报告，待返工复验。新3项公共API在同冻结SHA独立VS x64重建实跑PASS（3 passed，failed/skipped/notRun=0），原件见`traceability/acceptance/REUSE-T01-api-r7-20261022/`；不证明生产适配。
 
 第六批新增28条关系，累计174条（171 pending、3 proposal），closedFiles=0。runtime rtcodec/snapshotcodec与外层快照大端原语、selection组合校核及回填版本字段、时间加权RMS与单位转换已定向审读；`batch6-search.json`保留实际检索。两个selection u32At通过memcpy读取版本头，与其普通u32显式小端路径不同，跨端行为待生产回归，不改产品来绕过T01阶段门。Statistics样本均值/方差不能代替DYN-03时间梯形RMS，DOM getUnit缺产品量纲契约且依赖过重；Constants角度因子仍优先复用。Boost原依赖可提供进一步字节工具候选，未新增渠道或通用codec平台；不因BINArchive不适用即申请新核心。本批无产品/上游/vcpkg变动，无新增C++探测；全部登记仍待独立审查和全功能审计退出。
+
+第五批返工和第六批登记在冻结 ee9cc79bd68ec27b8b2f95901dddd78d6c57d5d2 独立复验 PASS，原件归档于 `traceability/acceptance/REUSE-T01-batch5-r2-20261022/`、`REUSE-T01-batch6-20261022/`；结论仅限对应登记。
+
+第七批新增26条关系，累计200条（197 pending、3 proposal），closedFiles=0。evidence快照/切片/清单低层编码原语与core/evidence测试入口细分登记；magic/版本/错误/身份权威仍归原owner。上游gtest入口附带全局初始化与TestSuiteConfig，不能盲链纯产品测试或造成双main。真实搜索见 `batch7-search.json`。额外支持上游精确gtest构建目标的门禁修正及双运行时142项真实自测（各142 passed、failed/skipped/notRun=0）见 `gates/gtest-target/`，保留所有失败轮次。无新增C++探测、未修改产品/上游，待本批冻结SHA独立审查，全T01未退出。

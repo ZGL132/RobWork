@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 140
+$driverFailure = ''; $expectedTests = 142
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -56,6 +56,14 @@ function MathMatrix {
     return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='runtime';functions=@($row)}
 }
 function PutMath($m) { PutJson ($reuse+'functions/runtime.json') $m }
+function IsolateFinalClosureMatrices {
+    # 这两项专测“新增文件缺独立关闭记录”，不能被真实审计中的 pending 抢先截断。
+    # 仅清空本 Case 的隔离副本；PutJson 保留原字节并在 finally 恢复。
+    # 01-clean 与 22-final-debt-rejected 仍使用完整真实矩阵，不豁免生产债务。
+    foreach ($file in Get-ChildItem -LiteralPath (Join-Path $sandbox ($reuse+'functions')) -Filter '*.json' -File) {
+        $path=$reuse+'functions/'+$file.Name;$m=GetJson $path;$m.functions=@();PutJson $path $m
+    }
+}
 function RestrictedAuditMatrix {
     # 使用真实未改动的 owner 编译器记录待审事实，不能要求先伪造授权才能登记债务。
     $m=MathMatrix;$r=$m.functions[0];$path=$product+'runtime/src/WorkCellCompiler.cpp'
@@ -195,7 +203,8 @@ try {
     & git -C $sandbox config core.autocrlf true
     & git -C $sandbox config core.safecrlf false
     & git -C $sandbox sparse-checkout init --cone
-    & git -C $sandbox sparse-checkout set 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' $product ($design+'reuse') ($design+'tasks') ($design+'traceability/acceptance')
+    # 上游测试入口也是复用对象；精确检出两套既有 gtest 根，避免隔离夹具漏文件而误报合法目标。
+    & git -C $sandbox sparse-checkout set 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWork/gtest' 'RobWork/RobWorkSim/gtest' $product ($design+'reuse') ($design+'tasks') ($design+'traceability/acceptance')
     & git -C $sandbox checkout --quiet --detach HEAD
     if ($LASTEXITCODE) { throw 'fixture checkout failed' }
     Copy-Item -LiteralPath $validatorSource -Destination $validator
@@ -247,6 +256,24 @@ try {
     Case '28-arbitrary-task-ready' 'REUSE-TASK' { PutJson ($design+'tasks/OTHER-T99.json') ([pscustomobject]@{taskId='OTHER-T99';status='ready'}) }
     Case '29-planned-not-executable' 'REUSE-TASK-STATE' { $j=GetJson ($design+'tasks/REUSE-T01.json');$j.status='planned';PutJson ($design+'tasks/REUSE-T01.json') $j } @('-TaskFile',($design+'tasks/REUSE-T01.json'))
     Case '30-forged-build-target' 'REUSE-UPSTREAM-TARGET' { $j=GetJson ($reuse+'catalog.json'); $j.capabilities[0].upstream[0].target='nonexistent'; PutJson ($reuse+'catalog.json') $j }
+    # 上游已有测试入口也是可复用资产；仅放开真实gtest根CMake，不扩展到任意目录。
+    Case 'upstream-gtest-build-target' 'PASS' {
+        $j=GetJson ($reuse+'catalog.json');$u=$j.capabilities[0].upstream[0]
+        $u.path='RobWork/RobWork/gtest/test-main.cpp';$u.symbols=@('main')
+        $u.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.path)))
+        $u.target='sdurw-gtest-main';$u.targetFile='RobWork/RobWork/gtest/CMakeLists.txt'
+        $u.targetSha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.targetFile)))
+        # v2 同时绑定能力的目标集合；替换候选来源后同步派生字段，避免正例自身不一致。
+        $j.capabilities[0].build.targets=@($j.capabilities[0].upstream | ForEach-Object { $_.target } | Sort-Object -Unique)
+        PutJson ($reuse+'catalog.json') $j
+    }
+    Case 'upstream-arbitrary-test-build-path-rejected' 'REUSE-UPSTREAM-TARGET' {
+        $j=GetJson ($reuse+'catalog.json');$u=$j.capabilities[0].upstream[0]
+        $u.target='sdurw-gtest-main';$u.targetFile='RobWork/RobWork/gtest/fake/CMakeLists.txt'
+        Put $u.targetFile 'add_library(sdurw-gtest-main STATIC fake.cpp)'
+        $u.targetSha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $u.targetFile)))
+        PutJson ($reuse+'catalog.json') $j
+    }
     # 首轮验收真实发现.c绕过；每种代码入口均须被同一门禁拒绝，无目录豁免。
     foreach ($suffix in @('c','ipp','inl','tpp','mjs','ps1','py','html','ts','cu','inc','opaque')) {
         $caseSuffix = $suffix
@@ -361,10 +388,10 @@ try {
         $txt=[IO.File]::ReadAllText((Join-Path $sandbox $g.build.path))+"`n# add_library(sdurws_ird_kinematics_fake STATIC src/Fk.cpp)`n"
         Put $g.build.path $txt;$g.build.sha256=Hash $txt;$p.grants=@($g);PutJson ($reuse+'permissions.json') $p
     }
-    Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
+    Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
     Case 'closure-baseline-cannot-use-absent' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].baselineBlob='absent';PutJson ($reuse+'closures.json') $c }
     Case 'closure-new-file-cannot-use-blob' 'REUSE-CLOSURE' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files[1].baselineBlob=$c.files[0].baselineBlob;PutJson ($reuse+'closures.json') $c }
-    Case 'closure-new-file-omitted-final' 'REUSE-MIGRATION : new/current file lacks independent closure' { [void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files=@($c.files[0]);PutJson ($reuse+'closures.json') $c } @('-RequireMigrationComplete')
+    Case 'closure-new-file-omitted-final' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;[void](ClosureFixture -Replacement);$c=GetJson ($reuse+'closures.json');$c.files=@($c.files[0]);PutJson ($reuse+'closures.json') $c } @('-RequireMigrationComplete')
     Case 'closure-mutable-reference-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].migrationCommit='HEAD';PutJson ($reuse+'closures.json') $c }
     Case 'closure-record-path-rejected' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].acceptance.path=$reuse+'fixture-production.json';PutJson ($reuse+'closures.json') $c }
     Case 'ad-real-qt-item-positive' 'PASS' {

@@ -1683,6 +1683,14 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "evidence",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "operations": [
@@ -1935,6 +1943,91 @@
       "resourceSearch": {
         "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
         "conclusion": "定向资源检查，未运行上游完整测试，不据空资源字段宣称缺失"
+      }
+    },
+    {
+      "id": "TEST-HARNESS",
+      "ownerUnit": "testkit",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "核原gtest入口/环境/报告目标；不把TestSuiteConfig依赖引入所有产品测试"
+      },
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f",
+          "symbols": [
+            "main"
+          ],
+          "target": "sdurw-gtest-main",
+          "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "targetSha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/TestEnvironment.cpp",
+          "sha256": "dc894e57d36b0b22e3baf5b5c55da1a29384c8cc5b57bc883386d7c943ce5db5",
+          "symbols": [
+            "SetUp",
+            "RobWork::init",
+            "testfilesDir"
+          ],
+          "target": "sdurw-gtest-main",
+          "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "targetSha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw-gtest-main"
+        ],
+        "constraints": "上游gtest构建期静态入口，非产品运行库/CONFIG公共组件；有main符号，不可与自有main同时链接"
+      },
+      "boundary": "复用GTest与既有testkit；上游入口自动初始化RobWork并读取TestSuiteConfig.xml，产品无框架依赖测试不能强接该入口。已有同形态TestMainReport可在测试构建目标复用，Qt/宿主初始化差异分别审，不建新测试平台",
+      "usages": [
+        {
+          "consumerUnit": "core",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "evidence",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "testkit",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "保留原生JSON/XML与真实退出码；不让测试设施进入产品链接或分发",
+        "lifetime": "每测试进程安装一次监听器；Qt是否需要由测试形态确定",
+        "determinism": "沿既有GTest过滤、计数、SKIP/失败口径，不新写报告器"
+      },
+      "tests": [],
+      "examples": [],
+      "docs": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "conclusion": "已读取原gtest/CMake与两处相同产品入口，未跑上游完整测试"
       }
     }
   ]

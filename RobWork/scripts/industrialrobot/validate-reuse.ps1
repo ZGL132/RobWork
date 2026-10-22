@@ -101,7 +101,8 @@ try {
             $txt = ReadText $u.path
             if ((Digest $txt) -ne $u.sha256) { Fail 'UPSTREAM-HASH' $u.path }
             foreach ($s in $u.symbols) { if (-not $txt.Contains("$s")) { Fail 'UPSTREAM-SYMBOL' "$($u.path): $s" } }
-            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/src/.+/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
+            # 测试入口/夹具亦须优先复用；仅允许两上游既有gtest根目标登记，仍拒绝任意路径。
+            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/(src/.+|gtest)/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
             $targetText = ReadText $u.targetFile
             if ((Digest $targetText) -ne $u.targetSha256 -or -not $targetText.Contains("$($u.target)")) { Fail 'UPSTREAM-TARGET' "$($u.target): build registration missing/stale" }
         }
