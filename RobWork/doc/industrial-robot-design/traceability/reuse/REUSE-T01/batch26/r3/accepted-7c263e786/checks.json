@@ -1,0 +1,100 @@
+[
+  {
+    "name": "pipeline-ps7",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+    ],
+    "exitCode": 0,
+    "seconds": 19.16,
+    "log": "pipeline-ps7.log"
+  },
+  {
+    "name": "pipeline-ps51",
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+    ],
+    "exitCode": 0,
+    "seconds": 14.76,
+    "log": "pipeline-ps51.log"
+  },
+  {
+    "name": "validate-task",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "-TaskFile",
+      "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+    ],
+    "exitCode": 0,
+    "seconds": 29.76,
+    "log": "validate-task.log"
+  },
+  {
+    "name": "validate-reuse",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "-TaskFile",
+      "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+      "-Head",
+      "7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+    ],
+    "exitCode": 0,
+    "seconds": 344.33,
+    "log": "validate-reuse.log"
+  },
+  {
+    "name": "validate-docs",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/validate-docs.ps1"
+    ],
+    "exitCode": 0,
+    "seconds": 19.92,
+    "log": "validate-docs.log"
+  },
+  {
+    "name": "scope-frozen",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "-TaskFile",
+      "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+      "-Base",
+      "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+      "-Head",
+      "7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+    ],
+    "exitCode": 0,
+    "seconds": 31.43,
+    "log": "scope-frozen.log"
+  },
+  {
+    "name": "commit-lint",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "-Range",
+      "4b9977f096d0b3d58687ecc94013f435e5b0502c..7c263e78683a74b5532e6f99e7647a02b6f39ea7"
+    ],
+    "exitCode": 0,
+    "seconds": 1.07,
+    "log": "commit-lint.log"
+  }
+]

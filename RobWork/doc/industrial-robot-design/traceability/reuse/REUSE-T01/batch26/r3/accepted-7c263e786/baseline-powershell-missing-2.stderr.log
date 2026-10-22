@@ -1,0 +1,9 @@
+git.exe : fatal: path 'RobWork/doc/industrial-robot-design/traceability/findings.json' is in the index, but not at stag
+e 2
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r3-acceptance-20261023\baseline-root\RobWork\scripts\industrialrobot
+\merge-findings-union.ps1:59 char:14
++ ...  $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$n ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (fatal: path 'Ro... not at stage 2:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
