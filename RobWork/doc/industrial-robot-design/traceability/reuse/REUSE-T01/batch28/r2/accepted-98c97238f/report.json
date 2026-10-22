@@ -1,0 +1,197 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B28-r2",
+  "reviewedCommit": "98c97238fa3c34aad51330b3b196439844badb69",
+  "baseCommit": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+  "rejectedCommit": "f2e65141259cd43ee5e63799514a733908440355",
+  "verdict": "PASS",
+  "scope": "仅B28-r2局部记录修正；不授全T01/T02、B29或生产迁移准入",
+  "independence": {
+    "checkout": "独立Temp clone --no-hardlinks --no-checkout; detached冻结SHA; core.longpaths=true; core.autocrlf=true",
+    "sharedTreeModified": false,
+    "remoteOperations": "none",
+    "mergeOperations": "none",
+    "cleanClone": true,
+    "gui": "NOT RUN",
+    "newCppBuildAndTests": "NOT RUN：相对原f2e产品/上游/probe及构建零变更，依根AGENTS §4按纯记录修正验收，引用已核原始独立r1证据"
+  },
+  "findings": [],
+  "closedPriorReviewItems": [
+    {
+      "id": "B28-ACC-01",
+      "result": "ContentVersion/ContentIdentity名称与Digest.hpp两hash特化吻合，仅静态同族影响；未冒充动态验证"
+    },
+    {
+      "id": "B28-ACC-02",
+      "result": "69行实际源段逐行复核；detail/匿名命名空间、模板<T>、重载类型与::真实符号已修正；5方法宏各六类型，比较宏六类型共18操作；原11行不改"
+    },
+    {
+      "id": "B28-ACC-03",
+      "result": "22行身份值引用3.6.1；31行来源/评估/诊断引用3.6.3；16行事件引用3.6总边界；不是worker条款一刀切，无grant新增"
+    },
+    {
+      "id": "B28-ACC-04",
+      "result": "CORE-EVENT按真实有状态实例构造、订阅增删、fire发布、列表查询申报construct/mutate/publish/query，仍candidate，借持listener生命周期/线程限制保留，不授core新增依赖"
+    }
+  ],
+  "rawChecks": {
+    "head": "98c97238fa3c34aad51330b3b196439844badb69",
+    "base": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+    "rejected": "f2e65141259cd43ee5e63799514a733908440355",
+    "changedPaths": 89,
+    "manifests": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/artifact-manifest.json",
+        "count": 37
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/artifact-manifest.json",
+        "count": 84
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/rejected-f2e651412/safe-manifest.json",
+        "count": 78
+      }
+    ],
+    "original11Unchanged": true,
+    "rows": 69,
+    "inputBindingsBefore": 615,
+    "inputBindingsAfter": 502,
+    "historicalFindingsSemanticPrefix": true,
+    "historicalFindingsRawPrefix": true,
+    "f965": {
+      "id": "F-965",
+      "source": "reuse/core-identity-events-audit.md / batch28",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core身份FNV非空向量偏离约定，公开ObjectId散列继承偏差",
+      "owner": "core / REUSE-T05",
+      "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ContentIdentity静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
+    },
+    "sourceChangesFromRejected": [],
+    "recordedIndependentTests": [
+      {
+        "run": "core",
+        "total": 64,
+        "passed": 64,
+        "failed": 0,
+        "skipped": 0,
+        "failedTests": [],
+        "recordedExit": "0"
+      },
+      {
+        "run": "probe",
+        "total": 6,
+        "passed": 4,
+        "failed": 2,
+        "skipped": 0,
+        "failedTests": [
+          "ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02",
+          "ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02"
+        ],
+        "recordedExit": "1"
+      }
+    ],
+    "permissionCounts": {
+      "ARCH:3.6.1": 22,
+      "ARCH:3.6.3": 31,
+      "ARCH:3.6": 16
+    },
+    "errors": []
+  },
+  "oracle": {
+    "freshIndependentOracle": true,
+    "vectors": [
+      {
+        "name": "empty",
+        "hex": "",
+        "hi": "6c62272e07bb0142",
+        "lo": "62b821756295c58d",
+        "fold": "0eda065b652ec4cf"
+      },
+      {
+        "name": "a",
+        "hex": "61",
+        "hi": "d228cb696f1a8caf",
+        "lo": "78912b704e4a8964",
+        "fold": "aab9e019215005cb"
+      },
+      {
+        "name": "zero16",
+        "hex": "00000000000000000000000000000000",
+        "hi": "f1f90b7bf705b5ef",
+        "lo": "1517163834145e4d",
+        "fold": "e4ee1d43c311eba2"
+      },
+      {
+        "name": "sequence16",
+        "hex": "000102030405060708090a0b0c0d0e0f",
+        "hi": "2f57eaee93cff23f",
+        "lo": "8177f0c93cb989fd",
+        "fold": "ae201a27af767bc2"
+      }
+    ],
+    "errors": [],
+    "originalR1TempArtifactsChecked": 78,
+    "originalR1TempArtifactErrors": []
+  },
+  "gates": [
+    {
+      "name": "validate-task",
+      "exit": 0,
+      "status": "PASS",
+      "log": "validate-task.log",
+      "exitFile": "validate-task.exit.txt"
+    },
+    {
+      "name": "validate-reuse",
+      "exit": 0,
+      "status": "PASS",
+      "log": "validate-reuse.log",
+      "exitFile": "validate-reuse.exit.txt"
+    },
+    {
+      "name": "validate-docs",
+      "exit": 0,
+      "status": "PASS",
+      "log": "validate-docs.log",
+      "exitFile": "validate-docs.exit.txt"
+    },
+    {
+      "name": "verify-task-scope",
+      "exit": 0,
+      "status": "PASS",
+      "log": "verify-task-scope.log",
+      "exitFile": "verify-task-scope.exit.txt"
+    },
+    {
+      "name": "commit-lint",
+      "exit": 0,
+      "status": "PASS",
+      "log": "commit-lint.log",
+      "exitFile": "commit-lint.exit.txt"
+    }
+  ],
+  "testEvidence": {
+    "source": "原r1独立验收已实际运行产物，外层raw/Git blob以及仍存原Temp evidence 78项均一致；本轮未重跑C++",
+    "core": {
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0
+    },
+    "probe": {
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "includesUpstreamOriginalEventTestsPassed": 2
+    },
+    "knownFailures": "FNV非空固定向量及公开ObjectId hash反例仍开放，不为审计记录修正而修改生产算法"
+  },
+  "environmentAttempts": {
+    "initialCheckout": "FAIL exit128 Windows filename too long；保留日志；开启独立clone core.longpaths后成功exit0",
+    "incompleteCheckoutGateInvocations": "5项均exit64，仅解释器无入口的无效启动；标记incomplete-checkout，不作为最终验证",
+    "reviewScriptAdjustments": "纯验收脚本先将比较宏误预期为6，按实际六类型×三操作改为18；原Temp产物按evidence目录定位后78项原件核对一致，先次日志保留"
+  },
+  "remaining": "F-965 open；所有69行pending；生产结果消费/完整调用链/泛型异常/并发/最终链接等未本批结项；远程未执行；无新算法授权"
+}

@@ -1,0 +1,75 @@
+{
+  "freshIndependentOracle": true,
+  "vectors": [
+    {
+      "name": "empty",
+      "hex": "",
+      "hi": "6c62272e07bb0142",
+      "lo": "62b821756295c58d",
+      "fold": "0eda065b652ec4cf"
+    },
+    {
+      "name": "a",
+      "hex": "61",
+      "hi": "d228cb696f1a8caf",
+      "lo": "78912b704e4a8964",
+      "fold": "aab9e019215005cb"
+    },
+    {
+      "name": "zero16",
+      "hex": "00000000000000000000000000000000",
+      "hi": "f1f90b7bf705b5ef",
+      "lo": "1517163834145e4d",
+      "fold": "e4ee1d43c311eba2"
+    },
+    {
+      "name": "sequence16",
+      "hex": "000102030405060708090a0b0c0d0e0f",
+      "hi": "2f57eaee93cff23f",
+      "lo": "8177f0c93cb989fd",
+      "fold": "ae201a27af767bc2"
+    }
+  ],
+  "errors": [],
+  "originalR1TempArtifactsChecked": 78,
+  "originalR1TempArtifactErrors": [
+    "original-b28/artifact-manifest.json",
+    "original-b28/b28-build-run.ps1",
+    "original-b28/b28-build.log",
+    "original-b28/b28-core-build.log",
+    "original-b28/b28-core-vs.log",
+    "original-b28/b28-dependents.log",
+    "original-b28/b28-docs-r2.log",
+    "original-b28/b28-docs.log",
+    "original-b28/b28-final-build.log",
+    "original-b28/b28-final-vs.log",
+    "original-b28/b28-probe-build.log",
+    "original-b28/b28-probe-vs.log",
+    "original-b28/b28-reuse-r2.log",
+    "original-b28/b28-reuse.log",
+    "original-b28/b28-task-r2.log",
+    "original-b28/b28-task.log",
+    "original-b28/b28-upstream-search.log",
+    "original-b28/b28-vs.log",
+    "original-b28/commands.json",
+    "original-b28/environment.json",
+    "original-b28/final-core/exit.txt",
+    "original-b28/final-core/gtest.xml",
+    "original-b28/final-core/ird-test-report.json",
+    "original-b28/final-core/stdout.log",
+    "original-b28/final-probe/exit.txt",
+    "original-b28/final-probe/gtest.xml",
+    "original-b28/final-probe/ird-test-report.json",
+    "original-b28/final-probe/stdout.log",
+    "original-b28/fnv-oracle.py",
+    "original-b28/fnv-vectors.json",
+    "original-b28/run/exit.txt",
+    "original-b28/run/stdout.log",
+    "original-b28/run-path/exit.txt",
+    "original-b28/run-path/gtest.xml",
+    "original-b28/run-path/ird-test-report.json",
+    "original-b28/run-path/stdout.log",
+    "original-b28/search.json",
+    "original-b28/verification.json"
+  ]
+}

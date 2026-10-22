@@ -1,0 +1,692 @@
+[
+  {
+    "functionId": "core.audit-b28.Identity.tryParseId128",
+    "symbol": "sdurws::ird::core::detail::tryParseId128",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.formatId128",
+    "symbol": "sdurws::ird::core::detail::formatId128",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.fnv1a128",
+    "symbol": "sdurws::ird::core::detail::fnv1a128",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.generateId128Bytes",
+    "symbol": "sdurws::ird::core::detail::generateId128Bytes",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.generate",
+    "symbol": "sdurws::ird::core::ObjectId::generate",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.fromCanonical",
+    "symbol": "sdurws::ird::core::ObjectId::fromCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.tryFromCanonical",
+    "symbol": "sdurws::ird::core::ObjectId::tryFromCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.toCanonical",
+    "symbol": "sdurws::ird::core::ObjectId::toCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.isValid",
+    "symbol": "sdurws::ird::core::ObjectId::isValid",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.tryParseAttempt",
+    "symbol": "sdurws::ird::core::(anonymous namespace)::tryParseAttempt",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.fromCanonical",
+    "symbol": "sdurws::ird::core::AttemptId::fromCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.tryFromCanonical",
+    "symbol": "sdurws::ird::core::AttemptId::tryFromCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.toCanonical",
+    "symbol": "sdurws::ird::core::AttemptId::toCanonical",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.isValid",
+    "symbol": "sdurws::ird::core::TaskIdentity::isValid",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.equal",
+    "symbol": "sdurws::ird::core::TaskIdentity::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.order",
+    "symbol": "sdurws::ird::core::TaskIdentity::operator<",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.toToken.ProvenanceKind",
+    "symbol": "sdurws::ird::core::toToken(ProvenanceKind)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.provenanceKindFromToken",
+    "symbol": "sdurws::ird::core::provenanceKindFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.make",
+    "symbol": "sdurws::ird::core::ValueProvenance::make",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.equal",
+    "symbol": "sdurws::ird::core::ValueProvenance::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.EvaluationMode",
+    "symbol": "sdurws::ird::core::toToken(EvaluationMode)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.evaluationModeFromToken",
+    "symbol": "sdurws::ird::core::evaluationModeFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.TaskOutcome",
+    "symbol": "sdurws::ird::core::toToken(TaskOutcome)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.taskOutcomeFromToken",
+    "symbol": "sdurws::ird::core::taskOutcomeFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.EngineeringStatus",
+    "symbol": "sdurws::ird::core::toToken(EngineeringStatus)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.engineeringStatusFromToken",
+    "symbol": "sdurws::ird::core::engineeringStatusFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.toToken.TaskState",
+    "symbol": "sdurws::ird::core::toToken(TaskState)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Evaluation.taskStateFromToken",
+    "symbol": "sdurws::ird::core::taskStateFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.codeSyntaxOk",
+    "symbol": "sdurws::ird::core::(anonymous namespace)::codeSyntaxOk",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.DiagnosticRecord.make",
+    "symbol": "sdurws::ird::core::DiagnosticRecord::make",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.DiagnosticRecord.equal",
+    "symbol": "sdurws::ird::core::DiagnosticRecord::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.make",
+    "symbol": "sdurws::ird::core::ConfirmableFinding::make",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.confirm",
+    "symbol": "sdurws::ird::core::ConfirmableFinding::confirm",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.reject",
+    "symbol": "sdurws::ird::core::ConfirmableFinding::reject",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.DiagData.ConfirmableFinding.equal",
+    "symbol": "sdurws::ird::core::ConfirmableFinding::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.toToken.DomainEventKind",
+    "symbol": "sdurws::ird::core::toToken(DomainEventKind)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.domainEventKindFromToken",
+    "symbol": "sdurws::ird::core::domainEventKindFromToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.RevisionCommitted",
+    "symbol": "sdurws::ird::core::DomainEvent::make(RevisionCommittedPayload)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.DependencyInvalidated",
+    "symbol": "sdurws::ird::core::DomainEvent::make(DependencyInvalidatedPayload)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.TaskStatusChanged",
+    "symbol": "sdurws::ird::core::DomainEvent::make(TaskStatusChangedPayload)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.make.ResultArchived",
+    "symbol": "sdurws::ird::core::DomainEvent::make(ResultArchivedPayload)",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asRevisionCommitted",
+    "symbol": "sdurws::ird::core::DomainEvent::asRevisionCommitted",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asDependencyInvalidated",
+    "symbol": "sdurws::ird::core::DomainEvent::asDependencyInvalidated",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asTaskStatusChanged",
+    "symbol": "sdurws::ird::core::DomainEvent::asTaskStatusChanged",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.asResultArchived",
+    "symbol": "sdurws::ird::core::DomainEvent::asResultArchived",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.DomainEvent.equal",
+    "symbol": "sdurws::ird::core::DomainEvent::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceSubscription",
+    "symbol": "sdurws::ird::core::(anonymous namespace)::ReferenceSubscription::unsubscribe",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.publish",
+    "symbol": "sdurws::ird::core::ReferenceEventBus::publish",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.subscribe",
+    "symbol": "sdurws::ird::core::ReferenceEventBus::subscribe",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.removeSink",
+    "symbol": "sdurws::ird::core::ReferenceEventBus::removeSink",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Events.ReferenceEventBus.subscriberCount",
+    "symbol": "sdurws::ird::core::ReferenceEventBus::subscriberCount",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IdMacro.value-comparisons",
+    "symbol": "sdurws::ird::core::ObjectId::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.AttemptId.value-comparisons",
+    "symbol": "sdurws::ird::core::AttemptId::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.TaskIdentity.notEqual",
+    "symbol": "sdurws::ird::core::TaskIdentity::operator!=",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.IrdCoreIdHash",
+    "symbol": "sdurws::ird::core::IrdCoreIdHash<T>::operator()",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.std.hash.AttemptId",
+    "symbol": "std::hash<sdurws::ird::core::AttemptId>::operator()",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Identity.std.hash.TaskIdentity",
+    "symbol": "std::hash<sdurws::ird::core::TaskIdentity>::operator()",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.1",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.ValueProvenance.notEqual",
+    "symbol": "sdurws::ird::core::ValueProvenance::operator!=",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.provided",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::provided",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.notProvided",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::notProvided",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.notApplicable",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::notApplicable",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.invalid",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::invalid",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.state",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::state",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.tryValue",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::tryValue",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.value",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::value",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.invalidRawInput",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::invalidRawInput",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.provenance",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::provenance",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.equal",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::operator==",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  },
+  {
+    "functionId": "core.audit-b28.Provenance.SourcedValue.stateToken",
+    "symbol": "sdurws::ird::core::SourcedValue<T>::stateToken",
+    "sourceSegmentReviewed": true,
+    "permissionRef": "ARCH:3.6.3",
+    "inputFamilyReviewed": true,
+    "retainedOriginalFamilyTests": true,
+    "status": "pending",
+    "conclusion": "符号、源段及按职责收窄的依赖与本次pending审计边界相符；不授迁移权限"
+  }
+]

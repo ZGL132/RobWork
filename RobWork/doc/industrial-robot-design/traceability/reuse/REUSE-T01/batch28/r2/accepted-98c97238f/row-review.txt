@@ -1,0 +1,907 @@
+core.audit-b28.Identity.tryParseId128 sdurws::ird::core::detail::tryParseId128
+bool tryParseId128(std::string_view tag, std::string_view text,
+                   std::array<std::uint8_t, 16>* out) noexcept
+{
+    // 前缀 tag 逐字符匹配：类型误用（rev- 串喂给 ObjectId）在此即失败。
+    if (text.size() != tag.size() + 32) {           // 总长固定：tag＋32 hex
+        return false;
+    }
+    for (std::size_t i = 0; i < tag.size(); ++i) {
+        if (text[i] != tag[i]) {                    // tag 逐字符（含大小写——tag 本身小写）
+            return false;
+        }
+    }
+    // 十六进制体：恰 32 个、仅 [0-9a-f]（大写 A-F 拒绝——规范文本唯一小写）。
+    const std::size_t body = tag.size();
+    for (std::size_t i = 0; i < 32; ++i) {
+        const char c = text[body + i];
+        unsigned nibble;
+        if (c >= '0' && c <= '9')      { nibble = static_cast<unsigned>(c - '0'); }
+        else if (c >= 'a' && c <= 'f') { nibble = static_cast<unsigned>(c - 'a') + 10u; }
+        else { return false; }                      // 大写/字母 g 以后/符号/空白/中文等一律拒绝
+        // 字节序＝文本序：每两个字符合成一字节，高半字节在前——与 formatId128 对称。
+        if ((i & 1u) == 0u) { (*out)[i / 2] = static_cast<std::uint8_t>(nibble << 4); }
+        else { (*out)[i / 2] = static_cast<std::uint8_t>((*out)[i / 2] | nibble); }
+    }
+    return true;
+}
+
+core.audit-b28.Identity.formatId128 sdurws::ird::core::detail::formatId128
+std::string formatId128(std::string_view tag, const std::array<std::uint8_t, 16>& bytes)
+{
+    static constexpr char kHex[] = "0123456789abcdef";   // 规范文本唯一小写（§4.1）
+    std::string s;
+    s.reserve(tag.size() + 32);
+    s.append(tag);
+    for (const std::uint8_t b : bytes) {                 // 字节序＝文本序（高半字节在前）
+        s.push_back(kHex[b >> 4]);
+        s.push_back(kHex[b & 0x0Fu]);
+    }
+    return s;
+}
+
+core.audit-b28.Identity.fnv1a128 sdurws::ird::core::detail::fnv1a128
+void fnv1a128(const std::uint8_t* data, std::size_t n,
+              std::uint64_t* outHi, std::uint64_t* outLo) noexcept
+{
+    // FNV-1a 128 偏移基＝0x6C62272E07BB0142_62B821756295C58D；素数＝2^88+2^8+0x3B。
+    // 状态 (hi,lo) 视作 128 位大端整数：迭代"异或字节→乘素数（模 2^128）"。
+    std::uint64_t hi = 0x6C62272E07BB0142ULL;
+    std::uint64_t lo = 0x62B821756295C58DULL;
+
+    // 累加一个 128 位项（无回绕加法）。
+    const auto add = [&](std::uint64_t th, std::uint64_t tl) {
+        const std::uint64_t nl = lo + tl;
+        const std::uint64_t c = (nl < lo) ? 1ULL : 0ULL;
+        hi = hi + th + c;
+        lo = nl;
+    };
+    // 累加 state << shift（shift∈[0,127]；≥64 时低字全零、高字＝lo 左移）。
+    const auto addShifted = [&](unsigned s) {
+        if (s == 0)        { add(hi, lo); return; }
+        if (s >= 64)       { add(lo << (s - 64), 0ULL); return; }
+        add((lo >> (64 - s)) | (hi << s), lo << s);
+    };
+    // 64×64→高 64 位（32 位分解，避免编译器扩展头文件）。
+    const auto mulHi64 = [](std::uint64_t a, std::uint64_t b) -> std::uint64_t {
+        const std::uint64_t al = a & 0xFFFFFFFFULL, ah = a >> 32;
+        const std::uint64_t bl = b & 0xFFFFFFFFULL, bh = b >> 32;
+        const std::uint64_t p00 = al * bl;
+        const std::uint64_t p01 = al * bh;
+        const std::uint64_t p10 = ah * bl;
+        const std::uint64_t p11 = ah * bh;
+        const std::uint64_t mid = (p00 >> 32) + (p01 & 0xFFFFFFFFULL) + (p10 & 0xFFFFFFFFULL);
+        return p11 + (p01 >> 32) + (p10 >> 32) + (mid >> 32);
+    };
+    // 累加 state * m（m<2^64；128 位截断：低＝lo*m，高＝mulHi(lo,m)＋lo 高字贡献 hi*m）。
+    const auto addMulSmall = [&](std::uint64_t m) {
+        const std::uint64_t tl = lo * m;
+        const std::uint64_t th = mulHi64(lo, m) + hi * m;
+        add(th, tl);
+    };
+
+    for (std::size_t i = 0; i < n; ++i) {
+        // 异或字节（进入 128 位状态最低字节＝lo 低 8 位）
+        lo ^= static_cast<std::uint64_t>(data[i]);
+        // 乘素数：p = 2^88 + 2^8 + 0x3B（三项分解累加，模 2^128）
+        addShifted(88);
+        addShifted(8);
+        addMulSmall(0x3BULL);
+    }
+    *outHi = hi;
+    *outLo = lo;
+}
+
+core.audit-b28.Identity.generateId128Bytes sdurws::ird::core::detail::generateId128Bytes
+std::array<std::uint8_t, 16> generateId128Bytes()
+{
+    // random_device 播种一次（thread_local）：进程内每线程独立引擎，无锁并发。
+    // 生成器选择与契约：§4.1 明文"random_device 播种的 mt19937_64"——非密码学
+    // 承诺，唯一性要求＝128 位随机空间下的碰撞概率可忽略。
+    thread_local std::mt19937_64 engine{std::random_device{}()};
+    std::array<std::uint8_t, 16> bytes{};
+    do {
+        const std::uint64_t w1 = engine();
+        const std::uint64_t w2 = engine();
+        for (int i = 0; i < 8; ++i) {                    // 大端装配：高字节在低下标（与 hex 序一致）
+            bytes[static_cast<std::size_t>(i)] = static_cast<std::uint8_t>(w1 >> (56 - 8 * i));
+            bytes[static_cast<std::size_t>(i) + 8] = static_cast<std::uint8_t>(w2 >> (56 - 8 * i));
+        }
+    } while (std::all_of(bytes.begin(), bytes.end(),
+                         [](std::uint8_t b) { return b == 0; }));
+    // 保留值纪律：全零重取（§4.1——"generate() 检验非零（零则重取）"）。
+    return bytes;
+}
+
+core.audit-b28.Identity.IdMacro.generate sdurws::ird::core::ObjectId::generate
+#define IRD_CORE_IMPLEMENT_ID_TYPE(TYPE_NAME, TAG_LIT)                                  \
+    TYPE_NAME TYPE_NAME::generate() {                                                   \
+        TYPE_NAME id;                                                                   \
+        id.bytes = detail::generateId128Bytes();                                        \
+        return id;                                                                      \
+    }                                                                                   \
+
+core.audit-b28.Identity.IdMacro.fromCanonical sdurws::ird::core::ObjectId::fromCanonical
+    TYPE_NAME TYPE_NAME::fromCanonical(std::string_view text) {                         \
+        TYPE_NAME id;                                                                   \
+        if (!detail::tryParseId128(TAG_LIT, text, &id.bytes)) {                         \
+            /* 抛出轨迹：错误前缀稳定 core/identity/parse（§4.10/§5.1 错误行）。          \
+               附带原文前 64 字符助诊断——超长截断防日志洪泛。 */                          \
+            const std::size_t n = std::min<std::size_t>(text.size(), 64);               \
+            throw CoreError(std::string{"core/identity/parse: " TAG_LIT " 期望 <tag><32 小写 hex>，实际: \""} \
+                            + std::string(text.substr(0, n)) + "\"（长度 "                           \
+                            + std::to_string(text.size()) + "）");                      \
+        }                                                                               \
+        return id;                                                                      \
+    }                                                                                   \
+
+core.audit-b28.Identity.IdMacro.tryFromCanonical sdurws::ird::core::ObjectId::tryFromCanonical
+    std::optional<TYPE_NAME> TYPE_NAME::tryFromCanonical(std::string_view text) noexcept { \
+        TYPE_NAME id;                                                                   \
+        if (!detail::tryParseId128(TAG_LIT, text, &id.bytes)) { return std::nullopt; }  \
+        return id;                                                                      \
+    }                                                                                   \
+
+core.audit-b28.Identity.IdMacro.toCanonical sdurws::ird::core::ObjectId::toCanonical
+    std::string TYPE_NAME::toCanonical() const {                                        \
+        return detail::formatId128(TAG_LIT, bytes);                                     \
+    }                                                                                   \
+
+core.audit-b28.Identity.IdMacro.isValid sdurws::ird::core::ObjectId::isValid
+    bool TYPE_NAME::isValid() const noexcept {                                          \
+        return std::any_of(bytes.begin(), bytes.end(),                                  \
+                           [](std::uint8_t b) { return b != 0; });                      \
+    }
+
+IRD_CORE_IMPLEMENT_ID_TYPE(ObjectId,   "obj-")
+IRD_CORE_IMPLEMENT_ID_TYPE(ProjectId,  "prj-")
+IRD_CORE_IMPLEMENT_ID_TYPE(BranchId,   "brn-")
+IRD_CORE_IMPLEMENT_ID_TYPE(RevisionId, "rev-")
+IRD_CORE_IMPLEMENT_ID_TYPE(RunId,      "run-")
+IRD_CORE_IMPLEMENT_ID_TYPE(EventId,    "evt-")
+
+core.audit-b28.Identity.tryParseAttempt sdurws::ird::core::(anonymous namespace)::tryParseAttempt
+bool tryParseAttempt(std::string_view body, std::uint64_t* out) noexcept
+{
+    if (body.empty() || body[0] < '1' || body[0] > '9') {
+        return false;   // 空/0 开头（含 "att-0" 保留值）/符号/前导零全部在此拒绝
+    }
+    std::uint64_t v = 0;
+    for (const char c : body) {
+        if (c < '0' || c > '9') { return false; }
+        const std::uint64_t d = static_cast<std::uint64_t>(c - '0');
+        // 溢出预检：v > (2^64-1-d)/10 时 v*10+d 必溢出——逐步检查不依赖 errno。
+        if (v > (0xFFFFFFFFFFFFFFFFULL - d) / 10ULL) { return false; }
+        v = v * 10ULL + d;
+    }
+    *out = v;
+    return true;
+}
+
+core.audit-b28.Identity.AttemptId.fromCanonical sdurws::ird::core::AttemptId::fromCanonical
+AttemptId AttemptId::fromCanonical(std::string_view text)
+{
+    AttemptId a;
+    if (text.size() < 5 || text.substr(0, 4) != "att-"
+        || !tryParseAttempt(text.substr(4), &a.value)) {
+        const std::size_t n = std::min<std::size_t>(text.size(), 64);
+        throw CoreError(std::string{"core/identity/parse: att- 期望 <十进制≥1>，实际: \""}
+                        + std::string(text.substr(0, n)) + "\"（长度 " + std::to_string(text.size()) + "）");
+    }
+    return a;
+}
+
+core.audit-b28.Identity.AttemptId.tryFromCanonical sdurws::ird::core::AttemptId::tryFromCanonical
+std::optional<AttemptId> AttemptId::tryFromCanonical(std::string_view text) noexcept
+{
+    AttemptId a;
+    if (text.size() < 5 || text.substr(0, 4) != "att-"
+        || !tryParseAttempt(text.substr(4), &a.value)) {
+        return std::nullopt;
+    }
+    return a;
+}
+
+core.audit-b28.Identity.AttemptId.toCanonical sdurws::ird::core::AttemptId::toCanonical
+std::string AttemptId::toCanonical() const
+{
+    return "att-" + std::to_string(value);
+}
+
+core.audit-b28.Identity.TaskIdentity.isValid sdurws::ird::core::TaskIdentity::isValid
+bool TaskIdentity::isValid() const noexcept
+{
+    // 五字段全合法（§5.1；UT-ID-T"缺一即 false"）。
+    return project.isValid() && branch.isValid() && revision.isValid()
+        && run.isValid() && attempt.isValid();
+}
+
+core.audit-b28.Identity.TaskIdentity.equal sdurws::ird::core::TaskIdentity::operator==
+bool TaskIdentity::operator==(const TaskIdentity& o) const noexcept
+{
+    // 精确等值（附录 D 第 12 项：身份比较无容差）。
+    return project == o.project && branch == o.branch && revision == o.revision
+        && run == o.run && attempt == o.attempt;
+}
+
+core.audit-b28.Identity.TaskIdentity.order sdurws::ird::core::TaskIdentity::operator<
+bool TaskIdentity::operator<(const TaskIdentity& o) const noexcept
+{
+    // 字典序仅作容器键（§5.1"仅容器用"）——无业务排序语义，勿用于展示。
+    if (project != o.project)   { return project < o.project; }
+    if (branch != o.branch)     { return branch < o.branch; }
+    if (revision != o.revision) { return revision < o.revision; }
+    if (run != o.run)           { return run < o.run; }
+    return attempt < o.attempt;
+}
+
+core.audit-b28.Provenance.toToken.ProvenanceKind sdurws::ird::core::toToken(ProvenanceKind)
+const char* toToken(ProvenanceKind kind) noexcept
+{
+    switch (kind) {
+    case ProvenanceKind::UserProvided:      return "user-provided";
+    case ProvenanceKind::GeometricEstimate: return "geometric-estimate";
+    case ProvenanceKind::CatalogBackfill:   return "catalog-backfill";
+    case ProvenanceKind::ImportMapped:      return "import-mapped";
+    case ProvenanceKind::DerivedReadOnly:   return "derived-readonly";
+    }
+    return "unknown";   // 不可达（五枚举全覆盖）；保返回避免 UB
+}
+
+core.audit-b28.Provenance.provenanceKindFromToken sdurws::ird::core::provenanceKindFromToken
+std::optional<ProvenanceKind> provenanceKindFromToken(std::string_view token) noexcept
+{
+    if (token == "user-provided")      { return ProvenanceKind::UserProvided; }
+    if (token == "geometric-estimate") { return ProvenanceKind::GeometricEstimate; }
+    if (token == "catalog-backfill")   { return ProvenanceKind::CatalogBackfill; }
+    if (token == "import-mapped")      { return ProvenanceKind::ImportMapped; }
+    if (token == "derived-readonly")   { return ProvenanceKind::DerivedReadOnly; }
+    return std::nullopt;   // 未知 token（try 轨——装载层错误收集用）
+}
+
+core.audit-b28.Provenance.ValueProvenance.make sdurws::ird::core::ValueProvenance::make
+ValueProvenance ValueProvenance::make(ProvenanceKind kind,
+                                      std::optional<ObjectId> sourceObject,
+                                      std::optional<ContentVersion> sourceVersion,
+                                      std::optional<std::string> methodTag)
+{
+    // 不变量 P-1（§4.3）：sourceVersion 有值 ⇒ sourceObject 有值。
+    // 版本只能挂在对象上——无对象的版本没有归属，属调用方契约违约。
+    if (sourceVersion.has_value() && !sourceObject.has_value()) {
+        throw CoreError("core/provenance/p1: sourceVersion 需要 sourceObject"
+                        "（P-1 不变量：版本挂于对象）");
+    }
+    // 对象/版本若提供则必须合法（保留值"空"不作为有效来源）。
+    if (sourceObject.has_value() && !sourceObject->isValid()) {
+        throw CoreError("core/provenance/p1: sourceObject 为保留值（全零）——"
+                        "无效来源对象");
+    }
+
+    // methodTag 语法校验（§4.3：[a-z0-9./_-]、非空、≤64；词表归产生单元——
+    // core 只管字符集/长度，不认识具体方法名）。
+    if (methodTag.has_value()) {
+        const std::string& tag = *methodTag;
+        if (tag.empty() || tag.size() > 64) {
+            throw CoreError("core/provenance/method-tag: 长度须为 1..64，实际 "
+                            + std::to_string(tag.size()));
+        }
+        const bool ok = std::all_of(tag.begin(), tag.end(), [](char c) {
+            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                || (c >= '0' && c <= '9')
+                || c == '.' || c == '/' || c == '_' || c == '-';
+        });
+        if (!ok) {
+            throw CoreError("core/provenance/method-tag: 含非法字符（允许"
+                            " [a-z0-9./_-]）: " + tag);
+        }
+    }
+
+    ValueProvenance v;
+    v.kind = kind;
+    v.sourceObject = std::move(sourceObject);
+    v.sourceVersion = std::move(sourceVersion);
+    v.methodTag = std::move(methodTag);
+    return v;
+}
+
+core.audit-b28.Provenance.ValueProvenance.equal sdurws::ird::core::ValueProvenance::operator==
+bool ValueProvenance::operator==(const ValueProvenance& o) const noexcept
+{
+    // 四字段全等（optional 的比较含"有无"维度）。
+    return kind == o.kind && sourceObject == o.sourceObject
+        && sourceVersion == o.sourceVersion && methodTag == o.methodTag;
+}
+
+core.audit-b28.Evaluation.toToken.EvaluationMode sdurws::ird::core::toToken(EvaluationMode)
+const char* toToken(EvaluationMode v) noexcept
+{
+    switch (v) {
+    case EvaluationMode::Preview:  return "preview";
+    case EvaluationMode::Quick:    return "quick";
+    case EvaluationMode::Verified: return "verified";
+    }
+    return "unknown";
+}
+
+core.audit-b28.Evaluation.evaluationModeFromToken sdurws::ird::core::evaluationModeFromToken
+std::optional<EvaluationMode> evaluationModeFromToken(std::string_view token) noexcept
+{
+    if (token == "preview")  { return EvaluationMode::Preview; }
+    if (token == "quick")    { return EvaluationMode::Quick; }
+    if (token == "verified") { return EvaluationMode::Verified; }
+    return std::nullopt;
+}
+
+core.audit-b28.Evaluation.toToken.TaskOutcome sdurws::ird::core::toToken(TaskOutcome)
+const char* toToken(TaskOutcome v) noexcept
+{
+    switch (v) {
+    case TaskOutcome::Completed:   return "completed";
+    case TaskOutcome::Canceled:    return "canceled";
+    case TaskOutcome::Failed:      return "failed";
+    case TaskOutcome::Interrupted: return "interrupted";
+    }
+    return "unknown";
+}
+
+core.audit-b28.Evaluation.taskOutcomeFromToken sdurws::ird::core::taskOutcomeFromToken
+std::optional<TaskOutcome> taskOutcomeFromToken(std::string_view token) noexcept
+{
+    if (token == "completed")   { return TaskOutcome::Completed; }
+    if (token == "canceled")    { return TaskOutcome::Canceled; }
+    if (token == "failed")      { return TaskOutcome::Failed; }
+    if (token == "interrupted") { return TaskOutcome::Interrupted; }
+    return std::nullopt;
+}
+
+core.audit-b28.Evaluation.toToken.EngineeringStatus sdurws::ird::core::toToken(EngineeringStatus)
+const char* toToken(EngineeringStatus v) noexcept
+{
+    switch (v) {
+    case EngineeringStatus::Feasible:             return "feasible";
+    case EngineeringStatus::EngineeringInfeasible: return "engineering-infeasible";
+    case EngineeringStatus::DataInsufficient:      return "data-insufficient";
+    case EngineeringStatus::NotApplicable:         return "not-applicable";
+    }
+    return "unknown";
+}
+
+core.audit-b28.Evaluation.engineeringStatusFromToken sdurws::ird::core::engineeringStatusFromToken
+std::optional<EngineeringStatus> engineeringStatusFromToken(std::string_view token) noexcept
+{
+    if (token == "feasible")              { return EngineeringStatus::Feasible; }
+    if (token == "engineering-infeasible") { return EngineeringStatus::EngineeringInfeasible; }
+    if (token == "data-insufficient")      { return EngineeringStatus::DataInsufficient; }
+    if (token == "not-applicable")         { return EngineeringStatus::NotApplicable; }
+    return std::nullopt;
+}
+
+core.audit-b28.Evaluation.toToken.TaskState sdurws::ird::core::toToken(TaskState)
+const char* toToken(TaskState v) noexcept
+{
+    switch (v) {
+    case TaskState::Queued:     return "queued";
+    case TaskState::Preparing:  return "preparing";
+    case TaskState::Running:    return "running";
+    case TaskState::Paused:     return "paused";
+    case TaskState::Canceling:  return "canceling";
+    case TaskState::Canceled:   return "canceled";
+    case TaskState::Completed:  return "completed";
+    case TaskState::Failed:     return "failed";
+    case TaskState::Interrupted: return "interrupted";
+    }
+    return "unknown";
+}
+
+core.audit-b28.Evaluation.taskStateFromToken sdurws::ird::core::taskStateFromToken
+std::optional<TaskState> taskStateFromToken(std::string_view token) noexcept
+{
+    if (token == "queued")      { return TaskState::Queued; }
+    if (token == "preparing")   { return TaskState::Preparing; }
+    if (token == "running")     { return TaskState::Running; }
+    if (token == "paused")      { return TaskState::Paused; }
+    if (token == "canceling")   { return TaskState::Canceling; }
+    if (token == "canceled")    { return TaskState::Canceled; }
+    if (token == "completed")   { return TaskState::Completed; }
+    if (token == "failed")      { return TaskState::Failed; }
+    if (token == "interrupted") { return TaskState::Interrupted; }
+    return std::nullopt;
+}
+
+core.audit-b28.DiagData.codeSyntaxOk sdurws::ird::core::(anonymous namespace)::codeSyntaxOk
+bool codeSyntaxOk(const std::string& code) noexcept
+{
+    if (code.empty() || code.size() > 64) { return false; }
+    auto alnum = [](char c) {
+        return (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9');
+    };
+    if (!alnum(code.front())) { return false; }
+    bool prevDash = false;
+    for (const char c : code) {
+        if (alnum(c)) {
+            prevDash = false;
+        } else if (c == '-') {
+            if (prevDash) { return false; }   // 连续连字符拒绝（[--] 形态）
+            prevDash = true;
+        } else {
+            return false;                     // 小写/下划线/空白等一律拒绝
+        }
+    }
+    return !prevDash;                          // 尾连字符拒绝
+}
+
+core.audit-b28.DiagData.DiagnosticRecord.make sdurws::ird::core::DiagnosticRecord::make
+DiagnosticRecord DiagnosticRecord::make(DiagCode code, std::optional<ObjectId> subject,
+                                        std::optional<std::string> localName,
+                                        std::optional<std::string> runtimeName,
+                                        std::string context, std::string cause,
+                                        std::string recommendedAction,
+                                        std::optional<ComparativeFields> comparison,
+                                        DiagnosticLevel level)
+{
+    // C-3①：code 句法（§4.8 DiagCode 行——前缀 core/diag/code）。
+    if (!codeSyntaxOk(code)) {
+        throw CoreError("core/diag/code: 码句法非法（^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）: "
+                        + code);
+    }
+    // C-3②：必填串非空（context/cause/recommendedAction 三字段——ERR-01 承载）。
+    if (context.empty() || cause.empty() || recommendedAction.empty()) {
+        throw CoreError("core/diag/required: context/cause/recommendedAction 均为必填非空");
+    }
+    DiagnosticRecord r;
+    r.code = std::move(code);
+    r.subject = std::move(subject);
+    r.localName = std::move(localName);
+    r.runtimeName = std::move(runtimeName);
+    r.context = std::move(context);
+    r.cause = std::move(cause);
+    r.recommendedAction = std::move(recommendedAction);
+    r.comparison = std::move(comparison);
+    // 级别（F-618 尾参——缺省 Error 由声明处缺省实参承载；此处照抄入值，
+    // 不做词表校验：DiagnosticLevel 仅两值且为强类型枚举，无第三态可错）。
+    r.level = level;
+    return r;
+}
+
+core.audit-b28.DiagData.DiagnosticRecord.equal sdurws::ird::core::DiagnosticRecord::operator==
+bool DiagnosticRecord::operator==(const DiagnosticRecord& o) const noexcept
+{
+    // level 参与等值（F-618）：级别是记录语义的一部分——同码同级不同级别
+    // 的两记录不等（序列化往返 parse(encode(x))==x 的全字段等值依赖此点）。
+    return code == o.code && subject == o.subject && localName == o.localName
+        && runtimeName == o.runtimeName && context == o.context
+        && cause == o.cause && recommendedAction == o.recommendedAction
+        && comparison == o.comparison && level == o.level;
+}
+
+core.audit-b28.DiagData.ConfirmableFinding.make sdurws::ird::core::ConfirmableFinding::make
+ConfirmableFinding ConfirmableFinding::make(DiagnosticRecord record)
+{
+    // C-1（SA-15）：可确认诊断必为比较型——无三要素则不可确认（直接走普通记录）。
+    if (!record.comparison.has_value()) {
+        throw CoreError("core/diag/c1: 可确认诊断必为比较型（comparison 缺失）");
+    }
+    ConfirmableFinding f;
+    f.record = std::move(record);
+    f.state = ConfirmationState::Pending;
+    return f;
+}
+
+core.audit-b28.DiagData.ConfirmableFinding.confirm sdurws::ird::core::ConfirmableFinding::confirm
+void ConfirmableFinding::confirm(ConfirmationCredential credential)
+{
+    // 状态机前置：仅 Pending 可确认（Confirmed/Rejected 的推进归 project §7.1）。
+    if (state != ConfirmationState::Pending) {
+        throw CoreError("core/diag/state: 仅 Pending 态可确认");
+    }
+    state = ConfirmationState::Confirmed;
+    this->credential = std::move(credential);   // C-2：Confirmed ⇔ 凭据在场
+                                                //（this-> 消歧——参数名与成员同名）
+}
+
+core.audit-b28.DiagData.ConfirmableFinding.reject sdurws::ird::core::ConfirmableFinding::reject
+void ConfirmableFinding::reject()
+{
+    if (state != ConfirmationState::Pending) {
+        throw CoreError("core/diag/state: 仅 Pending 态可否决");
+    }
+    state = ConfirmationState::Rejected;
+    // C-2：Rejected 不得携带凭据——保证字段为空（如有历史残留则清）。
+    credential.reset();
+}
+
+core.audit-b28.DiagData.ConfirmableFinding.equal sdurws::ird::core::ConfirmableFinding::operator==
+bool ConfirmableFinding::operator==(const ConfirmableFinding& o) const noexcept
+{
+    return record == o.record && state == o.state && credential == o.credential;
+}
+
+core.audit-b28.Events.toToken.DomainEventKind sdurws::ird::core::toToken(DomainEventKind)
+const char* toToken(DomainEventKind kind) noexcept
+{
+    switch (kind) {
+    case DomainEventKind::RevisionCommitted:       return "revision-committed";
+    case DomainEventKind::DependencyInvalidated:   return "dependency-invalidated";
+    case DomainEventKind::TaskStatusChanged:       return "task-status-changed";
+    case DomainEventKind::ResultArchived:          return "result-archived";
+    }
+    return "unknown";
+}
+
+core.audit-b28.Events.domainEventKindFromToken sdurws::ird::core::domainEventKindFromToken
+std::optional<DomainEventKind> domainEventKindFromToken(std::string_view token) noexcept
+{
+    if (token == "revision-committed")     { return DomainEventKind::RevisionCommitted; }
+    if (token == "dependency-invalidated") { return DomainEventKind::DependencyInvalidated; }
+    if (token == "task-status-changed")    { return DomainEventKind::TaskStatusChanged; }
+    if (token == "result-archived")        { return DomainEventKind::ResultArchived; }
+    return std::nullopt;
+}
+
+core.audit-b28.Events.DomainEvent.make.RevisionCommitted sdurws::ird::core::DomainEvent::make(RevisionCommittedPayload)
+DomainEvent DomainEvent::make(RevisionCommittedPayload payload)
+{
+    DomainEvent e;
+    e.id = EventId::generate();
+    e.emittedAtUtc = std::chrono::system_clock::now();
+    e.kind = DomainEventKind::RevisionCommitted;
+    e.payload = std::move(payload);
+    return e;
+}
+
+core.audit-b28.Events.DomainEvent.make.DependencyInvalidated sdurws::ird::core::DomainEvent::make(DependencyInvalidatedPayload)
+DomainEvent DomainEvent::make(DependencyInvalidatedPayload payload)
+{
+    DomainEvent e;
+    e.id = EventId::generate();
+    e.emittedAtUtc = std::chrono::system_clock::now();
+    e.kind = DomainEventKind::DependencyInvalidated;
+    e.payload = std::move(payload);
+    return e;
+}
+
+core.audit-b28.Events.DomainEvent.make.TaskStatusChanged sdurws::ird::core::DomainEvent::make(TaskStatusChangedPayload)
+DomainEvent DomainEvent::make(TaskStatusChangedPayload payload)
+{
+    DomainEvent e;
+    e.id = EventId::generate();
+    e.emittedAtUtc = std::chrono::system_clock::now();
+    e.kind = DomainEventKind::TaskStatusChanged;
+    e.payload = std::move(payload);
+    return e;
+}
+
+core.audit-b28.Events.DomainEvent.make.ResultArchived sdurws::ird::core::DomainEvent::make(ResultArchivedPayload)
+DomainEvent DomainEvent::make(ResultArchivedPayload payload)
+{
+    DomainEvent e;
+    e.id = EventId::generate();
+    e.emittedAtUtc = std::chrono::system_clock::now();
+    e.kind = DomainEventKind::ResultArchived;
+    e.payload = std::move(payload);
+    return e;
+}
+
+core.audit-b28.Events.DomainEvent.asRevisionCommitted sdurws::ird::core::DomainEvent::asRevisionCommitted
+const RevisionCommittedPayload& DomainEvent::asRevisionCommitted() const
+{
+    if (kind != DomainEventKind::RevisionCommitted) {
+        throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
+                        "（RevisionCommitted）");
+    }
+    return std::get<RevisionCommittedPayload>(payload);
+}
+
+core.audit-b28.Events.DomainEvent.asDependencyInvalidated sdurws::ird::core::DomainEvent::asDependencyInvalidated
+const DependencyInvalidatedPayload& DomainEvent::asDependencyInvalidated() const
+{
+    if (kind != DomainEventKind::DependencyInvalidated) {
+        throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
+                        "（DependencyInvalidated）");
+    }
+    return std::get<DependencyInvalidatedPayload>(payload);
+}
+
+core.audit-b28.Events.DomainEvent.asTaskStatusChanged sdurws::ird::core::DomainEvent::asTaskStatusChanged
+const TaskStatusChangedPayload& DomainEvent::asTaskStatusChanged() const
+{
+    if (kind != DomainEventKind::TaskStatusChanged) {
+        throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
+                        "（TaskStatusChanged）");
+    }
+    return std::get<TaskStatusChangedPayload>(payload);
+}
+
+core.audit-b28.Events.DomainEvent.asResultArchived sdurws::ird::core::DomainEvent::asResultArchived
+const ResultArchivedPayload& DomainEvent::asResultArchived() const
+{
+    if (kind != DomainEventKind::ResultArchived) {
+        throw CoreError("core/events/kind-payload: kind 与载荷备选不一致"
+                        "（ResultArchived）");
+    }
+    return std::get<ResultArchivedPayload>(payload);
+}
+
+core.audit-b28.Events.DomainEvent.equal sdurws::ird::core::DomainEvent::operator==
+bool DomainEvent::operator==(const DomainEvent& o) const
+{
+    // emittedAtUtc 参与相等（同一事件对象的语义比较）——时钟精度内等同即可，
+    // 测试以构造同值或同 id 为主。
+    return id == o.id && emittedAtUtc == o.emittedAtUtc && kind == o.kind
+           && payload == o.payload;
+}
+
+core.audit-b28.Events.ReferenceSubscription sdurws::ird::core::(anonymous namespace)::ReferenceSubscription::unsubscribe
+class ReferenceSubscription final : public IEventSubscription {
+public:
+    ReferenceSubscription(ReferenceEventBus* bus, IDomainEventSink* sink)
+        : bus_(bus), sink_(sink) {}
+
+    void unsubscribe() override
+    {
+        if (bus_ != nullptr) {
+            bus_->removeSink(sink_);
+            bus_ = nullptr;    // 幂等：二次调用 no-op
+            sink_ = nullptr;
+        }
+    }
+
+private:
+    ReferenceEventBus* bus_;
+    IDomainEventSink* sink_;
+};
+
+core.audit-b28.Events.ReferenceEventBus.publish sdurws::ird::core::ReferenceEventBus::publish
+void ReferenceEventBus::publish(const DomainEvent& event)
+{
+    // 投递序＝订阅序（同发布者 FIFO——参考实现单线程投递）；
+    // 快照副本遍历：sink 在回调内退订不影响本次遍历（避免迭代器失效）。
+    const auto snapshot = sinks_;
+    for (IDomainEventSink* sink : snapshot) {
+        sink->onEvent(event);
+    }
+}
+
+core.audit-b28.Events.ReferenceEventBus.subscribe sdurws::ird::core::ReferenceEventBus::subscribe
+std::unique_ptr<IEventSubscription> ReferenceEventBus::subscribe(IDomainEventSink& sink)
+{
+    sinks_.push_back(&sink);
+    return std::make_unique<ReferenceSubscription>(this, &sink);
+}
+
+core.audit-b28.Events.ReferenceEventBus.removeSink sdurws::ird::core::ReferenceEventBus::removeSink
+void ReferenceEventBus::removeSink(IDomainEventSink* sink)
+{
+    // 友元访问路径（ReferenceSubscription 的成员函数可调用）：
+    // 本类声明 removeSink 为公有方法并在头文件作为实现细节注释——测试内组件。
+    sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
+}
+
+core.audit-b28.Events.ReferenceEventBus.subscriberCount sdurws::ird::core::ReferenceEventBus::subscriberCount
+std::size_t ReferenceEventBus::subscriberCount() const noexcept
+{
+    return sinks_.size();
+}
+
+core.audit-b28.Identity.IdMacro.value-comparisons sdurws::ird::core::ObjectId::operator==
+#define IRD_CORE_DEFINE_ID_TYPE(TYPE_NAME, TAG_LIT, DOC)                              \
+    /** DOC */                                                                        \
+    struct TYPE_NAME {                                                                \
+        /** 128 位原始字节；全零＝空（保留值纪律，§4.1 U-1）。字节序＝规范文本序。 */     \
+        std::array<std::uint8_t, 16> bytes{};                                         \
+        /** 生成非零随机新值（thread_local mt19937_64；零则重取——保留值不可出现）。线程安全。 */ \
+        static TYPE_NAME generate();                                                  \
+        /** 严格解析 "#TAG_LIT<32 小写 hex>"；tag 不符/长度/字符集违约抛 CoreError（§5.1 错误行）。 */ \
+        static TYPE_NAME fromCanonical(std::string_view text);                        \
+        /** try 轨：解析失败返回 nullopt 不抛（io 错误收集场景，REQ-05/AT-02）。 */      \
+        static std::optional<TYPE_NAME> tryFromCanonical(std::string_view text) noexcept; \
+        /** 规范文本 "#TAG_LIT<32 小写 hex>"（与 parse 构成 parse(format(x))==x 往返）。 */ \
+        std::string toCanonical() const;                                              \
+        /** 非全零（保留值恒 false）。noexcept 纯值比较。 */                            \
+        bool isValid() const noexcept;                                                \
+        /** 字节精确相等（附录 D 第 12 项：无容差）。 */                                 \
+        bool operator==(const TYPE_NAME& o) const noexcept { return bytes == o.bytes; } \
+        bool operator!=(const TYPE_NAME& o) const noexcept { return !(*this == o); }   \
+        /** 字节字典序（容器键用；§5.1 规定 operator< 存在）。 */                        \
+        bool operator<(const TYPE_NAME& o) const noexcept { return bytes < o.bytes; }  \
+    };                                                                                \
+
+// 逐类型展开（注释＝§4.1 类型表行原文的浓缩；分配者字段供阅读，不改变 core 行为）：
+IRD_CORE_DEFINE_ID_TYPE(ObjectId, "obj-",
+    /** 持久化对象稳定身份，跨修订不变（ARC-04/§6.2）；分配者＝project（对象创建时一次）；
+        编码/编址归 project/io，名称映射归 runtime。tag＝"obj-"。 */
+);
+IRD_CORE_DEFINE_ID_TYPE(ProjectId, "prj-",
+    /** 项目身份（project.json 创建期一次写入；另存为换新 id，PM-05）；分配者＝project。tag＝"prj-"。 */
+);
+IRD_CORE_DEFINE_ID_TYPE(BranchId, "brn-",
+    /** 方案分支身份（PM-12：分支记录 baseRevisionId）；分配者＝project；分支表归 project。tag＝"brn-"。 */
+);
+IRD_CORE_DEFINE_ID_TYPE(RevisionId, "rev-",
+    /** 修订身份（一次命令提交＝一个修订，ARC-01）；分配者＝project。
+
+core.audit-b28.Identity.AttemptId.value-comparisons sdurws::ird::core::AttemptId::operator==
+struct AttemptId {
+    std::uint64_t value = 0;   ///< ≥1 合法；0＝空（保留值）——att-0 解析在边界失败
+
+    /// 严格解析 "att-<十进制>"：仅数字、无符号/前导零/空白；0 与 2^64 溢出拒绝。
+    static AttemptId fromCanonical(std::string_view text);
+    /// try 轨：失败返回 nullopt 不抛。
+    static std::optional<AttemptId> tryFromCanonical(std::string_view text) noexcept;
+    /// 规范文本 "att-<十进制>"。
+    std::string toCanonical() const;
+    /// value ≥ 1。
+    bool isValid() const noexcept { return value >= 1; }
+    bool operator==(AttemptId o) const noexcept { return value == o.value; }
+    bool operator!=(AttemptId o) const noexcept { return value != o.value; }
+    bool operator< (AttemptId o) const noexcept { return value <  o.value; }
+};
+
+core.audit-b28.Identity.TaskIdentity.notEqual sdurws::ird::core::TaskIdentity::operator!=
+    bool operator==(const TaskIdentity& o) const noexcept;
+    bool operator!=(const TaskIdentity& o) const noexcept { return !(*this == o); }
+    /// 字典序（project→branch→revision→run→attempt）；仅容器键用，无业务排序语义。
+    bool operator<(const TaskIdentity& o) const noexcept;
+
+core.audit-b28.Identity.IrdCoreIdHash sdurws::ird::core::IrdCoreIdHash<T>::operator()
+/// 置于本命名空间（std 内不放自定义模板）；std::hash 特化经继承取得。
+template <typename T> struct IrdCoreIdHash {
+    std::size_t operator()(const T& id) const noexcept {
+        std::uint64_t hi = 0, lo = 0;
+        detail::fnv1a128(id.bytes.data(), id.bytes.size(), &hi, &lo);
+        return static_cast<std::size_t>(hi ^ lo);
+    }
+};
+
+
+core.audit-b28.Identity.std.hash.AttemptId std::hash<sdurws::ird::core::AttemptId>::operator()
+template <> struct hash<sdurws::ird::core::AttemptId> {
+    /// 64 位值直接散列（0＝空保留值同样可散列——放入容器是调用方决定）。
+    std::size_t operator()(const sdurws::ird::core::AttemptId& a) const noexcept {
+        return std::hash<std::uint64_t>{}(a.value);
+    }
+};
+
+core.audit-b28.Identity.std.hash.TaskIdentity std::hash<sdurws::ird::core::TaskIdentity>::operator()
+template <> struct hash<sdurws::ird::core::TaskIdentity> {
+    /// 五字段顺序组合（size_t 溢出按无回绕加法惯例——散列质量非契约项）。
+    std::size_t operator()(const sdurws::ird::core::TaskIdentity& t) const noexcept {
+        const std::size_t h1 = std::hash<sdurws::ird::core::ProjectId>{}(t.project);
+        const std::size_t h2 = std::hash<sdurws::ird::core::BranchId>{}(t.branch);
+        const std::size_t h3 = std::hash<sdurws::ird::core::RevisionId>{}(t.revision);
+        const std::size_t h4 = std::hash<sdurws::ird::core::RunId>{}(t.run);
+        const std::size_t h5 = std::hash<sdurws::ird::core::AttemptId>{}(t.attempt);
+        std::size_t h = h1;
+        h ^= h2 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+        h ^= h3 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+        h ^= h4 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+        h ^= h5 + 0x9e3779b97f4a7c15ULL + (h << 6) + (h >> 2);
+        return h;
+    }
+};
+
+}  // namespace std
+
+
+core.audit-b28.Provenance.ValueProvenance.notEqual sdurws::ird::core::ValueProvenance::operator!=
+    bool operator==(const ValueProvenance& o) const noexcept;
+    bool operator!=(const ValueProvenance& o) const noexcept { return !(*this == o); }
+
+core.audit-b28.Provenance.SourcedValue.provided sdurws::ird::core::SourcedValue<T>::provided
+    static SourcedValue provided(T value, ValueProvenance provenance)
+    {
+        SourcedValue v;
+        v.state_ = FieldState::Provided;
+        v.value_ = std::move(value);
+        v.provenance_ = std::move(provenance);
+        return v;
+    }
+
+core.audit-b28.Provenance.SourcedValue.notProvided sdurws::ird::core::SourcedValue<T>::notProvided
+    static SourcedValue notProvided()
+    {
+        SourcedValue v;
+        v.state_ = FieldState::NotProvided;
+        return v;
+    }
+
+core.audit-b28.Provenance.SourcedValue.notApplicable sdurws::ird::core::SourcedValue<T>::notApplicable
+    static SourcedValue notApplicable()
+    {
+        SourcedValue v;
+        v.state_ = FieldState::NotApplicable;
+        return v;
+    }
+
+core.audit-b28.Provenance.SourcedValue.invalid sdurws::ird::core::SourcedValue<T>::invalid
+    static SourcedValue invalid(std::string rawInput)
+    {
+        if (rawInput.empty()) {
+            throw CoreError("core/provenance/invalid: 原始输入串不得为空"
+                            "（非法态的存在意义是保留原串）");
+        }
+        SourcedValue v;
+        v.state_ = FieldState::Invalid;
+        v.rawInput_ = std::move(rawInput);
+        return v;
+    }
+
+core.audit-b28.Provenance.SourcedValue.state sdurws::ird::core::SourcedValue<T>::state
+    FieldState state() const noexcept { return state_; }
+
+core.audit-b28.Provenance.SourcedValue.tryValue sdurws::ird::core::SourcedValue<T>::tryValue
+    std::optional<T> tryValue() const noexcept
+    {
+        if (state_ != FieldState::Provided) { return std::nullopt; }
+        return value_;
+    }
+
+    /**
+     * @brief 取值（抛出轨迹）：前置 state()==Provided。
+     *
+
+core.audit-b28.Provenance.SourcedValue.value sdurws::ird::core::SourcedValue<T>::value
+     * @throws CoreError 非 Provided 态（消息含四态 token——"缺失＝零"通道被切断）
+     */
+    const T& value() const
+    {
+        if (state_ != FieldState::Provided) {
+            throw CoreError(std::string{"core/provenance/value: 状态为 "}
+                            + stateToken(state_) + "，无值可取（缺失不得转零/伪造）");
+        }
+        return value_;
+    }
+
+    /**
+     * @brief 原始输入串（前置 state()==Invalid）。
+     *
+     * @return 非法输入原文（导入层登记的原串，供诊断/修正回路）
+     * @throws CoreError 非 Invalid 态
+
+core.audit-b28.Provenance.SourcedValue.invalidRawInput sdurws::ird::core::SourcedValue<T>::invalidRawInput
+    const std::string& invalidRawInput() const
+    {
+        if (state_ != FieldState::Invalid) {
+            throw CoreError(std::string{"core/provenance/invalid-raw: 状态为 "}
+                            + stateToken(state_) + "，无原始输入串");
+        }
+        return rawInput_;
+    }
+
+core.audit-b28.Provenance.SourcedValue.provenance sdurws::ird::core::SourcedValue<T>::provenance
+    /**
+     * @brief 来源记录（仅 Provided 有语义——§4.3 表"无意义"态返回默认对象，
+     *        调用方须先查 state()；此处按表承诺返回默认而非抛错）。
+     */
+    const ValueProvenance& provenance() const noexcept { return provenance_; }
+
+core.audit-b28.Provenance.SourcedValue.equal sdurws::ird::core::SourcedValue<T>::operator==
+    /// 相等＝状态与对应载荷全等（Provided 比值＋来源；Invalid 比原串；空态互等）。
+    bool operator==(const SourcedValue& o) const noexcept
+    {
+        if (state_ != o.state_) { return false; }
+        switch (state_) {
+        case FieldState::Provided:
+            return value_ == o.value_ && provenance_ == o.provenance_;
+        case FieldState::Invalid:
+            return rawInput_ == o.rawInput_;
+        default:
+            return true;   // NotProvided/NotApplicable 无载荷
+        }
+    }
+    bool operator!=(const SourcedValue& o) const noexcept { return !(*this == o); }
+
+core.audit-b28.Provenance.SourcedValue.stateToken sdurws::ird::core::SourcedValue<T>::stateToken
+    /// 四态 token（§4.3 token 列——错误消息机器判读用；文件内局部）。
+    static const char* stateToken(FieldState s) noexcept
+    {
+        switch (s) {
+        case FieldState::Provided:      return "provided";
+        case FieldState::NotProvided:   return "not-provided";
+        case FieldState::NotApplicable: return "not-applicable";
+        case FieldState::Invalid:       return "invalid";
+        }
+        return "unknown";
+    }
+
+    FieldState state_ = FieldState::NotProvided;   ///< 四态（默认 NotProvided）
