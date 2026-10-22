@@ -1,0 +1,121 @@
+{
+  "expected": 16,
+  "executed": 16,
+  "passed": 8,
+  "failed": 8,
+  "skipped": 0,
+  "cases": [
+    {
+      "shell": "pwsh",
+      "case": "all-no-dir",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "selected-no-dir",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "pwsh",
+      "case": "fresh",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "missing-contract",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "pwsh",
+      "case": "missing-designref",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "pwsh",
+      "case": "missing-rule",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "pwsh",
+      "case": "changed-designref",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "state-copy",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "all-no-dir",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "selected-no-dir",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "powershell",
+      "case": "fresh",
+      "expectedExitCode": 0,
+      "exitCode": 0,
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "missing-contract",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "powershell",
+      "case": "missing-designref",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "powershell",
+      "case": "missing-rule",
+      "expectedExitCode": 1,
+      "exitCode": 0,
+      "passed": false
+    },
+    {
+      "shell": "powershell",
+      "case": "changed-designref",
+      "expectedExitCode": 2,
+      "exitCode": 2,
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "state-copy",
+      "expectedExitCode": 1,
+      "exitCode": 1,
+      "passed": true
+    }
+  ]
+}

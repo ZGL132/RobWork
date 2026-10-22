@@ -3223,7 +3223,14 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch24-20261023/**",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch25-20261023/**",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/**",
-    "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md"
+    "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/**",
+    "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+    "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+    "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+    "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+    "RobWork/scripts/industrialrobot/index-evidence.ps1",
+    "RobWork/doc/industrial-robot-design/context/README.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

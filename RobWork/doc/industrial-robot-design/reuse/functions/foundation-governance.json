@@ -2324,7 +2324,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2357,6 +2357,18 @@
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
           "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
         }
       ],
       "execution": {
@@ -2372,9 +2384,13 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
           "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
         }
       ],
-      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
     },
     {
       "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
@@ -2407,7 +2423,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2440,6 +2456,18 @@
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
           "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
         }
       ],
       "execution": {
@@ -2455,9 +2483,13 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
           "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
         }
       ],
-      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
     },
     {
       "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
@@ -2471,8 +2503,8 @@
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "try {",
           "startLine": 27,
-          "endLine": 76,
-          "sha256": "989ea8604c6aecaef49826b4f5094690171a2ed5d78ff050207e68809ea537c8",
+          "endLine": 120,
+          "sha256": "3b7afb2f86fec15a423b03e56df6c31a74a5de22ec7bb9d46282bf9d88bbe1d5",
           "semanticGroup": "fixtures-and-report",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
         }
@@ -2491,7 +2523,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2524,6 +2556,18 @@
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
           "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
         }
       ],
       "execution": {
@@ -2539,9 +2583,13 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
           "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
         }
       ],
-      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
     },
     {
       "functionId": "foundation-governance.verify-task-scope.root-contract",
@@ -7187,6 +7235,1998 @@
         }
       ],
       "auditBoundary": "合并脚本10段审读及原8边界；第二轮独立25p1f发现既有PS51缺stage错误归类，r3双Shell四回归通过，仍待独验，不授全T01"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.root-and-task-map",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "$scriptDir",
+          "qualifiedSymbol": "PowerShell::root-and-task-map",
+          "startLine": 14,
+          "endLine": 36,
+          "sha256": "c3cbe0a94682f5848f726115f3fc5cda1ce27f07f33bcfb7a93a612c454ae2f8"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.navigation-and-blockers",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "$readingPath",
+          "qualifiedSymbol": "PowerShell::navigation-and-blockers",
+          "startLine": 38,
+          "endLine": 58,
+          "sha256": "7bcd9bfdaf79552d3bca2ea5997af2c609adbc05b2b5a4dfbede08a0945093f2"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.Get-BlobSha",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "Get-BlobSha",
+          "qualifiedSymbol": "PowerShell::Get-BlobSha",
+          "startLine": 64,
+          "endLine": 64,
+          "sha256": "cf5f7cf4b4e6ca9aa9e739f6da862131511ebfbd7da70310a54ac6b16448e87c"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.fingerprint-sources",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "Get-ContextFingerprintFiles",
+          "qualifiedSymbol": "PowerShell::fingerprint-sources",
+          "startLine": 65,
+          "endLine": 73,
+          "sha256": "082befb9b35e60e36f58330e27f54d728bea55152f8e198d2a58fddaaec66cc5"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.head-metadata",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "$headSha",
+          "qualifiedSymbol": "PowerShell::head-metadata",
+          "startLine": 75,
+          "endLine": 79,
+          "sha256": "da0eca50d4ffa89b55aee9d7bca50cc15001516ac2f86aa1589c973433f11046"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.markdown-assembly",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "$unitDir",
+          "qualifiedSymbol": "PowerShell::markdown-assembly",
+          "startLine": 81,
+          "endLine": 136,
+          "sha256": "8cff6f736f85e0bb4d51a960338aabe16bd3cb4258e0429c78b781854ff1f294"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.build-context-pack.write-generated-pack",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "symbol": "$packsDir",
+          "qualifiedSymbol": "PowerShell::write-generated-pack",
+          "startLine": 138,
+          "endLine": 143,
+          "sha256": "fe1adf16b8fcb4fd3c3fb1659b704f9eb122a855dfd44732c238bb3c0c9329cd"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.root-and-pack-selection",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "$scriptDir",
+          "qualifiedSymbol": "PowerShell::root-and-pack-selection",
+          "startLine": 18,
+          "endLine": 39,
+          "sha256": "9bf5c9802e15060d581757c46c9f40f99e1efdc4d0b625415a8d30126373b7ce"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.structure-and-contract-identity",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "$structural",
+          "qualifiedSymbol": "PowerShell::structure-and-contract-identity",
+          "startLine": 41,
+          "endLine": 72,
+          "sha256": "a5aaf785235683d4964bd4c1001fb7d03cfa87c64847d53b7ef06cf019a30a61"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.pipeline-purity",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "foreach ($marker",
+          "qualifiedSymbol": "PowerShell::pipeline-purity",
+          "startLine": 73,
+          "endLine": 76,
+          "sha256": "1785c67a0c491a5b3ed91a3c70431da4bcd35da341fc6a1499e477ecca6c877e"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.fingerprint-rehash",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "$inTable",
+          "qualifiedSymbol": "PowerShell::fingerprint-rehash",
+          "startLine": 77,
+          "endLine": 101,
+          "sha256": "650031a82652ab0d1b51112f5bfe04f9666957f53f3f0bc8146440dbefe785d5"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.required-source-coverage",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "Get-ContextFingerprintFiles",
+          "qualifiedSymbol": "PowerShell::required-source-coverage",
+          "startLine": 102,
+          "endLine": 107,
+          "sha256": "e611efd98a094dea76ecec60d5fb37708764847e7cb1ed253783b35e24856727"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validate-context-pack.drift-and-result",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "symbol": "$packedStatus",
+          "qualifiedSymbol": "PowerShell::drift-and-result",
+          "startLine": 108,
+          "endLine": 121,
+          "sha256": "6ae1d92b5b50f1bbdb920c775b2e9c4da29ed08ed3146dfa59f912cc77253111"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+          "sha256": "00fbe4d98cdf990056fdf496fc392b520995c301b822e687cb233e23c5e45329"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.context-pack-files.Get-ContextFingerprintFiles",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "symbol": "Get-ContextFingerprintFiles",
+          "qualifiedSymbol": "PowerShell::Get-ContextFingerprintFiles",
+          "startLine": 3,
+          "endLine": 17,
+          "sha256": "157f6162ffcd47e491ffe83ea984a3a3b01e129eac8b05339fc1527bafb00dda"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+          "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+          "sha256": "8fc43271243e5e14cb268257addcbaf52c7cb6fe5ba5d5add65bbae21f684cb3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/build-context-pack.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.root-and-shared-config",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$scriptDir",
+          "qualifiedSymbol": "PowerShell::root-and-shared-config",
+          "startLine": 19,
+          "endLine": 32,
+          "sha256": "144954dea87e3f22b5685d50a0929152e7366a26b87a642e8a4a5c9488631e5a"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.Get-IndexedContent",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "Get-IndexedContent",
+          "qualifiedSymbol": "PowerShell::Get-IndexedContent",
+          "startLine": 33,
+          "endLine": 45,
+          "sha256": "4997cb953e13dde22c89055ec983314bff5b6fcd791d6502c0426c0638c91253"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.task-and-open-reference-map",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$taskStatus",
+          "qualifiedSymbol": "PowerShell::task-and-open-reference-map",
+          "startLine": 46,
+          "endLine": 62,
+          "sha256": "76fbfea4b7a42205fa310c123221df02e965b762e350b9caab90d4e5b8f31b08"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.Get-EvidenceKind",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "Get-EvidenceKind",
+          "qualifiedSymbol": "PowerShell::Get-EvidenceKind",
+          "startLine": 64,
+          "endLine": 85,
+          "sha256": "0631c91f687bde5f46ae938f8c7ff5939443a09d0c864088fb26b60af3ebdf21"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.ConvertTo-CanonicalTaskId",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "ConvertTo-CanonicalTaskId",
+          "qualifiedSymbol": "PowerShell::ConvertTo-CanonicalTaskId",
+          "startLine": 87,
+          "endLine": 91,
+          "sha256": "e3effa720cac1628f32cb620685d4c6d810c504a7d6b60d9fc41244622f6b8ea"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.Get-TaskIds",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "Get-TaskIds",
+          "qualifiedSymbol": "PowerShell::Get-TaskIds",
+          "startLine": 92,
+          "endLine": 103,
+          "sha256": "b018f20b805710bb69ec6726551497ae1e41b52db952516a56029850f39a5126"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.git-tracked-inputs",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$repoTop",
+          "qualifiedSymbol": "PowerShell::git-tracked-inputs",
+          "startLine": 110,
+          "endLine": 139,
+          "sha256": "84b891760088a79fe0c8466807cd384843cc0a0f2f4e16a532e1605f85cda1eb"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.entry-lifecycle-and-hash",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$files",
+          "qualifiedSymbol": "PowerShell::entry-lifecycle-and-hash",
+          "startLine": 140,
+          "endLine": 165,
+          "sha256": "fe4b9f8d5a6198420efcd6b7154eac87dd040f859c39af4f708cb4471e539f0e"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.duplicate-summary",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$dupGroups",
+          "qualifiedSymbol": "PowerShell::duplicate-summary",
+          "startLine": 166,
+          "endLine": 175,
+          "sha256": "4b22461d2b3f02667bf0088ef64717105bb2ca93547491a01c42fb3bc87c8393"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.index-evidence.emit-index",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "symbol": "$index",
+          "qualifiedSymbol": "PowerShell::emit-index",
+          "startLine": 177,
+          "endLine": 201,
+          "sha256": "65163a73154b71f20d91c55f6434d6111ec89066a2dc52c1440829d026aef052"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch27/search.json",
+        "conclusion": "Git/.NET/PowerShell及原缓存/回归入口；上游C++IO/序列化/gtest候选不提供治理缓存协议，未授权新核心"
+      },
+      "differences": "见governance-context-index-audit.md；可选缓存不具权威，契约/规则输入不得从指纹面消失；索引为启发式快照，保留未验证风险",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+          "sha256": "0d98e67477872414fc122af02be3e2513045d18745bfbc11ec35bd2bd785506b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/context/README.md",
+          "sha256": "25200143ab50e3762b5ed6707a7ce3cd05d3716db834ca8f87beef95cab594b0"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/config/text-extensions.txt",
+          "sha256": "369da4c98644f6e7f7d72e6476718a2f8b0be26c983f94f003b3586f8afc66f9"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-context-index-audit.md",
+          "sha256": "c85721adf92e191a5499848d041221841201867106edf9143733689be9f95deb"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
+          "sha256": "e7b88bfbeb9fde709e4835d4f734b33e288f4e098a56b11c20976072d28a178f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/report.json",
+          "sha256": "b9c6d99cd458f98fcd4fd41014bcc68291014851e9ad797a255093b43da7cb06"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/report.json",
+          "sha256": "fe42e90fabbeacafc128ebf3bfa861e691eb8e162ea93ed7bfb300abcc30d9ae"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/index/report.json",
+          "sha256": "c195a678fdd5ef974e0f66a830ab796afd8ba244e20cdadde394073e52117519"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
+          "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        }
+      ],
+      "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
     }
   ]
 }
