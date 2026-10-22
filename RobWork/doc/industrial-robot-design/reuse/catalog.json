@@ -1111,7 +1111,7 @@
     {
       "id": "GEOM-SPHERE-SAMPLING",
       "search": {
-        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.* RobWork/RobWork/gtest/geometry",
+        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.hpp RobWork/RobWork/src/rw/geometry/HyperSphere.cpp RobWork/RobWork/gtest/geometry",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
         "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
       },
@@ -1162,7 +1162,7 @@
       },
       "tests": [],
       "resourceSearch": {
-        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.* RobWork/RobWork/gtest/geometry",
+        "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.hpp RobWork/RobWork/src/rw/geometry/HyperSphere.cpp RobWork/RobWork/gtest/geometry",
         "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
       }
     }

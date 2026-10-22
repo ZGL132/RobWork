@@ -6,7 +6,7 @@
       "functionId": "io.strictUtf8Check",
       "ownerUnit": "io",
       "requirements": [
-        "NFR-SEC-02"
+        "IO-T04"
       ],
       "sources": [
         {
@@ -37,7 +37,11 @@
           "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "designRefs": [
+        "units/io.md §5.9.1 编码约定（仅UTF-8/拒绝非法编码）",
+        "tasks/foundation/IO-T04.json acceptance 1"
+      ]
     },
     {
       "functionId": "io.canonicalizeJson",

@@ -28,3 +28,5 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 第二批增加53条候选关系，累计77条、涉及10单元，全部仍为pending；未覆盖文件/函数继续待审。实际定向检索的10条命令与完整输出见 [batch2-search.json](batch2-search.json)，exitCode=1只表示本次范围无命中。新增候选覆盖DH正构造、全局随机源和球面采样，并登记DH转换内的LM/差分/消元、采样/姿态小核、SHA-256、JSON/UTF-8和高阶基函数。逐功能位置与差异只维护在 `reuse/functions/`，本段不构成另一份决策台账。
 
 本批没有运行新的适用性或生产实验。`sdurw_sandbox`有真实目标但默认关闭，优化器源存在不表示它在当前配置可用；`FirstDifferences`与示例头路径/安装列表还需核查。`generateGridPositions`是确定性体心枚举，未错误绑定随机能力。Random全局32位种子、HyperSphere按delta生成数量、DHParameterSet仅取已有属性，这些差异均不构成新核心批准。下一批继续审查其余单元、实际消费者与测试/构建工具；没有把77条当成全项目功能总数，也没有关闭库存债务。
+
+第二批首轮独立验收FAIL（`4e2239f7672f367fff436ab83b7db56d49d19cfe`）：UTF-8 DFA误绑定资源预算需求，HyperSphere catalog检索路径通配符在Windows返回2。返工将前者追溯到IO-T04/units/io.md §5.9.1编码契约，后者显式列出.hpp/.cpp；真实重跑见 `batch2-rework-search.json`，exitCode=0。不修改权威需求、不覆盖原搜索或失败报告，不把仅修正登记声称为能力适用性验证。
