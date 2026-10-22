@@ -1,0 +1,806 @@
+{
+  "frozenSha": "9fd7256cf61a7768622810ed547617a66013949b",
+  "baseSha": "8a7174945a8f280f674a40ec46a512b5b5f1b414",
+  "trackedStatus": "",
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/policy.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/selection.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/acceptance.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/acceptance.md",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/authority-evidence.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/binding-checks.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/checkout.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/diff.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/diff.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/docs.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/fetch.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/proposal-bindings.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/reuse.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/scoped-diff.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/scoped-diff.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-2.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-3.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-4.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-5.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-6.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-7.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/search-replay.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/semantic-excerpts.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/source-review.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/task.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-proposals-20261022/task.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch5-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/build.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/tests.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/tests.log"
+  ],
+  "protectedFilesUnchanged": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "gitBlob": "8c7745ebcffba2657cd34ee507ff5b101e28dfa6",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.exit.txt",
+      "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.log",
+      "gitBlob": "ae8a1c678da25e3c9718979a125ed3d76fbc05b2",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/environment-artifacts.json",
+      "gitBlob": "ef5b6531711945e3d4e683165f29c75b423adc5e",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "gitBlob": "e49a4b322077c62b3bc49beeafd5f1855f168981",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/hypothesis-source.txt",
+      "gitBlob": "8c7745ebcffba2657cd34ee507ff5b101e28dfa6",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/ird-test-report.json",
+      "gitBlob": "8c1e19843cb2c76d99b2658a71843d5d495c5b12",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.exit.txt",
+      "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.log",
+      "gitBlob": "f2a768341dd4e44af7bcaba7ccc0d7a7495a7776",
+      "unchanged": true
+    }
+  ],
+  "unchangedFromPriorR6FrozenSha": true,
+  "testReports": [
+    {
+      "label": "frozen-r7",
+      "summary": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true,
+      "xmlFileBinding": "ToolSuitabilityTest.cpp"
+    },
+    {
+      "label": "independent-r7",
+      "summary": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true,
+      "xmlFileBinding": "ToolSuitabilityTest.cpp"
+    }
+  ],
+  "auditEvidenceBindings": [
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+      "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+      "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+      "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36",
+      "matches": true
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+      "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995",
+      "matches": true
+    }
+  ],
+  "associatedFunctions": [
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "capabilityId": "TRAJ-LINEAR",
+      "differences": "帧命中原值、越界nullopt、五量线性混合与双指针对齐/缺关节标志是回放业务；上游标量x(t)不做越界守卫且采用(end-start)/h*t+start，极值溢出/舍入可不同。显示插值不得回流统计、动力学验证或修订",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式大端，f64只经PolicyCodec canonical位模式；presence/规范序/帧长度及PolicyError归类由policy拥有，不能把domain字段协议移进跨业务公共新平台。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "status": "pending"
+    }
+  ],
+  "environmentArtifacts": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_common.dll",
+      "sha256": "f14174e77d8bf874e4c4338c5bb72a4ab48d81f7e009d281da5b112ff3370932",
+      "bytes": 1315840,
+      "matches": true
+    }
+  ],
+  "environmentSourceAndBuildNormalizedHashesMatch": true,
+  "catalogCandidateAndBindingsValid": true,
+  "counts": {
+    "relations": 146,
+    "pending": 143,
+    "proposal": 3,
+    "closedFiles": 0
+  },
+  "independentOracles": {
+    "scalarHostRepresentation": {
+      "nativeByteOrder": "little",
+      "value": "0x01020304",
+      "bytesHex": "04030201",
+      "source": "BINArchive.hpp scalar writeValue uses ostream.write(address,sizeof(T)); not canonical endian"
+    },
+    "formattedString": {
+      "original": "x y",
+      "serializedText": "3x y",
+      "lengthPrefix": "decimal formatted 3, no u32 bytes",
+      "read": "Formatted uint32 consumes 3; formatted char reads x, then skips space and reads y, then EOF leaves resized char zero",
+      "expectedDecodedBytesHex": "787900",
+      "testAssertions": "length=3, first x/second y, string differs; no inference of general malformed-input behavior"
+    },
+    "linear": {
+      "ordinary": "x(t)=1+(3-1)*t, t=2 gives 5 outside [0,1]",
+      "durationZero": "constructor throws for duration<=0",
+      "finiteExtreme": "end-start=-DBL_MAX-DBL_MAX overflows to -infinity before duration division; midpoint result nonfinite",
+      "weightedMidpoint": 0,
+      "scope": "Listed double values only, not full replay or floating-point equivalence"
+    }
+  }
+}

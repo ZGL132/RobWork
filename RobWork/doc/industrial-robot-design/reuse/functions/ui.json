@@ -84,7 +84,8 @@
       "functionId": "ui.SampleGridRender.draw",
       "ownerUnit": "ui",
       "requirements": [
-        "UX-07"
+        "UX-02",
+        "ERR-01"
       ],
       "sources": [
         {
@@ -119,7 +120,8 @@
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
       "designRefs": [
         "ARCHITECTURE.md §3.6.2 HOST-RENDER",
-        "tasks/foundation/UI-T52.json"
+        "tasks/foundation/UI-T52.json acceptance 2",
+        "units/requirements.md §9.8"
       ]
     }
   ]

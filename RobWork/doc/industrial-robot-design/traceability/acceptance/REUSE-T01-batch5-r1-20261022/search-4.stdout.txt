@@ -1,0 +1,71 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\WorkspaceTest.cpp:28:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:17: * 确定性：目标位姿由夹具 referenceFk 独立参考实现产生；载荷解析按
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:22:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:64:/// referenceFk 输出的 4×4 齐次矩阵 → rw 位姿（测试换形——IkTest 同款）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:218:    // 可达目标：referenceFk({0.3,-0.5})（独立参考产生——T04 V-05 同源）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:222:        transformOf(referenceFk(model, {0.3, -0.5}).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:289:        transformOf(referenceFk(model, {0.3, -0.5}).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:347:        transformOf(referenceFk(model, {0.3, -0.5}).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\TaskPointsBatchTest.cpp:406:        transformOf(referenceFk(model, {0.3, -0.5}).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\ReproBenchmarkTest.cpp:24:#include "KinFkFixture.hpp"   // TestView/NoopContext/twoLinkModel/referenceFk/idFrom
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\ReproBenchmarkTest.cpp:64:/// referenceFk 的 4×4 齐次矩阵 → rw 位姿（TaskPointsBatchTest 同款换形）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\ReproBenchmarkTest.cpp:155:            referenceFk(model, {angle, -0.5}).tcp);          // 独立参考 FK 产目标
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\RenderTest.cpp:18:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\RegionCoverageTest.cpp:26:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\PoseReachTest.cpp:28:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\PluginPanelTest.cpp:14: *     kinematics/test/KinFkFixture.hpp（TestView/规范模型构造器）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\PluginPanelTest.cpp:57:#include "KinFkFixture.hpp"                    // TestView/twoLinkModel（同目录夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinP4FlowsTest.cpp:42:#include "KinFkFixture.hpp"              // sixAxisModel/TestView（同单元夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:2: * @file   KinFkFixture.hpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:380:inline Mat4 rodrigues(double ax, double ay, double az, double angle)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:408:inline Mat4 mul4(const Mat4& a, const Mat4& b)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:429:inline RefChainResult referenceFk(const rt::CanonicalModel& model,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:452:        acc = mul4(acc, o);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:470:            acc = mul4(acc, motion);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:472:            acc = mul4(acc, rodrigues(j.axis[0], j.axis[1], j.axis[2], q[qi]));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:487:    out.tcp = mul4(acc, t);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:17: * 独立参考：目标位姿由夹具 referenceFk（4×4 齐次直算，与产品 Eigen
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:21:#include "../test/KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:194:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:275:    const Mat4 golden = referenceFk(twoLinkModel(), {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:430:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:465:    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:784:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:809:    const Mat4 golden = referenceFk(model, {0.3, 0.6}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:891:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:923:    const Mat4 golden = referenceFk(model, a).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:960:    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:980:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1014:    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1057:    const Mat4 golden = referenceFk(model, {0.2, 0.4, 0.0}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1098:    const Mat4 golden = referenceFk(model, {0.2, 3.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1125:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1312:        transformOf(referenceFk(model, *branchLow).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1348:        transformOf(referenceFk(model, {0.0}).tcp);  // 单位目标（yaw 0）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1385:        transformOf(referenceFk(model, qStar).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1468:        transformOf(referenceFk(model, {0.0}).tcp);  // 目标方向＝工具自身轴
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:1592:        transformOf(referenceFk(model, qStar).tcp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\GoldenKinTest.cpp:32:#include "KinFkFixture.hpp"   // TestView/NoopContext/idFrom/digestOf（单元内测试设施）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\FkTest.cpp:22:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\FkTest.cpp:154:        const RefChainResult ref = referenceFk(model, {pi / 2.0, pi / 2.0});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\FkTest.cpp:198:    const RefChainResult ref = referenceFk(model, q);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\FkTest.cpp:306:    const Mat4 twt = mul4(twb, tbt);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\EnvelopeTest.cpp:29:#include "KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointsBatchEvaluatorContractTest.cpp:28:#include "../test/KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:21:#include "../test/KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:171:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:189:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:246:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:338:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:363:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:451:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\TaskPointIkEvaluatorContractTest.cpp:501:    const Mat4 golden = referenceFk(model, {0.3, -0.5}).tcp;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\RegionCoverageEvaluatorContractTest.cpp:25:#include "../test/KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\PoseMetricsEvaluatorContractTest.cpp:20: * 注入视图替身，见 KinFkFixture.hpp）只承载宿主语义；断言全部针对真实
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\contract_test\PoseMetricsEvaluatorContractTest.cpp:24:#include "../test/KinFkFixture.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\KinEvaluationChannelTest.cpp:53:#include "KinFkFixture.hpp"                 // 两连杆黄金模型（kinematics 测试夹具——header-only）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinHostLoopGuiTest.cpp:62:#include "KinFkFixture.hpp"              // revolute/trans/rotZ/TestView（同单元夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinematicsPanelSessionGuiTest.cpp:51:#include "KinFkFixture.hpp"              // TestView/revPrismModel/sixAxisModel（同单元夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinematicsPanelSamplingGuiTest.cpp:38:#include "KinFkFixture.hpp"              // TestView/twoLinkModel（同单元夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinematicsPanelInputGuiTest.cpp:57:#include "KinFkFixture.hpp"              // TestView/sixAxisModel（同单元夹具）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinematicsAcceptanceGuiTest.cpp:26:#include "KinFkFixture.hpp"

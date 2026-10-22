@@ -48,3 +48,7 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第五批新增25条关系，累计146条（143 pending、3 proposal），closedFiles=0；细分三域20处低层字节原语、独立FK参照3处、回放插值和宿主采样格绘制。`batch5-search.json`保留实际检索。`UTIL-BINARCHIVE`与`HOST-LINES`仍candidate：前者主机序/格式化string长度/空白提取与冻结协议不等价，后者double→float且忽略回调alpha。测试oracle按audit-contract §6保留独立性，仅测试消费，不批准生产平行核心。最初门禁因inline方法symbol写成Class::method不在区段字面内而失败，已只修短symbol并保留qualifiedSymbol，不修改校验器或源码。
 
 `ToolSuitabilityTest.cpp`独立扩展原探测目标，复用原CONFIG common目标/GTest/testkit，不改旧19项源码和报告；`probe-r7/`在VS x64重建后仅新增3项实跑：passed=3，failed/skipped/notRun=0，验证archive主机序、字符串空白往返差异及线性插值越界/极值溢出。原19项本轮未重复执行，不能写成22项全跑。宿主呈现未运行GUI，尚未生产接线/性能验收。两份具体提案草案在8a7174945a8f280f674a40ec46a512b5b5f1b414独立治理PASS，原件见`traceability/acceptance/REUSE-T01-proposals-20261022/`，仍未获实施批准。第五批与新3项待独立验收，全T01尚未退出。
+
+第五批独立验收冻结9fd7256cf61a7768622810ed547617a66013949b为FAIL：仅SampleGridRender::draw误挂UX-07，已对照UI-T52 acceptance 2改为UX-02/ERR-01并保留原报告，待返工复验。新3项公共API在同冻结SHA独立VS x64重建实跑PASS（3 passed，failed/skipped/notRun=0），原件见`traceability/acceptance/REUSE-T01-api-r7-20261022/`；不证明生产适配。
+
+第六批新增28条关系，累计174条（171 pending、3 proposal），closedFiles=0。runtime rtcodec/snapshotcodec与外层快照大端原语、selection组合校核及回填版本字段、时间加权RMS与单位转换已定向审读；`batch6-search.json`保留实际检索。两个selection u32At通过memcpy读取版本头，与其普通u32显式小端路径不同，跨端行为待生产回归，不改产品来绕过T01阶段门。Statistics样本均值/方差不能代替DYN-03时间梯形RMS，DOM getUnit缺产品量纲契约且依赖过重；Constants角度因子仍优先复用。Boost原依赖可提供进一步字节工具候选，未新增渠道或通用codec平台；不因BINArchive不适用即申请新核心。本批无产品/上游/vcpkg变动，无新增C++探测；全部登记仍待独立审查和全功能审计退出。

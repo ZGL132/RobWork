@@ -1,0 +1,46 @@
+{
+  "sha": "9fd7256cf61a7768622810ed547617a66013949b",
+  "base": "8a7174945a8f280f674a40ec46a512b5b5f1b414",
+  "protectedFiles": 9,
+  "reportSummaries": [
+    {
+      "label": "frozen-r7",
+      "summary": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true,
+      "xmlFileBinding": "ToolSuitabilityTest.cpp"
+    },
+    {
+      "label": "independent-r7",
+      "summary": {
+        "total": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true,
+      "xmlFileBinding": "ToolSuitabilityTest.cpp"
+    }
+  ],
+  "associatedFunctions": 21,
+  "auditBindings": 84,
+  "counts": {
+    "relations": 146,
+    "pending": 143,
+    "proposal": 3,
+    "closedFiles": 0
+  },
+  "trackedStatus": ""
+}

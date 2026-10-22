@@ -1,0 +1,452 @@
+[
+  {
+    "id": "drivetrain.ByteWriter.putU32",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 54,
+    "endLine": 59,
+    "hashMatches": true,
+    "actualSha": "b6ddf93d2771fff45a26decd3d90982feee460c861da1b1bb9fdb864927d2df6",
+    "symbolOccurs": true,
+    "first": "    void putU32(std::uint32_t v)",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteWriter.putU32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteWriter.putU64",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 61,
+    "endLine": 66,
+    "hashMatches": true,
+    "actualSha": "7fce84f6fac6e47c5d6ec0b084b4138d50466d74e1a3d3d7f336341f36f17e73",
+    "symbolOccurs": true,
+    "first": "    void putU64(std::uint64_t v)",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteWriter.putU64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteWriter.putF64",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putF64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 69,
+    "endLine": 75,
+    "hashMatches": true,
+    "actualSha": "210b70d64a446186115665df038cba469915851bdbddbfaf1bf1d2932936b89b",
+    "symbolOccurs": true,
+    "first": "    void putF64(double v)",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteWriter.putF64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteWriter.putString",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 82,
+    "endLine": 86,
+    "hashMatches": true,
+    "actualSha": "58a3fec6c431c78934820896d21cb638b030f379ec585ec335bccbdd8fcea76f",
+    "symbolOccurs": true,
+    "first": "    void putString(const std::string& s)",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteWriter.putString",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteReader.getU32",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 129,
+    "endLine": 137,
+    "hashMatches": true,
+    "actualSha": "cac712d2e0dbbf75f98b05945fc433e83334d5d7c3c2f84f5de3147c70302500",
+    "symbolOccurs": true,
+    "first": "    std::uint32_t getU32()",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteReader.getU32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteReader.getU64",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 139,
+    "endLine": 147,
+    "hashMatches": true,
+    "actualSha": "24888850179a2c6605393c8620c497f5ee40efdea8383ee0ee7d01d521597fec",
+    "symbolOccurs": true,
+    "first": "    std::uint64_t getU64()",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteReader.getU64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteReader.getF64",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getF64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 149,
+    "endLine": 155,
+    "hashMatches": true,
+    "actualSha": "3ce0771777ec53f3b02dddaeb49fb4050a727845985648b35becb0279815812e",
+    "symbolOccurs": true,
+    "first": "    double getF64()",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteReader.getF64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.ByteReader.getString",
+    "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+    "startLine": 179,
+    "endLine": 196,
+    "hashMatches": true,
+    "actualSha": "df670d1651baa1736253b6962ab865602b87da90fc27a7059ab6d5c4776f53b7",
+    "symbolOccurs": true,
+    "first": "    std::string getString()",
+    "last": "    }"
+  },
+  {
+    "id": "drivetrain.ByteReader.getString",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.DynamicsReplayProjector.sampleAt",
+    "qualifiedSymbol": "sdurws::ird::dynamics::DynamicsReplayProjector::sampleAt",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp",
+    "startLine": 230,
+    "endLine": 348,
+    "hashMatches": true,
+    "actualSha": "a3ba0624f0a6eb96bcedb93d54803f9c9b13023ef740ea4a5a59194e8cbeff46",
+    "symbolOccurs": true,
+    "first": "std::optional<ReplaySample> DynamicsReplayProjector::sampleAt(const ReplayData& data,",
+    "last": "}"
+  },
+  {
+    "id": "dynamics.DynamicsReplayProjector.sampleAt",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.rodrigues",
+    "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "startLine": 380,
+    "endLine": 397,
+    "hashMatches": true,
+    "actualSha": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01",
+    "symbolOccurs": true,
+    "first": "inline Mat4 rodrigues(double ax, double ay, double az, double angle)",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.rodrigues",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.mul4",
+    "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "startLine": 408,
+    "endLine": 419,
+    "hashMatches": true,
+    "actualSha": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4",
+    "symbolOccurs": true,
+    "first": "inline Mat4 mul4(const Mat4& a, const Mat4& b)",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.mul4",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.referenceFk",
+    "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "startLine": 429,
+    "endLine": 518,
+    "hashMatches": true,
+    "actualSha": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7",
+    "symbolOccurs": true,
+    "first": "inline RefChainResult referenceFk(const rt::CanonicalModel& model,",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.referenceFk",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteWriter.u32",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 88,
+    "endLine": 94,
+    "hashMatches": true,
+    "actualSha": "aa19d22cd4832abb1f826825465faf7496824a660b9345d0310ba3bf29d2dfa9",
+    "symbolOccurs": true,
+    "first": "    void u32(std::uint32_t v)",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteWriter.u32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteWriter.f64",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 116,
+    "endLine": 120,
+    "hashMatches": true,
+    "actualSha": "f49b45ed80f0969754a8f91b3f3c361866822a45ede0a15990170e6f11972709",
+    "symbolOccurs": true,
+    "first": "    void f64(double value)",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteWriter.f64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteWriter.lengthPrefixedText",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::lengthPrefixedText",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 103,
+    "endLine": 113,
+    "hashMatches": true,
+    "actualSha": "ebb0c04d3d468bc0faaa4d4eabf5986377498414c3f90026a187f7d45c43c0da",
+    "symbolOccurs": true,
+    "first": "    void lengthPrefixedText(std::string_view text)",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteWriter.lengthPrefixedText",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteReader.u32",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 168,
+    "endLine": 179,
+    "hashMatches": true,
+    "actualSha": "319e45c324a42b9d27f4e92dc57d0c3d9b3b5e1d7d98607ab0b9a03ad5d22c37",
+    "symbolOccurs": true,
+    "first": "    std::uint32_t u32()",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteReader.u32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteReader.f64",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 212,
+    "endLine": 220,
+    "hashMatches": true,
+    "actualSha": "f2243cbcce8810c2eff6aa9eadc5015b026cc4fb584d95af572302779205cbbc",
+    "symbolOccurs": true,
+    "first": "    double f64()",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteReader.f64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.ByteReader.text",
+    "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::text",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp",
+    "startLine": 200,
+    "endLine": 209,
+    "hashMatches": true,
+    "actualSha": "f806ff1fdc3ad6964894f9c042ae6646a413c1982263d71bcb3e812ff8dd37fb",
+    "symbolOccurs": true,
+    "first": "    std::string text()",
+    "last": "    }"
+  },
+  {
+    "id": "policy.ByteReader.text",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteWriter.u32",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 123,
+    "endLine": 129,
+    "hashMatches": true,
+    "actualSha": "6cc8be86c7a4b16220712b45dcbd6ffb29608a1995b9170029504a11c5decaea",
+    "symbolOccurs": true,
+    "first": "    void u32(std::uint32_t v)",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteWriter.u32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteWriter.f64",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 134,
+    "endLine": 143,
+    "hashMatches": true,
+    "actualSha": "f69f6a234a579d952bfc3cd7c327660a74329c7e511aed5d84ea76053f898364",
+    "symbolOccurs": true,
+    "first": "    void f64(double v)",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteWriter.f64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteWriter.str",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 145,
+    "endLine": 149,
+    "hashMatches": true,
+    "actualSha": "c66ce5d6be36be13df5211081dbf6a2ccb70b10382c95b8036b7da8527d0be10",
+    "symbolOccurs": true,
+    "first": "    void str(const std::string& s)",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteWriter.str",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteReader.u32",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 218,
+    "endLine": 227,
+    "hashMatches": true,
+    "actualSha": "bc3aa2e37a34f85615b76c1677eca26f88b84a516735c6cb361fa01cc857920f",
+    "symbolOccurs": true,
+    "first": "    std::uint32_t u32()",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteReader.u32",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteReader.f64",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 235,
+    "endLine": 249,
+    "hashMatches": true,
+    "actualSha": "5c1998a894bfdb665730d439b5f3a4e7ffceb0214e49b43f58ab210e1b063eed",
+    "symbolOccurs": true,
+    "first": "    double f64()",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteReader.f64",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.ByteReader.str",
+    "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "startLine": 250,
+    "endLine": 265,
+    "hashMatches": true,
+    "actualSha": "ce8b1cb7eb2319b8e8269733df26d5b4bf89fdaa35a73ad265ed4e24a7193a39",
+    "symbolOccurs": true,
+    "first": "    std::string str()",
+    "last": "    }"
+  },
+  {
+    "id": "selection.ByteReader.str",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.SampleGridRender.draw",
+    "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+    "startLine": 268,
+    "endLine": 344,
+    "hashMatches": true,
+    "actualSha": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad",
+    "symbolOccurs": true,
+    "first": "    void draw(const DrawableNode::RenderInfo& info,",
+    "last": "    }"
+  },
+  {
+    "id": "ui.SampleGridRender.draw",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  }
+]

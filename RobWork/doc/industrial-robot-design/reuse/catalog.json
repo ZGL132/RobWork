@@ -1675,6 +1675,14 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "operations": [
@@ -1776,6 +1784,157 @@
       "resourceSearch": {
         "command": "rg -n \"RenderLines|addLine|setColor|setThickness|glVertex3f|glPushAttrib|alpha\" RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
         "conclusion": "只核列明资源；空数组不表示全库不存在"
+      }
+    },
+    {
+      "id": "MATH-STATS",
+      "ownerUnit": "core",
+      "search": {
+        "command": "rg -n \"RMS|rms|weighted|trapez|Trapez|Statistics|integrat\" RobWork/RobWork/src/rw/math/Statistics.hpp RobWork/RobWork/gtest/math/StatisticsTest.cpp RobWork/RobWork/src/rw/math RobWork/RobWork/src/rw/trajectory",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明候选及实现，未将名称相近当需求等价"
+      },
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Statistics.hpp",
+          "sha256": "26d899c9a5b33a191f2fcc54def70edfb8ab014941dfbe672d65e3a1012cc6f2",
+          "symbols": [
+            "mean",
+            "variance",
+            "minAndMaxValue"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "boundary": "mean为样本等权，variance为n-1无偏估计；不能替代DYN-03不等时间梯形RMS、驻留与缺口分母规则。峰值确定性首时刻/来源窗仍由业务提供；继续查合适积分原语，不申请新统计框架。",
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "沿原导出目标，是否需要该重依赖须逐消费核查"
+      },
+      "usages": [
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "mean为样本等权，variance为n-1无偏估计；不能替代DYN-03不等时间梯形RMS、驻留与缺口分母规则。峰值确定性首时刻/来源窗仍由业务提供；继续查合适积分原语，不申请新统计框架。",
+        "lifetime": "纯值/统计，不授予模型结构操作权",
+        "determinism": "产品单位token/统计缺口/确定性顺序权威不能被候选改变"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/StatisticsTest.cpp",
+          "sha256": "fb30c5dc4d91248f87ee9b948c73a26aa2242cb106d364ae341b547935023428",
+          "symbols": [
+            "Statistics",
+            "Double",
+            "Float"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "docs": [],
+      "examples": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"RMS|rms|weighted|trapez|Trapez|Statistics|integrat\" RobWork/RobWork/src/rw/math/Statistics.hpp RobWork/RobWork/gtest/math/StatisticsTest.cpp RobWork/RobWork/src/rw/math RobWork/RobWork/src/rw/trajectory",
+        "conclusion": "定向资源检查，未运行上游完整测试，不据空资源字段宣称缺失"
+      }
+    },
+    {
+      "id": "UTIL-UNITS",
+      "ownerUnit": "core",
+      "search": {
+        "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读列明候选及实现，未将名称相近当需求等价"
+      },
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Constants.hpp",
+          "sha256": "920a097a5f52cce68e6dbe411c5ae3b5ffd95efd9b0910d3d96510e0f60a863a",
+          "symbols": [
+            "Pi",
+            "Deg2Rad",
+            "Rad2Deg"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp",
+          "sha256": "db87f34cbb04e841b978a91f765b5eb1fae7407da5c931f56af71f8781e9eccc",
+          "symbols": [
+            "getUnit"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp",
+          "sha256": "695d611cd79492a7fe8276508cb4ca55890a3975bc522624320c80f01376e428",
+          "symbols": [
+            "UnitMap",
+            "getUnit"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        }
+      ],
+      "boundary": "Constants可复用角度因子；DOM getUnit是加载器字符串→比例查表，不含产品14量纲token、注册约束及错误语义，且引入models/graphics等重依赖。不能只因有单位名就整体换表，也不能以owner豁免基础常量重复。",
+      "build": {
+        "targets": [
+          "sdurw_loaders",
+          "sdurw_math"
+        ],
+        "constraints": "沿原导出目标，是否需要该重依赖须逐消费核查"
+      },
+      "usages": [
+        {
+          "consumerUnit": "core",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "Constants可复用角度因子；DOM getUnit是加载器字符串→比例查表，不含产品14量纲token、注册约束及错误语义，且引入models/graphics等重依赖。不能只因有单位名就整体换表，也不能以owner豁免基础常量重复。",
+        "lifetime": "纯值/统计，不授予模型结构操作权",
+        "determinism": "产品单位token/统计缺口/确定性顺序权威不能被候选改变"
+      },
+      "tests": [],
+      "docs": [],
+      "examples": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+        "conclusion": "定向资源检查，未运行上游完整测试，不据空资源字段宣称缺失"
       }
     }
   ]

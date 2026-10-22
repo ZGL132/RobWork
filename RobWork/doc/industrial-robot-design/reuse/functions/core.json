@@ -38,6 +38,50 @@
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "core.convert",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-03",
+        "KIN-12",
+        "DYN-03",
+        "SEL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+          "symbol": "convert",
+          "qualifiedSymbol": "sdurws::ird::core::convert",
+          "startLine": 134,
+          "endLine": 152,
+          "sha256": "2e895d8acd7caa6a1bbc6ada8fa5ebb6b0ec809980482bd7b154d1c55cffbb28"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-UNITS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"getUnit|UnitMap|Deg2Rad|Rad2Deg|_map\" RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp RobWork/RobWork/src/rw/math/Constants.hpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "core为唯一量纲/单位权威，保留已注册同量纲、有限性及结果溢出拒绝；优先Constants角度因子。DOM getUnit只提供无量纲比例，不据其命中放弃强类型token或引入loader重依赖",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可",
+      "designRefs": [
+        "tasks/foundation/CORE-T04.json",
+        "units/core.md §4.4/§5.4"
+      ]
     }
   ]
 }

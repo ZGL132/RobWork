@@ -293,6 +293,43 @@
           "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
         }
       ]
+    },
+    {
+      "functionId": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Envelope.cpp",
+          "symbol": "DynamicsEnvelopeCalculator::computeRms",
+          "qualifiedSymbol": "sdurws::ird::dynamics::DynamicsEnvelopeCalculator::computeRms",
+          "startLine": 181,
+          "endLine": 241,
+          "sha256": "6edc82bf49c0c2525f09fad30d5ee3d44869ff0605c9e52db8656adc600d4abe"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-STATS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RMS|rms|weighted|trapez|Trapez|Statistics|integrat\" RobWork/RobWork/src/rw/math/Statistics.hpp RobWork/RobWork/gtest/math/StatisticsTest.cpp RobWork/RobWork/src/rw/math RobWork/RobWork/src/rw/trajectory",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "时间加权梯形积分tau²并按有效全跨度归一；本关节非Ok缺口区间零贡献但时长留分母，无样本/跨度时NaN。上游样本mean/variance不能偷换该契约；底层平方/累加/数值稳定性仍须核，非整段业务豁免",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
     }
   ]
 }

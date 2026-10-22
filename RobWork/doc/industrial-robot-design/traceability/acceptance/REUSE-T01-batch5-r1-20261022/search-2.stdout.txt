@@ -1,0 +1,101 @@
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:7:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:49:template< typename T > class LinearInterpolatorTest : public testing::Test
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:54:    double duration () { return 7.66; }
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:57:template<> Transform3Dd LinearInterpolatorTest< Transform3Dd >::end ()
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:62:template<> Rotation3Dd LinearInterpolatorTest< Rotation3Dd >::end ()
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:67:template<> Vector3Dd LinearInterpolatorTest< Vector3Dd >::end ()
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:74:TYPED_TEST_CASE (LinearInterpolatorTest, LineTypes);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:76:TYPED_TEST (LinearInterpolatorTest, Constructor)
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:80:    double d    = this->duration ();
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:81:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:83:    EXPECT_THROW (LinearInterpolator< TypeParam > (s, e, 0.0), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:84:    EXPECT_THROW (LinearInterpolator< TypeParam > (s, e, -1), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:87:    EXPECT_EQ (li.duration (), d);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:90:TYPED_TEST (LinearInterpolatorTest, InterpolationSetup)
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:94:    double d    = this->duration ();
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:95:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:97:    EXPECT_TRUE (close (li.x (0), s));
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:98:    EXPECT_TRUE (close (li.x (d), e));
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:100:    TypeParam sv = li.dx (0);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:101:    for (double t = 0; t < li.duration (); t += li.duration () / 10) {
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:102:        EXPECT_EQ (li.dx (t), sv);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:105:    TypeParam sa = li.ddx (0);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:107:    for (double t = 0; t < li.duration (); t += li.duration () / 10) {
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:108:        EXPECT_EQ (li.ddx (t), sa);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:112:TYPED_TEST (LinearInterpolatorTest, isLinear)
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:117:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:119:    TypeParam pos = li.x (0);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:122:        pos = add (pos, li.dx (t),dt);
+RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp:124:    EXPECT_TRUE (close (pos, li.x (d),0.0005));
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:22: * @file LinearInterpolator.hpp
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:42:     * Given a start \f$ \mathbf{s}\f$, end \f$\mathbf{e}\f$ and duration \f$ d\f$
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:51:    template< class T > class LinearInterpolator : public rw::trajectory::Interpolator< T >
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:55:        typedef typename rw::core::Ptr< LinearInterpolator > Ptr;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:58:        typedef typename rw::core::Ptr< const LinearInterpolator > CPtr;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:61:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:62:         * and taking \b duration time.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:64:         * If \b duration <= 0 an exception is thrown
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:68:         * @param duration [in] Time it takes to from one end to the other.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:70:        LinearInterpolator (const T& start, const T& end, double duration) :
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:71:            _a (end-start), _b (start), _duration (duration)
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:73:            if (_duration <= 0)
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:76:            _a = _a / _duration;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:84:        T x (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:94:        T dx (double t) const { return _a; };
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:101:        T ddx (double t) const { return _b*0; }
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:113:        T getEnd () const { return _a *_duration + _b; }
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:116:         * @copydoc Interpolator::duration()
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:118:        double duration () const { return _duration; }
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:123:        double _duration;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:128:     * LinearInterpolator<rw::math::Transform3D<T> > a friend
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:133:     * @brief Implements LinearInterpolator for rw::math::Rotation3D<T>
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:140:    class LinearInterpolator< rw::math::Rotation3D< T > >
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:145:        typedef typename rw::core::Ptr< LinearInterpolator< rw::math::Rotation3D< T > > > Ptr;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:148:        typedef typename rw::core::Ptr< const LinearInterpolator< rw::math::Rotation3D< T > > >
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:152:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:153:         * and taking \b duration time.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:155:         * If \b duration <= 0 an exception is thrown
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:159:         * @param duration [in] Time it takes to from one end to the other.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:161:        LinearInterpolator (const rw::math::Rotation3D< T >& start,
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:162:                            const rw::math::Rotation3D< T >& end, double duration) :
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:164:            _end (end), _quarStart (start), _quarEnd (end), _duration (duration)
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:166:            if (_duration <= 0)
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:183:        rw::math::Rotation3D< T > x (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:185:            return _quarStart.slerp (_quarEnd, t / _duration).toRotation3D ();
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:193:        rw::math::Rotation3D< T > dx (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:195:            /*rw::math::Rotation3D< T > rot = x (1.0);
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:199:            return rw::math::EAA<T> (change.axis(),change.angle()/_duration).toRotation3D();
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:207:        rw::math::Rotation3D< T > ddx (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:227:         * @copydoc Interpolator::duration()
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:230:        double duration () const { return _duration; }
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:238:        double _duration;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:242:     * @brief Implements LinearInterpolator for rw::math::Transform3D<T>
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:247:    class LinearInterpolator< rw::math::Transform3D< T > >
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:252:        typedef typename rw::core::Ptr< LinearInterpolator< rw::math::Transform3D< T > > > Ptr;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:255:        typedef typename rw::core::Ptr< const LinearInterpolator< rw::math::Transform3D< T > > >
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:259:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:260:         * and taking \b duration time.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:262:         * If \b duration <= 0 an exception is thrown
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:266:         * @param duration [in] Time it takes to from one end to the other.
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:268:        LinearInterpolator (const rw::math::Transform3D< T >& start,
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:269:                            const rw::math::Transform3D< T >& end, double duration) :
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:271:            _end (end), _posInterpolator (start.P (), end.P (), duration),
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:272:            _rotInterpolator (start.R (), end.R (), duration)
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:280:        rw::math::Transform3D< T > x (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:282:            return rw::math::Transform3D< T > (_posInterpolator.x (t), _rotInterpolator.x (t));
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:292:        rw::math::Transform3D< T > dx (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:294:            return rw::math::Transform3D< T > (_posInterpolator.dx (t), _rotInterpolator.dx (t));
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:303:        rw::math::Transform3D< T > ddx (double t) const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:305:            return rw::math::Transform3D< T > (_posInterpolator.ddx (t), _rotInterpolator.ddx (t));
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:323:         * @copydoc Interpolator::duration()
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:326:        double duration () const { return _posInterpolator.duration (); }
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:329:         * @brief Returns LinearInterpolator for the position part of the transform
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:333:        const LinearInterpolator< rw::math::Vector3D< T > >& getPositionInterpolator () const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:339:         * @brief Returns LinearInterpolator for the rotation part of the transform
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:343:        const LinearInterpolator< rw::math::Rotation3D< T > >& getRotationInterpolator () const
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:351:        LinearInterpolator< rw::math::Vector3D< T > > _posInterpolator;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:352:        LinearInterpolator< rw::math::Rotation3D< T > > _rotInterpolator;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:356:     * @brief LinearInterpolator with T=rw:math::Q
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:358:    typedef LinearInterpolator< rw::math::Q > QLinearInterpolator;
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:361:     * @brief LinearInterpolator with T=rw:math::Transform3D<>
+RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp:363:    typedef LinearInterpolator< rw::math::Transform3D<> > CartesianLinearInterpolator;

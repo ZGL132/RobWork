@@ -30,14 +30,24 @@
         "command": "rg -n \"interpolateJointLinear|LinearInterpolator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Ptp.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
       },
-      "differences": "手写线性插值；复用LinearInterpolator<Q>并保留端点和零段业务处理",
+      "differences": "手写线性插值；复用LinearInterpolator<Q>并保留端点和零段业务处理；probe-r7标量极值/越界探测表明直接替换差分式插值需边界守卫和溢出回归；尚未对Q生产路径实测，不能推广该3项为PTP已通过",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
           "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
         }
       ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        }
+      ]
     },
     {
       "functionId": "trajectory.interpolateCartesianLine",

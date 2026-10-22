@@ -1,0 +1,34 @@
+[
+  {
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+    "shaMatches": true,
+    "target": "sdurw_common",
+    "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+    "shaMatches": true,
+    "target": "sdurw_common",
+    "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp",
+    "shaMatches": true,
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp",
+    "shaMatches": true,
+    "target": "sdurw_opengl",
+    "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/gtest/common/SerializationTest.cpp",
+    "shaMatches": true
+  }
+]

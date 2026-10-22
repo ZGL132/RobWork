@@ -1,0 +1,192 @@
+{
+  "schemaVersion": "ird-independent-api-probe-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "api-r7",
+  "verdict": "pass",
+  "reviewedCommit": "9fd7256cf61a7768622810ed547617a66013949b",
+  "baseCommit": "8a7174945a8f280f674a40ec46a512b5b5f1b414",
+  "scope": "只读验收新增3项ToolSuitabilityTest及common CONFIG接线、probe-r7原件/环境/矩阵绑定；非第五批完整审计、全T01退出或生产迁移",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-api-r7-20261022-224442\\repo",
+  "trackedStatus": "",
+  "checks": {
+    "configure": {
+      "exitCode": 0,
+      "log": "configure.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "tests": {
+      "exitCode": 0,
+      "log": "tests.log"
+    },
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "diff-check": {
+      "exitCode": 2,
+      "log": "diff-check.log"
+    },
+    "active-diff-check": {
+      "exitCode": 0,
+      "log": "active-diff-check.log"
+    },
+    "inspect": {
+      "exitCode": 0,
+      "log": "inspect.log"
+    }
+  },
+  "tests": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "testFilter": "ReuseAudit.BinaryArchive*:ReuseAudit.LinearInterpolatorExtrapolates*",
+  "notRunOriginalTests": 19,
+  "protectedFilesUnchanged": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+      "gitBlob": "8c7745ebcffba2657cd34ee507ff5b101e28dfa6",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.exit.txt",
+      "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/build.log",
+      "gitBlob": "ae8a1c678da25e3c9718979a125ed3d76fbc05b2",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/environment-artifacts.json",
+      "gitBlob": "ef5b6531711945e3d4e683165f29c75b423adc5e",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+      "gitBlob": "e49a4b322077c62b3bc49beeafd5f1855f168981",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/hypothesis-source.txt",
+      "gitBlob": "8c7745ebcffba2657cd34ee507ff5b101e28dfa6",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/ird-test-report.json",
+      "gitBlob": "8c1e19843cb2c76d99b2658a71843d5d495c5b12",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.exit.txt",
+      "gitBlob": "573541ac9702dd3969c9bc859d2b91ec1f7e6e56",
+      "unchanged": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/tests.log",
+      "gitBlob": "f2a768341dd4e44af7bcaba7ccc0d7a7495a7776",
+      "unchanged": true
+    }
+  ],
+  "unchangedFromPriorR6FrozenSha": true,
+  "sourceXmlEnvironmentBinding": {
+    "allMatch": true,
+    "associatedFunctions": 21,
+    "auditBindings": 84,
+    "details": "independent-review.json"
+  },
+  "semanticOracles": {
+    "scalarHostRepresentation": {
+      "nativeByteOrder": "little",
+      "value": "0x01020304",
+      "bytesHex": "04030201",
+      "source": "BINArchive.hpp scalar writeValue uses ostream.write(address,sizeof(T)); not canonical endian"
+    },
+    "formattedString": {
+      "original": "x y",
+      "serializedText": "3x y",
+      "lengthPrefix": "decimal formatted 3, no u32 bytes",
+      "read": "Formatted uint32 consumes 3; formatted char reads x, then skips space and reads y, then EOF leaves resized char zero",
+      "expectedDecodedBytesHex": "787900",
+      "testAssertions": "length=3, first x/second y, string differs; no inference of general malformed-input behavior"
+    },
+    "linear": {
+      "ordinary": "x(t)=1+(3-1)*t, t=2 gives 5 outside [0,1]",
+      "durationZero": "constructor throws for duration<=0",
+      "finiteExtreme": "end-start=-DBL_MAX-DBL_MAX overflows to -infinity before duration division; midpoint result nonfinite",
+      "weightedMidpoint": 0,
+      "scope": "Listed double values only, not full replay or floating-point equivalence"
+    }
+  },
+  "catalogAndMatrixReview": {
+    "UTIL-BINARCHIVE": "candidate；主机序/格式化string与冻结协议不等价，继续查既有依赖；不授权通用codec新核心。",
+    "TRAJ-LINEAR": "标量可用但外推/溢出/舍入/业务守卫需适配；Replay采样维持pending。",
+    "related21FunctionsPending": true,
+    "scope": "仅相关候选/工具探测结论，不替代第五批其余条目的语义验收。"
+  },
+  "environmentArtifacts": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_common.dll",
+      "sha256": "f14174e77d8bf874e4c4338c5bb72a4ab48d81f7e009d281da5b112ff3370932",
+      "bytes": 1315840,
+      "matches": true
+    }
+  ],
+  "environmentLimitation": "既有common DLL raw摘要只标识环境，不证明冻结源码可复现构建来源；模板/头来源通过冻结源码及CMake绑定留存，探测本身fresh构建。",
+  "relationCounts": {
+    "relations": 146,
+    "pending": 143,
+    "proposal": 3,
+    "closedFiles": 0
+  },
+  "findings": [],
+  "observations": [
+    "全差异git diff --check=2，所有告警仅来自新归档历史验收diff.log原文尾空白；未改写历史证据。排除该归档后的活动文件检查=0。",
+    "MSBuild MSB8029临时目录增量构建告警；本次fresh构建成功。",
+    "本次只实际运行3项；原19项编译进入目标但被filter排除，不写成22全跑。"
+  ],
+  "notRun": [
+    "原19项测试重跑",
+    "BINArchive一般输入/畸形输入/跨平台/大端机器验证",
+    "完整上游测试、生产接线或协议迁移、回放全路径/数值性能验收",
+    "HOST-LINES GUI或其他第五批功能验收",
+    "全T01审计退出/T02准入",
+    "140治理自测/DeepEvidence/远程CI",
+    "提交/推送/合入"
+  ],
+  "evidenceSha256": {
+    "active-diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build.log": "74b8e31c406d85cf5f897fbbfc7292ccbef67a40269a11ed9d26f49ae151928a",
+    "checkout.log": "f7ca3d5c6b80abad5028d53f78e2ef925de0f66ff290c798bcf2b493b8e95d10",
+    "clone.log": "84598581896ac111eaf660347e52b5e07f0e3b8c0dba39162ef4d011ca76a398",
+    "configure.log": "c0ad5a1c2faeaa8baa50c53e98a0296b0545f2df1dce9308ebe13a46fbaceb4e",
+    "diff-check.log": "dba47b0586c2b486acec2cf546ea3b263ba52b5c26d45f84cc8d0b83eb7677e3",
+    "docs.log": "ff03dddcc03ae63a556ea55876cbbded92d678bbc155de00a8c8d047568479f6",
+    "environment.log": "ba490ca832c85024139229f19b0457d90fc9e96008141b8e620864e1d851bf77",
+    "gtest.xml": "5ae4a0f0a82480e875d81b64ec249e5b163d9f76bbc87e0ca3bf6a47348c579e",
+    "independent-review.json": "3e1fa2fa513bbc198fbb52649208ab8676ab43c4ed80ed67220b209010b5d16c",
+    "inspect.log": "bc6e4efadeab10e8cb92b965bc24963eaa5dedd3e9000e8b61ee7fe247afe2f0",
+    "ird-test-report.json": "e4f8781531de4fbc774043119d93afc61b980cf5db89d2b33d9e96b1b7fca2cb",
+    "reuse.log": "73a448f6bb3360476eead4e9bde009a003a3eea0218e9312a5ad4ba7de0d4eef",
+    "run-probe.ps1": "0a19b666e9087d72a21bfd1c4981080ea132becfe7d89259fa024b26730dc351",
+    "task.log": "dae7a3e3a4549b9dcdc6ac1a3026c737dfff9e208249f750af547039c58be5ac",
+    "tests.log": "2abc731a9e03c1d8b5fa8c46cf036023c78cb055ebf68cfcb12f59d05a875b5e"
+  }
+}

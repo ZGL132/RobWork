@@ -1,0 +1,34 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"LinearInterpolator|duration|x \\(\" RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"RenderLines|addLine|setColor|setThickness|glVertex3f|glPushAttrib|alpha\" RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  }
+]
