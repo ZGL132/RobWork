@@ -1,5 +1,8 @@
 # 工业机械臂设计软件 · 实现任务拆分（development-task-breakdown）
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v0.97（2026-10-19，DOC-T16 测试策略修订批：§5.2 DoD 第 5 条强化〔人工点验＋关键交互链固化 Widgets 级生产路径测试进常驻回归——投影/领域函数测试不得替代；豁免须所有者确认〕＋新增第 6 条入口与布局冒烟＋第 7 条跨域消费链回归；§5.1"插件 GUI 手动验证通道"行补宿主遍历脚本化推荐载体；units/requirements.md v0.21/units/modeling.md v0.55/acceptance-protocol.md v1.10 同批——依据＝需求模块全功能审计〔分支 codex/requirements-audit-20261018〕A-01~A-12 交互接线层零自动化覆盖＋wp14-t12 修复批新登 A-13~A-16 跨域消费链；效力自下一批授权契约生效，不追溯 wp14-t12）。前一版本 v0.96 保留如下。 |

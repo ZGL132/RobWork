@@ -3,6 +3,8 @@ name: ird-design-change
 description: 工业机械臂变更设计——实施前产出设计八节（行为、接口、失败语义、生命周期、线程约束、测试矩阵、文档影响、决策记录判定）。前置为 ird-discover-change 画像完成；跨单元或公共接口变化须先过所有者审阅。
 ---
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
 # ird-design-change：变更设计（不动码）
 
 **时机**：discover 画像完成后、写第一行代码之前。

@@ -578,6 +578,8 @@ jobs:
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-docs.ps1 -DeepEvidence
       - name: governance-context-pack（上下文包新鲜度＋PIPE 权威红线）
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\validate-context-pack.ps1 -All
+      - name: reuse-adversarial-selftests
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrialrobot\test-reuse-governance.ps1
       - name: check-boundaries
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\RobWork\scripts\industrial-robot\check-boundaries.ps1
       - name: 上传日志/CTest XML/边界报告/安装 manifest

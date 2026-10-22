@@ -29,6 +29,9 @@ Write-Output "verify-task: RepoRoot=$RepoRoot"
 & (Join-Path $scriptDir "validate-task.ps1") -TaskFile $TaskFile -RepoRoot $RepoRoot
 
 $t = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json
+# 新执行（包括旧契约重新执行）必须补齐复用证据与阶段门，DryRun 也不能绕过。
+& (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
 if ($DryRun) {
   foreach ($cmd in @($t.verify)) { Write-Output "[dryrun] $cmd" }
   Write-Output "verify-task: DRYRUN PASS $($t.taskId)"

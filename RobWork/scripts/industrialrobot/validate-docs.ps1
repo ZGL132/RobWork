@@ -373,5 +373,8 @@ if (-not (Test-Path $manifestPath)) {
     }
   }
 }
+# H1—H6：文档检查和构建门禁共用校验器；RepoRoot 在本脚本为源码子根，需回到 Git 根。
+& (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot (Split-Path -Parent $RepoRoot)
+if ($LASTEXITCODE -ne 0) { $errors += 'H1-H6 reuse governance failed' }
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceCount evidence)"

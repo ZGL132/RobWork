@@ -119,4 +119,11 @@ foreach ($t in $tasks) {
     }
   }
 }
+# 新编译契约的复用字段不能只停留在文字上；历史契约结构检查不冒充重新授权执行。
+foreach ($t in $tasks) {
+  if ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done'))) {
+    & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+    if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
+  }
+}
 Write-Output "validate-task: PASS ($($tasks.Count) tasks)"

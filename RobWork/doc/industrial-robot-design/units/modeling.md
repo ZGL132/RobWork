@@ -1,5 +1,8 @@
 # 工业机械臂设计软件 · modeling 单元详细设计（阶段 B）
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
+
 > 2026-09-22 新建（WP-13-T01 承接）。本文是 modeling 单元的唯一详细设计：依据 REQUIREMENTS MDL-01～22 与 ARCHITECTURE §3.1/§3.3/§7.1～§7.10 的分配，把 RobotDesign 数据模型、模板与参数化、URDF/Xacro/WorkCell 导入映射、双权威参数化、物性估算、DH↔显式转换、传动耦合输入、模型就绪校验、CanonicalModel 交接、建模命令与撤销/重做写到可直接实现的深度。本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收。
 
 | 字段 | 值 |
@@ -1773,3 +1776,7 @@ T30完整分组表单设计续接：所有者确认第5批高亮人工通过后�
 - 域树、直接三维拾取、模式和项目应用/关闭/最近项目切换通过非模态三选守卫。确认后再切换、放弃输入后切换、留在当前对象；失败不离开。宿主延续回调以QPointer及原adapter身份保护，不把旧动作应用到新项目。
 
 验证证据与本批人工步骤归traceability/builds/modeling-interaction-20261021/batch6-grouped-form；只有报告列明的本次真实执行结论可计入通过。GF-B尚未实施，T30整体保持ready，每批提交推送后人工暂停。
+
+## GOV-T21 迁移约束与旧规则勘误
+
+CouplingMath.hpp、CanonicalBridge/DhConvert/RpyMath 为待迁移/审计；SVD/旋转优先用 rw::math，DH 拟合不因仅找到 DHParameterSet 元数据就认定已有完整能力。

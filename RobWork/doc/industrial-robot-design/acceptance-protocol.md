@@ -1,5 +1,8 @@
 # 实施验收协议（acceptance-protocol）
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v1.10（2026-10-19，DOC-T16 测试策略修订批：§4 新增 4.12"UI 任务真实交互证据"——触达插件面板交互的任务须核对真实宿主操作证据与 Widgets 级生产路径测试留痕（对应 DTB §5.2 DoD 第 5~7 条 v0.97），组件级/领域函数测试通过不得替代，豁免须所有者确认；清单 11→12 项，§2.1/§5 计数同步。前一版 v1.9＝§4.10 留痕口径对齐实践） |
@@ -94,3 +97,7 @@
 | v1.4 | 2026-09-10 | 三轮审查修复（P1：失败验收无法可靠重试＋evidence 未冻结）：①evidence 分支改 `acc/<taskId>/<attempt>`（attempt 序号随验收请求下发，state.attempts.accept 递增——fail 重试永不复用已有分支名，`worktree add -b` 不再失败）；②acceptanceRecord.commit 明确为 40 位不可变 evidence SHA，收尾验证 origin ref==该 SHA 后**按 SHA 合并**（不合并分支尖端，evidence 被追加提交时不带入未审查内容）；③与 PIPE v1.5 §4.7 双漂移检测（任务分支＋evidence 分支）与附录 C 模板（T-ACC v3）同步 |
 | v1.5 | 2026-09-10 | 四轮审查同步：§5 的记录完成判据改为与 §3 一致的 `acc/<taskId>/<attempt>`，消除遗留的无 attempt 分支表述；验收 fail 的三元组由 PIPE v1.6 保存为返工用 lastFailureRecord，不改变本协议的独立验收与记录推送要求 |
 | v1.6 | 2026-09-27 | 所有者禁止使用子智能体：B.1 任务允许同一会话顺序执行实施与验收，但记录必须声明独立性降级；冻结 SHA、detached worktree、逐项对抗核查、evidence 分支与失败证据要求不变 |
+
+## GOV-T21 复用治理验收补充
+
+本轮零算法/GUI变更，脚本门禁自测输出 JUnit XML 与 reuse-test-report.json，真实列出 passed/skipped/failed，不生成伪 gtest 或伪 ird-test-report。集成与独立冒烟重新配置并重跑 ird_gates；对抗例、PS5.1/7兼容、冻结SHA和远程保护均须实际核验。验收另存同目录 JSON：taskId、verdict、reviewedCommit，后续任务引用该记录提交/路径/被验收SHA。历史验收只读。复用语义与批准身份须人工审查，不能以字符串检测代替真实调用证据。

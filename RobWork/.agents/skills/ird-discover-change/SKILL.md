@@ -3,6 +3,8 @@ name: ird-discover-change
 description: 工业机械臂任务侦察——接到任务 ID 或变更请求后的第一个动作。输出变更画像（分支、范围、适用规则、需求/单元/WP、依赖边、禁止路径、最小上下文），全程只读不改源码。适用于 RobWork 仓库 industrialrobot 开发区接手任何编码/治理任务之前。
 ---
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
 # ird-discover-change：任务侦察（只读）
 
 **时机**：接手任何任务的第一步（实施会话开工、验收会话对账前、人工排查切入）。

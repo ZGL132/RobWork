@@ -1,0 +1,15 @@
+powershell.exe : D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-reuse.ps1 : REUSE-MISSING
+ : RobWork/RobWor
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-reuse-governance.ps1:44 char:63
++ ...  $output = (& $ps -NoProfile -File $validator -RepoRoot $sandbox @ext ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (D:\10_Source_Re... RobWork/RobWor:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+k/src/rw/missing.hpp
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-reuse.ps1:187 char:11
++ } catch { Write-Error $_; exit 1 }
++           ~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-reuse.ps1
+ 

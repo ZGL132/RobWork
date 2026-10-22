@@ -1,5 +1,8 @@
 # drivetrain 单元详细设计（L2 共享计算服务）
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 单元 | drivetrain（**L2 共享计算服务**——ARCHITECTURE §2.3/§3.1：非业务域单元、非 L4 插件；dynamics 与 selection 之间的唯一共享传动计算服务） |
@@ -1238,3 +1241,7 @@ R2 矩阵检查前提重申（§7.4）：常矩阵、方阵、可逆、良态、
 | GUI 测试 | **不适用**（本单元无 plugin/GUI 目标，§14.4） |
 
 以上任何一项在后续任务中执行后，须按 DTB §5.4 与本卡 §18.5 登记真实结果；未执行项不得标注"通过"。
+
+## GOV-T21 迁移约束与旧规则勘误
+
+MappingCore.cpp 自持 Jacobi SVD 迁移至 rw::math::LinearAlgebra，业务秩阈值/可信度留在适配边界。

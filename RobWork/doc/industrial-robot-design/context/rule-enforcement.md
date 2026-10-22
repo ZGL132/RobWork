@@ -1,5 +1,8 @@
 # 规则执法分级审计表（context/rule-enforcement.md）
 
+> **GOV-T21**：全部新任务执行根 AGENTS.md §0.1 H1—H6；先读设计根 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json`、`reuse/inventory.json`，核对治理独立验收pass后再执行适配/算法任务。历史done不代表复用合规，缺口先提案并经所有者明确批准。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v1.4（2026-10-18：新增偶发失败观测工具 run-flake-probe（F-925）——重复运行＋后台负载＋失败用例点名/原始输出落盘；观测层，不改变测试门禁判定；前一版 v1.3＝commit-lint 挂 CI） |
@@ -99,3 +102,16 @@
 - **降级/维持 behavioral**（明示不造摆设门禁）：提交粒度纪律、中文交流规范、阅读路径、人机同规署名责任。
 - **删除项**：无——第一遍审计未发现"完全无执法载体且无保留价值"的条款（各 behavioral 条款均有事后审计或升级路径）。
 - 本表自身为 load-bearing 登记资产：路径存在性由 validate-docs 资产清单门禁保证（自反执法）。
+
+## GOV-T21 H1—H6 执法矩阵
+
+| 规则 | 唯一机器执行入口 | 独立审查边界 |
+| --- | --- | --- |
+| H1/H6 复用追溯 | validate-reuse：上游路径/符号/规范摘要/真实构建注册、20单元固定Git库存、逐文件manifest | 生产调用与功能等价，不能include-only |
+| H2 禁平行内核 | 精确变更摘要、已知核心指纹止增、GOV-T21禁止算法授权 | 改名/复制/业务伪装由语义审查补足 |
+| H3 类型与权威 | 复用既有ird_gates边界检查，不复制第二套规则 | 单位/参考系/ABI/State与所有权 |
+| H4 入口全覆盖 | validate-docs、validate-task、verify-task、gate-all、ird_gates、GitHub/GitLab模板/实际GitHub入口 | PR清单与中文契约同步 |
+| H5 阶段门 | 新/修改ready或done契约与所有verify-task执行必须reuse；算法任务须不可变GOV-T21验收记录 | 所有者批准身份，实施者不自行合入 |
+| 最终消债 | RequireMigrationComplete当前必须拒绝未审计/存量债务；REUSE-T06按批准契约增加逐项关闭证据协议，不能改历史classification洗白 | 最终逐功能覆盖与完整回归 |
+
+远程主线已要求ird-reuse-governance与ird-industrial-robot-package、strict检查、管理员同规、禁止强推删除和未解决对话合入。身份真实性和验收独立性仍须审阅；GitLab Runner未接入，不能声称已跑。

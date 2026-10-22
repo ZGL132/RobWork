@@ -1,0 +1,31 @@
+# H1—H6：独立快速复用门禁；完整历史用于固定基线与不可变验收记录。
+name: upstream-reuse-governance
+on:
+  push:
+    branches: [redesign-main, gov-t21]
+  pull_request:
+    branches: [redesign-main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ird-reuse-governance:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate upstream reuse evidence
+        shell: pwsh
+        run: ./RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head HEAD
+      - name: Adversarial reuse gate tests
+        shell: pwsh
+        run: ./RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/reuse-tests
+      - name: Windows PowerShell compatibility
+        shell: powershell
+        run: ./RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head HEAD
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reuse-governance-evidence
+          path: .cache/reuse-tests

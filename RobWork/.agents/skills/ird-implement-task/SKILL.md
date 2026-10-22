@@ -3,6 +3,8 @@ name: ird-implement-task
 description: 工业机械臂任务实施——一次只处理一个任务卡：按契约在 wp 分支编码（中文注释契约）、测试与 CMake 与契约文档同提交、提交前双模式构建与门禁自查、四段式 commit 并推送、发出验收请求。禁止跨任务重构与自行合入。
 ---
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
 # ird-implement-task：任务实施（单任务卡）
 
 **时机**：discover＋design 完成后。

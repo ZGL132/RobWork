@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T21",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "实施并独立验收上游复用文档约束与门禁治理",
+  "status": "ready",
+  "branch": "gov-t21",
+  "dependsOn": [],
+  "requirements": [
+    "DYN-01",
+    "DYN-05",
+    "KIN-01",
+    "KIN-02"
+  ],
+  "designRefs": [
+    "reuse/policy.md",
+    "reuse/migration.md",
+    "reuse/review-checklist.md",
+    "acceptance-protocol.md"
+  ],
+  "allowedFiles": [
+    "AGENTS.md",
+    ".github/**",
+    "RobWork/README.md",
+    "RobWork/.agents/skills/**",
+    "RobWork/doc/industrial-robot-design/**",
+    "RobWork/scripts/industrialrobot/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**/*.hpp",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "reuse-governance",
+    "test-junit-json",
+    "immutable-acceptance"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "pwsh -File RobWork/scripts/industrialrobot/validate-docs.ps1 -DeepEvidence",
+    "cmake --build build --config Release --target ird_gates"
+  ],
+  "interUnit": false,
+  "knownPitfalls": [],
+  "acceptance": [
+    "H1-H6根规则/所有活跃入口及20单元卡/README/Skills/PR同步；明确替代旧SVD及自持RK4规则，零算法修改",
+    "完整固定基线库存与真实上游文件/符号/目标/摘要；债务显式而非合规宣称",
+    "同一门禁接入任务执行、文档、ird_gates及CI；隔离对抗实验正例与至少20类负例真实执行，JUnit+JSON计数",
+    "集成/独立冒烟重新配置并执行门禁；新脚本在PS7与Windows PS5.1验证",
+    "冻结SHA独立worktree验收并推送证据，实施者不自行合入；后续任务须验收pass记录",
+    "远程分支保护读取并配置所需复用检查，记录配置与限制"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json"
+  },
+  "implementationState": "ready-for-independent-acceptance",
+  "note": "实现提交冻结后独立验收；status保持ready直至所有者收尾，不自签done。零产品算法变更。"
+}

@@ -200,6 +200,10 @@ if ($LASTEXITCODE -eq 0) { Ok "治理文档门禁（validate-docs -DeepEvidence�
 & pwsh -NoProfile -ExecutionPolicy Bypass -File "$PSScriptRoot/validate-context-pack.ps1" -All 2>&1 | Select-Object -Last 3 | Write-Host
 if ($LASTEXITCODE -eq 0) { Ok "上下文包门禁（validate-context-pack -All）" } else { Fail "上下文包门禁" "validate-context-pack 失败（退出码 $LASTEXITCODE——STALE 过期包重跑 build-context-pack 生成后复验）" }
 
+# H1—H6：文档入口已执行复用校验；这里另执行真实对抗夹具，证明门禁能拒绝违规。
+& pwsh -NoProfile -File "$PSScriptRoot/test-reuse-governance.ps1" 2>&1 | Select-Object -Last 3 | Write-Host
+if ($LASTEXITCODE -eq 0) { Ok "H1-H6 对抗复用自测" } else { Fail "H1-H6 对抗复用自测" "负实验失败或未完整执行" }
+
 # ---- 第 1 步：集成构建树确认/配置 ----
 $cacheFile = "$BuildDir/CMakeCache.txt"
 $needConf = -not (Test-Path $cacheFile)

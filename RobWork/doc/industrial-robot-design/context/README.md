@@ -1,5 +1,8 @@
 # 资产分层与默认上下文规则（context/）
 
+> **GOV-T21**：全部新任务执行根 AGENTS.md §0.1 H1—H6；先读设计根 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json`、`reuse/inventory.json`，核对治理独立验收pass后再执行适配/算法任务。历史done不代表复用合规，缺口先提案并经所有者明确批准。
+
+
 | 字段 | 值 |
 | --- | --- |
 | 文档版本 | v1.0（2026-10-17，随 Agent-native 治理 Task 1 建立） |

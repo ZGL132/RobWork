@@ -1,5 +1,8 @@
 # 工业机械臂设计软件 · kinematics 单元详细设计（阶段 B）
 
+> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+
+
 > 2026-09-22 新建（WP-15-T01 承接）。本文是 kinematics 单元的唯一详细设计：依据 REQUIREMENTS KIN-01～14 与 ARCHITECTURE §3.1/§4/§7.5/§7.6/§7.10 的分配，把输入快照与求解配置、FK/IK 契约、构型与解集、批量任务点验证、区域采样与覆盖率、策略调用、确定性/并行/缓存、evidence 与 execution 协作、公共接口与插件界面写到可直接实现的深度。本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收。
 
 | 字段 | 值 |
@@ -1099,3 +1102,7 @@ SamplingPlan表尾tcpOverride缺省沿query.defaultTcp，存在时只消费同�
 MDL-15/AT-28：runtime场景几何可选，assembleCollisionScene从同快照geometry.has_value投影hasCollisionGeometry；固定帧仍保留身份/角色/名称，不将显示标记当碰撞几何。原policy消费/算法/公共签名不改。八节范围及真实装配反例见2026-10-20-modeling-completion.md B3g；未验证不标通过。
 
 B3g实施验证：18套件2599通过、0失败、3既有占位跳过，双模式/全量Release及verify-task三条机器检查通过；证据traceability/builds/modeling-completion-20261020-b3g/，详细分类见FOLLOWUP与XML。真实网格及新入口端到端磁盘/三维尚未封闭，不将本批编译消费绿色外推到47项终验。
+
+## GOV-T21 迁移约束与旧规则勘误
+
+O-40 / WP-15-T03 的“rw::math 无 SVD”已被上游 rw/math/LinearAlgebra.hpp::svd/pseudoInverse 源码反证，不再是实现依据。历史任务事实保留；自持 FK/Jacobian/DLS 迁移见 REUSE-T02/T03。
