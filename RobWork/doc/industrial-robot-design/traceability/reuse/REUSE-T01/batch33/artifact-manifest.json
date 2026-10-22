@@ -1,0 +1,110 @@
+{
+  "batch": "B33",
+  "entries": [
+    {
+      "path": "b33-build.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b33-build.log",
+      "bytes": 2101,
+      "rawSha256": "39f0cf5f476e5251f53cdf372b0f4ade3b0cc12740a24f67c5abf8b3f1a7c545"
+    },
+    {
+      "path": "b33-configure.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b33-configure.log",
+      "bytes": 2582,
+      "rawSha256": "9247f75ceb06c5eed45c5832ce7068a49b0c546cf8d2af393bf7678a45840f77"
+    },
+    {
+      "path": "b33-docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b33-docs.log",
+      "bytes": 2725,
+      "rawSha256": "c4640a37f0627a55efa68dbc5e474d870e9a5ef7775919309328dcc961350cd2"
+    },
+    {
+      "path": "b33-reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b33-reuse.log",
+      "bytes": 2487,
+      "rawSha256": "5e0bef92e58ab814143dd91f0017a2ae2c864cbfd0d9f41cc9836cbd2cc0dd72"
+    },
+    {
+      "path": "b33-task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b33-task.log",
+      "bytes": 2518,
+      "rawSha256": "74dd2cabbb7e00af34ffd0aa3b4aa358b7f793d14e2f0aca1ebe9392565f6741"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1470,
+      "rawSha256": "e1082fc2da42555220c4e907c739d6ab00673835861f1ffea1f8894d5f5520ee"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1574,
+      "rawSha256": "248a6d7c4348c5df7b6350d1bf3ba0864f2b00f7dbe5e79d0ee769640733630b"
+    },
+    {
+      "path": "dependency.json",
+      "bytes": 1222,
+      "rawSha256": "b92c4b18ba7f18a708c73970e294a636c3a749517dbfe19f4f94d4b62bbcec5e"
+    },
+    {
+      "path": "DiagnosticSchemaSuitabilityTest.cpp",
+      "bytes": 4581,
+      "rawSha256": "3e2364f18a5a1e77f1047dd9e596637971c0ce8a3b812d43c8711479ad9a563f"
+    },
+    {
+      "path": "findings-prefix.json",
+      "bytes": 144,
+      "rawSha256": "f4e8e1898fd61560e23e3c92898424a0ed9de8a9ea1a6708ab0781734b88bd5c"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 20370,
+      "rawSha256": "bd6714bf0d8847883cec1a5209f06df6ba3c3a733bece03cff4e88e11b405aec"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 33653,
+      "rawSha256": "a512a698b352200b713ff6cadd6a7be98b423c1f2aced6e4738b1b7caf742324"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 10007,
+      "rawSha256": "d718656a0a138a8c7cf7dc74d2c322dfaa19a5d9ac6dc776a1f3138cbab360b4"
+    },
+    {
+      "path": "search.json",
+      "bytes": 40814,
+      "rawSha256": "ccb9659fc1f08238a1b0babe7f75226d79f0cd1af576a67a849d3de4255a09b1"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 922,
+      "rawSha256": "b08472312374ad8c62e9bd9c4d3cdda536a368b458e9ba2bae3d1be9b3882015"
+    }
+  ]
+}

@@ -9756,5 +9756,16 @@
   "owner": "core / execution / ui / REUSE-T01",
   "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。"
 }
+,
+{
+  "id": "F-968",
+  "source": "reuse/diagnostics-schema-audit.md / batch33",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics受限模式解析失败保留部分names违反私有输出契约",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "43跑42passed1failed，原38例通过；四类已解析pid后的非法尾部均false且error非空但names未清空。注册表和工厂检查false即停止，未证公共对象污染。T01不改解析核心；保持单一私有解析点，后续先核冻结契约及两调用方，最小处置独立回归。"
+}
   ]
 }
