@@ -1,0 +1,36 @@
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:58:     * The general step looks like this:;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:97:         * @brief Performs a step and updates the state
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:99:        virtual void step (double dt, rw::kinematics::State& state) = 0;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:105:        virtual void resetScene (rw::kinematics::State& state) = 0;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:110:        virtual void initPhysics (rw::kinematics::State& state) = 0;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:115:        virtual void exitPhysics () = 0;
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:66:        void setMotorForceLimits (const rw::math::Q& force);
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:71:        rw::math::Q getMotorForceLimits ();
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:106:            Force,      //!< For force control.
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:108:        } MotorControlMode;
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:113:        std::vector< MotorControlMode > getMotorModes (const rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:121:        MotorControlMode getMotorMode (int i, const rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:150:        void setMotorForceTargets (const rw::math::Q& force, rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp:174:        void setMotorForceTarget (double force, int i, rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:47:            Q maxForce):
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:50:        _maxForce(maxForce)
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:69:    rw::math::Q flim = _rdev->getMotorForceLimits ();
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:80:        _odeJoints[i]->setMaxForce (flim (qi));
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:113:        std::vector< RigidDevice::MotorControlMode > mstate = _rdev->getMotorModes (state);
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:120:        rw::math::Q flim = _rdev->getMotorForceLimits ();
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:121:        if (MetricUtil::dist1 (flim, _maxForce) > 0.0001) {
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:123:            _maxForce   = flim;
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:155:            _odeJoints[i]->setMaxForce (_maxForce (qi));
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:166:            _odeJoints[i]->setForce (targets[qi]);
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:188:            // in the next timestep will match that of the other joint
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:251:                _odeJoints[i]->setMaxForce( _maxForce(qi)*1.5);
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:254:            _odeJoints[i]->setMaxForce( _maxForce(qi) );
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:274:    _modes (rdev->getMotorForceLimits ().size (), RigidDevice::Velocity), _sim (sim)
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:280:    _maxForce = rdev->getMotorForceLimits ();
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:451:    Q maxForce                        = rdev->getMotorForceLimits ();
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:458:        odeJoint->setMaxForce (maxForce (i));
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:497:        odeJoint->setMaxForce( maxForce(i) );
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:514:    Q maxForce = rDev->getForceLimit();
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:515:    // std::cout  << "Max force: " << maxForce << std::endl;
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:562:             dJointSetAMotorParam(motor,dParamFMax, maxForce(i) );
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:593:             dJointSetAMotorParam(motor,dParamFMax, maxForce(i) );

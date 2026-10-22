@@ -238,6 +238,61 @@
         "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
         "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
       }
+    },
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-08"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp",
+          "symbol": "DynamicsReplayProjector::sampleAt",
+          "qualifiedSymbol": "sdurws::ird::dynamics::DynamicsReplayProjector::sampleAt",
+          "startLine": 230,
+          "endLine": 348,
+          "sha256": "a3ba0624f0a6eb96bcedb93d54803f9c9b13023ef740ea4a5a59194e8cbeff46"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TRAJ-LINEAR",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"LinearInterpolator|duration|x \\(\" RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "帧命中原值、越界nullopt、五量线性混合与双指针对齐/缺关节标志是回放业务；上游标量x(t)不做越界守卫且采用(end-start)/h*t+start，极值溢出/舍入可不同。显示插值不得回流统计、动力学验证或修订",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
     }
   ]
 }

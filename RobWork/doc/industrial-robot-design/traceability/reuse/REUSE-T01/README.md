@@ -44,3 +44,7 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm_min,1,1e300)丢失小正轴，直接以谱值判严格SPD受限；同一现有Eigen依赖的LLT通过该输入、单位尺度1±nextafter边界和精确秩1十进制块拒绝。仅列明输入成立，尚未证明全部合法性入口/极值/对称化误差可替换，矩阵仍pending。构建沿用原CONFIG目标和testkit；`probe-r6/environment-artifacts.json`记录已安装数学DLL/LLT头原始摘要，不能把已有二进制摘要冒充源码可复现构建证明。第四批独立审读另发现占位圆柱误挂MDL-02，已按单元卡§2.5/§5.2改为MDL-04/WP-13-T07，待返工独立复核。
 
 第四批登记返工和新增5项API探测已分别在 `877f6afee38446ab43c5e6a6fd9b09593925aedb` 独立验收PASS，原件见 `REUSE-T01-batch4-r1/r2-20261022/`、`REUSE-T01-api-r6-20261022/`（前者按各目录实际名称定位）；不覆盖原FAIL。19项由独立现场VS x64重建实跑，passed=19、failed/skipped/notRun=0；该结论不涉及生产迁移或全T01退出。新增两份具体提案仍未批准，3个相关功能关系如实改为proposal，其余118条pending、closedFiles=0；提案不是功能完成/源码权限许可。
+
+第五批新增25条关系，累计146条（143 pending、3 proposal），closedFiles=0；细分三域20处低层字节原语、独立FK参照3处、回放插值和宿主采样格绘制。`batch5-search.json`保留实际检索。`UTIL-BINARCHIVE`与`HOST-LINES`仍candidate：前者主机序/格式化string长度/空白提取与冻结协议不等价，后者double→float且忽略回调alpha。测试oracle按audit-contract §6保留独立性，仅测试消费，不批准生产平行核心。最初门禁因inline方法symbol写成Class::method不在区段字面内而失败，已只修短symbol并保留qualifiedSymbol，不修改校验器或源码。
+
+`ToolSuitabilityTest.cpp`独立扩展原探测目标，复用原CONFIG common目标/GTest/testkit，不改旧19项源码和报告；`probe-r7/`在VS x64重建后仅新增3项实跑：passed=3，failed/skipped/notRun=0，验证archive主机序、字符串空白往返差异及线性插值越界/极值溢出。原19项本轮未重复执行，不能写成22项全跑。宿主呈现未运行GUI，尚未生产接线/性能验收。两份具体提案草案在8a7174945a8f280f674a40ec46a512b5b5f1b414独立治理PASS，原件见`traceability/acceptance/REUSE-T01-proposals-20261022/`，仍未获实施批准。第五批与新3项待独立验收，全T01尚未退出。

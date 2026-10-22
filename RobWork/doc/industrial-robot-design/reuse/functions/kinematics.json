@@ -782,6 +782,129 @@
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "kinematics.rodrigues",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "rodrigues",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
+          "startLine": 380,
+          "endLine": 397,
+          "sha256": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
+    },
+    {
+      "functionId": "kinematics.mul4",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "mul4",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
+          "startLine": 408,
+          "endLine": 419,
+          "sha256": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
+    },
+    {
+      "functionId": "kinematics.referenceFk",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "referenceFk",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
+          "startLine": 429,
+          "endLine": 518,
+          "sha256": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
     }
   ]
 }

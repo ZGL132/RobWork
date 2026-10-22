@@ -1,0 +1,34 @@
+{
+  "taskId": "REUSE-T01",
+  "scope": "新增3个公共API适用性探测；原19项报告未重写，本次不算22项全跑",
+  "source": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+    "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+  },
+  "build": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "sha256": "36e7b272b2b30deb29d02e7ca9679549f6c6f401f8f8ea39fd568c2cca11c54f"
+  },
+  "artifacts": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_common.dll",
+      "sha256": "f14174e77d8bf874e4c4338c5bb72a4ab48d81f7e009d281da5b112ff3370932",
+      "bytes": 1315840
+    }
+  ],
+  "limits": "原导出库的raw摘要仅标识运行环境，不证明源码可复现构建来源",
+  "commands": [
+    "VS x64: cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "ird_reuse_audit_probe.exe --gtest_filter=ReuseAudit.BinaryArchive*:ReuseAudit.LinearInterpolatorExtrapolates* --gtest_output=xml:<probe-r7/gtest.xml> --ird_report=<probe-r7/ird-test-report.json>"
+  ],
+  "results": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  }
+}

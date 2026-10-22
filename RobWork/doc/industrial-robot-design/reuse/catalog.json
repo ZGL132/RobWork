@@ -1610,6 +1610,173 @@
         "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
         "conclusion": "已读列明测试/目标；未执行上游完整测试或生产迁移"
       }
+    },
+    {
+      "id": "UTIL-BINARCHIVE",
+      "ownerUnit": "core",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "实际读取公共头、实现与原目标；仅候选，不证明业务协议可直接替换"
+      },
+      "boundary": "标量为主机字节序；string长度用格式化流<<而非固定u32，读取用>>并按长度resize。不能直接替代冻结大小端/字符串/拒绝策略；IOUtil::isLittleEndian只探测，不提供协议。继续审查同渠道已用Boost.Endian等可复用原语，不申请新通用codec平台。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+          "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6",
+          "symbols": [
+            "BINArchive",
+            "writeValue",
+            "readValue"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+          "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733",
+          "symbols": [
+            "doWrite",
+            "doRead"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_common"
+        ],
+        "constraints": "沿用原CONFIG目标，未新引依赖；本候选尚未生产接线"
+      },
+      "usages": [
+        {
+          "consumerUnit": "drivetrain",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "selection",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "policy",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "标量为主机字节序；string长度用格式化流<<而非固定u32，读取用>>并按长度resize。不能直接替代冻结大小端/字符串/拒绝策略；IOUtil::isLittleEndian只探测，不提供协议。继续审查同渠道已用Boost.Endian等可复用原语，不申请新通用codec平台。",
+        "lifetime": "调用方局部值/宿主渲染；不授予模型构造或worker越界权限",
+        "determinism": "逐功能核字段位模式、浮点及呈现差异，不声称等价"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/common/SerializationTest.cpp",
+          "sha256": "e4c74384bd7701f19452ce52fc6583bff40916f4b8f9a8303fecec27a5538c11",
+          "symbols": [
+            "BINArchiveTest"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "examples": [],
+      "docs": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "只核列明资源；空数组不表示全库不存在"
+      }
+    },
+    {
+      "id": "HOST-LINES",
+      "ownerUnit": "ui",
+      "search": {
+        "command": "rg -n \"RenderLines|addLine|setColor|setThickness|glVertex3f|glPushAttrib|alpha\" RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "实际读取公共头、实现与原目标；仅候选，不证明业务协议可直接替换"
+      },
+      "boundary": "宿主线段绘制候选；draw忽略回调alpha，使用setColor的_alpha；顶点从double转float。保持gl属性、逐点色、世界系m、选中圈及透明度，不能整段GL_POINTS直接换线渲染。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp",
+          "sha256": "961b1dfdf2b39f0b48535cf900a35369d23486c905beffcf2b2a4450b9c902f4",
+          "symbols": [
+            "RenderLines",
+            "addLine",
+            "addLines",
+            "setColor",
+            "setThickness"
+          ],
+          "target": "sdurw_opengl",
+          "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+          "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+        },
+        {
+          "path": "RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp",
+          "sha256": "8d34fa5c1be3e04af2127c00ba73bc623713a89559cccc9bd067699e53366c3c",
+          "symbols": [
+            "draw",
+            "drawVector3D"
+          ],
+          "target": "sdurw_opengl",
+          "targetFile": "RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+          "targetSha256": "e5c3a1379dd0e4ab0859396e9f049f57b2c8a0a2b97ef5cbeac0e01e7373f20f"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_opengl"
+        ],
+        "constraints": "沿用原CONFIG目标，未新引依赖；本候选尚未生产接线"
+      },
+      "usages": [
+        {
+          "consumerUnit": "ui",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6.2",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "宿主线段绘制候选；draw忽略回调alpha，使用setColor的_alpha；顶点从double转float。保持gl属性、逐点色、世界系m、选中圈及透明度，不能整段GL_POINTS直接换线渲染。",
+        "lifetime": "调用方局部值/宿主渲染；不授予模型构造或worker越界权限",
+        "determinism": "逐功能核字段位模式、浮点及呈现差异，不声称等价"
+      },
+      "tests": [],
+      "examples": [],
+      "docs": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"RenderLines|addLine|setColor|setThickness|glVertex3f|glPushAttrib|alpha\" RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp RobWork/RobWork/src/rwlibs/opengl/RenderLines.cpp RobWork/RobWork/src/rwlibs/opengl/CMakeLists.txt",
+        "conclusion": "只核列明资源；空数组不表示全库不存在"
+      }
     }
   ]
 }
