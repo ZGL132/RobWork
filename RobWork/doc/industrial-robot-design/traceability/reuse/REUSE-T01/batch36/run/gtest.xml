@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="20" failures="2" disabled="0" errors="0" time="13.794" timestamp="2026-10-23T07:48:26.863" name="AllTests">
+  <testsuite name="LogPipelineAudit" tests="4" failures="2" disabled="0" skipped="0" errors="0" time="0.091" timestamp="2026-10-23T07:48:26.863">
+    <testcase name="AlreadyEmittedLastSampleDoesNotReplayEarlierDrop_DT_LOG_SAMPLE" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp" line="67" status="run" result="completed" time="0.018" timestamp="2026-10-23T07:48:26.863" classname="LogPipelineAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp:88&#x0A;Expected equality of these values:&#x0A;  bytes.find(&quot;sample-middle&quot;)&#x0A;    Which is: 163&#x0A;  std::string::npos&#x0A;    Which is: 18446744073709551615&#x0A;DT-LOG采样最后一条已落盘，不应收尾补出更早被采掉的中间条&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp:88
+Expected equality of these values:
+  bytes.find("sample-middle")
+    Which is: 163
+  std::string::npos
+    Which is: 18446744073709551615
+DT-LOG采样最后一条已落盘，不应收尾补出更早被采掉的中间条
+]]></failure>
+    </testcase>
+    <testcase name="BufferedBatchAfterFinalSequenceIsStale_DT_LOG_REPLAY" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp" line="92" status="run" result="completed" time="0.043" timestamp="2026-10-23T07:48:26.882" classname="LogPipelineAudit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp:111&#x0A;Expected equality of these values:&#x0A;  bytes.find(&quot;after-final-invalid&quot;)&#x0A;    Which is: 405&#x0A;  std::string::npos&#x0A;    Which is: 18446744073709551615&#x0A;final定义之后无更多批次，较高序号缓冲必须按陈旧批处理&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp:111
+Expected equality of these values:
+  bytes.find("after-final-invalid")
+    Which is: 405
+  std::string::npos
+    Which is: 18446744073709551615
+final定义之后无更多批次，较高序号缓冲必须按陈旧批处理
+]]></failure>
+    </testcase>
+    <testcase name="SameWorkerDifferentTaskStreamsRemainIndependent_DT_LOG_REPLAY" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp" line="115" status="run" result="completed" time="0.026" timestamp="2026-10-23T07:48:26.926" classname="LogPipelineAudit" />
+    <testcase name="ExistingQueueAndZeroThreadPoolSemantics_REUSE_UTIL_THREAD" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch36\LogPipelineSuitabilityTest.cpp" line="138" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:48:26.952" classname="LogPipelineAudit" />
+  </testsuite>
+  <testsuite name="DiagLogging" tests="12" failures="0" disabled="0" skipped="0" errors="0" time="0.39" timestamp="2026-10-23T07:48:26.954">
+    <testcase name="DtLog1_TwoTierSplitKeepsUserFileCleanOfDevLinesAndInternalPatterns" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="390" status="run" result="completed" time="0.04" timestamp="2026-10-23T07:48:26.954" classname="DiagLogging" />
+    <testcase name="DtLog2_ConcurrentWritesKeepSameThreadFifoAndGlobalStableOrder" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="469" status="run" result="completed" time="0.189" timestamp="2026-10-23T07:48:26.994" classname="DiagLogging" />
+    <testcase name="DtLog3_WriteFailureInjectedStaysNonBlockingAndBounded" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="536" status="run" result="completed" time="0.018" timestamp="2026-10-23T07:48:27.184" classname="DiagLogging" />
+    <testcase name="DtLog4_DisabledLoggingLeavesFormalDiagnosticsIntact" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="596" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:48:27.202" classname="DiagLogging" />
+    <testcase name="DtLog5_WorkerBatchReplayRestoresOrderAndFillsChannelGap" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="651" status="run" result="completed" time="0.029" timestamp="2026-10-23T07:48:27.203" classname="DiagLogging" />
+    <testcase name="DtLogThrottleAndSamplingWindowBehavior" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="754" status="run" result="completed" time="0.018" timestamp="2026-10-23T07:48:27.232" classname="DiagLogging" />
+    <testcase name="DtLogOverflowDropsOldestDebugTraceAndCountsDevDiagnostic" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="850" status="run" result="completed" time="0.018" timestamp="2026-10-23T07:48:27.251" classname="DiagLogging" />
+    <testcase name="DtLogRotationGenerationsShiftWithRealFiles" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="899" status="run" result="completed" time="0.006" timestamp="2026-10-23T07:48:27.269" classname="DiagLogging" />
+    <testcase name="DtLogTruncationMarks4KiBUtf8Safe" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="941" status="run" result="completed" time="0.064" timestamp="2026-10-23T07:48:27.275" classname="DiagLogging" />
+    <testcase name="DtLogCallerViolationsFailFastWithUsage" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="975" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:48:27.340" classname="DiagLogging" />
+    <testcase name="DtPdiag7_DefaultsAreConfigurableEngineeringDefaults" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="1022" status="run" result="completed" time="0.002" timestamp="2026-10-23T07:48:27.341" classname="DiagLogging" />
+    <testcase name="DtPex8_HeaderDefinesPayloadOnlyNoExecutionFrameContract" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\LoggingTest.cpp" line="1063" status="run" result="completed" time="0." timestamp="2026-10-23T07:48:27.343" classname="DiagLogging" />
+  </testsuite>
+  <testsuite name="ThreadPoolTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="1.018" timestamp="2026-10-23T07:48:27.344">
+    <testcase name="timed_test_5sec" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\common\ThreadTest.cpp" line="460" status="run" result="completed" time="1.018" timestamp="2026-10-23T07:48:27.344" classname="ThreadPoolTest" />
+  </testsuite>
+  <testsuite name="ThreadPoolTest_Abort" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="8.13" timestamp="2026-10-23T07:48:28.363">
+    <testcase name="timed_test_20sec" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\common\ThreadTest.cpp" line="471" status="run" result="completed" time="8.13" timestamp="2026-10-23T07:48:28.363" classname="ThreadPoolTest_Abort" />
+  </testsuite>
+  <testsuite name="ThreadTaskTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-23T07:48:36.493">
+    <testcase name="timed_test_5sec" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\common\ThreadTest.cpp" line="482" status="run" result="completed" time="0.001" timestamp="2026-10-23T07:48:36.493" classname="ThreadTaskTest" />
+  </testsuite>
+  <testsuite name="ThreadTaskTest_InvocationOrder" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="4.162" timestamp="2026-10-23T07:48:36.494">
+    <testcase name="times_test_20sec" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\common\ThreadTest.cpp" line="495" status="run" result="completed" time="4.162" timestamp="2026-10-23T07:48:36.494" classname="ThreadTaskTest_InvocationOrder" />
+  </testsuite>
+</testsuites>

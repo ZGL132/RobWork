@@ -1,0 +1,80 @@
+{
+  "batch": "B36-in-flight-preserved",
+  "entries": [
+    {
+      "path": "b36-build-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b36-build-final.log",
+      "bytes": 14194,
+      "rawSha256": "74fc71de04a5292d64c692ed76d395991f5dd98b7826f5a81df781a747ce6478"
+    },
+    {
+      "path": "b36-build.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b36-build.log",
+      "bytes": 25188,
+      "rawSha256": "a00e88d5bf9292011610402e8e88176aeaca53fc9b15c3253709b8cebdbfea32"
+    },
+    {
+      "path": "b36-configure.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b36-configure.log",
+      "bytes": 4485,
+      "rawSha256": "af17217df5cdc3748e5b643b11e36a1fc1dacdfa0e90495eaae9b48f7e58a17c"
+    },
+    {
+      "path": "b36-vs-env-final.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b36-vs-env.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1204,
+      "rawSha256": "6d24415ec974b173fe561b5502dd7ae331e7645ea5d2b79ae34089e1b9e1100b"
+    },
+    {
+      "path": "LogPipelineSuitabilityTest.cpp",
+      "bytes": 6340,
+      "rawSha256": "23b587113d206d8dcb8e53d0e14f565cf471a0917b976a3631e57f665e0df925"
+    },
+    {
+      "path": "README.md",
+      "bytes": 873,
+      "rawSha256": "a8bff606555d2d46a05c56b68f3b8f6c959e9b242647590da4d5496620a1c58f"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 9490,
+      "rawSha256": "27c86eff91b0d07cbfebb129f0fede6aa79ec5d4e7039763e66c6eebfc0f870b"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 15891,
+      "rawSha256": "6740abc51a3e89912f9341a4af97aabefe3a03fe70b6e6264f3b69a5f91a5476"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 5036,
+      "rawSha256": "915faf70ec476ed3b7d19c3382eb984f6bd85ca73739c3a3aa7017be313c85e9"
+    }
+  ]
+}
