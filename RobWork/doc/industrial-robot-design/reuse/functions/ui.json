@@ -411,7 +411,7 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
           "symbol": "ObservedView",
-          "qualifiedSymbol": "KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+          "qualifiedSymbol": "(anonymous namespace)::KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
           "startLine": 957,
           "endLine": 971,
           "sha256": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002"

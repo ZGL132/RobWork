@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "taskId": "REUSE-T01",
+  "scope": "runtime移动关节偏置反例真实性及owner修复边界独立验收",
+  "frozenSha": "dd27799a1afd6ba080c7ad7b4ec9d6db9da86e38",
+  "verdict": "PASS",
+  "verdictMeaning": "缺陷复现有效；产品规范测试仍FAIL，产品缺陷OPEN，不是产品行为PASS或T01/T02整体PASS",
+  "acceptanceFindings": [],
+  "productDefect": {
+    "status": "OPEN",
+    "title": "runtime编译器将Prismatic零位偏置误作旋转",
+    "owner": "runtime",
+    "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "relevantLines": [
+      540,
+      546,
+      714,
+      715,
+      717
+    ],
+    "canonicalContract": "q_authoritative=zeroOffset+q_rw；Prismatic zeroOffset单位m",
+    "offsetMetres": 0.25,
+    "runtimeQMetres": 0.125,
+    "expectedDisplacementMetres": 0.375,
+    "expectedRotationRad": 0,
+    "actualDisplacementMetres": 0.125,
+    "actualRotationRad": 0.25,
+    "axes": [
+      "X",
+      "Y",
+      "Z"
+    ],
+    "cause": "compileWorkCell在Prismatic和Revolute分流前共用jointStaticTransform；其rZeroOffset=rotationFromCustomEaa(axis*zeroOffset)，保留原点平移而把米制偏置编为旋转。PrismaticJoint按静态变换局部Z平移q，子帧仅补偿R_align，故丢失offset平移并保留offset旋转。",
+    "upstreamDefect": false,
+    "upstreamEvidence": "PrismaticJoint.cpp getJointTransform(q)为(0,0,q)纯平移；PrismaticJoint.hpp各实现只沿固定变换R.col(2)加q，保持传入旋转。上游JointTest.cpp:130-160也明确P=T.P+T.R.col(2)*q、R=T.R；本次审读而未运行完整上游Joint测试。",
+    "repairBoundary": "仅runtime owner负责按关节类型修正现有静态变换适配，沿用上游Transform3D/PrismaticJoint。不得由kinematics构造第二WorkCell、业务侧补偿或修改规范/黄金洗绿；相关修复须另行契约与回归验收。"
+  },
+  "results": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "caseResults": [
+    {
+      "testId": "RuntimeOffsetAudit.RevoluteOffsetMatchesAuthoritativeCoordinate",
+      "outcome": "passed",
+      "role": "旋转控制组",
+      "meaning": "offset=.25rad、q_rw=.125rad，对照公开EAA(.375rad)矩阵通过"
+    },
+    {
+      "testId": "RuntimeOffsetAudit.PrismaticOffsetMustTranslateWithoutRotation",
+      "outcome": "failed",
+      "role": "规范反例",
+      "meaning": "X/Y/Z三轴每轴1个平移和4个旋转断言失败，共15个failure；不得把这些产品断言失败算passed"
+    }
+  ],
+  "build": {
+    "generator": "Visual Studio 17 2022",
+    "VSDeveloperShell": "17.12.0",
+    "hostArch": "x64",
+    "targetArch": "x64",
+    "configuration": "Release",
+    "target": "ird_runtime_audit_probe",
+    "configureExit": 0,
+    "buildExit": 0,
+    "productTestExit": 1,
+    "driverExit": 0,
+    "filter": "RuntimeOffsetAudit.*",
+    "absoluteExe": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-runtime-counterexample-28e716b14103449384a04ec48929d50c\\build\\Release\\ird_runtime_audit_probe.exe",
+    "warning": "MSB8029临时目录增量生成警告；全新构建完成"
+  },
+  "sourceAndEnvironment": {
+    "frozenManifestSourceHashChecks": 6,
+    "hashMismatches": 0,
+    "additionalSourceBindings": 7,
+    "xmlNativeNamesOutcomesAndCountsMatch": true,
+    "priorRedNamesOutcomesMatch": true,
+    "XMLFailureAssertions": 15,
+    "CMake": "直接add_subdirectory产品原core/testkit/runtime CMake；CONFIG导出目标通过ALIAS适配，仅目标命名衔接",
+    "fixture": "原CanonicalModelFixture minimalFixture，真实CanonicalModelBuilder::build与compileWorkCell、SerialDevice::baseTend；未使用伪造WC/FK",
+    "compiledWorkCellCompilerFromFrozenCheckout": true,
+    "upstreamArtifacts": "使用既有D盘RobWork/RobWorkSim导出目标与安装依赖，核心models/kinematics DLL原始摘要另存；不宣称重建整个上游或源码可复现证明"
+  },
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\\repo",
+  "checkoutClean": true,
+  "parentTreeModified": false,
+  "canonicalOrGoldenModified": false,
+  "productOrUpstreamModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "notRun": [
+    "全量runtime/core/testkit测试",
+    "上游完整Joint测试集",
+    "GUI/Widgets",
+    "修复后回归（未实施修复）",
+    "非恒等原点、多TCP、Fixed/Continuous、非轴向任意轴与限位完整矩阵",
+    "生产断开/扰动",
+    "T01/T02整体退出或迁移验收",
+    "本次范围外治理脚本/新增关系独立语义验收"
+  ],
+  "limitations": [
+    "PASS只表示反例复现有效；产品测试1 failed和产品缺陷OPEN必须保留。",
+    "规范期望与1e-12容差均保持冻结源码；没有改黄金、吞错或将规范FAIL转为成功断言。",
+    "角度.25rad根据各轴实跑失败矩阵的cos/sin数值与静态映射源码共同核定，不是原生日志单独打印的EAA。",
+    "原生报告gitCommit为空，冻结SHA、干净独立检出、项目编译输入与附加源码/产物摘要在外部报告中绑定；未改写原生报告。",
+    "未批准T02实施/整体通过，不视为PrismaticJoint上游缺陷或新数值核需求。"
+  ],
+  "evidence": [
+    "run-probe.ps1",
+    "environment.log",
+    "configure.log",
+    "configure.exit.txt",
+    "build.log",
+    "build.exit.txt",
+    "tests.log",
+    "tests.exit.txt",
+    "gtest.xml",
+    "ird-test-report.json",
+    "report-cross-check.json",
+    "observed-counterexample.json",
+    "source-hash-checks.json",
+    "additional-source-binding.json",
+    "source-inspection.log",
+    "authority-and-build-binding.log",
+    "binary-and-cache-binding.json",
+    "scoped-diff.log",
+    "scoped-diff.exit.txt",
+    "fetch.log",
+    "checkout.log",
+    "driver.log",
+    "driver.exit.txt"
+  ]
+}

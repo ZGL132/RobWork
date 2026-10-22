@@ -1,0 +1,41 @@
+newRows=19 failedBindings=0
+
+id                                         startLine endLine hashMatches first
+--                                         --------- ------- ----------- -----                                         
+kinematics.IKinRuntimeView                       141     154        True class IKinRuntimeView {
+kinematics.FrozenRuntimeView                      74      91        True class FrozenRuntimeView final : public IKinRun
+                                                                         timeView {
+kinematics.TestView                              337     351        True class TestView final : public IKinRuntimeView
+                                                                         {
+kinematics.MidSolveDegradedView                  241     264        True class MidSolveDegradedView final : public kin:
+                                                                         :IKinRuntimeView {
+kinematics.RigView                               191     202        True class RigView final : public kin::IKinRuntimeV
+                                                                         iew {
+runtime.WorkCellConstView.findFrame              990     995        True const rw::kinematics::Frame* WorkCellConstView
+                                                                         ::findFrame(std::string_view name) const noexc
+                                                                         ept
+runtime.WorkCellConstView.findDevice             998    1003        True     WorkCellConstView::findDevice(std::string_
+                                                                         view name) const noexcept
+runtime.WorkCellConstView.defaultState          1011    1015        True rw::kinematics::State WorkCellConstView::defau
+                                                                         ltState() const
+runtime.RuntimeSnapshot.workCell                 753     756        True const WorkCellConstView& RuntimeSnapshot::work
+                                                                         Cell() const
+runtime.RuntimeSnapshot.makeState                811     816        True rw::kinematics::State RuntimeSnapshot::makeSta
+                                                                         te() const
+runtime.RuntimeSnapshot.tryDynamicWorkCell       768     784        True Expected<DynamicWorkCellConstView, RuntimeErro
+                                                                         r> RuntimeSnapshot::tryDynamicWorkCell() const
+runtime.RuntimeSnapshot.workCellHandle           758     766        True rw::core::Ptr<rw::models::WorkCell> RuntimeSna
+                                                                         pshot::workCellHandle() const
+runtime.jointStaticTransform                     541     553        True rw::math::Transform3D<double> jointStaticTrans
+                                                                         form(
+ui.SnapshotViewAdapter                            61      80        True class SnapshotViewAdapter final : public kinem
+                                                                         atics::IKinRuntimeView {
+ui.KinSessionModelView                           108     135        True class KinSessionModelView final : public kinem
+                                                                         atics::IKinRuntimeView {
+ui.KinEvaluationExecutor.attachSnapshot           94     111        True void KinEvaluationExecutor::attachSnapshot(
+ui.KinEvaluationExecutor.attachView              113     139        True void KinEvaluationExecutor::attachView(
+ui.FixtureView                                    79     118        True class FixtureView final : public IKinRuntimeVi
+                                                                         ew {
+ui.ObservedView                                  957     971        True     class ObservedView final : public IKinRunt
+                                                                         imeView {
+

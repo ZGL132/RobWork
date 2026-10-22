@@ -1197,9 +1197,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "WorkCellConstView::findDevice",
           "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
-          "startLine": 998,
+          "startLine": 997,
           "endLine": 1003,
-          "sha256": "a5b3c3534662a5d27bc8c7f5fcc8b2dbc6b48c92ea079564f58613869ea75556"
+          "sha256": "86fa247a2b003a68f5fd67c54a293c61926414cc76c285d468b52db6a91a2967"
         }
       ],
       "targets": [
@@ -1526,7 +1526,7 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
           "symbol": "jointStaticTransform",
-          "qualifiedSymbol": "sdurws::ird::runtime::jointStaticTransform",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::jointStaticTransform",
           "startLine": 541,
           "endLine": 553,
           "sha256": "3290ac5bbbc1fac433ac36ef73223e4effdea03d0399410e313839d75507f590"

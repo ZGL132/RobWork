@@ -64,3 +64,5 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第九批新增19条runtime/运动学/UI视图与调用链关系，累计239条（236 pending、3 proposal），closedFiles=0。真实边界、五个测试替身和T02最小接口方向见 `runtime-boundary-audit.md`；不把model/worldToBase值冻结当成WC构造许可。新增runtime-probe沿用产品原runtime CMake、原夹具、GTest/testkit，VS x64配置/构建exit0；2项真实执行1 passed、1 failed，skipped/notRun=0：旋转控制组正确，移动offset=0.25m误编码旋转且缺平移，三坐标轴均检出。原FAIL见 `runtime-probe/red/`，未改产品/上游/vcpkg或放宽规范。该发现阻断相关T02适配验收，待按阶段修复runtime owner映射；不是上游能力缺失。全T01仍未退出。
 
 第八批readHex4返工在冻结6d4c254548d2784aa25a2b87978e3d7fc0ab60af独立复验PASS；原件见 `traceability/acceptance/REUSE-T01-batch8-r2-20261022/`，原首轮FAIL保留，仅限登记返工。
+
+第九批首轮独立语义验收冻结dd27799为FAIL：B9-P2-01三处qualifiedSymbol作用域错误、B9-P2-02 findDevice遗漏完整返回类型；已分别修正为真实匿名/全局/测试局部域和997–1003行并重算摘要，待返工独立复验。原件在 `traceability/acceptance/REUSE-T01-batch9-r1-20261023/`。同冻结SHA移动offset反例经独立VS x64重建实跑确认1 passed、1 failed、exit1，反例真实性PASS而产品缺陷OPEN，见 `REUSE-T01-runtime-counterexample-20261023/`，不授予T01/T02整体通过。

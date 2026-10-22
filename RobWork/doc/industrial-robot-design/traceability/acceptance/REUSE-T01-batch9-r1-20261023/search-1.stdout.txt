@@ -1,0 +1,10 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\KinFkFixture.hpp:337:class TestView final : public IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\IkTest.cpp:241:class MidSolveDegradedView final : public kin::IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\CollisionPortTest.cpp:191:class RigView final : public kin::IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\plugin\KinPanelTypes.hpp:56:class IKinRuntimeView;    // 前置声明（模型只读视图——KinTypes.hpp）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:74:class FrozenRuntimeView final : public IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\include\sdurws\ird\kinematics\KinTypes.hpp:141:class IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\KinEvaluationChannelTest.cpp:79:class FixtureView final : public IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\test\KinEvaluationChannelTest.cpp:957:    class ObservedView final : public IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\KinEvaluationChannel.hpp:108:class KinSessionModelView final : public kinematics::IKinRuntimeView {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\KinEvaluationChannel.cpp:61:class SnapshotViewAdapter final : public kinematics::IKinRuntimeView {

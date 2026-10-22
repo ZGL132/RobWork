@@ -1,0 +1,20 @@
+[
+  {
+    "testId": "RuntimeOffsetAudit.RevoluteOffsetMatchesAuthoritativeCoordinate",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailureAssertions": 0,
+    "xmlOutcome": "passed",
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "RuntimeOffsetAudit.PrismaticOffsetMustTranslateWithoutRotation",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailureAssertions": 15,
+    "xmlOutcome": "failed",
+    "nativeOutcome": "failed",
+    "matches": true
+  }
+]

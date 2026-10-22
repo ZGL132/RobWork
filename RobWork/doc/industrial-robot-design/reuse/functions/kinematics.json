@@ -1083,7 +1083,7 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
           "symbol": "MidSolveDegradedView",
-          "qualifiedSymbol": "(anonymous namespace)::MidSolveDegradedView",
+          "qualifiedSymbol": "::MidSolveDegradedView",
           "startLine": 241,
           "endLine": 264,
           "sha256": "fc40f3bfb56e65951d04f50f51517e08eff36bb8f5afd8a3ecf8a2a16d4a2bfb"

@@ -1,0 +1,30 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "normalizedSha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "normalizedSha256": "64fa97398fd7dc6869e099c130e004069cc63c6456c3ad3ed9cd332270d97fb0"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+    "normalizedSha256": "2bd4c6927c108b1f08966649971acc4ec9e8c6cad689b858ccbb0afa8f1282eb"
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+    "normalizedSha256": "428118721de2c8927de1703e04cd64a54f55f00abf17491af006cef5df67db23"
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.cpp",
+    "normalizedSha256": "89b77f9823a1a2a90b758faeae5e6366b11ea49df9953807dbe0090689a9dace"
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "normalizedSha256": "c4bb61d1c6b5d1c5243e6df20b7b9bfb8a0519287e0a9433728ecda2eb51b3b7"
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+    "normalizedSha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+  }
+]

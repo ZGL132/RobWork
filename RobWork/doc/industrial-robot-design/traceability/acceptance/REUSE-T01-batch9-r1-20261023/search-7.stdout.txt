@@ -1,0 +1,25 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:63:#include <rw/models/PrismaticJoint.hpp>   // 移动关节
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:451: * RevoluteJoint/PrismaticJoint 固定绕局部 Z 旋转，权威轴 axis（关节系内
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:526: * 定义：T_static ＝ T_parent_joint · R_axis(zeroOffset) · R_align。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:527: * 基线关节瞬时变换为 getTransform(q_rw)＝T_static·Rz(q_rw)（RevoluteJoint
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:530: * 连杆系满足 F(link_i)＝F(link_{i-1})·T_parent_joint·R_axis(offset+q_rw)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:531: * ＝权威 FK（q_authoritative＝zeroOffset＋q_rw，CanonicalJoint::zeroOffset
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:536: * @param zeroOffset   [in] 零位偏置（单位 rad〔移动关节 m〕；RobWork 侧
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:537: *                     q_rw＝q_authoritative−offset）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:541:rw::math::Transform3D<double> jointStaticTransform(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:544:    double zeroOffset)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:548:    const rw::math::Rotation3D<double> rZeroOffset = rotationFromCustomEaa(axis * zeroOffset);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:706:                // 原样挂接；zeroOffset 对无轴关节无意义，不消费（其合法性
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:712:                // ·R_align（任意轴映射推导见 jointStaticTransform 注释）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:714:                    jointStaticTransform(joint.origin, joint.axis, joint.zeroOffset);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:715:                if (joint.type == JointType::Prismatic) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:717:                        new rw::models::PrismaticJoint(jointFrameName, tStatic));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:731:                // 限位：权威 [qmin,qmax] 对应 q_rw＝q_auth−offset（RobWork
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:732:                // q 从零起算——zeroOffset 语义），故 WC 侧 bounds 平移 −offset；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:740:                    qLower = joint.bounds->lower - joint.zeroOffset;  // 单位随关节量纲（rad/m）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:741:                    qUpper = joint.bounds->upper - joint.zeroOffset;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:763:            //   R_align·Rz(q_rw)·R_alignᵀ ＝ R_axis(q_rw)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp:855:        // 位姿语义经 zeroOffset 映射在链变换内）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp:149:    /// 零位偏置：q_authoritative = q_zeroOffset + q_rw（RobWork 侧 q 从零起算）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp:151:    double zeroOffset = 0.0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp:152:    /// 关节限位（存在性与值都入身份）。Revolute/Prismatic 必填且 lower＜upper；
