@@ -3241,7 +3241,9 @@
     "RobWork/doc/industrial-robot-design/reuse/core-digest-audit.md",
     "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-DIGEST-01.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/**",
-    "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md"
+    "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/**",
+    "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

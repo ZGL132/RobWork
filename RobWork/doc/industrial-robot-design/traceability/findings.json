@@ -9745,5 +9745,16 @@
   "owner": "core / REUSE-T05",
   "resolution": "22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。"
 }
+,
+{
+  "id": "F-967",
+  "source": "reuse/core-event-lifetime-audit.md / batch32",
+  "severity": "major",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "ReferenceEventBus测试参考实现被UI生产装配且句柄析构不退订",
+  "owner": "core / execution / ui / REUSE-T01",
+  "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。"
+}
   ]
 }

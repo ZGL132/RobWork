@@ -2146,6 +2146,171 @@
         }
       ],
       "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.audit-b32.eventBus.productionWiring",
+      "ownerUnit": "ui",
+      "requirements": [
+        "SA-19",
+        "TASK-03",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "m_eventBus = std::make_shared<core::ReferenceEventBus>();",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 746,
+          "endLine": 756,
+          "sha256": "0c5777c781b21af4a932f376404e86e32ac9e199d2efa54e6a39ec47d652bd97"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "m_revisionSink =",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 823,
+          "endLine": 845,
+          "sha256": "f7f781f755f72c4059c77f4064197e704b98b9bcef6c2cb711b74f2a52070d7f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "class RequirementsRevisionSyncSink",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 850,
+          "endLine": 925,
+          "sha256": "3bdbcd40c2974035c470f74a94e83d7c8e841280431eb27923c348a77da9772f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "contentDeps.wiring.eventBus = m_eventBus;",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 1022,
+          "endLine": 1022,
+          "sha256": "902de7b05121fe5763706b7509430e92e35ce8e4d686551f97aa27da25e738a4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "CORE-EVENT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch32/search.json",
+        "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
+      },
+      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/units/core.md",
+          "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/CMakeLists.txt",
+          "sha256": "2846b134386a062e13ad949c024769ca4677c1e943e37c83b041e048a6ec85ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/EventLifetimeSuitabilityTest.cpp",
+          "sha256": "f22aec21c9023f7cb07acc00fcf39679a5db4869da1ece6b2305c916cc08f23e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+          "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+          "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+          "sha256": "70acb5cfc8c0e540d19c8715857fff1898396888efe56ae75f49398403aaf374"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Events.hpp",
+          "sha256": "f7307d7400fdd65d13ae5079caf841ce00a722d90ba617b45668803f1ef47fc1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+          "sha256": "aa8b0c1c0150e278b0a4fe486c597c205baf65534fa65976f81ac341fd92a4f6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Evaluation.hpp",
+          "sha256": "5bcf9c507261c17c7063a6444f670697eefe330d6e671ccadae4ea0b41d8e036"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/EventsTest.cpp",
+          "sha256": "966587ae56aa5628815f048e744307f4a749d61f0c9c582716259e5082f65fda"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/EventBus.cpp",
+          "sha256": "c817e0276136d9977ee982dfbe7cbc1d1e9b22eb199adbdce9ee4a1957758533"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp",
+          "sha256": "b6d9483ba746de2d0b7a828bc603073f0718f8d7502a37d9ddf4c0cef34feaaa"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/Event.hpp",
+          "sha256": "6f66c8dd30b36c0a3bf9946a8b38d71389d8f06adabdbcdfb3f60ea82b54ece6"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/core/EventTest.cpp",
+          "sha256": "98440bef94017790fc2ad62d6fd8d9b1c7c21e89326083a0d1d9cef27555b73d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "sha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+          "sha256": "2a5f64a2976e0da725064f53f16a84bf982dfc301a2dfcfbe6b7abf147474636"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/units/execution.md",
+          "sha256": "ab7a4c3894b988be0fb7745daab50c8924ac679f8f24edfd2c7022d85f961a8f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+          "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/search.json",
+          "sha256": "1c4570dffd56881224b85d0f0d7859dd3c3f4fc400f09de865b070aeafec2305"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/verification.json",
+          "sha256": "25bdbec7bbf5c881b50a576d0f7d8c220b199b3d4a9dda91cf8a9fe12bb66ab3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/run/gtest.xml",
+          "sha256": "aa39fe33c2fd54f61317318a77a6c495470a856d9e16765210d7d0001be396b2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/run/ird-test-report.json",
+          "sha256": "f45a624baae63f21a5c611c3f98b02251d22caf3c9562128924ba2ec14cec9d1"
+        }
+      ],
+      "auditBoundary": "23跑22passed1failed0skipped；生产装配仅静态源码链，未跑GUI/最终DLL/并发在投退订/全消费者，不关闭整文件或T01"
     }
   ]
 }

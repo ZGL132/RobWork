@@ -1,0 +1,26 @@
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- The CXX compiler identification is MSVC 19.42.34433.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: D:/software/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Error at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:830 (set):
+  Syntax error in cmake code at
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:830
+
+  when parsing string
+
+    QUIET;COMPONENTS;filesystem;serialization;system;thread;program_options;date_time;CONFIG;HINTS;C:\local
+
+  Invalid character escape '\l'.
+Call Stack (most recent call first):
+  D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:108 (find_package)
+  D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package)
+  C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt:4 (find_package)
+
+
+-- Configuring incomplete, errors occurred!
