@@ -1,0 +1,54 @@
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.cpp:135:void FalconControl::keyEventListener(int key, Qt::KeyboardModifiers modifier){
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.cpp:155:          boost::bind(&FalconControl::genericEventListener, this, boost::arg<1>()), this);
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.cpp:158:          boost::bind(&FalconControl::keyEventListener, this, boost::arg<1>(), boost::arg<2>()), this);
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.cpp:264:void FalconControl::genericEventListener(const std::string& event){
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.hpp:69:    void genericEventListener(const std::string& event);
+RobWork/RobWorkSim/example\FalconTeleoperatePlugin\src\FalconControl.hpp:70:    void keyEventListener(int key, Qt::KeyboardModifiers modifier);
+RobWork/RobWork/gtest\CMakeLists.txt:74:        core/EventTest.cpp
+RobWork/RobWorkSim/example\SimTemplatePlugin\SimTemplatePlugin.hpp:44:    void genericEventListener(const std::string& event);
+RobWork/RobWorkSim/example\SimTaskPlugin\SimTaskPlugin.hpp:63:    void genericEventListener(const std::string& event);
+RobWork/RobWorkSim/example\SimTaskPlugin\SimTaskPlugin.cpp:126:          boost::bind(&SimTaskPlugin::genericEventListener, this, boost::arg<1>()), this);
+RobWork/RobWorkSim/example\SimTaskPlugin\SimTaskPlugin.cpp:1331:void SimTaskPlugin::genericEventListener(const std::string& event){
+RobWork/RobWorkSim/example\SimTemplatePlugin\SimTemplatePlugin.cpp:51:          boost::bind(&SimTemplatePlugin::genericEventListener, this, boost::arg<1>()), this);
+RobWork/RobWorkSim/example\SimTemplatePlugin\SimTemplatePlugin.cpp:153:void SimTemplatePlugin::genericEventListener(const std::string& event){
+RobWork/RobWorkSim/example\SimTaskVisPlugin\SimTaskVisPlugin.hpp:52:    void genericEventListener(const std::string& event);
+RobWork/RobWorkSim/example\SimTaskVisPlugin\SimTaskVisPlugin.cpp:147:          boost::bind(&SimTaskVisPlugin::genericEventListener, this, boost::arg<1>()), this);
+RobWork/RobWorkSim/example\SimTaskVisPlugin\SimTaskVisPlugin.cpp:582:void SimTaskVisPlugin::genericEventListener(const std::string& event){
+RobWork/RobWork/gtest\core\EventTest.cpp:31:typedef boost::function<void(const std::string&, boost::any)> GenericAnyEventListener;
+RobWork/RobWork/gtest\core\EventTest.cpp:32:typedef rw::core::Event<GenericAnyEventListener, const std::string&, boost::any> GenericAnyEvent;
+RobWork/RobWork/gtest\core\EventTest.cpp:44:    class AnyEventListener {
+RobWork/RobWork/gtest\core\EventTest.cpp:46:        AnyEventListener(bool &check): _check(check) {}
+RobWork/RobWork/gtest\core\EventTest.cpp:54:TEST( EventTest, GlobalCallbackFunctions ) {
+RobWork/RobWork/gtest\core\EventTest.cpp:75:TEST( EventTest, EventListener ) {
+RobWork/RobWork/gtest\core\EventTest.cpp:76:    AnyEventListener listener1(b1);
+RobWork/RobWork/gtest\core\EventTest.cpp:77:    AnyEventListener listener2(b2);
+RobWork/RobWork/gtest\core\EventTest.cpp:80:    event.add( boost::bind(&AnyEventListener::cb, &listener1, _1, _2), &listener1 );
+RobWork/RobWork/gtest\core\EventTest.cpp:81:    event.add( boost::bind(&AnyEventListener::cb, &listener2, _1, _2), &listener2 );
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:3:#include <EventListener.hpp>
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:13:class MyListener: public example::EventListener {
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:18:        void event(EventListener::EventType type, void *data){
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:21:                case(EventListener::e_MENUITEM_EVENT):
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:24:                case(EventListener::e_SPECIAL_KEY_EVENT):
+RobWork/RobWork/example\simplegui\ViewerExample.cpp:27:                case(EventListener::e_KEY_EVENT):
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.hpp:9:class EventListener;
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.hpp:101:        void setKeyListener(example::EventListener *listener);
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:4:#include "EventListener.hpp"
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:81:    example::EventListener* _keyListener;
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:282:        data->_keyListener->event (example::EventListener::e_KEY_EVENT, &key);
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:444:        data->_keyListener->event (example::EventListener::e_KEY_EVENT, &key);
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:532:void SimpleGLViewer::setKeyListener (example::EventListener* listener)
+RobWork/RobWork/example\simplegui\src\MenuItem.hpp:5:#include "EventListener.hpp"
+RobWork/RobWork/example\simplegui\src\MenuItem.hpp:10:    MenuItem(const std::string& name, int id, example::EventListener *listener):
+RobWork/RobWork/example\simplegui\src\MenuItem.hpp:11:             _name(name),_id(id),_eventListener(listener){};
+RobWork/RobWork/example\simplegui\src\MenuItem.hpp:19:        _eventListener->event(example::EventListener::e_MENUITEM_EVENT,&_name);
+RobWork/RobWork/example\simplegui\src\MenuItem.hpp:25:    example::EventListener *_eventListener;
+RobWork/RobWork/example\simplegui\src\EventListener.hpp:1:#ifndef EVENTLISTENER_HPP_
+RobWork/RobWork/example\simplegui\src\EventListener.hpp:2:#define EVENTLISTENER_HPP_
+RobWork/RobWork/example\simplegui\src\EventListener.hpp:5:class EventListener {
+RobWork/RobWork/example\simplegui\src\EventListener.hpp:11:    virtual ~EventListener(){};
+RobWork/RobWork/example\simplegui\src\EventListener.hpp:18:#endif /*EVENTLISTENER_HPP_*/
+RobWork/RobWork/example\simplegui\src\EventListener.cpp:1:#include "EventListener.hpp"
+RobWork/RobWork/example\simplegui\CMakeLists.txt:49:    src/EventListener.cpp
+RobWork/RobWorkSim/example\bootstrap\plugin\BootstrapPlugin.cpp:58:          boost::bind(&BootstrapPlugin::genericEventListener, this, boost::arg<1>()), this);
+RobWork/RobWorkSim/example\bootstrap\plugin\BootstrapPlugin.cpp:213:void BootstrapPlugin::genericEventListener(const std::string& event){
+RobWork/RobWorkSim/example\bootstrap\plugin\BootstrapPlugin.hpp:44:    void genericEventListener(const std::string& event);

@@ -1,0 +1,37 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:3: * @brief  工作台宿主插件（sdurws_ird_ui_plugin）——框架 RobWorkStudio 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:69:#include <sdurws/ird/core/Events.hpp>             // core::ReferenceEventBus/IDomainEventBus（WP-24-T03b——修订事件总线）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:490:    /// 完整类型在 UiPlugin.cpp——析构序经显式析构承载）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:530:    // 段的 #ifdef 区分在 UiPlugin.cpp 实现内；契约测试等无定义目标不编
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:580:    /// 后台执行/结构化结果账面；完整类型在 UiPlugin.cpp——unique_ptr
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:613:    /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:614:    std::shared_ptr<core::ReferenceEventBus> m_eventBus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:618:    std::unique_ptr<core::IEventSubscription> m_revisionSubscription;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:623:    std::unique_ptr<core::IEventSubscription> m_requirementsRevisionSubscription;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp:652:    /// 纯值转发零业务语义；以观察者接口指针持有，具体类在 UiPlugin.cpp）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:894:# ---- 工作台宿主插件：sdurws_ird_ui_plugin（UI-T16，O-38 裁决承接）----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:919:    add_library(sdurws_ird_ui_plugin MODULE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:920:        plugin/UiPlugin.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:937:    target_compile_features(sdurws_ird_ui_plugin PRIVATE cxx_std_17)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:938:    set_target_properties(sdurws_ird_ui_plugin PROPERTIES
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:944:        target_compile_options(sdurws_ird_ui_plugin PRIVATE /utf-8)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:952:    target_compile_definitions(sdurws_ird_ui_plugin PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:957:    target_include_directories(sdurws_ird_ui_plugin PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:987:    target_link_libraries(sdurws_ird_ui_plugin PRIVATE
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1004:        "industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin "
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1015:#   - plugin/UiPlugin.cpp＋plugin/DomainAssembly.cpp＝WP-24-T03 T03a/T03b
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1026:#     同源复用采用"同源码编入本目标"形态——sdurws_ird_ui_plugin（MODULE）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1049:        plugin/UiPlugin.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1050:        plugin/DomainAssembly.cpp   # 装配基座（与 sdurws_ird_ui_plugin 同 TU 同源）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1070:        AUTOMOC ON)   # 插件类 Q_OBJECT 所需——与 sdurws_ird_ui_plugin 同口径
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1075:    # ASM-STUDIO 承接段编译定义（与 sdurws_ird_ui_plugin 同款单一书写点）：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1091:    #     宿主集成边——DTB §4.5 登记模式，与 sdurws_ird_ui_plugin 逐一同构）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt:1194:    # （sdurws_ird_ui_app／sdurws_ird_ui_plugin）与测试/演示目标一律不进
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:2: * @file   UiPlugin.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:3: * @brief  工作台宿主插件实现（sdurws_ird_ui_plugin）——装配序列、会话入口
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:749:    m_eventBus = std::make_shared<core::ReferenceEventBus>();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:755:        std::make_shared<app::StoreFactoryPortAdapter>(*m_bridge, m_eventBus.get()),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:845:            m_revisionSubscription = m_eventBus->subscribe(*m_revisionSink);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:924:            m_requirementsRevisionSubscription =
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:925:                m_eventBus->subscribe(*m_requirementsRevisionSink);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:1022:    contentDeps.wiring.eventBus = m_eventBus;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp:1455:        throw std::runtime_error("sdurws_ird_ui_plugin: 内容装配面构建被拒");
