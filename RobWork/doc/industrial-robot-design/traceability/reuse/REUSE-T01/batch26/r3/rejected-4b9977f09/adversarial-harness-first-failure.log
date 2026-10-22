@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\adversarial.py", line 42, in <module>
+    staged=git(root,'show',':0:'+target);passed=passed and staged==raw
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\adversarial.py", line 6, in git
+    p=run(['git','-C',str(repo),*args]);assert p.returncode==0,(args,p.stderr);return p.stdout
+                                               ^^^^^^^^^^^^^^^
+AssertionError: (('show', ':0:RobWork/doc/industrial-robot-design/traceability/findings.json'), b"fatal: path 'RobWork/doc/industrial-robot-design/traceability/findings.json' is in the index, but not at stage 0\nhint: Did you mean ':1:RobWork/doc/industrial-robot-design/traceability/findings.json'?\n")

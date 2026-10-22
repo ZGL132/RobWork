@@ -1,0 +1,16 @@
+{"shell": "pwsh", "case": "unicode-bom-union", "expected": 0, "actual": 0, "passed": true, "skipped": false, "worktreePreserved": false, "stagesPreserved": false, "log": "fixtures-v2\\pwsh-unicode-bom-union\\stdout.log"}
+{"shell": "pwsh", "case": "note-case", "expected": 1, "actual": 1, "passed": true, "skipped": false, "worktreePreserved": true, "stagesPreserved": true, "log": "fixtures-v2\\pwsh-note-case\\stdout.log"}
+{"shell": "pwsh", "case": "schema-case", "expected": 1, "actual": 1, "passed": true, "skipped": false, "worktreePreserved": true, "stagesPreserved": true, "log": "fixtures-v2\\pwsh-schema-case\\stdout.log"}
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\adversarial.py", line 42, in <module>
+    parsed=json.loads(raw.decode('utf-8-sig'));passed=passed and not after and [x['id'] for x in parsed['findings']]==ids and all(x['when']=='2026-10-23T01:02:03Z' for x in parsed['findings'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\json\decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\json\decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

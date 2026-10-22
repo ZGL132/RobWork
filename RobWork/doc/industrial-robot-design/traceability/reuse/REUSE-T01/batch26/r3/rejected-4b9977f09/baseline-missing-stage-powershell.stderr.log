@@ -1,0 +1,8 @@
+git.exe : fatal: path 'RobWork/doc/industrial-robot-design/traceability/findings.json' exists on disk, but not in the i
+ndex
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b26-r2-acceptance-20261023\baseline-with-parser-bom.ps1:59 char:14
++ ...  $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$n ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (fatal: path 'Ro...ot in the index:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -261,7 +261,7 @@ try {
 
   # PIPE §4.7③：使用隔离真实Git的三方index，不模拟合并器内部集合算法。
   # 正例必须完成暂存；大小写分歧必须保留工作文件与三方stage，不能只核非零退出。
-  foreach ($case in @('union','note-case','schema-case')) {
+  foreach ($case in @('union','note-case','schema-case','missing-stage')) {
     $unionRepo = Join-Path $tempRoot ("union-" + $case)
     New-Item -ItemType Directory -Force $unionRepo | Out-Null
     & git -C $unionRepo init --quiet
@@ -277,6 +277,7 @@ try {
     [IO.File]::WriteAllText($workingPath, 'conflict-preserved', [Text.UTF8Encoding]::new($false))
     $indexInfo = @()
     foreach ($stage in 1..3) {
+      if ($case -eq 'missing-stage' -and $stage -eq 3) { continue }
       # 固定两空格JSON契合登记簿原有文本格式；中文用于检验Git UTF-8解码与回写。
       $entry = "    {`n      `"id`": `"F-001`",`n      `"title`": `"原始条目`"`n    }"
       if ($stage -gt 1) { $entry += ",`n    {`n      `"id`": `"F-00$stage`",`n      `"title`": `"新增条目`"`n    }" }
@@ -298,7 +299,9 @@ try {
     Assert-ExitCode 0 $LASTEXITCODE "并集夹具注入三方stage"
     $initialUnmerged = @(& git -C $unionRepo ls-files -u)
     Assert-ExitCode 0 $LASTEXITCODE "核查并集初始三方索引"
-    Assert-Equal 3 $initialUnmerged.Count "并集合并前必须存在三个冲突stage"
+    $expectedStageCount = 3
+    if ($case -eq 'missing-stage') { $expectedStageCount = 2 }
+    Assert-Equal $expectedStageCount $initialUnmerged.Count "并集合并前核对冲突stage数"
     $unionScript = Join-Path $RepoRoot 'RobWork/scripts/industrialrobot/merge-findings-union.ps1'
     $unionOutput = @(& $script:statePowerShell -NoProfile -File $unionScript -RepoRoot $unionRepo 2>&1)
     $unionExit = $LASTEXITCODE
@@ -311,10 +314,13 @@ try {
       Assert-Equal 'F-001,F-002,F-003' ($mergedFindings.findings.id -join ',') "正常并集条目序列"
       Assert-Equal '原始条目' $mergedFindings.findings[0].title "中文不得损坏"
     } else {
-      Assert-ExitCode 1 $unionExit "顶层大小写分歧"
-      Assert-Equal 3 $unmerged.Count "拒绝并集须保留三方stage"
+      $expectedExit = 1; $reasonPattern = '顶层'
+      # 缺stage是调用错误（exit2），不能由PS5.1的NativeCommandError冒充语义拒绝。
+      if ($case -eq 'missing-stage') { $expectedExit = 2; $reasonPattern = '三方暂存条目' }
+      Assert-ExitCode $expectedExit $unionExit "并集拒绝错误归类"
+      Assert-Equal $expectedStageCount $unmerged.Count "拒绝并集须保留原冲突stage"
       Assert-Equal 'conflict-preserved' ([IO.File]::ReadAllText($workingPath)) "拒绝并集须保留原工作文件"
-      if ("$unionOutput" -notmatch '顶层') { throw "拒绝原因必须来自顶层字段检查，不能由解析失败冒充：$unionOutput" }
+      if ("$unionOutput" -notmatch $reasonPattern) { throw "拒绝原因须符合错误归类，不能由解析失败冒充：$unionOutput" }
     }
     Write-Output "union-boundary: $case actual=$unionExit"
   }

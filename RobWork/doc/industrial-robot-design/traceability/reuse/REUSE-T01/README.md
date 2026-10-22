@@ -127,3 +127,5 @@ B25补状态校验19关系并刷新B24相关14条pending输入；修整数/伪GU
 B26审findings并集解算入口10段、回归入口3条语义关系；真实Git红两Shell各6p2f，绿各8p0f；原流水线回归两Shell通过。修顶层大小写比较与Windows编码，证据见governance-union-audit.md；B24/B25局部验收原件已归档。全T01/T02仍未完成，不同步远程。
 
 B26首冻结aa31f6d9因归档autocrlf转换被独立验收拒绝；已以原字节重新暂存B24 173件/B25 159件并逐Git对象核对零差异，后续以修正版SHA重验。旧FAIL及修正过程保留，未粉饰为PASS。
+
+B26第二轮4b9977f09因PS5.1缺stage错误码契约被拒；raw332件修正核验通过。第三轮局部按Git退出码归类、原pipeline加缺stage边界，红PS7通过/PS51失败，绿双Shell四边界通过，原FAIL327件及manifest按raw归档，待新冻结独验。

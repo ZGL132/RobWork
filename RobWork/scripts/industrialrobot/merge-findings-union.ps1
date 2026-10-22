@@ -56,8 +56,14 @@ $absPath = Join-Path $RepoRoot ($Path -replace '/', '\')
 
 # ---------- ① 读取三方暂存条目（仅合并冲突现场存在 :1/:2/:3，否则视为调用错误） ----------
 function Get-StageLines([string]$stage) {
-  $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$null)
-  if ($LASTEXITCODE -ne 0) { return $null }
+  # PS5.1会把Git stderr提升为终止错误；局部按退出码判断缺stage，保持调用错误exit2。
+  $savedPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$null)
+    $gitExit = $LASTEXITCODE
+  } finally { $ErrorActionPreference = $savedPreference }
+  if ($gitExit -ne 0) { return $null }
   return ,@($lines)
 }
 $baseLines = Get-StageLines ":1"

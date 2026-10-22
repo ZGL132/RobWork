@@ -1,0 +1,36 @@
+36:add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+37:target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+44:    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)
+49:    add_rw_gtest(sdurw_algorithms-gtest)
+57:    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)
+62:    add_rw_gtest(sdurw_calibration-gtest)
+70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+87:    add_rw_gtest(sdurw_core-gtest)
+124:    add_rw_gtest(sdurw_common-gtest)
+132:    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+154:    add_rw_gtest(sdurw_geometry-gtest)
+162:    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+171:    add_rw_gtest(sdurw_graphics-gtest)
+179:    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+188:    add_rw_gtest(sdurw_invkin-gtest)
+201:    add_rw_gtest(sdurw_kinematics-gtest)
+209:    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+219:    add_rw_gtest(sdurw_loaders-gtest)
+252:    add_rw_gtest(sdurw_math-gtest)
+260:    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)
+265:    add_rw_gtest(sdurw_mathematica-gtest)
+273:    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)
+281:    add_rw_gtest(sdurw_models-gtest)
+289:    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)
+294:    add_rw_gtest(sdurw_opengl-gtest)
+309:    add_rw_gtest(sdurw_pathoptimization-gtest)
+317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+325:    add_rw_gtest(sdurw_pathplanning-gtest)
+333:    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+355:    add_rw_gtest(sdurw_proximity-gtest)
+366:    add_rw_gtest(sdurw_sensor-gtest)
+374:    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)
+379:    add_rw_gtest(sdurw_task-gtest)
+387:    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)
+395:        trajectory/LinearInterpolatorTest.cpp
+400:    add_rw_gtest(sdurw_trajectory-gtest)

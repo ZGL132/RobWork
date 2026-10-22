@@ -1,0 +1,915 @@
+{
+  "summary": {
+    "newRows": 10,
+    "oldRowDeltas": [
+      {
+        "functionId": "foundation-governance.pipeline-lock.Get-LockMutexName",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Read-Lock",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.Test-Fencing",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.root",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.pipeline-lock.actions",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.root",
+        "changedKeys": [
+          "auditEvidence",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.test-pipeline-pipeline.regressions",
+        "changedKeys": [
+          "auditEvidence",
+          "sources",
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Convert-ToIso",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Compare-Iso",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.Test-NonNegativeInteger",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.root",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.schema",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.heartbeat",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.fencing-presence",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.attempts",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.policy",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.contract-index",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.queue",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.phase",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.acceptance",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.failure-record",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.run",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.history",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.docRefs",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.narrative-limit",
+        "changedKeys": [
+          "inputs"
+        ]
+      },
+      {
+        "functionId": "foundation-governance.validate-state.verdict",
+        "changedKeys": [
+          "inputs"
+        ]
+      }
+    ],
+    "pendingOwnerOnly": true,
+    "bindingChecks": 110,
+    "bindingFailed": 0
+  },
+  "checks": [
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 40,
+      "end": 56,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.root-and-arguments",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 58,
+      "end": 68,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.git-stage-read",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 71,
+      "end": 98,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.entry-block-scan",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 99,
+      "end": 115,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.block-normalization-and-sort",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 117,
+      "end": 130,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.top-level-schema-guard",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 132,
+      "end": 150,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deletion-and-existing-change-guards",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 153,
+      "end": 165,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.new-entry-union",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 167,
+      "end": 200,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.deterministic-reassembly",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 202,
+      "end": 210,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.result-validation",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "source",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "start": 212,
+      "end": 218,
+      "match": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "inputs",
+      "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "inputs",
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "inputs",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/reuse/governance-union-audit.md",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-red/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/union-green/report.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/search.json",
+      "match": true
+    },
+    {
+      "functionId": "foundation-governance.merge-findings-union.write-and-stage",
+      "kind": "auditEvidence",
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/verification.json",
+      "match": true
+    }
+  ]
+}
