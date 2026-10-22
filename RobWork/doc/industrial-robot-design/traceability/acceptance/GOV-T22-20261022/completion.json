@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ird-independent-acceptance-completion/1",
+  "taskId": "GOV-T22",
+  "verdict": "fail",
+  "reviewedCommit": "0d018a0ba9d1695eef16442f76e9d325276328e7",
+  "originalAcceptance": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022.json",
+  "originalRecordCommit": "2daa7710fbf3cf2d2d39ef28c73c8ba01fe17f45",
+  "purpose": "补充首轮已启动的自测最终结果，原失败记录和探针只增不改。",
+  "tests": [
+    {
+      "runtime": "ps7",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022/ps7",
+      "exitCode": 0,
+      "expected": 128,
+      "executed": 128,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "json": "ps7/reuse-test-report.json",
+      "junit": "ps7/reuse-governance.junit.xml",
+      "driverLog": "ps7-driver.log",
+      "validatorSha256": "8CA5832133CBD72FE916A247313497984366CFFE27611B4CCBDB7BE55F2A5313",
+      "helperSha256": "590CE5172C79ECE7DEA16E89F7C949E9DDA5848E6B4830F46D9398FB0AD42620",
+      "driverSha256": "9716CCF6E8BB9F329161222193A20A65A8BFEF9D67395D15FAD3A56C972E325E",
+      "testcaseCount": 128
+    },
+    {
+      "runtime": "ps51",
+      "command": "powershell -ExecutionPolicy Bypass -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022/ps51",
+      "exitCode": 0,
+      "expected": 128,
+      "executed": 128,
+      "passed": 128,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true,
+      "driverFailure": "",
+      "json": "ps51/reuse-test-report.json",
+      "junit": "ps51/reuse-governance.junit.xml",
+      "driverLog": "ps51-driver.log",
+      "validatorSha256": "8CA5832133CBD72FE916A247313497984366CFFE27611B4CCBDB7BE55F2A5313",
+      "helperSha256": "590CE5172C79ECE7DEA16E89F7C949E9DDA5848E6B4830F46D9398FB0AD42620",
+      "driverSha256": "9716CCF6E8BB9F329161222193A20A65A8BFEF9D67395D15FAD3A56C972E325E",
+      "testcaseCount": 128
+    }
+  ],
+  "testedFiles": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "sha256": "8CA5832133CBD72FE916A247313497984366CFFE27611B4CCBDB7BE55F2A5313"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "sha256": "590CE5172C79ECE7DEA16E89F7C949E9DDA5848E6B4830F46D9398FB0AD42620"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+      "sha256": "9716CCF6E8BB9F329161222193A20A65A8BFEF9D67395D15FAD3A56C972E325E"
+    }
+  ],
+  "independentProbe": {
+    "exitCode": 1,
+    "passed": 2,
+    "failed": 3,
+    "skipped": 0,
+    "notRun": 0,
+    "findings": [
+      "GOV-T22-ACC-01",
+      "GOV-T22-ACC-02"
+    ]
+  },
+  "reviewConclusion": "PS7/PS5.1结构夹具全部通过；真实Qt同名API误报和BOM冻结摘要不一致仍阻断独立验收。格式夹具不构成生产迁移证明。",
+  "limitations": [
+    "无产品算法/数值/GUI变更或迁移通过结论。",
+    "远程CI及分支保护未核验，本地结果不代表远程交付。",
+    "未推送acc分支，未合入redesign-main或main。"
+  ]
+}
