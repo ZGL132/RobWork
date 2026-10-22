@@ -1,0 +1,5 @@
+# integrity 段（回填 manifest.json——含本脚本自身）:
+  {"path": "inputs/coverage-inputs.json", "sha256": "4dcfbd7fbf4b027aabef74780d389a769026f5b3bcecf7d8ac2976266e388608", "sizeBytes": 3412},
+  {"path": "expected/coverage-expected.json", "sha256": "f0f9597fed99e7dcfa58dd27cb60b15f6157ba4f7168f9c15d84de0fe8b7ce71", "sizeBytes": 3079},
+  {"path": "generate/make_kin_coverage_golden.mjs", "sha256": "cc53fc5dade8c96695b524392268aebb74f2f63b7b64562c2a8317678ed726d1", "sizeBytes": 8924},
+# planA 100 格心可达 60 / 最小边界裕度 0.09883736647868702

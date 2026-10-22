@@ -1,0 +1,16 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp:439:                  static_cast<std::size_t>(jNum(*counts, "mappedVelocityCount")))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/DynGoldenDatasetTest.cpp:4: *         testdata/golden/dyn-two-link-analytic 数据集经 testkit 黄金设施
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/DynGoldenDatasetTest.cpp:306:        return {"dyn-two-link-analytic", "1.0.0"};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/DynGoldenDatasetTest.cpp:376:    EXPECT_EQ(mf.datasetId, "dyn-two-link-analytic");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/DynGoldenDatasetTest.cpp:503:    const tk::JsonValue& anc = field(inCase, "anchors", {});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:579:// 套件二：Pareto 非支配与不可行不入可行集黄金（opt-pareto-golden——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:942:/// Pareto 套件夹具（GoldenFixture 六步——数据集 opt-pareto-golden@1.0.0）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:948:        return {"opt-pareto-golden", "1.0.0"};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:965:                  tk::DatasetRef{"opt-pareto-golden", "1.0.0"}, "opt-golden@1.0.0");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1218:    const tk::JsonValue* goldenEntries = goldenRun->find("entries");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1219:    ASSERT_TRUE(goldenEntries != nullptr && goldenEntries->isArray());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1221:        paretoMembersFromGolden(expected, *goldenEntries, config.objectives.entries);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1256:    ASSERT_EQ(run.pareto.entries.size(), goldenEntries->items.size());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1257:    for (std::size_t i = 0; i < goldenEntries->items.size(); ++i) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1258:        const tk::JsonValue& ge = goldenEntries->items[i];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp:1303:                  tk::DatasetRef{"opt-pareto-golden", "1.0.0"}, "opt-golden@1.0.0");

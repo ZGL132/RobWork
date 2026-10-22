@@ -1,0 +1,101 @@
+[
+  {
+    "index": 0,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "pareto|non.?domin|latin.?hyper",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": false,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 1,
+    "arguments": [
+      "rg",
+      "-n",
+      "TrapMethod|trapezMethod|seed|mt19937",
+      "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+      "RobWork/RobWork/src/rw/math/Random.hpp",
+      "RobWork/RobWork/src/rw/math/Random.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": false,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 2,
+    "arguments": [
+      "rg",
+      "-n",
+      "dyn-two-link-analytic|anchors|opt-pareto-golden|goldenEntries|mappedVelocityCount|velocityMapped",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/DynGoldenDatasetTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/OptGoldenDatasetTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": false,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 3,
+    "arguments": [
+      "rg",
+      "-n",
+      "makeCid|makeCandidate|makeTwoObjectives|idsOf|makeXacroSource|rowAt|expectNearRel|makePrismRevModel",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": false,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 4,
+    "arguments": [
+      "rg",
+      "-n",
+      "RecursiveNewtonEuler|solve",
+      "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
+      "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": false,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  },
+  {
+    "index": 5,
+    "arguments": [
+      "rg",
+      "-n",
+      "make_import_expectations|mappedVelocityCount|joint-velocity-limit",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp"
+    ],
+    "exitCode": 0,
+    "exitMatches": true,
+    "stdoutMatches": true,
+    "stdoutSetMatches": true,
+    "stderrMatches": true
+  }
+]

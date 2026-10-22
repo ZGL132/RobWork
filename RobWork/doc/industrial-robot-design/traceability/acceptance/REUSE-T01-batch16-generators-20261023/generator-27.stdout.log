@@ -1,0 +1,2 @@
+sel-screening-golden: 4 cases, 24 records, 33 reasons, 13 gaps
+  anchors: {"powerCurveAt130":1040,"radialAllowG202":250,"sfEdgeSpeedPeak":300}

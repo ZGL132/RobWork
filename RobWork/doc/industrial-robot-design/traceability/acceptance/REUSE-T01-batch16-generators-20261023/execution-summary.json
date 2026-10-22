@@ -1,0 +1,37 @@
+{
+  "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "comparisonBase": "a703b88225b1e094947b46723706b5be8af5159f",
+  "driverExit": 0,
+  "datasetsCopied": 29,
+  "scriptsExpected": 29,
+  "scriptsExecuted": 29,
+  "processResults": {
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "jsonComparisons": {
+    "total": 91,
+    "normalizedEqual": 90,
+    "normalizedDifferent": 1,
+    "rawEqual": 90,
+    "rawDifferent": 1,
+    "result": "FAIL"
+  },
+  "differentPaths": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/import-report.json"
+  ],
+  "all91AreGeneratedFilesClaimed": false,
+  "secondConfirmExit": 0,
+  "secondEqualsFirst": true,
+  "sourceFilesHashed": 148,
+  "originalDataUnchanged": true,
+  "checkoutClean": true,
+  "recordedReviewedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "independentWrapper": {
+    "initialExit": 1,
+    "reason": "全部生成/对照/第二目录确认已完成；首次收尾clean断言发现本次输出.cache未被Git忽略。保留run-replay.log，移动输出后继续收尾通过，未重新执行29脚本。",
+    "finishExit": 0
+  }
+}

@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B16",
+  "result": "FAIL",
+  "verdict": "FAIL",
+  "scope": "仅B16新增43关系的语义登记、定义/摘要/实际上下文、Node与产物消费目标、F-959表述、3组归档保真和3项门禁。不授全T01/T02，不包含29脚本独立重跑。",
+  "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "reviewedParentCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+  "repo": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo",
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9",
+  "createdAt": "2026-10-22T17:43:41.914542+00:00",
+  "facts": {
+    "reviewedCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+    "reviewedParentCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+    "newRelations": 43,
+    "definitions": 43,
+    "newExactlyMatchesDefinitions": true,
+    "previousRowsChanged": [],
+    "unitCounts": {
+      "optimization": 4,
+      "modeling": 9,
+      "dynamics": 9,
+      "foundation-governance": 21
+    },
+    "hashChecks": 341,
+    "hashFailures": 0,
+    "definitionFailures": 0,
+    "allNewPending": true,
+    "searchReplays": 6,
+    "searchFailures": 0,
+    "searchOrderOnly": 5,
+    "targetChecks": 43,
+    "targetFailures": 0,
+    "archiveGroups": 3,
+    "archiveFiles": 123,
+    "archiveRawMatches": 71,
+    "archiveNewlineOnly": 52,
+    "archiveMismatches": 0,
+    "scopedDiffCheckExit": 0,
+    "sourceDiffEmpty": true,
+    "clean": true,
+    "allRelations": 612,
+    "distinctFunctionIds": 611,
+    "closedFiles": 0
+  },
+  "counts": {
+    "newRelations": 43,
+    "hashChecks": 341,
+    "hashFailures": 0,
+    "hashKinds": {
+      "sources": 43,
+      "inputs": 169,
+      "auditEvidence": 129
+    },
+    "searchReplays": 6,
+    "searchHitSetMismatches": 0,
+    "searchOrderOnly": 5,
+    "targetChecks": 43,
+    "archiveFiles": 123,
+    "archiveRawMatches": 71,
+    "archiveNewlineOnly": 52,
+    "archiveContentMismatches": 0,
+    "gatePassed": 4,
+    "gateSkipped": 0,
+    "gateFailed": 0,
+    "semanticBlockingFindings": 1,
+    "freshnessProbeCases": 5
+  },
+  "findings": [
+    {
+      "id": "B16-P2-01",
+      "priority": 2,
+      "category": "evidence-freshness",
+      "status": "OPEN",
+      "title": "函数外决定性测试上下文未纳入摘要绑定",
+      "file": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+      "line": 573,
+      "relatedLocations": [
+        {
+          "file": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+          "lines": [
+            573,
+            738,
+            793,
+            848
+          ]
+        },
+        {
+          "file": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+          "lines": [
+            2723
+          ]
+        }
+      ],
+      "affectedFunctions": [
+        "dynamics.StatisticsTest.expectNearRel",
+        "dynamics.StatisticsTest.prismAxialForce",
+        "dynamics.StatisticsTest.revTorque",
+        "dynamics.StatisticsTest.makePrismRevModel",
+        "modeling.XacroExpandTest.makeBasicSource"
+      ],
+      "observed": "expectNearRel只绑定StatisticsTest.cpp:103–108，描述中的1e-12来自未绑定的97行kGoldenRelTol；prismAxialForce/revTorque/makePrismRevModel依赖184–189行质量、半径、惯量、重力常量，却仅绑定各函数定义及CMake/TwoLinkFixture.hpp。makeBasicSource只绑定XacroExpandTest.cpp:202–205，所消费kBasicXacro raw字符串186–200未绑定。相关inputs没有本cpp全文件。",
+      "impact": "改变测试容差、解析期望/模型参数或Xacro字节与真实摘要，可保留全部登记摘要不变，导致受影响语义证据不能按契约失效；函数区段本身完整并不能覆盖这些实际输入。",
+      "evidence": [
+        "freshness-probe.json",
+        "freshness-probe.py",
+        "definition-checks.json",
+        "hash-checks.json",
+        "RobWork/doc/industrial-robot-design/reuse/audit-contract.md:77"
+      ],
+      "reproduction": "5项只在内存替换，均确认完整源码摘要改变而该关系sources/inputs/auditEvidence摘要全部不变；未写仓库文件、未声称真实门禁变异运行或C++缺陷复现。",
+      "requestedChange": "保留精确函数sources和qualifiedSymbol，为受影响关系补绑定真正决定行为的同文件常量/raw字符串；可将对应StatisticsTest.cpp或XacroExpandTest.cpp全文件加入inputs，或绑定精确依赖区段。同步相关摘要后仅复验受影响登记，无需改产品/原测试或放宽容差。",
+      "reproducedProductDefect": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "validate-task",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+        "-TaskFile",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo"
+      ],
+      "log": "task.log"
+    },
+    {
+      "name": "validate-docs",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-docs.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork"
+      ],
+      "log": "docs.log"
+    },
+    {
+      "name": "validate-reuse",
+      "status": "PASS",
+      "exitCode": 0,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo",
+        "-Head",
+        "435dbdb716b9eb86d0932a478eb086642206ac76",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      ],
+      "log": "reuse.log"
+    },
+    {
+      "name": "scoped git diff --check",
+      "status": "PASS",
+      "exitCode": 0,
+      "log": "scoped-diff-check.log",
+      "scope": "HEAD^..HEAD变动文件，排除已逐文件验证保真的原始归档.log与.frozen.txt；精确列表见diff-check-exclusions.log。首次只排除.log的exit2仅为原frozen摘录保留的尾空格，原输出见scoped-diff-check-initial.log。"
+    }
+  ],
+  "semanticChecks": [
+    {
+      "area": "定义与作用域",
+      "status": "PASS",
+      "observation": "43条新增关系与43个定义逐一一致。直接审读3份C++测试上下文、2个ESModule的全部20个命名函数及URDF顶层fixture组；匿名namespace、FakeContext成员作用域及模块身份正确。makeXacroSource:128–158包含默认includeBytes={}之后的真实函数体；makeBasicSource:202–205无raw字符串误截，fixtureGeneration:42–149明确是顶层语义组。此项不消除B16-P2-01的函数外上下文绑定缺口。"
+    },
+    {
+      "area": "Pareto测试helper",
+      "status": "PASS",
+      "observation": "makeCid仅固定字节身份，candidate装两个指标槽，makeTwoObjectives调用生产makeObjectiveSet，idsOf仅投影既有entries。测试断言针对实际Pareto生产接口，无第二生产支配核心。"
+    },
+    {
+      "area": "Xacro测试helper",
+      "status": "PASS_WITH_FINDING",
+      "observation": "真实复用ContentDigester、标准容器和sort；fake路径/mtime、缺叶/环是防御注入，不证明真实IO安全。makeBasicSource的raw常量缺绑定见B16-P2-01。"
+    },
+    {
+      "area": "Statistics测试oracle",
+      "status": "PASS_WITH_FINDING",
+      "observation": "独立max(1e-15,1e-12*abs(expected))与core C4不同；rowAt五分项零而tauTotal可非零，登记没有继承旧恒等式注释。解析支撑力与回转力矩限定竖直移动静止/水平回转，单位N/N·m正确；CanonicalModelBuilder构模及FakeContext替身用途准确。相关决定性常量缺绑定见B16-P2-01。"
+    },
+    {
+      "area": "动力学黄金oracle",
+      "status": "PASS",
+      "observation": "二连杆rneaReference实际为Y轴Lagrange标量M/C/G+摩擦、外力零，非递归RNE；非均匀逐区间梯形、严格大于首峰、JS===不保证逐bit等值、Complete与mandatory全在场限制均如实登记。消费者DynGoldenDatasetTest.cpp:432起读取expected，501–510有独立r×F第三静力矩锚。TrapMethod.hpp:38–49统一h及求和序、Random全局unsigned种子不等价，未授权新生产核心。"
+    },
+    {
+      "area": "优化黄金oracle",
+      "status": "PASS",
+      "observation": "Node crypto/Buffer LE/-0归零、64位SplitMix与53bit采样、两维LHS和基线首位、9事实6可行、C4以b为reference、去重首见/非支配分层/严格三键排序均与源码一致。该独立定义式仅用于测试；零筛选固定事实不证明全优化编排。"
+    },
+    {
+      "area": "生成器执行与消费target",
+      "status": "PASS",
+      "observation": "Node是已登记运行器，CMake实际编译3个消费测试目标，不编译或自动执行mjs。全部21条生成器关系targetRelation明确generated-artifact-consumer；对应CMake包含DynGoldenDatasetTest/OptGoldenDatasetTest/GoldenImportTest，消费者读取真实dataset expected。未重跑29脚本，其独立执行验收由另一验收者负责。"
+    },
+    {
+      "area": "F-959与历史结论",
+      "status": "PASS",
+      "observation": "旧URDF脚本仍写unsupported=8和joint-velocity-limit×5，缺mappedVelocityCount；当前expected为unsupported=3/mappedVelocityCount=5，GoldenImportTest.cpp:430–440消费映射计数。登记明确29进程exit0不等于JSON一致/数学PASS，未宣称已运行C++消费者复现失败。保留F-959 open，B14/B15返工PASS仅关闭各自单项；全覆盖NOT PASS没有被抹除。"
+    }
+  ],
+  "archiveGroups": [
+    {
+      "archive": "REUSE-T01-batch14-r2-20261023",
+      "files": 23,
+      "rawMatches": 20,
+      "newlineOnly": 3,
+      "mismatches": 0
+    },
+    {
+      "archive": "REUSE-T01-batch15-r2-20261023",
+      "files": 33,
+      "rawMatches": 31,
+      "newlineOnly": 2,
+      "mismatches": 0
+    },
+    {
+      "archive": "REUSE-T01-full-coverage-20261023",
+      "files": 67,
+      "rawMatches": 20,
+      "newlineOnly": 47,
+      "mismatches": 0
+    }
+  ],
+  "notRun": [
+    "C++构建/消费者测试",
+    "GUI测试",
+    "数值/性能验收",
+    "DeepEvidence",
+    "29个生成器重跑（另验收者负责）",
+    "其余批次语义复验",
+    "远程推送/CI交付核验"
+  ],
+  "boundaries": {
+    "productChanged": false,
+    "sourceDiffEmpty": true,
+    "noCommitPushOrMerge": true,
+    "cleanIndependentCheckout": true,
+    "fullStagePass": false,
+    "remoteVerified": false,
+    "newRelationsRemainPending": true
+  },
+  "limitations": [
+    "validate-docs输出NOT AUDITED evidence。",
+    "validate-reuse仅治理检查，functions=612、closedFiles=0，不代表算法合规。",
+    "6个检索命中行集合一致，其中5个原始输出只有rg并行输出顺序差异。",
+    "原始归档.log/.frozen.txt按保真保留并从scoped whitespace检查排除；未清洗证据。",
+    "allRelations=612关系，distinctFunctionIds=611源于原有重复ID；新增43个ID唯一且无旧行变动，未将存量ID关系混作本批缺陷。"
+  ],
+  "toolHashes": [
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+      "rawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-docs.ps1",
+      "rawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1",
+      "rawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\repo\\RobWork\\scripts\\industrialrobot\\reuse-contract.ps1",
+      "rawSha256": "25f27251fafa9cb40146243afc4916ea82b93cdf8708b6fa050c4b37d77f0e57"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\audit-b16.py",
+      "rawSha256": "2bf583d2151eac8fd75dbedec917be232a74c21b651903f0c62ff8c401defa39"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\freshness-probe.py",
+      "rawSha256": "15d36f07970781b7fd2070a50bb13e25714e600af5f5a8a180ef16a09b0858ea"
+    },
+    {
+      "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\write-acceptance.py",
+      "rawSha256": "0b5dfe26032b720e075c4ffd9443c69a7e9037ce489ae3c72485c91e33530067"
+    }
+  ]
+}

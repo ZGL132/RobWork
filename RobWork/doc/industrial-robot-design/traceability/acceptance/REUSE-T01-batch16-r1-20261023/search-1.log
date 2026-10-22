@@ -1,0 +1,11 @@
+RobWork/RobWork/src/rw/math/Random.hpp:53:        static void seed (unsigned seed);
+RobWork/RobWork/src/rw/math/Random.hpp:60:        static void seed ();
+RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp:27:    class TrapMethod
+RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp:38:        template< class T > static double inline trapezMethod (T& func, const int M, const double h)
+RobWork/RobWork/src/rw/math/Random.cpp:31:boost::mt19937 generator;
+RobWork/RobWork/src/rw/math/Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+RobWork/RobWork/src/rw/math/Random.cpp:50:void Random::seed (unsigned seed)
+RobWork/RobWork/src/rw/math/Random.cpp:52:    // VC++ can't select the correct seed() method without a cast here.
+RobWork/RobWork/src/rw/math/Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+RobWork/RobWork/src/rw/math/Random.cpp:56:void Random::seed ()
+RobWork/RobWork/src/rw/math/Random.cpp:58:    seed ((unsigned) rw::common::TimerUtil::currentTimeMs ());

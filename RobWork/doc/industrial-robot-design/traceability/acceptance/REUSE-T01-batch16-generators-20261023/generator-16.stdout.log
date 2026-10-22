@@ -1,0 +1,8 @@
+== integrity 申报表（path / sizeBytes / sha256） ==
+  { "path": "inputs/policy-input.json", "sha256": "cb1fe140fb98281d7a07da1feb65a739fc6d46cf7305d00bb0d1cb75e535b070", "sizeBytes": 2447 },
+  { "path": "inputs/policy-input-variant.json", "sha256": "11060ff5f2bcc30de42002262f50015bde822c1a1cede5c17e47808add4f0cf4", "sizeBytes": 2557 },
+  { "path": "expected/identity.json", "sha256": "c6cbd7b9f0572b940fd871c39d1ef3977f80fde97b5e511e70c59772add5cf7b", "sizeBytes": 2941 },
+  { "path": "generate/make_pol_policy_fixture.mjs", "sha256": "21725a1b7d8b6c339b6454a650951826afe93092a98e029508c1852adc45b561", "sizeBytes": 17698 },
+expected/identity.json 已写出：C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\pol-policy-codec-fixture\1.0.0\expected\identity.json
+fullEncoding 字节数=526，projection 字节数=401
+contentIdentityHex=6c0116a37dc17e4e2010cdb76c13fe98ed53b201418fcee315432bd14658ef7c

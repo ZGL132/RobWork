@@ -1,0 +1,136 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:103:void expectNearRel(double actual, double expected, const char* what)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:113:DynamicsSample rowAt(double t, std::uint32_t segment, std::uint32_t joint,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:201:inline CanonicalModel makePrismRevModel()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:315:    b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:316:    b.addSample(rowAt(0.1, 0, 1, DynJointType::Revolute, 0.1, 0.2, 0.3, 4.0, 0.8));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:317:    b.addSample(rowAt(0.1, 0, 0, DynJointType::Revolute, 0.0, 0.1, 0.2, 2.0, 0.2));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:362:        b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.5, 0.0, 2.0 + perturb,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:364:        b.addSample(rowAt(0.5, 0, 0, DynJointType::Revolute, 0.1, 0.5, 0.0, 2.0 + perturb,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:387:    b.addSample(rowAt(0.5, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:389:        b.addSample(rowAt(0.4, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:409:    b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:410:    b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));  // 重复对
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:426:    b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:430:        local.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:488:        b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:489:        b.addSample(rowAt(0.5, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 1.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:534:        b.addSample(rowAt(t, seg, 0, DynJointType::Revolute, 0.0, qd[k], qdd[k], tau[k],
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:606:        b.addSample(rowAt(t[k], seg, 0, DynJointType::Revolute, 0.0, qd[k], 0.0, tau[k],
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:614:    expectNearRel(rms * rms, 6.375 / 3.0, "RMS²＝梯形 Σ/T_cycle（含驻留）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:646:        DynamicsSample r = rowAt(0.1 * k, 0, 0, DynJointType::Revolute, 0.0, 0.5, 0.0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:670:    expectNearRel(rms * rms, 3.2, "缺口零贡献分段积分 Σ/T_cycle（F-589 口径）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:706:            DynamicsSample gap = rowAt(0.3, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:717:        b.addSample(rowAt(t[ok], 0, 0, DynJointType::Revolute, 0.0, qd[ok], 0.0, tau[ok],
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:725:    expectNearRel(rms * rms, 4.8, "缺口零贡献 RMS²=Σ/T=2.4/0.5（F-589）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:733:    expectNearRel(sum.joints[0].positiveEnergyJ, 0.4, "E⁺ 缺口区间零贡献");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:734:    expectNearRel(sum.joints[0].negativeEnergyJ, -0.2, "E⁻ 缺口区间零贡献");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:735:    expectNearRel(sum.joints[0].netEnergyJ, 0.2, "E_net=E⁺+E⁻ 恒等式保持");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:759:        b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 0.0, 0.0, 5.0, 0.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:800:        b.addSample(rowAt(t[k], (t[k] <= 1.0) ? 0u : 1u, 0, DynJointType::Revolute, 0.0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:812:    expectNearRel(sum.cycleDurationS, 3.0, "T_cycle 含驻留全程");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:813:    expectNearRel(row.positiveEnergyJ, 3.0, "E⁺（驱动功——含跳变段梯形项）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:814:    expectNearRel(row.negativeEnergyJ, 0.0, "E⁻（无制动段）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:815:    expectNearRel(row.netEnergyJ, 3.0, "E_net");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:816:    expectNearRel(row.meanPowerW, 1.0, "平均功率 E_net/T_cycle");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:817:    expectNearRel(row.powerPeak.value, 2.0, "功率幅值峰值");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:822:    expectNearRel(row.netEnergyJ, series.samples.back().energyIntegralJ,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:844:        b.addSample(rowAt(1.0 * k, 0, 0, DynJointType::Revolute, 0.0, qd[k], 0.0, 2.0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:852:    expectNearRel(sum.joints[0].positiveEnergyJ, 1.0, "E⁺");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:853:    expectNearRel(sum.joints[0].negativeEnergyJ, -1.0, "E⁻（制动负功）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:856:    expectNearRel(sum.joints[0].netEnergyJ, 0.0, "E_net（对称循环为零）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:857:    expectNearRel(sum.joints[0].powerPeak.value, 2.0, "幅值峰值");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:885:        b.addSample(rowAt(0.0, 0, 0, DynJointType::Revolute, 0.0, 1.0, 0.0, 2.0, 2.0));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:981:    expectNearRel(env.computeRms(series, 0), std::abs(tau1), "关节 0 力矩 RMS");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:982:    expectNearRel(env.computeRms(series, 1), std::abs(tau2), "关节 1 力矩 RMS");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:991:    expectNearRel(sum.cycleDurationS, 2.0, "T_cycle=2s");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:992:    expectNearRel(sum.joints[0].positiveEnergyJ, 0.0, "E⁺ 真实零");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:993:    expectNearRel(sum.joints[0].netEnergyJ, 0.0, "E_net 真实零");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1013:    const CanonicalModel model = makePrismRevModel();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1059:    expectNearRel(peaks[0].value, fAxis, "移动关节轴力峰（N）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1060:    expectNearRel(peaks[1].value, -fAxis, "移动关节反向幅值（全正循环为负形态）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1061:    expectNearRel(peaks[2].value, 0.0, "移动关节速度峰（m/s——静止）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1063:    expectNearRel(peaks[6].value, tauRev, "转动关节矩峰（N·m）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1064:    expectNearRel(peaks[7].value, -tauRev, "转动关节反向幅值");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1065:    expectNearRel(peaks[8].value, kAlpha, "转动关节速度峰（rad/s——末样本）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1068:    expectNearRel(env.computeRms(series, 0), fAxis, "移动关节力 RMS（N）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1069:    expectNearRel(env.computeRms(series, 1), tauRev, "转动关节矩 RMS（N·m）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1076:    expectNearRel(sum.joints[0].netEnergyJ, 0.0, "移动关节净能量（静止）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1077:    expectNearRel(sum.joints[1].netEnergyJ, tauRev * kAlpha * 0.5, "转动关节净能量（J）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1078:    expectNearRel(sum.joints[1].powerPeak.value, tauRev * kAlpha,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp:1097:        b.addSample(rowAt(t[k], 0, 0, DynJointType::Revolute, 0.0, 1.0, 0.0, tau[k],
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:68:CandidateId makeCid(unsigned char seed)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:78:FeasibleCandidate makeCandidate(unsigned char seed, double envelope,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:82:    c.candidateId = makeCid(seed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:91:ObjectiveSet makeTwoObjectives()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:98:std::vector<CandidateId> idsOf(const ParetoFrontResult& r)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:119:    const ObjectiveSet objs = makeTwoObjectives();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:125:    const FeasibleCandidate a = makeCandidate(0x01, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:126:    const FeasibleCandidate b = makeCandidate(0x02, 2.0, 0.5);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:127:    const FeasibleCandidate c = makeCandidate(0x03, 2.0, 0.95);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:128:    const FeasibleCandidate d = makeCandidate(0x04, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:144:    const FeasibleCandidate near1 = makeCandidate(0x11, 1.000, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:145:    const FeasibleCandidate near2 = makeCandidate(0x12, 1.008, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:148:    const ObjectiveSet strict = makeTwoObjectives();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:162:    const FeasibleCandidate far = makeCandidate(0x13, 1.500, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:171:    const ObjectiveSet objs = makeTwoObjectives();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:173:    const FeasibleCandidate highMargin = makeCandidate(0x21, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:174:    const FeasibleCandidate lowMargin = makeCandidate(0x22, 1.0, 0.5);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:183:    const FeasibleCandidate refBig = makeCandidate(0x23, 2.00, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:184:    const FeasibleCandidate closeSmall = makeCandidate(0x24, 1.96, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:185:    const FeasibleCandidate farSmall = makeCandidate(0x25, 1.04, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:217:    const FeasibleCandidate p1 = makeCandidate(0x31, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:218:    const FeasibleCandidate p2 = makeCandidate(0x32, 2.0, 0.95);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:219:    const FeasibleCandidate p3 = makeCandidate(0x33, 1.5, 0.7);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:220:    const FeasibleCandidate p4 = makeCandidate(0x34, 1.5, 0.7);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:221:    const FeasibleCandidate p5 = makeCandidate(0x35, 2.0, 0.4);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:222:    const ObjectiveSet objs = makeTwoObjectives();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:228:    const std::vector<CandidateId> expected = {makeCid(0x31), makeCid(0x32),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:229:                                               makeCid(0x33), makeCid(0x34),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:230:                                               makeCid(0x35)};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:231:    EXPECT_EQ(idsOf(r1), expected) << "三键全序（rank→目标序→CandidateId）";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:240:    EXPECT_EQ(r1.nondominatedIds[0], makeCid(0x31));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:241:    EXPECT_EQ(r1.nondominatedIds[1], makeCid(0x32));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:269:    FeasibleCandidate first = makeCandidate(0x41, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:270:    const FeasibleCandidate dup = makeCandidate(0x41, 2.0, 0.4);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:271:    const FeasibleCandidate other = makeCandidate(0x42, 2.0, 0.95);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:275:                                                   makeTwoObjectives());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:280:    const std::vector<CandidateId> expectedFirstKept{makeCid(0x41),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:281:                                                     makeCid(0x42)};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:282:    EXPECT_EQ(idsOf(r), expectedFirstKept) << "保留首见（好向量），重复被丢";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:293:    const FeasibleCandidate worst = makeCandidate(0x51, 3.0, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:294:    const FeasibleCandidate mid = makeCandidate(0x52, 2.0, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:295:    const FeasibleCandidate best = makeCandidate(0x53, 1.0, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:299:    const std::vector<CandidateId> expectedCascade{makeCid(0x53), makeCid(0x52),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:300:                                                   makeCid(0x51)};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:301:    EXPECT_EQ(idsOf(r), expectedCascade);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:315:    const FeasibleCandidate tiny = makeCandidate(0x61, base, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:316:    const FeasibleCandidate slightlyWorse = makeCandidate(0x62, nextAfter, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:322:        builder.buildFront({slightlyWorse, tiny}, makeTwoObjectives());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:324:    EXPECT_EQ(r.entries[0].candidateId, makeCid(0x61)) << "近邻严格序保持";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:334:    const FeasibleCandidate p3 = makeCandidate(0x63, 1.5, 0.7);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:335:    const FeasibleCandidate p5 = makeCandidate(0x64, 2.0, 0.4);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:340:    EXPECT_EQ(ra.entries[0].candidateId, makeCid(0x63));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:354:        (void)builder.buildFront({makeCandidate(0x71, 1.0, 0.9)}, ObjectiveSet{});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:363:    FeasibleCandidate withGap = makeCandidate(0x72, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:367:        (void)builder.buildFront({withGap}, makeTwoObjectives());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:375:        makeCandidate(0x73, std::nan(""), 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:377:        (void)builder.buildFront({nanVal}, makeTwoObjectives());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:384:    FeasibleCandidate badShape = makeCandidate(0x74, 1.0, 0.9);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:387:        (void)builder.buildFront({badShape}, makeTwoObjectives());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:400:    const FeasibleCandidate baseline = makeCandidate(0x81, 1.2, 0.8, true);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:401:    const FeasibleCandidate better = makeCandidate(0x82, 1.0, 0.9, false);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp:402:    const ObjectiveSet objs = makeTwoObjectives();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:128:ValidatedXacroSource makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:204:    return makeXacroSource("robot.xacro", kBasicXacro, {}, {});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:392:        makeXacroSource("robot.xacro", entry,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:421:    const ValidatedXacroSource exprSource = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:440:    const ValidatedXacroSource rosSource = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:470:    const ValidatedXacroSource source = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:508:    const ValidatedXacroSource source = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:553:        makeXacroSource("robot.xacro", entry,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:589:        makeXacroSource("robot.xacro", entry, {missingNode("macros.xacro")},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:616:    const ValidatedXacroSource source = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:690:        makeXacroSource("robot.xacro", kGen6Xacro, {}, {});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:773:    const ValidatedXacroSource source = makeXacroSource(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:811:        makeXacroSource("robot.xacro",
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp:854:        makeXacroSource("robot.xacro", kBasicXacro, {}, {});

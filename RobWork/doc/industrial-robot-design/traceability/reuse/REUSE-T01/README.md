@@ -101,3 +101,5 @@ B14/B15返工各自独立复验PASS，仅关闭B14-P2-01/B15-P2-01；原件见`.
 全覆盖第二次独立复核NOT PASS（冻结b83fa7a3）见`../../acceptance/REUSE-T01-full-coverage-20261023/coverage.md`：20组具体遗漏与文件内部漏段是继续补审入口，不是穷尽范围；不撤销局部PASS、不授T02。B16仅补其中部分测试/生成器项，不能据此关闭其余候选。
 
 B17补core容差、testkit集合模板与数据装载39条关系，见`compare-set-dataset-audit.md`；既有Boost最大匹配2项API实跑passed，原core C4极值反例1项failed。旧30项NOT RUN，不改产品、全T01未退出。
+
+B16语义独立首验FAIL（B16-P2-01），原件见`../../acceptance/REUSE-T01-batch16-r1-20261023/`。返工为22条C++ helper补来源全文inputs，待冻结独立复验；保留原FAIL。生成器独立复跑见`../../acceptance/REUSE-T01-batch16-generators-20261023/`：29进程passed，91 JSON对照90一致/1不一致，F-959仍open，未跑C++消费者，不授全T01/T02。

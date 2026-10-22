@@ -1,0 +1,5 @@
+integrity 申报表（path / sizeBytes / sha256）：
+inputs/transport-task.json 7440 5fd9280c142f9f133a6f055c0e9d96cab5701847a661acbe17ae8e1f4ce2c1a0
+expected/transport-task-expected.json 2810 56b5dfd57bd1a58a4c467b62422db39f2d46ef71f947bbaf73a9baca181416e3
+generate/make_transport_task_golden.mjs 9383 63e3cafa918fd77767152b79eafcb996808fe34ce06dda8db66e4ee06a1aa8de
+expected 写出: C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\req-transport-task\1.0.0\expected\transport-task-expected.json

@@ -1,0 +1,10 @@
+inputs/gate-advice-fixtures.json
+  sha256=1343f9b335b8230af60bfc16712d81985d3dc8b6e5a4728403cea24223df3f6d
+  sizeBytes=18408
+expected/gate-advice-expected.json
+  sha256=167b657da0be2d53cbf6105718c4944c603d6927a0890a5117b8d99bad0ccde8
+  sizeBytes=31271
+generate/make_wf_gate_advice_fixture.mjs
+  sha256=4feb9899991dc77bedca136347650babd2262843646693ca3fa7d4152111bc2c
+  sizeBytes=17883
+cases=10 expected written.

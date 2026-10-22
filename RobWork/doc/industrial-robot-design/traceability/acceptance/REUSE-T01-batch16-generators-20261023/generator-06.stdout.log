@@ -1,0 +1,6 @@
+# integrity 段（回填 manifest.json——含本脚本自身）:
+  {"path": "inputs/ik-dedup-inputs.json", "sha256": "77e3e30223d7a93507c95cc690f2e18602b7a78adcaec787d1011d076baa89a9", "sizeBytes": 1719},
+  {"path": "expected/ik-dedup-expected.json", "sha256": "ad110253c867fa01b4a180783b1fefa07f03d40b2b5a4883c7ae104a0b7d9509", "sizeBytes": 1015},
+  {"path": "generate/make_kin_ik_dedup_golden.mjs", "sha256": "240edaabfdc649ceb81941ed977bda8e955e4f96a4a5fb0905534b2d16d91734", "sizeBytes": 6965},
+# 参考序（expectedOrder）= [0,1]
+# 双分支 q = [[0.20000000000000012,0.39999999999999997,0],[0.49873161577581365,-0.39999999999999997,0.5012683842241864]]

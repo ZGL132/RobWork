@@ -1,0 +1,27 @@
+{
+  "recordedEvidenceCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "frozenAcceptanceCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "recordedCommitIsAncestor": true,
+  "relevantSourceDiffEmpty": true,
+  "recordedScriptHashMatches": 29,
+  "driftEvidenceBindingsMatch": 3,
+  "findingStatus": "open",
+  "jsonPathCategories": {
+    "expected": 32,
+    "inputs": 30,
+    "manifest.json": 29
+  },
+  "urdfComparedPaths": [
+    "expected/import-report.json",
+    "expected/xacro-samples.json",
+    "manifest.json"
+  ],
+  "urdfGeneratorOnlyWrites": [
+    "expected/import-report.json",
+    "expected/xacro-samples.json"
+  ],
+  "consumerReadsExpectedCountsAndMappedVelocity": true,
+  "consumerMissingNumberTriggersAddFailure": true,
+  "productVelocityMappingConfirmedStatically": true,
+  "productCppRun": false
+}

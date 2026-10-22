@@ -1,0 +1,986 @@
+[
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\acceptance.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\acceptance.md",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "archive-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\archive-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "changed-files.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\changed-files.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "check-rework.ps1",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\check-rework.ps1",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\checkout.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\checkout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\clone.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\clone.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "diff-check-exclusions.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\diff-check-exclusions.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\docs.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\docs.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "facts.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\facts.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "final-status.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\final-status.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\hash-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "product-upstream-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\product-upstream-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\reuse.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\reuse.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "scoped-diff-check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\scoped-diff-check.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "scoped-diff-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\scoped-diff-check.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\task.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\task.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch14-r2-20261023",
+    "file": "write-acceptance.ps1",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b14-r2-844c099516cf4504831b94667d217371\\write-acceptance.ps1",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\acceptance.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\acceptance.md",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "all-note-references.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\all-note-references.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "archive-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\archive-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "authority-permission-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\authority-permission-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "check-rework.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\check-rework.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "check-rework.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\check-rework.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "check-rework.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\check-rework.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\checkout.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\checkout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\clone.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\clone.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "cmake-evidence.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\cmake-evidence.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "comparison-base.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\comparison-base.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "diff-check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\diff-check.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "diff-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\diff-check.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\docs.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\docs.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "facts.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\facts.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "finalize.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\finalize.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "finalize.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\finalize.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "finalize.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\finalize.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "frozen-sha.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\frozen-sha.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "git-status-end.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\git-status-end.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "git-status-start.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\git-status-start.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\hash-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "original-cmake-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\original-cmake-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "product-upstream-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\product-upstream-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\reuse.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\reuse.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "target-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\target-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\task.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch15-r2-20261023",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312\\task.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "candidate-files.tsv",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\candidate-files.tsv",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "capture-evidence.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\capture-evidence.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "capture-evidence.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\capture-evidence.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "capture-evidence.mjs",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\capture-evidence.mjs",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\checkout.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\checkout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\clone.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\clone.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "CORE-TEMPLATE-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\CORE-TEMPLATE-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "coverage-gaps.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\coverage-gaps.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "coverage.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\coverage.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "coverage.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\coverage.md",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "current-files-beyond-baseline.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\current-files-beyond-baseline.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "definition-boundary-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\definition-boundary-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\docs.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\docs.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-02.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-02.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-03.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-03.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-04.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-04.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-05.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-05.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-06.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-06.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-07.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-07.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-08.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-08.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-09.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-09.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-10.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-10.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-11.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-11.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-12.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-12.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-13.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-13.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-14.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-14.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-15.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-15.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-16.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-16.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-17.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-17.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-18.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-18.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-19.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-19.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "FCOV-20.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\FCOV-20.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "frozen-sha.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\frozen-sha.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "git-status-end.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\git-status-end.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "governance-script-index.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\governance-script-index.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "groupable-examples.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\groupable-examples.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "INLINE-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\INLINE-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "inventory-analysis.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\inventory-analysis.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "inventory-analysis.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\inventory-analysis.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "inventory-analysis.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\inventory-analysis.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "mjs-coverage.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\mjs-coverage.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "mjs-function-index.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\mjs-function-index.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "old16-crosswalk.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\old16-crosswalk.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "PARTIAL-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\PARTIAL-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "PARTIAL-02.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\PARTIAL-02.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "PARTIAL-03.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\PARTIAL-03.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "RECOVERY-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\RECOVERY-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "report-consistency-check.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\report-consistency-check.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\reuse.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\reuse.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "scan-coverage.mjs",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\scan-coverage.mjs",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "source-reference-index.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\source-reference-index.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "supplemental-gaps.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\supplemental-gaps.json",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\task.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\task.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "TEST-01.frozen.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\TEST-01.frozen.txt",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "unit-counts.tsv",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\unit-counts.tsv",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "verify-report.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\verify-report.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "verify-report.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\verify-report.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "verify-report.mjs",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\verify-report.mjs",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "write-report.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\write-report.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "write-report.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\write-report.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-full-coverage-20261023",
+    "file": "write-report.mjs",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-full-coverage-4128bd11\\write-report.mjs",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  }
+]

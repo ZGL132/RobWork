@@ -606,6 +606,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -661,6 +665,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -716,6 +724,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -771,6 +783,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -826,6 +842,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -881,6 +901,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
           "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -936,6 +960,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
           "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -991,6 +1019,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
           "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [
@@ -1046,6 +1078,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
           "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
         }
       ],
       "auditEvidence": [

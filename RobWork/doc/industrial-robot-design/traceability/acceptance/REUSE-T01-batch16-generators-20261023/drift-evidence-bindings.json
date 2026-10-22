@@ -1,0 +1,26 @@
+[
+  {
+    "role": "original",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected/import-report.json",
+    "recordedSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+    "rawSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+    "normalizedSha256": "2448cd83ac6f28990a0e64cf15bbaa7355ac4f7036b50c877f7aa3443c4474d1",
+    "normalizedMatches": true
+  },
+  {
+    "role": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+    "recordedSha256": "e0e7674bb52c36c3ab40991d14c8df6ab80b46f5456bf4db5ad4e54db5f3ab9a",
+    "rawSha256": "e0e7674bb52c36c3ab40991d14c8df6ab80b46f5456bf4db5ad4e54db5f3ab9a",
+    "normalizedSha256": "e0e7674bb52c36c3ab40991d14c8df6ab80b46f5456bf4db5ad4e54db5f3ab9a",
+    "normalizedMatches": true
+  },
+  {
+    "role": "consumer",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp",
+    "recordedSha256": "6989122392412e2ead2824291f0d591226856d774c246f15a5fb0d58de1c178d",
+    "rawSha256": "64cbde6a59407659899da0bef42e2cdde2c0ced088868c7289108249f4b2b40b",
+    "normalizedSha256": "6989122392412e2ead2824291f0d591226856d774c246f15a5fb0d58de1c178d",
+    "normalizedMatches": true
+  }
+]

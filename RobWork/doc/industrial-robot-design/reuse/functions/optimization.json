@@ -1139,6 +1139,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
           "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
         }
       ],
       "auditEvidence": [
@@ -1194,6 +1198,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
           "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
         }
       ],
       "auditEvidence": [
@@ -1249,6 +1257,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
           "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
         }
       ],
       "auditEvidence": [
@@ -1304,6 +1316,10 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/include/sdurws/ird/optimization/Pareto.hpp",
           "sha256": "890f295bb11b3211d2880d681eb13706d69ffce37b0921a556a1680731c95ada"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+          "sha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80"
         }
       ],
       "auditEvidence": [

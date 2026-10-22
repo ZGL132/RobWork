@@ -1,0 +1,6 @@
+{
+  "originalExecutionOutput": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\repo\\.cache",
+  "savedAt": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\first-run-cache",
+  "reason": "冻结脚本写入.cache目录不被Git忽略；只移动本独立运行的输出缓存，原testdata未改。",
+  "nodeRerun": false
+}

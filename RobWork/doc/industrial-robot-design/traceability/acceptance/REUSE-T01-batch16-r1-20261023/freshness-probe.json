@@ -1,0 +1,257 @@
+[
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "sourcePath": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+    "replacement": {
+      "before": "constexpr double kGoldenRelTol = 1e-12;",
+      "after": "constexpr double kGoldenRelTol = 1e-6;"
+    },
+    "behaviorChange": "改变独立断言容差，从1e-12放宽为1e-6",
+    "wholeSourceHashChanges": true,
+    "allRegisteredHashesUnchanged": true,
+    "allOriginalHashesMatched": true,
+    "registeredBindings": [
+      {
+        "kind": "sources",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      }
+    ],
+    "execution": "仅内存替换，未写入任何仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "sourcePath": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+    "replacement": {
+      "before": "constexpr double kPrismMass = 1.0;",
+      "after": "constexpr double kPrismMass = 2.0;"
+    },
+    "behaviorChange": "支撑力从(1.0+0.5)*9.81改变为(2.0+0.5)*9.81",
+    "wholeSourceHashChanges": true,
+    "allRegisteredHashesUnchanged": true,
+    "allOriginalHashesMatched": true,
+    "registeredBindings": [
+      {
+        "kind": "sources",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      }
+    ],
+    "execution": "仅内存替换，未写入任何仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "sourcePath": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+    "replacement": {
+      "before": "constexpr double kRevMass = 0.5;",
+      "after": "constexpr double kRevMass = 1.5;"
+    },
+    "behaviorChange": "回转力矩随参与质量改变",
+    "wholeSourceHashChanges": true,
+    "allRegisteredHashesUnchanged": true,
+    "allOriginalHashesMatched": true,
+    "registeredBindings": [
+      {
+        "kind": "sources",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      }
+    ],
+    "execution": "仅内存替换，未写入任何仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "sourcePath": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+    "replacement": {
+      "before": "constexpr double kPrismMass = 1.0;",
+      "after": "constexpr double kPrismMass = 2.0;"
+    },
+    "behaviorChange": "CanonicalModel滑臂质量改变",
+    "wholeSourceHashChanges": true,
+    "allRegisteredHashesUnchanged": true,
+    "allOriginalHashesMatched": true,
+    "registeredBindings": [
+      {
+        "kind": "sources",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      }
+    ],
+    "execution": "仅内存替换，未写入任何仓库文件，未执行C++或门禁变异运行"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "sourcePath": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "replacement": {
+      "before": "<xacro:property name=\"prefix\" value=\"arm\"/>",
+      "after": "<xacro:property name=\"prefix\" value=\"changed\"/>"
+    },
+    "behaviorChange": "原始Xacro字节、真实digest以及展开后的关节名称改变",
+    "wholeSourceHashChanges": true,
+    "allRegisteredHashesUnchanged": true,
+    "allOriginalHashesMatched": true,
+    "registeredBindings": [
+      {
+        "kind": "sources",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "inputs",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      },
+      {
+        "kind": "auditEvidence",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "unchanged": true,
+        "originalMatchesRegistration": true
+      }
+    ],
+    "execution": "仅内存替换，未写入任何仓库文件，未执行C++或门禁变异运行"
+  }
+]

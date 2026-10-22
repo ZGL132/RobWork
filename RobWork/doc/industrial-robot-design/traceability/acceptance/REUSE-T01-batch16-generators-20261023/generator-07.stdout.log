@@ -1,0 +1,6 @@
+# integrity 段（回填 manifest.json——含本脚本自身）:
+  {"path": "inputs/search-outcomes-inputs.json", "sha256": "1c5ec123d14b5164f0e2bfa91e5140d4fad91a8a19c5e47e515ab061b04ffe1d", "sizeBytes": 5586},
+  {"path": "expected/search-outcomes-expected.json", "sha256": "2f3a29004774fb71dd3eb4fb29f409cd514e976f43bb950acca224c5b93844f0", "sizeBytes": 2376},
+  {"path": "generate/make_kin_search_outcomes_golden.mjs", "sha256": "a493e11cc56e48c0170fc5f5954a1245d4a1b79029a27518585f82b0a208fb4c", "sizeBytes": 9873},
+# 3R 双分支 = [[0.20000000000000012,0.39999999999999997,0],[0.49873161577581365,-0.39999999999999997,0.5012683842241864]]
+# 2R 目标 = {"x":1.7369167425270358,"y":0.1860036957709307,"phi":-0.2}
