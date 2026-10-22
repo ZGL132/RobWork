@@ -852,6 +852,43 @@
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+    },
+    {
+      "functionId": "modeling.zeroConfigFK",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+          "symbol": "zeroConfigFK",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::zeroConfigFK",
+          "startLine": 1780,
+          "endLine": 1799,
+          "sha256": "0bddab268c3e4daf679960f242da542ef475fedb35e9b158a7a8335cdf6a7b8b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"zeroConfigFK|baseTframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "新发现零位验证自持链前向累计；优先runtime受控上游FK端口，禁止在modeling自建WorkCell；保留DH两描述等价性独立oracle与公差",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
     }
   ]
 }

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "project",
+  "functions": [
+    {
+      "functionId": "project.ObjectStore.publishObject",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+          "symbol": "ObjectStore::publishObject",
+          "qualifiedSymbol": "sdurws::ird::project::objstore::ObjectStore::publishObject",
+          "startLine": 179,
+          "endLine": 322,
+          "sha256": "b087016657ecdd941b0550f5ec7176ca731ba1133c69a5c54ce382e97be2e316"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "不可变CAS发布/同内容共享/冲突复验是project写权威；IOUtil仅底层工具候选，不提供publishNew原子协议，不能放宽fsync和防覆盖",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "project.ObjectStore.readVerified",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+          "symbol": "ObjectStore::readVerified",
+          "qualifiedSymbol": "sdurws::ird::project::objstore::ObjectStore::readVerified",
+          "startLine": 328,
+          "endLine": 389,
+          "sha256": "2f82daaaf440ee0f53cb1c7e480f19ade7bfab084336f8dec17112c29870f8e5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "读取需按内容身份核摘要、缓存和预算；IOUtil::readFile只读全部字节，不提供这些契约。摘要继续单源core",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

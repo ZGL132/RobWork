@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "evidence",
+  "functions": [
+    {
+      "functionId": "evidence.aggregateVerdict",
+      "ownerUnit": "evidence",
+      "requirements": [
+        "CON-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+          "symbol": "aggregateVerdict",
+          "qualifiedSymbol": "sdurws::ird::evidence::aggregateVerdict",
+          "startLine": 379,
+          "endLine": 586,
+          "sha256": "3cb1da55f8cfa4f3494915d17b9161f82688313bb728ad3b09dd9fb5b7ccbf5f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_evidence"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "六级判定/工程与执行轴分离归evidence；不搬到适配层，不允许业务自行构造结果包络。需要继续核稳定诊断文案来源及全部输入消费者",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+          "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

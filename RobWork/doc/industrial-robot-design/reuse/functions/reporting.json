@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "reporting",
+  "functions": [
+    {
+      "functionId": "reporting.ReportArchiveCoordinator.publish",
+      "ownerUnit": "reporting",
+      "requirements": [
+        "RPT-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Archive.cpp",
+          "symbol": "ReportArchiveCoordinator::publish",
+          "qualifiedSymbol": "sdurws::ird::reporting::ReportArchiveCoordinator::publish",
+          "startLine": 226,
+          "endLine": 512,
+          "sha256": "02c239e0c3a3f55411f45739129d24cbf22f7b8a175913ad7234eed626e94cf0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_reporting"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "经产物sink/归档端口编排，需核project唯一写权与证据身份；IOUtil不等于归档事务，禁止另建对象库或越权直接写",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+          "sha256": "f607f1a9fb2068c928ee2faffb24623ee30967b969e59d714312d90cdcf3da13"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

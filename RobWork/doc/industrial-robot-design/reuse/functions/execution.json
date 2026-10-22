@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "execution",
+  "functions": [
+    {
+      "functionId": "execution.TaskScheduler.submit",
+      "ownerUnit": "execution",
+      "requirements": [
+        "TASK-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+          "symbol": "TaskScheduler::submit",
+          "qualifiedSymbol": "sdurws::ird::execution::TaskScheduler::submit",
+          "startLine": 163,
+          "endLine": 237,
+          "sha256": "3c5963200ed523327f448c33c94a2bc42cad21c39b86e34cf4e0f66f1cc756ac"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_execution"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-THREAD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "双优先级、受理预算、状态机与身份属于execution编排；ThreadPool仅候选执行原语，不能抹掉Controller唯一写者/取消/终态",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+          "sha256": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+      "ownerUnit": "execution",
+      "requirements": [
+        "TASK-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+          "symbol": "WorkerSupervisor::spawnNewWorker",
+          "qualifiedSymbol": "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker",
+          "startLine": 264,
+          "endLine": 344,
+          "sha256": "9b6171dd9ed958aac4a5dc7217f691e8fbefe4031ca797294bcf88d27709cd3b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_execution"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.3",
+      "capabilityId": "UTIL-THREAD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "当前使用Win32受控进程/作业对象及命名管道五元组；ThreadPool不提供这些隔离能力，不是可直接替代。继续核底层启动和IPC工具",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+          "sha256": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

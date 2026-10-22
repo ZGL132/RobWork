@@ -453,7 +453,8 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch1-r2-20261022/semantic-probe/CMakeLists.txt",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch1-r2-20261022/semantic-probe/semantic.cpp",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-search.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-rework-search.json"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-rework-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch3-search.json"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

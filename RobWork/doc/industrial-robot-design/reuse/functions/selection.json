@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "selection",
+  "functions": [
+    {
+      "functionId": "selection.LinearCurveEvaluator.evaluate",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CapabilityCurve.cpp",
+          "symbol": "LinearCurveEvaluator::evaluate",
+          "qualifiedSymbol": "sdurws::ird::selection::LinearCurveEvaluator::evaluate",
+          "startLine": 52,
+          "endLine": 137,
+          "sha256": "534c45f484fb7722eda81eb894b192d77befb6c6a1634819de36674d3e2e1db4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TRAJ-LINEAR",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class LinearInterpolator|LinearInterpolator \\(|T x \\(|duration\" RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "底层标量分段线性插值候选LinearInterpolator<double>，保留禁止外推/有效区间/目录身份与单位，x不是时间但段参数可归一；不能让适配层接管淘汰原因",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

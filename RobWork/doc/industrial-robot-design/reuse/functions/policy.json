@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "policy",
+  "functions": [
+    {
+      "functionId": "policy.RobWorkCollisionEvaluator.createSession",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+          "symbol": "RobWorkCollisionEvaluator::createSession",
+          "qualifiedSymbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::createSession",
+          "startLine": 82,
+          "endLine": 93,
+          "sha256": "e65147ffd54cd184e50eb3238970fbfb95a89292111fabf27b7cb6760fe89811"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "COLLISION",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "已有策略/互斥会话构造不是重复碰撞核心；继续审Scene来源、借持生命周期、State隔离与内置后端距离能力，保留唯一policy入口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "policy.CollisionEvaluationSession.evaluate",
+      "ownerUnit": "policy",
+      "requirements": [
+        "KIN-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+          "symbol": "CollisionEvaluationSession::evaluate",
+          "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::evaluate",
+          "startLine": 372,
+          "endLine": 712,
+          "sha256": "10dd0281be62e601bf09ce21702c26ffea8a87171c56baa7cbda95e72bce0f70"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "COLLISION",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "已有inCollision/distance结果消费，策略过滤与覆盖事实归policy；内置二值后端无distance时诚实Failed，需对照可用距离后端，不另写几何距离",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "requirements",
+  "functions": [
+    {
+      "functionId": "requirements.SamplingPlanBuilder.buildPlan",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+          "symbol": "SamplingPlanBuilder::buildPlan",
+          "qualifiedSymbol": "sdurws::ird::requirements::SamplingPlanBuilder::buildPlan",
+          "startLine": 35,
+          "endLine": 83,
+          "sha256": "30830fbce617cd541748073c1daf9cac29133265d6510e8435f3f827342c99b9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "构造规范化采样计划，不执行随机/姿态采样；调用WorkRegionService而非复制生成器，不能按文件名误报重复采样核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "requirements.SamplingPlanBuilder.digest",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "CON-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+          "symbol": "SamplingPlanBuilder::digest",
+          "qualifiedSymbol": "sdurws::ird::requirements::SamplingPlanBuilder::digest",
+          "startLine": 85,
+          "endLine": 130,
+          "sha256": "eda2ccc43e71f4cc8f79e0fe5c707095d824a2150cae3238451cb743fd9e5200"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "计划分母与codec字节身份；现调用core摘要器而非新SHA核心。饱和乘积/Random分母与零样本的消费者一致性仍待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

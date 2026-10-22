@@ -60,6 +60,22 @@
           "operations": [
             "query"
           ]
+        },
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        },
+        {
+          "consumerUnit": "ui",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6.2",
+          "operations": [
+            "query"
+          ]
         }
       ],
       "limits": {
@@ -566,6 +582,14 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "selection",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "limits": {
@@ -683,6 +707,37 @@
           ],
           "target": "sdurw_proximity",
           "sha256": "9f1938197c15a8758412cbc1e66d50147bd341d211fea67c9ded340aaaba0104",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp",
+          "sha256": "6036e3a5df16c3fe1c724547fc0c186ae9a7362286ae4f44dd6e669082508172",
+          "symbols": [
+            "inCollision"
+          ],
+          "target": "sdurw_proximity",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp",
+          "sha256": "4a62b9f99f841229b02d74b0798bccd4d5d668485ad4511ee593a7b5eee04650",
+          "symbols": [
+            "distance"
+          ],
+          "target": "sdurw_proximity",
+          "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+          "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+          "sha256": "c44184668f172bd401b5fd747ed07117c59a438f2551724374c9fcb8aa74b6bf",
+          "symbols": [
+            "createModel",
+            "doInCollision"
+          ],
+          "target": "sdurw_proximity",
           "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
           "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
         }
@@ -1164,6 +1219,288 @@
       "resourceSearch": {
         "command": "rg -n \"uniformDistribution|Fibonacci|fibonacci|golden|sampling\" RobWork/RobWork/src/rw/geometry/HyperSphere.hpp RobWork/RobWork/src/rw/geometry/HyperSphere.cpp RobWork/RobWork/gtest/geometry",
         "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+      }
+    },
+    {
+      "id": "UTIL-LOG",
+      "search": {
+        "command": "rg -n \"class Log|static.*getLog|setWriter|write \\(|flush|virtual.*doWrite\" RobWork/RobWork/src/rw/core/Log.hpp RobWork/RobWork/src/rw/core/LogWriter.hpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
+      },
+      "boundary": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/core/Log.hpp",
+          "sha256": "1a994191b10b0fe01b2c9c206d1fac2ebdea47096d609499b883244affae9ebc",
+          "symbols": [
+            "setWriter",
+            "write",
+            "flush"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/LogWriter.hpp",
+          "sha256": "966c344a821d34fb2c11bcb3a5efc742e52081cd95ebe7958f37f1b02745bde8",
+          "symbols": [
+            "doWrite",
+            "doFlush"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_core"
+        ],
+        "constraints": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义"
+      },
+      "usages": [
+        {
+          "consumerUnit": "diagnostics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "仅候选日志输出原语；稳定码注册、文案、脱敏、节流、worker重放与Tier-U/Tier-D仍归diagnostics；不能直接替换后丢失有序关闭与错误语义",
+        "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
+        "determinism": "未运行本批适用性实验，不承诺等价"
+      },
+      "ownerUnit": "diagnostics",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"class Log|static.*getLog|setWriter|write \\(|flush|virtual.*doWrite\" RobWork/RobWork/src/rw/core/Log.hpp RobWork/RobWork/src/rw/core/LogWriter.hpp",
+        "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+      }
+    },
+    {
+      "id": "UTIL-THREAD",
+      "search": {
+        "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
+      },
+      "boundary": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
+          "sha256": "623b5a3a7f8483381238ff26b99b7d580fff365664102e363eeb7d22b7e8d1e9",
+          "symbols": [
+            "addWork",
+            "stop",
+            "waitForEmptyQueue"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e",
+          "symbols": [
+            "push",
+            "try_pop",
+            "pop"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_common"
+        ],
+        "constraints": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算"
+      },
+      "usages": [
+        {
+          "consumerUnit": "execution",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "diagnostics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算",
+        "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
+        "determinism": "未运行本批适用性实验，不承诺等价"
+      },
+      "ownerUnit": "execution",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+        "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+      }
+    },
+    {
+      "id": "UTIL-FILE",
+      "search": {
+        "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
+      },
+      "boundary": "通用读取/遍历原语；不等同不可变内容寻址发布、摘要复验、原子提交、资源预算与路径防护，避免为了复用扩充通用文件门面",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+          "sha256": "a23aec22355ee093e6ed9c2a89ab09c346443ed3154cb1d85c86908142ff6eef",
+          "symbols": [
+            "readFile",
+            "getFilesInFolder"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_core"
+        ],
+        "constraints": "通用读取/遍历原语；不等同不可变内容寻址发布、摘要复验、原子提交、资源预算与路径防护，避免为了复用扩充通用文件门面"
+      },
+      "usages": [
+        {
+          "consumerUnit": "project",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "reporting",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "io",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "通用读取/遍历原语；不等同不可变内容寻址发布、摘要复验、原子提交、资源预算与路径防护，避免为了复用扩充通用文件门面",
+        "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
+        "determinism": "未运行本批适用性实验，不承诺等价"
+      },
+      "ownerUnit": "io",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"readFile|getFilesInFolder|getFileSize|atomic|publish|fsync|digest\" RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp",
+        "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
+      }
+    },
+    {
+      "id": "HOST-SCENE",
+      "search": {
+        "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已查列明API；只证明候选存在，不代表生产适用或功能缺口成立"
+      },
+      "boundary": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+          "sha256": "6e396a8fb97558bbca6d77fccbd9924c82a413f10a77da257cdfdb3116404eca",
+          "symbols": [
+            "setWorkCell",
+            "getWorkCell",
+            "getWorldNode"
+          ],
+          "target": "sdurw_graphics",
+          "targetFile": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+          "targetSha256": "8ae68542dec9acb18f6032c0f17af2fe455c5c1f34bc3ffde05e83d5e58ea034"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_graphics"
+        ],
+        "constraints": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖"
+      },
+      "usages": [
+        {
+          "consumerUnit": "ui",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "仅ARCH3.6.2精确宿主呈现例外；空场景锚与正式计算模型须分别审查，不授予工程模型构造权，也不允许worker图形依赖",
+        "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
+        "determinism": "未运行本批适用性实验，不承诺等价"
+      },
+      "ownerUnit": "ui",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+        "conclusion": "本批只核公共API/源码/构建，测试与示例资源待进一步复核；空数组非不存在"
       }
     }
   ]

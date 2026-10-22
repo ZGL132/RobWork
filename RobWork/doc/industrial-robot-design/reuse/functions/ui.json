@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "ui",
+  "functions": [
+    {
+      "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+          "startLine": 471,
+          "endLine": 504,
+          "sha256": "f89820ae0e53efa4c3ac959136ea24e8824f487ee8c97a83d60dddeef84775b6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "现有空WorkCell会话锚须按HOST-RENDER核查；只供场景WORLD，不是runtime计算模型，不因已有例外标签自动合法，不授予新构造路径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合",
+      "designRefs": [
+        "ARCHITECTURE.md §3.6.2 HOST-RENDER",
+        "tasks/foundation/UI-T33.json"
+      ]
+    },
+    {
+      "functionId": "ui.HostView3DGateway.currentTcpPose",
+      "ownerUnit": "ui",
+      "requirements": [
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::currentTcpPose",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::currentTcpPose",
+          "startLine": 120,
+          "endLine": 135,
+          "sha256": "ffb08a63647c2bbcd1983ea72a00b004b172549f2ef48eaa67271297b9732986"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setWorkCell|getWorkCell|getWorldNode|worldTframe\" RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp RobWork/RobWork/src/rw/kinematics/Kinematics.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "已调用Kinematics::worldTframe读取宿主会话位姿；返回是world坐标不能冒充base坐标，Frame/State由装配保活，HOST-GATEWAY不回灌工程真值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

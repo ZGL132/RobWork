@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "diagnostics",
+  "functions": [
+    {
+      "functionId": "diagnostics.StableCodeRegistry.registerCode",
+      "ownerUnit": "diagnostics",
+      "requirements": [
+        "ERR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+          "symbol": "StableCodeRegistry::registerCode",
+          "qualifiedSymbol": "sdurws::ird::diagnostics::StableCodeRegistry::registerCode",
+          "startLine": 604,
+          "endLine": 720,
+          "sha256": "51efe4fd84c85eccf6036bc952d8e2b1fc583bd38e91c028853c16e8862047ad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_diagnostics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "稳定码词表/元数据注册是diagnostics权威；上游Log日志等级不能替代稳定码和文案契约。继续审查内部schema解析与摘要工具，不能整文件business-specific",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+          "sha256": "cb63d58112306ea143e1b2832f757eb3e81eb841aed144a6aad58e9beabe188c"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "diagnostics.FileLogFileOps.appendLine",
+      "ownerUnit": "diagnostics",
+      "requirements": [
+        "ERR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+          "symbol": "FileLogFileOps::appendLine",
+          "qualifiedSymbol": "sdurws::ird::diagnostics::FileLogFileOps::appendLine",
+          "startLine": 369,
+          "endLine": 373,
+          "sha256": "9588ede10f350272130f9f3c5cbd5ae3903813c6c802e655865cbd2a63050e98"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_diagnostics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-LOG",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class Log|static.*getLog|setWriter|write \\(|flush|virtual.*doWrite\" RobWork/RobWork/src/rw/core/Log.hpp RobWork/RobWork/src/rw/core/LogWriter.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "逐行开写关/写失败语义与上游LogWriter输出原语比较；锁与轮转不能未经验证换成全局Log",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+          "sha256": "cb63d58112306ea143e1b2832f757eb3e81eb841aed144a6aad58e9beabe188c"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "diagnostics.LoggingPipeline.log",
+      "ownerUnit": "diagnostics",
+      "requirements": [
+        "ERR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+          "symbol": "LoggingPipeline::log",
+          "qualifiedSymbol": "sdurws::ird::diagnostics::LoggingPipeline::log",
+          "startLine": 1295,
+          "endLine": 1300,
+          "sha256": "1787ee8f3bf2ccb1766e88001fe946a21fd4509f0b0d91f2d951523e3c0aff02"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_diagnostics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-THREAD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class ThreadPool|addWork|stop \\(|waitForEmptyQueue|class ThreadSafeQueue|push \\(|pop \\(|while.*empty\" RobWork/RobWork/src/rw/common/ThreadPool.hpp RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "日志线程排队候选；需核关闭排空、背压、配置顺序和worker批重放，队列API本身未证明全管线可替换",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+          "sha256": "cb63d58112306ea143e1b2832f757eb3e81eb841aed144a6aad58e9beabe188c"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}

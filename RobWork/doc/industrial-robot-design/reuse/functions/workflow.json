@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "workflow",
+  "functions": [
+    {
+      "functionId": "workflow.PureStageGateService.evaluate",
+      "ownerUnit": "workflow",
+      "requirements": [
+        "UX-12"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
+          "symbol": "PureStageGateService::evaluate",
+          "qualifiedSymbol": "sdurws::ird::workflow::PureStageGateService::evaluate",
+          "startLine": 134,
+          "endLine": 297,
+          "sha256": "55d56e9b1cc1bce3aa074a734f66f778f66da224b01c357b31796020fb0efd08"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_workflow"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "七阶段门控消费投影与事件，不重算领域阈值。通用事件/状态工具仍需查，不能把整个workflow判业务专属",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    }
+  ]
+}
