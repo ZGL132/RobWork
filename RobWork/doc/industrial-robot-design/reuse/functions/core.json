@@ -143,7 +143,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -203,12 +203,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -229,6 +233,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -383,7 +395,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -443,12 +455,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -469,6 +485,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -501,7 +525,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -561,12 +585,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -587,6 +615,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -619,7 +655,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -679,12 +715,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -705,6 +745,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -737,7 +785,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -797,12 +845,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -823,6 +875,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -855,7 +915,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -915,12 +975,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -941,6 +1005,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -973,7 +1045,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -1033,12 +1105,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -1059,6 +1135,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -1091,7 +1175,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -1151,12 +1235,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -1177,6 +1265,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -10602,7 +10698,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -10662,12 +10758,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -10688,6 +10788,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -10720,7 +10828,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -10780,12 +10888,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -10806,6 +10918,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -10838,7 +10958,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -10898,12 +11018,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -10924,6 +11048,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -10956,7 +11088,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11016,12 +11148,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11042,6 +11178,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11074,7 +11218,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11134,12 +11278,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11160,6 +11308,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11192,7 +11348,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11252,12 +11408,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11278,6 +11438,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11310,7 +11478,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11370,12 +11538,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11396,6 +11568,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11428,7 +11608,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11488,12 +11668,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11514,6 +11698,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11546,7 +11738,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11606,12 +11798,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11632,6 +11828,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11664,7 +11868,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11724,12 +11928,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11750,6 +11958,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11782,7 +11998,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11842,12 +12058,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11868,6 +12088,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -11900,7 +12128,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -11960,12 +12188,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -11986,6 +12218,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12018,7 +12258,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12078,12 +12318,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12104,6 +12348,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12136,7 +12388,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12196,12 +12448,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12222,6 +12478,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12254,7 +12518,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12314,12 +12578,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12340,6 +12608,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12372,7 +12648,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12432,12 +12708,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12458,6 +12738,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12490,7 +12778,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12550,12 +12838,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12576,6 +12868,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12608,7 +12908,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12668,12 +12968,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12694,6 +12998,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12726,7 +13038,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12786,12 +13098,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12812,6 +13128,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12844,7 +13168,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -12904,12 +13228,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -12930,6 +13258,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -12962,7 +13298,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13022,12 +13358,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13048,6 +13388,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13080,7 +13428,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13140,12 +13488,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13166,6 +13518,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13198,7 +13558,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13258,12 +13618,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13284,6 +13648,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13316,7 +13688,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13376,12 +13748,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13402,6 +13778,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13434,7 +13818,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13494,12 +13878,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13520,6 +13908,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13552,7 +13948,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13612,12 +14008,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13638,6 +14038,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13670,7 +14078,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13730,12 +14138,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13756,6 +14168,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13788,7 +14208,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13848,12 +14268,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13874,6 +14298,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -13906,7 +14338,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -13966,12 +14398,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -13992,6 +14428,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14024,7 +14468,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14084,12 +14528,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14110,6 +14558,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14142,7 +14598,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14202,12 +14658,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14228,6 +14688,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14260,7 +14728,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14320,12 +14788,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14346,6 +14818,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14378,7 +14858,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14438,12 +14918,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14464,6 +14948,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14496,7 +14988,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14556,12 +15048,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14582,6 +15078,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14614,7 +15118,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14674,12 +15178,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14700,6 +15208,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14732,7 +15248,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14792,12 +15308,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14818,6 +15338,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14850,7 +15378,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -14910,12 +15438,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -14936,6 +15468,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -14968,7 +15508,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -15028,12 +15568,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15054,6 +15598,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -15086,7 +15638,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -15146,12 +15698,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15172,6 +15728,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -15204,7 +15768,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -15264,12 +15828,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15290,6 +15858,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -15322,7 +15898,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -15382,12 +15958,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15408,6 +15988,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -15440,7 +16028,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "未被源码引用的kInvalidIndex常量，未来清理候选；不能借未使用常量绕过无效句柄前置或全文件审计",
@@ -15500,12 +16088,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15526,6 +16118,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
@@ -15574,7 +16174,7 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "batch31/search.json",
+        "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
       "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
@@ -15634,12 +16234,16 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
           "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
         }
       ],
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
-          "sha256": "d6265b7d037ee5d049d2c7b63eb1ba3aaf5a1ae978d5eefeb60ab0195faf7e44"
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
@@ -15660,6 +16264,14 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
           "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
+          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
+          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
         }
       ],
       "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"

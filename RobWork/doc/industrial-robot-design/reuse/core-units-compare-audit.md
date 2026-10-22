@@ -19,3 +19,7 @@ value=DBL_MAX、reference=-DBL_MAX、relative=1.5、absolute=0均有限且Tolera
 次正规数denorm_min从mm到mm经各一次乘除下溢0是观察记录，SI纯构造保留原值；当前单位契约明定各一次乘除、不承诺位往返，本批不私自更改舍入政策或把characterization通过称为正确性证明。UnitToken默认无效而kind/symbol依赖已注册前置；Quantity::tryParse/displayValueIn应继续核调用方前置，不执行未定义行为来伪造拒绝证据。Tolerance公共成员可绕过make的约束尚未判定，不据此自行收窄接口。
 
 跨平台浮点/极端长序列/全部消费者阈值、上游完整套件与产品打包未执行；全部新行pending，F-966开放，独立验收只可授本批局部结论。
+
+## R2：补齐真实上游文档检索
+
+首轮独验B31-P2-01判定文档范围缺失：原路径RobWork/RobWork/doc不存在，后一次只删除坏路径，不能算已查文档。原证据及独验FAIL原样保留于batch31/r2。本轮实际搜索RobWork/doc（排除产品industrial-robot-design，包含md/rst等），阅读sphinx/tutorials/basic.rst:173的Deg2Rad示例与:205的弧度约定；原头/实现/测试/示例/CMake检索继续有效。该文档不补齐产品强量纲/词表/失败双轨或非对称C4。catalog资源检索指向新证据；当前资源路径校验仅允许RobWork/RobWork或RobWorkSim，真实共享doc路径暂以search/read摘要留痕，不伪造docs路径或授verified。51行只刷新证据及文档依赖，源码/探测/构建未变，引用原独验实跑19passed3failed；不重写原报告、不将F966洗绿。

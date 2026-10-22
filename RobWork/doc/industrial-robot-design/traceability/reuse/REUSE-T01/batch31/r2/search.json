@@ -1,0 +1,49 @@
+{
+  "baseline": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "corrects": "B31-P2-01；原search.json保留，exit2及删除坏路径均不冒充真实文档检索",
+  "args": [
+    "rg",
+    "-n",
+    "-i",
+    "getUnit|UnitMap|DOMCoreBasisTypes|DOMBasisTypes|Deg2Rad|Rad2Deg|radians|degrees|isFinite|isNaN|isInf|isApprox|relative.*tolerance|absolute.*tolerance",
+    "RobWork/doc/apidoc",
+    "RobWork/doc/gfx",
+    "RobWork/doc/layout",
+    "RobWork/doc/manual",
+    "RobWork/doc/ressources",
+    "RobWork/doc/sphinx",
+    "RobWork/doc/topics",
+    "RobWork/doc/tutorials",
+    "-g",
+    "*.md",
+    "-g",
+    "*.rst",
+    "-g",
+    "*.hpp",
+    "-g",
+    "*.cpp",
+    "-g",
+    "*.txt"
+  ],
+  "exit": 0,
+  "stdout": "RobWork/doc/sphinx\\file_formats\\workcell.rst:442:- **alpha:** in degrees\nRobWork/doc/topics\\softbodysimulation.hpp.md:118:    boost::numeric::ublas::vector<double> avec(M); \t// angle of each cross section in radians\nRobWork/doc/sphinx\\tutorials\\basic.rst:173:   RPY<> rpy(0, 0, 90*Deg2Rad); // 90 degree rotation around x-axis\nRobWork/doc/sphinx\\tutorials\\basic.rst:188:   // rotate a vector (0,1,0) 90 degrees around x-axis\nRobWork/doc/sphinx\\tutorials\\basic.rst:205:RobWork uses radians and not degrees. Take this into account.\nRobWork/doc/sphinx\\manual\\rotations.rst:92:The direction of the vector gives the axis of rotation, and the length of the vector gives the amount of rotation in radians.\nRobWork/doc/sphinx\\manual\\inverse_kinematics.rst:32:This robot has 6 degrees of freedom, and the solver will provide up to 8 solutions.\nRobWork/doc/sphinx\\manual\\inverse_kinematics.rst:33:Notice that for every joint there is a solution where the joint is rotated 360 degrees.\nRobWork/doc/sphinx\\manual\\inverse_kinematics.rst:34:Than means that each of the 8 solutions can typically be achieved in 64 different ways. It is up to the user to add or subtract 360 degrees such that it suits the application best.\nRobWork/doc/sphinx\\manual\\inverse_kinematics.rst:40:This robot has 7 degrees of freedom. It can have an infinite number of solutions, as the middle joint can be placed anywhere on a circle.\nRobWork/doc/sphinx\\manual\\inverse_kinematics.rst:48:The rw::invkin::PieperSolver is a closed form solver that works for serial devices with 6 degrees of freedom revolute joints. It requires that the last three axes intersect.\n",
+  "stderr": "",
+  "read": [
+    {
+      "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+      "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
+    }
+  ],
+  "conclusion": "basic.rst明示Deg2Rad及rad；文档未提供完整产品量纲/冻结token/错误双轨/C4比较。结合原头/实现/测试/示例/CMake证据，保留Constants直接候选、DOMCore比例候选边界。",
+  "scope": [
+    "RobWork/doc/apidoc",
+    "RobWork/doc/gfx",
+    "RobWork/doc/layout",
+    "RobWork/doc/manual",
+    "RobWork/doc/ressources",
+    "RobWork/doc/sphinx",
+    "RobWork/doc/topics",
+    "RobWork/doc/tutorials"
+  ],
+  "scopeReason": "枚举共享doc子目录，明确排除industrial-robot-design；避免Windows递归glob误包含产品文档"
+}

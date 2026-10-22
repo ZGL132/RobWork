@@ -1,0 +1,634 @@
+RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json:3242: trailing whitespace.
++    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-DIGEST-01.md",
+RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json:3243: trailing whitespace.
++    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/**",
+RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json:3244: trailing whitespace.
++    "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md"
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:1: trailing whitespace.
++适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:2: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:3: trailing whitespace.
++  1>Checking Build System
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:4: trailing whitespace.
++  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:5: trailing whitespace.
++  Core.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:6: trailing whitespace.
++  Identity.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:7: trailing whitespace.
++  Digest.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:8: trailing whitespace.
++  Provenance.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:9: trailing whitespace.
++  Units.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:10: trailing whitespace.
++  Compare.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:11: trailing whitespace.
++  Evaluation.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:12: trailing whitespace.
++  DiagData.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:13: trailing whitespace.
++  Events.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:14: trailing whitespace.
++  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b31-build\parent-probe\ird-core\Release\sdurws_ird_core.lib
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:15: trailing whitespace.
++  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:16: trailing whitespace.
++  TestPaths.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:17: trailing whitespace.
++  JsonLite.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:18: trailing whitespace.
++  Fault.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:19: trailing whitespace.
++  Dataset.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:20: trailing whitespace.
++  ToleranceProfile.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:21: trailing whitespace.
++  Check.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:22: trailing whitespace.
++  ContractCheck.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:23: trailing whitespace.
++  Fixture.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:24: trailing whitespace.
++  Report.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:25: trailing whitespace.
++  ProcessRunner.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:26: trailing whitespace.
++  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b31-build\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:27: trailing whitespace.
++  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:28: trailing whitespace.
++  UnitsSuitabilityTest.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:29: trailing whitespace.
++  UnitsTest.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:30: trailing whitespace.
++  CompareTest.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:31: trailing whitespace.
++  TestMainReport.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:32: trailing whitespace.
++  ird_units_audit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b31-build\Release\ird_units_audit.exe
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log:33: trailing whitespace.
++  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b31-build\Release\gtest.dll done
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:1: trailing whitespace.
++-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:2: trailing whitespace.
++-- The CXX compiler identification is MSVC 19.42.34433.0
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:3: trailing whitespace.
++-- Detecting CXX compiler ABI info
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:4: trailing whitespace.
++-- Detecting CXX compiler ABI info - done
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:5: trailing whitespace.
++-- Check for working CXX compiler: D:/software/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/bin/Hostx64/x64/cl.exe - skipped
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:6: trailing whitespace.
++-- Detecting CXX compile features
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:7: trailing whitespace.
++-- Detecting CXX compile features - done
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:8: trailing whitespace.
++-- RobWork has not been compiled with a Version Number
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:9: trailing whitespace.
++-- RobWork: Found a RobWork build tree
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:10: trailing whitespace.
++CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:11: trailing whitespace.
++  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:12: trailing whitespace.
++  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:13: trailing whitespace.
++  cmake_policy command to set the policy and suppress this warning.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:14: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:15: trailing whitespace.
++  CMake variable QHULL_ROOT is set to:
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:16: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:17: trailing whitespace.
++    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:18: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:19: trailing whitespace.
++  For compatibility, find_package is ignoring the variable, but code in a
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:20: trailing whitespace.
++  .cmake module might still use it.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:21: trailing whitespace.
++Call Stack (most recent call first):
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:22: trailing whitespace.
++  CMakeLists.txt:4 (find_package)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:23: trailing whitespace.
++This warning is for project developers.  Use -Wno-dev to suppress it.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:24: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:25: trailing whitespace.
++-- Found RobWork: D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/..
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:26: trailing whitespace.
++-- RobWork has not been compiled with a Version Number
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:27: trailing whitespace.
++-- RobWork: Found a RobWork build tree
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:28: trailing whitespace.
++CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:29: trailing whitespace.
++  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:30: trailing whitespace.
++  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:31: trailing whitespace.
++  cmake_policy command to set the policy and suppress this warning.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:32: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:33: trailing whitespace.
++  CMake variable QHULL_ROOT is set to:
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:34: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:35: trailing whitespace.
++    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:36: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:37: trailing whitespace.
++  For compatibility, find_package is ignoring the variable, but code in a
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:38: trailing whitespace.
++  .cmake module might still use it.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:39: trailing whitespace.
++Call Stack (most recent call first):
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:40: trailing whitespace.
++  C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt:4 (find_package)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:41: trailing whitespace.
++This warning is for project developers.  Use -Wno-dev to suppress it.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:42: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:43: trailing whitespace.
++-- Found Threads: TRUE
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:44: trailing whitespace.
++-- Performing Test HAVE_STDATOMIC
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:45: trailing whitespace.
++-- Performing Test HAVE_STDATOMIC - Success
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:46: trailing whitespace.
++-- Found WrapAtomic: TRUE
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:47: trailing whitespace.
++-- Configuring done (10.4s)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:48: trailing whitespace.
++-- Generating done (0.4s)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log:49: trailing whitespace.
++-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b31-build
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-run-vs.log:1: trailing whitespace.
++**********************************************************************
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-run-vs.log:2: trailing whitespace.
++** Visual Studio 2022 Developer PowerShell v17.12.0
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-run-vs.log:3: trailing whitespace.
++** Copyright (c) 2022 Microsoft Corporation
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-run-vs.log:4: trailing whitespace.
++**********************************************************************
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:1: trailing whitespace.
++NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:2: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:3: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:4: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:5: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:6: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:7: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:8: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:9: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:10: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:11: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:12: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:13: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:14: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:15: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:16: trailing whitespace.
++reuse supplement: schema/permission/function evidence checked; functions=1011 closedFiles=0 (semantic review required)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:17: trailing whitespace.
++validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log:18: trailing whitespace.
++validate-docs: PASS (20 units, 12 trace entries, 378 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:1: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:2: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:3: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:4: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:5: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:6: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:7: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:8: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:9: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:10: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:11: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:12: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:13: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:14: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:15: trailing whitespace.
++reuse supplement: schema/permission/function evidence checked; functions=1011 closedFiles=0 (semantic review required)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log:16: trailing whitespace.
++validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:1: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:2: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:3: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:4: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:5: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:6: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:7: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:8: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:9: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:10: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:11: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:12: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:13: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:14: trailing whitespace.
++REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:15: trailing whitespace.
++reuse supplement: schema/permission/function evidence checked; functions=1011 closedFiles=0 (semantic review required)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:16: trailing whitespace.
++validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log:17: trailing whitespace.
++validate-task: PASS (1 tasks)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-vs.log:1: trailing whitespace.
++**********************************************************************
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-vs.log:2: trailing whitespace.
++** Visual Studio 2022 Developer PowerShell v17.12.0
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-vs.log:3: trailing whitespace.
++** Copyright (c) 2022 Microsoft Corporation
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-vs.log:4: trailing whitespace.
++**********************************************************************
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:1: trailing whitespace.
++{
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:2: trailing whitespace.
++  "valueHex": "0x1.fffffffffffffp+1023",
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:3: trailing whitespace.
++  "referenceHex": "-0x1.fffffffffffffp+1023",
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:4: trailing whitespace.
++  "relative": "3/2",
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:5: trailing whitespace.
++  "absolute": 0,
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:6: trailing whitespace.
++  "differenceOverMaximum": "2",
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:7: trailing whitespace.
++  "limitOverMaximum": "3/2",
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:8: trailing whitespace.
++  "expected": false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json:9: trailing whitespace.
++}
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:1: trailing whitespace.
++<?xml version="1.0" encoding="UTF-8"?>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:2: trailing whitespace.
++<testsuites tests="22" failures="3" disabled="0" errors="0" time="0.002" timestamp="2026-10-23T06:45:00.406" name="AllTests">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:3: trailing whitespace.
++  <testsuite name="ReuseUnitsAudit" tests="7" failures="3" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-23T06:45:00.406">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:4: trailing whitespace.
++    <testcase name="MathAngleConstants_CORE_T04" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="26" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.406" classname="ReuseUnitsAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:5: trailing whitespace.
++    <testcase name="DomCoreScaleAndSemanticLimits_CORE_T04" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="34" status="run" result="completed" time="0.001" timestamp="2026-10-23T06:45:00.406" classname="ReuseUnitsAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:6: trailing whitespace.
++    <testcase name="QApproximationAndNanLimits_CORE_T05" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="49" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.408" classname="ReuseUnitsAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:7: trailing whitespace.
++    <testcase name="ScalarFiniteOverflowMustReject_CORE_T05" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="59" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="ReuseUnitsAudit">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:8: trailing whitespace.
++      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:61&#x0A;Value of: closeWithin(maximum,-maximum,Tolerance::make(1.5,0))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:61
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:9: trailing whitespace.
++Value of: closeWithin(maximum,-maximum,Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:10: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:11: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:12: trailing whitespace.
++]]></failure>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:13: trailing whitespace.
++    </testcase>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:14: trailing whitespace.
++    <testcase name="VectorFiniteOverflowMustReject_CORE_T05" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="ReuseUnitsAudit">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:15: trailing whitespace.
++      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:66&#x0A;Value of: allCloseWithin(std::vector&lt;double&gt;{maximum},std::vector&lt;double&gt;{-maximum},Tolerance::make(1.5,0))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:66
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:16: trailing whitespace.
++Value of: allCloseWithin(std::vector<double>{maximum},std::vector<double>{-maximum},Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:17: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:18: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:19: trailing whitespace.
++]]></failure>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:20: trailing whitespace.
++    </testcase>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:21: trailing whitespace.
++    <testcase name="QFiniteOverflowMustReject_CORE_T05" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="69" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="ReuseUnitsAudit">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:22: trailing whitespace.
++      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:72&#x0A;Value of: allCloseWithin(value,reference,Tolerance::make(1.5,0))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp:72
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:23: trailing whitespace.
++Value of: allCloseWithin(value,reference,Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:24: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:25: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:26: trailing whitespace.
++]]></failure>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:27: trailing whitespace.
++    </testcase>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:28: trailing whitespace.
++    <testcase name="SubnormalConversionCharacterization_CORE_T04" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp" line="76" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="ReuseUnitsAudit">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:29: trailing whitespace.
++      <properties>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:30: trailing whitespace.
++        <property name="subnormal_same_unit_zero" value="observed"/>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:31: trailing whitespace.
++      </properties>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:32: trailing whitespace.
++    </testcase>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:33: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:34: trailing whitespace.
++  <testsuite name="UnitsConvert" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:35: trailing whitespace.
++    <testcase name="KnownConversions_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsConvert" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:36: trailing whitespace.
++    <testcase name="ModelingDerivativeDisplayUnits_UX05_T30" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsConvert" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:37: trailing whitespace.
++    <testcase name="DimensionMismatch_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="73" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsConvert" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:38: trailing whitespace.
++    <testcase name="NonFiniteAndOverflow_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsConvert" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:39: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:40: trailing whitespace.
++  <testsuite name="UnitsFind" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:41: trailing whitespace.
++    <testcase name="UnknownSymbol_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="108" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsFind" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:42: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:43: trailing whitespace.
++  <testsuite name="UnitsRegistry" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:44: trailing whitespace.
++    <testcase name="R1TableComplete_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="120" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="UnitsRegistry" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:45: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:46: trailing whitespace.
++  <testsuite name="QuantityTyped" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:47: trailing whitespace.
++    <testcase name="TryParseKindMismatchAndDisplay_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\UnitsTest.cpp" line="146" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="QuantityTyped" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:48: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:49: trailing whitespace.
++  <testsuite name="CompareFormula" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:50: trailing whitespace.
++    <testcase name="C4Basic_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="CompareFormula" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:51: trailing whitespace.
++    <testcase name="ZeroReferenceDegradesToAbsolute_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="41" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="CompareFormula" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:52: trailing whitespace.
++    <testcase name="NonFiniteInputsFalse_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="53" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="CompareFormula" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:53: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:54: trailing whitespace.
++  <testsuite name="AllCloseWithin" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:55: trailing whitespace.
++    <testcase name="ElementWiseNotSummed_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="64" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="AllCloseWithin" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:56: trailing whitespace.
++    <testcase name="LengthMismatchThrows_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="77" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="AllCloseWithin" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:57: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:58: trailing whitespace.
++  <testsuite name="ToleranceMake" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:59: trailing whitespace.
++    <testcase name="Validation_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="ToleranceMake" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:60: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:61: trailing whitespace.
++  <testsuite name="RuntimeAbsoluteTolerance" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:62: trailing whitespace.
++    <testcase name="C7Transcription_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="108" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="RuntimeAbsoluteTolerance" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:63: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:64: trailing whitespace.
++  <testsuite name="AllCloseWithinQ" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T06:45:00.409">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:65: trailing whitespace.
++    <testcase name="QOverloadSemantics_UT_UNIT" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp" line="139" status="run" result="completed" time="0." timestamp="2026-10-23T06:45:00.409" classname="AllCloseWithinQ" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:66: trailing whitespace.
++  </testsuite>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml:67: trailing whitespace.
++</testsuites>
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:1: trailing whitespace.
++[==========] Running 22 tests from 10 test suites.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:2: trailing whitespace.
++[----------] Global test environment set-up.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:3: trailing whitespace.
++[----------] 7 tests from ReuseUnitsAudit
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:4: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.MathAngleConstants_CORE_T04
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:5: trailing whitespace.
++[       OK ] ReuseUnitsAudit.MathAngleConstants_CORE_T04 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:6: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.DomCoreScaleAndSemanticLimits_CORE_T04
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:7: trailing whitespace.
++[       OK ] ReuseUnitsAudit.DomCoreScaleAndSemanticLimits_CORE_T04 (1 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:8: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.QApproximationAndNanLimits_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:9: trailing whitespace.
++[       OK ] ReuseUnitsAudit.QApproximationAndNanLimits_CORE_T05 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:10: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:11: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp(61): error: Value of: closeWithin(maximum,-maximum,Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:12: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:13: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:14: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:15: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:16: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:17: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp(66): error: Value of: allCloseWithin(std::vector<double>{maximum},std::vector<double>{-maximum},Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:18: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:19: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:20: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:21: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:22: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:23: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch31\UnitsSuitabilityTest.cpp(72): error: Value of: allCloseWithin(value,reference,Tolerance::make(1.5,0))
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:24: trailing whitespace.
++  Actual: true
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:25: trailing whitespace.
++Expected: false
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:26: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:27: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:28: trailing whitespace.
++[ RUN      ] ReuseUnitsAudit.SubnormalConversionCharacterization_CORE_T04
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:29: trailing whitespace.
++[       OK ] ReuseUnitsAudit.SubnormalConversionCharacterization_CORE_T04 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:30: trailing whitespace.
++[----------] 7 tests from ReuseUnitsAudit (2 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:31: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:32: trailing whitespace.
++[----------] 4 tests from UnitsConvert
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:33: trailing whitespace.
++[ RUN      ] UnitsConvert.KnownConversions_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:34: trailing whitespace.
++[       OK ] UnitsConvert.KnownConversions_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:35: trailing whitespace.
++[ RUN      ] UnitsConvert.ModelingDerivativeDisplayUnits_UX05_T30
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:36: trailing whitespace.
++[       OK ] UnitsConvert.ModelingDerivativeDisplayUnits_UX05_T30 (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:37: trailing whitespace.
++[ RUN      ] UnitsConvert.DimensionMismatch_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:38: trailing whitespace.
++[       OK ] UnitsConvert.DimensionMismatch_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:39: trailing whitespace.
++[ RUN      ] UnitsConvert.NonFiniteAndOverflow_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:40: trailing whitespace.
++[       OK ] UnitsConvert.NonFiniteAndOverflow_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:41: trailing whitespace.
++[----------] 4 tests from UnitsConvert (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:42: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:43: trailing whitespace.
++[----------] 1 test from UnitsFind
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:44: trailing whitespace.
++[ RUN      ] UnitsFind.UnknownSymbol_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:45: trailing whitespace.
++[       OK ] UnitsFind.UnknownSymbol_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:46: trailing whitespace.
++[----------] 1 test from UnitsFind (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:47: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:48: trailing whitespace.
++[----------] 1 test from UnitsRegistry
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:49: trailing whitespace.
++[ RUN      ] UnitsRegistry.R1TableComplete_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:50: trailing whitespace.
++[       OK ] UnitsRegistry.R1TableComplete_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:51: trailing whitespace.
++[----------] 1 test from UnitsRegistry (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:52: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:53: trailing whitespace.
++[----------] 1 test from QuantityTyped
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:54: trailing whitespace.
++[ RUN      ] QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:55: trailing whitespace.
++[       OK ] QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:56: trailing whitespace.
++[----------] 1 test from QuantityTyped (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:57: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:58: trailing whitespace.
++[----------] 3 tests from CompareFormula
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:59: trailing whitespace.
++[ RUN      ] CompareFormula.C4Basic_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:60: trailing whitespace.
++[       OK ] CompareFormula.C4Basic_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:61: trailing whitespace.
++[ RUN      ] CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:62: trailing whitespace.
++[       OK ] CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:63: trailing whitespace.
++[ RUN      ] CompareFormula.NonFiniteInputsFalse_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:64: trailing whitespace.
++[       OK ] CompareFormula.NonFiniteInputsFalse_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:65: trailing whitespace.
++[----------] 3 tests from CompareFormula (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:66: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:67: trailing whitespace.
++[----------] 2 tests from AllCloseWithin
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:68: trailing whitespace.
++[ RUN      ] AllCloseWithin.ElementWiseNotSummed_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:69: trailing whitespace.
++[       OK ] AllCloseWithin.ElementWiseNotSummed_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:70: trailing whitespace.
++[ RUN      ] AllCloseWithin.LengthMismatchThrows_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:71: trailing whitespace.
++[       OK ] AllCloseWithin.LengthMismatchThrows_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:72: trailing whitespace.
++[----------] 2 tests from AllCloseWithin (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:73: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:74: trailing whitespace.
++[----------] 1 test from ToleranceMake
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:75: trailing whitespace.
++[ RUN      ] ToleranceMake.Validation_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:76: trailing whitespace.
++[       OK ] ToleranceMake.Validation_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:77: trailing whitespace.
++[----------] 1 test from ToleranceMake (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:78: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:79: trailing whitespace.
++[----------] 1 test from RuntimeAbsoluteTolerance
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:80: trailing whitespace.
++[ RUN      ] RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:81: trailing whitespace.
++[       OK ] RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:82: trailing whitespace.
++[----------] 1 test from RuntimeAbsoluteTolerance (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:83: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:84: trailing whitespace.
++[----------] 1 test from AllCloseWithinQ
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:85: trailing whitespace.
++[ RUN      ] AllCloseWithinQ.QOverloadSemantics_UT_UNIT
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:86: trailing whitespace.
++[       OK ] AllCloseWithinQ.QOverloadSemantics_UT_UNIT (0 ms)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:87: trailing whitespace.
++[----------] 1 test from AllCloseWithinQ (0 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:88: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:89: trailing whitespace.
++[----------] Global test environment tear-down
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:90: trailing whitespace.
++[==========] 22 tests from 10 test suites ran. (2 ms total)
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:91: trailing whitespace.
++[  PASSED  ] 19 tests.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:92: trailing whitespace.
++[  FAILED  ] 3 tests, listed below:
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:93: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:94: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:95: trailing whitespace.
++[  FAILED  ] ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:96: trailing whitespace.
++
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log:97: trailing whitespace.
++ 3 FAILED TESTS

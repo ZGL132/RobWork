@@ -1,0 +1,9 @@
+{
+  "valueHex": "0x1.fffffffffffffp+1023",
+  "referenceHex": "-0x1.fffffffffffffp+1023",
+  "relative": "3/2",
+  "absolute": 0,
+  "differenceOverMaximum": "2",
+  "limitOverMaximum": "3/2",
+  "expected": false
+}

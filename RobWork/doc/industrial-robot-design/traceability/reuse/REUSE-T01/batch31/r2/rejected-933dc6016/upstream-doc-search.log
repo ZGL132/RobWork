@@ -1,0 +1,25 @@
+RobWork/doc/manual/xmlfileformat.hpp.md:451:A rotation matrix with 90 degree rotation around z-axis
+RobWork/doc/manual/manual.hpp.md:58:- Field of view is in degree and is defined in the Y-axis
+RobWork/doc/sphinx\file_formats\path.rst:22:The second line defines the degree of freedom of all devices in the workcell.
+RobWork/doc/sphinx\file_formats\workcell.rst:442:- **alpha:** in degrees
+RobWork/doc/sphinx\file_formats\workcell.rst:632:A rotation matrix with 90 degree rotation around z-axis
+RobWork/doc/sphinx\installation\centos.rst:95:Google Test (optional) is used for unit tests in RobWork. If you are a developer and wants to develop code for the RobWork trunk, writing a GTest will be a requirement:
+RobWork/doc/sphinx\installation\centos.rst:161:   cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DOUBLE_PRECISION=ON -DBUILD_BULLET3=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX:PATH=$WORKSPACE/Release -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DBUILD_EXTRAS=OFF -DBUILD_BULLET2_DEMOS=OFF -DBUILD_UNIT_TESTS=OFF -BUILD_CPU_DEMOS=OFF ..
+RobWork/doc/sphinx\license.rst:168:It can be used to detect collisions (overlap), distances and tolerance queries.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:32:This robot has 6 degrees of freedom, and the solver will provide up to 8 solutions.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:33:Notice that for every joint there is a solution where the joint is rotated 360 degrees.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:34:Than means that each of the 8 solutions can typically be achieved in 64 different ways. It is up to the user to add or subtract 360 degrees such that it suits the application best.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:40:This robot has 7 degrees of freedom. It can have an infinite number of solutions, as the middle joint can be placed anywhere on a circle.
+RobWork/doc/sphinx\manual\inverse_kinematics.rst:48:The rw::invkin::PieperSolver is a closed form solver that works for serial devices with 6 degrees of freedom revolute joints. It requires that the last three axes intersect.
+RobWork/doc/sphinx\installation\ubuntu_compile.rst:108:Google Test (optional) is used for unit tests in RobWork. If you are a
+RobWork/doc/sphinx\installation\ubuntu_compile.rst:212:    cmake -DCMAKE_BUILD_TYPE=Release -DUSE_DOUBLE_PRECISION=ON -DBUILD_BULLET3=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX:PATH=$WORKSPACE/Release -DCMAKE_CXX_FLAGS="-fPIC" -DCMAKE_C_FLAGS="-fPIC" -DBUILD_EXTRAS=OFF -DBUILD_BULLET2_DEMOS=OFF -DBUILD_UNIT_TESTS=OFF -BUILD_CPU_DEMOS=OFF ..
+RobWork/doc/sphinx\tutorials\basic.rst:173:   RPY<> rpy(0, 0, 90*Deg2Rad); // 90 degree rotation around x-axis
+RobWork/doc/sphinx\tutorials\basic.rst:188:   // rotate a vector (0,1,0) 90 degrees around x-axis
+RobWork/doc/sphinx\tutorials\basic.rst:205:RobWork uses radians and not degrees. Take this into account.
+RobWork/doc/sphinx\installation\windows.rst:239:be unit test executables) and DLL's for shared libraries.
+RobWork/doc/sphinx\installation\windows_dependencies\bullet.rst:26:    cmake .. -G "Visual Studio 16 2019" -A x64  -DUSE_DOUBLE_PRECISION=ON -DUSE_MSVC_RUNTIME_LIBRARY_DLL=ON -DUSE_MSVC_DISABLE_RTTI=OFF -DBUILD_EXTRAS=OFF -DBUILD_UNIT_TESTS=OFF -DBUILD_CPU_DEMOS=OFF -DBUILD_OPENGL3_DEMOS=OFF -DBUILD_BULLET2_DEMOS=OFF -DBUILD_UNIT_TESTS=OFF -DINSTALL_LIBS=ON -DCMAKE_INSTALL_PREFIX=%Install_DIR%\Bullet
+RobWork/doc/sphinx\manual\rotations.rst:91:Equivalent Angle-Axis (EAA) is the RobWork type for rotations defined by the product of a unit vector and an angle of rotation.
+RobWork/doc/sphinx\manual\rotations.rst:92:The direction of the vector gives the axis of rotation, and the length of the vector gives the amount of rotation in radians.
+RobWork/doc/sphinx\manual\simulated_sensors.rst:90:- Field of view is in degree and is defined in the Y-axis
+RobWork/doc/sphinx\installation\windows_dependencies\gtest.rst:4:(optional) is used for unit tests in RobWork. If you are
+RobWork/doc/sphinx\installation\windows_dependencies\visual_studio.rst:24:It is possible to use both Community, Professional and Enterprise

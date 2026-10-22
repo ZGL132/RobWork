@@ -1,0 +1,1 @@
+{"oracle": "Python Fraction exact rational; independently recomputed in acceptance", "differenceOverMaximum": "2", "limitOverMaximum": "3/2", "expected": false, "passed": true}

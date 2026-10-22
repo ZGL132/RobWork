@@ -2177,8 +2177,8 @@
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
       "resourceSearch": {
-        "command": "batch31/search.json",
-        "conclusion": "上游公共头/实现/测试/示例/构建定向搜索留痕；未运行完整上游套件，不伪造对应测试资源"
+        "command": "batch31/search.json + batch31/r2/search.json",
+        "conclusion": "原公共头/实现/测试/示例/构建定向检索，加真实共享RobWork/doc的md/rst检索及basic.rst阅读；candidate，不宣称完整产品契约或全套上游测试通过。共享doc路径以r2/search.read摘要绑定，未伪造catalog docs路径。"
       }
     },
     {
