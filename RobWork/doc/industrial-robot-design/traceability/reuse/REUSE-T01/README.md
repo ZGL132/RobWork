@@ -93,3 +93,9 @@ B13独立语义验收PASS（冻结63e86ba5，限54关系）见`../../acceptance/
 B14首轮独立FAIL（B14-P2-01）见`../../acceptance/REUSE-T01-batch14-r1-20261023/`：requirePathField错误地写成ASCII路径；现按实际非空/4096字节/C0及DEL限制澄清解码后允许UTF-8中文与空格，磁盘JSON ASCII要求独立。仅修登记，待冻结返工复验。
 
 B15首轮独立FAIL（B15-P2-01）见`../../acceptance/REUSE-T01-batch15-r1-20261023/`：五条QtText关系漏列集成条件下的ui_test消费者，现补齐实际target与说明，权限仍待核、无grant变化，待冻结复验。远程已恢复并同步到a78b41ff2，历史网络失败保留。
+
+B16补测试helper/黄金oracle共43关系，见`test-helpers-golden-audit.md`；29个生成器隔离执行均exit0，但JSON产物对照发现URDF导入1处实质漂移，第二独立目录重复确认。未修改原黄金数据/产品/依赖，未运行本批C++测试，脚本exit0不冒充数据一致/数学PASS，全T01仍未退出。
+
+B14/B15返工各自独立复验PASS，仅关闭B14-P2-01/B15-P2-01；原件见`../../acceptance/REUSE-T01-batch14-r2-20261023/`与`REUSE-T01-batch15-r2-20261023/`，未授整批或T01退出。F-959登记黄金生成器漂移，保持open。
+
+全覆盖第二次独立复核NOT PASS（冻结b83fa7a3）见`../../acceptance/REUSE-T01-full-coverage-20261023/coverage.md`：20组具体遗漏与文件内部漏段是继续补审入口，不是穷尽范围；不撤销局部PASS、不授T02。B16仅补其中部分测试/生成器项，不能据此关闭其余候选。

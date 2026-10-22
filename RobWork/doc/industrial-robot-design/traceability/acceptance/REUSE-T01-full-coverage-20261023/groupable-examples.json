@@ -1,0 +1,17 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Evaluation.hpp",
+    "symbol": "EvaluationMode/TaskOutcome/EngineeringStatus/TaskState",
+    "classification": "枚举声明可按冻结词表成组；toToken实现仍须单独审"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/Contexts.hpp",
+    "symbol": "IPolicyNameContext/IPolicyCallContext/IPolicyBytesSource",
+    "classification": "纯虚接口声明可按所有权/注入合同成组，不等于适配器实现已审"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/DiagData.hpp",
+    "symbol": "ComparativeValue::operator== / ComparativeFields::operator==",
+    "classification": "简单值转发相等比较可成组，但DiagnosticRecord::make校验不可据此整文件豁免"
+  }
+]

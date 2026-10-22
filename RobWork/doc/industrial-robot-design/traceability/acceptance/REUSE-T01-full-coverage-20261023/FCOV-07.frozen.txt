@@ -1,0 +1,326 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp
+sdurws::ird::policy::JointLimitEvaluator::evaluate
+266: JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,
+267:                                                    const EngineeringPolicySet& policy,
+268:                                                    const IPolicyNameContext& names) const
+269: {
+270:     // ---- 输出基座预填（全部出口共用——缺省态＝Failed 非终态：任何提前出口
+271:     // ---- 不得虚标 Completed，逐出口显式覆写；与 CollisionQuery.cpp 同纪律）。
+272:     JointLimitEvaluation out;
+273:     out.status = CollisionEvaluationStatus::Failed;
+274:     out.finalized = false;
+275: 
+276:     // ---- ① policy 发布态复检（调用方契约违约 fail-fast——与会话侧
+277:     // ---- createSession ① 同码同语义：把未发布对象当策略传入＝装配违约）。
+278:     if (policy.validationState != PolicyValidationState::Valid
+279:         || !policy.policyObject.isValid() || !policy.contentIdentity.isValid()) {
+280:         throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+281:                           "policy 发布态复检失败（须为 Valid 已发布对象且身份有效——"
+282:                           "§9.4 前置；validationState="
+283:                               + std::to_string(static_cast<int>(policy.validationState))
+284:                               + "）");
+285:     }
+286: 
+287:     // ---- ② 查询契约校验（唯一抛出点之二——装配违约 fail-fast，见上）。
+288:     validateQueryShape(q);
+289: 
+290:     // ---- ③ 构型位置有限性（§7.5 数值异常行同构——NaN/±Inf 不伪造、不入
+291:     // ---- findings：任一构型任一关节位置非有限，本次评估整体 Failed；
+292:     // ---- 原文 %.17g 保留于诊断 cause，NFR-COR-03）。
+293:     //     全表先验扫描（含将被跳过的关节——数据级非法不因检查豁免而合法）。
+294:     for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+295:         for (std::size_t j = 0; j < q.joints.size(); ++j) {
+296:             const double pos = q.configurations[s][j];
+297:             if (!std::isfinite(pos)) {
+298:                 out.diagnostics.push_back(makeJointDiagnostic(
+299:                     kCodeEvaluationFailed, q.joints[j].jointObject, q.joints[j].localName,
+300:                     std::string{},
+301:                     "构型位置非有限（原文=" + formatRawDouble(pos)
+302:                         + "，SI rad）: sample=" + std::to_string(s) + ", joint="
+303:                         + q.joints[j].jointObject.toCanonical()
+304:                         + "——§7.5 不伪造、不入 findings/margins",
+305:                     "排查构型数据来源（IK/采样器）后重评；失败输出不入正式证据"
+306:                     "（finalized=false）"));
+307:                 return out;   // status=Failed，finalized=false
+308:             }
+309:         }
+310:     }
+311: 
+312:     // ---- ④ 名称解析（规范序遍历＝jointObject 字典序——输出与装配顺序无关；
+313:     // ---- 不可解析→Failed＋诊断定位，不猜测——ARC-04）。
+314:     // 规范序下标表（关节表承载序 → 处理序；排序键＝ObjectId 字节序）。
+315:     std::vector<std::size_t> canonicalOrder(q.joints.size());
+316:     std::iota(canonicalOrder.begin(), canonicalOrder.end(), std::size_t{0});
+317:     std::stable_sort(canonicalOrder.begin(), canonicalOrder.end(),
+318:                      [&q](std::size_t l, std::size_t r) {
+319:                          return q.joints[l].jointObject < q.joints[r].jointObject;
+320:                      });
+321:     // 运行时名固化表（后续发现/裕量/诊断共用——一次解析，评估期零重复查询；
+322:     // IPolicyNameContext 幂等契约使其正确性不依赖缓存，仅为确定性遍历服务）。
+323:     std::map<core::ObjectId, std::string> runtimeNames;
+324:     for (const std::size_t idx : canonicalOrder) {
+325:         const JointLimitSpec& spec = q.joints[idx];
+326:         const std::optional<std::string> runtimeName = names.tryRuntimeName(spec.jointObject);
+327:         if (!runtimeName.has_value()) {
+328:             out.diagnostics.push_back(makeJointDiagnostic(
+329:                 kCodeNameUnresolved, spec.jointObject, spec.localName, std::string{},
+330:                 "关节对象经名称上下文不可解析（nullopt 原样呈现——不猜测，ARC-04）: obj="
+331:                     + spec.jointObject.toCanonical(),
+332:                 "核对名称映射与模型编译产物的一致性后重评；失败输出不入正式证据"));
+333:             return out;   // status=Failed，finalized=false
+334:         }
+335:         runtimeNames.emplace(spec.jointObject, *runtimeName);
+336:     }
+337: 
+338:     // ---- ⑤ 检查级不适用标记预填（acceptance 3 载体——Check 枚举序固定
+339:     // ---- 产出；P-POL-2/O-10 保守口径：阈值未设置＝该检查显式不适用，
+340:     // ---- 不伪造数值；开关关闭＝策略显式停用，同样如实标记）。
+341:     // ⑤a 近限位比：无冻结默认（P-POL-2）——nullopt 即检查不适用。
+342:     if (!policy.jointThresholds.nearLimitRatio.has_value()) {
+343:         JointCheckNotApplicable marker;
+344:         marker.check = JointCheckNotApplicable::Check::NearLimitRatio;
+345:         marker.cause = "近限位比阈值未设置（nullopt——无冻结默认，P-POL-2/O-10 保守"
+346:                        "口径）：该检查显式不适用，不伪造数值（policy.md §4.4/§7.4）";
+347:         out.notApplicableChecks.push_back(std::move(marker));
+348:     }
+349:     // ⑤b 条件数警告：无冻结默认（P-POL-2）；本评估器无条件数检查种类
+350:     // （§9.4 Kind 五值不含之——权威唯一 R-6，其计算归所属单元），仅在
+351:     // 阈值未设置时按 acceptance 3 同口径输出标记。
+352:     if (!policy.jointThresholds.conditionNumberWarning.has_value()) {
+353:         JointCheckNotApplicable marker;
+354:         marker.check = JointCheckNotApplicable::Check::ConditionNumberWarning;
+355:         marker.cause = "条件数警告阈值未设置（nullopt——无冻结默认，P-POL-2/O-10 保守"
+356:                        "口径）：该检查显式不适用，不伪造数值（policy.md §4.4）";
+357:         out.notApplicableChecks.push_back(std::move(marker));
+358:     }
+359:     // ⑤c 行程上限校验开关（§4.4 travelLimitCheckEnabled——false＝策略显式
+360:     // 停用 MDL-06④ 策略校验，非阈值缺席，语义分列）。
+361:     if (!policy.jointThresholds.travelLimitCheckEnabled) {
+362:         JointCheckNotApplicable marker;
+363:         marker.check = JointCheckNotApplicable::Check::TravelLimit;
+364:         marker.cause = "行程上限校验被策略显式关闭（travelLimitCheckEnabled=false"
+365:                        "——policy.md §4.4 校验开关行）";
+366:         out.notApplicableChecks.push_back(std::move(marker));
+367:     }
+368: 
+369:     // ---- ⑥ 逐关节检查（规范序遍历——与名称解析同序，输出与装配顺序无关）。
+370:     // 阈值取值（KIN-13/R-POL-5：阈值唯一来自 policy——API 无阈值参数）。
+371:     const double travelLimitRad = policy.jointThresholds.finiteRotationTravelLimit.siValue();
+372:     const bool nearRatioPresent = policy.jointThresholds.nearLimitRatio.has_value();
+373:     const double nearRatio = nearRatioPresent ? policy.jointThresholds.nearLimitRatio->siValue()
+374:                                               : 0.0;
+375:     const bool travelCheckEnabled = policy.jointThresholds.travelLimitCheckEnabled;
+376: 
+377:     for (const std::size_t idx : canonicalOrder) {
+378:         const JointLimitSpec& spec = q.joints[idx];
+379:         const std::string& runtimeName = runtimeNames.at(spec.jointObject);
+380:         const bool limitsPresent = spec.qMin.has_value();   // 同有同无——②已保证
+381: 
+382:         // ---- 分支 A：有限限位关节（!continuous）----
+383:         if (!spec.isContinuous) {
+384:             if (limitsPresent) {
+385:                 const double qmin = *spec.qMin;   // SI rad（非度——Spec 契约）
+386:                 const double qmax = *spec.qMax;   // SI rad
+387:                 // ---- A1 区间有效性（qmin＜qmax——硬断言的检出侧：违约→
+388:                 // 诊断级发现＋跳过该关节，状态仍 Completed——D-13：判定权归
+389:                 // 命令处理器，本评估器不阻断、不伪造裕量）。NaN 端点经
+390:                 // "NaN 参与的 ＜ 比较恒 false"自然落入本分支（确定性）。
+391:                 if (!(qmin < qmax)) {
+392:                     JointLimitFinding finding;
+393:                     finding.jointObject = spec.jointObject;
+394:                     finding.localName = spec.localName;
+395:                     finding.runtimeName = runtimeName;
+396:                     finding.kind = JointLimitFindingKind::IntervalInvalid;
+397:                     finding.actualValue = qmin;      // 比较三要素：qmin ≥ qmax（rad）
+398:                     finding.thresholdValue = qmax;   // （口径见 JointLimitFindingKind 注释表）
+399:                     finding.level = PolicyRuleLevel::Must;   // 供处理器就地阻断
+400:                     out.findings.push_back(std::move(finding));
+401:                     // 伴随稳定诊断（比较型三要素齐备——处理器可直接构造
+402:                     // ConfirmableFinding 素材；码＝§9.6 JNT 家族）。
+403:                     core::ComparativeFields comparison;
+404:                     comparison.actual = comparativeValue(qmin);
+405:                     comparison.expected = comparativeValue(qmax);
+406:                     out.diagnostics.push_back(makeJointDiagnostic(
+407:                         kCodeJntTableInvalid, spec.jointObject, spec.localName, runtimeName,
+408:                         "关节区间非法（qmin ≥ qmax，须 qmin＜qmax——硬断言的检出侧，"
+409:                         "MDL-06）：qmin=" + formatRawDouble(qmin)
+410:                             + ", qmax=" + formatRawDouble(qmax) + "（SI rad）——该关节"
+411:                             "已跳过（不产出裕量，D-13 判定权归命令处理器）",
+412:                         "由建模/project 处理器按硬断言语义就地处置（D-13）；修正区间后"
+413:                         "重评",
+414:                         std::move(comparison)));
+415:                     continue;   // 跳过：无行程/违例/近限位检查、无裕量记录
+416:                 }
+417:                 // ---- A2 行程上限比较（§7.4 行程上限行：T＝|qmax−qmin|，
+418:                 // T＞L 才超限；T＝L 不超限——边界含于合规侧，D-08；开关关闭
+419:                 // 时整段跳过——⑤c 标记已声明）。
+420:                 if (travelCheckEnabled) {
+421:                     const double travel = std::fabs(qmax - qmin);   // T，SI rad
+422:                     if (travel > travelLimitRad) {
+423:                         JointLimitFinding finding;
+424:                         finding.jointObject = spec.jointObject;
+425:                         finding.localName = spec.localName;
+426:                         finding.runtimeName = runtimeName;
+427:                         finding.kind = JointLimitFindingKind::TravelLimitExceeded;
+428:                         finding.actualValue = travel;          // 比较三要素：实际行程（rad）
+429:                         finding.thresholdValue = travelLimitRad;  // 阈值 L（rad）
+430:                         finding.level = PolicyRuleLevel::Must;  // 供 SA-15 ConfirmableFinding
+431:                         out.findings.push_back(std::move(finding));
+432:                         // policy 止于比较型结果供给（§10.4）——不放行、不阻断、
+433:                         // 不产生"可确认/已确认"语义（确认流归 project 处理器）。
+434:                     }
+435:                 }
+436:                 // ---- A3 逐构型扫描：限位违例（首个命中）＋近限位（首个命中）
+437:                 // ＋逐构型裕量记录（每样本一条——KIN-01 逐构型逐关节口径）。
+438:                 const double halfWidth = (qmax - qmin) / 2.0;   // 区间半宽，SI rad（＞0——A1 保证）
+439:                 bool limitViolatedEmitted = false;   // 每关节每 kind 至多一条——首个命中
+440:                 bool nearLimitEmitted = false;
+441:                 for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+442:                     const double pos = q.configurations[s][idx];   // 内层与表序对齐
+443:                     // 有符号裕量与近限位比（§7.4 口径——区间内 ∈[0,半宽]/[0,1]，
+444:                     // 越限为负有符号事实；计算恒执行——记录必须逐样本齐备）。
+445:                     const double margin = std::min(pos - qmin, qmax - pos);   // SI rad
+446:                     const double ratio = margin / halfWidth;                  // 无量纲 r
+447:                     // 限位违例（q ∉ [qmin,qmax]——闭区间端点不违例；硬过滤
+448:                     // 素材，过滤动作归 kinematics KIN-02；阈值侧＝被越过的端）。
+449:                     if (!limitViolatedEmitted && (pos < qmin || pos > qmax)) {
+450:                         const double crossedLimit = (pos < qmin) ? qmin : qmax;
+451:                         JointLimitFinding finding;
+452:                         finding.jointObject = spec.jointObject;
+453:                         finding.localName = spec.localName;
+454:                         finding.runtimeName = runtimeName;
+455:                         finding.kind = JointLimitFindingKind::LimitViolated;
+456:                         finding.actualValue = pos;            // 违例位置（rad）
+457:                         finding.thresholdValue = crossedLimit;  // 被越过的限位端（rad）
+458:                         finding.level = PolicyRuleLevel::Must;
+459:                         out.findings.push_back(std::move(finding));
+460:                         limitViolatedEmitted = true;   // 后续样本事实由 margins 承载
+461:                     }
+462:                     // 近限位警告（§7.4：r＜阈值才警告——严格小于，r＝阈值不
+463:                     // 警告〔同 D-08 边界含于安全侧〕；Should 级默认；阈值
+464:                     // nullopt 时整段不评估——⑤a 标记已声明；越限样本的负
+465:                     // 裕量不参与警告判定——违例已由上支承载）。
+466:                     if (!nearLimitEmitted && nearRatioPresent && margin >= 0.0
+467:                         && ratio < nearRatio) {
+468:                         JointLimitFinding finding;
+469:                         finding.jointObject = spec.jointObject;
+470:                         finding.localName = spec.localName;
+471:                         finding.runtimeName = runtimeName;
+472:                         finding.kind = JointLimitFindingKind::NearLimit;
+473:                         finding.actualValue = ratio;      // 比较三要素：r（无量纲）
+474:                         finding.thresholdValue = nearRatio;  // 阈值（无量纲）
+475:                         finding.level = PolicyRuleLevel::Should;  // §7.4"Should 级默认"
+476:                         out.findings.push_back(std::move(finding));
+477:                         nearLimitEmitted = true;
+478:                     }
+479:                     // 裕量记录（Provided——有限限位且区间有效且位置有限，②③保证）。
+480:                     JointMarginRecord record;
+481:                     record.jointObject = spec.jointObject;
+482:                     record.localName = spec.localName;
+483:                     record.runtimeName = runtimeName;
+484:                     record.sampleIndex = s;
+485:                     record.marginToNearestLimit =
+486:                         core::SourcedValue<double>::provided(margin, marginProvenance());
+487:                     record.nearLimitRatioValue =
+488:                         core::SourcedValue<double>::provided(ratio, marginProvenance());
+489:                     out.margins.push_back(std::move(record));
+490:                 }
+491:             }
+492:             else {
+493:                 // ---- 分支 B：未声明限位的有限关节（qMin/qMax 均缺——类型层
+494:                 // 合法形态）：无限位可比→全部检查不适用；裕量记录以
+495:                 // NotApplicable 显式标记（不伪造数值——§4.5/ERR-01；KIN-01
+496:                 // 消费方可区分"不适用"与"缺失"）。
+497:                 for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+498:                     JointMarginRecord record;
+499:                     record.jointObject = spec.jointObject;
+500:                     record.localName = spec.localName;
+501:                     record.runtimeName = runtimeName;
+502:                     record.sampleIndex = s;
+503:                     record.marginToNearestLimit = core::SourcedValue<double>::notApplicable();
+504:                     record.nearLimitRatioValue = core::SourcedValue<double>::notApplicable();
+505:                     out.margins.push_back(std::move(record));
+506:                 }
+507:             }
+508:         }
+509:         // ---- 分支 C：continuous 关节（MDL-12——行程上限豁免，§7.4"continuous
+510:         // ---- 关节免除"；工程工作范围有限性在此检出）。
+511:         else {
+512:             const std::pair<double, double>& range = *spec.engineeringRange;   // ②必填已保证
+513:             // 范围有限性（MDL-12：双端有限且 first＜second——"已提供但非法"
+514:             // 的语义检出→诊断级发现＋跳过〔D-13〕；"必填"缺失已在②fail-fast，
+515:             // 两分登记于 policy.md §15.4 v0.9）。
+516:             const bool endsFinite = std::isfinite(range.first) && std::isfinite(range.second);
+517:             if (!endsFinite || !(range.first < range.second)) {
+518:                 JointLimitFinding finding;
+519:                 finding.jointObject = spec.jointObject;
+520:                 finding.localName = spec.localName;
+521:                 finding.runtimeName = runtimeName;
+522:                 finding.kind = JointLimitFindingKind::EngineeringRangeInvalid;
+523:                 finding.actualValue = range.first;    // 比较三要素：范围端（rad，可能
+524:                 finding.thresholdValue = range.second;  // 非有限——原文经诊断保留）
+525:                 finding.level = PolicyRuleLevel::Must;   // 供处理器就地阻断
+526:                 out.findings.push_back(std::move(finding));
+527:                 // 伴随稳定诊断（非有限端点以 Invalid 态保留 %.17g 原文——
+528:                 // NFR-COR-03 不静默转 0；有限端点 Provided 携带数值）。
+529:                 core::ComparativeFields comparison;
+530:                 comparison.actual = comparativeValue(range.first);
+531:                 comparison.expected = comparativeValue(range.second);
+532:                 out.diagnostics.push_back(makeJointDiagnostic(
+533:                     kCodeJntEngineeringRangeInvalid, spec.jointObject, spec.localName,
+534:                     runtimeName,
+535:                     "continuous 关节工程工作范围非法（须双端有限且 first＜second——"
+536:                     "MDL-12 有限性）：first=" + formatRawDouble(range.first)
+537:                         + ", second=" + formatRawDouble(range.second)
+538:                         + "（SI rad）——该关节已跳过（不产出裕量，D-13 判定权归命令"
+539:                           "处理器）",
+540:                     "由建模/project 处理器按硬断言语义就地处置（D-13）；修正工程工作"
+541:                     "范围后重评",
+542:                     std::move(comparison)));
+543:                 continue;   // 跳过：无裕量记录（§9.4"不伪造裕量"）
+544:             }
+545:             // 合法 continuous：行程上限豁免（§7.4）、无限位可比→裕量记录
+546:             // NotApplicable 显式标记（逐构型齐备——KIN-01 口径；工程范围
+547:             // 越界无对应检查种类〔§9.4 Kind 五值不含〕，不发明新判定——
+548:             // 范围事实随 JointLimitSpec 由消费方取用）。
+549:             for (std::size_t s = 0; s < q.configurations.size(); ++s) {
+550:                 JointMarginRecord record;
+551:                 record.jointObject = spec.jointObject;
+552:                 record.localName = spec.localName;
+553:                 record.runtimeName = runtimeName;
+554:                 record.sampleIndex = s;
+555:                 record.marginToNearestLimit = core::SourcedValue<double>::notApplicable();
+556:                 record.nearLimitRatioValue = core::SourcedValue<double>::notApplicable();
+557:                 out.margins.push_back(std::move(record));
+558:             }
+559:         }
+560:     }
+561: 
+562:     // ---- ⑦ 稳定排序＋终态化（§9.4"稳定排序（对象字典序×kind）"——输出
+563:     // ---- 与装配顺序无关，三入口跨进程逐字节一致，NFR-COR-05/AT-19）。
+564:     // findings 键序：(jointObject 字节字典序, kind)——生成序已与键序同向
+565:     // （规范序遍历），stable_sort 为契约兜底（同键重复元保持生成序——每
+566:     // 关节每 kind 至多一条，无同键重复，防御性声明）。
+567:     std::stable_sort(out.findings.begin(), out.findings.end(),
+568:                      [](const JointLimitFinding& l, const JointLimitFinding& r) {
+569:                          if (l.jointObject != r.jointObject) {
+570:                              return l.jointObject < r.jointObject;
+571:                          }
+572:                          return static_cast<int>(l.kind) < static_cast<int>(r.kind);
+573:                      });
+574:     // margins 键序：(sampleIndex 升序, jointObject 字典序)——实现冻结口径
+575:     // （JointMarginRecord 注释；policy.md §15.4 v0.9 登记）。
+576:     std::stable_sort(out.margins.begin(), out.margins.end(),
+577:                      [](const JointMarginRecord& l, const JointMarginRecord& r) {
+578:                          if (l.sampleIndex != r.sampleIndex) {
+579:                              return l.sampleIndex < r.sampleIndex;
+580:                          }
+581:                          return l.jointObject < r.jointObject;
+582:                      });
+583:     // notApplicableChecks 生成序即 Check 枚举序（⑤固定产出序）——无第二排序点。
+584:     // 检出非法（IntervalInvalid/EngineeringRangeInvalid）不改变评估状态——
+585:     // D-13 诊断级不阻断：评估已完成（发现齐备），阻断决策归命令处理器。
+586:     out.status = CollisionEvaluationStatus::Completed;
+587:     out.finalized = true;
+588:     return out;
+589: }

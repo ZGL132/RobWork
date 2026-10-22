@@ -1,0 +1,194 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "recordedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "computedSha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  }
+]

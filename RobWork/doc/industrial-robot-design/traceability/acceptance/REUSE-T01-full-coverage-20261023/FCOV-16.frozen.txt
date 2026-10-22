@@ -1,0 +1,18 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+sdurws::ird::core::closeWithin
+18: bool closeWithin(double value, double reference, Tolerance t) noexcept
+19: {
+20:     // 非有限输入 → false（不抛、不静默通过——NFR-COR-03；noexcept 契约）。
+21:     const bool inputsFinite = value == value && reference == reference
+22:                            && value - value == 0 && reference - reference == 0;
+23:     if (!inputsFinite) {
+24:         return false;
+25:     }
+26:     // C4 公式：|value−reference| ≤ relative·|reference| + absolute。
+27:     // 零参考：|reference|=0 时相对项退化为 0——公式自然退化为纯 absolute（§4.5
+28:     // "不要求精确零"——无需分支特判）。
+29:     const double diff = value - reference;
+30:     const double limit = t.relative * (reference < 0 ? -reference : reference)
+31:                        + t.absolute;
+32:     return (diff <= limit) && (-diff <= limit);
+33: }

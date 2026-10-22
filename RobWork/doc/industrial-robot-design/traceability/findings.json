@@ -9663,6 +9663,16 @@
       "title": "testkit静态监听器传给GTest Append，与其接管并delete对象的公开所有权契约冲突",
       "owner": "testkit / REUSE-T05",
       "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。"
+    },
+    {
+      "id": "F-959",
+      "source": "traceability/reuse/REUSE-T01/test-helpers-golden-audit.md / generator-replay.json",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "URDF导入黄金生成脚本未随速度限制F01映射更新，再生会回退正确黄金数据且缺消费字段",
+      "owner": "modeling/testdata / REUSE-T05",
+      "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。"
     }
   ]
 }

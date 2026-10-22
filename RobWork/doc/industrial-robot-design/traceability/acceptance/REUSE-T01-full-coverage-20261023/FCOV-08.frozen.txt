@@ -1,0 +1,55 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp
+sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts
+508: void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,
+509:                                   const SceneObjectIndex& objectIndex,
+510:                                   std::map<PairKey, std::size_t>& mandatoryExpanded,
+511:                                   std::map<PairKey, std::pair<std::size_t, std::string>>&
+512:                                       excludedExpanded)
+513: {
+514:     // 必检规则展开（承载序遍历；map 首条准入——重复对确定性吸收）。
+515:     for (std::size_t i = 0; i < policy.collision.mandatoryPairs.size(); ++i) {
+516:         const PairRule& rule = policy.collision.mandatoryPairs[i];
+517:         const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+518:         const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+519:         for (const core::ObjectId& a : first) {
+520:             for (const core::ObjectId& b : second) {
+521:                 if (a == b) {
+522:                     continue;   // 自对无碰撞语义（同一对象不与自己检测）
+523:                 }
+524:                 mandatoryExpanded.emplace(detail::canonicalPair(a, b), i);
+525:             }
+526:         }
+527:     }
+528:     // 排除规则展开（同上；携带下标＋理由——AppliedFilterRecord 素材）。
+529:     for (std::size_t i = 0; i < policy.collision.excludedPairs.size(); ++i) {
+530:         const PairRule& rule = policy.collision.excludedPairs[i];
+531:         const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+532:         const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+533:         for (const core::ObjectId& a : first) {
+534:             for (const core::ObjectId& b : second) {
+535:                 if (a == b) {
+536:                     continue;
+537:                 }
+538:                 excludedExpanded.emplace(detail::canonicalPair(a, b),
+539:                                          std::make_pair(i, rule.reason));
+540:             }
+541:         }
+542:     }
+543:     // 冲突同码复核（§7.2："排除∩必检=∅ 必须成立……违反→POLICY-RULE-
+544:     // CONFLICT"——按必检集承载序定位首个冲突对，确定性诊断；定位信息＝
+545:     // 双方规则清单/下标/理由＋冲突对象对规范文本——ERR-01 可追溯）。
+546:     for (const auto& [pairKey, mandatoryIndex] : mandatoryExpanded) {
+547:         const auto excludedIt = excludedExpanded.find(pairKey);
+548:         if (excludedIt != excludedExpanded.end()) {
+549:             throw PolicyError(
+550:                 PolicyErrorCode::RuleConflict,
+551:                 "会话构建冲突复核（§7.2 两层防御第二层）: excludedPairs["
+552:                     + std::to_string(excludedIt->second.first) + "]（理由'"
+553:                     + excludedIt->second.second + "'）展开后覆盖 mandatoryPairs["
+554:                     + std::to_string(mandatoryIndex) + "]（理由'"
+555:                     + policy.collision.mandatoryPairs[mandatoryIndex].reason
+556:                     + "'）的对象对（objA=" + pairKey.first.toCanonical()
+557:                     + ", objB=" + pairKey.second.toCanonical() + "）——过滤不得隐藏必检");
+558:         }
+559:     }
+560: }

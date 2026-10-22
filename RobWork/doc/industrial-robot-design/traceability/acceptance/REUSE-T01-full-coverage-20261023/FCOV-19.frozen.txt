@@ -1,0 +1,29 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs
+<ES module>::rneaReference
+77: function rneaReference(m, gz, q, qd, qdd) {
+78:   const [m1, m2] = [m.links[0].massKg, m.links[1].massKg];
+79:   const [c1, c2] = [m.links[0].comFromJointM, m.links[1].comFromJointM];
+80:   const [i1, i2] = [m.links[0].inertiaYyAboutCom, m.links[1].inertiaYyAboutCom];
+81:   const L1 = m.link1LengthM;
+82:   const out = [];
+83:   for (let j = 0; j < 2; ++j) {
+84:     const cosQ2 = Math.cos(q[1]);
+85:     const M11 = m1 * c1 * c1 + i1 + m2 * (L1 * L1 + c2 * c2 + 2 * L1 * c2 * cosQ2) + i2;
+86:     const M12 = m2 * (c2 * c2 + L1 * c2 * cosQ2) + i2;
+87:     const M22 = m2 * c2 * c2 + i2;
+88:     const grav = j === 0
+89:       ? gz * (m1 * c1 * Math.cos(q[0]) + m2 * (L1 * Math.cos(q[0]) + c2 * Math.cos(q[0] + q[1])))
+90:       : gz * m2 * c2 * Math.cos(q[0] + q[1]);
+91:     const inertia = j === 0 ? M11 * qdd[0] + M12 * qdd[1] : M12 * qdd[0] + M22 * qdd[1];
+92:     const h = m2 * L1 * c2 * Math.sin(q[1]);
+93:     const cori = j === 0 ? -h * (2 * qd[0] * qd[1] + qd[1] * qd[1]) : h * qd[0] * qd[0];
+94:     const sgn0 = qd[j] > 0 ? 1 : qd[j] < 0 ? -1 : 0; // sgn₀(0)=0（D-DYN-7）
+95:     const fric = m.friction.provided
+96:       ? m.friction.viscous * qd[j] + m.friction.coulomb * sgn0 + m.friction.bias
+97:       : 0; // 摩擦缺失＝分项按 0 继续（MDL-16/DYN-06——降级标记由产品面承载）
+98:     const total = grav + inertia + cori + fric + 0; // 外力项 R1 恒 0（P-DYN-3）
+99:     out.push({ tauGravity: grav, tauInertia: inertia, tauCoriolisCentrifugal: cori,
+100:                tauFriction: fric, tauExternal: 0, tauTotal: total });
+101:   }
+102:   return out;
+103: }

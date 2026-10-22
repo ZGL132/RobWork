@@ -1,0 +1,46 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Controller.cpp
+sdurws::ird::execution::TaskController::forceKillSequence
+686: void TaskController::forceKillSequence(ManagedTask& entry,
+687:                                        std::chrono::steady_clock::time_point nowTp,
+688:                                        bool runTimeout)
+689: {
+690:     TaskStateMachine& machine = *entry.machine;
+691: 
+692:     // ---- 第 1 步：进程树终止（恰一次）----
+693:     // KILL_ON_JOB_CLOSE 契约见 IWorkerHandle::terminateForce 注（实现归
+694:     // EX-T06 JobScope；本编排保证"一次任务至多一次终止调用"——收敛超时
+695:     // 与运行超时与直接强杀三方竞争同一任务时不会双重终止）。
+696:     if (!entry.forceKillIssued) {
+697:         if (entry.worker != nullptr) {
+698:             entry.worker->terminateForce(TerminationCause::ForceTerminated);
+699:         }
+700:         entry.forceKillIssued = true;
+701:     }
+702: 
+703:     // ---- 第 2 步：运行超时的判定诊断（先于 T13 终结标记——诊断序即
+704:     // 因果序：先"判定原因 EX-WORKER-HUNG（运行超时）"，后"终结标记
+705:     // EX-FORCE-TERMINATED"）。EX-WKR-5"诊断区分 timeout"的落点：cause
+706:     // 携带 evaluation-timeout 标记，与心跳失联（EX-T06 写入的卡死判定）
+707:     // 区分。码值 EX-WORKER-HUNG 为 diagnostics StableCodeRegistry 已收编
+708:     // 稳定码（§3.4 清单）——execution 不私定码值（契约 note）。
+709:     if (runTimeout) {
+710:         machine.appendDiagnostic(makeTaskDiagnostic(
+711:             "EX-WORKER-HUNG",
+712:             "运行超时判定：任务 " + machine.record().taskId.toCanonical(),
+713:             "评估运行时长超过能力声明时限（evaluationTimeout——§11 EX-WKR-5 能力声明字段）；"
+714:             "走卡死强杀路径，诊断以运行超时标记与心跳失联区分（§7.1）",
+715:             "任务将被强制终止并保留最近检查点；重跑可从检查点续（新任务、新身份链）"));
+716:     }
+717: 
+718:     // ---- 第 3 步：T13 超时强杀转移（Canceling→Failed）----
+719:     // 状态机在转移内写入 termination=ForceTerminated＋EX-FORCE-TERMINATED
+720:     // 显式诊断（"不伪装为普通失败"——§5.3 T13；EX-WKR-4 观测点"诊断
+721:     // 标记"）。EX-FORCE-TERMINATED 用户可见"已强制终止，检查点保留"
+722:     // （§7.4 诊断行）；普通失败（EX-WKR-2 崩溃）的呈现面是 EX-WORKER-
+723:     // CRASHED——两码永不并存，即"显式区别"的机器判读面。
+724:     machine.request(TransitionTrigger::CancelTimeoutForceKill);
+725: 
+726:     // nowTp 仅供签名对称与未来扩展（当前强杀序列的时点由 refreshTracking
+727:     // 统一维护）；显式引用防未用参数告警。
+728:     (void)nowTp;
+729: }

@@ -1,0 +1,57 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp
+sdurws::ird::execution::WorkerSupervisor::handleHandshake
+999: void WorkerSupervisor::handleHandshake(WorkerRecord& record, ChannelFrame&& frame)
+1000: {
+1001:     const std::optional<HelloPayload> hello = decodeHello(frame.payload);
+1002:     std::string rejectReason;
+1003:     if (!hello.has_value()) {
+1004:         rejectReason = "Hello payload undecodable";
+1005:     } else if (hello->protoVersion != kChannelProtocolVersion) {
+1006:         // 主版本失配→握手拒绝（§6.5"消息版本"行——开发诊断面）。
+1007:         rejectReason = "protocol version mismatch: worker "
+1008:                        + std::to_string(hello->protoVersion) + " vs main "
+1009:                        + std::to_string(kChannelProtocolVersion);
+1010:     } else if (hello->manifestDigestHex != record.assignment.manifestDigest) {
+1011:         // manifest 摘要比对（§6.4 握手——"不一致→拒绝派发→Preparing→
+1012:         // Failed"，CON-06/AT-19 装配侧纪律）。
+1013:         rejectReason = "evaluator manifest digest mismatch";
+1014:     }
+1015: 
+1016:     if (!rejectReason.empty()) {
+1017:         // 拒绝派发：事件→编排方使任务 Failed；进程就地终结（不可服务的
+1018:         // worker 不留）。
+1019:         emit(WorkerEvent{WorkerEvent::Kind::HandshakeRejected, record.id, record.identity,
+1020:                          std::nullopt, 0, 0, {}, "EX-WORKER-LAUNCH-FAILED", rejectReason,
+1021:                          false, 0, ExitClassification::Crashed});
+1022:         record.forceKillIssued = true;  // 分类面：监督方终结（区别于 worker 自身异常）
+1023:         record.job.terminate(win32::kForceTerminateExitCode);
+1024:         return;
+1025:     }
+1026: 
+1027:     // 握手通过：回 HelloAck（携带心跳间隔——两侧同源 HeartbeatPolicy，
+1028:     // D-06），随即派发（§6.4 时序：握手→DispatchRequest）。
+1029:     HelloAckPayload ack;
+1030:     ack.accepted = true;
+1031:     ack.heartbeatIntervalMs =
+1032:         static_cast<std::uint32_t>(record.assignment.heartbeat.interval.count());
+1033:     ChannelFrame ackFrame;
+1034:     ackFrame.type = ChannelMsgType::HelloAck;
+1035:     ackFrame.seq = record.outSeq++;
+1036:     ackFrame.identity = record.identity;
+1037:     ackFrame.payload = encodeHelloAck(ack);
+1038:     if (!sendFrame(record, ackFrame) || !sendDispatchRequest(record)) {
+1039:         // 握手后的首笔写失败＝通道已断——读线程的 Exited/ChannelError
+1040:         // 会跟进；此处只留开发诊断。
+1041:         emit(WorkerEvent{WorkerEvent::Kind::ProtocolViolation, record.id, record.identity,
+1042:                          std::nullopt, 0, 0, {}, "EX-CHANNEL-PROTOCOL-ERROR",
+1043:                          "command channel broken right after handshake", true, 0,
+1044:                          ExitClassification::Crashed});
+1045:         return;
+1046:     }
+1047:     record.handshakeDone = true;
+1048:     record.phase = WorkerStatus::Phase::Running;
+1049:     {
+1050:         std::lock_guard<std::mutex> lock(m_statusMutex);
+1051:         m_statusView[record.id.value].phase = WorkerStatus::Phase::Running;
+1052:     }
+1053: }

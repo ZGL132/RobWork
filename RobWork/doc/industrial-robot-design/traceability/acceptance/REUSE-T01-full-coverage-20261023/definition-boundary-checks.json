@@ -1,0 +1,102 @@
+[
+  {
+    "id": "FCOV-01",
+    "start": "CommitResult TxEngine::commit(const CommitPlan& plan,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-02",
+    "start": "CommandResult CommandServiceImpl::submit(const CommandEnvelope& envelope,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-03",
+    "start": "std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-04",
+    "start": "ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-05",
+    "start": "FileResult AtomicFile::writeThrough(const std::wstring& path,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-06",
+    "start": "ParseOutcome runParsePipeline(const RawPolicyInput& input,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-07",
+    "start": "JointLimitEvaluation JointLimitEvaluator::evaluate(const JointLimitQuery& q,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-08",
+    "start": "void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-09",
+    "start": "int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-10",
+    "start": "ResultAdmission::ArchiveResult ResultAdmission::runArchiveTransaction(",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-11",
+    "start": "void TaskController::forceKillSequence(ManagedTask& entry,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-12",
+    "start": "ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-13",
+    "start": "std::string RedactionService::redact(std::string_view raw, LogTier tier) const noexcept",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-14",
+    "start": "GoldenDataset GoldenDataset::load(const DatasetRef& ref)",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-15",
+    "start": "SetCheckResult checkSetEquivalent(const std::vector<T>& expected,",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-16",
+    "start": "bool closeWithin(double value, double reference, Tolerance t) noexcept",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-17",
+    "start": "function(ird_classify_target name out_unit out_face)",
+    "end": "endfunction()"
+  },
+  {
+    "id": "FCOV-18",
+    "start": "function closedFormFk(joints, q) {",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-19",
+    "start": "function rneaReference(m, gz, q, qd, qdd) {",
+    "end": "}"
+  },
+  {
+    "id": "FCOV-20",
+    "start": "function handDerived(c) {",
+    "end": "}"
+  }
+]

@@ -1,0 +1,513 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp
+sdurws::ird::project::tx::TxEngine::commit
+287: CommitResult TxEngine::commit(const CommitPlan& plan,
+288:                               const HeadRecord& currentHead,
+289:                               const ProjectMetadataRecord& authoritative,
+290:                               const ObjectRefPair& authoritativeRef)
+291: {
+292:     // =================================================================
+293:     // 内存段（零磁盘副作用）：计划校验 → 身份/序号分配 → D-5 派生 →
+294:     // S6 注册＋发布边界校验 → 清单装配。全部可能失败的操作先于一切
+295:     // 发布动作（"顺序即原子性"的 D-09 前置精神：任何 here-doc 失败
+296:     // 都不留下磁盘痕迹）。
+297:     // =================================================================
+298: 
+299:     // ---- 调用方契约校验（fail-fast）：字段级违约在装配点暴露 ----
+300:     if (!plan.revisionId.isValid()) {
+301:         throw std::invalid_argument(
+302:             "project/tx-engine: commit requires valid plan.revisionId"
+303:             "（修订身份由调用方生成——单一分配点口径）");
+304:     }
+305:     if (!plan.branchId.isValid()) {
+306:         throw std::invalid_argument(
+307:             "project/tx-engine: commit requires valid branchId");
+308:     }
+309:     // tipUpdate 一致性提前校验：更新的 tip 必须恰为本计划的新修订
+310:     // （validateMetadataPublish 亦有同判据——分支_metadata-regression；
+311:     // 此处以 invalid_argument 前置给出更精确的调用方错误归类，二道
+312:     // 防线保留防绕过）。
+313:     if (plan.metadataDelta.tipUpdate.has_value()
+314:         && !(plan.metadataDelta.tipUpdate->newTip == plan.revisionId)) {
+315:         throw std::invalid_argument(
+316:             "project/tx-engine: tipUpdate.newTip 必须等于 plan.revisionId"
+317:             "（每次提交的活动分支 tip 恰推进到本次新修订——§4.5）");
+318:     }
+319:     if (plan.committedAtUtc.empty()) {
+320:         throw std::invalid_argument(
+321:             "project/tx-engine: commit requires committedAtUtc（ISO-8601 "
+322:             "UTC——时钟供给归调用方）");
+323:     }
+324:     if (plan.command.commandType.empty()) {
+325:         throw std::invalid_argument(
+326:             "project/tx-engine: commit requires commandType（命令留痕无"
+327:             "token＝历史浏览无法呈现——§4.4.4）");
+328:     }
+329:     if (!currentHead.projectId.isValid()) {
+330:         throw std::invalid_argument(
+331:             "project/tx-engine: currentHead.projectId 无效（须为磁盘 HEAD "
+332:             "的真实内容——readHead() 产出）");
+333:     }
+334:     if (plan.parentRevisionId.has_value()
+335:         && !plan.parentRevisionId->isValid()) {
+336:         throw std::invalid_argument(
+337:             "project/tx-engine: parentRevisionId 携带全零保留值（无父修订"
+338:             "应传 nullopt 而非空身份——§4.4.2）");
+339:     }
+340:     std::set<std::string> objectIds;  // 完整清单的 OID 唯一性（无单位，按规范文本比较）。
+341:     for (const PlannedObject& obj : plan.newObjects) {
+342:         // 域对象身份与类型 token 的合法性：全零 oid＝保留值不是身份；
+343:         // 空 token 会让修订清单的 objectRefs 违反 §4.4.2 非空约束。
+344:         if (!obj.oid.isValid() || obj.objectTypeToken.empty()) {
+345:             throw std::invalid_argument(
+346:                 "project/tx-engine: newObjects 含无效 oid 或空 "
+347:                 "objectTypeToken（oid 分配归 HandlerContext——§6.5）");
+348:         }
+349:     }
+350: 
+351:     // A-13：保留项是既有引用，不应经过新对象写入通道。先验证完整集合，
+352:     // 避免同一 OID 出现两个版本、旧元数据混入，或无效摘要流入已提交清单。
+353:     // 此处仅验证引用值，绝不读取/重写保留负载；负载读校验仍归 ObjectStore。
+354:     for (const PlannedObject& obj : plan.newObjects) {
+355:         if (!objectIds.insert(obj.oid.toCanonical()).second) {
+356:             throw std::invalid_argument("project/tx-engine: newObjects 含重复 oid");
+357:         }
+358:     }
+359:     for (const ObjectRef& ref : plan.retainedObjects) {
+360:         if (!ref.objectId.isValid() || !ref.contentVersion.isValid()
+361:             || ref.objectTypeToken.empty() || ref.objectTypeToken == kMetadataTypeToken
+362:             || ref.objectId == authoritativeRef.objectId
+363:             || ref.digest256 != cvHex(ref.contentVersion)
+364:             || !objectIds.insert(ref.objectId.toCanonical()).second) {
+365:             // 摘要必须恰等于合法 CV 的 64 位小写 hex，一并拒绝格式错误与身份不符。
+366:             // 计划畸形是调用方契约错误，在分配序号和任何磁盘副作用之前 fail-fast。
+367:             throw std::invalid_argument(
+368:                 "project/tx-engine: retainedObjects 含无效引用、元数据或重复 oid");
+369:         }
+370:     }
+371:     const core::ObjectId metadataOid = core::ObjectId::generate();
+372:     if (objectIds.count(metadataOid.toCanonical()) != 0) {
+373:         // 即使随机身份发生极小概率碰撞，也不能发布有歧义的完整清单。
+374:         throw std::invalid_argument("project/tx-engine: 元数据 oid 与业务对象重叠");
+375:     }
+376: 
+377:     // ---- 第 1 步（内存半边）：tx-id 与序号分配（§7.1 第 1 步"生成 tx-id；
+378:     //      ……；分配 RevisionId/seq（权威 HEAD seq+1）"）。修订身份由计划
+379:     //      带入（单一分配点＝命令服务 S6 计划装配，见 CommitPlan 登记），
+380:     //      本步骤消费该身份并分配序号。O-15 口径：序号在 S6（本事务）内
+381:     //      分配、失败不回收（进程内水位只进不退）；"S6 决策点"＝进入本
+382:     //      事务（S1～S5 命令阶段全部通过后），因此此处分配符合"决策点之后
+383:     //      调用"的时序契约。事务中途失败会留下已消费的水位——跨会话由
+384:     //      adoptHeadSeq 断点恢复，与崩溃残留序号同语义（§4.5.1 结论④：
+385:     //      不同在闭包即无歧义）。
+386:     const std::string txId = generateTxId();
+387:     const RevisionId& newRevId = plan.revisionId;
+388:     const std::uint64_t revSeq = m_index->allocateRevisionSeq();
+389: 
+390:     // ---- D-5 派生：以权威元数据为底本拷贝出候选（deriveNextMetadata 是
+391:     //      INV-M3 的机制化唯一入口——增量引用未知分支等在此 invalid_argument，
+392:     //      零磁盘副作用）。candidate 与计划分离＝PRJ-T06 的 S6 时序契约
+393:     //      （"提交时由事务引擎 derive＋validate"）。
+394:     const ProjectMetadataRecord candidate = revindex::RevisionIndex::
+395:         deriveNextMetadata(authoritative, authoritativeRef,
+396:                            plan.metadataDelta, newRevId);
+397: 
+398:     // ---- 元数据对象身份与编址：oid 由引擎生成（§13.2：对象分配落地点
+399:     //      归 project——元数据对象是 project 自有对象，不经 HandlerContext）；
+400:     //      负载＝候选元数据的 canonical 字节；cv＝CR-02 唯一哈希入口。
+401:     const std::string metadataPayload = codec::dump(candidate);
+402:     const core::ContentVersion metadataCv =
+403:         codec::contentVersionOf(metadataPayload);
+404:     const std::string metadataDigestHex = cvHex(metadataCv);
+405: 
+406:     // ---- 域对象编址预计算（内容寻址：文件名即摘要，写入前必须已知目标
+407:     //      ——与 ObjectStore::publishObject 第 1 步同纪律）。
+408:     struct StagedObject
+409:     {
+410:         core::ObjectId oid;
+411:         core::ContentVersion cv;
+412:         std::string payload;  ///< canonical 字节的稳定副本（验证步比对基准）
+413:     };
+414:     std::vector<StagedObject> staged;
+415:     staged.reserve(plan.newObjects.size() + 1);
+416:     for (const PlannedObject& obj : plan.newObjects) {
+417:         StagedObject s;
+418:         s.oid = obj.oid;
+419:         s.payload.assign(obj.payload.begin(), obj.payload.end());
+420:         s.cv = codec::contentVersionOf(
+421:             std::string_view{reinterpret_cast<const char*>(s.payload.data()),
+422:                              s.payload.size()});
+423:         staged.push_back(std::move(s));
+424:     }
+425: 
+426:     // ---- 修订清单装配（§4.4.2）：objectRefs＝完整引用集（≥1，含元数据
+427:     //      对象——元数据在前、保留对象按基线序、新对象按计划序）；introducedObjects＝本次新
+428:     //      就位对象（含元数据——残留识别/浏览辅助，§4.4.2 表）。
+429:     RevisionManifest manifest;
+430:     manifest.revisionId = newRevId;
+431:     manifest.revisionSeq = revSeq;
+432:     manifest.parentRevisionId = plan.parentRevisionId;
+433:     manifest.branchId = plan.branchId;
+434:     manifest.committedAtUtc = plan.committedAtUtc;
+435:     manifest.metadataRef = ObjectRefPair{metadataOid, metadataCv};
+436:     {
+437:         ObjectRef metaRef;
+438:         metaRef.objectId = metadataOid;
+439:         metaRef.contentVersion = metadataCv;
+440:         metaRef.objectTypeToken = kMetadataTypeToken;
+441:         metaRef.digest256 = metadataDigestHex;
+442:         manifest.objectRefs.push_back(metaRef);
+443:         manifest.introducedObjects.push_back(metadataCv);
+444:     }
+445:     // 已就位对象仅将引用复制进全量状态，不进入 staged 与 introducedObjects，
+446:     // 因此不增加负载 I/O、不污染“本次新引入版本”证据，历史文件亦保持不可变。
+447:     manifest.objectRefs.insert(manifest.objectRefs.end(),
+448:                                plan.retainedObjects.begin(), plan.retainedObjects.end());
+449:     for (std::size_t i = 0; i < staged.size(); ++i) {
+450:         const StagedObject& s = staged[i];
+451:         ObjectRef ref;
+452:         ref.objectId = s.oid;
+453:         ref.contentVersion = s.cv;
+454:         // 按索引对齐取计划里的类型 token（staged 与 plan.newObjects 同序
+455:         // 同长——上方装配循环保序）。
+456:         ref.objectTypeToken = plan.newObjects[i].objectTypeToken;
+457:         ref.digest256 = cvHex(s.cv);
+458:         manifest.objectRefs.push_back(ref);
+459:         manifest.introducedObjects.push_back(s.cv);
+460:     }
+461:     const std::string manifestBytes = codec::dump(manifest);
+462:     // HEAD.manifestDigest 的取值（§4.4.1"指向修订 manifest 的字节摘要"）：
+463:     // cv 的 hex 形态（SHA-256 hex 无 tag）——同一字节序列后续在第 3/5 步
+464:     // 重算比对，切换后自校验因此可复现（CR-02：摘要只经 core ContentDigester）。
+465:     const core::ContentVersion manifestCv =
+466:         codec::contentVersionOf(manifestBytes);
+467:     const std::string manifestDigestHex = cvHex(manifestCv);
+468: 
+469:     // ---- 命令留痕字节（§4.4.4；project 原样持久化——D-10）。
+470:     const std::string commandBytes = codec::dump(plan.command);
+471:     const core::ContentVersion commandCv =
+472:         codec::contentVersionOf(commandBytes);
+473: 
+474:     // ---- S6 注册＋发布边界校验（PRJ-T06 时序契约：先注册新修订后校验
+475:     //      ——祖先链/谱系单调判定以新修订已注册为前提）。二者任一失败
+476:     //      （BranchMetadataRegression/喂入失真的 invalid_argument）都发生在
+477:     //      暂存目录创建之前——零磁盘副作用。注意：校验失败时新修订已注册
+478:     //      进会话索引且无撤销入口——该修订从任何 HEAD 闭包都不可达（无
+479:     //      parent 指向它），对查询不可见，属无害的内存残迹；此时调用方
+480:     //      已处于不变量违约的编程错误态（fail-fast 语义优先）。
+481:     m_index->registerRevision(manifest);
+482:     const ObjectRefPair candidateRef{metadataOid, metadataCv};
+483:     m_index->validateMetadataPublish(authoritative, authoritativeRef,
+484:                                      candidate, candidateRef, newRevId);
+485:     // ---- S6 时序第三步"切换权威"：候选通过发布边界校验后注册为新权威
+486:     // 元数据版本——后续闭包行走（含本次新修订的 metadataRef）因此可达
+487:     // （validate 契约要求 candidateRef 此前未注册，故注册必须在校验之后）。
+488:     m_index->registerMetadata(candidateRef, candidate);
+489: 
+490:     // 幻影注册守卫（R3 审计 B6 修复，2026-10-15）：武装于注册后、解除于
+491:     // 唯一提交点（replaceExisting 成功）——其间的环境失败（暂存写/publish/
+492:     // head-switch）原本把本次注册留在会话索引：幻影修订可被 tryRevision/
+493:     // metadataAt 查到（PRJ-TX-9"闭包外不可见"被破坏）、assembleView 读从
+494:     // 未发布的 command.json 抛假 StoreCorrupt。析构时若仍武装即摘除本次
+495:     // 注册（单写者持锁、修订身份新铸造——摘除不影响任何既有闭包/读者）。
+496:     // 提交点之后的失败（自校验/事件/清理）不解除武装前的守卫已经失效——
+497:     // D-18"提交事实不回滚"语义保持。
+498:     struct PhantomRegistrationGuard {
+499:         revindex::RevisionIndex* index;
+500:         const RevisionId& revId;
+501:         const ObjectRefPair& ref;
+502:         bool armed = true;
+503:         ~PhantomRegistrationGuard()
+504:         {
+505:             if (armed) {
+506:                 index->rollbackCommitRegistration(revId, ref);
+507:             }
+508:         }
+509:     } phantomGuard{m_index, newRevId, candidateRef};
+510: 
+511:     // =================================================================
+512:     // 第 1 步（磁盘半边）：建 .staging/<tx-id>/（§7.1 第 1 步"建 .staging/
+513:     // <tx-id>/"）。失败→环境码；残留形态＝无或仅空目录（启动清理兜底，
+514:     // 这里尽力移除空壳——失败忽略，恢复扫描可识别空目录）。
+515:     // =================================================================
+516:     const fs::path txDir = stagingRoot() / txId;
+517:     {
+518:         const win32::FileResult cr = m_fileOps->createDirectories(txDir.wstring());
+519:         if (!cr.ok) {
+520:             // 尽力清理空壳目录（创建失败的目录通常不存在；存在则是半建
+521:             // 状态——removeTree 幂等，错误码吸收不做二次报错：本失败的
+522:             // 主因错误才是稳定诊断载体）。
+523:             std::error_code rmEc;
+524:             fs::remove_all(txDir, rmEc);
+525:             throw osToStoreError(cr.osError, "create-staging-dir",
+526:                                  txDir.string());
+527:         }
+528:     }
+529:     // tmp 子目录随事务建立（D-09：编译/非事务临时产物限 .staging/tmp——
+530:     // 事务期的临时落点即本目录；§7.1 第 7 步"删除 .staging/<tx-id>/（含
+531:     // tmp）"的清理对象在准备期即存在）。
+532:     {
+533:         const win32::FileResult cr =
+534:             m_fileOps->createDirectories((txDir / "tmp").wstring());
+535:         if (!cr.ok) {
+536:             std::error_code rmEc;
+537:             fs::remove_all(txDir, rmEc);
+538:             throw osToStoreError(cr.osError, "create-staging-tmp",
+539:                                  (txDir / "tmp").string());
+540:         }
+541:     }
+542: 
+543:     // =================================================================
+544:     // 第 2 步：暂存（§7.1"对象字节、manifest.json、command.json、新
+545:     // ProjectMetadata 全部写入 .staging/<tx-id>/"）。每文件走 writeThrough
+546:     // ＝FILE_FLAG_WRITE_THROUGH＋FlushFileBuffers 闸门（§7.2 行 1——写入
+547:     // 持久性保证）。暂存布局镜像目标树（objects/<oid>/<cv>、revision/
+548:     // manifest.json、revision/command.json），发布步 rename 时路径语义
+549:     // 一目了然。任何写失败：已写部分**有意残留**（§7.1 第 2 步"残留部分
+550:     // 文件于 .staging"——恢复扫描忽略＋诊断，PM-08），直接上抛不清理。
+551:     // =================================================================
+552:     win32::AtomicFile file{m_fileOps};  // 注入接缝（F2 注入边界在此链路）
+553:     {
+554:         // 元数据对象先行暂存（发布序＝对象先行；元数据对象是清单的首个
+555:         // 引用者）。
+556:         const fs::path stagedMeta =
+557:             txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+558:         const win32::FileResult dirCr = m_fileOps->createDirectories(
+559:             (txDir / "objects" / metadataOid.toCanonical()).wstring());
+560:         if (!dirCr.ok) {
+561:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+562:                                  stagedMeta.string());
+563:         }
+564:         const win32::FileResult wr = file.writeThrough(
+565:             stagedMeta.wstring(), metadataPayload.data(),
+566:             metadataPayload.size());
+567:         if (!wr.ok) {
+568:             throw osToStoreError(wr.osError, "stage-write",
+569:                                  stagedMeta.string());
+570:         }
+571:     }
+572:     for (const StagedObject& s : staged) {
+573:         const fs::path stagedPath =
+574:             txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv);
+575:         const win32::FileResult dirCr = m_fileOps->createDirectories(
+576:             (txDir / "objects" / s.oid.toCanonical()).wstring());
+577:         if (!dirCr.ok) {
+578:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+579:                                  stagedPath.string());
+580:         }
+581:         const char* data =
+582:             s.payload.empty() ? nullptr : s.payload.data();
+583:         const win32::FileResult wr = file.writeThrough(
+584:             stagedPath.wstring(), data, s.payload.size());
+585:         if (!wr.ok) {
+586:             throw osToStoreError(wr.osError, "stage-write",
+587:                                  stagedPath.string());
+588:         }
+589:     }
+590:     // 修订目录两文件（command 先于 manifest 暂存只是书写序；发布步保证
+591:     // manifest 最后就位）。
+592:     const fs::path stagedRevisionDir = txDir / "revision";
+593:     {
+594:         const win32::FileResult dirCr =
+595:             m_fileOps->createDirectories(stagedRevisionDir.wstring());
+596:         if (!dirCr.ok) {
+597:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+598:                                  stagedRevisionDir.string());
+599:         }
+600:     }
+601:     const fs::path stagedManifest = stagedRevisionDir / "manifest.json";
+602:     const fs::path stagedCommand = stagedRevisionDir / "command.json";
+603:     {
+604:         const win32::FileResult wr =
+605:             file.writeThrough(stagedCommand.wstring(), commandBytes.data(),
+606:                               commandBytes.size());
+607:         if (!wr.ok) {
+608:             throw osToStoreError(wr.osError, "stage-write",
+609:                                  stagedCommand.string());
+610:         }
+611:     }
+612:     {
+613:         const win32::FileResult wr =
+614:             file.writeThrough(stagedManifest.wstring(), manifestBytes.data(),
+615:                               manifestBytes.size());
+616:         if (!wr.ok) {
+617:             throw osToStoreError(wr.osError, "stage-write",
+618:                                  stagedManifest.string());
+619:         }
+620:     }
+621: 
+622:     // =================================================================
+623:     // 第 3 步：验证（§7.1"重读暂存文件：size＋SHA-256 全量校验（含'对象
+624:     // 字节→ContentVersion 名一致性'）"）。失败→StoreCorrupt＋开发诊断
+625:     // （磁盘/内存错误怀疑——§7.1 第 3 步失败列）；残留同第 2 步。
+626:     // =================================================================
+627:     {
+628:         const fs::path stagedMetaPath = txDir / "objects"
+629:             / metadataOid.toCanonical() / cvHex(metadataCv);
+630:         try {
+631:             verifyStagedFile(stagedMetaPath, metadataPayload, metadataCv);
+632:             for (const StagedObject& s : staged) {
+633:                 verifyStagedFile(
+634:                     txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+635:                     s.payload, s.cv);
+636:             }
+637:             verifyStagedFile(stagedCommand, commandBytes, commandCv);
+638:             verifyStagedFile(stagedManifest, manifestBytes, manifestCv);
+639:         } catch (const StoreError& e) {
+640:             reportDev(std::string{"verify-failed（暂存校验不符——磁盘/内存"
+641:                                   "错误怀疑，F3 边界） detail="}
+642:                       + e.what());
+643:             throw;  // StoreCorrupt（含路径定位）原样上抛
+644:         }
+645:     }
+646: 
+647:     // =================================================================
+648:     // 第 4 步：内容发布（§7.1"`.staging` 内容就位正式路径……只增不改，
+649:     // 部分就位不破坏旧版本（HEAD 仍指旧内容）"）。顺序＝对象先行、修订
+650:     // 清单最后（"清单是内容的引用者，反向会出现'清单在而对象缺'的中间
+651:     // 可见态"；command.json 属修订目录内容，先于 manifest 就位）。任一
+652:     // rename 失败→环境码；已就位项保留（悬挂，不回滚——闭包外，§7.3）。
+653:     // =================================================================
+654:     {
+655:         // 对象品类：元数据对象→域对象（计划序）。共享判定（目标已存在）
+656:         // 复用 ObjectStore 读回校验通道——摘要不符抛 StoreCorrupt，与
+657:         // publishObject 的共享语义同源同码（实现口径登记见头文件）。
+658:         const fs::path stagedMetaPath =
+659:             txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+660:         publishOneObject(stagedMetaPath, metadataOid, metadataCv);
+661:         for (const StagedObject& s : staged) {
+662:             publishOneObject(
+663:                 txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+664:                 s.oid, s.cv);
+665:         }
+666:         // 修订目录：先建目录，command.json 次之，manifest.json 最后
+667:         // （§7.1"对象先行、修订清单最后"）。
+668:         const fs::path targetRevDir = revisionDir(newRevId);
+669:         const win32::FileResult dirCr =
+670:             m_fileOps->createDirectories(targetRevDir.wstring());
+671:         if (!dirCr.ok) {
+672:             throw osToStoreError(dirCr.osError, "publish-mkdir",
+673:                                  targetRevDir.string());
+674:         }
+675:         const win32::FileResult cmdPub = m_fileOps->publishNew(
+676:             stagedCommand.wstring(),
+677:             (targetRevDir / "command.json").wstring());
+678:         if (!cmdPub.ok) {
+679:             throw osToStoreError(cmdPub.osError, "publish-command",
+680:                                  (targetRevDir / "command.json").string());
+681:         }
+682:         const win32::FileResult manPub = m_fileOps->publishNew(
+683:             stagedManifest.wstring(),
+684:             (targetRevDir / "manifest.json").wstring());
+685:         if (!manPub.ok) {
+686:             throw osToStoreError(manPub.osError, "publish-manifest",
+687:                                  (targetRevDir / "manifest.json").string());
+688:         }
+689:     }
+690: 
+691:     // =================================================================
+692:     // 第 5 步：提交指针切换（§7.1"写 HEAD.new（完整 HeadRecord）→ flush →
+693:     // MoveFileExW(HEAD.new→HEAD, REPLACE_EXISTING|WRITE_THROUGH)——唯一
+694:     // 提交点；切换后重读 HEAD 自校验 manifestDigest"）。
+695:     // =================================================================
+696:     HeadRecord newHead;
+697:     newHead.schemaVersion = currentHead.schemaVersion;
+698:     newHead.projectId = currentHead.projectId;
+699:     newHead.revisionId = newRevId;
+700:     newHead.revisionSeq = revSeq;
+701:     newHead.branchId = plan.branchId;
+702:     newHead.manifestDigest = manifestDigestHex;
+703:     const fs::path stagedHead = txDir / "head.new";
+704:     {
+705:         const std::string headBytes = codec::dump(newHead);
+706:         const win32::FileResult wr =
+707:             file.writeThrough(stagedHead.wstring(), headBytes.data(),
+708:                               headBytes.size());
+709:         if (!wr.ok) {
+710:             throw osToStoreError(wr.osError, "stage-head",
+711:                                  stagedHead.string());
+712:         }
+713:     }
+714:     {
+715:         const fs::path headPath = m_projectDir / "HEAD";
+716:         // replaceExisting＝MoveFileExW(REPLACE_EXISTING|WRITE_THROUGH)（§7.2
+717:         // 行 3）。本调用成功即"唯一提交点"成立——此后本次修订视为已提交，
+718:         // 后续任何失败（第 6/7 步）不回滚（D-18）。失败→环境码；内容已
+719:         // 发布但 HEAD 未变＝第 4 步残留语义（闭包外可识别）。
+720:         const win32::FileResult rep =
+721:             m_fileOps->replaceExisting(stagedHead.wstring(),
+722:                                        headPath.wstring());
+723:         if (!rep.ok) {
+724:             throw osToStoreError(rep.osError, "head-switch", headPath.string());
+725:         }
+726:         // 唯一提交点已过——解除幻影守卫（本修订已是提交事实：此后自校验/
+727:         // 事件/清理失败均走 D-18 不回滚语义，索引注册必须保留）。
+728:         phantomGuard.armed = false;
+729:         // 自校验（§7.1 第 5 步"切换后重读 HEAD 自校验 manifestDigest"）：
+730:         // 重读+重解与内存事实逐字段比对。失败＝提交点内容异常的极端态
+731:         // （读失败/内容不符）——D-18 不回滚：抛 StoreCorrupt 硬错误，恢复
+732:         // 扫描④以磁盘 HEAD 实际内容为准兜底（§7.1"崩溃于切换前后以 HEAD
+733:         // 实际内容为准（字节级判定）"）。
+734:         const auto headBytes = readAllBytes(headPath);
+735:         bool selfCheckOk = headBytes.has_value();
+736:         if (selfCheckOk) {
+737:             try {
+738:                 selfCheckOk = (codec::parseHeadRecord(*headBytes) == newHead);
+739:             } catch (const StoreError&) {
+740:                 selfCheckOk = false;  // 重读内容解析失败＝自校验不过
+741:             }
+742:         }
+743:         if (!selfCheckOk) {
+744:             reportDev("head-selfcheck-failed（HEAD 切换后重读不符——提交点"
+745:                       "异常，恢复扫描④兜底） rev=" + newRevId.toCanonical());
+746:             throw StoreError(StoreErrorCode::StoreCorrupt,
+747:                              "project/tx-engine: head-selfcheck-failed path="
+748:                                  + (m_projectDir / "HEAD").string());
+749:         }
+750:     }
+751: 
+752:     // =================================================================
+753:     // 第 6 步：事件发布（§7.1"bus.publish(RevisionCommitted→
+754:     // DependencyInvalidated)（FIFO；失败重试一次＋开发诊断，不回滚——D-18）"）。
+755:     // 总线可空＝跳过（§5.1 装配口径）。失败不影响提交事实。
+756:     // =================================================================
+757:     if (m_eventBus != nullptr) {
+758:         core::RevisionCommittedPayload committed;
+759:         committed.project = currentHead.projectId;
+760:         committed.branch = plan.branchId;
+761:         committed.revision = newRevId;
+762:         committed.parent = plan.parentRevisionId;
+763:         publishEventWithRetry(core::DomainEvent::make(committed),
+764:                               "revision-committed");
+765:         // FIFO：失效通知严格在提交事件之后发布（订阅方先刷新视图再失效
+766:         // 依赖——§7.1 第 6 步"RevisionCommitted→DependencyInvalidated"序）。
+767:         core::DependencyInvalidatedPayload invalidated;
+768:         invalidated.project = currentHead.projectId;
+769:         invalidated.branch = plan.branchId;
+770:         invalidated.revision = newRevId;
+771:         publishEventWithRetry(core::DomainEvent::make(invalidated),
+772:                               "dependency-invalidated");
+773:     }
+774: 
+775:     // =================================================================
+776:     // 第 7 步：清理（§7.1"删除 .staging/<tx-id>/（含 tmp）；清理失败仅
+777:     // 开发诊断"——已提交状态不受影响，残留不参与任何读取路径）。
+778:     // =================================================================
+779:     {
+780:         const win32::FileResult rm = m_fileOps->removeTree(txDir.wstring());
+781:         if (!rm.ok) {
+782:             reportDev("cleanup-failed（.staging 清理失败——已提交状态不受"
+783:                       "影响，残留由下次启动扫描处置，F7 边界） dir="
+784:                           + txDir.string() + " osError="
+785:                           + std::to_string(rm.osError));
+786:         }
+787:     }
+788: 
+789:     // ---- 提交结果（供命令服务组装返回值/事件消费，PRJ-T10） ----
+790:     CommitResult result;
+791:     result.revisionId = newRevId;
+792:     result.revisionSeq = revSeq;
+793:     result.metadataRef = candidateRef;
+794:     result.manifestDigest = manifestDigestHex;
+795:     result.newHead = newHead;
+796:     return result;
+797: }

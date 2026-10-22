@@ -1,0 +1,274 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp
+sdurws::ird::project::tx::TxEngine::scanForRecovery
+871: TxRecoveryScan TxEngine::scanForRecovery()
+872: {
+873:     TxRecoveryScan scan;
+874: 
+875:     // ---- ① `.staging` 残留扫描（§7.4①"忽略未提交内容＋恢复诊断"）。
+876:     // tx 目录＝未提交事务：记入清单＋用户级诊断，**忽略不删**（现场保留
+877:     // ——§4.1 .staging 行"启动扫描忽略"口径）；`.staging/tmp`＝启动清理
+878:     // （整树删除——§4.1 tmp 行"启动清理"，D-09 临时物不逸出该目录）。
+879:     std::error_code ec;
+880:     const fs::path stRoot = stagingRoot();
+881:     if (fs::exists(stRoot, ec) && !ec) {
+882:         std::vector<std::string> ignored;
+883:         for (fs::directory_iterator it(stRoot, ec), end; it != end && !ec;
+884:              it.increment(ec)) {
+885:             if (ec) {
+886:                 break;  // 迭代中途中错：停止扫描（已收集结果仍有效）
+887:             }
+888:             const std::string name = it->path().filename().string();
+889:             std::error_code typeEc;
+890:             if (!it->is_directory(typeEc) || typeEc) {
+891:                 continue;  // 非目录条目不属于事务残留（开发观测面之外——
+892:                            // 暂存区只应有目录条目，异常文件留给人工排查）
+893:             }
+894:             if (name == "tmp") {
+895:                 // tmp 清理（§4.1"启动清理"）：删除失败仅开发诊断——
+896:                 // 临时物残留无害（不参与任何读取路径）。
+897:                 const win32::FileResult rm =
+898:                     m_fileOps->removeTree(it->path().wstring());
+899:                 if (!rm.ok) {
+900:                     reportDev("tmp-cleanup-failed（.staging/tmp 启动清理"
+901:                               "失败——残留无害） osError="
+902:                                   + std::to_string(rm.osError));
+903:                 }
+904:                 continue;
+905:             }
+906:             ignored.push_back(name);
+907:         }
+908:         // 确定性排序（NFR-COR-02：directory_iterator 顺序未指定——报告
+909:         // 必须可复现，验收可逐元素比对）。
+910:         std::sort(ignored.begin(), ignored.end());
+911:         scan.ignoredStagingTxs = std::move(ignored);
+912:         if (!scan.ignoredStagingTxs.empty()) {
+913:             // 用户级恢复诊断（PRJ-RECOVERY-IGNORED-UNCOMMITTED——码值
+914:             // ＝diagnostics.md §4.6 收编清单，project 不私造码）。
+915:             emitReport(m_sink, makeIgnoredUncommittedRecord(
+916:                                    scan.ignoredStagingTxs));
+917:         }
+918:     }
+919: 
+920:     // ---- ④ HEAD 读取：缺失/损坏＝CorruptStoreDetected（§4.1 HEAD 行）
+921:     // ——报告位 false＋PRJ-STORE-CORRUPT（不抛：一次扫描产出完整清单）。
+922:     const fs::path headPath = m_projectDir / "HEAD";
+923:     const auto headBytes = readAllBytes(headPath);
+924:     if (!headBytes) {
+925:         reportDev("recovery-head-missing（HEAD 缺失——无法校验闭包）");
+926:         emitReport(m_sink, makeStoreCorruptRecord(
+927:                                "project/tx-engine: HEAD 文件缺失 path="
+928:                                    + headPath.string()));
+929:         return scan;  // headIntegrityVerified=false；①的发现已随行带回
+930:     }
+931:     HeadRecord head;
+932:     try {
+933:         head = codec::parseHeadRecord(*headBytes);
+934:     } catch (const StoreError& e) {
+935:         reportDev(std::string{"recovery-head-unreadable（HEAD 解析拒绝） "}
+936:                   + e.what());
+937:         emitReport(m_sink, makeStoreCorruptRecord(
+938:                                "project/tx-engine: HEAD 解析失败 detail="
+939:                                    + std::string(e.what())));
+940:         return scan;
+941:     }
+942: 
+943:     // ---- 装载磁盘修订清单入**临时索引**（不污染会话索引——§7.3：闭包
+944:     // 外修订对查询不可见的机制＝装载纪律只认闭包成员；扫描自持局部视图）。
+945:     // 损坏分流纪律（§7.4④的边界）：清单/元数据缺失或损坏只对**闭包成员**
+946:     // 构成 store-corrupt；闭包外目录的残缺＝未提交残留（§7.3"闭包外修订
+947:     // 目录与对象计入残留清单"——发布中途失败的修订目录可能无清单，F4
+948:     // 边界）。装载期失败先挂账，待闭包计算成功后统一归类。
+949:     revindex::RevisionIndex loader;
+950:     // 磁盘侧修订目录集（dirName→已注册的修订 id；清单完好者才入集）。
+951:     std::map<std::string, RevisionId> onDisk;
+952:     // 挂账的残缺目录（{目录名解析出的身份, 定位细节}）——闭包行走成功
+953:     // 即证明闭包成员清单全部完好，挂账目录必在闭包外＝残留。
+954:     std::vector<std::pair<RevisionId, std::string>> brokenDirs;
+955:     std::set<ObjectRefPair, MetadataRefLess> metadataRefs;  // 去重待装载集
+956:     // 元数据装载失败挂账（ref→细节）——仅闭包成员引用的失败置损坏，
+957:     // 残留清单引用的失败仅开发诊断。
+958:     std::map<ObjectRefPair, std::string, MetadataRefLess> failedMetaRefs;
+959:     bool broken = false;  // ④完整性结论（仅闭包相关失败置位）
+960:     std::string brokenDetail;
+961: 
+962:     {
+963:         std::error_code dirEc;
+964:         const fs::path revRoot = revisionsRoot();
+965:         const bool revRootOk = fs::exists(revRoot, dirEc) && !dirEc;
+966:         if (revRootOk) {
+967:             for (fs::directory_iterator it(revRoot, dirEc), end;
+968:                  it != end && !dirEc; it.increment(dirEc)) {
+969:                 if (dirEc) {
+970:                     break;
+971:                 }
+972:                 std::error_code isDirEc;
+973:                 if (!it->is_directory(isDirEc) || isDirEc) {
+974:                     continue;  // 非目录条目：不在修订命名规则内，跳过
+975:                 }
+976:                 const std::string dirName = it->path().filename().string();
+977:                 const auto rid = RevisionId::tryFromCanonical(dirName);
+978:                 if (!rid) {
+979:                     // 目录名非 rev- 规范文本：不合规条目（开发观测）——
+980:                     // 不计入磁盘集也不计入闭包（残缺命名不可能被 HEAD
+981:                     // 引用；§4.5 闭包规则只认身份可达性）。
+982:                     reportDev("recovery-malformed-revision-dir（目录名非"
+983:                               "规范文本，跳过） dir=" + dirName);
+984:                     continue;
+985:                 }
+986:                 const auto bytes =
+987:                     readAllBytes(it->path() / "manifest.json");
+988:                 if (!bytes) {
+989:                     // 清单缺失：挂账待闭包归类（残留或损坏）。
+990:                     brokenDirs.emplace_back(
+991:                         *rid, "project/tx-engine: manifest 缺失 path="
+992:                                   + (it->path() / "manifest.json").string());
+993:                     reportDev("recovery-manifest-missing path="
+994:                               + (it->path() / "manifest.json").string());
+995:                     continue;
+996:                 }
+997:                 try {
+998:                     const RevisionManifest manifest =
+999:                         codec::parseRevisionManifest(*bytes);
+1000:                     loader.registerRevision(manifest);
+1001:                     onDisk[dirName] = manifest.revisionId;
+1002:                     metadataRefs.insert(manifest.metadataRef);
+1003:                 } catch (const StoreError& e) {
+1004:                     // 清单字节非法（截断/字段违约/版本拒绝）：同缺失挂账。
+1005:                     brokenDirs.emplace_back(
+1006:                         *rid, "project/tx-engine: manifest 解析失败 path="
+1007:                             + (it->path() / "manifest.json").string()
+1008:                             + " detail=" + std::string(e.what()));
+1009:                     reportDev("recovery-manifest-corrupt path="
+1010:                               + (it->path() / "manifest.json").string()
+1011:                               + " detail=" + std::string(e.what()));
+1012:                 }
+1013:             }
+1014:         }
+1015:     }
+1016: 
+1017:     // ---- 元数据记录装载（闭包通道二需要 supersedes/committedBy 链）。
+1018:     for (const ObjectRefPair& ref : metadataRefs) {
+1019:         try {
+1020:             // 经 ObjectStore 读回校验通道：缺失/摘要不符＝StoreCorrupt
+1021:             //（§4.6 读校验语义；闭包内引用缺失按数据侧拒绝——§5.2 表）。
+1022:             const auto payloadBytes = m_objects->object(ref.objectId,
+1023:                                                         ref.contentVersion);
+1024:             const std::string payload{
+1025:                 reinterpret_cast<const char*>(payloadBytes.data()),
+1026:                 payloadBytes.size()};
+1027:             const ProjectMetadataRecord record =
+1028:                 codec::parseMetadataRecord(payload);
+1029:             loader.registerMetadata(ref, record);
+1030:         } catch (const StoreError& e) {
+1031:             // 挂账不置损：是否构成闭包损坏待闭包归类（仅闭包成员引用的
+1032:             // 失败置位——残留清单引用悬空只做开发诊断）。
+1033:             failedMetaRefs.emplace(
+1034:                 ref, "project/tx-engine: metadata 装载失败 oid="
+1035:                     + ref.objectId.toCanonical() + " cv="
+1036:                     + ref.contentVersion.toCanonical() + " detail="
+1037:                     + std::string(e.what()));
+1038:         }
+1039:     }
+1040: 
+1041:     // ---- 闭包计算（§7.4④"校验 HEAD 引用闭包完整性"）：起点缺失/悬挂
+1042:     // 引用＝损坏（RevisionIndex 契约）——捕获置位，不中断扫描。
+1043:     bool closureOk = false;
+1044:     revindex::CommittedClosure closure;
+1045:     try {
+1046:         closure = loader.committedClosure(head.revisionId);
+1047:         closureOk = true;
+1048:     } catch (const StoreError& e) {
+1049:         broken = true;
+1050:         brokenDetail = "project/tx-engine: 闭包行走失败 detail="
+1051:             + std::string(e.what());
+1052:         reportDev(std::string{"recovery-closure-failed "} + e.what());
+1053:     }
+1054: 
+1055:     if (closureOk) {
+1056:         // ---- 闭包行走成功 ⇒ 闭包成员的清单全部完好；挂账残缺目录必在
+1057:         // 闭包外＝未提交残留（§7.3；F4 边界的"有目录无清单"形态）。
+1058:         for (const auto& [rid, detail] : brokenDirs) {
+1059:             scan.uncommittedRevisions.push_back(rid);
+1060:             reportDev("recovery-uncommitted-broken-dir（闭包外目录清单残缺"
+1061:                       "——按残留归类） detail=" + detail);
+1062:         }
+1063: 
+1064:         // ---- §7.3 识别：磁盘修订目录集 ＼ 闭包集 ＝ 已发布但未提交
+1065:         //（对查询/历史浏览不可见——装载纪律只认闭包成员；这里产出其
+1066:         // 清单供恢复诊断与 PRJ-TX-9 断言）。
+1067:         std::set<std::string> inClosure;
+1068:         for (const RevisionId& id : closure.revisions) {
+1069:             inClosure.insert(id.toCanonical());
+1070:         }
+1071:         for (const auto& [dirName, rid] : onDisk) {
+1072:             if (inClosure.count(dirName) == 0) {
+1073:                 scan.uncommittedRevisions.push_back(rid);
+1074:             }
+1075:         }
+1076:         // 残留清单统一排序（map/挂账序均按规范文本有序，排序收敛两种
+1077:         // 来源——NFR-COR-02 确定性）。
+1078:         std::sort(scan.uncommittedRevisions.begin(),
+1079:                   scan.uncommittedRevisions.end());
+1080: 
+1081:         // ---- ④ 后半：闭包内全部对象引用做 size＋SHA-256 校验（§7.4④
+1082:         // "校验 HEAD 引用闭包完整性（对象/清单哈希）"——全量档）。清单
+1083:         // 哈希半边＝装载期 parse 拒绝（上文），对象半边在此。
+1084:         std::vector<objstore::ObjectKey> references;
+1085:         references.reserve(closure.revisions.size());
+1086:         for (const RevisionId& rid : closure.revisions) {
+1087:             const auto manifest = loader.tryRevision(rid);
+1088:             if (!manifest) {
+1089:                 continue;  // 不可达防御（闭包成员必已注册）
+1090:             }
+1091:             // 闭包成员引用的元数据若在挂账集中＝闭包损坏（定位细节随
+1092:             // 用户诊断 cause 上报——§7.4④"定位到文件"）。
+1093:             const auto failedMeta = failedMetaRefs.find(manifest->metadataRef);
+1094:             if (failedMeta != failedMetaRefs.end()) {
+1095:                 broken = true;
+1096:                 brokenDetail = failedMeta->second;
+1097:                 reportDev("recovery-closure-metadata-failed "
+1098:                           + failedMeta->second);
+1099:             }
+1100:             for (const ObjectRef& ref : manifest->objectRefs) {
+1101:                 references.push_back(objstore::ObjectKey{ref.objectId,
+1102:                                                          ref.contentVersion});
+1103:             }
+1104:         }
+1105:         const objstore::ObjectScanReport objReport =
+1106:             m_objects->scanObjects(references, true);
+1107:         if (!objReport.missingReferenced.empty()
+1108:             || !objReport.corruptReferenced.empty()) {
+1109:             broken = true;
+1110:             brokenDetail = "project/tx-engine: 闭包对象完整性失败 missing="
+1111:                 + std::to_string(objReport.missingReferenced.size())
+1112:                 + " corrupt="
+1113:                 + std::to_string(objReport.corruptReferenced.size());
+1114:             reportDev("recovery-object-integrity-failed missing="
+1115:                       + std::to_string(objReport.missingReferenced.size())
+1116:                       + " corrupt="
+1117:                       + std::to_string(objReport.corruptReferenced.size()));
+1118:         }
+1119:         // ---- ⑤ 悬挂对象计数（只读不删——GC 范围外，§4.1 objects 行）。
+1120:         scan.danglingObjectCount = objReport.danglingOnDisk.size();
+1121:         if (scan.danglingObjectCount > 0) {
+1122:             reportDev("recovery-dangling-objects count="
+1123:                       + std::to_string(scan.danglingObjectCount)
+1124:                       + "（闭包外对象——只读计数，不删除）");
+1125:         }
+1126:     } else {
+1127:         // 闭包不可计算：挂账元数据失败无法归类为"闭包内/外"——全部按
+1128:         // 开发诊断交底（损坏结论已由闭包失败承载，用户诊断单发不重复）。
+1129:         for (const auto& [ref, detail] : failedMetaRefs) {
+1130:             reportDev("recovery-metadata-load-failed " + detail);
+1131:         }
+1132:     }
+1133: 
+1134:     if (broken) {
+1135:         scan.headIntegrityVerified = false;
+1136:         // 用户级损坏诊断（PRJ-STORE-CORRUPT；定位细节随 record.cause）。
+1137:         emitReport(m_sink, makeStoreCorruptRecord(brokenDetail));
+1138:     } else {
+1139:         scan.headIntegrityVerified = true;
+1140:     }
+1141:     return scan;
+1142: }

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B15-r2",
+  "reviewedCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+  "comparisonBase": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "verdict": "PASS",
+  "scope": "仅独立复验B15-P2-01并关闭此项；不重授原B15其余语义、全UI/T01或T02通过。",
+  "closedFindings": [
+    "B15-P2-01"
+  ],
+  "newFindings": [],
+  "facts": {
+    "reviewedCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+    "comparisonBase": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+    "correctedTargetRows": 5,
+    "relatedNoteRows": 24,
+    "noteDigest": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+    "hashMismatches": 0,
+    "targetSetsMatched": 24,
+    "archiveFiles": 50,
+    "archiveRawMatches": 47,
+    "archiveNewlineOnly": 3,
+    "archiveMismatches": 0,
+    "originalFailPreserved": true,
+    "productAndUpstreamUnchanged": true,
+    "authorityAndPermissionsUnchanged": true,
+    "originalCMakeUnchanged": true,
+    "grants": 0,
+    "allRowsPending": true
+  },
+  "semanticReview": {
+    "actualCMake": "ui/CMakeLists.txt:416-427，if(TARGET sdurws)下target_sources(sdurws_ird_ui_test PRIVATE ...)在425行直接编入QtTextBillboard.cpp",
+    "fiveTargetRowsCorrect": true,
+    "allNoteReferencesFresh": true,
+    "unrelatedRowsUnchangedExceptNoteDigest": true,
+    "sourceCMakeUnchangedSinceOriginalB15": true,
+    "authorityAndGrantsUnchanged": true,
+    "restrictedPermissionsRemainPending": true
+  },
+  "archive": {
+    "originalVerdict": "FAIL",
+    "originalCommit": "85e561539a4038e37231dcfcb506109a5a188151",
+    "findingPreserved": "B15-P2-01",
+    "files": 50,
+    "rawMatches": 47,
+    "newlineOnly": 3,
+    "missingOrContentMismatches": 0
+  },
+  "gates": {
+    "exitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "治理结构/文档/任务，不代表语义或算法合规"
+  },
+  "checkoutClean": true,
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "t02Approved": false,
+  "remoteDelivery": {
+    "userReportedPushedCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+    "independentlyRechecked": false,
+    "detail": "委派已明确该冻结提交成功推远程。本轮不执行推送或重复远程核验；原FAIL中的历史网络状态保留。"
+  },
+  "notRun": [
+    "C++构建/产品测试",
+    "GUI/GL/真实后端",
+    "数值/性能",
+    "原B15其余语义重验",
+    "DeepEvidence",
+    "全T01退出",
+    "T02准入验收",
+    "远程推送/CI重验"
+  ],
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-r2-20261023-012138-1947673312"
+}

@@ -1,0 +1,153 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp
+sdurws::ird::project::objstore::ObjectStore::scanObjects
+441: ObjectScanReport ObjectStore::scanObjects(
+442:     const std::vector<ObjectKey>& references, bool verifyDigest) const
+443: {
+444:     // ---- 引用集装配（校验＋去重集：磁盘→引用方向的成员判定用） ----
+445:     std::unordered_set<ObjectKey, ObjectKeyHash> refSet;
+446:     refSet.reserve(references.size());
+447:     for (const ObjectKey& ref : references) {
+448:         if (!ref.oid.isValid() || !ref.cv.isValid()) {
+449:             // 调用方契约违约（引用表混入保留值）——fail-fast 而非静默跳过
+450:             // （跳过会把坏引用伪装成"无此引用"）。
+451:             throw std::invalid_argument(
+452:                 "project/object-store: scanObjects references contain "
+453:                 "invalid key");
+454:         }
+455:         refSet.insert(ref);
+456:     }
+457: 
+458:     ObjectScanReport report;
+459: 
+460:     // ---- 方向一：引用→磁盘（有引用无对象/有对象但损坏） ----
+461:     for (const ObjectKey& ref : references) {
+462:         const std::filesystem::path file = objectFile(ref.oid, ref.cv);
+463:         std::error_code ec;
+464:         const auto fileSize = fs::file_size(file, ec);
+465:         if (ec) {
+466:             if (isNotFound(ec)) {
+467:                 // 有引用无对象——报告桶由调用方映射 store-corrupt（§4.6/
+468:                 // §7.4 ④）；扫描不抛＝一次扫描产出完整清单。
+469:                 report.missingReferenced.push_back(ref);
+470:             } else {
+471:                 // 存在却探测失败（权限等）——归入损坏桶（无法证明完整性，
+472:                 // 归类理由同 readErrorToStoreError）。
+473:                 report.corruptReferenced.push_back(ref);
+474:             }
+475:             continue;
+476:         }
+477:         if (!verifyDigest) {
+478:             continue;  // 廉价档：只查存在性（PM-08 悬挂计数场景）
+479:         }
+480:         // 全量校验档（§7.4 ④"校验 HEAD 引用闭包完整性"）：size＋SHA-256。
+481:         // 注意本方法为 const——不查/不写已校验集、不触缓存（扫描结论
+482:         // 独立于运行期校验状态，报告必须可复现）。
+483:         std::ifstream in(file, std::ios::binary);
+484:         if (!in) {
+485:             report.corruptReferenced.push_back(ref);
+486:             continue;
+487:         }
+488:         std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(in),
+489:                                         std::istreambuf_iterator<char>()};
+490:         if (bytes.size() != fileSize) {
+491:             report.corruptReferenced.push_back(ref);
+492:             continue;
+493:         }
+494:         const core::ContentVersion actual = codec::contentVersionOf(
+495:             std::string_view{reinterpret_cast<const char*>(bytes.data()),
+496:                              bytes.size()});
+497:         if (!(actual == ref.cv)) {
+498:             report.corruptReferenced.push_back(ref);
+499:         }
+500:     }
+501: 
+502:     // ---- 方向二：磁盘→引用（悬挂对象＝有对象无引用——开发诊断） ----
+503:     std::error_code dirEc;
+504:     fs::directory_iterator it(m_objectsDir, dirEc);
+505:     if (!dirEc) {
+506:         // 对象区不存在＝空库，方向二自然无发现（不报错——新项目合法态）。
+507:         // 迭代采用 error_code 版 increment（异常轨道会以 filesystem_error
+508:         // 中断扫描——本方法契约是"损坏进报告桶不抛"）。
+509:         for (; it != fs::directory_iterator(); it.increment(dirEc)) {
+510:             if (dirEc) {
+511:                 break;  // 迭代中途中错：停止方向二（已收集结果仍有效）
+512:             }
+513:             const fs::directory_entry& entry = *it;
+514:             const std::string name = entry.path().filename().string();
+515:             std::error_code typeEc;
+516:             if (!entry.is_directory(typeEc) || typeEc) {
+517:                 // 对象区根下的非目录条目——不合规（§4.1 只定义 <oid> 目录）。
+518:                 report.malformedEntries.push_back(name);
+519:                 continue;
+520:             }
+521:             // 目录名须为 core 规范文本 "obj-<32hex>"（try 轨解析——不合规
+522:             // 进 malformed，不中断扫描）。
+523:             const auto oid = core::ObjectId::tryFromCanonical(name);
+524:             if (!oid) {
+525:                 report.malformedEntries.push_back(name);
+526:                 continue;
+527:             }
+528:             std::error_code fileEc;
+529:             fs::directory_iterator fit(entry.path(), fileEc);
+530:             if (fileEc) {
+531:                 continue;  // 子目录枚举失败：方向二跳过该 oid（方向一已覆盖引用）
+532:             }
+533:             for (; fit != fs::directory_iterator(); fit.increment(fileEc)) {
+534:                 if (fileEc) {
+535:                     break;
+536:                 }
+537:                 const fs::directory_entry& fentry = *fit;
+538:                 const std::string fname = fentry.path().filename().string();
+539:                 std::error_code ftypeEc;
+540:                 if (!fentry.is_regular_file(ftypeEc) || ftypeEc
+541:                     || !isHex64(fname)) {
+542:                     // 文件名非 64 小写 hex（或非普通文件）——不合规条目。
+543:                     report.malformedEntries.push_back(name + "/" + fname);
+544:                     continue;
+545:                 }
+546:                 // "cv-"＋文件名 → core 解析（读回路径与写入路径同源——
+547:                 // 本地无第二套编址格式）。
+548:                 const auto fcv = core::ContentVersion::tryFromCanonical(
+549:                     "cv-" + fname);
+550:                 if (!fcv) {
+551:                     report.malformedEntries.push_back(name + "/" + fname);
+552:                     continue;
+553:                 }
+554:                 const ObjectKey key{*oid, *fcv};
+555:                 if (refSet.count(key) == 0) {
+556:                     // 有对象无引用＝悬挂对象——只报告不删除（GC 明确不做，
+557:                     // §4.1/§7.3；删除决策永不属于对象库）。
+558:                     report.danglingOnDisk.push_back(key);
+559:                 }
+560:             }
+561:         }
+562:     }
+563: 
+564:     // ---- 确定性排序（directory_iterator 顺序未指定——报告必须可复现，
+565:     //      测试断言与跨次扫描比对才有稳定语义） ----
+566:     std::sort(report.missingReferenced.begin(),
+567:               report.missingReferenced.end(), objectKeyLess);
+568:     std::sort(report.corruptReferenced.begin(),
+569:               report.corruptReferenced.end(), objectKeyLess);
+570:     std::sort(report.danglingOnDisk.begin(), report.danglingOnDisk.end(),
+571:               objectKeyLess);
+572:     std::sort(report.malformedEntries.begin(), report.malformedEntries.end());
+573: 
+574:     // ---- 开发诊断上报（悬挂对象计数＋不合规条目——§4.6"开发诊断"落点；
+575:     //      sink 可空＝丢弃，存储行为不受影响） ----
+576:     if (m_sink != nullptr) {
+577:         if (!report.danglingOnDisk.empty()) {
+578:             m_sink->reportDev(
+579:                 "project/object-store",
+580:                 "dangling-objects count="
+581:                     + std::to_string(report.danglingOnDisk.size()));
+582:         }
+583:         if (!report.malformedEntries.empty()) {
+584:             m_sink->reportDev(
+585:                 "project/object-store",
+586:                 "malformed-entries count="
+587:                     + std::to_string(report.malformedEntries.size()));
+588:         }
+589:     }
+590:     return report;
+591: }

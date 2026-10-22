@@ -1,0 +1,20 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake
+ird_classify_target
+152: function(ird_classify_target name out_unit out_face)
+153:     set(_unit "")
+154:     set(_face "other")
+155:     if(name MATCHES "^sdurws_ird_([a-z]+)$")
+156:         set(_unit "${CMAKE_MATCH_1}")
+157:         set(_face "product")
+158:     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(plugin|worker|app)$")
+159:         set(_unit "${CMAKE_MATCH_1}")
+160:         set(_face "${CMAKE_MATCH_2}")
+161:     # WP-01-T05：性能测试同样遵守 testkit §2.4 的测试目标规则。只扩展
+162:     # 明确登记的两种后缀；不使用 .*_test，避免任意工具名得到测试豁免。
+163:     elseif(name MATCHES "^sdurws_ird_([a-z]+)_(test|contract_test|gui_test|perf_test|largedata_perf_test)$")
+164:         set(_unit "${CMAKE_MATCH_1}")
+165:         set(_face "test")
+166:     endif()
+167:     set(${out_unit} "${_unit}" PARENT_SCOPE)
+168:     set(${out_face} "${_face}" PARENT_SCOPE)
+169: endfunction()
