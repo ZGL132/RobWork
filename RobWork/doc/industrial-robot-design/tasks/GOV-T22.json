@@ -57,7 +57,13 @@
     "精确权限/逐功能/正向证据/阶段准入/新鲜度与关闭记录校验",
     "独立会话冻结SHA验收，本任务不自签pass或算法批准"
   ],
-  "implementationState": "awaiting-independent-verification",
+  "implementationState": "local-independent-pass-remote-delivery-blocked",
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "note": "第三轮独立验收本地治理pass，前两轮fail保留。status保持ready：远程推送受127.0.0.1:17890代理不可达阻断，远程CI/保护未验证，未合入redesign-main；不表示算法迁移或全1401功能审计完成。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",

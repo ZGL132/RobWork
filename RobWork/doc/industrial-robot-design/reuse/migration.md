@@ -105,12 +105,14 @@ A 文档/约束/门禁经独立冻结 SHA 验收后，B 审计与适配能力探
 
 ### 12.3 工作包 1：门禁数据模型与兼容升级
 
+本地治理验收：`e6f06e5b9` 已由独立会话第三轮 pass（[证据](../traceability/acceptance/GOV-T22-20261022-r3.json)，不可变 Git 引用见 tasks/GOV-T22.json）；PS7/PS5.1 各 136 passed、0 failed/skipped/notRun，权限/BOM 独立探针各 10 passed，完整关闭对照各 2 passed。工作包 1 和工作包 2 的机器规则已实现；静态规则之外的间接调用/生命周期仍须逐功能审查，不视为全语义覆盖。下方 CI 项的本地双运行时与模板同步已完成，但远程 CI/保护未核验，故保持未勾选。工作包 0 的远程同步仍因本机代理不可达阻断，未合入主线、未启动后续适配/算法阶段。
+
 修改范围：`reuse/catalog.json`、后续 `reuse/functions/<unit>.json`、原 `reuse/changes/` 格式和阶段验收引用；校验实现为 `RobWork/scripts/industrialrobot/validate-reuse.ps1`，夹具为同目录 `test-reuse-governance.ps1`。若需机读权限数据，集中在现有 `reuse/` 中一个权限文件，引用 ARCH §3.6 与 HOST-* ID，不复制架构 prose 或另建 policy 引擎。
 
-- [ ] 按 audit-contract §3/§4/§5 在隔离夹具定义 catalog 角色/操作、functionId/调用链、权限记录与来源摘要的有效样例；固定基线和旧能力 ID 保持不变。
-- [ ] 先增加拒绝夹具：缺 owner/consumer、未知能力、权限引用不存在、伪上游符号/target、重复 functionId 关系、路径逃逸、失效摘要、丢文件/丢功能覆盖；确认旧门禁不能满足新增验收。
-- [ ] 同一提交升级校验器、数据和夹具。旧字段兼容迁移须显式标为待审，不能默认 verified；采用一个明确 schema 版本分派，禁止新字段被旧入口静默忽略。
-- [ ] 固定状态含义：文件已登记≠功能已审计，功能已审计≠适用性已验证，适用性已验证≠生产已迁移，生产已迁移≠独立验收已关闭。缺口可记录为 proposal；无证据功能保持 pending，不填虚假通过。
+- [x] 按 audit-contract §3/§4/§5 在隔离夹具定义 catalog 角色/操作、functionId/调用链、权限记录与来源摘要的有效样例；固定基线和旧能力 ID 保持不变。
+- [x] 先增加拒绝夹具：缺 owner/consumer、未知能力、权限引用不存在、伪上游符号/target、重复 functionId 关系、路径逃逸、失效摘要、丢文件/丢功能覆盖；确认旧门禁不能满足新增验收。
+- [x] 同一提交升级校验器、数据和夹具。旧字段兼容迁移须显式标为待审，不能默认 verified；采用一个明确 schema 版本分派，禁止新字段被旧入口静默忽略。
+- [x] 固定状态含义：文件已登记≠功能已审计，功能已审计≠适用性已验证，适用性已验证≠生产已迁移，生产已迁移≠独立验收已关闭。缺口可记录为 proposal；无证据功能保持 pending，不填虚假通过。
 
 退出条件：新/旧有效凭证可受控读取，非法数据与未知 schema 显式拒绝；没有清空 inventory 或把历史债务重分类洗白。后续业务专属规则只因真实需求扩充，不一开始设计万能 schema/插件体系。
 
@@ -118,12 +120,12 @@ A 文档/约束/门禁经独立冻结 SHA 验收后，B 审计与适配能力探
 
 修改范围：上述两脚本、`cmake/ird_gates.cmake`、`cmake/ird_gates_whitelist.cmake`、`RobWork/scripts/industrialrobot/validate-task.ps1`（ready 校验确需时）、既有 `.github/workflows/upstream-reuse-governance.yml` 及镜像 `RobWork/scripts/industrialrobot/ci/upstream-reuse-governance.github-workflow.yml`；其他入口仅必要接线，不复制校验逻辑。
 
-- [ ] 实现 IRD-GATE-AD：按文件/编译目标/头与类型/对象来源/操作核对权限。正例包括数学值、runtime 编译、受控视图、任务私有 State/solver、四组精确宿主操作；负例覆盖业务 load/clone/factory 建 WC、模型结构写入、共享 State 写、宿主例外扩散、worker Widgets/借持指针。
+- [x] 实现 IRD-GATE-AD：按文件/编译目标/头与类型/对象来源/操作核对权限。正例包括数学值、runtime 编译、受控视图、任务私有 State/solver、四组精确宿主操作；负例覆盖业务 load/clone/factory 建 WC、模型结构写入、共享 State 写、宿主例外扩散、worker Widgets/借持指针。
 - [ ] 静态扫描不能可靠识别的别名/间接工厂/句柄逃逸，输出具体位置并要求调用链和独立审查，不宣称正则可完备判断；若现有构建信息足够则复用，不预先引入第二套解析工具链或全局 AST 服务。
-- [ ] 实现逐功能覆盖与证据新鲜度：改动的源区段、上游能力、依赖/配置或测试摘要失效时，相关证据失效；隐藏 helper、模板、脚本/黄金生成器不能绕过。格式正确但未审计的存量仍输出债务，不冒充 PASS。
-- [ ] 实现 direct/adapter 正向证据结构与结果读取：入口→上游→消费端、真实目标/用例、正常执行与隔离断开/扰动的相反结果。门禁拒绝 demo-only、只 include/link、忽略返回值、伪造/过期报告；测试语义和来源真实性仍由独立审查负责。
-- [ ] 按状态应用证据要求，避免循环：审计阶段允许 pending/proposal 但不得登记 migrated/closed；真实 migrated 行必须有生产正向证据；最终模式拒绝 pending/debt/audit-required/旧 fallback。不能要求尚未替换的旧路径提供新路径证据，迫使伪造报告。
-- [ ] 原验收引用之外增加新补强验收检查；T02 及之后缺记录、非 pass、错误 SHA、非祖先或引用错阶段均拒绝。普通文档检查不因此要求产品验收。
+- [x] 实现逐功能覆盖与证据新鲜度：改动的源区段、上游能力、依赖/配置或测试摘要失效时，相关证据失效；隐藏 helper、模板、脚本/黄金生成器不能绕过。格式正确但未审计的存量仍输出债务，不冒充 PASS。
+- [x] 实现 direct/adapter 正向证据结构与结果读取：入口→上游→消费端、真实目标/用例、正常执行与隔离断开/扰动的相反结果。门禁拒绝 demo-only、只 include/link、忽略返回值、伪造/过期报告；测试语义和来源真实性仍由独立审查负责。
+- [x] 按状态应用证据要求，避免循环：审计阶段允许 pending/proposal 但不得登记 migrated/closed；真实 migrated 行必须有生产正向证据；最终模式拒绝 pending/debt/audit-required/旧 fallback。不能要求尚未替换的旧路径提供新路径证据，迫使伪造报告。
+- [x] 原验收引用之外增加新补强验收检查；T02 及之后缺记录、非 pass、错误 SHA、非祖先或引用错阶段均拒绝。普通文档检查不因此要求产品验收。
 - [ ] PS7/PS5.1 执行相关正负夹具并保留 JUnit/JSON；CI 调用同一入口和冻结树，模板同步。不更改保护规则以绕过失败；远程必需检查是否生效须实时读取设置确认。
 
 退出条件：audit-contract §7 各类规则均有允许/拒绝实测，驱动完整执行、notRun/driverFailure 不伪报通过；受影响 CMake 目标注册/ird_gates 验证通过；独立会话冻结 SHA 验收 pass 后才能进入 T02。此工作包不修改 FK/IK/RNE/FD 等生产算法。
