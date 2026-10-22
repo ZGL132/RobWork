@@ -204,6 +204,442 @@
         }
       ],
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "core.Compare.closeWithin",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "symbol": "closeWithin",
+          "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+          "startLine": 18,
+          "endLine": 33,
+          "sha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "C4定向reference及非有限拒绝；极值中间溢出已真实误接受，见probe-r17/core-red，T05保持owner公式修数值边界，非新比较平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.vector",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "symbol": "allCloseWithin",
+          "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+          "startLine": 35,
+          "endLine": 51,
+          "sha256": "031cee042adba57b99a0b3ff79666fb4c89e8d2a3e4c89e5aa94e066c1f738c0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.Q",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "symbol": "allCloseWithin",
+          "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+          "startLine": 54,
+          "endLine": 66,
+          "sha256": "12fc8e06989b20838bd6926dce52176fef7a7432b526f3fef7ae11d512823826"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Compare.runtimeAbsoluteTolerance",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "symbol": "runtimeAbsoluteTolerance",
+          "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
+          "startLine": 69,
+          "endLine": 85,
+          "sha256": "9608cac2c49bf41e713358750e88efaef289976d46a8f2197fb6fc8faf38d861"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "C7量纲默认单点机械转写；未声明nullopt，不让上游precision重定义需求",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Tolerance.make",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "symbol": "make",
+          "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+          "startLine": 57,
+          "endLine": 72,
+          "sha256": "25a6c19d307bda7f46cce6c18947fd36dafeb9a01b7c29ddba4098b5a33aeae6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "合法非负有限工厂，公开聚合字段可绕工厂，调用契约需清楚",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Tolerance.operator==",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "symbol": "operator==",
+          "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
+          "startLine": 74,
+          "endLine": 77,
+          "sha256": "51b49f4d7161c3cc473f6bd8e95f58ac2176e1a4cd4f41e9a6e336710edccb34"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "二分量精确值相等，不作容差比较",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
+    },
+    {
+      "functionId": "core.Tolerance.operator!=",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "symbol": "operator!=",
+          "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
+          "startLine": 78,
+          "endLine": 78,
+          "sha256": "859765a3e3a5e206a96b1080f11eabfaeb0daec333e5aa4d0b9fbfd8a68720b7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "只委托精确==反转，不写另一比较逻辑",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "441962b366c65c65d09a28a1c8bd11d49e8a515d4bf4009e56b4bd1d3f606007"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     }
   ]
 }

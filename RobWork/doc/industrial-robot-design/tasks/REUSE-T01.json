@@ -1777,7 +1777,22 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-full-coverage-20261023/verify-report.mjs",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-full-coverage-20261023/write-report.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-full-coverage-20261023/write-report.log",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-full-coverage-20261023/write-report.mjs"
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-full-coverage-20261023/write-report.mjs",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-definitions.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/MatchingSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/stdout.log"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

@@ -1,0 +1,88 @@
+{
+  "taskId": "REUSE-T01",
+  "reviewedParentCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/MatchingSuitabilityTest.cpp",
+      "sha256": "e4375eb9ce34f6a26a52b7043d01547025fc6453b3474a62d70872b63d77fa64"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "sha256": "f418f8db6c361aa597630e9b4f45f9aeee8246fd1532d9a3a3ff7ae7b32bdc31"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "sha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6"
+    }
+  ],
+  "installedCandidates": [
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\max_cardinality_matching.hpp",
+      "rawSha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\adjacency_list.hpp",
+      "rawSha256": "758292c5dabec222b3b21044ad3f22026297eece78d8b8a80306f4ec2e12512e",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+      "rawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_headers\\boost_headers-config.cmake",
+      "rawSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准"
+    }
+  ],
+  "commands": [
+    "VS x64: cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "absolute ird_reuse_audit_probe.exe --gtest_filter=ReuseAuditMatching.* --gtest_output=xml:<candidates/gtest.xml> --ird_report=<candidates/ird-test-report.json>",
+    "absolute ird_reuse_audit_probe.exe --gtest_filter=ReuseAuditCoreBoundary.* --gtest_output=xml:<core-red/gtest.xml> --ird_report=<core-red/ird-test-report.json>"
+  ],
+  "runs": [
+    {
+      "name": "candidates",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/gtest.xml",
+        "sha256": "110f25c96ca331d414dc82836facae489e00fd16e988062c172cb2fbb79aabba"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/ird-test-report.json",
+        "sha256": "6b4f9f0822bd5f123c2cdd16a76acdbb5076d46856933617566b2cd91622ceba"
+      },
+      "stdout": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/stdout.log",
+        "sha256": "2b352c39138e30fddcc782f525930be5c973900617c4be1eac55fd89dbfea928"
+      }
+    },
+    {
+      "name": "core-red",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 1,
+      "xml": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/gtest.xml",
+        "sha256": "e0385d93cb5004d47d2dfb6993a8c549b71b0f267df4a3f3ad289d620a00659f"
+      },
+      "report": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/ird-test-report.json",
+        "sha256": "2444403b728b2aaa6ebcd5e7570c0627c282e4e40c8e4c6a89043c97f8546e4e"
+      },
+      "stdout": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/stdout.log",
+        "sha256": "52342f7e4ebc7a356c7eb5e9abb419047b7200dbde20e43bd26527a1012979a2"
+      }
+    }
+  ],
+  "limits": "2个既有候选API passed、1个原core边界反例failed；旧30项NOT RUN，非全产品/生产迁移/性能验收"
+}

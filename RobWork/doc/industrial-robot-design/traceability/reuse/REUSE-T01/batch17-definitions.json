@@ -1,0 +1,431 @@
+[
+  {
+    "functionId": "core.Compare.closeWithin",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "symbol": "closeWithin",
+      "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+      "startLine": 18,
+      "endLine": 33,
+      "sha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+    }
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.vector",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "symbol": "allCloseWithin",
+      "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+      "startLine": 35,
+      "endLine": 51,
+      "sha256": "031cee042adba57b99a0b3ff79666fb4c89e8d2a3e4c89e5aa94e066c1f738c0"
+    }
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.Q",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "symbol": "allCloseWithin",
+      "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+      "startLine": 54,
+      "endLine": 66,
+      "sha256": "12fc8e06989b20838bd6926dce52176fef7a7432b526f3fef7ae11d512823826"
+    }
+  },
+  {
+    "functionId": "core.Compare.runtimeAbsoluteTolerance",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "symbol": "runtimeAbsoluteTolerance",
+      "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
+      "startLine": 69,
+      "endLine": 85,
+      "sha256": "9608cac2c49bf41e713358750e88efaef289976d46a8f2197fb6fc8faf38d861"
+    }
+  },
+  {
+    "functionId": "core.Tolerance.make",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "symbol": "make",
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+      "startLine": 57,
+      "endLine": 72,
+      "sha256": "25a6c19d307bda7f46cce6c18947fd36dafeb9a01b7c29ddba4098b5a33aeae6"
+    }
+  },
+  {
+    "functionId": "core.Tolerance.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
+      "startLine": 74,
+      "endLine": 77,
+      "sha256": "51b49f4d7161c3cc473f6bd8e95f58ac2176e1a4cd4f41e9a6e336710edccb34"
+    }
+  },
+  {
+    "functionId": "core.Tolerance.operator!=",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "symbol": "operator!=",
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
+      "startLine": 78,
+      "endLine": 78,
+      "sha256": "859765a3e3a5e206a96b1080f11eabfaeb0daec333e5aa4d0b9fbfd8a68720b7"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.failField",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "failField",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::failField",
+      "startLine": 24,
+      "endLine": 28,
+      "sha256": "108e4bee27bd2f7fdc8470ed65ae58a901453499885bdc8144138e2d3c7125fa"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.requireStringArray",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "requireStringArray",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireStringArray",
+      "startLine": 47,
+      "endLine": 64,
+      "sha256": "52cebded2b44c45c21cc6df4b81df75646b009b169238f5ed2e53e3ba6da7892"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.requireBool",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "requireBool",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireBool",
+      "startLine": 67,
+      "endLine": 74,
+      "sha256": "644098ffa4ded81a197e50624ac47b1bf92a2750119c46c72e5dfe9576400b60"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.allCharsIn",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "allCharsIn",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::allCharsIn",
+      "startLine": 77,
+      "endLine": 82,
+      "sha256": "d5ad6280a714ccf7fb88587a0f31ade55a5f35e7b8a0e09e9b9c12212c2b8b1f"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.readFileBytes",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "readFileBytes",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::readFileBytes",
+      "startLine": 85,
+      "endLine": 95,
+      "sha256": "4a83ca6b00dff198fd166c29f599f131e31aba9717bb53942f5b880c6425a874"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.sha256HexOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "sha256HexOf",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::sha256HexOf",
+      "startLine": 98,
+      "endLine": 111,
+      "sha256": "c4223ebf93dc5ce03bafb97b07c97c006e843e9ca74c067327527f95cea627b0"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.toToken",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "toToken",
+      "qualifiedSymbol": "sdurws::ird::testkit::toToken",
+      "startLine": 116,
+      "endLine": 126,
+      "sha256": "b8f566b6f0cce8f0421fd5c3c7212c2833a10f37e043829090b93db8cb470bbd"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.datasetKindFromToken",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "datasetKindFromToken",
+      "qualifiedSymbol": "sdurws::ird::testkit::datasetKindFromToken",
+      "startLine": 128,
+      "endLine": 136,
+      "sha256": "4f9bea4f18b152e8103b30dd2ecd12333bf496158fe0f874ddd67e8f9c904610"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.parseSemanticVersion",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "parseSemanticVersion",
+      "qualifiedSymbol": "sdurws::ird::testkit::parseSemanticVersion",
+      "startLine": 138,
+      "endLine": 171,
+      "sha256": "f81f2bb40a47447b32c43772d9459e23e973ccb1de7b7b2c26b9bf6564d9715a"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.DatasetManifest.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "DatasetManifest::operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::DatasetManifest::operator==",
+      "startLine": 173,
+      "endLine": 195,
+      "sha256": "ee72fb28ffaa161de3fdee237d25473d3b52b96359860c1752c1b13cdee08832"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.GoldenDataset.load",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "GoldenDataset::load",
+      "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::load",
+      "startLine": 197,
+      "endLine": 486,
+      "sha256": "faf2ac946a8a838984fd94e031b1d8fabee3db0d0e35c998e6e685178a77fdbd"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.GoldenDataset.resolveInput",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "GoldenDataset::resolveInput",
+      "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::resolveInput",
+      "startLine": 488,
+      "endLine": 496,
+      "sha256": "239c772e7cfd5527fb7a6bdbf19dc3153b5b5cd5a84c1377f6c7b4fbcee22cae"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.GoldenDataset.resolveExpected",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "GoldenDataset::resolveExpected",
+      "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::resolveExpected",
+      "startLine": 498,
+      "endLine": 506,
+      "sha256": "53d0d6f26ca7298a752a4ebd0262353e9320bfc87c02be40011ccbef590a46d8"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.requireString.prefix",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "requireString",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireString",
+      "startLine": 31,
+      "endLine": 39,
+      "sha256": "a143afd14b5c8e2942442ed8346f38a406935c75b01bb07c84a545403bb13bc2"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.requireString.plain",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+      "symbol": "requireString",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireString",
+      "startLine": 41,
+      "endLine": 44,
+      "sha256": "44b1dd9735a6904bba9bdd4bd778652b46351af5c0f9e11421a69634e52cf7ad"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.ReferenceSource.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::ReferenceSource::operator==",
+      "startLine": 67,
+      "endLine": 72,
+      "sha256": "04f9b402f9eac04a62dba3d2909a1f448a97c4b0419db89d9398da83d2d0b7e5"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.Producer.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::Producer::operator==",
+      "startLine": 85,
+      "endLine": 91,
+      "sha256": "45b77fbefd64a244bd2b593aef6938552f557116d427f4148818d5898e4c8490"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.Producer.operator!=",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator!=",
+      "qualifiedSymbol": "sdurws::ird::testkit::Producer::operator!=",
+      "startLine": 92,
+      "endLine": 92,
+      "sha256": "5531020bbb1538ea94b9380fb99a18b31f9348f0fecbe572f0d6436d29ab33b8"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.IntegrityEntry.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::IntegrityEntry::operator==",
+      "startLine": 109,
+      "endLine": 112,
+      "sha256": "f9399df38ec10ddf08b6e878e5ec9cb2b47f5789ac131196aaf42b7e1bd9437d"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.HistoryEntry.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::HistoryEntry::operator==",
+      "startLine": 123,
+      "endLine": 127,
+      "sha256": "f78622ae176590e04c2556ce7348a0c982cadd302d4d50fec179890cc59b7a3b"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.HistoryEntry.operator!=",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator!=",
+      "qualifiedSymbol": "sdurws::ird::testkit::HistoryEntry::operator!=",
+      "startLine": 128,
+      "endLine": 128,
+      "sha256": "28105c0de58f5951594e93b5683443b765b5058e1ff8930d6bddf794a4d9b2e5"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.DatasetManifest.operator!=",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "operator!=",
+      "qualifiedSymbol": "sdurws::ird::testkit::DatasetManifest::operator!=",
+      "startLine": 163,
+      "endLine": 163,
+      "sha256": "12a9ecb325925a49e9b460da8f7adc41b1f16a9edb9cc3f0d16d4b90e16f630d"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.GoldenDataset.manifest",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "manifest",
+      "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::manifest",
+      "startLine": 179,
+      "endLine": 179,
+      "sha256": "14f9dd34e61d9e4066ddb2c727d028f2c600a9fcf0ba23525d64472f824724fa"
+    }
+  },
+  {
+    "functionId": "testkit.Dataset.GoldenDataset.toleranceProfileRef",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+      "symbol": "toleranceProfileRef",
+      "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::toleranceProfileRef",
+      "startLine": 187,
+      "endLine": 190,
+      "sha256": "4d28ab2d1ed59dc8053093cab54ff39946e333f7a103f1df0ee5b89d697637e8"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.MatchPair.operator==",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "operator==",
+      "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator==",
+      "startLine": 58,
+      "endLine": 61,
+      "sha256": "033ad8974b6f77d360ae9fc9450e04b73ff7a8467c1fc5d78dab527c79bb8d18"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.MatchPair.operator!=",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "operator!=",
+      "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator!=",
+      "startLine": 62,
+      "endLine": 62,
+      "sha256": "7e8581b15c7c49e40d8858f184bea5700095377710fdde837f43562acd8046cf"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.SetMatchTraits.identity",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "identity",
+      "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::identity",
+      "startLine": 91,
+      "endLine": 91,
+      "sha256": "7d6769af413c4c01c430dfd4894ee6ba3357777ca4661105f27a4c13abba7512"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.SetMatchTraits.numerics",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "numerics",
+      "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::numerics",
+      "startLine": 93,
+      "endLine": 93,
+      "sha256": "5dc80d6994d2cf553159c8ba7cbe4dd299660011139ee2d436e461b976f3d42e"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.compatible",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "compatible",
+      "qualifiedSymbol": "sdurws::ird::testkit::detail::compatible",
+      "startLine": 99,
+      "endLine": 116,
+      "sha256": "b32f60f56f8df2f6d0a418992efe015a4dd488d4534fde39837525218c78cfe8"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.tryAugmentAt",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "tryAugmentAt",
+      "qualifiedSymbol": "sdurws::ird::testkit::detail::tryAugmentAt",
+      "startLine": 121,
+      "endLine": 151,
+      "sha256": "3c3276657ce8a95fff844a9234c7aedb2a03a5a0fb608503bf1e1bbb48efdb15"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.checkSetEquivalent",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "checkSetEquivalent",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkSetEquivalent",
+      "startLine": 162,
+      "endLine": 392,
+      "sha256": "974b636b65ace170030789a4b5051fd31cd6988904fa6fd9b8a4d4962ff1279b"
+    }
+  },
+  {
+    "functionId": "testkit.SetCheck.checkStableOrder",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "symbol": "checkStableOrder",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkStableOrder",
+      "startLine": 394,
+      "endLine": 435,
+      "sha256": "c2bf1998ded2016e7119d3ff93384802418c1f3afcf807d65f3e57ebacbfb9b1"
+    }
+  }
+]

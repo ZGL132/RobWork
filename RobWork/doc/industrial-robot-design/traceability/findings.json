@@ -9673,6 +9673,16 @@
       "title": "URDF导入黄金生成脚本未随速度限制F01映射更新，再生会回退正确黄金数据且缺消费字段",
       "owner": "modeling/testdata / REUSE-T05",
       "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。"
+    },
+    {
+      "id": "F-960",
+      "source": "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md / probe-r17/core-red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
+      "owner": "core / REUSE-T05",
+      "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
     }
   ]
 }
