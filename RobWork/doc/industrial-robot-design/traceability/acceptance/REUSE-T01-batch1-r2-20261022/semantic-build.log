@@ -1,0 +1,8 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-batch1-r2-20261022-212641\semantic-build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-batch1-r2-20261022-212641\semantic-build\acceptance_semantic.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-accept-t01-batch1-r2-20261022-212641/semantic-probe/CMakeLists.txt
+  semantic.cpp
+  acceptance_semantic.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-batch1-r2-20261022-212641\semantic-build\Release\acceptance_semantic.exe
