@@ -1,0 +1,654 @@
+[
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+    "start": 18,
+    "end": 23,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_core_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_core_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
+    "start": 25,
+    "end": 36,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_drivetrain_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
+    "start": 45,
+    "end": 71,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_drivetrain_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_drivetrain_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){#ifdefined(_MSC_VER)&&defined(_DEBUG)_CrtSetReportMode(_CRT_WARN,_CRTDBG_MODE_FILE);_CrtSetReportFile(_CRT_WARN,_CRTDBG_FILE_STDERR);_CrtSetReportMode(_CRT_ERROR,_CRTDBG_MODE_FILE);_CrtSetReportFile(_CRT_ERROR,_CRTDBG_FILE_STDERR);_CrtSetReportMode(_CRT_ASSERT,_CRTDBG_MODE_FILE);_CrtSetReportFile(_CRT_ASSERT,_CRTDBG_FILE_STDERR);_set_error_mode(_OUT_TO_STDERR);#endif::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp",
+    "start": 25,
+    "end": 36,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_dynamics_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_dynamics_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp",
+    "start": 27,
+    "end": 38,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_dynamics_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+    "start": 23,
+    "end": 32,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_evidence_test",
+      "sdurws_ird_evidence_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+    "start": 35,
+    "end": 53,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_execution_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_execution_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){{exrcv::ChildArgschildArgs;if(exrcv::tryParseChildArgs(argc,argv,childArgs)){returnexrcv::runRecoveryParkChild(childArgs);}}::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+    "start": 31,
+    "end": 38,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_execution_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_execution_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/contract_test/ContractTestMain.cpp",
+    "start": 27,
+    "end": 34,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_io_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_io_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp",
+    "start": 35,
+    "end": 44,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_io_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_io_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp",
+    "start": 19,
+    "end": 26,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_kinematics_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp",
+    "start": 34,
+    "end": 47,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_kinematics_gui_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_kinematics_gui_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+    "start": 27,
+    "end": 42,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_kinematics_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QCoreApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/ContractTestMain.cpp",
+    "start": 19,
+    "end": 26,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_modeling_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/TestMainReport.cpp",
+    "start": 27,
+    "end": 39,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_modeling_gui_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_modeling_gui_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp",
+    "start": 31,
+    "end": 46,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_modeling_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QCoreApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+    "start": 27,
+    "end": 38,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_optimization_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_optimization_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+    "start": 28,
+    "end": 39,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_optimization_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_optimization_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+    "start": 23,
+    "end": 32,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_policy_test",
+      "sdurws_ird_policy_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_policy_test",
+      "sdurws_ird_policy_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp",
+    "start": 32,
+    "end": 41,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_project_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_project_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+    "start": 35,
+    "end": 42,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_reporting_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+    "start": 38,
+    "end": 45,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_reporting_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_reporting_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp",
+    "start": 19,
+    "end": 26,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_requirements_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_requirements_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp",
+    "start": 25,
+    "end": 37,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_requirements_gui_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+    "start": 28,
+    "end": 43,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_requirements_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_requirements_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QCoreApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+    "start": 23,
+    "end": 32,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_runtime_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_runtime_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+    "start": 25,
+    "end": 36,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_selection_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_selection_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+    "start": 27,
+    "end": 38,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_selection_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_selection_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp",
+    "start": 24,
+    "end": 33,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_testkit_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_testkit_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){g_irdTestArgv=argv;::sdurws::ird::testkit::installTestRecordListener(argc,argv);::testing::InitGoogleTest(&argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp",
+    "start": 26,
+    "end": 37,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_trajectory_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp",
+    "start": 27,
+    "end": 38,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_trajectory_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_trajectory_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp",
+    "start": 34,
+    "end": 50,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_ui_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_ui_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){if(argc>=3&&std::string(argv[1])==\"--ird-wp24-t02-child\"){returnsdurws::ird::ui::studio::runCrashTestChild(argv[2]);}QCoreApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp",
+    "start": 33,
+    "end": 45,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_ui_gui_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_ui_gui_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+    "start": 36,
+    "end": 49,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_ui_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_ui_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){QCoreApplicationapp(argc,argv);::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp",
+    "start": 19,
+    "end": 26,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_workflow_contract_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+    "start": 29,
+    "end": 40,
+    "qualified": "::main",
+    "hashMatches": true,
+    "definitionStarts": true,
+    "definitionEnds": true,
+    "recordedTargets": [
+      "sdurws_ird_workflow_test"
+    ],
+    "actualDirectConsumers": [
+      "sdurws_ird_workflow_test"
+    ],
+    "targetMatch": true,
+    "groupMatches": true,
+    "normalized": "intmain(intargc,char**argv){::testing::InitGoogleTest(&argc,argv);sdurws::ird::testkit::installTestRecordListener(argc,argv);returnRUN_ALL_TESTS();}"
+  }
+]

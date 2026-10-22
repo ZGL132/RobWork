@@ -1225,7 +1225,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -1284,7 +1284,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -1343,7 +1343,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -1377,7 +1377,6 @@
         }
       ],
       "targets": [
-        "sdurws_ird_kinematics_app",
         "sdurws_ird_kinematics_test",
         "sdurws_ird_kinematics_gui_test",
         "sdurws_ird_kinematics_contract_test"
@@ -1405,7 +1404,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -1421,6 +1420,242 @@
         }
       ],
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "kinematics.Envelope.probeSeedFor",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "probeSeedFor",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
+          "startLine": 63,
+          "endLine": 66,
+          "sha256": "f5216eee1e556cab7e4808df7400c80bde14b8311cebdf5ccc2fcde75017f0c8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"probeSeedFor|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "仅委托既有64位流派生，Random全局32位不能直接替换；种子核债保留",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+    },
+    {
+      "functionId": "kinematics.Envelope.failCaller",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "failCaller",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+          "startLine": 69,
+          "endLine": 72,
+          "sha256": "d2a733b11c2b333b7d29892edc1e6f94e6569363328b6623b2bade7bff6bc91c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"failCaller|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "调用方错误抛invalid_argument的域上下文，非稳定诊断码权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+    },
+    {
+      "functionId": "kinematics.Envelope.probeReachability",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "probeReachability",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
+          "startLine": 127,
+          "endLine": 209,
+          "sha256": "e30675246a0c8892e3991f2fad45079179541e7a998cd2af687f9fb2c96bc891"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"probeReachability|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "PositionOnly请求→注入或默认IK→四态，计数只在调用推进；沿上游IK薄适配，保留取消/设施失败/搜索未果语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+    },
+    {
+      "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "computeApproximateEnvelope",
+          "qualifiedSymbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
+          "startLine": 217,
+          "endLine": 481,
+          "sha256": "7ade2c0c735829fa2fc644c337c469cdb6029fbf0a291c488efe47caa1c992a4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"computeApproximateEnvelope|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "近似方向搜索/二分委托IK探针，AABB非可达包络；仍需上游IK适配及真实生产调用核验，不新增workspace求解核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     }
   ]
 }

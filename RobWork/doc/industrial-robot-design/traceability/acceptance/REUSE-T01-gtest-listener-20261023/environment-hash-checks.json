@@ -1,0 +1,23 @@
+[
+  {
+    "kind": "source",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/TestHarnessSuitabilityTest.cpp",
+    "expected": "c85944731bf09943bf3dc1bb8ac3849e000f422035cb7cbb862b9b27b69e4ee5",
+    "actual": "c85944731bf09943bf3dc1bb8ac3849e000f422035cb7cbb862b9b27b69e4ee5",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "expected": "926ce151a3ab724c278f20f580660d6ce34bdac7051e77e45662bde968bdcd1c",
+    "actual": "926ce151a3ab724c278f20f580660d6ce34bdac7051e77e45662bde968bdcd1c",
+    "matches": true
+  },
+  {
+    "kind": "external",
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/gtest/gtest.h",
+    "expected": "c6f886e33c2e426d6f634112b12b0041aa0bad85b9f897be853b083c14aea169",
+    "actual": "c6f886e33c2e426d6f634112b12b0041aa0bad85b9f897be853b083c14aea169",
+    "matches": true
+  }
+]

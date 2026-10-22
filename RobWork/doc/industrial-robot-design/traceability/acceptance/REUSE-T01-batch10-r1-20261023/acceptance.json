@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "reviewedCommit": "e0bee2994eee0e8f3299ea5ccf200c354f4454be",
+  "baselineCommit": "a7171137a77048e2f1102b80051fb66fce52daa9",
+  "result": "FAIL",
+  "scope": "B10：36 main、20宏、2监听器；不判全T01退出",
+  "relations": {
+    "added": 56,
+    "pending": 292,
+    "total": 295,
+    "changed": 58,
+    "updated": 2,
+    "proposal": 3,
+    "closedFiles": 0
+  },
+  "gates": {
+    "passed": 3,
+    "exitCodes": {
+      "reuse": 0,
+      "docs": 0,
+      "task": 0
+    },
+    "failed": 0,
+    "skipped": 0
+  },
+  "findings": [
+    {
+      "affected": [
+        {
+          "unit": "dynamics",
+          "falseTargets": [
+            "sdurws_ird_dynamics_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_dynamics_test",
+            "sdurws_ird_dynamics_contract_test",
+            "sdurws_ird_dynamics_gui_test"
+          ]
+        },
+        {
+          "unit": "execution",
+          "falseTargets": [
+            "sdurws_ird_execution_worker"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_execution_test",
+            "sdurws_ird_execution_contract_test",
+            "sdurws_ird_execution_perf_test"
+          ]
+        },
+        {
+          "unit": "kinematics",
+          "falseTargets": [
+            "sdurws_ird_kinematics_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_kinematics_test",
+            "sdurws_ird_kinematics_gui_test",
+            "sdurws_ird_kinematics_contract_test"
+          ]
+        },
+        {
+          "unit": "modeling",
+          "falseTargets": [
+            "sdurws_ird_demo6r",
+            "sdurws_ird_modeling_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_modeling_test",
+            "sdurws_ird_modeling_gui_test",
+            "sdurws_ird_modeling_contract_test"
+          ]
+        },
+        {
+          "unit": "project",
+          "falseTargets": [
+            "sdurws_ird_project_openbench_worker"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_project_test",
+            "sdurws_ird_project_contract_test",
+            "sdurws_ird_project_perf_test"
+          ]
+        },
+        {
+          "unit": "requirements",
+          "falseTargets": [
+            "sdurws_ird_requirements_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_requirements_test",
+            "sdurws_ird_requirements_contract_test",
+            "sdurws_ird_requirements_gui_test"
+          ]
+        },
+        {
+          "unit": "selection",
+          "falseTargets": [
+            "sdurws_ird_selection_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_selection_test",
+            "sdurws_ird_selection_contract_test"
+          ]
+        },
+        {
+          "unit": "testkit",
+          "falseTargets": [
+            "sdurws_ird_testdata_lint",
+            "sdurws_ird_testkit_prochelper"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_testkit_test"
+          ]
+        },
+        {
+          "unit": "trajectory",
+          "falseTargets": [
+            "sdurws_ird_trajectory_app"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_trajectory_test",
+            "sdurws_ird_trajectory_contract_test"
+          ]
+        },
+        {
+          "unit": "ui",
+          "falseTargets": [
+            "sdurws_ird_ui_app",
+            "sdurws_ird_studio"
+          ],
+          "actualConsumers": [
+            "sdurws_ird_ui_test",
+            "sdurws_ird_ui_contract_test",
+            "sdurws_ird_ui_perf_test",
+            "sdurws_ird_ui_largedata_perf_test",
+            "sdurws_ird_ui_gui_test"
+          ]
+        }
+      ],
+      "id": "B10-P2-01",
+      "status": "open",
+      "evidence": "macro-checks.json",
+      "title": "宏targets误列未调用宏的13个可执行目标",
+      "repair": "按实际宏调用修正functions和inventory并更新摘要，不改变源码目标",
+      "priority": 2
+    }
+  ],
+  "checks": {
+    "macroDefinitionHashes": {
+      "failed": 0,
+      "passed": 20
+    },
+    "productSourceChanges": 0,
+    "macroConsumerRelations": {
+      "passed": 10,
+      "failed": 10,
+      "falseTargets": 13
+    },
+    "sourceInputCatalogEvidenceHashes": "PASS",
+    "searchReplay": {
+      "failed": 0,
+      "passed": 5
+    },
+    "mains": {
+      "failed": 0,
+      "passed": 36
+    },
+    "mainGroups": [
+      24,
+      1,
+      1,
+      4,
+      4,
+      1,
+      1
+    ],
+    "probeSourceDependencyHashes": "PASS",
+    "permissionChanges": 0
+  },
+  "archivedProbe": {
+    "passed": 1,
+    "rerun": false,
+    "notRun": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "notRun": [
+    "C++构建",
+    "产品全回归",
+    "GUI",
+    "原25项API探测",
+    "新1项GTest探测重跑",
+    "全库DeepEvidence"
+  ],
+  "preservedOpenFindings": [
+    "F-957",
+    "F-958"
+  ],
+  "archives": {
+    "coverage": {
+      "result": "NOT PASS",
+      "raw": 54,
+      "files": 65,
+      "newlineOnly": 11,
+      "failed": 0
+    },
+    "B9r2": {
+      "raw": 14,
+      "files": 15,
+      "newlineOnly": 1,
+      "failed": 0
+    }
+  },
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r1-ff13cbaf",
+  "repositoryModified": false,
+  "fullT01ExitApproved": false
+}

@@ -1,0 +1,1046 @@
+[
+  {
+    "id": "core.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+    "startLine": 18,
+    "endLine": 23,
+    "hashMatches": true,
+    "actualSha": "82585c0df15b3c5fe9c0bc4795b66a8ddb28ff577d1c5065d33631f2349671ad",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "core.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "core.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "startLine": 134,
+    "endLine": 147,
+    "hashMatches": true,
+    "actualSha": "9ae62d347e4530bffa97b527b7d45f410c5617040d327c36fd19d7b45aa90086",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "core.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "diagnostics.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "startLine": 257,
+    "endLine": 269,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "diagnostics.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
+    "startLine": 25,
+    "endLine": 36,
+    "hashMatches": true,
+    "actualSha": "62ce597ca2c6e8724e57a637fb1768c96246355ee5761ff00ae4aa76a3e7699e",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "drivetrain.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
+    "startLine": 45,
+    "endLine": 71,
+    "hashMatches": true,
+    "actualSha": "90ceb0e006d795ebc5b6b16e6739906233c94ebf535fa12aa943f3d29f6d7a7b",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "drivetrain.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "drivetrain.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "startLine": 203,
+    "endLine": 215,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "drivetrain.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp",
+    "startLine": 25,
+    "endLine": 36,
+    "hashMatches": true,
+    "actualSha": "9b8277d8ab73650d4e605f479cc337881f0b5f278f07e6a616a5cdc7ecde76e2",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "dynamics.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp",
+    "startLine": 27,
+    "endLine": 38,
+    "hashMatches": true,
+    "actualSha": "9b8277d8ab73650d4e605f479cc337881f0b5f278f07e6a616a5cdc7ecde76e2",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "dynamics.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "dynamics.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "startLine": 482,
+    "endLine": 494,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "dynamics.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "evidence.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+    "startLine": 23,
+    "endLine": 32,
+    "hashMatches": true,
+    "actualSha": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "evidence.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "evidence.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "startLine": 131,
+    "endLine": 143,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "evidence.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "execution.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+    "startLine": 35,
+    "endLine": 53,
+    "hashMatches": true,
+    "actualSha": "571f31f4cef7733409c542225e473d3c554e207da56190c18052c2e378d127ea",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "execution.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "execution.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+    "startLine": 31,
+    "endLine": 38,
+    "hashMatches": true,
+    "actualSha": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "execution.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "execution.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "startLine": 459,
+    "endLine": 471,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "execution.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/contract_test/ContractTestMain.cpp",
+    "startLine": 27,
+    "endLine": 34,
+    "hashMatches": true,
+    "actualSha": "05e1f03564177dec955b07a7c44eaef866b14f737e76467b99241d6ee369347b",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "io.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp",
+    "startLine": 35,
+    "endLine": 44,
+    "hashMatches": true,
+    "actualSha": "dd7a6054bf8ee27818f5699698149c8b48bc821c0b8f1b0a0344c2e2f78a15d4",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "io.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "startLine": 252,
+    "endLine": 264,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "io.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp",
+    "startLine": 19,
+    "endLine": 26,
+    "hashMatches": true,
+    "actualSha": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.gui_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp",
+    "startLine": 34,
+    "endLine": 47,
+    "hashMatches": true,
+    "actualSha": "1e59b2759d01897a5da8747ec64b693f8d0c78fcdecd96c74d87c8f6852e5654",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.gui_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+    "startLine": 27,
+    "endLine": 42,
+    "hashMatches": true,
+    "actualSha": "30936784424d631b7174cf9de62ac9b1d300a9f42807e8c9c6f710a5c9f7c549",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "kinematics.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "startLine": 498,
+    "endLine": 510,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "kinematics.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/ContractTestMain.cpp",
+    "startLine": 19,
+    "endLine": 26,
+    "hashMatches": true,
+    "actualSha": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "modeling.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.gui_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/TestMainReport.cpp",
+    "startLine": 27,
+    "endLine": 39,
+    "hashMatches": true,
+    "actualSha": "46e884280c66e32d7deeb3bfc175c1bdd8f80ababc9f64fce9b52935443fda4f",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "modeling.gui_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp",
+    "startLine": 31,
+    "endLine": 46,
+    "hashMatches": true,
+    "actualSha": "7d929fa8917d56a15cbad60a2e461b73bda561b6cd3eae35f859bc3336ebf9f3",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "modeling.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "modeling.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "startLine": 664,
+    "endLine": 676,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "modeling.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+    "startLine": 27,
+    "endLine": 38,
+    "hashMatches": true,
+    "actualSha": "0d6f51a008cf019d24c9749d6e069b290f80492b9be1e611e0bd2cd3d6d915c3",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "optimization.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+    "startLine": 28,
+    "endLine": 39,
+    "hashMatches": true,
+    "actualSha": "0d6f51a008cf019d24c9749d6e069b290f80492b9be1e611e0bd2cd3d6d915c3",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "optimization.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "optimization.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "startLine": 458,
+    "endLine": 470,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "optimization.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+    "startLine": 23,
+    "endLine": 32,
+    "hashMatches": true,
+    "actualSha": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "policy.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "policy.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "startLine": 316,
+    "endLine": 328,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "policy.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "project.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp",
+    "startLine": 32,
+    "endLine": 41,
+    "hashMatches": true,
+    "actualSha": "8b3833f525ebb52914bb373b3f4eef04a54672fc638b9035806659bf8cc7d6a6",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "project.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "project.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "startLine": 639,
+    "endLine": 651,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "project.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "reporting.contract_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+    "startLine": 35,
+    "endLine": 42,
+    "hashMatches": true,
+    "actualSha": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "reporting.contract_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "reporting.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+    "startLine": 38,
+    "endLine": 45,
+    "hashMatches": true,
+    "actualSha": "0ae3e8a12b10812a4ae063fd39d8684d3dfb11f9b445da8babcc20fa116e0d02",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "reporting.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "reporting.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "startLine": 409,
+    "endLine": 421,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "reporting.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp",
+    "startLine": 19,
+    "endLine": 26,
+    "hashMatches": true,
+    "actualSha": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.gui_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp",
+    "startLine": 25,
+    "endLine": 37,
+    "hashMatches": true,
+    "actualSha": "46e884280c66e32d7deeb3bfc175c1bdd8f80ababc9f64fce9b52935443fda4f",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.gui_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+    "startLine": 28,
+    "endLine": 43,
+    "hashMatches": true,
+    "actualSha": "09e891ac1a87e705fdcaaee85cd35290672018b9ff8752103d62e98a7e147060",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "requirements.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "requirements.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "startLine": 473,
+    "endLine": 485,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "requirements.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+    "startLine": 23,
+    "endLine": 32,
+    "hashMatches": true,
+    "actualSha": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "runtime.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "startLine": 352,
+    "endLine": 364,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "runtime.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+    "startLine": 25,
+    "endLine": 36,
+    "hashMatches": true,
+    "actualSha": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "selection.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+    "startLine": 27,
+    "endLine": 38,
+    "hashMatches": true,
+    "actualSha": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "selection.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "selection.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "startLine": 441,
+    "endLine": 453,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "selection.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.test.TestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp",
+    "startLine": 24,
+    "endLine": 33,
+    "hashMatches": true,
+    "actualSha": "9f050581ddefa51fae05b5f1fee80d5f77f3fca12a854831747f0afbdf61d5d1",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "testkit.test.TestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "startLine": 165,
+    "endLine": 177,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "testkit.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.TestRecordListener",
+    "qualifiedSymbol": "sdurws::ird::testkit::TestRecordListener",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+    "startLine": 44,
+    "endLine": 108,
+    "hashMatches": true,
+    "actualSha": "6bf2fb80e7d9df8c9f28dc9ddf9aa2580f23a4729316d4c17d2e68703f932978",
+    "symbolOccurs": true,
+    "first": "class TestRecordListener : public ::testing::EmptyTestEventListener {",
+    "last": "};"
+  },
+  {
+    "id": "testkit.TestRecordListener",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.installTestRecordListener",
+    "qualifiedSymbol": "sdurws::ird::testkit::installTestRecordListener",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+    "startLine": 120,
+    "endLine": 142,
+    "hashMatches": true,
+    "actualSha": "a1934b155b4cf34b2f134bf1101c546c6d7cbe96bd8df84acb48528119a87c1a",
+    "symbolOccurs": true,
+    "first": "inline void installTestRecordListener(int& argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "testkit.installTestRecordListener",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp",
+    "startLine": 26,
+    "endLine": 37,
+    "hashMatches": true,
+    "actualSha": "c85779d8e87be94a2d427882081bd239bf9e9825ce3af7078204f332319b4125",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp",
+    "startLine": 27,
+    "endLine": 38,
+    "hashMatches": true,
+    "actualSha": "c85779d8e87be94a2d427882081bd239bf9e9825ce3af7078204f332319b4125",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "trajectory.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "trajectory.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "startLine": 532,
+    "endLine": 544,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "trajectory.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.contract_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp",
+    "startLine": 34,
+    "endLine": 50,
+    "hashMatches": true,
+    "actualSha": "e68eb844e59b708bfcde5f7471a00b8292041eca7e03fd7b4ec240215c5d37ec",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "ui.contract_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.gui_test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp",
+    "startLine": 33,
+    "endLine": 45,
+    "hashMatches": true,
+    "actualSha": "d26c4503ad11f8171c38f86c3580c43438b38bbf979f5288626cf7fab540b3f3",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "ui.gui_test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+    "startLine": 36,
+    "endLine": 49,
+    "hashMatches": true,
+    "actualSha": "eb48d3cb26026b31160a1e3ce91802290977a17137e0167d5514918d96a59e58",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "ui.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "startLine": 279,
+    "endLine": 291,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "ui.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "workflow.contract_test.ContractTestMain.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp",
+    "startLine": 19,
+    "endLine": 26,
+    "hashMatches": true,
+    "actualSha": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "workflow.contract_test.ContractTestMain.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "workflow.test.TestMainReport.main",
+    "qualifiedSymbol": "::main",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+    "startLine": 29,
+    "endLine": 40,
+    "hashMatches": true,
+    "actualSha": "f6ad051f12bb1798474fe9d8b3d37d2caabd6c38bc8d0825a72c71fc7852dd0b",
+    "symbolOccurs": true,
+    "first": "int main(int argc, char** argv)",
+    "last": "}"
+  },
+  {
+    "id": "workflow.test.TestMainReport.main",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "workflow.CMake.ird_add_gtest",
+    "qualifiedSymbol": "ird_add_gtest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "startLine": 374,
+    "endLine": 386,
+    "hashMatches": true,
+    "actualSha": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba",
+    "symbolOccurs": true,
+    "first": "macro(ird_add_gtest target)",
+    "last": "endmacro()"
+  },
+  {
+    "id": "workflow.CMake.ird_add_gtest",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "hashMatches": true
+  }
+]

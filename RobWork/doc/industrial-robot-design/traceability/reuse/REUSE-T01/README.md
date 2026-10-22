@@ -70,3 +70,7 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第十批新增56条测试/构建关系，累计295条（292 pending、3 proposal），closedFiles=0。36个main分7种初始化形态、20个同形ird_add_gtest宏及两项现有监听适配见 `test-build-audit.md` / `test-build-inventory.json`，不为最薄入口新增平台。新增1项GTest公开Append析构探测passed（failed/skipped/notRun=0），原25项本轮未重跑；实测契约揭示产品静态监听器所有权错配，登记F-958，尚未宣称已复现所有退出崩溃。F-957另登记真实移动偏置缺陷；两项保持open并分别作为T02/T05修复前置。无产品/上游/vcpkg修改，未全T01退出。
 
 B9返工独立验收PASS见 `../../acceptance/REUSE-T01-batch9-r2-20261023/`（冻结a717113，限原两项登记问题）。全覆盖定向审查NOT PASS见 `../../acceptance/REUSE-T01-coverage-20261023/coverage.md`（冻结bb997f1，16组遗漏是下限，后续批次逐项补齐）；该结论不撤销局部验收，也不批准T02准入。
+
+第十一批补规划/优化/包络/功率统计33条功能关系（本批pending），见`planning-computation-audit.md`。新增4项公开API实跑passed，failed/skipped/notRun=0；原26项NOT RUN。新发现PathAnalyzer+Manhattan、Linf与TrapMethod候选，保留全局随机/浮点顺序/供给与真实接线边界，不改产品、不批准新核心，不构成T01退出。
+
+B10首轮语义验收FAIL（B10-P2-01）原档见`../../acceptance/REUSE-T01-batch10-r1-20261023/`：10单元宏条目多列13个未调用宏的目标。现按真实ird_add_gtest调用修正20宏消费者，functions与inventory一致，见`batch10-rework.json`，待独立复验；未改门禁或产品。新增GTest探测独立重建1 passed验收PASS见`../../acceptance/REUSE-T01-gtest-listener-20261023/`。单次git -c http.proxy= push已成功同步到e0bee299，未改持久代理；原代理失败记录保留。

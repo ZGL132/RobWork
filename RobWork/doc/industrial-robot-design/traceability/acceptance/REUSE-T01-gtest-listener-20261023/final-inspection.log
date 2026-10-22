@@ -1,0 +1,10 @@
+e0bee2994eee0e8f3299ea5ccf200c354f4454be
+386:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\TestHarnessSuitabilityTest.cpp" />
+387:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\TestMainReport.cpp" />
+139:CMAKE_PREFIX_PATH:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows;D:/software/Qt/6.11.1/msvc2022_64
+226:GTest_DIR:PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest
+273:RobWork_DIR:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake
+530:CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+532:CMAKE_GENERATOR_INSTANCE:INTERNAL=D:/software/Microsoft Visual Studio/2022/Community
+534:CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+536:CMAKE_GENERATOR_TOOLSET:INTERNAL=

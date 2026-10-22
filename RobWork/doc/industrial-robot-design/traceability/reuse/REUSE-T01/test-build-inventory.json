@@ -851,7 +851,6 @@
       "targets": [
         "sdurws_ird_dynamics_test",
         "sdurws_ird_dynamics_contract_test",
-        "sdurws_ird_dynamics_app",
         "sdurws_ird_dynamics_gui_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
@@ -891,7 +890,6 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_execution_worker",
         "sdurws_ird_execution_test",
         "sdurws_ird_execution_contract_test",
         "sdurws_ird_execution_perf_test"
@@ -933,7 +931,6 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_kinematics_app",
         "sdurws_ird_kinematics_test",
         "sdurws_ird_kinematics_gui_test",
         "sdurws_ird_kinematics_contract_test"
@@ -955,8 +952,6 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_demo6r",
-        "sdurws_ird_modeling_app",
         "sdurws_ird_modeling_test",
         "sdurws_ird_modeling_gui_test",
         "sdurws_ird_modeling_contract_test"
@@ -999,8 +994,8 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_policy_test",
-        "sdurws_ird_policy_contract_test"
+        "sdurws_ird_policy_contract_test",
+        "sdurws_ird_policy_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {
@@ -1021,7 +1016,6 @@
       "targets": [
         "sdurws_ird_project_test",
         "sdurws_ird_project_contract_test",
-        "sdurws_ird_project_openbench_worker",
         "sdurws_ird_project_perf_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
@@ -1061,7 +1055,6 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_requirements_app",
         "sdurws_ird_requirements_test",
         "sdurws_ird_requirements_contract_test",
         "sdurws_ird_requirements_gui_test"
@@ -1103,8 +1096,7 @@
       },
       "targets": [
         "sdurws_ird_selection_test",
-        "sdurws_ird_selection_contract_test",
-        "sdurws_ird_selection_app"
+        "sdurws_ird_selection_contract_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {
@@ -1123,9 +1115,7 @@
         "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
       },
       "targets": [
-        "sdurws_ird_testkit_test",
-        "sdurws_ird_testdata_lint",
-        "sdurws_ird_testkit_prochelper"
+        "sdurws_ird_testkit_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {
@@ -1145,8 +1135,7 @@
       },
       "targets": [
         "sdurws_ird_trajectory_test",
-        "sdurws_ird_trajectory_contract_test",
-        "sdurws_ird_trajectory_app"
+        "sdurws_ird_trajectory_contract_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {
@@ -1169,9 +1158,7 @@
         "sdurws_ird_ui_contract_test",
         "sdurws_ird_ui_perf_test",
         "sdurws_ird_ui_largedata_perf_test",
-        "sdurws_ird_ui_gui_test",
-        "sdurws_ird_ui_app",
-        "sdurws_ird_studio"
+        "sdurws_ird_ui_gui_test"
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {

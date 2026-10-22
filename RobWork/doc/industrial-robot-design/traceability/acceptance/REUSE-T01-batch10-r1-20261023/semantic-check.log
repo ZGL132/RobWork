@@ -1,0 +1,89 @@
+{
+  "changed": 58,
+  "added": 56,
+  "updated": 2,
+  "mains": 36,
+  "mainTargetMismatch": 0,
+  "mainHashMismatch": 0,
+  "macroCount": 20,
+  "macroNormalizedGroups": 1,
+  "macroUnitsWithFalseTargets": 10,
+  "falseTargetCount": 13,
+  "evidenceHashFailures": 0,
+  "probeHashFailures": 0
+}
+[
+  {
+    "unit": "dynamics",
+    "falseTargets": [
+      "sdurws_ird_dynamics_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "execution",
+    "falseTargets": [
+      "sdurws_ird_execution_worker"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "kinematics",
+    "falseTargets": [
+      "sdurws_ird_kinematics_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "modeling",
+    "falseTargets": [
+      "sdurws_ird_demo6r",
+      "sdurws_ird_modeling_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "project",
+    "falseTargets": [
+      "sdurws_ird_project_openbench_worker"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "requirements",
+    "falseTargets": [
+      "sdurws_ird_requirements_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "selection",
+    "falseTargets": [
+      "sdurws_ird_selection_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "testkit",
+    "falseTargets": [
+      "sdurws_ird_testdata_lint",
+      "sdurws_ird_testkit_prochelper"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "trajectory",
+    "falseTargets": [
+      "sdurws_ird_trajectory_app"
+    ],
+    "missingTargets": []
+  },
+  {
+    "unit": "ui",
+    "falseTargets": [
+      "sdurws_ird_ui_app",
+      "sdurws_ird_studio"
+    ],
+    "missingTargets": []
+  }
+]

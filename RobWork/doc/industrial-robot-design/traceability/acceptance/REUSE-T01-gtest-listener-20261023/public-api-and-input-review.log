@@ -1,0 +1,127 @@
+  void OnEnvironmentsTearDownStart(const UnitTest& /*unit_test*/) override {}
+  void OnEnvironmentsTearDownEnd(const UnitTest& /*unit_test*/) override {}
+  void OnTestIterationEnd(const UnitTest& /*unit_test*/,
+                          int /*iteration*/) override {}
+  void OnTestProgramEnd(const UnitTest& /*unit_test*/) override {}
+};
+
+// TestEventListeners lets users add listeners to track events in Google Test.
+class GTEST_API_ [[nodiscard]] TestEventListeners {
+ public:
+  TestEventListeners();
+  ~TestEventListeners();
+
+  // Appends an event listener to the end of the list. Google Test assumes
+  // the ownership of the listener (i.e. it will delete the listener when
+  // the test program finishes).
+  void Append(TestEventListener* listener);
+
+  // Removes the given event listener from the list and returns it.  It then
+  // becomes the caller's responsibility to delete the listener. Returns
+  // NULL if the listener is not found in the list.
+  TestEventListener* Release(TestEventListener* listener);
+
+  // Returns the standard listener responsible for the default console
+  // output.  Can be removed from the listeners list to shut down default
+  // console output.  Note that removing this object from the listener list
+  // with Release transfers its ownership to the caller and makes this
+  // function return NULL the next time.
+  TestEventListener* default_result_printer() const {
+    return default_result_printer_;
+  }
+
+  // Returns the standard listener responsible for the default XML output
+  // controlled by the --gtest_output=xml flag.  Can be removed from the
+  // listeners list by users who want to shut down the default XML output
+  // controlled by this flag and substitute it with custom one.  Note that
+  // removing this object from the listener list with Release transfers its
+  // ownership to the caller and makes this function return NULL the next
+  // time.
+  TestEventListener* default_xml_generator() const {
+    return default_xml_generator_;
+  }
+
+  // Controls whether events will be forwarded by the repeater to the
+  // listeners in the list.
+  void SuppressEventForwarding(bool);
+
+ private:
+  friend class TestSuite;
+/**
+ * @file TestHarnessSuitabilityTest.cpp
+ * @brief REUSE-T01：通过GTest公开事件集合验证监听器所有权契约，纯审计探测。
+ * 依据：testkit §7.3 / TK-T10；不执行静态对象非法delete，不修改生产监听器。
+ */
+#include <gtest/gtest.h>
+
+namespace {
+/**
+ * @brief 析构观察器；计数由本测试持有，集合析构前始终有效，单线程使用。
+ */
+class CountingListener final : public ::testing::EmptyTestEventListener {
+public:
+    /// @brief 借持析构计数；@param count [in,out] 测试栈上的计数器，无单位。
+    explicit CountingListener(int& count) : m_count(count) {}
+    /// @brief 记录真实析构；不抛异常，计数器生命周期由测试保证。
+    ~CountingListener() override { ++m_count; }
+private:
+    int& m_count; ///< 借持计数器，所有权仍归测试栈。
+};
+}
+
+// TK-T10：使用公开Append，证明集合接管所有权；不把产品错误注释当规范。
+TEST(ReuseTestHarnessAudit, ListenerCollectionOwnsAppendedListener) {
+    int destroyed = 0;
+    {
+        ::testing::TestEventListeners listeners;
+        listeners.Append(new CountingListener(destroyed));
+        EXPECT_EQ(0,destroyed);
+    }
+    EXPECT_EQ(1,destroyed);
+}
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:8:# Import target "GTest::gtest" for configuration "Release"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:9:set_property(TARGET GTest::gtest APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:10:set_target_properties(GTest::gtest PROPERTIES
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:11:  IMPORTED_IMPLIB_RELEASE "${_IMPORT_PREFIX}/lib/gtest.lib"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:12:  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/gtest.dll"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:15:list(APPEND _cmake_import_check_targets GTest::gtest )
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:16:list(APPEND _cmake_import_check_files_for_GTest::gtest "${_IMPORT_PREFIX}/lib/gtest.lib" "${_IMPORT_PREFIX}/bin/gtest.dll" )
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:18:# Import target "GTest::gtest_main" for configuration "Release"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:19:set_property(TARGET GTest::gtest_main APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:20:set_target_properties(GTest::gtest_main PROPERTIES
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:21:  IMPORTED_IMPLIB_RELEASE "${_IMPORT_PREFIX}/lib/manual-link/gtest_main.lib"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:22:  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/gtest_main.dll"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:25:list(APPEND _cmake_import_check_targets GTest::gtest_main )
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:26:list(APPEND _cmake_import_check_files_for_GTest::gtest_main "${_IMPORT_PREFIX}/lib/manual-link/gtest_main.lib" "${_IMPORT_PREFIX}/bin/gtest_main.dll" )
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:31:  IMPORTED_IMPLIB_RELEASE "${_IMPORT_PREFIX}/lib/gmock.lib"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:32:  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/gmock.dll"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:41:  IMPORTED_IMPLIB_RELEASE "${_IMPORT_PREFIX}/lib/manual-link/gmock_main.lib"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake:42:  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/bin/gmock_main.dll"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:22:foreach(_cmake_expected_target IN ITEMS GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:57:# Create imported target GTest::gtest
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:58:add_library(GTest::gtest SHARED IMPORTED)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:60:set_target_properties(GTest::gtest PROPERTIES
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:61:  INTERFACE_COMPILE_DEFINITIONS "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:62:  INTERFACE_COMPILE_FEATURES "cxx_std_17"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:63:  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:64:  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:67:# Create imported target GTest::gtest_main
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:68:add_library(GTest::gtest_main SHARED IMPORTED)
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:70:set_target_properties(GTest::gtest_main PROPERTIES
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:71:  INTERFACE_COMPILE_DEFINITIONS "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:72:  INTERFACE_COMPILE_FEATURES "cxx_std_17"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:73:  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:74:  INTERFACE_LINK_LIBRARIES "GTest::gtest"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:75:  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:82:  INTERFACE_COMPILE_DEFINITIONS "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:83:  INTERFACE_COMPILE_FEATURES "cxx_std_17"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:84:  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:85:  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:92:  INTERFACE_COMPILE_DEFINITIONS "GTEST_LINKED_AS_SHARED_LIBRARY=1"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:93:  INTERFACE_COMPILE_FEATURES "cxx_std_17"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:94:  INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake:95:  INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"
+117: * 监听器为静态存储期对象（gtest listeners 不接管所有权——官方 recommended
+139:    // 静态存储期监听器（gtest listeners 不接管所有权）。
+140:    static TestRecordListener listener{reportPath};
+141:    ::testing::UnitTest::GetInstance()->listeners().Append(&listener);

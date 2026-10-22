@@ -1,0 +1,562 @@
+[
+  {
+    "archive": "B9r2",
+    "path": "acceptance.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "acceptance.md",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "archive-check.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "binding-check.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "checkout.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "checkout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "clone.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "clone.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "docs.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "docs.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "reuse.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "reuse.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "runtime-archive-check.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "task.exit.txt",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "B9r2",
+    "path": "task.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "bounds-geometry.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "bounds-geometry.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "checkout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "clone.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "coverage-inventory.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "coverage.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "coverage.md",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "energy-envelope.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "energy-envelope.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "final-freeze.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "followup-search.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "followup-searches.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "foundation.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "foundation.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "generate-review.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "golden-search.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "golden-search.stdout.log",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "inventory-analysis.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "inventory-analysis.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "metadata-inspect.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "opt-pareto.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "opt-pareto.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "planner.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "planner.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "project-codec.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "project-codec.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "protocol.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "protocol.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "read-sections.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "read-sections.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "review-search.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "sample-tests.stderr.log",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "sample-tests.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "search-summary.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "searches.json",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "supplemental-sections.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "supplemental-sections.py",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "testkit.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "testkit.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "tests-corrected.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "tests-corrected.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "ui-workflow.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "ui-workflow.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-host-scene.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-host-scene.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-integrals.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-integrals.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-optimization-corrected.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-optimization-corrected.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-planner-corrected.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-planner-corrected.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-process.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-process.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-test-build.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-test-build.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-xml-json.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "up-xml-json.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-math.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-math.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-planner.stderr.log",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-planner.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-tools.stderr.log",
+    "exists": true,
+    "raw": false,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "upstream-tools.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "xacro.stderr.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  },
+  {
+    "archive": "coverage",
+    "path": "xacro.stdout.log",
+    "exists": true,
+    "raw": true,
+    "normalized": true
+  }
+]

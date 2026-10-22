@@ -373,7 +373,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -432,7 +432,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -468,7 +468,6 @@
       "targets": [
         "sdurws_ird_dynamics_test",
         "sdurws_ird_dynamics_contract_test",
-        "sdurws_ird_dynamics_app",
         "sdurws_ird_dynamics_gui_test"
       ],
       "usageRole": "adapter",
@@ -494,7 +493,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "d7cf19011670465b088bead0b1766a73a530de8eadb999e7846acabd9a2f1b49"
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
@@ -510,6 +509,65 @@
         }
       ],
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
+          "symbol": "PowerEnergyCalculator::compute",
+          "qualifiedSymbol": "sdurws::ird::dynamics::PowerEnergyCalculator::compute",
+          "startLine": 63,
+          "endLine": 186,
+          "sha256": "ee09039027629be8c659336797263084934ce15e523c1f3ef299673287ffc836"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-TRAPEZOID",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"compute|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "时间序正负分项梯形可查TrapMethod(M=2)，但顺序/溢出、缺口/NaN/首峰与供给未解决；calcEnergy非序列积分，不能用无同名豁免",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/PowerEnergy.hpp",
+          "sha256": "baaa75286ebf24c999e679e18c9370f5947bbc95adf3fac235dc1b28002e6606"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     }
   ]
 }
