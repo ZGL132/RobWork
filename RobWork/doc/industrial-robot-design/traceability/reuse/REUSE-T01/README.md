@@ -89,3 +89,5 @@ B13独立语义验收PASS（冻结63e86ba5，限54关系）见`../../acceptance/
 第十四批补project/reporting codec 132条关系，精确区段见`batch14-definitions.json`，边界见`persistence-report-codec-audit.md`；无产品/上游/依赖修改，无本批C++实跑，未关闭库存/全T01。最近本地提交因GitHub443不可达未全部远程交付，不推进T02。
 
 第十五批补宿主预览/网关/文本21条关系并细化3条既有关系，见`host-preview-audit.md`；实际studio同源目标、QtText受限操作与四项HOST例外需精确核权，pending不扩大权限。未跑GUI/GL，不关闭T01。
+
+B14首轮独立FAIL（B14-P2-01）见`../../acceptance/REUSE-T01-batch14-r1-20261023/`：requirePathField错误地写成ASCII路径；现按实际非空/4096字节/C0及DEL限制澄清解码后允许UTF-8中文与空格，磁盘JSON ASCII要求独立。仅修登记，待冻结返工复验。

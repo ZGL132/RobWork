@@ -1,0 +1,9 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt:57:# PRJ-T04 落位：src/Codec.cpp 增列（§12 PRJ-T04 行产物——格式契约与编码：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt:186:    src/Codec.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt:268:# PRJ-T04 增列：PersistenceFormatTest（acceptance 1 round-trip 全类型/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt:383:    test/PersistenceFormatTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt:86:#   - src/ReportCodec.cpp——确定性二进制双编码（magic IRDRPT1/IRDRPTD1＋
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt:162:    src/ReportCodec.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt:245:#   - test/ReportingScenario.hpp＋test/ReportingContractSuiteTest.cpp——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt:283:    test/ReportModelTest.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt:296:    test/ReportingContractSuiteTest.cpp)

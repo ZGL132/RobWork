@@ -1,0 +1,44 @@
+RobWork/RobWork/gtest\task\Task.xml.hpp:30:    stream << "<?xml version=\"1.0\" encoding=\"utf-8\"?>" << std::endl;
+RobWork/RobWork/gtest\task\Task.xml.hpp:87:    stream << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>" << std::endl;
+RobWork/RobWork/gtest\task\GraspTask.xml.hpp:25:	static const std::string xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?> \
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:354:std::vector< Frame* > ParallelLegHEXAPOD (Frame* base, const std::string& scope,
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:409:        ParallelLegHEXAPOD (world, "LegA", baseTA, toolTA, -0.2554802362083838, 0.5058297976189102);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:417:        ParallelLegHEXAPOD (world, "LegB", baseTB, toolTB, -0.3501394675976276, 0.4486102166464917);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:424:    legChains[2] = ParallelLegHEXAPOD (
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:432:    legChains[3] = ParallelLegHEXAPOD (
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:440:    legChains[4] = ParallelLegHEXAPOD (
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:449:        ParallelLegHEXAPOD (world, "LegF", baseTF, toolTF, 0.5595869360340129, 0.05084170375926413);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:468:    const ParallelDevice hexapod (legs, "Hexapod", state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:470:    Q q = hexapod.getQ (state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:472:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:474:    q = hexapod.getQ (state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:475:    EXPECT_NEAR (0, hexapod.baseTend (state).P ()[0], 5e-12);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:476:    EXPECT_NEAR (0, hexapod.baseTend (state).P ()[1], 5e-12);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:477:    EXPECT_NEAR (78.5, hexapod.baseTend (state).P ()[2], 1e-4);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:478:    EXPECT_TRUE (hexapod.baseTend (state).R ().equal (Rotation3D<>::identity (), 1e-13));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:480:        EXPECT_TRUE (legs[i]->baseTend (state).R ().equal (hexapod.baseTend (state).R (), 1e-12));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:482:            0, (legs[i]->baseTend (state).P () - hexapod.baseTend (state).P ()).normInf (), 1e-10);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:486:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:488:        EXPECT_TRUE (legs[i]->baseTend (state).R ().equal (hexapod.baseTend (state).R (), 1e-12));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:490:            0, (legs[i]->baseTend (state).P () - hexapod.baseTend (state).P ()).normInf (), 1e-10);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:497:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:499:        EXPECT_TRUE (legs[i]->baseTend (state).R ().equal (hexapod.baseTend (state).R (), 5e-10));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:501:            0, (legs[i]->baseTend (state).P () - hexapod.baseTend (state).P ()).normInf (), 5e-9);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:510:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:512:        EXPECT_TRUE (legs[i]->baseTend (state).R ().equal (hexapod.baseTend (state).R (), 1e-11));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:514:            0, (legs[i]->baseTend (state).P () - hexapod.baseTend (state).P ()).normInf (), 1e-9);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:526:    const Q qFull = hexapod.getFullQ (state);
+RobWork/RobWork/gtest\TestEnvironment.cpp:54:        boost::filesystem::path full_path = boost::filesystem::canonical (path);
+RobWork/RobWork/src/rw/core\IOUtil.hpp:105:         * @brief tests if this machine use little or big endian.
+RobWork/RobWork/src/rw/core\IOUtil.hpp:108:        static bool isLittleEndian ();
+RobWork/RobWork/src/rw/core\IOUtil.cpp:179:bool IOUtil::isLittleEndian ()
+RobWork/RobWork/src/rw/core\IOUtil.cpp:185:    } endianTest;
+RobWork/RobWork/src/rw/core\IOUtil.cpp:187:    endianTest.testWord = 1;
+RobWork/RobWork/src/rw/core\IOUtil.cpp:188:    if (endianTest.testByte[0] == 1) {
+RobWork/RobWork/src/rw/core\IOUtil.cpp:189:        // litle endian - least significant byte first
+RobWork/RobWorkSim/src\rwsimlibs\plugins\EngineTestPlugin.hpp:67:                               "EngineTestPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.hpp:85:                           "GraspTableGeneratorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimulatorPlugin.hpp:54:                           "RWSimulatorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimPlugin.hpp:57:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "RWSimPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimUtilityPlugin.hpp:49:                           "SimUtilityPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.hpp:48:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTaskPlugin.json")

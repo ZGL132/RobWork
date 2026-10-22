@@ -1,0 +1,122 @@
+[
+  {
+    "index": 1,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "json|canonical|utf.?8|hex|endian",
+      "RobWork/RobWork/src/rw/core",
+      "RobWork/RobWork/src/rw/common",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 44,
+    "actualLines": 44,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 2,
+    "arguments": [
+      "rg",
+      "-n",
+      "writeValue|readValue|doWrite.*string|doRead.*string|sizeof",
+      "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+      "RobWork/RobWork/src/rw/common/BINArchive.cpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 122,
+    "actualLines": 122,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 3,
+    "arguments": [
+      "rg",
+      "-n",
+      "codec::|ReportCodec::",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportModelTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/ReportingContractSuiteTest.cpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 208,
+    "actualLines": 208,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 4,
+    "arguments": [
+      "rg",
+      "-n",
+      "load_big_u(16|32|64)|store_big_u(16|32|64)|load_little_u(16|32|64)|store_little_u(16|32|64)",
+      "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/endian/conversion.hpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 12,
+    "actualLines": 12,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 5,
+    "arguments": [
+      "rg",
+      "-n",
+      "hex_lower|unhex|hex_char_to_int|non_hex_input|not_enough_input",
+      "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/algorithm/hex.hpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 28,
+    "actualLines": 28,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 6,
+    "arguments": [
+      "rg",
+      "--files",
+      "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost",
+      "-g",
+      "*json*"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 3,
+    "actualLines": 3,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 7,
+    "arguments": [
+      "rg",
+      "-n",
+      "Codec.cpp|ReportCodec.cpp|PersistenceFormatTest|ReportModelTest|ReportingContractSuiteTest",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 9,
+    "actualLines": 9,
+    "matches": true,
+    "differences": []
+  }
+]

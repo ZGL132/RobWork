@@ -1,0 +1,19 @@
+{
+  "taskId": "REUSE-T01",
+  "findingId": "B14-P2-01",
+  "originalAcceptance": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch14-r1-20261023/acceptance.json",
+  "before": "4096字节ASCII路径字段profile，非io真实路径解析或第二安全沙箱",
+  "after": "解码后UTF-8路径允许中文与空格：非空、最多4096字节，拒绝C0控制字节(<0x20)及DEL(0x7F)；ASCII限制属于磁盘JSON原始字节，不属于解码后路径；非io真实路径解析或第二安全沙箱",
+  "source": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+      "symbol": "requirePathField",
+      "qualifiedSymbol": "sdurws::ird::project::codec::(anonymous namespace)::requirePathField",
+      "startLine": 779,
+      "endLine": 794,
+      "sha256": "0d8d32f1d0e0aff79527c9fe9fa2440588de57df1c4bf1c53891cf2501a99924"
+    }
+  ],
+  "productChanged": false,
+  "fullStagePass": false
+}

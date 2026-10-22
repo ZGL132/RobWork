@@ -1,0 +1,32 @@
+[
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\conversion.hpp",
+    "actual": "30c0b4afd03bbb7cf12c710143af477cc476da86cf5063541c58854562ccaf13",
+    "pass": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\algorithm\\hex.hpp",
+    "actual": "ed4515912981d29cf7e0ad4f634a5ad8f018155f0104fcb7e221db6a4183ca8a",
+    "pass": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser.hpp",
+    "actual": "e6dc0371dd810dbf3ef7d90fe10fb4c9b9d0e4354b666e88e0a559a8aa2fc51c",
+    "pass": true
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+    "actual": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+    "pass": true
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/json.hpp",
+    "actual": false,
+    "pass": true
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/nlohmann/json.hpp",
+    "actual": false,
+    "pass": true
+  }
+]

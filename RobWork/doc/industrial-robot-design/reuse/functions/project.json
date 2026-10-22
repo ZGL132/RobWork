@@ -2385,7 +2385,7 @@
         "command": "见batch14-search.json真实参数/结果，API定义及既有B8探测",
         "conclusion": "已审列明定义/格式与候选差异；NONE表示尚无选定能力，不证明成熟库不存在"
       },
-      "differences": "4096字节ASCII路径字段profile，非io真实路径解析或第二安全沙箱",
+      "differences": "解码后UTF-8路径允许中文与空格：非空、最多4096字节，拒绝C0控制字节(<0x20)及DEL(0x7F)；ASCII限制属于磁盘JSON原始字节，不属于解码后路径；非io真实路径解析或第二安全沙箱",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
