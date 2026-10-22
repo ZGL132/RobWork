@@ -9614,6 +9614,15 @@
       "registeredAt": "2026-10-21",
       "title": "主线扩展复验41个exe均有XML/stdout，显式传--ird_report仍仅产36份报告：evidence/evidence_contract/policy/policy_contract/runtime缺原生ird报告；需补接报告入口或登记明确豁免，不能以伪造转换报告补齐三件套",
       "owner": "testkit及相关目标所有者；MA-09。T29纠正T27零报告假绿：删除runtime旧RT-T16环境与新main的重复监听，补扫core自有入口；原五目标及core共六目标双模式非零JSON/XML逐例ID、投影状态及原生六类计数对账通过。runtime集成299通过加1显式跳过，独立195通过；core集成65通过、独立63通过。证据builds/wp13-t29-closure/verified-test-summary*.json、red-ma09和red-ma09-core；旧零报告不回填，任务分支验证不等于主线交付。"
+    },
+    {
+      "id": "F-953",
+      "source": "traceability/acceptance/WP-16-T17-20261022.md#S-1（acc/WP-16-T17/1）",
+      "severity": "minor",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "WP-16-T17实施在持有未提交异批内容（wp13-t30建模批）的工作树完成构建验证并声称通过，提交时UiPlugin.cpp整文件入库带入六处guardPendingInputs调用而其声明/定义留在未提交区，冻结SHA 5f199617c在干净复现下C2039×6/LNK2019不可构建——提交对象与验证对象脱钩",
+      "owner": "实施流程所有者（DTB §5）。建议：构建/测试验证一律在git stash后的干净工作树或detached worktree执行；提交前以diff核对'待提交文件不引用未提交符号'；验收端4.2对fresh detached树的复现即本类问题的拦截面（本次已拦截），登记为流程纪律固化建议。修复随WP-16-T17返工闭合。"
     }
   ]
 }
