@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="6" disabled="0" errors="0" time="0.952" timestamp="2026-10-22T05:02:50.958" name="AllTests">
+  <testsuite name="DynWindow" tests="6" failures="6" disabled="0" skipped="0" errors="0" time="0.952" timestamp="2026-10-22T05:02:50.958">
+    <testcase name="EmptyResultDisablesDataActions_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="94" status="run" result="completed" time="0.261" timestamp="2026-10-22T05:02:50.958" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:102&#x0A;Value of: peak-&gt;isEnabled()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:102
+Value of: peak->isEnabled()
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:103&#x0A;Value of: play-&gt;isEnabled()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:103
+Value of: play->isEnabled()
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="PeakSelectionSynchronizesChannelTimeAndPose_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="107" status="run" result="completed" time="0.169" timestamp="2026-10-22T05:02:51.220" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:116&#x0A;Expected equality of these values:&#x0A;  channel-&gt;currentData().toInt()&#x0A;    Which is: 0&#x0A;  int(DynChannelId::Velocity)&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:116
+Expected equality of these values:
+  channel->currentData().toInt()
+    Which is: 0
+  int(DynChannelId::Velocity)
+    Which is: 1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:118&#x0A;Expected equality of these values:&#x0A;  time-&gt;value()&#x0A;    Which is: 0&#x0A;  1.0&#x0A;    Which is: 1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:118
+Expected equality of these values:
+  time->value()
+    Which is: 0
+  1.0
+    Which is: 1
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:121&#x0A;Value of: reading-&gt;text().contains(QString::fromUtf8(&quot;已同步&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:121
+Value of: reading->text().contains(QString::fromUtf8("已同步"))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="PeakReportsPoseRejection_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="128" status="run" result="completed" time="0.131" timestamp="2026-10-22T05:02:51.389" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:134&#x0A;Value of: reading-&gt;text().contains(QString::fromUtf8(&quot;保留上次姿态&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:134
+Value of: reading->text().contains(QString::fromUtf8("保留上次姿态"))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="PrismaticJointChangesUnitLabels_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="137" status="run" result="completed" time="0.134" timestamp="2026-10-22T05:02:51.521" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:143&#x0A;Value of: channel-&gt;itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;m&quot;))))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:143
+Value of: channel->itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u"" "m"))))
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:144&#x0A;Value of: channel-&gt;itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u&quot;&quot; &quot;rad&quot;))))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:144
+Value of: channel->itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u"" "rad"))))
+  Actual: true
+Expected: false
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:146&#x0A;Value of: channel-&gt;itemText(3).contains(QString::fromUtf8(&quot;N·m&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:146
+Value of: channel->itemText(3).contains(QString::fromUtf8("N·m"))
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="DifferentResultIdentityRejectsReplay_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="149" status="run" result="completed" time="0.127" timestamp="2026-10-22T05:02:51.656" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:154&#x0A;Expected equality of these values:&#x0A;  writes&#x0A;    Which is: 1&#x0A;  0&#x0A;跨结果数据不得更新真实姿态&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:154
+Expected equality of these values:
+  writes
+    Which is: 1
+  0
+跨结果数据不得更新真实姿态
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:156&#x0A;Value of: reading-&gt;text().contains(QString::fromUtf8(&quot;来源不一致&quot;))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:156
+Value of: reading->text().contains(QString::fromUtf8("来源不一致"))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="ShowCurvesCommandNavigatesToCurves_UX02" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="159" status="run" result="completed" time="0.127" timestamp="2026-10-22T05:02:51.783" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:163&#x0A;Expected equality of these values:&#x0A;  panel-&gt;findChild&lt;QTabWidget*&gt;()-&gt;currentIndex()&#x0A;    Which is: 0&#x0A;  1&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:163
+Expected equality of these values:
+  panel->findChild<QTabWidget*>()->currentIndex()
+    Which is: 0
+  1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

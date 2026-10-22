@@ -15,6 +15,7 @@
 #include <QPalette>
 #include <QPen>
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -121,9 +122,13 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
     }
 
     // ---- 标题（关节＋通道＋量纲——工程用语，UX-02）。 ----------------
-    const QString title = tr("关节 %1 · %2（%3）")
-                              .arg(m_jointIndex)
-                              .arg(QString::fromStdString(dynChannelKey(m_channel)))
+    // 文案由父面板通过同一 UiText 解析器提供；缺绑定时只显示键，便于诊断。
+    const auto text = [this](const std::string& key) {
+        return m_textResolver ? m_textResolver(key) : QString::fromStdString(key);
+    };
+    const QString title = text("plugin.dynamics.chart.title")
+                              .arg(m_jointIndex + 1) // 显示从 1 开始，内部仍使用 0 基链序。
+                              .arg(m_channelLabel)
                               .arg(QString::fromStdString(
                                   dynChannelUnit(m_channel, m_jointType)));
     painter.setPen(palette().color(QPalette::WindowText));
@@ -133,7 +138,7 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
     // ---- 空态（无快照数据——"无数据"呈现，不伪造曲线）。 -----------
     if (m_t.empty() || m_values.empty()) {
         painter.setPen(palette().color(QPalette::Mid));
-        painter.drawText(rect(), Qt::AlignCenter, tr("无数据"));
+        painter.drawText(rect(), Qt::AlignCenter, text("plugin.dynamics.chart.empty"));
         return;
     }
 
@@ -160,13 +165,19 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
     }
     if (!anyFinite) {
         painter.setPen(palette().color(QPalette::Mid));
-        painter.drawText(rect(), Qt::AlignCenter, tr("无有效数据点"));
+        painter.drawText(rect(), Qt::AlignCenter, text("plugin.dynamics.chart.invalid"));
         return;
     }
     // 零跨度退化（常值通道——平线）：纵轴补对称半跨，避免除零。
     if (vMax - vMin < 1e-300) {
         vMin -= 0.5;
         vMax += 0.5;
+    }
+    // 单时刻结果合法。给横轴补 1 s 的呈现范围，使样本居中；仅影响像素
+    // 位置，不添加样本、不外推数据，也不改变任何统计结果。
+    if (tMax == tMin) {
+        tMin -= 0.5;
+        tMax += 0.5;
     }
 
     // ---- 数据→像素映射（线性变换——呈现几何）。 ----------------------
@@ -186,7 +197,7 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
                      Qt::AlignLeft, QString::number(tMax, 'g', 4));
     painter.drawText(QRect(0, plotTop - 14, plotLeft - 4, 14),
                      Qt::AlignRight, QString::number(vMax, 'g', 4));
-    painter.drawText(QRect(0, plotBottom - 2, plotLeft - 4, 14),
+    painter.drawText(QRect(0, plotBottom - 16, plotLeft - 4, 14),
                      Qt::AlignRight, QString::number(vMin, 'g', 4));
 
     // ---- 折线（有限点连接；非有限点断线——不虚构连续性）。 ----------
@@ -204,6 +215,9 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
         if (penDown) {
             painter.drawLine(prev, pt);
         }
+        // 样本点本身也要可见：单点或断线后的孤立点不能仅留下空坐标轴。
+        painter.setBrush(palette().highlight());
+        painter.drawEllipse(pt, 2.0, 2.0);
         prev = pt;
         penDown = true;
     }
@@ -219,7 +233,11 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
             painter.setBrush(palette().link());
             painter.drawEllipse(QPointF(px, yOf(m_peakValue)), 3.5, 3.5);
             painter.setPen(palette().color(QPalette::WindowText));
-            painter.drawText(QRect(static_cast<int>(px) - 60, plotTop - 16,
+            // 端点标注向绘图区内收，防止 t=max 的读数被控件右边界裁掉。
+            const int labelX = std::clamp(static_cast<int>(px) - 60, plotLeft, plotRight - 120);
+            const int labelY = std::clamp(static_cast<int>(yOf(m_peakValue)) - 20,
+                                           plotTop + 20, plotBottom - 16);
+            painter.drawText(QRect(labelX, labelY,
                                    120, 14),
                              Qt::AlignHCenter,
                              QString::number(m_peakValue, 'g', 6));
@@ -234,10 +252,11 @@ void DynCurveChartView::paintEvent(QPaintEvent* /*event*/)
         painter.drawLine(QPointF(cx, plotTop), QPointF(cx, plotBottom));
         // 游标时刻读数（底部——工程用语，单位 s）。
         painter.setPen(palette().color(QPalette::WindowText));
-        painter.drawText(QRect(static_cast<int>(cx) - 50, plotTop + 2,
+        const int cursorLabelX = std::clamp(static_cast<int>(cx) - 50, plotLeft, plotRight - 100);
+        painter.drawText(QRect(cursorLabelX, plotTop + 2,
                                100, 14),
                          Qt::AlignHCenter,
-                         tr("t = %1 s").arg(QString::number(m_cursorS, 'g', 6)));
+                         text("plugin.dynamics.chart.cursor").arg(QString::number(m_cursorS, 'g', 6)));
     }
 }
 

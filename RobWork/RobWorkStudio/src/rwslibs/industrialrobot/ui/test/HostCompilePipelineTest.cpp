@@ -637,6 +637,36 @@ TEST_F(HostCompilePipelineTest, NameMapPort_ResolvesAfterPresentationBinding)
 // ACC3——呈现源折叠投影（RT-T14 工厂完整构造＋objectExists 正反例）
 // =====================================================================
 
+/** @brief MDL-07/T30：首末连杆必须解析到已编译的实际呈现帧，不能返回悬空LinkFrame别名。 */
+TEST_F(HostCompilePipelineTest, NameMapPort_BoundaryLinksResolveExistingFrames_MDL07_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07"},{"AT-01"},std::nullopt);
+    HostModelCompilePort compiler({m_query.get(),core::ProjectId::generate(),
+        std::string(modeling::kRobotDesignObjectType),nullptr});
+    ASSERT_TRUE(compiler.compileWorkCellAndDwc(makeCompileRequest()).ok);
+    const auto snapshot=compiler.lastPublishedSnapshot(); ASSERT_NE(snapshot,nullptr);
+    const auto view=runtime::createHostPresentationView(snapshot,m_query->view.id);
+    HostRuntimeNameMapPort names; names.bindPresentation(view);
+    const auto decoded=modeling::RobotDesignCodec{}.decode(m_designBytes,modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(decoded.ok()); const auto& robot=std::get<modeling::RobotDesign>(decoded.get());
+    // 使用真实两连杆编译产物：base只落BaseFrame，末连杆只落Flange；
+    // 主身份仍是LinkFrame，不能更改runtime权威来使此UI适配测试假绿。
+    for(const auto& link:robot.links){
+        const auto primary=view->resolveObjectId(link.objectId); ASSERT_TRUE(primary.ok());
+        EXPECT_EQ(primary.get().scope,runtime::NameScope::LinkFrame);
+        EXPECT_EQ(view->workCell().findFrame(primary.get().fullName),nullptr);
+        const auto target=names.resolveRuntimeName(link.objectId); ASSERT_TRUE(target.has_value());
+        EXPECT_NE(view->workCell().findFrame(*target),nullptr) << link.localName;
+        EXPECT_EQ(names.resolveObjectIdFromRuntimeName(*target),std::optional<core::ObjectId>{link.objectId});
+    }
+    // 设备不是Frame，不得把机器人身份改选成BaseMount；普通关节保持原名。
+    for(const auto id:{m_rootId,robot.joints.front().objectId}){
+        const auto primary=view->resolveObjectId(id); ASSERT_TRUE(primary.ok());
+        EXPECT_EQ(names.resolveRuntimeName(id),std::optional<std::string>{primary.get().fullName});
+    }
+    names.clearPresentation(); EXPECT_FALSE(names.resolveRuntimeName(robot.links.front().objectId));
+}
+
 /// 折叠投影面：真实快照→投影完整（三类身份有效＋载体非空＋objectExists
 /// 对映射内对象 true、映射外 false）；无快照＝诚实 nullopt。
 TEST_F(HostCompilePipelineTest, PresentationSource_FoldsCompleteProjection)

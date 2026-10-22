@@ -1,0 +1,32 @@
+[==========] Running 12 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 12 tests from DynWindow
+[ RUN      ] DynWindow.EmptyResultDisablesDataActions_DYN08
+[       OK ] DynWindow.EmptyResultDisablesDataActions_DYN08 (242 ms)
+[ RUN      ] DynWindow.PeakSelectionSynchronizesChannelTimeAndPose_DYN08
+[       OK ] DynWindow.PeakSelectionSynchronizesChannelTimeAndPose_DYN08 (424 ms)
+[ RUN      ] DynWindow.PeakReportsPoseRejection_DYN08
+[       OK ] DynWindow.PeakReportsPoseRejection_DYN08 (118 ms)
+[ RUN      ] DynWindow.PrismaticJointChangesUnitLabels_DYN08
+[       OK ] DynWindow.PrismaticJointChangesUnitLabels_DYN08 (127 ms)
+[ RUN      ] DynWindow.DifferentResultIdentityRejectsReplay_DYN08
+[       OK ] DynWindow.DifferentResultIdentityRejectsReplay_DYN08 (142 ms)
+[ RUN      ] DynWindow.ShowCurvesCommandNavigatesToCurves_UX02
+[       OK ] DynWindow.ShowCurvesCommandNavigatesToCurves_UX02 (151 ms)
+[ RUN      ] DynWindow.EveryPeakTokenMarksSignedSample_DYN08
+[       OK ] DynWindow.EveryPeakTokenMarksSignedSample_DYN08 (130 ms)
+[ RUN      ] DynWindow.InvalidAndOutOfRangeReplayPreservesLastPose_DYN08
+[       OK ] DynWindow.InvalidAndOutOfRangeReplayPreservesLastPose_DYN08 (154 ms)
+[ RUN      ] DynWindow.HostAvailabilityDisablesAllEntrances_UX10
+[       OK ] DynWindow.HostAvailabilityDisablesAllEntrances_UX10 (136 ms)
+[ RUN      ] DynWindow.ChangingJointClearsPreviousPeak_DYN08
+[       OK ] DynWindow.ChangingJointClearsPreviousPeak_DYN08 (158 ms)
+[ RUN      ] DynWindow.ReloadedResultClearsPreviousMarkers_DYN08
+[       OK ] DynWindow.ReloadedResultClearsPreviousMarkers_DYN08 (161 ms)
+[ RUN      ] DynWindow.SingleTimestampDrawsVisibleSample_DYN08
+[       OK ] DynWindow.SingleTimestampDrawsVisibleSample_DYN08 (155 ms)
+[----------] 12 tests from DynWindow (2105 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 1 test suite ran. (2105 ms total)
+[  PASSED  ] 12 tests.

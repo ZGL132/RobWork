@@ -347,6 +347,19 @@ std::optional<std::string> HostRuntimeNameMapPort::resolveRuntimeName(
     if (!resolved.ok()) {
         return std::nullopt;
     }
+    // MDL-07/T30：名称图的连杆主身份始终为LinkFrame，但WC首/末连杆只落
+    // BaseFrame/Flange帧。主名不在当前呈现WC时，必须从同一权威图的同OID
+    // 条目中选取实际帧；否则树选中成功，却把不存在的名字交给高亮出口。
+    // 这只是呈现投影：不改runtime主身份、不拼前缀、不缓存跨快照Frame。
+    if (resolved.get().scope == runtime::NameScope::LinkFrame
+        && m_view->workCell().findFrame(resolved.get().fullName) == nullptr) {
+        for (const auto& entry : m_view->nameMap().entries()) {
+            if (entry.objectId == id && m_view->workCell().findFrame(entry.fullName) != nullptr) {
+                return entry.fullName;
+            }
+        }
+        return std::nullopt; // 无实际对应帧时诚实缺供，不能留下虚假的可高亮名称。
+    }
     return resolved.get().fullName;
 }
 

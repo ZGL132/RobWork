@@ -1,0 +1,110 @@
+[
+  {
+    "suite": "modeling",
+    "tests": 463,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 463
+  },
+  {
+    "suite": "modeling_contract",
+    "tests": 17,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 17
+  },
+  {
+    "suite": "modeling_gui",
+    "tests": 106,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 106
+  },
+  {
+    "suite": "standalone_modeling",
+    "tests": 361,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 361
+  },
+  {
+    "suite": "standalone_modeling_contract",
+    "tests": 8,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 8
+  },
+  {
+    "suite": "standalone_modeling_gui",
+    "tests": 74,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 74
+  },
+  {
+    "suite": "standalone_ui",
+    "tests": 276,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 276
+  },
+  {
+    "suite": "standalone_ui_contract",
+    "tests": 34,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 34
+  },
+  {
+    "suite": "standalone_ui_gui",
+    "tests": 78,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 78
+  },
+  {
+    "suite": "ui",
+    "tests": 342,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 342
+  },
+  {
+    "suite": "ui_contract",
+    "tests": 63,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 63
+  },
+  {
+    "suite": "ui_gui",
+    "tests": 98,
+    "failures": 0,
+    "disabled": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 98
+  }
+]

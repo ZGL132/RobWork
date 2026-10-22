@@ -29,6 +29,9 @@
 #define IRD_DYNAMICS_PLUGIN_DYNCURVECHARTVIEW_HPP
 
 #include <cstdint>
+#include <functional>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include <QWidget>
@@ -73,6 +76,18 @@ public:
 
     /// @brief 当前显示通道。
     DynChannelId channel() const noexcept { return m_channel; }
+    /// @brief 注入宿主解析的通道中文名，避免图标题回显内部通道键。
+    void setChannelLabel(const QString& label) { m_channelLabel = label; update(); }
+    /**
+     * @brief 绑定统一文案解析器；仅 UI 线程调用，不转移宿主所有权。
+     * @param resolver [in] 键到已翻译文案；捕获对象须比本子控件存活更久。
+     */
+    void setTextResolver(std::function<QString(const std::string&)> resolver)
+    { m_textResolver = std::move(resolver); update(); }
+    /// @brief 当前峰值标记的有符号曲线值，供无屏幕坐标依赖的呈现验收。
+    double peakValue() const noexcept { return m_peakValue; }
+    /// @brief 是否存在有效峰值标记；换关节/换通道后应清除。
+    bool hasPeak() const noexcept { return m_hasPeak; }
 
     /**
      * @brief 设置游标时刻（联动线横坐标），单位 s。
@@ -108,6 +123,8 @@ protected:
 
 private:
     DynChannelId m_channel;          ///< 当前显示通道
+    QString m_channelLabel; ///< 宿主文案资源的呈现副本，仅 UI 线程使用。
+    std::function<QString(const std::string&)> m_textResolver; ///< 父面板提供，随 Qt 子控件销毁。
     std::uint32_t m_jointIndex = 0;  ///< 当前关节序号（标题素材）
     DynJointType m_jointType{};      ///< 当前关节型（量纲标签判型）
     std::vector<double> m_t;         ///< 时间轴快照，单位 s（与 m_values 对位）

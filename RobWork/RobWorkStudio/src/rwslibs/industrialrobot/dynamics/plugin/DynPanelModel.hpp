@@ -248,6 +248,26 @@ std::optional<DynPeakJump> locatePeakJump(const DynPanelServices& services,
                                           int tokenIndex,
                                           std::string* outReason = nullptr);
 
+/**
+ * @brief 将有效回放样本交给宿主临时姿态写点（DYN-08/KIN-06）。
+ *
+ * @param services [in] 动力学面板服务缝
+ * @param sample [in] 已完成越界校验的回放样本，q 单位为 rad 或 m
+ * @param outReason [out] 可空原因：not-assembled/incomplete/apply-failed/空串；
+ *                        incomplete 包含空帧、缺号、重复序号、非有限 q。
+ * @return true＝宿主已接受临时姿态；false＝不覆盖最后有效姿态
+ */
+bool applyReplayPose(const DynPanelServices& services,
+                     const ReplaySample& sample,
+                     std::string* outReason = nullptr);
+
+/**
+ * @brief 校验峰值选择并返回统计通道序号（0..5）。
+ * @param selection [in] 峰值下拉框数据值
+ * @return 合法时原值；越界返回 -1
+ */
+int peakTokenIndexForSelection(int selection);
+
 // =====================================================================
 // L-D5 回放查表流（域设施消费——UI 线程插值查表）。
 // =====================================================================

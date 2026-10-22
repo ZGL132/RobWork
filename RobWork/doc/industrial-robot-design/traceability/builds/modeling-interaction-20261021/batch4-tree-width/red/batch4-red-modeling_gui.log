@@ -1,0 +1,53 @@
+Note: Google Test filter = *TreeWidthContinuous*:*TreeNarrowScroll*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from ModelingPanelGuiTest
+[ RUN      ] ModelingPanelGuiTest.TreeWidthContinuousAndCollapse_UX09_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(324): error: Expected: (splitter->sizes()[0]) <= (300), actual: 594 vs 300
+默认树栏不应占近半编辑区
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(331): error: The difference between splitter->sizes()[0] and width is 273, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 160, and
+1 evaluates to 1.
+请求树宽=160
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(331): error: The difference between splitter->sizes()[0] and width is 353, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 80, and
+1 evaluates to 1.
+请求树宽=80
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(331): error: The difference between splitter->sizes()[0] and width is 393, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 40, and
+1 evaluates to 1.
+请求树宽=40
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(331): error: The difference between splitter->sizes()[0] and width is 432, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+width evaluates to 1, and
+1 evaluates to 1.
+请求树宽=1
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(334): error: The difference between splitter->sizes()[0] and 240 is 193, which exceeds 1, where
+splitter->sizes()[0] evaluates to 433,
+240 evaluates to 240, and
+1 evaluates to 1.
+收起后必须能够恢复
+
+[  FAILED  ] ModelingPanelGuiTest.TreeWidthContinuousAndCollapse_UX09_T30 (985 ms)
+[ RUN      ] ModelingPanelGuiTest.TreeNarrowScrollNavigationNoDirty_MDL07_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingPanelGuiTest.cpp(344): error: Expected: (scroll) != (nullptr), actual: NULL vs (nullptr)
+
+[  FAILED  ] ModelingPanelGuiTest.TreeNarrowScrollNavigationNoDirty_MDL07_T30 (410 ms)
+[----------] 2 tests from ModelingPanelGuiTest (1396 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1398 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ModelingPanelGuiTest.TreeWidthContinuousAndCollapse_UX09_T30
+[  FAILED  ] ModelingPanelGuiTest.TreeNarrowScrollNavigationNoDirty_MDL07_T30
+
+ 2 FAILED TESTS

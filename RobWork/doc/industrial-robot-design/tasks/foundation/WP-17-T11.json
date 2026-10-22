@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "WP-17-T11",
+  "unit": "dynamics",
+  "masterWp": "WP-G",
+  "title": "修复动力学峰值与回放交互并建立真实窗口回归",
+  "status": "ready",
+  "dependsOn": [
+    "WP-17-T09",
+    "WP-17-T10"
+  ],
+  "requirements": [
+    "DYN-08",
+    "UX-02",
+    "UX-10"
+  ],
+  "designRefs": [
+    "units/dynamics.md#17",
+    "development-task-breakdown.md#2.18"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/ExtraDomainAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/WP-17-T11.json",
+    "RobWork/doc/industrial-robot-design/traceability/**",
+    "RobWork/docs/superpowers/plans/2026-10-22-dynamics-review-fixes.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "gui-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_dynamics_gui_test sdurws_ird_dynamics_test sdurws_ird_dynamics_contract_test"
+  ],
+  "branch": "wp17-t11",
+  "interUnit": true,
+  "knownPitfalls": [
+    "P-DYN-8",
+    "P-DYN-11"
+  ],
+  "acceptance": [
+    "Windows GUI真实执行，六峰值与回放失败反馈正确",
+    "计算单元与契约回归通过；正式宿主缺口单独记录，不声称全功能通过"
+  ]
+}

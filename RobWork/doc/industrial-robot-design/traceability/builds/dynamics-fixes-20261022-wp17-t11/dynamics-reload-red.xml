@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0.295" timestamp="2026-10-22T05:21:28.615" name="AllTests">
+  <testsuite name="DynWindow" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0.295" timestamp="2026-10-22T05:21:28.615">
+    <testcase name="ReloadedResultClearsPreviousMarkers_DYN08" file="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp" line="225" status="run" result="completed" time="0.295" timestamp="2026-10-22T05:21:28.615" classname="DynWindow">
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:235&#x0A;Value of: chart-&gt;hasPeak()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;刷新后的标记必须重新定位，不能沿用旧结果&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:235
+Value of: chart->hasPeak()
+  Actual: true
+Expected: false
+刷新后的标记必须重新定位，不能沿用旧结果
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:236&#x0A;Value of: reading-&gt;text().contains(QString::fromUtf8(&quot;已同步&quot;))&#x0A;  Actual: true&#x0A;Expected: false&#x0A;新结果尚未回放，不能显示上一结果的三维成功反馈&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp:236
+Value of: reading->text().contains(QString::fromUtf8("已同步"))
+  Actual: true
+Expected: false
+新结果尚未回放，不能显示上一结果的三维成功反馈
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -129,6 +129,12 @@ public:
 
     std::optional<core::ObjectId>
         resolveObjectIdFromRuntimeName(const std::string& runtimeName) const override;
+    /**
+     * @brief 从当前权威名称图解析呈现名称；连杆选取WC中实际存在的同OID帧。
+     * @param id [in] 稳定业务身份，无物理单位；不通过名称拼装推测身份。
+     * @return 主名称；边界连杆主名未落帧时返回同图实际帧别名，缺供为空。
+     * 仅UI线程只读查询；不缓存帧或另建名称表，设备等非连杆身份保持主名。
+     */
     std::optional<std::string> resolveRuntimeName(const core::ObjectId& id) const override;
 
     /// 绑定态（观测面——true＝真值映射在位）。

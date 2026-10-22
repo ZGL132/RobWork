@@ -1,0 +1,84 @@
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from DynWindow
+[ RUN      ] DynWindow.EmptyResultDisablesDataActions_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(102): error: Value of: peak->isEnabled()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(103): error: Value of: play->isEnabled()
+  Actual: true
+Expected: false
+
+[  FAILED  ] DynWindow.EmptyResultDisablesDataActions_DYN08 (261 ms)
+[ RUN      ] DynWindow.PeakSelectionSynchronizesChannelTimeAndPose_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(116): error: Expected equality of these values:
+  channel->currentData().toInt()
+    Which is: 0
+  int(DynChannelId::Velocity)
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(118): error: Expected equality of these values:
+  time->value()
+    Which is: 0
+  1.0
+    Which is: 1
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(121): error: Value of: reading->text().contains(QString::fromUtf8("已同步"))
+  Actual: false
+Expected: true
+
+[  FAILED  ] DynWindow.PeakSelectionSynchronizesChannelTimeAndPose_DYN08 (169 ms)
+[ RUN      ] DynWindow.PeakReportsPoseRejection_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(134): error: Value of: reading->text().contains(QString::fromUtf8("保留上次姿态"))
+  Actual: false
+Expected: true
+
+[  FAILED  ] DynWindow.PeakReportsPoseRejection_DYN08 (131 ms)
+[ RUN      ] DynWindow.PrismaticJointChangesUnitLabels_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(143): error: Value of: channel->itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u"" "m"))))
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(144): error: Value of: channel->itemText(0).contains((QString(QtPrivate::qMakeStringPrivate(u"" "rad"))))
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(146): error: Value of: channel->itemText(3).contains(QString::fromUtf8("N·m"))
+  Actual: true
+Expected: false
+
+[  FAILED  ] DynWindow.PrismaticJointChangesUnitLabels_DYN08 (134 ms)
+[ RUN      ] DynWindow.DifferentResultIdentityRejectsReplay_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(154): error: Expected equality of these values:
+  writes
+    Which is: 1
+  0
+跨结果数据不得更新真实姿态
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(156): error: Value of: reading->text().contains(QString::fromUtf8("来源不一致"))
+  Actual: false
+Expected: true
+
+[  FAILED  ] DynWindow.DifferentResultIdentityRejectsReplay_DYN08 (127 ms)
+[ RUN      ] DynWindow.ShowCurvesCommandNavigatesToCurves_UX02
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(163): error: Expected equality of these values:
+  panel->findChild<QTabWidget*>()->currentIndex()
+    Which is: 0
+  1
+
+[  FAILED  ] DynWindow.ShowCurvesCommandNavigatesToCurves_UX02 (127 ms)
+[----------] 6 tests from DynWindow (952 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (952 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 6 tests, listed below:
+[  FAILED  ] DynWindow.EmptyResultDisablesDataActions_DYN08
+[  FAILED  ] DynWindow.PeakSelectionSynchronizesChannelTimeAndPose_DYN08
+[  FAILED  ] DynWindow.PeakReportsPoseRejection_DYN08
+[  FAILED  ] DynWindow.PrismaticJointChangesUnitLabels_DYN08
+[  FAILED  ] DynWindow.DifferentResultIdentityRejectsReplay_DYN08
+[  FAILED  ] DynWindow.ShowCurvesCommandNavigatesToCurves_UX02
+
+ 6 FAILED TESTS

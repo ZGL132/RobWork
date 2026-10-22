@@ -1452,3 +1452,17 @@ AT-05→V-07/41/45；AT-07→V-01/13/22/23/24/25（动力学链）；AT-10→V-4
 - **门禁**：**ird_gates 已执行零命中**（WP-17-T02：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中＋引擎自测 9 例按预期检出——留痕 integrate-build 日志；**WP-17-T10 复跑零命中** 2026-10-09，同口径）。
 - **文档验证脚本**：validate-docs.ps1 已在 WP-17-T02 交付会话执行（PASS：20 units/12 trace entries/307 task files）；**WP-17-T10 复跑 PASS**（2026-10-09：20 units/12 trace entries/312 task files——任务文件计数随 T10 契约落位增长）。
 - 后续落位路径：§12 任务表 WP-17 全部任务（T01～T10）已落位；评估器注册等装配面实现随宿主装配批次收口（§3.2 布局表 Evaluators/TrajectorySourcePort/DynConfig/Handoff 零预建——NFR-MNT-04），全部验收以真实执行留痕为准。
+
+
+## 17. 2026-10-22 动力学交互续修（WP-17-T11）
+
+DYN-P1～P6 的原审核见 traceability/builds/dynamics-audit-20261022-119dce6b/。
+本批以真实 Windows GUI 测试替代历史占位 SKIP，不改变计算公式或需求语义。
+
+- 装配门面补齐曲线/回放/峰值读取及临时姿态回调；回放 q 按链序传递，重复序号、缺行、非有限 q 拒绝写点。
+- 六种峰值选择联动同量纲曲线；反向幅值与绝对峰标记采用曲线原始有符号值；峰值定位更新回放时刻并复用统一失败反馈。
+- 移动关节使用 m、m/s、m/s²、N；空结果禁用数据入口；显示曲线命令实际切换页面；通道中文名与面板稳定文案归 ui::UiText。
+- 新增 sdurws_ird_dynamics_gui_test，Windows 单进程执行并保存截图；harness 直接使用 UiText，去掉重复文案表。依赖沿既有 dynamics→ui，测试直链精确登记于 DTB §4.5。
+- 正式宿主分析执行器、真实轨迹/归档来源和结果快照校验尚未落位，不将空闭包当接通；移除未校验身份的首设备姿态写入。DYN-P1、P2、P4 持续未关闭。
+
+实现计划：docs/superpowers/plans/2026-10-22-dynamics-review-fixes.md；本批验证结果另建 builds/dynamics-fixes-20261022-wp17-t11/，不覆盖原审核历史。

@@ -28,7 +28,7 @@
  *   - 演示部分：归档读取缝（曲线/回放/峰值）在进程内现取现算（真实
  *     归档链路＝归档 payload 读取，归宿主装配层）、命令提交出口以
  *     回显承载（真实 CommandRegistry 接线归宿主装配批次——不虚构提
- *     交语义）、文案解析器以键名回显（宿主 UiText 资源接线归装配批次
+ *     交语义）、文案解析器消费正式 UiText（其余宿主服务接线归装配批次
  *     ——UX-02 键值分离的产品形态见装配登记）；
  *   - 不覆盖：三维姿态同步的真实 View3D 驱动（回放读数为会话姿态素
  *     材呈现——姿态驱动归宿主 View3D 桥，KIN-06 零修订语义经模型层
@@ -51,6 +51,7 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
+#include <sdurws/ird/ui/UiText.hpp>
 #include <optional>
 #include <string>
 #include <vector>
@@ -240,8 +241,9 @@ int main(int argc, char* argv[])
     };
     services.commandAvailability =
         [](const std::string&) { return true; };  // 演示态全部可用
+    // 与正式宿主共用 UiText 资源，未知键按资源契约 fail-fast。
     services.textResolver = [](const std::string& titleKey) {
-        return titleKey;  // 键名回显（宿主 UiText 资源接线归装配批次）
+        return sdurws::ird::ui::resolveText(titleKey);
     };
     bundle.setServices(services);
 

@@ -118,6 +118,50 @@ QList<QPushButton*> commandButtonsOf(
 
 }  // namespace
 
+/** @brief MDL-07：域树上行必须进入唯一共享选择/三维出口，下行不能改写来源或回环。 */
+TEST(ModelingUiModuleHostWiring, DomainTreeFeedsSharedHighlightAndClear_MDL07_T30)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-07","UX-06"},{"AT-01"},std::nullopt);
+    // 测试名图只声明“已有对应物”，不伪造正式场景；真实帧/网格由宿主tour另验。
+    struct Names final : ui::IUiRuntimeNameMapPort {
+        std::optional<core::ObjectId> resolveObjectIdFromRuntimeName(const std::string&) const override {return std::nullopt;}
+        std::optional<std::string> resolveRuntimeName(const core::ObjectId& id) const override {return id.toCanonical();}
+    };
+    // 单线程观测出口仅记录最后一次高亮，生命周期由选择服务共享持有。
+    struct Highlight final : ui::IUiHighlightOutlet {
+        std::string current; int calls=0;
+        void highlightRuntimeObject(const std::string& name) override {current=name;++calls;}
+        void clearHighlight() override {current.clear();++calls;}
+    };
+    auto highlight=std::make_shared<Highlight>();
+    ui::SelectionService::Deps deps; deps.nameMap=std::make_shared<Names>(); deps.highlightOutlet=highlight;
+    deps.treeLocator=[](const core::ObjectId&){return true;};
+    ui::SelectionService selection(deps); ModelingUiModule module; module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel()); module.attachSelectionService(selection);
+    auto* tree=widget->findChild<QTreeWidget*>("ird_modeling_struct_tree"); ASSERT_NE(tree,nullptr);
+    widget->resize(1100,760);widget->show();QApplication::processEvents();
+    const auto before=module.session().draft;
+    const auto choose=[&](const core::ObjectId& id){
+        QTreeWidgetItem* item=nullptr;
+        for(QTreeWidgetItemIterator it(tree);*it;++it){if((*it)->text(1).toStdString()==id.toCanonical()){item=*it;break;}}
+        ASSERT_NE(item,nullptr); tree->setCurrentItem(item);QApplication::processEvents();
+        EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{id});
+        EXPECT_EQ(selection.selectionSource(),ui::SelectionSource::ProjectTree);
+        EXPECT_EQ(highlight->current,id.toCanonical());
+    };
+    choose(before.design.joints[0].objectId); choose(before.design.joints[1].objectId); choose(before.design.links[1].objectId);
+    const int calls=highlight->calls;
+    selection.selectBusiness({before.design.joints[0].objectId},ui::SelectionSource::Search);
+    QApplication::processEvents();
+    EXPECT_EQ(selection.selectionSource(),ui::SelectionSource::Search) << "下行定位不能伪装成用户树选择";
+    EXPECT_EQ(highlight->calls,calls+1) << "单次下行不能重复上报三维";
+    tree->clearSelection();QApplication::processEvents();
+    EXPECT_TRUE(selection.selectedObjectIds().empty()); EXPECT_TRUE(highlight->current.empty());
+    EXPECT_EQ(module.session().draft,before) << "导航不得修改任何草稿字段";
+    module.detachSelectionService(); tree->setCurrentItem(tree->topLevelItem(0));
+    EXPECT_TRUE(selection.selectedObjectIds().empty()) << "退订后不再写旧服务";
+}
+
 /**
  * @brief MDL-08/UX-13/AT-12：真实命令/模态窗口/面板树定位接线。
  * 只读也能查看；使用真实编辑原语删除末关节，证明不能按旧下标误定位。

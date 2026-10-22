@@ -115,6 +115,59 @@ void DynamicsPluginAssembly::bindCommandAvailability(
     }
 }
 
+void DynamicsPluginAssembly::bindReplayPoseApply(
+    std::function<bool(const std::vector<ReplayJointState>&)> apply)
+{
+    if (m_module != nullptr) {
+        m_module->services.replayPoseApply = std::move(apply);
+    }
+}
+
+void DynamicsPluginAssembly::bindCurveSource(
+    std::function<CurveProjection()> source)
+{
+    if (m_module != nullptr) {
+        m_module->services.curveSource = std::move(source);
+    }
+}
+
+void DynamicsPluginAssembly::bindReplaySource(
+    std::function<ReplayData()> source)
+{
+    if (m_module != nullptr) {
+        m_module->services.replaySource = std::move(source);
+    }
+}
+
+void DynamicsPluginAssembly::bindPeakLocate(
+    std::function<std::optional<std::tuple<double, double, std::uint32_t>>(
+        std::uint32_t, int)> locate)
+{
+    if (m_module == nullptr) {
+        return;
+    }
+    if (!locate) {
+        m_module->services.peakLocate = {};
+        return;
+    }
+    m_module->services.peakLocate = [locate = std::move(locate)](
+                                         std::uint32_t jointIndex,
+                                         int tokenIndex)
+        -> std::optional<DynPeakJump> {
+        const auto value = locate(jointIndex, tokenIndex);
+        if (!value.has_value()) {
+            return std::nullopt;
+        }
+        DynPeakJump jump;
+        jump.jointIndex = jointIndex;
+        jump.tokenIndex = tokenIndex;
+        jump.tPeakS = std::get<0>(*value);
+        jump.value = std::get<1>(*value);
+        jump.segmentIndex = std::get<2>(*value);
+        return jump;
+    };
+}
+
 void DynamicsPluginAssembly::bindTextResolver(
     std::function<std::string(const std::string& titleKey)> resolve)
 {

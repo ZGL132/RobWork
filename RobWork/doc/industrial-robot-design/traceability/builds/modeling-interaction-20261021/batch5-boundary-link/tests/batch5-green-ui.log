@@ -1,0 +1,53 @@
+Note: Google Test filter = HostCompilePipelineTest.*
+[==========] Running 22 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 22 tests from HostCompilePipelineTest
+[ RUN      ] HostCompilePipelineTest.DetachViewReleasesCollisionSnapshot_MA03
+[       OK ] HostCompilePipelineTest.DetachViewReleasesCollisionSnapshot_MA03 (0 ms)
+[ RUN      ] HostCompilePipelineTest.NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15
+[       OK ] HostCompilePipelineTest.NamedTcpClosureCompilesAndSolvesRealNumerics_REQ01_A15 (0 ms)
+[ RUN      ] HostCompilePipelineTest.CompilePort_PublishesSnapshotAndCachesIt
+[       OK ] HostCompilePipelineTest.CompilePort_PublishesSnapshotAndCachesIt (0 ms)
+[ RUN      ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12
+[       OK ] HostCompilePipelineTest.ScenePlanRetainsTypeAndDoesNotMasqueradeAsRoot_REQ10_WP14T12 (14 ms)
+[ RUN      ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12
+[       OK ] HostCompilePipelineTest.SceneOnlyUpdateUsesBaselineRoot_REQ10_WP14T12 (1 ms)
+[ RUN      ] HostCompilePipelineTest.RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12
+[       OK ] HostCompilePipelineTest.RecordedResourceIsRereadAndFailurePreservesSnapshot_REQ10_WP14T12 (30 ms)
+[ RUN      ] HostCompilePipelineTest.CompilePort_FailsWithDiagnosticsOnGarbageBytes
+[       OK ] HostCompilePipelineTest.CompilePort_FailsWithDiagnosticsOnGarbageBytes (0 ms)
+[ RUN      ] HostCompilePipelineTest.CompilePort_CorruptedDigestDoesNotCrash
+[       OK ] HostCompilePipelineTest.CompilePort_CorruptedDigestDoesNotCrash (0 ms)
+[ RUN      ] HostCompilePipelineTest.NameMapPort_EmptyBeforeBinding
+[       OK ] HostCompilePipelineTest.NameMapPort_EmptyBeforeBinding (0 ms)
+[ RUN      ] HostCompilePipelineTest.NameMapPort_ResolvesAfterPresentationBinding
+[       OK ] HostCompilePipelineTest.NameMapPort_ResolvesAfterPresentationBinding (0 ms)
+[ RUN      ] HostCompilePipelineTest.NameMapPort_BoundaryLinksResolveExistingFrames_MDL07_T30
+[       OK ] HostCompilePipelineTest.NameMapPort_BoundaryLinksResolveExistingFrames_MDL07_T30 (0 ms)
+[ RUN      ] HostCompilePipelineTest.PresentationSource_FoldsCompleteProjection
+[       OK ] HostCompilePipelineTest.PresentationSource_FoldsCompleteProjection (0 ms)
+[ RUN      ] HostCompilePipelineTest.PresentationObject_ApplyWithoutStudioFailsHonestly
+[       OK ] HostCompilePipelineTest.PresentationObject_ApplyWithoutStudioFailsHonestly (0 ms)
+[ RUN      ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationPlanCoversCompiledPrimitives_UI_T78
+[       OK ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationPlanCoversCompiledPrimitives_UI_T78 (0 ms)
+[ RUN      ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationDeterministicAcrossRecompile_UI_T78
+[       OK ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationDeterministicAcrossRecompile_UI_T78 (1 ms)
+[ RUN      ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationGroupBindingIsPhysical_UI_T78
+[       OK ] HostCompilePipelineTest.PublishedModelGeometry_CalibrationGroupBindingIsPhysical_UI_T78 (0 ms)
+[ RUN      ] HostCompilePipelineTest.ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21
+[       OK ] HostCompilePipelineTest.ConflictRebuildReadsCompleteFixedRevisionAndRetainsOldDraft_PM04_AT21 (2 ms)
+[ RUN      ] HostCompilePipelineTest.RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21
+[       OK ] HostCompilePipelineTest.RevisionDraftReaderDistinguishesEmptyFromCorruption_PM04_AT21 (0 ms)
+[ RUN      ] HostCompilePipelineTest.NamedPoseStagesRealStateAndRejectsAtomically_MDL17_AT04
+[       OK ] HostCompilePipelineTest.NamedPoseStagesRealStateAndRejectsAtomically_MDL17_AT04 (0 ms)
+[ RUN      ] HostCompilePipelineTest.NamedPoseMixedChainKeepsZeroOffsetAndFixedSemantics_MDL17_AT04
+[       OK ] HostCompilePipelineTest.NamedPoseMixedChainKeepsZeroOffsetAndFixedSemantics_MDL17_AT04 (0 ms)
+[ RUN      ] HostCompilePipelineTest.CommittedClosureStaysOnExactRevision_PM04_AT21
+[       OK ] HostCompilePipelineTest.CommittedClosureStaysOnExactRevision_PM04_AT21 (0 ms)
+[ RUN      ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21
+[       OK ] HostCompilePipelineTest.CompleteWorkingSetDiskApplyAndHistory_PM04_AT21 (1771 ms)
+[----------] 22 tests from HostCompilePipelineTest (1832 ms total)
+
+[----------] Global test environment tear-down
+[==========] 22 tests from 1 test suite ran. (1832 ms total)
+[  PASSED  ] 22 tests.

@@ -364,21 +364,29 @@ ModelingPanelWidget::ModelingPanelWidget(bool writable, QWidget* parent)
     // 页签承载三区，对应 UX-09 五区布局的建模域投影）。
     // 局部历史工具条在整栏上方；左右分栏仍由下面唯一splitter承载。
     auto* mainLayout = new QVBoxLayout(this);
-    // 左右栏使用可拖动分隔器：结构树需要保持可读宽度，右侧参数表在窄窗
-    // 中则应优先获得空间。分隔位置属于会话呈现设置，不改变模型数据。
+    // UX-09/T30：结构树宽度由用户决定，不能让内部一排结构按钮的最小宽度
+    // 反向撑住整个分栏。窄栏中的按钮行独立滚动，右侧编辑区优先获得空间；
+    // 分隔位置、收起和滚动都是呈现态，不改变草稿或项目修订。
     auto* splitter = new QSplitter(Qt::Horizontal, this);
     splitter->setObjectName(QStringLiteral("ird_modeling_main_splitter"));
     auto* leftHost = new QWidget(splitter);
+    // 仅minimumWidth(0)不能消除布局minimumSizeHint。Ignored使宿主不传播
+    // 宽度提示；按钮行自带滚动，树视口独立缩放，横滚按钮时不会把树移出视野。
+    leftHost->setMinimumWidth(0);
+    leftHost->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+    leftHost->setToolTip(QStringLiteral("拖动右侧分隔条可缩窄或收起结构树；窄栏按钮可横向滚动，收起后从左边界拖回"));
     auto* rightHost = new QWidget(splitter);
     auto* left = new QVBoxLayout(leftHost);
+    left->setSizeConstraint(QLayout::SetNoConstraint);
     auto* right = new QVBoxLayout(rightHost);
     left->setContentsMargins(0, 0, 4, 0);
     right->setContentsMargins(4, 0, 0, 0);
     splitter->addWidget(leftHost);
     splitter->addWidget(rightHost);
-    splitter->setStretchFactor(0, 5);
-    splitter->setStretchFactor(1, 4);
-    splitter->setSizes({520, 420});
+    splitter->setCollapsible(0, true); // 0像素为用户主动收起；手柄保留供拖回恢复。
+    splitter->setStretchFactor(0, 0);
+    splitter->setStretchFactor(1, 1);
+    splitter->setSizes({240, 700}); // 默认仅分配树导航宽度，窗口变宽时主要扩展编辑区。
     // L-5：草稿历史入口常驻，明确区别于宿主项目撤销（后者产生逆命令修订）。
     // 本行只调用UI编辑器回调，不借全局命令注册表改变项目历史。
     auto* draftHistoryRow = new QHBoxLayout();
@@ -912,9 +920,27 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     // 结束，本自持树升格为面板主导航呈现；与共享项目树的 L-R1 双向联动
     // 语义不变）。
 
-    auto* treeHeader = new QHBoxLayout();
+    // @brief 为按钮行提供独立横向视口，避免操作尾部被裁掉，也避免整棵树随之偏移。
+    // @param row [in] UI线程新建的内容控件，滚动壳接管其Qt父子所有权。
+    // @param name [in] 测试/自动化使用的唯一控件名，无业务身份语义。
+    // @return 父布局拥有的滚动壳；固定高度含一条滚动条预算，不因横滚挤压树。
+    const auto addScrollableRow=[this,left](QWidget* row,const QString& name) {
+        auto* scroll=new QScrollArea(this);
+        scroll->setObjectName(name);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidgetResizable(true);
+        scroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scroll->setMinimumWidth(0);
+        scroll->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Fixed);
+        scroll->setWidget(row);
+        scroll->setFixedHeight(row->sizeHint().height()+scroll->horizontalScrollBar()->sizeHint().height());
+        left->addWidget(scroll);
+        return scroll;
+    };
+    auto* headerHost=new QWidget(this);
+    auto* treeHeader = new QHBoxLayout(headerHost);
+    treeHeader->setContentsMargins(0,0,0,0);
     treeHeader->addWidget(new QLabel(QStringLiteral("建模结构"), this));
-    treeHeader->addStretch();
     // WP-13-T30：展开/折叠只改变浏览状态，不归写命令目录，也不受只读门控。
     auto* expandAll = new QPushButton(QStringLiteral("展开全部"), this);
     auto* collapseAll = new QPushButton(QStringLiteral("折叠全部"), this);
@@ -922,10 +948,14 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
     collapseAll->setObjectName(QStringLiteral("ird_modeling_struct_collapse_all"));
     treeHeader->addWidget(expandAll);
     treeHeader->addWidget(collapseAll);
-    left->addLayout(treeHeader);
+    treeHeader->addStretch();
+    addScrollableRow(headerHost,QStringLiteral("ird_modeling_tree_header_scroll"));
     m_tree = new QTreeWidget(this);
     m_tree->setColumnCount(2);
     m_tree->setHeaderHidden(true);
+    // 树本身跟随栏宽，长名称由树自身水平滚动处理，不传播默认256像素最小提示。
+    m_tree->setMinimumWidth(0);
+    m_tree->setSizePolicy(QSizePolicy::Ignored,QSizePolicy::Expanding);
     m_tree->setObjectName(QStringLiteral("ird_modeling_struct_tree"));  // UI-T47——gui 定位锚（B6 可访问性同款）
     m_tree->hideColumn(kAnchorColumn);  // 锚列隐藏——UX-02：界面不见哈希/内部标识
     // UI-T41 批次B（B6）：可访问性——树/状态行/预览挂 accessibleName
@@ -964,7 +994,7 @@ void ModelingPanelWidget::buildStructureTreePane(QVBoxLayout* left)
         barLay->addWidget(btn);
     }
     barLay->addStretch(1);
-    left->addWidget(structBar);
+    addScrollableRow(structBar,QStringLiteral("ird_modeling_tree_actions_scroll"));
 }
 
 // ---- 区②属性编辑区 ---------------------------------------------------
@@ -3752,9 +3782,14 @@ void ModelingPanelWidget::refreshEditPages()
 void ModelingPanelWidget::onTreeSelectionChanged()
 {
     // L-1 正向半区：树点击→会话选中态（零修订）→属性区重投影。
-    const auto anchor = nodeAnchor(m_tree->currentItem());
+    // clearSelection不会清currentItem；必须按真实选中集合判断，否则“清空”
+    // 会把上次当前项重新选回。下行focusObject先更新m_selection，因此同值不再上报。
+    const auto anchor = m_tree->selectedItems().isEmpty()
+        ? std::optional<core::ObjectId>{} : nodeAnchor(m_tree->currentItem());
     if (m_selection.select(anchor)) {
         m_lastSelected = anchor;
+        Q_EMIT treeSelectionRequested(anchor.has_value()
+            ? QString::fromStdString(anchor->toCanonical()) : QString());
         Q_EMIT selectionChanged(anchor.has_value()
                                   ? QString::fromStdString(anchor->toCanonical())
                                   : QString());

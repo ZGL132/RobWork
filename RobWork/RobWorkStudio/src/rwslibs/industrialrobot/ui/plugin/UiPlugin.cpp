@@ -93,6 +93,10 @@
 #include <rw/models/JointDevice.hpp>             // rw::models::JointDevice（UI-T45——TCP 帧解析 getEnd）
 #include <rw/models/WorkCell.hpp>                // rw::models::WorkCell（L2 高亮按名寻帧/D8 设备枚举——呈现对象公开面）
 #include <rw/graphics/WorkCellScene.hpp>         // rw::graphics::WorkCellScene（L2 高亮出口——setHighlighted 公开 API）
+#include <rw/graphics/Render.hpp> // MDL-07：无几何关节的会话中心定位标记，不修改运行时模型。
+#include <rwlibs/opengl/rwgl.hpp> // 复用宿主兼容GL绘制通路，回调内完整保存/恢复状态。
+#include <rwlibs/opengl/RenderGeometry.hpp> // 选中几何复用权威网格/局部变换，原材质零修改。
+#include <QColor>
 
 #include <sdurws/ird/project/CommandService.hpp> // project::CommandResult/CommandStatus（apply 网关提交面——T03b-2）
 #include <sdurws/ird/project/QueryPort.hpp>      // project::IProjectQueryPort/RevisionView（UI-T29 闭包数据源）
@@ -499,6 +503,62 @@ private:
  */
 
 /**
+ * @brief MDL-07：当前选择帧原点的屏幕尺寸标记，场景拥有，仅UI渲染线程使用。
+ * 关节帧通常没有独立几何，原生高亮会没有任何可见结果；此标记以13像素蓝点
+ * 加5像素白心定位中心，像素是呈现尺寸，不是m制实体/碰撞半径。中心点置于近裁面
+ * 帮助用户在连杆遮挡下定位；实体覆盖层沿原几何，全部GL状态退出恢复。
+ */
+class SelectionCenterRender final : public rw::graphics::Render {
+public:
+    /**
+     * @brief 为当前场景选择创建独立覆盖层，场景拥有；不缓存Frame或原Drawable。
+     * @param geometry [in] 当前选中帧的已发布几何共享值，可空；位置/比例沿原Geometry。
+     * @return 构造完成的覆盖层；仅UI线程，几何引用随场景清除释放，不写模型材质。
+     */
+    explicit SelectionCenterRender(const std::vector<rw::geometry::Geometry::Ptr>& geometry)
+    {
+        const QColor color(ui::palette::kPrimary);
+        for(const auto& item:geometry){
+            auto render=rw::core::ownedPtr(new rwlibs::opengl::RenderGeometry(item));
+            render->setColor(color.redF(),color.greenF(),color.blueF());m_surfaces.push_back(render);
+        }
+    }
+    /**
+     * @brief 在场景已施加的权威帧局部原点绘制选中中心，不另算世界变换。
+     * @param info [in] 宿主本次渲染上下文，借用且不保存。
+     * @param type [in] 宿主实体显示模式；标记始终为点，不冒充网格轮廓。
+     * @param alpha [in] 宿主透明度，标记使用自身不透明颜色以保持可辨识。
+     * @return 无返回；仅当前有效GL上下文调用，无模型/文件写入。
+     */
+    void draw(const rw::graphics::DrawableNode::RenderInfo& info,
+              rw::graphics::DrawableNode::DrawType type,double alpha) const override
+    {
+        (void)info;(void)type;(void)alpha;
+        glPushAttrib(GL_ENABLE_BIT|GL_CURRENT_BIT|GL_POINT_BIT|GL_DEPTH_BUFFER_BIT|GL_LIGHTING_BIT
+                     |GL_POLYGON_BIT|GL_VIEWPORT_BIT);
+        glDisable(GL_LIGHTING);glDisable(GL_TEXTURE_1D);glDisable(GL_TEXTURE_2D);
+        // 原生GL_LIGHT7可能与模型本色相近，不能据isHighlighted==true冒称颜色可辨。
+        // 以同一已发布几何画工程蓝覆盖层；负一个深度分辨步避开重合面闪烁，仍保留
+        // 实体遮挡。局部变换/尺度由RenderGeometry消费，不在UI复算姿态或修改原材质。
+        glEnable(GL_POLYGON_OFFSET_FILL);glPolygonOffset(-1.0f,-1.0f);
+        for(const auto& surface:m_surfaces){surface->draw(info,type,alpha);}
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        // 原点所在帧往往先于子连杆绘制；只关深度测试会被随后实体覆盖。
+        // 将定位点深度写到近裁面，保证前后绘制顺序都可见；仅点占用的像素受影响，
+        // GL状态和深度范围随后全部恢复，实体间遮挡和模型数据保持原语义。
+        glEnable(GL_DEPTH_TEST);glDepthFunc(GL_ALWAYS);glDepthMask(GL_TRUE);glDepthRange(0.0,0.0);
+        const QColor outer(ui::palette::kPrimary),inner(ui::palette::kCard);
+        glColor3f(outer.redF(),outer.greenF(),outer.blueF());glPointSize(13.0f);
+        glBegin(GL_POINTS);glVertex3d(0,0,0);glEnd();
+        glColor3f(inner.redF(),inner.greenF(),inner.blueF());glPointSize(5.0f);
+        glBegin(GL_POINTS);glVertex3d(0,0,0);glEnd();
+        glPopAttrib();
+    }
+private:
+    std::vector<rwlibs::opengl::RenderGeometry::Ptr> m_surfaces; ///< 同一场景内的只读几何覆盖，不跨快照缓存。
+};
+
+/**
  * @brief 宿主三维高亮出口（IUiHighlightOutlet 的宿主实现——L2 的动作
  *        出线缝，D7 唯一三维视图的框架公开 API 承载）。
  *
@@ -523,6 +583,9 @@ public:
 
     void highlightRuntimeObject(const std::string& runtimeName) override
     {
+        // 单选切换先撤销上次高亮；SelectionService只派发新目标，不替出口清理。
+        // 即使新名字失效，也不能让旧对象继续显亮冒充本次选中。
+        clearHighlight();
         rw::models::WorkCell::Ptr workcell =
             m_studio != nullptr ? m_studio->getWorkCell() : nullptr;
         rw::graphics::WorkCellScene::Ptr scene =
@@ -544,20 +607,27 @@ public:
             }
             return;
         }
+        std::vector<rw::geometry::Geometry::Ptr> geometry;
+        for(const auto& object:workcell->getObjects()){
+            if(object->getBase()==frame){
+                const auto& shapes=object->getGeometry();geometry.insert(geometry.end(),shapes.begin(),shapes.end());
+            }
+        }
+        scene->addRender("ird-selection-center",rw::core::ownedPtr(new SelectionCenterRender(geometry)),
+                         frame,rw::graphics::DrawableNode::Virtual);
         scene->setHighlighted(true, frame);
         m_highlightedName = runtimeName;  // 只记名不记指针（§14.2 纪律）
+        m_studio->getView()->update(); // 选择后立即请求重绘，不等待相机拖动触发。
     }
 
     void clearHighlight() override
     {
-        if (m_highlightedName.empty()) {
-            return;  // 本无高亮＝恒等动作
-        }
         rw::models::WorkCell::Ptr workcell =
             m_studio != nullptr ? m_studio->getWorkCell() : nullptr;
         rw::graphics::WorkCellScene::Ptr scene =
             m_studio != nullptr ? m_studio->getWorkCellScene() : nullptr;
-        if (!workcell.isNull() && !scene.isNull()) {
+        if (!scene.isNull()) { scene->removeDrawable("ird-selection-center"); }
+        if (!m_highlightedName.empty() && !workcell.isNull() && !scene.isNull()) {
             rw::core::Ptr<rw::kinematics::Frame> frame =
                 workcell->findFrame(m_highlightedName);
             if (!frame.isNull()) {
@@ -565,6 +635,7 @@ public:
             }
         }
         m_highlightedName.clear();
+        if(m_studio&&m_studio->getView()){m_studio->getView()->update();}
     }
 
 private:
@@ -10100,6 +10171,61 @@ void IrdWorkbenchHostPlugin::maybeRunModelingTour()
                 }
             }
             ok(jointSelected, "step8 reopened-shared-selection-focuses-modeling-joint");
+            // T30/MDL-07：从域树真正变更选择，不能以共享服务直接select冒充上行已接线。
+            // 同时检查正式帧、绘制物和前次清除，截图另行核对可见位置和颜色。
+            if(savedModel&&savedModel->joints.size()>1&&savedModel->links.size()>1){
+                // 前一段需求拾取把相机放到夹具近景且激活需求Dock。视觉验收
+                // 必须切回真正可见建模页并沿既有菜单复位视角，不能只检查隐藏树。
+                if(m_modelingDock){m_modelingDock->show();m_modelingDock->raise();}
+                auto* view=getRobWorkStudio()->getView().get();
+                for(const auto* title:{"Axiometric (Ctrl + A)","Autozoom (Ctrl + *)"}){
+                    QAction* action=nullptr;
+                    for(auto* candidate:view->findChildren<QAction*>()){
+                        if(candidate->text().remove('&')==QString::fromLatin1(title)){action=candidate;break;}
+                    }
+                    ok(action!=nullptr,std::string("mtour-t30 camera-action ")+title);
+                    if(action){action->trigger();settleEvents(150);}
+                }
+                auto* tree=panel->findChild<QTreeWidget*>("ird_modeling_struct_tree");
+                const auto scene=getRobWorkStudio()->getWorkCellScene();
+                const auto cell=getRobWorkStudio()->getWorkCell();
+                rw::core::Ptr<rw::kinematics::Frame> previous;
+                const auto beforeTip=m_lastStoreAdapter->projectStore().query().head().id;
+                const auto chooseTree=[&](const core::ObjectId& id,const std::string& tag){
+                    QTreeWidgetItem* item=nullptr;
+                    for(QTreeWidgetItemIterator it(tree);*it;++it){if((*it)->text(1).toStdString()==id.toCanonical()){item=*it;break;}}
+                    ok(item!=nullptr,tag+" tree-item-present"); if(!item){return;}
+                    tree->setCurrentItem(item);settleEvents(200);
+                    ok(m_selection->selectedObjectIds()==std::vector<core::ObjectId>{id},tag+" domain-tree-upstream");
+                    const auto name=m_nameMapPort->resolveRuntimeName(id);
+                    auto* frame=name?cell->findFrame(*name):nullptr;
+                    ok(frame&&scene->isHighlighted(frame),tag+" exact-frame-highlighted");
+                    if(previous){ok(!scene->isHighlighted(previous),tag+" previous-highlight-cleared");}
+                    bool marker=false,body=false;
+                    if(frame){for(const auto& drawable:scene->getDrawables(frame)){
+                        if(drawable->getName()=="ird-selection-center"){marker=true;}
+                        else{body=body||drawable->isHighlighted();}
+                    }}
+                    ok(marker,tag+" exact-frame-center-marker");
+                    if(tag.find("link")!=std::string::npos){ok(body,tag+" link-geometry-highlighted");}
+                    previous=frame;
+                    snapPng(hostWin,(tag+".png").c_str());
+                };
+                chooseTree(savedModel->joints[1].objectId,"mtour-t30-selected-j2");
+                chooseTree(savedModel->joints[0].objectId,"mtour-t30-selected-j1");
+                chooseTree(savedModel->links[1].objectId,"mtour-t30-selected-link1");
+                // 人工反馈的边界补验：base/末连杆使用派生帧，不能只测中间连杆。
+                chooseTree(savedModel->links.front().objectId,"mtour-t30-selected-link-base");
+                chooseTree(savedModel->links.back().objectId,"mtour-t30-selected-link-last");
+                m_selection->clearSelection(SelectionSource::Command);settleEvents(100);
+                bool markerRemaining=false;
+                for(const auto& drawable:scene->getDrawables()){markerRemaining=markerRemaining||drawable->getName()=="ird-selection-center";}
+                ok(!markerRemaining&&previous&&!scene->isHighlighted(previous),"mtour-t30-clear-removes-highlight-and-marker");
+                ok(beforeTip==m_lastStoreAdapter->projectStore().query().head().id
+                   &&!m_domains->modeling.module->buildDraftCommand(modeling::kModuleHandle),"mtour-t30-navigation-zero-write");
+                // 恢复原后续表单测试的J1目标。
+                m_selection->selectBusiness({savedModel->joints.front().objectId},SelectionSource::ProjectTree);settleEvents(100);
+            }
             bool continuedEdit = false;
             if (jointSelected) {
                 QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);

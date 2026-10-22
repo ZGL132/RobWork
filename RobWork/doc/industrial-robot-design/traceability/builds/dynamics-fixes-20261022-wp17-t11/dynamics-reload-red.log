@@ -1,0 +1,25 @@
+Note: Google Test filter = DynWindow.ReloadedResultClearsPreviousMarkers_DYN08
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DynWindow
+[ RUN      ] DynWindow.ReloadedResultClearsPreviousMarkers_DYN08
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(235): error: Value of: chart->hasPeak()
+  Actual: true
+Expected: false
+刷新后的标记必须重新定位，不能沿用旧结果
+
+C:\Users\zgl18\.codex\worktrees\0ae2\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\gui_test\DynamicsPanelGuiTest.cpp(236): error: Value of: reading->text().contains(QString::fromUtf8("已同步"))
+  Actual: true
+Expected: false
+新结果尚未回放，不能显示上一结果的三维成功反馈
+
+[  FAILED  ] DynWindow.ReloadedResultClearsPreviousMarkers_DYN08 (295 ms)
+[----------] 1 test from DynWindow (295 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (295 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DynWindow.ReloadedResultClearsPreviousMarkers_DYN08
+
+ 1 FAILED TEST

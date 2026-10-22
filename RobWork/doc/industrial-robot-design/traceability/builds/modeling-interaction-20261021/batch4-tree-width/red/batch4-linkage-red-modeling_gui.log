@@ -1,0 +1,82 @@
+Note: Google Test filter = *DomainTreeFeeds*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ModelingUiModuleHostWiring
+[ RUN      ] ModelingUiModuleHostWiring.DomainTreeFeedsSharedHighlightAndClear_MDL07_T30
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(148): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{id}
+    Which is: { 16-byte object <AD-1F 7A-CA 8E-39 FC-1C 3A-9A 17-37 90-3C 4F-A2> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(149): error: Expected equality of these values:
+  selection.selectionSource()
+    Which is: (nullopt)
+  ui::SelectionSource::ProjectTree
+    Which is: 1-byte object <00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(150): error: Expected equality of these values:
+  highlight->current
+    Which is: ""
+  id.toCanonical()
+    Which is: "obj-ad1f7aca8e39fc1c3a9a1737903c4fa2"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(148): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{id}
+    Which is: { 16-byte object <C7-30 52-33 F7-52 A4-08 33-2E 2F-CE C7-7C AB-D5> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(149): error: Expected equality of these values:
+  selection.selectionSource()
+    Which is: (nullopt)
+  ui::SelectionSource::ProjectTree
+    Which is: 1-byte object <00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(150): error: Expected equality of these values:
+  highlight->current
+    Which is: ""
+  id.toCanonical()
+    Which is: "obj-c7305233f752a408332e2fcec77cabd5"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(148): error: Expected equality of these values:
+  selection.selectedObjectIds()
+    Which is: {}
+  std::vector<core::ObjectId>{id}
+    Which is: { 16-byte object <6B-BB DF-BA EA-7E F8-6C 26-0D F3-C8 34-44 C9-BA> }
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(149): error: Expected equality of these values:
+  selection.selectionSource()
+    Which is: (nullopt)
+  ui::SelectionSource::ProjectTree
+    Which is: 1-byte object <00>
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(150): error: Expected equality of these values:
+  highlight->current
+    Which is: ""
+  id.toCanonical()
+    Which is: "obj-6bbbdfbaea7ef86c260df3c83444c9ba"
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(159): error: Value of: selection.selectedObjectIds().empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(159): error: Value of: highlight->current.empty()
+  Actual: false
+Expected: true
+
+C:\Users\zgl18\.codex\worktrees\486b\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\gui_test\ModelingUiModuleHostWiringGuiTest.cpp(162): error: Value of: selection.selectedObjectIds().empty()
+  Actual: false
+Expected: true
+退订后不再写旧服务
+
+[  FAILED  ] ModelingUiModuleHostWiring.DomainTreeFeedsSharedHighlightAndClear_MDL07_T30 (700 ms)
+[----------] 1 test from ModelingUiModuleHostWiring (701 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (703 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ModelingUiModuleHostWiring.DomainTreeFeedsSharedHighlightAndClear_MDL07_T30
+
+ 1 FAILED TEST

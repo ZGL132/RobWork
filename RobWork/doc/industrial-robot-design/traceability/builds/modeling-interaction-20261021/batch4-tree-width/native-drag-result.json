@@ -1,0 +1,15 @@
+{
+  "platform": "windows",
+  "developerEnvironment": "VS2022 x64",
+  "nativeMouse": true,
+  "narrowScreenshot": "screenshots/native-drag-narrow.png",
+  "collapseScreenshot": "screenshots/native-drag-collapsed.png",
+  "restoreScreenshot": "screenshots/native-drag-restored.png",
+  "restorationHandleObservedX": 12,
+  "restorationTargetX": 250,
+  "y": 800,
+  "coordinates": "relative to observed main window, this desktop only",
+  "visualInspection": "narrow, collapsed, restored screenshots inspected",
+  "applicationClosedNormally": true,
+  "limitations": "first restoration started outside actual handle and had no effect; final drag succeeded"
+}

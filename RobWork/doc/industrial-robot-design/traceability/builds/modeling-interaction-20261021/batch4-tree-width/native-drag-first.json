@@ -1,0 +1,9 @@
+{
+  "pid": 31396,
+  "hwnd": 65147874,
+  "fromX": 250,
+  "toX": 90,
+  "y": 800,
+  "method": "native-mouse-drag",
+  "foregroundConfirmed": true
+}
