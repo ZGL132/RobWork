@@ -1,0 +1,19 @@
+{
+  "pathsChanged": 195,
+  "scriptsChanged": [
+    "RobWork/scripts/industrialrobot/test-governance-lite.ps1"
+  ],
+  "protectedChanged": [],
+  "beforeRawSha256": "d922652abaadcbe49c0796e017149dc2371e9297c53ea2656bdf89e371920537",
+  "savedBeforeRawSha256": "d922652abaadcbe49c0796e017149dc2371e9297c53ea2656bdf89e371920537",
+  "beforeRawEqual": true,
+  "beforeNormalizedEqual": true,
+  "afterRawSha256": "1a1bcc25d8bf65d73f319eaabcf8a7a369d27123499a0662059cf782252d2d77",
+  "archiveCounts": {
+    "19": 86,
+    "20": 52
+  },
+  "archiveRawEqual": true,
+  "functionCount": 14,
+  "definitionCount": 14
+}

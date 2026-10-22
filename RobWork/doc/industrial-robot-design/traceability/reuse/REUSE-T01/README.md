@@ -115,3 +115,7 @@ B21审4治理脚本14条pending，修原lite夹具漏带catalog的gtest检出面
 2026-10-23按所有者新指示持续本地执行，不同步远程；B19/B20局部验收原件分别归档于acceptance/REUSE-T01-batch19-20261023与batch20-20261023；两者均不授全T01/T02。
 
 B22补execution登记/接纳26定义，原25例passed、新2例1passed1failed，总26p1f；F964拒绝终结半写保持open，详见execution-admission-audit.md。零产品变更，非全execution/T01/T02。
+
+B23补范围/批次/flake三脚本18关系；原探针零执行误绿已真实复现并修补原入口，双PS解析红各4p3f、绿各7p0f，健康/零执行真实进程及5项治理探测符合预期。详见governance-scope-flake-audit.md，非全T01/T02，无远程同步。
+
+B21冻结cff60ddd4局部独验通过，92件原样归档于traceability/acceptance/REUSE-T01-batch21-20261023；不授全T01/T02。

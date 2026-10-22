@@ -1,0 +1,13 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+powershell.exe : REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+At C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d161\before\test-governance-lite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (REUSE-MISSING :...t/test-main.cpp:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-f7b2d791601c4971be463cd1e79b8df0\RobWork\scripts\industrialrobot\validat
+e-docs.ps1 : H1-H6 reuse governance failed
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+ 

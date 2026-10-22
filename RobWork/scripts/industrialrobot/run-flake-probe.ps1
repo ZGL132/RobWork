@@ -3,7 +3,7 @@
 # 职责：把"负载下偶发失败"从不可复现的口头现象变成可留痕事件——对指定测试
 # 可执行文件重复运行 N 次，逐次落盘 stdout/stderr 与 gtest XML；可选在运行
 # 期间制造后台 CPU 负载（模拟并行编译/验收环境）。任一次失败即：
-#   ① 在汇总里点名失败用例（XML 的 testcase[failure] 节点，不靠翻日志）；
+#   ① 在汇总里点名失败用例（XML 的 testcase[failure/error] 节点，不靠翻日志）；
 #   ② 保留该次完整输出与 XML 路径；
 #   ③ 退出码 1（便于 CI/批处理判红）。
 #
@@ -15,7 +15,7 @@
 # 用法：
 #   pwsh -File run-flake-probe.ps1 -TestExe build/RobWorkStudio/bin/Release/sdurws_ird_ui_test.exe `
 #        [-Repeat 10] [-LoadJobs 4] [-OutDir traceability/builds/flake-probe/<名字>] [-GtestFilter "*"]
-#   pwsh -File run-flake-probe.ps1 -SelfTest      # 自检：合成失败 XML→解析器必须点名
+#   pwsh -File run-flake-probe.ps1 -SelfTest      # 自检：失败点名与零执行拒绝
 #
 # 约定：
 #   - 测试 exe 的运行期 DLL 前置（框架 bin / vcpkg bin / Qt bin / python）由调用方
@@ -48,37 +48,57 @@ function Get-FailedTestNames([string]$XmlPath) {
   if (-not (Test-Path $XmlPath)) { return @('<xml-missing>') }
   try { [xml]$x = Get-Content -LiteralPath $XmlPath -Raw } catch { return @('<xml-unparsable>') }
   $names = @()
-  # gtest XML 结构：testsuites/testsuite/testcase；失败用例带 <failure> 子节点。
-  foreach ($tc in $x.SelectNodes('//testcase')) {
-    if ($tc.SelectSingleNode('failure')) {
+  # 零用例常由 filter 拼错造成；进程 exit0 不能证明测试已执行（AGENTS §4.2）。
+  $cases = @($x.SelectNodes('//testcase'))
+  if ($cases.Count -eq 0) { return @('<xml-no-tests>') }
+  $executed = 0
+  foreach ($tc in $cases) {
+    # error 与 failure 同属失败证据；跳过项不计入实际执行数。
+    if ($tc.SelectSingleNode('failure') -or $tc.SelectSingleNode('error')) {
       $suite = "$($tc.parentNode.GetAttribute('name'))"
       $names += ("{0}.{1}" -f $suite, $tc.name)
+      $executed++
+    } elseif (-not $tc.SelectSingleNode('skipped') -and $tc.GetAttribute('status') -ne 'notrun') {
+      $executed++
     }
   }
+  # 全跳过/禁用同样不能支持“负载下稳定”的结论，必须显式拒绝假绿。
+  if ($executed -eq 0) { return @('<xml-no-executed-tests>') }
   return $names
 }
 
-# ---------- 自检：合成一个含失败用例的 XML，解析器必须点名 ----------
+# ---------- 自检：共用正式解析器，验证失败与零执行均可判红 ----------
 if ($SelfTest) {
   $tmp = Join-Path ([IO.Path]::GetTempPath()) ("flake-selftest-" + [guid]::NewGuid().ToString('N') + ".xml")
-  @'
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites tests="2" failures="1">
-  <testsuite name="SelfTestSuite" tests="2" failures="1">
-    <testcase name="Passes" file="x.cpp" line="1"/>
-    <testcase name="FailsOnPurpose" file="x.cpp" line="2">
-      <failure message="synthetic">boom</failure>
-    </testcase>
-  </testsuite>
-</testsuites>
-'@ | Set-Content -LiteralPath $tmp -Encoding utf8
-  $names = @(Get-FailedTestNames $tmp)
-  Remove-Item -LiteralPath $tmp -Force
-  if ($names.Count -eq 1 -and $names[0] -eq 'SelfTestSuite.FailsOnPurpose') {
-    Write-Output "run-flake-probe: SELFTEST PASS（合成失败用例被正确点名: $($names[0])）"
+  $cases = @(
+    @{ Name='missing'; Xml=$null; Expected=@('<xml-missing>') },
+    @{ Name='malformed'; Xml='<testsuites'; Expected=@('<xml-unparsable>') },
+    @{ Name='zero'; Xml='<testsuites tests="0"/>'; Expected=@('<xml-no-tests>') },
+    @{ Name='healthy'; Xml='<testsuites><testsuite name="S"><testcase name="Healthy"/></testsuite></testsuites>'; Expected=@() },
+    @{ Name='failure'; Xml='<testsuites><testsuite name="S"><testcase name="Failed"><failure/></testcase></testsuite></testsuites>'; Expected=@('S.Failed') },
+    @{ Name='error'; Xml='<testsuites><testsuite name="S"><testcase name="Errored"><error/></testcase></testsuite></testsuites>'; Expected=@('S.Errored') },
+    @{ Name='all-skipped'; Xml='<testsuites><testsuite name="S"><testcase name="Skipped"><skipped/></testcase></testsuite></testsuites>'; Expected=@('<xml-no-executed-tests>') }
+  )
+  $passed = 0
+  try {
+    foreach ($case in $cases) {
+      # 每例独立文件状态，missing 例不得误读前例遗留 XML。
+      if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force }
+      if ($null -ne $case.Xml) { [IO.File]::WriteAllText($tmp, $case.Xml) }
+      $names = @(Get-FailedTestNames $tmp)
+      $ok = ($names.Count -eq $case.Expected.Count -and ($names -join '|') -ceq ($case.Expected -join '|'))
+      if ($ok) { $passed++ }
+      Write-Output ("  selftest {0}: {1} actual=[{2}]" -f $case.Name, $ok, ($names -join ', '))
+    }
+  } finally {
+    if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force }
+  }
+  $failed = $cases.Count - $passed
+  if ($failed -eq 0) {
+    Write-Output "run-flake-probe: SELFTEST PASS（executed=$($cases.Count) passed=$passed failed=0 skipped=0）"
     exit 0
   }
-  Write-Output "run-flake-probe: SELFTEST FAIL（解析结果: $($names -join ', ')）"
+  Write-Output "run-flake-probe: SELFTEST FAIL（executed=$($cases.Count) passed=$passed failed=$failed skipped=0）"
   exit 1
 }
 

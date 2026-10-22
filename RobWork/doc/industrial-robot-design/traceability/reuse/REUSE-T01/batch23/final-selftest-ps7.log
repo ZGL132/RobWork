@@ -1,0 +1,8 @@
+  selftest missing: True actual=[<xml-missing>]
+  selftest malformed: True actual=[<xml-unparsable>]
+  selftest zero: True actual=[<xml-no-tests>]
+  selftest healthy: True actual=[]
+  selftest failure: True actual=[S.Failed]
+  selftest error: True actual=[S.Errored]
+  selftest all-skipped: True actual=[<xml-no-executed-tests>]
+run-flake-probe: SELFTEST PASS（executed=7 passed=7 failed=0 skipped=0）

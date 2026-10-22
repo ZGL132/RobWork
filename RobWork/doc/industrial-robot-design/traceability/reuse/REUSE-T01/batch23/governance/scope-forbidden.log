@@ -1,0 +1,3 @@
+verify-task-scope: REUSE-T01 base=cff60ddd4a05 head=daf0dcd175fb changed=20 allowedRules=2682 forbiddenRules=5
+  [forbidden] RobWork/doc/industrial-robot-design/reuse/catalog.json  <= RobWork/doc/industrial-robot-design/reuse/catalog.json
+verify-task-scope: FAIL REUSE-T01 —— 1 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）

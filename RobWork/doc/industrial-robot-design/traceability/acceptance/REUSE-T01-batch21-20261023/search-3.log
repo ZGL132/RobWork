@@ -1,0 +1,28 @@
+RobWork/RobWork/gtest/test-main.cpp:25:	return RUN_ALL_TESTS();
+RobWork/RobWork/gtest/CMakeLists.txt:8:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+RobWork/RobWork/gtest/CMakeLists.txt:35:set(RWMAIN_TEST_SRC TestEnvironment.cpp test-main.cpp)
+RobWork/RobWork/gtest/CMakeLists.txt:36:add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+RobWork/RobWork/gtest/CMakeLists.txt:37:target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+RobWork/RobWork/gtest/CMakeLists.txt:44:    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)
+RobWork/RobWork/gtest/CMakeLists.txt:57:    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)
+RobWork/RobWork/gtest/CMakeLists.txt:70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+RobWork/RobWork/gtest/CMakeLists.txt:132:    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:162:    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:179:    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:209:    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:260:    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)
+RobWork/RobWork/gtest/CMakeLists.txt:273:    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)
+RobWork/RobWork/gtest/CMakeLists.txt:289:    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)
+RobWork/RobWork/gtest/CMakeLists.txt:317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+RobWork/RobWork/gtest/CMakeLists.txt:333:    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+RobWork/RobWork/gtest/CMakeLists.txt:374:    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)
+RobWork/RobWork/gtest/CMakeLists.txt:387:    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:6:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:31:add_library(sdurwsim-gtest-main STATIC TestEnvironment.cpp test-main.cpp)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:32:target_link_libraries(sdurwsim-gtest-main ${RW_BUILD_WITH_LIBRARIES_GTEST} RW::sdurw_core sdurwsim_test)
+RobWork/RobWorkSim/gtest/CMakeLists.txt:38:    set(COMMON_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST})
+RobWork/RobWorkSim/gtest/CMakeLists.txt:50:    set(DYNAMICS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST}
+RobWork/RobWorkSim/gtest/CMakeLists.txt:65:    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+RobWork/RobWorkSim/gtest/CMakeLists.txt:83:    set(PERFORMANCE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode
+RobWork/RobWorkSim/gtest/CMakeLists.txt:101:    set(SENSORS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+RobWork/RobWorkSim/gtest/CMakeLists.txt:130:    set(TASKSIMULATION_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode

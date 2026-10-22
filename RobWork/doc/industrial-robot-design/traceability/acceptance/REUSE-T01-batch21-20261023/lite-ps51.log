@@ -1,0 +1,9 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+PASS default-ignores-optional-index
+PASS deep-rejects-invalid-index
+governance-lite: PASS (8 passed, 0 failed, 0 skipped)
