@@ -1,0 +1,9 @@
+script-audit-no-fake-target : True (exit=0 expected=PASS)
+script-audit-reject-cmake-target : True (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-product-escape : True (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-other-directory : True (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-fake-migration : True (exit=1 expected=REUSE-EXECUTION)
+script-audit-require-own-context : True (exit=1 expected=REUSE-EXECUTION)
+script-audit-stale-context : True (exit=1 expected=REUSE-FRESHNESS)
+script-audit-reject-production-disguise : True (exit=1 expected=REUSE-EXECUTION)
+reuse selftests: passed=8 skipped=0 failed=0

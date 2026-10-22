@@ -201,14 +201,36 @@ function CheckFunctions($grants, [string[]]$changedSources) {
         if ($matrix.schemaVersion -ne 'ird-reuse-functions/1' -or $matrix.unit -notin @($units+'foundation-governance') -or
             $file -ne ($design+'reuse/functions/'+$matrix.unit+'.json') -or -not $matrix.PSObject.Properties['functions']) { Fail 'FUNCTION' $file }
         foreach ($r in $matrix.functions) {
-            RequireFields $r @('functionId','ownerUnit','requirements','sources','targets','usageRole','permissionRef','capabilityId','decision','status','search','differences','inputs') 'FUNCTION'
+            RequireFields $r @('functionId','ownerUnit','requirements','sources','usageRole','permissionRef','capabilityId','decision','status','search','differences') 'FUNCTION'
             $key="$($r.functionId)|$($r.capabilityId)"
             if ($ids.ContainsKey($key) -or $r.ownerUnit -ne $matrix.unit -or $r.usageRole -notin @('owner','adapter') -or
                 $r.decision -notin @('direct','adapter','business-specific','pending','proposal') -or $r.status -notin @('audited','pending','proposal','migrated','closed') -or
                 ($r.capabilityId -ne 'NONE' -and -not $caps.ContainsKey($r.capabilityId)) -or -not $r.search.command -or -not $r.search.conclusion) { Fail 'FUNCTION' $key }
             if ($r.capabilityId -eq 'NONE' -and $r.decision -notin @('business-specific','pending','proposal')) { Fail 'FUNCTION' 'NONE cannot claim upstream reuse' }
-            if ($r.status -in @('migrated','closed') -and $r.decision -in @('pending','proposal')) { Fail 'FUNCTION' 'unresolved cannot migrate' }
+            if ($null -eq $r.PSObject.Properties['execution'] -and $r.status -in @('migrated','closed') -and $r.decision -in @('pending','proposal')) { Fail 'FUNCTION' 'unresolved cannot migrate' }
             CheckPermissionRef $r.permissionRef; $ids[$key]=$true; $rows[$key]=$r
+            # 治理脚本是解释执行关系，没有CMake编译目标；只允许精确脚本目录
+            # 的待审计登记，不能通过execution标签绕过产品源/权限或伪称迁移关闭。
+            # 结项仍由最终模式拒绝pending/proposal，不把格式支持当治理语义PASS。
+            $scriptAudit=$null -ne $r.PSObject.Properties['execution']
+            if ($scriptAudit) {
+                RequireFields $r.execution @('kind','entry','command') 'EXECUTION'
+                $entry=SafePath "$($r.execution.entry)"
+                if ($matrix.unit -ne 'foundation-governance' -or $r.usageRole -ne 'owner' -or
+                    $r.execution.kind -ne 'governance-script' -or
+                    $entry -notmatch '^RobWork/scripts/industrialrobot/[^/]+\.ps1$' -or
+                    -not "$($r.execution.command)".Contains($entry) -or
+                    $r.capabilityId -ne 'NONE' -or $r.decision -notin @('pending','proposal') -or
+                    $r.status -notin @('pending','proposal') -or @($r.targets).Count -ne 0 -or
+                    -not @($r.sources).Count -or $entry -notin @($r.inputs.path)) { Fail 'EXECUTION' $r.functionId }
+                foreach ($s in $r.sources) {
+                    # 允许真实入口dot-source的同目录私有helper；两者都须完整摘要绑定。
+                    # 具体dot-source调用链由独立语义验收核对，字符串命中不是执行证明。
+                    if ($s.path -notmatch '^RobWork/scripts/industrialrobot/[^/]+\.ps1$' -or $s.path -notin @($r.inputs.path)) { Fail 'EXECUTION' 'source/entry/context must bind exact governance scripts' }
+                }
+            } else {
+                RequireFields $r @('targets','inputs') 'FUNCTION'
+            }
             foreach ($input in $r.inputs) { [void](CheckBinding $input) }
             foreach ($target in $r.targets) {
                 $registered=$false
@@ -220,7 +242,7 @@ function CheckFunctions($grants, [string[]]$changedSources) {
             foreach ($s in $r.sources) {
                 RequireFields $s @('path','symbol','startLine','endLine','sha256') 'FUNCTION'
                 $path=SafePath $s.path; $txt=ReadText $path
-                if (-not $path.StartsWith($product) -or [int]$s.startLine -lt 1 -or [int]$s.endLine -lt [int]$s.startLine) { Fail 'FUNCTION' $path }
+                if ((-not $scriptAudit -and -not $path.StartsWith($product)) -or [int]$s.startLine -lt 1 -or [int]$s.endLine -lt [int]$s.startLine) { Fail 'FUNCTION' $path }
                 $lines=@(($txt -replace "`r`n","`n") -split "`n")
                 if ([int]$s.endLine -gt $lines.Count) { Fail 'FUNCTION' "$path : region bounds" }
                 $region=($lines[([int]$s.startLine-1)..([int]$s.endLine-1)] -join "`n")
@@ -231,7 +253,7 @@ function CheckFunctions($grants, [string[]]$changedSources) {
                 $unresolvedBaseline=($tree.ContainsKey($path) -and $path -notin $changedSources -and
                     $r.status -in @('pending','proposal') -and $r.decision -in @('pending','proposal'))
                 if ($RequireMigrationComplete -and $unresolvedBaseline) { Fail 'MIGRATION' "unresolved function $($r.functionId)" }
-                CheckSourcePermission $path $region $grants -AuditOnly:$unresolvedBaseline
+                if (-not $scriptAudit) { CheckSourcePermission $path $region $grants -AuditOnly:$unresolvedBaseline }
             }
             if ($r.replaces) {
                 foreach ($old in $r.replaces) { $old=SafePath $old; if (-not $tree.ContainsKey($old)) { Fail 'FUNCTION' "unknown replaced baseline $old" } }

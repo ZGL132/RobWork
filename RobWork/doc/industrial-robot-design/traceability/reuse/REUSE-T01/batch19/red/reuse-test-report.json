@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "1CF30F2D07419BA21B8B7DA7C43331A190A3DC0E0B37C1CDE6110DD98E46A77F",
+  "helperSha256": "25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57",
+  "driverSha256": "1280372559625AB0F7C6EA0E18FF436382D516A5A2459FDAB4B7BA759C51916A",
+  "expected": 8,
+  "executed": 8,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 0,
+  "skipped": 0,
+  "failed": 8,
+  "complete": true,
+  "tests": [
+    {
+      "name": "script-audit-no-fake-target",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "PASS",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-reject-cmake-target",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : fixture.governance.entry|NONE : target needs bound CMake registration sdurws_ird_core\r\n"
+    },
+    {
+      "name": "script-audit-reject-product-escape",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-reject-other-directory",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-reject-fake-migration",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-require-own-context",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-stale-context",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    },
+    {
+      "name": "script-audit-reject-production-disguise",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-FUNCTION : missing targets\r\n"
+    }
+  ]
+}

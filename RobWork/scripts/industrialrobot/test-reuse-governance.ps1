@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 142
+$driverFailure = ''; $expectedTests = 152
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -56,6 +56,22 @@ function MathMatrix {
     return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='runtime';functions=@($row)}
 }
 function PutMath($m) { PutJson ($reuse+'functions/runtime.json') $m }
+# 治理脚本的执行关系不伪装成CMake目标；仅在隔离副本写入代表性审计行。
+# 这不是脚本语义验收，反例验证该标记不能放宽产品目录或权限红线。
+function ScriptMatrix {
+    $path='RobWork/scripts/industrialrobot/commit-lint.ps1'
+    $text='# synthetic governance audit fixture only';Put $path $text
+    $r=[pscustomobject]@{
+        functionId='fixture.governance.entry';ownerUnit='foundation-governance';requirements=@('H6');
+        sources=@([pscustomobject]@{path=$path;symbol='audit';startLine=1;endLine=1;sha256=(Hash $text)});
+        targets=@();usageRole='owner';permissionRef='ARCH:3.6.4';capabilityId='NONE';decision='pending';status='pending';
+        search=[pscustomobject]@{command='rg fixture';conclusion='仅治理执行关系格式夹具，不冒充语义审计'};
+        differences='无CMake编译target';inputs=@([pscustomobject]@{path=$path;sha256=(Hash $text)});
+        execution=[pscustomobject]@{kind='governance-script';entry=$path;command=('pwsh -NoProfile -File '+$path)}
+    }
+    return [pscustomobject]@{schemaVersion='ird-reuse-functions/1';unit='foundation-governance';functions=@($r)}
+}
+function PutScriptMatrix($m) { PutJson ($reuse+'functions/foundation-governance.json') $m }
 function IsolateFinalClosureMatrices {
     # 这两项专测“新增文件缺独立关闭记录”，不能被真实审计中的 pending 抢先截断。
     # 仅清空本 Case 的隔离副本；PutJson 保留原字节并在 finally 恢复。
@@ -224,6 +240,20 @@ try {
     & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'fixture acceptance only'
     if ($LASTEXITCODE) { throw 'fixture acceptance commit failed' }
     $script:fixtureAcceptanceCommit=(& git -C $sandbox rev-parse HEAD).Trim()
+    Case 'script-audit-no-fake-target' 'PASS' { PutScriptMatrix (ScriptMatrix) }
+    Case 'script-audit-sourced-helper' 'PASS' {
+        $m=ScriptMatrix;$path='RobWork/scripts/industrialrobot/reuse-contract.ps1';$text='# audit helper fixture';Put $path $text
+        $m.functions[0].sources[0].path=$path;$m.functions[0].sources[0].sha256=Hash $text
+        $m.functions[0].inputs+=([pscustomobject]@{path=$path;sha256=(Hash $text)});PutScriptMatrix $m
+    }
+    Case 'script-audit-require-real-entry-binding' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].execution.entry='RobWork/scripts/industrialrobot/other.ps1';$m.functions[0].execution.command='pwsh -File RobWork/scripts/industrialrobot/other.ps1';PutScriptMatrix $m }
+    Case 'script-audit-reject-cmake-target' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].targets=@('sdurws_ird_core');PutScriptMatrix $m }
+    Case 'script-audit-reject-product-escape' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].sources[0].path=$product+'kinematics/src/Fk.cpp';PutScriptMatrix $m }
+    Case 'script-audit-reject-other-directory' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].execution.entry='RobWork/other.ps1';PutScriptMatrix $m }
+    Case 'script-audit-reject-fake-migration' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].status='migrated';PutScriptMatrix $m }
+    Case 'script-audit-require-own-context' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].inputs=@();PutScriptMatrix $m }
+    Case 'script-audit-stale-context' 'REUSE-FRESHNESS' { $m=ScriptMatrix;$m.functions[0].inputs[0].sha256='bad';PutScriptMatrix $m }
+    Case 'script-audit-reject-production-disguise' 'REUSE-EXECUTION' { $m=ScriptMatrix;$m.functions[0].execution.command='pwsh -File missing.ps1';PutScriptMatrix $m }
     Case '01-clean' 'PASS' {}
     Case '02-fixed-baseline' 'REUSE-BASELINE' { $j=GetJson ($reuse+'catalog.json'); $j.baselineCommit='HEAD'; PutJson ($reuse+'catalog.json') $j }
     Case '03-all-units' 'REUSE-UNITS' { $j=GetJson ($reuse+'catalog.json'); $j.units=@('kinematics'); PutJson ($reuse+'catalog.json') $j }

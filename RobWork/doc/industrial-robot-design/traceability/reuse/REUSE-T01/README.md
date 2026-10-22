@@ -107,3 +107,5 @@ B16语义独立首验FAIL（B16-P2-01），原件见`../../acceptance/REUSE-T01-
 B18补策略解析、限位、作用域和后端构建46条关系，见`policy-boundary-audit.md`。原policy目标实跑新增2探测1passed/1failed，F-961登记open；全policy回归未跑，T01未退出。B16返工独验PASS仅关闭B16-P2-01，原件见`../../acceptance/REUSE-T01-batch16-r2-20261023/`。
 
 B20补project事务/Win32原语/恢复/查询/归档47条关系，见`project-transaction-audit.md`；原目标新增6项2passed/4failed，F-962公共打开摘要漏检与F-963磁盘满误归类保持open。无产品变更、全T01未退出。
+
+B19为19个治理脚本的后续逐功能审计补最小待审格式，未登记/关闭这些脚本。旧helper新增8夹具红跑8failed，最终当前152夹具PS7与PS5.1各152passed、0failed/skipped/notRun，见`governance-script-format-audit.md`和`batch19/verification.json`；独立验收待冻结。原样归档B17/B18局部PASS，不授全T01/T02。
