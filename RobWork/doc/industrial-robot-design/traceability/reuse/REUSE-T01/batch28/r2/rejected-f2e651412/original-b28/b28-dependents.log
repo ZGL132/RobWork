@@ -1,0 +1,42 @@
+Microsoft (R) COFF/PE Dumper Version 14.42.34433.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file .cache\t01-probe-export\Release\ird_reuse_audit_probe.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    sdurwsim_bullet.dll
+    gtest.dll
+    sdurwsim.dll
+    sdurw_pathplanning.dll
+    sdurw_invkin.dll
+    sdurw_models.dll
+    sdurw_kinematics.dll
+    sdurw_math.dll
+    sdurw_common.dll
+    sdurw_core.dll
+    MSVCP140.dll
+    VCOMP140.DLL
+    VCRUNTIME140.dll
+    VCRUNTIME140_1.dll
+    api-ms-win-crt-runtime-l1-1-0.dll
+    api-ms-win-crt-math-l1-1-0.dll
+    api-ms-win-crt-heap-l1-1-0.dll
+    api-ms-win-crt-stdio-l1-1-0.dll
+    api-ms-win-crt-filesystem-l1-1-0.dll
+    api-ms-win-crt-environment-l1-1-0.dll
+    api-ms-win-crt-convert-l1-1-0.dll
+    api-ms-win-crt-locale-l1-1-0.dll
+    KERNEL32.dll
+
+  Summary
+
+        5000 .data
+        4000 .pdata
+       3B000 .rdata
+        1000 .reloc
+        1000 .rsrc
+       5A000 .text

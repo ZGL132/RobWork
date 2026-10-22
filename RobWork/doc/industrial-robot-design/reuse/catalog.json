@@ -3048,9 +3048,12 @@
         {
           "consumerUnit": "execution",
           "usageRole": "adapter",
-          "permissionRef": "ARCH:3.6.4",
+          "permissionRef": "ARCH:3.6",
           "operations": [
-            "value"
+            "construct",
+            "mutate",
+            "publish",
+            "query"
           ]
         }
       ],
@@ -3063,7 +3066,10 @@
       "examples": [],
       "docs": [],
       "operations": [
-        "value"
+        "construct",
+        "mutate",
+        "publish",
+        "query"
       ],
       "review": {
         "status": "candidate",

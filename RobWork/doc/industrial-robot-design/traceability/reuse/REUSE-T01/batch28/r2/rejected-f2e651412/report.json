@@ -1,0 +1,198 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B28",
+  "reviewedCommit": "f2e65141259cd43ee5e63799514a733908440355",
+  "baseCommit": "f6d3de37ddbc8375a334b456b058e3d548141484",
+  "verdict": "fail",
+  "scope": "仅B28局部审计增量；不授全T01/T02准入；两项真实探测失败是审计反例，不要求本批改产品",
+  "independence": {
+    "checkout": "local clone --no-hardlinks --no-checkout; detached frozen SHA; core.autocrlf=true; core.longpaths=true",
+    "remoteOperations": "none",
+    "sharedTreeModified": false,
+    "GUI": "not run"
+  },
+  "findings": [
+    {
+      "id": "B28-ACC-01",
+      "priority": 2,
+      "path": "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+      "line": 7,
+      "related": "RobWork/doc/industrial-robot-design/traceability/findings.json:9735",
+      "detail": "静态同族对象误写ContentVersion/ConfigStamp；Digest.hpp:143/151实际为std::hash<ContentVersion>与std::hash<ContentIdentity>。仅ObjectId新探测动态失败，其余不得称动态证实。",
+      "required": "修正实际类型名称并同步必要绑定摘要；保留原37项测试/探测证据及历史findings前缀，不修产品"
+    },
+    {
+      "id": "B28-ACC-02",
+      "priority": 2,
+      "path": "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+      "line": 831,
+      "detail": "69行中的55个qualifiedSymbol含点号语义标签；4个detail helper漏detail命名空间。ReferenceEventBus.publish(4791)、SourcedValue.equal(6527)均不是真实C++全限定符号；宏IdMacro也不是展开类型。源段及规范化摘要吻合不能补足该追溯错误。",
+      "required": "按真实命名空间/::/重载签名登记；匿名命名空间注明translation-unit私有；宏以真实类型代表并明确六类展开，不以functionId代替C++符号"
+    },
+    {
+      "id": "B28-ACC-03",
+      "priority": 2,
+      "path": "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+      "line": 665,
+      "detail": "69新增行permissionRef统一ARCH:3.6.4(worker边界)，不能精确说明core身份/来源/诊断值与参考事件的职责。全部pending因此未授权新依赖，但权限追溯依据仍需校正。",
+      "required": "按实际值/无状态形态与core诊断权威选择3.6/3.6.1/3.6.3等准确条款；Event仍候选，不向core下放新增依赖/构造权"
+    },
+    {
+      "id": "B28-ACC-04",
+      "priority": 2,
+      "path": "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+      "line": 3061,
+      "detail": "CORE-EVENT将能力及execution消费操作仅写value；实读Event构造对象、add/remove改变订阅表、fire调用listener，getListenerList暴露可变列表，属于有状态实例操作，不能冒充纯值权限。",
+      "required": "按对象和实际construct/mutate/publish/query等操作申报，明确任务或宿主私有实例及生命周期；保持candidate，不新增core依赖或WC构造权限"
+    }
+  ],
+  "rawChecks": {
+    "head": "f2e65141259cd43ee5e63799514a733908440355",
+    "base": "f6d3de37ddbc8375a334b456b058e3d548141484",
+    "originalManifestCount": 37,
+    "rawManifestErrors": [],
+    "priorFunctions": 11,
+    "currentFunctions": 80,
+    "addedFunctions": 69,
+    "deletedOrChangedPriorFunctions": [],
+    "bindingErrors": [],
+    "historicalFindingsSemanticPrefixEqual": true,
+    "historicalFindingsRawPrefixEqual": true,
+    "newFindings": [
+      "F-965"
+    ],
+    "addedDecisions": {
+      "pending": 69
+    },
+    "addedStatuses": {
+      "pending": 69
+    },
+    "capabilities": {
+      "NONE": 64,
+      "CORE-EVENT": 5
+    }
+  },
+  "tests": {
+    "algorithm": "independent Python arbitrary-precision; prime parsed fixed 128-bit hexadecimal, modulo 2^128",
+    "vectorsEqual": true,
+    "vectors": [
+      {
+        "name": "empty",
+        "hex": "",
+        "hi": "6c62272e07bb0142",
+        "lo": "62b821756295c58d",
+        "fold": "0eda065b652ec4cf"
+      },
+      {
+        "name": "a",
+        "hex": "61",
+        "hi": "d228cb696f1a8caf",
+        "lo": "78912b704e4a8964",
+        "fold": "aab9e019215005cb"
+      },
+      {
+        "name": "zero16",
+        "hex": "00000000000000000000000000000000",
+        "hi": "f1f90b7bf705b5ef",
+        "lo": "1517163834145e4d",
+        "fold": "e4ee1d43c311eba2"
+      },
+      {
+        "name": "sequence16",
+        "hex": "000102030405060708090a0b0c0d0e0f",
+        "hi": "2f57eaee93cff23f",
+        "lo": "8177f0c93cb989fd",
+        "fold": "ae201a27af767bc2"
+      }
+    ],
+    "executions": {
+      "core": {
+        "exit": 0,
+        "summary": {
+          "total": 64,
+          "passed": 64,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        }
+      },
+      "probe": {
+        "exit": 1,
+        "summary": {
+          "total": 6,
+          "passed": 4,
+          "failed": 2,
+          "skipped": 0,
+          "notRun": 0,
+          "envUnavailable": 0,
+          "datasetInvalid": 0,
+          "decisive": true
+        }
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "configure-toolchain-failed",
+      "exit": 1,
+      "log": "configure-toolchain-failed.log"
+    },
+    {
+      "name": "configure",
+      "exit": 0,
+      "log": "configure.log"
+    },
+    {
+      "name": "probe-build",
+      "exit": 0,
+      "log": "probe-build.log"
+    },
+    {
+      "name": "core-build",
+      "exit": 0,
+      "log": "core-build.log"
+    },
+    {
+      "name": "validate-task",
+      "exit": 0,
+      "log": "validate-task.log"
+    },
+    {
+      "name": "validate-reuse",
+      "exit": 0,
+      "log": "validate-reuse.log"
+    },
+    {
+      "name": "validate-docs",
+      "exit": 0,
+      "log": "validate-docs.log"
+    },
+    {
+      "name": "verify-task-scope",
+      "exit": 0,
+      "log": "verify-task-scope.log"
+    },
+    {
+      "name": "commit-lint",
+      "exit": 0,
+      "log": "commit-lint.log"
+    }
+  ],
+  "semanticReview": {
+    "Event": "已读原Event.hpp/EventTest.cpp、core参考总线及execution生产总线；直接列表同步遍历与专用线程/帧快照/锁外回调/drain/RAII差异真实；原EventTest两项与适用性一项实跑通过",
+    "core": "Identity/Provenance/SourcedValue/Evaluation/DiagData/Events只登记pending；稳定码归diagnostics、结果信封归evidence，core无依赖变化。泛型noexcept、聚合可变性、最终符号及消费者兼容性仍未验证",
+    "inputNarrowing": "可按真实源码族去掉无关IdentityTest/EventsTest/probe输入；仍保留或说明Provenance→Identity(ObjectId)/Digest(ContentVersion)，DiagData→Identity/Provenance/Units，Events→Identity/Evaluation(TaskState)的真实跨族载荷依赖。仅实际FNV/Event适用性行关联新probe，不提升pending",
+    "probe": "只调既有公开API并冻结固定向量，原EventTest源直接编译；未写哈希、事件总线或其他核心实现"
+  },
+  "limitations": [
+    "复用本地上游导出及vcpkg二进制，不声称重建或完整执行上游测试",
+    "未运行GUI、execution总线并发/重入/性能、泛型异常、持久化兼容性或真实生产迁移",
+    "首次完整toolchain配置因既有上游RobWorkConfig C:\\local转义冲突失败，失败日志保留；原prefix方式独立配置构建成功",
+    "首次clone checkout因Windows长路径失败；仅临时clone开启core.longpaths后强制checkout成功；raw校验使用git show字节而非CRLF检出字节",
+    "未fetch/pull/push、远程CI或合入；独立clone最终应保持clean"
+  ],
+  "generatedAtUtc": "2026-10-22T22:23:00.224881+00:00"
+}
