@@ -3245,7 +3245,9 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/**",
     "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/**",
-    "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md"
+    "RobWork/doc/industrial-robot-design/reuse/diagnostics-schema-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/**",
+    "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

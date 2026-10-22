@@ -1,0 +1,73 @@
+Note: Google Test filter = CodeManifestAudit.*:DiagCodes*.*:DiagnosticsError*.*
+[==========] Running 23 tests from 7 test suites.
+[----------] Global test environment set-up.
+[----------] 12 tests from DiagCodesRegistry
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableRegistersFullyAndManifestStable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim
+[       OK ] DiagCodesRegistry.DtReg1_BuiltinTableValuesMatchDesignVerbatim (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder
+[       OK ] DiagCodesRegistry.DtReg1_ManifestIndependentOfRegistrationOrder (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten
+[       OK ] DiagCodesRegistry.DtReg2_DuplicateRegistrationRejectedNotOverwritten (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection
+[       OK ] DiagCodesRegistry.DtReg5_VersionConflictIsDuplicateRejection (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected
+[       OK ] DiagCodesRegistry.DtReg2_TextKeyCollisionRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected
+[       OK ] DiagCodesRegistry.DtReg3_UnknownCodeFindNullptrAndOwnershipConflictRejected (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode
+[       OK ] DiagCodesRegistry.DtReg4_ExceptionTextIsNotACode (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_ParamSchemaValidation
+[       OK ] DiagCodesRegistry.DtReg5_ParamSchemaValidation (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable
+[       OK ] DiagCodesRegistry.DtReg5_DeprecateTombstoneKeptAndNavigable (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent
+[       OK ] DiagCodesRegistry.DtReg5_TombstoneDescriptorRegistrableAndManifestConsistent (0 ms)
+[ RUN      ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal
+[       OK ] DiagCodesRegistry.DtReg5_RuntimeMutationRejectedAfterSeal (0 ms)
+[----------] 12 tests from DiagCodesRegistry (3 ms total)
+
+[----------] 2 tests from DiagCodesVocabulary
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen
+[       OK ] DiagCodesVocabulary.DtPdiag3_Category15Severity4TokensFrozen (0 ms)
+[ RUN      ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata
+[       OK ] DiagCodesVocabulary.DtPdiag3_VocabularyCarriedByBuiltinCodeMetadata (0 ms)
+[----------] 2 tests from DiagCodesVocabulary (0 ms total)
+
+[----------] 2 tests from DiagCodesLevel
+[ RUN      ] DiagCodesLevel.F618_LevelMappingAcrossBuiltinTable
+[       OK ] DiagCodesLevel.F618_LevelMappingAcrossBuiltinTable (0 ms)
+[ RUN      ] DiagCodesLevel.F618_LevelSeverityMismatchRejected
+[       OK ] DiagCodesLevel.F618_LevelSeverityMismatchRejected (0 ms)
+[----------] 2 tests from DiagCodesLevel (0 ms total)
+
+[----------] 1 test from DiagCodesCoreBaseline
+[ RUN      ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode
+[       OK ] DiagCodesCoreBaseline.DtPdiag1_CodeFieldIsCoreDiagCode (0 ms)
+[----------] 1 test from DiagCodesCoreBaseline (0 ms total)
+
+[----------] 1 test from DiagCodesTextKeys
+[ RUN      ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique
+[       OK ] DiagCodesTextKeys.DtPdiag9_TextKeysFollowConventionAndAreUnique (0 ms)
+[----------] 1 test from DiagCodesTextKeys (0 ms total)
+
+[----------] 1 test from DiagnosticsErrors
+[ RUN      ] DiagnosticsErrors.DtReg_TokenTableComplete
+[       OK ] DiagnosticsErrors.DtReg_TokenTableComplete (0 ms)
+[----------] 1 test from DiagnosticsErrors (0 ms total)
+
+[----------] 4 tests from CodeManifestAudit
+[ RUN      ] CodeManifestAudit.EmptyMatchesIndependentHashlib_DT_REG_1
+[       OK ] CodeManifestAudit.EmptyMatchesIndependentHashlib_DT_REG_1 (0 ms)
+[ RUN      ] CodeManifestAudit.FixedDescriptorAndTombstoneMatchIndependentHashlib_DT_REG_1
+[       OK ] CodeManifestAudit.FixedDescriptorAndTombstoneMatchIndependentHashlib_DT_REG_1 (0 ms)
+[ RUN      ] CodeManifestAudit.SealPreservesExistingLookupAndRejectsWrites_DT_REG_2
+[       OK ] CodeManifestAudit.SealPreservesExistingLookupAndRejectsWrites_DT_REG_2 (0 ms)
+[ RUN      ] CodeManifestAudit.CoreAndRegistryShareCodeSyntaxForAsciiInputs
+[       OK ] CodeManifestAudit.CoreAndRegistryShareCodeSyntaxForAsciiInputs (48 ms)
+[----------] 4 tests from CodeManifestAudit (48 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 7 test suites ran. (52 ms total)
+[  PASSED  ] 23 tests.
