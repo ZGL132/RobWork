@@ -1,0 +1,11 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=10
+Write-Error: validate-context-pack: pack fingerprint table empty/unparsable: ACC-T01.md
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/tasks/foundation/ACC-T01.json (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/README.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/extra.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/REQUIREMENTS.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/reading-paths.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/asset-inventory.json (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: AGENTS.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/AGENTS.md (ACC-T01.md)
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md (ACC-T01.md)

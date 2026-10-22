@@ -1,0 +1,88 @@
+{
+  "executed": 16,
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "shell": "pwsh",
+      "case": "current-open-ref",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "historical-done",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "unverified-ready",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "machine-current",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "text-normalized",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "binary-nul-raw",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "large-unhashed",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "no-source-mutation",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "current-open-ref",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "historical-done",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "unverified-ready",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "machine-current",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "text-normalized",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "binary-nul-raw",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "large-unhashed",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "no-source-mutation",
+      "passed": true
+    }
+  ]
+}

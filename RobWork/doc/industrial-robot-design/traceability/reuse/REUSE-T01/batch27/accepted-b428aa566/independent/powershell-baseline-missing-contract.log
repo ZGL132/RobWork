@@ -1,0 +1,6 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\independent\before-validate-context-pack.ps1 : validate-con
+text-pack: pack fingerprint table empty/unparsable: ACC-T01.md
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,before-validate-context-pack.ps1
+ 

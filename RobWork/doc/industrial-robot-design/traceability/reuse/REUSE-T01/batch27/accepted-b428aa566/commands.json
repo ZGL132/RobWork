@@ -1,0 +1,121 @@
+[
+  {
+    "name": "lite-ps7",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\lite-ps7"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 70.18,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\lite-ps7.log"
+  },
+  {
+    "name": "lite-ps51",
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\lite-ps51"
+    ],
+    "exitCode": 1,
+    "elapsedSeconds": 47.75,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\lite-ps51.log"
+  },
+  {
+    "name": "task",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 25.36,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\task.log"
+  },
+  {
+    "name": "docs",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-docs.ps1"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 25.13,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\docs.log"
+  },
+  {
+    "name": "frozen-reuse",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-reuse.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+      "-Head",
+      "b428aa566144bdad777dbc14b985a6d90f435d65"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 324.39,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\frozen-reuse.log"
+  },
+  {
+    "name": "scope",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\verify-task-scope.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+      "-Base",
+      "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+      "-Head",
+      "b428aa566144bdad777dbc14b985a6d90f435d65"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 16.07,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\scope.log"
+  },
+  {
+    "name": "commit-lint",
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\commit-lint.ps1",
+      "-Range",
+      "7c263e78683a74b5532e6f99e7647a02b6f39ea7..b428aa566144bdad777dbc14b985a6d90f435d65"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 0.75,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\commit-lint.log"
+  },
+  {
+    "name": "diff-check",
+    "command": [
+      "git",
+      "diff",
+      "--check",
+      "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+      "b428aa566144bdad777dbc14b985a6d90f435d65"
+    ],
+    "exitCode": 2,
+    "elapsedSeconds": 0.11,
+    "log": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\diff-check.log"
+  }
+]

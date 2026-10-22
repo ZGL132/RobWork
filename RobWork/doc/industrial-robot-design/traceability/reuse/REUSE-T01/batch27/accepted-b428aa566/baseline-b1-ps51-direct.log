@@ -1,0 +1,13 @@
+At C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\baseline-lf\RobWork\scripts\industrialrobot\validate-b1-
+batch.ps1:13 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\baseline-lf\RobWork\scripts\industrialrobot\validate-b1-
+batch.ps1:47 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

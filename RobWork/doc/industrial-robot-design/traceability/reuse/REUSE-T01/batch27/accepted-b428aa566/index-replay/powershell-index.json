@@ -1,0 +1,105 @@
+{
+    "schemaVersion":  "ird-evidence-index/1",
+    "contentBasis":  "text-crlf-to-lf-v1",
+    "generatedAt":  "2026-10-23T05:58:34+08:00",
+    "generatedBy":  "index-evidence.ps1（治理 Task 7）",
+    "lifecycleRules":  {
+                           "current":  "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
+                           "superseded":  "被取代——需人工标记，首轮不自动判定",
+                           "historical":  "关联任务契约状态全部 done（已完成工作的历史留痕）",
+                           "unverified":  "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
+                       },
+    "summary":  {
+                    "totalFiles":  6,
+                    "totalBytes":  524412,
+                    "byKind":  {
+                                   "json-data":  1,
+                                   "pipeline-artifact":  1,
+                                   "log":  3,
+                                   "other":  1
+                               },
+                    "byLifecycle":  {
+                                        "current":  2,
+                                        "historical":  2,
+                                        "unverified":  2,
+                                        "superseded":  0
+                                    },
+                    "associated":  4,
+                    "unassociated":  2,
+                    "shaComputed":  5,
+                    "shaSkippedLarge":  1,
+                    "duplicateGroupsTotal":  1,
+                    "duplicateGroupsListed":  1
+                },
+    "duplicateGroups":  [
+                            {
+                                "sha256":  "880553fca8fcea94e325ee2cfb48e5a985cc797f39a14cc6d3cedecfeb2ae4d2",
+                                "paths":  [
+                                              "sample/REUSE-T01-copy.txt",
+                                              "sample/REUSE-T01-crlf.txt"
+                                          ]
+                            }
+                        ],
+    "entries":  [
+                    {
+                        "path":  "findings.json",
+                        "kind":  "json-data",
+                        "taskIds":  [
+
+                                    ],
+                        "bytes":  103,
+                        "sha256":  "b9534384c92cf2567dee03d8be337e4c23127ff51fedad025007b4d5e74c4e8c",
+                        "lifecycle":  "unverified"
+                    },
+                    {
+                        "path":  "pipeline/state.json",
+                        "kind":  "pipeline-artifact",
+                        "taskIds":  [
+
+                                    ],
+                        "bytes":  3,
+                        "sha256":  "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+                        "lifecycle":  "current"
+                    },
+                    {
+                        "path":  "sample/LITE-T01-nul.txt",
+                        "kind":  "log",
+                        "taskIds":  [
+                                        "LITE-T01"
+                                    ],
+                        "bytes":  5,
+                        "sha256":  "3ae063476ea12ae4569623bc8302e8351469618d9b2e40149d12db7e5ad5ad32",
+                        "lifecycle":  "unverified"
+                    },
+                    {
+                        "path":  "sample/REUSE-T01-copy.txt",
+                        "kind":  "log",
+                        "taskIds":  [
+                                        "REUSE-T01"
+                                    ],
+                        "bytes":  6,
+                        "sha256":  "880553fca8fcea94e325ee2cfb48e5a985cc797f39a14cc6d3cedecfeb2ae4d2",
+                        "lifecycle":  "historical"
+                    },
+                    {
+                        "path":  "sample/REUSE-T01-crlf.txt",
+                        "kind":  "log",
+                        "taskIds":  [
+                                        "REUSE-T01"
+                                    ],
+                        "bytes":  6,
+                        "sha256":  "880553fca8fcea94e325ee2cfb48e5a985cc797f39a14cc6d3cedecfeb2ae4d2",
+                        "lifecycle":  "current"
+                    },
+                    {
+                        "path":  "sample/REUSE-T01-large.bin",
+                        "kind":  "other",
+                        "taskIds":  [
+                                        "REUSE-T01"
+                                    ],
+                        "bytes":  524289,
+                        "sha256":  null,
+                        "lifecycle":  "historical"
+                    }
+                ]
+}

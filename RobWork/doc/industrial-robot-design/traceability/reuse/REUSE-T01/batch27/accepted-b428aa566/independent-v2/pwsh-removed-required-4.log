@@ -1,0 +1,2 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/reading-paths.md (ACC-T01.md)

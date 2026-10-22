@@ -1,0 +1,278 @@
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-all-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-build.log:1: trailing whitespace.
++build-context-pack: LITE-T01 -> context/packs/LITE-T01.md (fingerprints=8, blockedDeps=0, openFindings=0)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-changed-designref.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-changed-designref.log:3: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=1, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-fresh.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:2: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:3: trailing whitespace.
++e-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/tasks/foundation/LITE-T01.json (
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:4: trailing whitespace.
++LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:5: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:6: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:7: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-contract.log:7: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:2: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:3: trailing whitespace.
++e-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/README.md (LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:4: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:5: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:6: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-designref.log:6: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:2: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:3: trailing whitespace.
++e-context-pack: pack missing required fingerprint: AGENTS.md (LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:4: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:5: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:6: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-missing-rule.log:6: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:1: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:2: trailing whitespace.
++e-context-pack: pack not found for TaskId: LITE-T01
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:3: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:4: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:5: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-selected-no-dir.log:5: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:2: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:3: trailing whitespace.
++e-context-pack: pack violates PIPE authority red line (state copy '"phase"\s*:'): LITE-T01.md
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:4: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:5: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:6: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/powershell-state-copy.log:6: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-all-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-build.log:1: trailing whitespace.
++build-context-pack: LITE-T01 -> context/packs/LITE-T01.md (fingerprints=8, blockedDeps=0, openFindings=0)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-changed-designref.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack LITE-T01.md)——重跑 build-context-pack.ps1 -TaskId LITE-T01 刷新
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-changed-designref.log:2: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=1, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-fresh.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-contract.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-contract.log:2: trailing whitespace.
++Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/tasks/foundation/LITE-T01.json (LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-designref.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-designref.log:2: trailing whitespace.
++Write-Error: validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/README.md (LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-rule.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-missing-rule.log:2: trailing whitespace.
++Write-Error: validate-context-pack: pack missing required fingerprint: AGENTS.md (LITE-T01.md)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-selected-no-dir.log:1: trailing whitespace.
++Write-Error: validate-context-pack: pack not found for TaskId: LITE-T01
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-state-copy.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-green/pwsh-state-copy.log:2: trailing whitespace.
++Write-Error: validate-context-pack: pack violates PIPE authority red line (state copy '"phase"\s*:'): LITE-T01.md
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-all-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-build.log:1: trailing whitespace.
++build-context-pack: LITE-T01 -> context/packs/LITE-T01.md (fingerprints=8, blockedDeps=0, openFindings=0)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-changed-designref.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-changed-designref.log:3: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=1, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-fresh.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-missing-contract.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-missing-designref.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-missing-rule.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-selected-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:2: trailing whitespace.
++C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-pack.ps1 : validat
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:3: trailing whitespace.
++e-context-pack: pack violates PIPE authority red line (state copy '"phase"\s*:'): LITE-T01.md
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:4: trailing whitespace.
++    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:5: trailing whitespace.
++    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:6: trailing whitespace.
++ 
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/powershell-state-copy.log:6: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-all-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-build.log:1: trailing whitespace.
++build-context-pack: LITE-T01 -> context/packs/LITE-T01.md (fingerprints=8, blockedDeps=0, openFindings=0)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-changed-designref.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack LITE-T01.md)——重跑 build-context-pack.ps1 -TaskId LITE-T01 刷新
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-changed-designref.log:2: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=1, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-fresh.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-missing-contract.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-missing-designref.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-missing-rule.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=1, stale/drift=0, structural=0
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-selected-no-dir.log:1: trailing whitespace.
++validate-context-pack: no packs dir (nothing to validate)
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-state-copy.log:1: trailing whitespace.
++validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/context-red/pwsh-state-copy.log:2: trailing whitespace.
++Write-Error: validate-context-pack: pack violates PIPE authority red line (state copy '"phase"\s*:'): LITE-T01.md
+
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-1.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-1.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-1/default-ignores-optional-index.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-1/default-ignores-optional-index.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-1/default-ignores-optional-index.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r2-1.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r2-1.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r2-1/default-ignores-optional-index.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r2-1/default-ignores-optional-index.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r2-1/default-ignores-optional-index.log:14: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-changed-design.log:1: trailing whitespace.
++WARNING: validate-context-pack: STALE source: RobWork/doc/industrial-robot-design/context/README.md (pack 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-AGENTS.md.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-AGENTS.md.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-LITE-T01.json.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-LITE-T01.json.log:14: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-README.md.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-missing-README.md.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-selected-no-dir.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-selected-no-dir.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-selected-no-dir.log:13: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-state-copy.log:9: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/context-state-copy.log:13: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/deep-rejects-invalid-index.log:25: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/deep-rejects-invalid-index.log:30: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-green-r4-1/deep-rejects-invalid-index.log:30: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-longpath-failure-1.log:15: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/lite-longpath-failure-1.log:15: new blank line at EOF.

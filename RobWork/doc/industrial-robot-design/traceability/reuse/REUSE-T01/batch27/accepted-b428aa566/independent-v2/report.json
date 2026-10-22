@@ -1,0 +1,638 @@
+{
+  "executed": 38,
+  "passed": 38,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "shell": "pwsh",
+      "case": "all-no-directory",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "nothing to validate",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "selected-no-directory",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "pack not found",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "baseline-build",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "build-context-pack: ACC-T01",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\before-build-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "frozen-build",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "build-context-pack: ACC-T01",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\build-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "exact-baseline-fingerprint-rows-with-anchors-dedup-backslash",
+      "passed": true,
+      "rows": 9
+    },
+    {
+      "shell": "pwsh",
+      "case": "navigation-current-rules",
+      "passed": true
+    },
+    {
+      "shell": "pwsh",
+      "case": "fresh",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "fresh=1",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-0",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-1",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-2",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-3",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-4",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-5",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-6",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-7",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "removed-required-8",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "malformed-sha",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "fingerprint row is malformed",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "changed-required-rule",
+      "exitCode": 2,
+      "expected": 2,
+      "diagnostic": "STALE source",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "pwsh",
+      "case": "missing-source-kept-row",
+      "exitCode": 2,
+      "expected": 2,
+      "diagnostic": "MISSING source",
+      "passed": true,
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\pwsh-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "all-no-directory",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "nothing to validate",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "selected-no-directory",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "pack not found",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "baseline-build",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "build-context-pack: ACC-T01",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\before-build-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "frozen-build",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "build-context-pack: ACC-T01",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\build-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "exact-baseline-fingerprint-rows-with-anchors-dedup-backslash",
+      "passed": true,
+      "rows": 9
+    },
+    {
+      "shell": "powershell",
+      "case": "navigation-current-rules",
+      "passed": true
+    },
+    {
+      "shell": "powershell",
+      "case": "fresh",
+      "exitCode": 0,
+      "expected": 0,
+      "diagnostic": "fresh=1",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-0",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-1",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-2",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-3",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-4",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-5",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-6",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-7",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "removed-required-8",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "missing required fingerprint",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "malformed-sha",
+      "exitCode": 1,
+      "expected": 1,
+      "diagnostic": "fingerprint row is malformed",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "changed-required-rule",
+      "exitCode": 2,
+      "expected": 2,
+      "diagnostic": "STALE source",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    },
+    {
+      "shell": "powershell",
+      "case": "missing-source-kept-row",
+      "exitCode": 2,
+      "expected": 2,
+      "diagnostic": "MISSING source",
+      "passed": true,
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\repo-copy\\RobWork\\scripts\\industrialrobot\\validate-context-pack.ps1",
+        "-RepoRoot",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\independent-v2\\powershell-fixture\\RobWork",
+        "-TaskId",
+        "ACC-T01"
+      ]
+    }
+  ]
+}

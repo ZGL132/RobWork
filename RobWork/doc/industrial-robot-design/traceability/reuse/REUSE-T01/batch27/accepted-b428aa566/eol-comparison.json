@@ -1,0 +1,34 @@
+[
+  {
+    "name": "baseline-lf",
+    "commit": "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+    "coreAutocrlf": "false",
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\baseline-lf\\RobWork\\scripts\\industrialrobot\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\baseline-lf",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\baseline-lf-suite"
+    ],
+    "exitCode": 1
+  },
+  {
+    "name": "frozen-system-crlf",
+    "commit": "b428aa566144bdad777dbc14b985a6d90f435d65",
+    "coreAutocrlf": "true",
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\frozen-system-crlf\\RobWork\\scripts\\industrialrobot\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\frozen-system-crlf",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b27-accept-1f6654c1f4\\frozen-system-crlf-suite"
+    ],
+    "exitCode": 0
+  }
+]
