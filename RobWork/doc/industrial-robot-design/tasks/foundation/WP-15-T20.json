@@ -10,6 +10,8 @@
   "designRefs": ["units/kinematics.md#9.8", "units/kinematics.md#10", "development-task-breakdown.md#2.16"],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/**",
+    "docs/superpowers/**",
+    "RobWork/docs/superpowers/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinHostServicesAssembly.cpp",
@@ -31,8 +33,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/assembly/sdurws/ird/kinematics/KinematicsPluginAssembly.hpp"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/**"
   ],
   "outputs": ["implementation", "unit-tests", "traceability-update", "doc-update"],
   "verify": [
