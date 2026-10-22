@@ -38,7 +38,8 @@ function ReadText([string]$path, [switch]$Optional) {
     return ([IO.File]::ReadAllText($full)).TrimStart([char]0xFEFF)
 }
 function Digest([string]$text) {
-    $bytes = [Text.Encoding]::UTF8.GetBytes(($text -replace "`r`n", "`n").TrimEnd("`n") + "`n")
+    # 已验版本比较也会直接接收 git show 文本；摘要入口统一规范化，避免绕过 ReadText。
+    $bytes = [Text.Encoding]::UTF8.GetBytes(($text.TrimStart([char]0xFEFF) -replace "`r`n", "`n").TrimEnd("`n") + "`n")
     $sha = [Security.Cryptography.SHA256]::Create()
     try { return ([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant() } finally { $sha.Dispose() }
 }

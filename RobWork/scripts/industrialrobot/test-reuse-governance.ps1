@@ -15,7 +15,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 135
+$driverFailure = ''; $expectedTests = 136
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -130,9 +130,11 @@ function ProductionFixture([switch]$Replacement) {
     }
     $fixture=[pscustomobject]@{matrix=$m;report=$report;path=$e};WriteProduction $fixture;return $fixture
 }
-function ClosureFixture([switch]$Replacement) {
+function ClosureFixture([switch]$Replacement, [switch]$BomLog) {
     $script:caseCommit=(& git -C $sandbox rev-parse HEAD).Trim()
     $f=ProductionFixture -Replacement:$Replacement
+    # 日志属于已验输入；真实 BOM 必须在 acceptedPaths 比较中与工作树保持同一摘要。
+    if ($BomLog) { $p=$f.report.normal.log.path;Put $p ([char]0xFEFF+[IO.File]::ReadAllText((Join-Path $sandbox $p))) }
     # 报告 .log/.xml 可能匹配仓库忽略规则；这些显式合成夹具也必须进入被验 Git 对象。
     & git -C $sandbox add -f -- $reuse ($design+'tasks/GOV-T22.json')
     if ($Replacement) { & git -C $sandbox add -- ($product+'runtime/src/BaseWorldTransform.cpp') ($product+'runtime/src/RotationAdapterProbe.cpp') ($design+'tasks/REUSE-T99.json') }
@@ -313,6 +315,7 @@ try {
     Case 'function-deleted-replacement-unknown' 'REUSE-FUNCTION' { $m=MathMatrix;$m.functions[0] | Add-Member replaces @($product+'not-a-baseline.cpp');PutMath $m }
     Case 'production-review-version-fake' 'REUSE-SUITABILITY' { [void](ProductionFixture);$c=GetJson ($reuse+'catalog.json');@($c.capabilities | Where-Object { $_.id -eq 'MATH-ROT' })[0].review.version='0000000000000000000000000000000000000000';PutJson ($reuse+'catalog.json') $c }
     Case 'closure-current-positive' 'PASS' { [void](ClosureFixture) }
+    Case 'closure-bom-log-positive' 'PASS' { [void](ClosureFixture -BomLog) }
     Case 'closure-deleted-replacement-positive' 'PASS' { [void](ClosureFixture -Replacement) }
     Case 'closure-changed-function-after-pass' 'REUSE-CLOSURE' { $f=ClosureFixture;$f.matrix.functions[0].differences='changed after acceptance';WriteProduction $f }
     Case 'closure-deletion-missing-replaces' 'REUSE-CLOSURE' { $f=ClosureFixture -Replacement;$f.matrix.functions[0].PSObject.Properties.Remove('replaces');WriteProduction $f }
