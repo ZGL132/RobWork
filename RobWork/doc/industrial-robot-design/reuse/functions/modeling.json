@@ -918,20 +918,35 @@
         "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
-      "differences": "呈现私有公式同样应复用RPY；不得为冒烟header-only重写，候选换序和奇异往返需验证",
+      "differences": "呈现私有公式同样应复用RPY；不得为冒烟header-only重写，候选换序和奇异往返需验证；probe-r6实测RPY近奇异及精确±pi/2均旋转往返正确，奇异时上游yaw=0与产品roll=0表示不同，需保持规范化字段/摘要约定；不需要据此改上游或重写通用反解",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
           "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
         }
       ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+          "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+          "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
+        }
+      ]
     },
     {
       "functionId": "modeling.makeLinkPlaceholderCylinder",
       "ownerUnit": "modeling",
       "requirements": [
-        "MDL-02"
+        "MDL-04"
+      ],
+      "designRefs": [
+        "units/modeling.md#2.5",
+        "units/modeling.md#5.2",
+        "tasks/foundation/WP-13-T07.json"
       ],
       "sources": [
         {

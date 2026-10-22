@@ -289,14 +289,28 @@
         "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
-      "differences": "自持按轴二进制平衡、补偿LDLT；DescriptionValidator与builder共用。候选上游对称谱及已依赖Eigen分解；严格>0、次正规/混合尺度/近半正定必须独立核，不能全局缩放吞小轴或加epsilon",
+      "differences": "自持按轴二进制平衡、补偿LDLT；DescriptionValidator与builder共用。候选上游对称谱及已依赖Eigen分解；严格>0、次正规/混合尺度/近半正定必须独立核，不能全局缩放吞小轴或加epsilon；probe-r6实测谱解丢混合尺度小正轴，既有Eigen LLT通过该对角、1±nextafter边界与精确秩1十进制块；仍须完整不对称/平衡/非法极值与诊断消费者回归，不批准保留自持LDLT",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
           "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
         }
       ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+          "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/ird-test-report.json",
+          "sha256": "ff3d09f4085e5438261dcaeb94fbbbdb40e407c5c646b9902eee5b9975ae6919"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+          "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
+        }
+      ]
     },
     {
       "functionId": "runtime.relativeAsymmetry",

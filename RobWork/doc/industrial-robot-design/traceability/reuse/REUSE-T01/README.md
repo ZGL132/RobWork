@@ -38,3 +38,7 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 14项API探测增量已独立重建实跑通过（冻结 `4e142e485343e8bade52a8481eefbb447b017989`），原始报告在 `traceability/acceptance/REUSE-T01-api-r3-20261022/`。第三批首轮验收FAIL：日志功能误挂ERR-01、worker权限错指§3.6.3；本次改为NFR-REL-05/DIAG-T07和§3.6.4，仍待返工独立复核。原始FAIL报告在 `REUSE-T01-batch3-r1-20261022/`，不覆盖历史。只读覆盖验收 `REUSE-T01-coverage-20261022/` 另指出惯量SPD、特征值、镜像姿态、正向动力学内部RK4及路径平滑等遗漏；其结论为全功能审计NOT PASS，不是迁移批准。
 
 第三批两项返工已在 `f6ee77c91c36f40a4cd573a24335405afc06f68b` 独立复核PASS，原件在 `REUSE-T01-batch3-r2-20261022/`；只覆盖引用修正。覆盖审查驱动的第四批新增26条关系，累计121条仍全pending，closedFiles=0；实际检索见 `batch4-search.json`。细分登记runtime惯量SPD/相对对称性、selection闭式求谱、镜像矩阵与各插件RPY、StageD随机流、轴对齐、连续性角差、平滑剔点/切线/偏差以及FD右端/RK4。RK4保留真实外层入口摘要并另列审读段，不把入口登记视为整函数结项。新增 `sdurw_pathoptimization` 真实目标与其pathPruning/gtest候选，不把边可连判定冒充产品双域偏差约束。
+
+后续探测的失败原件在 `probe-r4/`：18实跑、17 passed/1 failed，失败是本次审读把源码的r12=R(0,1)误当R(1,2)，错误预期RPY精确正奇异往返有1.8rad偏差，实际约4.2e-17rad；保存当时源码 `hypothesis-source.txt`。复核解析式后，`probe-r5/` 18 passed、`probe-r6/` 19 passed（failed/skipped/notRun均0），两份gtest XML与原生报告摘要已交叉核对。近奇异和精确±pi/2的RPY旋转往返正确，只是上游奇异时yaw=0、产品约定roll=0，规范化字段/摘要需适配。这不是上游缺陷，不据此提出patch。
+
+SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm_min,1,1e300)丢失小正轴，直接以谱值判严格SPD受限；同一现有Eigen依赖的LLT通过该输入、单位尺度1±nextafter边界和精确秩1十进制块拒绝。仅列明输入成立，尚未证明全部合法性入口/极值/对称化误差可替换，矩阵仍pending。构建沿用原CONFIG目标和testkit；`probe-r6/environment-artifacts.json`记录已安装数学DLL/LLT头原始摘要，不能把已有二进制摘要冒充源码可复现构建证明。第四批独立审读另发现占位圆柱误挂MDL-02，已按单元卡§2.5/§5.2改为MDL-04/WP-13-T07，待返工独立复核。

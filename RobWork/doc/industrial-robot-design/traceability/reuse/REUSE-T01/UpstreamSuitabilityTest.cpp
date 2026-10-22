@@ -31,7 +31,9 @@
 #include <rw/trajectory/LloydHaywardBlend.hpp>
 #include <array>
 #include <cmath>
+#include <limits>
 #include <memory>
+#include <Eigen/Cholesky>
 
 // 验证建模 SPD 判定的候选能力：上游特征值求解能否保留排序及极小尺度。
 TEST(ReuseAudit, SymmetricEigenvaluesAcrossScales) {
@@ -290,4 +292,68 @@ TEST(ReuseAudit, PolynomialNonzeroEndpointDerivativesWithTimeScale) {
                             derivatives[k], 1e-9);
         }
     }
+}
+
+// REQ-10/REQ-11：普通及近奇异姿态须保持同一旋转，不能只核字段换序。
+TEST(ReuseAudit, RpyNearGimbalRoundTripPreservesRotation) {
+    using namespace rw::math;
+    for (double pitch : {-Pi / 2 + 1e-8, -0.4, 0.4, Pi / 2 - 1e-8}) {
+        const auto original = RPY<>(0.7, pitch, -0.2).toRotation3D();
+        const auto recovered = RPY<>(original, 1e-12).toRotation3D();
+        for (int i = 0; i < 3; ++i)
+            for (int j = 0; j < 3; ++j)
+                EXPECT_NEAR(original(i, j), recovered(i, j), 1e-12);
+    }
+}
+
+// 精确奇异分支也保持旋转；源码r12指R(0,1)，不能误读为R(1,2)。
+TEST(ReuseAudit, RpyExactGimbalPreservesRotationWithDifferentFields) {
+    using namespace rw::math;
+    const auto original = RPY<>(0.7, Pi / 2, -0.2).toRotation3D();
+    const RPY<> recoveredRpy(original, 1e-12);
+    const auto recovered = recoveredRpy.toRotation3D();
+    // R01=sin(roll-yaw)=-sin(0.9)，故上游yaw=0、roll=-0.9，同一旋转。
+    EXPECT_NEAR(0.0, recoveredRpy[0], 1e-12);
+    EXPECT_NEAR(-0.9, recoveredRpy[2], 1e-12);
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            EXPECT_NEAR(original(i, j), recovered(i, j), 1e-12);
+    // 负奇异分支与正分支不等价，分别核实，不能用一个分支推断另一个。
+    const auto negative = RPY<>(0.7, -Pi / 2, -0.2).toRotation3D();
+    const auto negativeRecovered = RPY<>(negative, 1e-12).toRotation3D();
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            EXPECT_NEAR(negative(i, j), negativeRecovered(i, j), 1e-12);
+}
+
+// MDL-06：同一矩阵跨轴极端尺度不同于整体缩放，不能沿用前三种尺度结论。
+TEST(ReuseAudit, MixedScaleEigenLosesTinyPositiveAxis) {
+    Eigen::MatrixXd inertia = Eigen::MatrixXd::Zero(3, 3);
+    inertia.diagonal() << std::numeric_limits<double>::denorm_min(), 1.0, 1e300;
+    const auto eigen = rw::math::LinearAlgebra::eigenDecompositionSymmetric(inertia);
+    // 上游谱解在该输入缩放后丢失小轴；这是直接用最小特征值判SPD的限制。
+    EXPECT_EQ(0.0, eigen.second.minCoeff());
+    EXPECT_GT(inertia(0, 0), 0.0); // 独立对角矩阵oracle：所有对角严格正。
+}
+
+// 同一既有Eigen依赖的LLT是候选原语，无需自持LDLT；本用例只核列明输入。
+TEST(ReuseAudit, ExistingEigenLltKeepsMixedScaleAndStrictBoundary) {
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+    inertia.diagonal() << std::numeric_limits<double>::denorm_min(), 1.0, 1e300;
+    EXPECT_EQ(Eigen::Success, Eigen::LLT<Eigen::Matrix3d>(inertia).info());
+    for (double off : {std::nextafter(1.0, 0.0), 1.0, std::nextafter(1.0, 2.0)}) {
+        // 左上块特征值为1±off，第三轴为1；零不能加epsilon当正数。
+        inertia.setIdentity();
+        inertia(0, 1) = inertia(1, 0) = off;
+        EXPECT_EQ(off < 1.0 ? Eigen::Success : Eigen::NumericalIssue,
+                  Eigen::LLT<Eigen::Matrix3d>(inertia).info());
+    }
+}
+
+// MDL-06：完全相同的两行使该块精确秩1；谱为0/2e-14/1，严格SPD必须拒绝。
+TEST(ReuseAudit, ExistingEigenLltRejectsExactRankOneDecimalBlock) {
+    Eigen::Matrix3d inertia = Eigen::Matrix3d::Zero();
+    inertia(0, 0) = inertia(0, 1) = inertia(1, 0) = inertia(1, 1) = 1e-14;
+    inertia(2, 2) = 1.0;
+    EXPECT_EQ(Eigen::NumericalIssue, Eigen::LLT<Eigen::Matrix3d>(inertia).info());
 }
