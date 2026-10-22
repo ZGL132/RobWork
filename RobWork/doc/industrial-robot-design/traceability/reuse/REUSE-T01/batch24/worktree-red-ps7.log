@@ -1,0 +1,5 @@
+pipeline-lock.ps1: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-pipeline-pipeline.ps1:36
+Line |
+  36 |    $output = @(& $script:lockScript @invokeArgs 2>&1)
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Unable to find type [System.IO].

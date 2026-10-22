@@ -1,0 +1,74 @@
+Note: Google Test filter = RunRegistryAdmissionTest.*
+[==========] Running 27 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 27 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations
+[       OK ] RunRegistryAdmissionTest.RegisterRejectsCallerContractViolations (79 ms)
+[ RUN      ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts
+[       OK ] RunRegistryAdmissionTest.AppendAttemptSupersedesOldAttempts (94 ms)
+[ RUN      ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+[       OK ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState (65 ms)
+[ RUN      ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1
+[       OK ] RunRegistryAdmissionTest.UnknownRunRejectedWithNoArchiveWrite_EX_REG_1 (60 ms)
+[ RUN      ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2
+[       OK ] RunRegistryAdmissionTest.FiveTupleFieldMismatchRejectedPerField_EX_REG_2 (82 ms)
+[ RUN      ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3
+[       OK ] RunRegistryAdmissionTest.StaleAttemptsAllRejected_EX_REG_3 (64 ms)
+[ RUN      ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck
+[       OK ] RunRegistryAdmissionTest.BindingMismatchAtSecondCheck (78 ms)
+[ RUN      ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected
+[       OK ] RunRegistryAdmissionTest.KindOutsideAllowedSetRejected (60 ms)
+[ RUN      ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.TerminatedRegistrationsRejectFinalEnvelope_EX_ORT_1 (73 ms)
+[ RUN      ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet
+[       OK ] RunRegistryAdmissionTest.InterruptedTerminationNotInStepSevenRejectSet (54 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeRedeliveryIdempotent_EX_REG_7 (99 ms)
+[ RUN      ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8
+[       OK ] RunRegistryAdmissionTest.FinalEnvelopeContentConflictRejected_EX_REG_8 (58 ms)
+[ RUN      ] RunRegistryAdmissionTest.ResultBatchAdmissionAndMultiBatch_F809
+[       OK ] RunRegistryAdmissionTest.ResultBatchAdmissionAndMultiBatch_F809 (52 ms)
+[ RUN      ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.CompletedWithDataInsufficientIsAdmitted_EX_ORT_1 (59 ms)
+[ RUN      ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6
+[       OK ] RunRegistryAdmissionTest.HeadChangeNotInvolvedInAdmission_EX_REG_6 (53 ms)
+[ RUN      ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.SupersededCurrentDoesNotBlockOrRewrite_EX_ORT_1 (54 ms)
+[ RUN      ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission
+[       OK ] RunRegistryAdmissionTest.RuntimeNameResolutionGatesAdmission (51 ms)
+[ RUN      ] RunRegistryAdmissionTest.UndecodablePayloadRejected
+[       OK ] RunRegistryAdmissionTest.UndecodablePayloadRejected (40 ms)
+[ RUN      ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1
+[       OK ] RunRegistryAdmissionTest.ConstructionFailureFailsTask_EX_ORT_1 (38 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds
+[       OK ] RunRegistryAdmissionTest.ArchiveRetriesBoundedThenSucceeds (45 ms)
+[ RUN      ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5
+[       OK ] RunRegistryAdmissionTest.ArchiveRetryExhaustionAbandonsKeepsCompleted_EX_ARC_5 (41 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityLostRejectedWithDiagnostics_EX_REG_5 (44 ms)
+[ RUN      ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5
+[       OK ] RunRegistryAdmissionTest.AuthorityReacquiredArchivesNormally_EX_REG_5 (58 ms)
+[ RUN      ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly
+[       OK ] RunRegistryAdmissionTest.NonArchivedKindsPassClassificationOnly (41 ms)
+[ RUN      ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast
+[       OK ] RunRegistryAdmissionTest.InvalidArrivalIdentityFailsFast (41 ms)
+[ RUN      ] RunRegistryAdmissionTest.ReuseBoundaryInvalidCompletedPreservesRegistration
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r22\RegistryBoundaryTest.cpp(19): error: Value of: after->terminationCause.has_value()
+  Actual: true
+Expected: false
+
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r22\RegistryBoundaryTest.cpp(21): error: Expected: m_registry.markTerminated(id.run, TerminationCause::Canceled) doesn't throw an exception.
+  Actual: it throws sdurws::ird::execution::ExecutionError with description "execution/run-registry: 登记已带终结标记，不允许二次写入".
+
+[  FAILED  ] RunRegistryAdmissionTest.ReuseBoundaryInvalidCompletedPreservesRegistration (44 ms)
+[ RUN      ] RunRegistryAdmissionTest.ReuseBoundaryValidCancelWritesOnce
+[       OK ] RunRegistryAdmissionTest.ReuseBoundaryValidCancelWritesOnce (44 ms)
+[----------] 27 tests from RunRegistryAdmissionTest (1584 ms total)
+
+[----------] Global test environment tear-down
+[==========] 27 tests from 1 test suite ran. (1633 ms total)
+[  PASSED  ] 26 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RunRegistryAdmissionTest.ReuseBoundaryInvalidCompletedPreservesRegistration
+
+ 1 FAILED TEST

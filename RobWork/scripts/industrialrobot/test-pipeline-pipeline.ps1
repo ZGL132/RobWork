@@ -89,7 +89,7 @@ function Invoke-StateValidation([string]$StatePath) {
   $oldPreference = $ErrorActionPreference
   try {
     $ErrorActionPreference = "Continue"
-    $output = @(& pwsh -NoProfile -File $script:stateScript -RepoRoot $script:RepoRoot -StateFile $StatePath 2>&1)
+    $output = @(& pwsh -NoProfile -File $script:stateScript -RepoRoot $script:stateRepo -StateFile $StatePath 2>&1)
     return [pscustomobject]@{ ExitCode = $LASTEXITCODE; Output = $output }
   }
   finally { $ErrorActionPreference = $oldPreference }
@@ -97,9 +97,11 @@ function Invoke-StateValidation([string]$StatePath) {
 
 $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ("ird-pipeline-regression-" + [guid]::NewGuid().ToString("N"))
 try {
-  # 为锁测试准备独立仓库壳。pipeline-lock 只要求 .git 目录存在，因此无需初始化真实 Git 仓库。
+  # 用隔离真实Git仓库验证管理目录解析；不再用伪.git目录掩盖worktree差异。
   $script:lockRepo = Join-Path $tempRoot "lock-repo"
   New-Item -ItemType Directory -Force (Join-Path $script:lockRepo ".git") | Out-Null
+  & git -C $script:lockRepo init --quiet
+  Assert-ExitCode 0 $LASTEXITCODE "隔离Git仓库初始化"
   $lockPath = Join-Path $script:lockRepo ".git/ird-pipeline-tick.lock"
 
   # 初始无锁时也必须由 status 进入同一 mutex；否则它与 acquire/renew/release 的临界范围
@@ -131,10 +133,37 @@ try {
   Assert-LockActionWaitsOnMutex "release" $newLock.tickId "released"
   if (Test-Path $lockPath) { throw "接管者 release 后锁文件仍存在" }
 
-  # 从真实 paused 样例派生一个最小返工状态；所有队列、policy 和文档指针保持原样，
-  # 仅填充 implementing 运行态所需字段，以便测试专注于失败证据 schema。
+  # linked worktree 的 .git 是指向文件，不能将其当目录拼接锁路径。
+  # 在隔离真实仓库中走完整获取/拒绝旧 token/释放入口，防 exit0 却无JSON的假成功。
+  & git -C $script:lockRepo init --quiet
+  Assert-ExitCode 0 $LASTEXITCODE "隔离Git仓库初始化"
+  & git -C $script:lockRepo -c user.name=IRD-fixture -c user.email=ird-fixture@example.invalid -c commit.gpgsign=false commit --quiet --allow-empty -m fixture
+  Assert-ExitCode 0 $LASTEXITCODE "隔离Git基点提交"
+  $primaryRepo = $script:lockRepo
+  $script:lockRepo = Join-Path $tempRoot "linked-worktree"
+  & git -C $primaryRepo worktree add --quiet --detach $script:lockRepo HEAD
+  Assert-ExitCode 0 $LASTEXITCODE "隔离linked worktree创建"
+  $linked = Invoke-Lock "acquire"
+  Assert-ExitCode 0 $linked.ExitCode "linked worktree acquire"
+  if (-not $linked.Output -or "$($linked.Output)" -notmatch '"tickId"') { throw "linked worktree acquire必须返回真实token，不得仅exit0" }
+  $linkedToken = ($linked.Output | Select-Object -Last 1 | ConvertFrom-Json).tickId
+  $linkedReject = Invoke-Lock "release" "not-owner"
+  Assert-ExitCode 4 $linkedReject.ExitCode "linked worktree错误token拒绝"
+  $linkedRelease = Invoke-Lock "release" $linkedToken
+  Assert-ExitCode 0 $linkedRelease.ExitCode "linked worktree合法token释放"
+  $script:lockRepo = $primaryRepo
+
+  # 仅复用真实样例的policy/schema；任务状态在隔离根内固定，避免TK-T01在
+  # 主项目已done后把合法返工例错误拒绝。此夹具只测失败证据，不证明队列可领取。
+  $script:stateRepo = Join-Path $tempRoot "state-repo"
+  $fixtureTasks = Join-Path $script:stateRepo "RobWork/doc/industrial-robot-design/tasks"
+  New-Item -ItemType Directory -Force $fixtureTasks | Out-Null
+  @{taskId='TK-T01';status='ready';branch='wp02-t01'} | ConvertTo-Json | Set-Content (Join-Path $fixtureTasks 'TK-T01.json') -Encoding UTF8
   $state = Get-Content $sourceState -Raw -Encoding UTF8 | ConvertFrom-Json
   $now = [DateTime]::Now
+  $state.history = @()
+  $state.queue = @()
+  $state.docRefs.PSObject.Properties.Remove('b1BatchManifest')
   $state.phase = "implementing"
   $state.currentTask = "TK-T01"
   $state.branch = "wp02-t01"
@@ -204,5 +233,8 @@ try {
 }
 finally {
   # 临时目录仅承载测试伪锁与派生状态；无论断言成功或失败都必须清理，避免污染后续审查。
-  if (Test-Path $tempRoot) { Remove-Item -LiteralPath $tempRoot -Recurse -Force }
+  $resolvedTemp = [IO.Path]::GetFullPath($tempRoot)
+  $tempParent = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\') + '\'
+  if (-not $resolvedTemp.StartsWith($tempParent, [StringComparison]::OrdinalIgnoreCase)) { throw "临时清理路径越界：$resolvedTemp" }
+  if (Test-Path -LiteralPath $resolvedTemp) { Remove-Item -LiteralPath $resolvedTemp -Recurse -Force }
 }

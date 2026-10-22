@@ -3694,6 +3694,1000 @@
         }
       ],
       "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Get-LockMutexName",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Get-LockMutexName",
+          "startLine": 49,
+          "endLine": 62,
+          "sha256": "20d89b18d8104994bc20c68971e59de94ce4073fcc000c31a1f5e798c6e02d14",
+          "qualifiedSymbol": "PowerShell::Get-LockMutexName"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Get-LockMutexName",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Invoke-InLockMutex",
+          "startLine": 64,
+          "endLine": 83,
+          "sha256": "574734e5284aff5f193b0d074c9f0b27297c254909d2f82accd63aa51dd5d3f4",
+          "qualifiedSymbol": "PowerShell::Invoke-InLockMutex"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Invoke-InLockMutex",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Read-Lock",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Read-Lock",
+          "startLine": 85,
+          "endLine": 98,
+          "sha256": "f36111beef40015dbaf9a58b0e28b433cd483fc753aa311dc610f2eaab56327a",
+          "qualifiedSymbol": "PowerShell::Read-Lock"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Read-Lock",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.Test-Fencing",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Test-Fencing",
+          "startLine": 101,
+          "endLine": 109,
+          "sha256": "922348ce812173b5366a5a4ab03992d6ee4573bf8823eba7511f1610e327e918",
+          "qualifiedSymbol": "PowerShell::Test-Fencing"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Test-Fencing",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-Equal",
+          "startLine": 22,
+          "endLine": 24,
+          "sha256": "f62a67bb6c2050bbc5f9343f189d7731f40883c5aede78faaa88e86ffa62200c",
+          "qualifiedSymbol": "PowerShell::Assert-Equal"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Assert-Equal",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-ExitCode",
+          "startLine": 26,
+          "endLine": 28,
+          "sha256": "7f41572f86b80334539295550538ad511e477cc968144065f4d460ea18071433",
+          "qualifiedSymbol": "PowerShell::Assert-ExitCode"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Assert-ExitCode",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Invoke-Lock",
+          "startLine": 30,
+          "endLine": 38,
+          "sha256": "234aed4f2682d6bcbcafb8d3e9c20335e7b379b794354e6586e5ce484dd101a6",
+          "qualifiedSymbol": "PowerShell::Invoke-Lock"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Invoke-Lock",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Get-LockMutexName",
+          "startLine": 40,
+          "endLine": 50,
+          "sha256": "b2d7bf079a72ce5a4dbaec705e5ef4dc9f9b0ca21ffc01b87da4cc967028eb3d",
+          "qualifiedSymbol": "PowerShell::Get-LockMutexName"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Get-LockMutexName",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Assert-LockActionWaitsOnMutex",
+          "startLine": 52,
+          "endLine": 83,
+          "sha256": "14e97c2f540f415ceae8eb97c7c26bd7c6957f5a2ed00e4dad84bf52d9106952",
+          "qualifiedSymbol": "PowerShell::Assert-LockActionWaitsOnMutex"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Assert-LockActionWaitsOnMutex",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "Invoke-StateValidation",
+          "startLine": 85,
+          "endLine": 96,
+          "sha256": "bde00f7b32e13b4f68eed89843cb83b98fcb7d4130f7b013677fbfb4a4b4ceed",
+          "qualifiedSymbol": "PowerShell::Invoke-StateValidation"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。Invoke-StateValidation",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.root",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "$gitDir",
+          "startLine": 33,
+          "endLine": 47,
+          "sha256": "a81d7a92c8076897763b3335c7f756b03f5561a102bba47b93b1596ba396d7e3",
+          "qualifiedSymbol": "PowerShell::root"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。root",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.pipeline-lock.actions",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "symbol": "Invoke-InLockMutex",
+          "startLine": 111,
+          "endLine": 176,
+          "sha256": "3bebfec08436a883b5f7da5ae3bf986637fe95fb9a41b48c7c7d8f2cdc2269b3",
+          "qualifiedSymbol": "PowerShell::actions"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。actions",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action status"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.root",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "$lockScript",
+          "startLine": 11,
+          "endLine": 20,
+          "sha256": "a51bad26c5d31d29e888997d6eb3b1f099d0dfdb2be1f40537a49b8775ba8502",
+          "qualifiedSymbol": "PowerShell::root"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。root",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-pipeline-pipeline.regressions",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "symbol": "$tempRoot",
+          "startLine": 98,
+          "endLine": 240,
+          "sha256": "bc0df1570b4374aa39bbfb30671f2d090788338cfd858bfff89867d84e938a73",
+          "qualifiedSymbol": "PowerShell::regressions"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch24/search.json实际检索",
+        "conclusion": "C++进程内线程工具不替代Windows命名mutex/Git管理目录/业务fencing；复用原.NET/Git/项目工具"
+      },
+      "differences": "详见governance-lock-audit.md；原helper/动作/原回归，不另建锁或状态机。regressions",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+          "sha256": "07875b7fe0b318c093370959a63d64dfb8c71d0103c72431ff1d9134f60b8e11"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+          "sha256": "0eb2fcbad6fc1b2d2cd1228e942ef028a0918dcb10d9607b3fb3848b145ba84e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+          "sha256": "fb7111f46d6473fc79751f046e915b5e187750a70a779a00d8e24a3dff3a9ab2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+          "sha256": "186ddb17ee5fdf82be61144fe981d783a774c93e77918a4f804b6832496129d3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+          "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        }
+      ],
+      "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
     }
   ]
 }

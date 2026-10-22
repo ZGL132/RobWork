@@ -1552,7 +1552,8 @@
         "semantics": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算",
         "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
         "determinism": "未运行本批适用性实验，不承诺等价",
-        "admissionBoundary": "B22读TimerUtil/ThreadTask实现：TimerUtil不可产UTC日历；线程任务不持业务五元组/ResultEnvelope/project归档owner。保留标准时间/既有evidence/project接口，不为复用换一套登记。"
+        "admissionBoundary": "B22读TimerUtil/ThreadTask实现：TimerUtil不可产UTC日历；线程任务不持业务五元组/ResultEnvelope/project归档owner。保留标准时间/既有evidence/project接口，不为复用换一套登记。",
+        "governanceLockBoundary": "ThreadSafeQueue为C++进程内boost::mutex/condition；不承担Windows跨进程命名mutex、Git worktree管理目录或tick业务fencing。B24保留原.NET/Git脚本。"
       },
       "ownerUnit": "execution",
       "examples": [],

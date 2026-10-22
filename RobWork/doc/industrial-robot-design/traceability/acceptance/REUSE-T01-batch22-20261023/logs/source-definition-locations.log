@@ -1,0 +1,27 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:34:AdmissionDecision makeReject(AdmissionDecision::RejectReason reason,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:55:RunRegistry::RunRegistry(UtcClockFn clock)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:60:RunRegistration* RunRegistry::find(core::RunId run) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:68:const RunRegistration* RunRegistry::find(core::RunId run) const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:73:RunRegistration& RunRegistry::registerRun(TaskId task, const RegistrationInput& input)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:139:void RunRegistry::appendAttempt(core::RunId run, core::AttemptId nextAttempt)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:166:AdmissionDecision RunRegistry::classifyArrival(const ArrivalEnvelope& arrival) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:291:std::optional<RunRegistration> RunRegistry::tryRun(core::RunId run) const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:301:void RunRegistry::markTerminated(core::RunId run, TerminationCause cause)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:337:void RunRegistry::noteAdmissionCompleted(core::RunId run)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:349:void RunRegistry::noteArchivePhase(core::RunId run, ArchivePhase phase)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp:361:void RunRegistry::noteArchiveSession(core::RunId run, project::ArchiveSessionRef session)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:58:std::string sha256Hex(const std::vector<std::uint8_t>& bytes)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:78:std::string iso8601Utc(std::chrono::system_clock::time_point tp)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:96:core::DiagnosticRecord admissionDiag(const char* stableCode, std::string cause,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:110:ResultAdmission::ResultAdmission(RunRegistry& registry, IExecutionDiagnosticsSink& diagnostics,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:120:void ResultAdmission::setNameResolver(const INameResolverAdapter* resolver) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:125:void ResultAdmission::setOutputDecoder(const IEvaluationOutputDecoder* decoder) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:130:void ResultAdmission::setEventBus(core::IDomainEventBus* bus) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:135:ArchivePhase ResultAdmission::archivePhase(core::RunId run) const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:142:std::uint64_t ResultAdmission::rejectedArrivalCount() const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:151:AdmissionOutcome ResultAdmission::admitResult(ArrivalEnvelope&& arrival)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:220:AdmissionOutcome ResultAdmission::admitFinalEnvelope(ArrivalEnvelope&& arrival,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:494:AdmissionOutcome ResultAdmission::admitResultBatch(ArrivalEnvelope&& arrival,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:551:AdmissionOutcome ResultAdmission::admitNonArchivedKind(ArrivalEnvelope&& arrival,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:581:ResultAdmission::ArchiveResult ResultAdmission::runArchiveTransaction(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp:595:    const auto backoff = [this](std::uint32_t attemptIndex) {

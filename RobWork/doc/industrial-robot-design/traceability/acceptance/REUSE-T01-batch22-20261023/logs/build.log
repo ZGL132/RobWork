@@ -1,0 +1,142 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-core\sdurws_ird_core.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-core\Release\sdurws_ird_core.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-evidence\sdurws_ird_evidence.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt
+  Evidence.cpp
+  Errors.cpp
+  Snapshot.cpp
+  Slice.cpp
+  Verdict.cpp
+  Envelope.cpp
+  Currentness.cpp
+  Compatibility.cpp
+  Evaluator.cpp
+  sdurws_ird_evidence.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-evidence\Release\sdurws_ird_evidence.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-project\sdurws_ird_project.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-project\sdurws_ird_project.vcxproj]
+      C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-project\Release\sdurws_ird_project.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-execution\sdurws_ird_execution.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt
+  Execution.cpp
+  Errors.cpp
+  TaskTypes.cpp
+  StateMachine.cpp
+  Controller.cpp
+  Scheduler.cpp
+  RunRegistry.cpp
+  Admission.cpp
+  EventBus.cpp
+  ChannelProtocol.cpp
+  WorkerSupervisor.cpp
+  Checkpoint.cpp
+  CacheCoordinator.cpp
+  ChannelPair.cpp
+  JobScope.cpp
+  MemProbe.cpp
+  ProcessLauncher.cpp
+D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18): warning C4244: “=”: 从“const wchar_t”转换到“char”，可能丢失数据 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-execution\sdurws_ird_execution.vcxproj]
+  (编译源文件“../../RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp”)
+      D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xutility(4709,18):
+      模板实例化上下文(最早的实例化上下文)为
+          C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(308,43):
+          查看对正在编译的函数 模板 实例化“std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_const_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)”的引用
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_const_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+              C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\src\WorkerSupervisor.cpp(306,38):
+              请参阅 "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker" 中对 "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string" 的第一个引用
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(793,17):
+          查看对正在编译的函数 模板 实例化“void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<const wchar_t*,const wchar_t*,_Size_type>(_Iter,const _Sent,_Size)”的引用
+          with
+          [
+              _Size_type=unsigned __int64,
+              _Iter=const wchar_t *,
+              _Sent=const wchar_t *,
+              _Size=unsigned __int64
+          ]
+          D:\software\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.42.34433\include\xstring(949,18):
+          查看对正在编译的函数 模板 实例化“_OutIt *std::_Copy_n_unchecked4<const wchar_t*,_Size,char*>(_InIt,_SizeTy,_OutIt)”的引用
+          with
+          [
+              _OutIt=char *,
+              _Size=unsigned __int64,
+              _InIt=const wchar_t *,
+              _SizeTy=unsigned __int64
+          ]
+  
+  sdurws_ird_execution.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-execution\Release\sdurws_ird_execution.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-testkit\sdurws_ird_testkit.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird-testkit\Release\sdurws_ird_testkit.lib
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird_execution_boundary_audit.vcxproj]
+  Building Custom Rule C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/CMakeLists.txt
+  RegistryBoundaryTest.cpp
+  TestMainReport.cpp
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9): warning C4005: “NOMINMAX”: 宏重定义 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird_execution_boundary_audit.vcxproj]
+  (编译源文件“../RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/RegistryBoundaryTest.cpp”)
+      C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(52,9):
+      之前在命令行上声明的“NOMINMAX”
+  
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9): warning C4005: “WIN32_LEAN_AND_MEAN”: 宏重定义 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird_execution_boundary_audit.vcxproj]
+  (编译源文件“../RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/RegistryBoundaryTest.cpp”)
+      C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(53,9):
+      之前在命令行上声明的“WIN32_LEAN_AND_MEAN”
+  
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1250,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird_execution_boundary_audit.vcxproj]
+  (编译源文件“../RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/RegistryBoundaryTest.cpp”)
+  
+C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(1272,26): warning C4834: 放弃具有 [[nodiscard]] 属性的函数的返回值 [C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\ird_execution_boundary_audit.vcxproj]
+  (编译源文件“../RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/RegistryBoundaryTest.cpp”)
+  
+  ird_execution_boundary_audit.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\Release\ird_execution_boundary_audit.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\AppData\Local\Temp\ird-b22-accept-7c3d9afa\build-original\Release\gtest.dll done

@@ -1,0 +1,9 @@
+repo root resolution failed: .git not found under 'C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b24-lock-
+green\missing'
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\pipeline-lock.ps1:39 char:54
++ ... ".git"))) { throw "repo root resolution failed: .git not found under  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (repo root resol...-green\missing':String) [], RuntimeException
+    + FullyQualifiedErrorId : repo root resolution failed: .git not found under 'C:\Users\zgl18\.codex\worktrees\reuse 
+   -audit\RobWork\.cache\b24-lock-green\missing'
+ 

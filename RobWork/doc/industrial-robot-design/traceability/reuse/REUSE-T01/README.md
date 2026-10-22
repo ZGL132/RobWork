@@ -119,3 +119,5 @@ B22补execution登记/接纳26定义，原25例passed、新2例1passed1failed，
 B23补范围/批次/flake三脚本18关系；原探针零执行误绿已真实复现并修补原入口，双PS解析红各4p3f、绿各7p0f，健康/零执行真实进程及5项治理探测符合预期。详见governance-scope-flake-audit.md，非全T01/T02，无远程同步。
 
 B21冻结cff60ddd4局部独验通过，92件原样归档于traceability/acceptance/REUSE-T01-batch21-20261023；不授全T01/T02。
+
+B24补锁/原回归14关系，修真实worktree空token假成功及TK-T01 done夹具漂移；两Shell原回归PASS，独立20动作与3 Git准备符合预期，最初探索driverFailure如实保留。B22局部独验原件归档，F964仍open。非全T01/T02，无远程同步。

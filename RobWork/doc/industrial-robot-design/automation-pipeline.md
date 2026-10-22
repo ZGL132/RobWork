@@ -9,7 +9,7 @@
 | 文档代号 | PIPE |
 | 上游 | acceptance-protocol.md（验收段完全复用其清单与独立性要求）、contract-compilation.md（ready 契约的唯一产出通道）、development-task-breakdown.md §5.7/§8（三段式流程与契约家族）、AGENTS.md §6（提交/推送/循环约定） |
 | 状态载体 | `traceability/pipeline/state.json`（唯一事实源；schema 见 §0.2，机器校验 `validate-state.ps1`） |
-| 并发载体 | `.git/ird-pipeline-tick.lock`（原子锁，`pipeline-lock.ps1` 管理——§0.1） |
+| 并发载体 | `<git-dir>/ird-pipeline-tick.lock`（普通clone的git-dir为`.git`，linked worktree为专属管理目录；原子锁，`pipeline-lock.ps1` 管理——§0.1） |
 
 ## 文档职责（本文负责／本文不负责／下游入口）
 
@@ -25,7 +25,7 @@
 
 ### 0.1 tick 调用约定与原子锁（v1.6：命名 mutex＋fencing token 消除锁操作 TOCTOU）
 
-- **原子锁**：每 tick **第一步**执行 `pwsh -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action acquire -LeaseMinutes <policy.leaseMinutes.implement>`。脚本先取得由**绝对仓库路径 SHA-256**派生的 Windows 命名 mutex；`status`/`acquire`/`renew`/`release` 的完整“读锁→判定→修改”均在同一临界区内，随后才以 .NET FileStream CreateNew（O_EXCL）独占创建 `.git/ird-pipeline-tick.lock`。因此旧 tick 即使在 fencing 核对后被调度打断，也不可能在新持有者接管后删除或覆盖新锁。锁内容含 `tickId`/`workerId`（GUID）＋`acquiredAt`/`leaseExpiresAt`。**acquire 失败（退出码 3）＝有未到期锁在持 → 本 tick 只输出锁信息后退出，不读不写 state**；锁已过期或损坏 → 脚本将陈锁改名 `.stale-<时间戳>` 留证后接管并继续。
+- **原子锁**：每 tick **第一步**执行 `pwsh -File RobWork/scripts/industrialrobot/pipeline-lock.ps1 -Action acquire -LeaseMinutes <policy.leaseMinutes.implement>`。脚本先取得由**绝对仓库路径 SHA-256**派生的 Windows 命名 mutex；`status`/`acquire`/`renew`/`release` 的完整“读锁→判定→修改”均在同一临界区内，随后才以 .NET FileStream CreateNew（O_EXCL）独占创建由 `git rev-parse --absolute-git-dir` 定位的 `<git-dir>/ird-pipeline-tick.lock`（普通clone仍为`.git/ird-pipeline-tick.lock`，linked worktree不把`.git`指向文件当目录）。因此旧 tick 即使在 fencing 核对后被调度打断，也不可能在新持有者接管后删除或覆盖新锁。锁内容含 `tickId`/`workerId`（GUID）＋`acquiredAt`/`leaseExpiresAt`。**acquire 失败（退出码 3）＝有未到期锁在持 → 本 tick 只输出锁信息后退出，不读不写 state**；锁已过期或损坏 → 脚本将陈锁改名 `.stale-<时间戳>` 留证后接管并继续。
 - **fencing token（v1.6）**：acquire 返回的 `tickId` 即 fencing token（每次成功获取——含接管——都生成新 token）。`release` 与 `renew` **必须携带 `-Token <tickId>`**，脚本在上述 mutex 临界区内与锁内 tickId 核对：不匹配（旧 tick 租约过期被接管后复活，试图释放/续租新 tick 的锁）一律拒绝（退出码 4），绝不删除他人锁。**失去租约的旧 tick 不得再写状态、不得触碰锁**——发现自身 token 失配（release 被拒/续租被拒）即自终止并报告。
 - **状态写入纪律（诚实边界）**：state.json 的文件写入无法做到硬件级 fencing——纪律为"仅持锁 tick 可写，且每次写入记录 `tickToken`＝自身锁 tickId"；validate-state 的事后检测面＝tickToken 存在性（in-flight 阶段非空）＋心跳时钟健全性（不得晚于当前时刻 5 分钟以上）＋心跳单调性（不得早于活跃 run 的 startedAt）。历史上确有无锁心跳写入与未来时间戳写入两类事故（2026-09-10 实录），均会被上述检测捕获。
 - **长等待续租**：派发子代理阻塞等待前执行 `renew -Token <tickId> -LeaseMinutes <对应时长>`；**阻塞等待返回后再次 renew**，确认本 tick 在处理完成事件、写 state 或释放锁前仍是持有者。任一次 renew 返回退出码 4 即自终止，防健康长任务被租约误杀也防过期 tick 落盘。

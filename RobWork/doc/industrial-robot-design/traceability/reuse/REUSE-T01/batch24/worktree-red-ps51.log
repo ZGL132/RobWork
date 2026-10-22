@@ -1,0 +1,9 @@
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\pipeline-lock.ps1 : Unable to find 
+type [System.IO].
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-pipeline-pipeline.ps1:36 ch
+ar:15
++   $output = @(& $script:lockScript @invokeArgs 2>&1)
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.IO:TypeName) [pipeline-lock.ps1], RuntimeException
+    + FullyQualifiedErrorId : TypeNotFound,pipeline-lock.ps1
+ 

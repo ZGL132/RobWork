@@ -1,0 +1,392 @@
+[
+  {
+    "name": "init",
+    "argv": [
+      "git",
+      "init",
+      "--quiet",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "commit",
+    "argv": [
+      "git",
+      "-C",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\repo",
+      "-c",
+      "user.name=IRD fixture",
+      "-c",
+      "user.email=ird-fixture@example.invalid",
+      "-c",
+      "commit.gpgsign=false",
+      "commit",
+      "--quiet",
+      "--allow-empty",
+      "-m",
+      "fixture"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "worktree",
+    "argv": [
+      "git",
+      "-C",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\repo",
+      "worktree",
+      "add",
+      "--detach",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "HEAD"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-acquire",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-busy",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "pwsh-wrong-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong-owner"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-wrong-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong-owner"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "pwsh-status-held",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "ff4c2d4c-1590-4877-8b99-5b61b6e6f6ce"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-release",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "ff4c2d4c-1590-4877-8b99-5b61b6e6f6ce"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-status-none",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "pwsh-absent-renew",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "ff4c2d4c-1590-4877-8b99-5b61b6e6f6ce"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "pwsh-invalid-root",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-Action",
+      "acquire",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\missing"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-acquire",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-busy",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "acquire"
+    ],
+    "exitCode": 3,
+    "expectedExit": 3,
+    "passed": true
+  },
+  {
+    "name": "powershell-wrong-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "wrong-owner"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-wrong-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "wrong-owner"
+    ],
+    "exitCode": 4,
+    "expectedExit": 4,
+    "passed": true
+  },
+  {
+    "name": "powershell-status-held",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "461ae061-2501-4e3f-be26-2b110fd232db"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-release",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "release",
+      "-Token",
+      "461ae061-2501-4e3f-be26-2b110fd232db"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-status-none",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "status"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true
+  },
+  {
+    "name": "powershell-absent-renew",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\linked",
+      "-Action",
+      "renew",
+      "-Token",
+      "461ae061-2501-4e3f-be26-2b110fd232db"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  },
+  {
+    "name": "powershell-invalid-root",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\pipeline-lock.ps1",
+      "-Action",
+      "acquire",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b24-lock-green\\missing"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true
+  }
+]
