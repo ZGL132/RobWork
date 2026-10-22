@@ -1,0 +1,48 @@
+ird-reuse-governance	Adversarial reuse gate tests	﻿2026-10-22T07:29:39.9561220Z ##[group]Run ./RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/reuse-tests
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:39.9561694Z ^[[36;1m./RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/reuse-tests^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:39.9607630Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:39.9607834Z ##[endgroup]
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:48.0001281Z 01-clean : True (exit=0 expected=PASS)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:48.5825527Z 02-fixed-baseline : True (exit=1 expected=REUSE-BASELINE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:48.9074867Z 03-all-units : True (exit=1 expected=REUSE-UNITS)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:49.2507553Z 04-missing-source : True (exit=1 expected=REUSE-MISSING)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:49.5879865Z 05-stale-source : True (exit=1 expected=REUSE-UPSTREAM-HASH)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:49.9800934Z 06-missing-symbol : True (exit=1 expected=REUSE-UPSTREAM-SYMBOL)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:50.5654498Z 07-inventory-omission : True (exit=1 expected=REUSE-INVENTORY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:51.0230681Z 08-forged-blob : True (exit=1 expected=REUSE-INVENTORY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:51.5171202Z 09-inventory-duplicate : True (exit=1 expected=REUSE-INVENTORY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:51.9807121Z 10-inventory-unit : True (exit=1 expected=REUSE-INVENTORY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:52.7893189Z 11-new-source : True (exit=1 expected=REUSE-UNDECLARED)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:53.5176780Z 12-stale-change-hash : True (exit=1 expected=REUSE-UNDECLARED)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:54.3342043Z 13-core-even-business : True (exit=1 expected=REUSE-DUPLICATE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:55.0876180Z 14-cpp-not-governance : True (exit=1 expected=REUSE-MODE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:55.8096900Z 15-missing-approval : True (exit=1 expected=REUSE-PATH)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:56.5494517Z 16-unknown-capability : True (exit=1 expected=REUSE-CAPABILITY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:57.2656414Z 17-path-traversal : True (exit=1 expected=REUSE-PATH)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:57.9986899Z 18-missing-task-proof : True (exit=1 expected=REUSE-TASK)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:58.7362928Z 19-task-scope : True (exit=1 expected=REUSE-SCOPE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:29:59.5024082Z 20-forbidden-scope : True (exit=1 expected=REUSE-SCOPE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:00.6270748Z 21-stage-not-approved : True (exit=1 expected=REUSE-STAGE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:01.1677654Z 22-final-debt-rejected : True (exit=1 expected=REUSE-MIGRATION)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:02.0159465Z 23-governance-not-algorithm-approval : True (exit=1 expected=REUSE-GOV-SCOPE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:02.9391075Z 24-upstream-readonly : True (exit=1 expected=REUSE-UPSTREAM-READONLY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:03.6669409Z 25-missing-record-file : True (exit=1 expected=REUSE-MISSING)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:04.4356989Z 26-deletion-undeclared : True (exit=1 expected=REUSE-UNDECLARED)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:04.8947092Z 27-forged-debt-closure : True (exit=1 expected=REUSE-INVENTORY)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:05.9089216Z 28-arbitrary-task-ready : True (exit=1 expected=REUSE-TASK)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:06.9089888Z 29-planned-not-executable : True (exit=1 expected=REUSE-TASK-STATE)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.2390339Z 30-forged-build-target : True (exit=1 expected=REUSE-UPSTREAM-TARGET)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4540844Z HEAD detached at 64ef0fd0
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4541315Z You are in a sparse checkout with 19% of tracked files present.
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4541964Z 
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4542096Z Untracked files:
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4544658Z   (use "git add <file>..." to include in what will be committed)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4544929Z 	.reuse-validator.ps1
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4545015Z 
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:07.4545131Z nothing added to commit but untracked files present (use "git add" to track)
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.1832723Z ^[[31;1mException: ^[[0mD:\a\RobWork\RobWork\RobWork\scripts\industrialrobot\test-reuse-governance.ps1:110^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.1833190Z ^[[31;1m^[[0m^[[36;1mLine |^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.1833580Z ^[[31;1m^[[0m^[[36;1m^[[36;1m 110 | ^[[0m     if ($LASTEXITCODE) { ^[[36;1mthrow 'fixture commit failed'^[[0m }^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.1833966Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m     | ^[[31;1m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.1836249Z ^[[31;1m^[[0m^[[36;1m^[[36;1m^[[0m^[[36;1m^[[0m^[[36;1m^[[31;1m^[[31;1m^[[36;1m     | ^[[31;1mfixture commit failed^[[0m
+ird-reuse-governance	Adversarial reuse gate tests	2026-10-22T07:30:08.2050490Z ##[error]Process completed with exit code 1.

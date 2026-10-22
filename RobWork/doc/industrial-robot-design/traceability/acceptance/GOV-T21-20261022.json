@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ird-governance-acceptance/1",
+  "taskId": "GOV-T21",
+  "attempt": 1,
+  "verdict": "fail",
+  "reviewedCommit": "64ef0fd07755479ce01b3f936320fe91396cfce2",
+  "baseCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "mode": "独立子会话验收（所有者2026-10-22指令）",
+  "record": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022.md",
+  "evidenceRoot": "RobWork/doc/industrial-robot-design/traceability/builds/acc-gov-t21-1/",
+  "blockingFindings": ["F-957", "F-958"],
+  "checks": {
+    "4.1": "pass", "4.2": "pass-governance-targets", "4.3": "fail", "4.4": "fail",
+    "4.5": "pass", "4.6": "pass-change-scope", "4.7": "pass-applicable-scope", "4.8": "pass-design-sync",
+    "4.9": "pass-format-and-raw-history", "4.10": "fail-incomplete-execution", "4.11": "fail", "4.12": "not-applicable"
+  },
+  "selftests": {
+    "ps7": {"planned":32,"passed":30,"skipped":0,"assertionFailed":0,"notRun":2,"driverExitCode":1},
+    "ps51": {"planned":32,"passed":30,"skipped":0,"assertionFailed":0,"notRun":2,"driverExitCode":1},
+    "executedNegativeCasesPerShell":29
+  },
+  "independentBypass": {"fileSuffix":".c","manifestDeclared":false,"expected":"nonzero rejection","actualExitCode":0,"result":"fail","temporaryFileRemoved":true},
+  "additionalBypass": {"fileSuffix":".ps1","manifestDeclared":false,"actualExitCode":0,"temporaryFileRemoved":true},
+  "existingOmittedInputs": {"mjs":29,"ps1":1,"html":1,"note":"静态页面可分类；可执行脚本/黄金生成器不得默认忽略"},
+  "builds": {"integrationConfigureExitCode":0,"integrationIrdGatesExitCode":0,"smokeConfigureExitCode":0,"smokeIrdGatesExitCode":0,"fullProductBuild":"not-run"},
+  "otherValidation": {"frozenReuseExitCode":0,"taskScopeExitCode":0,"docsDeepExitCode":0,"validateTaskExitCode":0,"verifyTaskExitCode":1},
+  "ci": {"runId":39740812174,"headSha":"64ef0fd07755479ce01b3f936320fe91396cfce2","conclusion":"failure"},
+  "notRun": ["product algorithm tests", "GUI tests", "performance tests", "full product build"],
+  "implementationBranchModified": false,
+  "merged": false
+}

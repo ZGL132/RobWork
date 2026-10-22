@@ -1,0 +1,90 @@
+[KIN-FK]
+88:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state) const = 0;
+207:        rw::math::Transform3D< double > baseTframe (rw::core::Ptr<const rw::kinematics::Frame> f,
+290:         * By default the method forwards to baseJframe().
+324:         * By default the method forwards to baseJframes().
+326:        virtual rw::math::Jacobian baseJframe (rw::core::Ptr<const rw::kinematics::Frame> frame,
+338:        virtual rw::math::Jacobian baseJframes (const std::vector< rw::kinematics::Frame* >& frames,
+1:set(SUBSYS_NAME sdurw_models)
+[KIN-IK]
+110:        typedef enum { Transpose, SVD, DLS, Weighted } JacobianSolverType;
+169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+182:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+1:set(SUBSYS_NAME sdurw_invkin)
+[MATH-SVD]
+65:        static void svd (const Eigen::Matrix<double,-1,-1>& M, Eigen::Matrix<double,-1,-1>& U, Eigen::Matrix<double,-1,1>& sigma,
+85:        static Eigen::Matrix<double,-1,-1> pseudoInverse (const Eigen::Matrix<double,-1,-1>& am, double precision = 1e-6);
+1:set(SUBSYS_NAME sdurw_math)
+[DYN-RNE]
+81:        void setGravity (const rw::math::Vector3D<>& gravity);
+107:        void setPayload (const rw::math::Vector3D<>& com, double payload,
+175:        std::vector< rw::math::Wrench6D<> > solve (const rw::kinematics::State& state,
+186:        std::vector< double > solveMotorTorques (const rw::kinematics::State& state,
+191:         * @brief Check if solver will work for the given device - if not an exception will be
+192:         * thrown when trying to solve.
+193:         * @return true if solver works for the given device, false otherwise.
+1:set(SUBSYS_NAME sdurwsim)
+298:        sdurwsim
+[DYN-FD]
+58:     * The general step looks like this:;
+85:        virtual void load (rw::core::Ptr< rwsim::dynamics::DynamicWorkCell > dwc) = 0;
+97:         * @brief Performs a step and updates the state
+99:        virtual void step (double dt, rw::kinematics::State& state) = 0;
+110:        virtual void initPhysics (rw::kinematics::State& state) = 0;
+1:set(SUBSYS_NAME sdurwsim)
+298:        sdurwsim
+[MATH-ROT]
+177:         * @copydoc Rotation3DVector::toRotation3D()
+196:        virtual const rw::math::Rotation3D< T > toRotation3D () const;
+420:            return EAA< T > (this->toRotation3D () * rhs.toRotation3D ());
+442:         * @return EAA ( this->toRotation3D() * rhs)
+446:            return EAA (this->toRotation3D () * rhs);
+1:set(SUBSYS_NAME sdurw_math)
+[TRAJ-SLERP]
+444:         * @brief Calculates a slerp interpolation between \b this and \b v.
+446:         * The slerp interpolation ensures a constant velocity across the interpolation.
+451:        inline const Quaternion< T > slerp (const Quaternion< T >& v, const T t) const
+453:            return Quaternion (_q.slerp (t, v.e ()));
+1:set(SUBSYS_NAME sdurw_math)
+[TRAJ-LINEAR]
+22: * @file LinearInterpolator.hpp
+51:    template< class T > class LinearInterpolator : public rw::trajectory::Interpolator< T >
+55:        typedef typename rw::core::Ptr< LinearInterpolator > Ptr;
+58:        typedef typename rw::core::Ptr< const LinearInterpolator > CPtr;
+61:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+70:        LinearInterpolator (const T& start, const T& end, double duration) :
+128:     * LinearInterpolator<rw::math::Transform3D<T> > a friend
+1:set(SUBSYS_NAME sdurw_trajectory)
+[TRAJ-HIGH]
+22: * @file CubicSplineFactory.hpp
+43:    class CubicSplineFactory
+78:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+122:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+169:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+308:        CubicSplineFactory ();
+310:        virtual ~CubicSplineFactory ();
+1:set(SUBSYS_NAME sdurw_trajectory)
+[COLLISION]
+168:        bool inCollision (const kinematics::State& state, QueryResult* result = 0,
+178:        bool inCollision (const kinematics::State& state, rw::proximity::ProximityData& data) const;
+191:        bool inCollision (
+198:            success = this->inCollision (state, &data, stopAtFirstContact);
+1:set(SUBSYS_NAME sdurw_proximity)
+21:#include <rw/models/PrismaticJoint.hpp>
+22:#include <rw/models/RevoluteJoint.hpp>
+35:    _valid (validate ())
+89:    std::vector< Motion > res (_jdev->getDOF () + 1);
+99:    for (std::size_t k = 1; k <= _jdev->getDOF (); k++) {
+110:        if (dynamic_cast< PrismaticJoint* > (joint))
+112:        else if (dynamic_cast< RevoluteJoint* > (joint))
+147:        res[_jdev->getDOF ()].velocity     = VelocityScrew6D<> (drCOM, EAA<> (w));
+148:        res[_jdev->getDOF ()].acceleration = VelocityScrew6D<> (ddrCOM, EAA<> (dw));
+159:    std::vector< Wrench6D<> > res (_jdev->getDOF () + 1);
+162:    for (std::size_t i = 0; i < _jdev->getDOF (); i++) {
+184:        Motion motion = motions[_jdev->getDOF ()];
+192:        res[_jdev->getDOF ()]   = Wrench6D<> (force, torque);
+201:    std::vector< Wrench6D<> > res (_jdev->getDOF () + 1);
+205:        std::size_t k     = _jdev->getDOF ();
+213:    for (std::size_t k = _jdev->getDOF (); k >= 1; k--) {
+237:std::vector< double > RecursiveNewtonEuler::solveMotorTorques (const State& state, const Q& dq,
+245:    std::vector< double > res (_jdev->getDOF () + 1);

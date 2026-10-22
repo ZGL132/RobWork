@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-22T12:47:22+08:00",
+  "generatedAt": "2026-10-22T15:49:51+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,31 +10,31 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 16000,
-    "totalBytes": 869764612,
+    "totalFiles": 16101,
+    "totalBytes": 869912386,
     "byKind": {
       "json-data": 7,
-      "log": 1,
-      "manual-acceptance": 1,
       "benchmark": 8,
-      "acceptance-record": 518,
-      "build-log": 15047,
-      "pipeline-artifact": 2,
+      "log": 1,
+      "markdown-doc": 41,
+      "manual-acceptance": 1,
+      "acceptance-record": 521,
       "gtest-report": 335,
       "governance-record": 40,
-      "markdown-doc": 41
+      "pipeline-artifact": 2,
+      "build-log": 15145
     },
     "byLifecycle": {
       "superseded": 0,
+      "current": 29,
       "historical": 565,
-      "unverified": 15407,
-      "current": 28
+      "unverified": 15507
     },
-    "associated": 599,
-    "unassociated": 15401,
-    "shaComputed": 15980,
+    "associated": 602,
+    "unassociated": 15499,
+    "shaComputed": 16081,
     "shaSkippedLarge": 20,
-    "duplicateGroupsTotal": 927,
+    "duplicateGroupsTotal": 957,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -369,6 +369,221 @@
       "paths": [
         "builds/acc-gate-toolchain-param/neg2-default-fallback.log",
         "builds/acc-gate-toolchain-param/neg3-mutation-old-hardcode.log"
+      ]
+    },
+    {
+      "sha256": "954fee3f3d89daec039a0e4c7e8463e02a65c4711d308a2badc74a22562c4d38",
+      "paths": [
+        "builds/acc-gov-t21-1/build-integration.log",
+        "builds/acc-gov-t21-1/build-smoke.log"
+      ]
+    },
+    {
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/01-clean.log",
+        "builds/acc-gov-t21-1/ps7/01-clean.log",
+        "builds/acc-gov-t21-1/validate-reuse-frozen.log"
+      ]
+    },
+    {
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/02-fixed-baseline.log",
+        "builds/acc-gov-t21-1/ps7/02-fixed-baseline.log"
+      ]
+    },
+    {
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/03-all-units.log",
+        "builds/acc-gov-t21-1/ps7/03-all-units.log"
+      ]
+    },
+    {
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/04-missing-source.log",
+        "builds/acc-gov-t21-1/ps7/04-missing-source.log"
+      ]
+    },
+    {
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/05-stale-source.log",
+        "builds/acc-gov-t21-1/ps7/05-stale-source.log"
+      ]
+    },
+    {
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/06-missing-symbol.log",
+        "builds/acc-gov-t21-1/ps7/06-missing-symbol.log"
+      ]
+    },
+    {
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/07-inventory-omission.log",
+        "builds/acc-gov-t21-1/ps7/07-inventory-omission.log"
+      ]
+    },
+    {
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/08-forged-blob.log",
+        "builds/acc-gov-t21-1/ps51/09-inventory-duplicate.log",
+        "builds/acc-gov-t21-1/ps7/08-forged-blob.log",
+        "builds/acc-gov-t21-1/ps7/09-inventory-duplicate.log"
+      ]
+    },
+    {
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/10-inventory-unit.log",
+        "builds/acc-gov-t21-1/ps7/10-inventory-unit.log"
+      ]
+    },
+    {
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/11-new-source.log",
+        "builds/acc-gov-t21-1/ps7/11-new-source.log"
+      ]
+    },
+    {
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/12-stale-change-hash.log",
+        "builds/acc-gov-t21-1/ps7/12-stale-change-hash.log"
+      ]
+    },
+    {
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/13-core-even-business.log",
+        "builds/acc-gov-t21-1/ps7/13-core-even-business.log"
+      ]
+    },
+    {
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/14-cpp-not-governance.log",
+        "builds/acc-gov-t21-1/ps7/14-cpp-not-governance.log"
+      ]
+    },
+    {
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/15-missing-approval.log",
+        "builds/acc-gov-t21-1/ps7/15-missing-approval.log"
+      ]
+    },
+    {
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/16-unknown-capability.log",
+        "builds/acc-gov-t21-1/ps7/16-unknown-capability.log"
+      ]
+    },
+    {
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/17-path-traversal.log",
+        "builds/acc-gov-t21-1/ps7/17-path-traversal.log"
+      ]
+    },
+    {
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/18-missing-task-proof.log",
+        "builds/acc-gov-t21-1/ps7/18-missing-task-proof.log"
+      ]
+    },
+    {
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/19-task-scope.log",
+        "builds/acc-gov-t21-1/ps51/20-forbidden-scope.log",
+        "builds/acc-gov-t21-1/ps7/19-task-scope.log",
+        "builds/acc-gov-t21-1/ps7/20-forbidden-scope.log"
+      ]
+    },
+    {
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/21-stage-not-approved.log",
+        "builds/acc-gov-t21-1/ps7/21-stage-not-approved.log"
+      ]
+    },
+    {
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/22-final-debt-rejected.log",
+        "builds/acc-gov-t21-1/ps7/22-final-debt-rejected.log"
+      ]
+    },
+    {
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/23-governance-not-algorithm-approval.log",
+        "builds/acc-gov-t21-1/ps7/23-governance-not-algorithm-approval.log"
+      ]
+    },
+    {
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/24-upstream-readonly.log",
+        "builds/acc-gov-t21-1/ps7/24-upstream-readonly.log"
+      ]
+    },
+    {
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/25-missing-record-file.log",
+        "builds/acc-gov-t21-1/ps7/25-missing-record-file.log"
+      ]
+    },
+    {
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/26-deletion-undeclared.log",
+        "builds/acc-gov-t21-1/ps7/26-deletion-undeclared.log"
+      ]
+    },
+    {
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/27-forged-debt-closure.log",
+        "builds/acc-gov-t21-1/ps7/27-forged-debt-closure.log"
+      ]
+    },
+    {
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/28-arbitrary-task-ready.log",
+        "builds/acc-gov-t21-1/ps7/28-arbitrary-task-ready.log"
+      ]
+    },
+    {
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/29-planned-not-executable.log",
+        "builds/acc-gov-t21-1/ps7/29-planned-not-executable.log"
+      ]
+    },
+    {
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/30-forged-build-target.log",
+        "builds/acc-gov-t21-1/ps7/30-forged-build-target.log"
+      ]
+    },
+    {
+      "sha256": "88dc4977e7ea0e83a299d8275bad9ce9f4ae58735e6ca8793861ee96eed599e0",
+      "paths": [
+        "builds/acc-gov-t21-1/ps51/reuse-governance.junit.xml",
+        "builds/acc-gov-t21-1/ps7/reuse-governance.junit.xml"
       ]
     },
     {
@@ -1147,283 +1362,6 @@
       "paths": [
         "builds/main-functional-audit-20261021-5fd9a3d1/contact-sheets/requirements-tour-3.jpg",
         "builds/main-functional-recheck-20261021-b7abcba9/contact-sheets/requirements-tour-3.jpg"
-      ]
-    },
-    {
-      "sha256": "a5fd2e087cf4f3adac09b8a7b56503569ba9bdd11e9218933c265aa9b7f10fd8",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gates.log",
-        "builds/main-manual-validation-20261021/premerge-gates.log",
-        "builds/modeling-completion-20261020-b1/gates.log",
-        "builds/modeling-completion-20261020-b3c/gates.log",
-        "builds/modeling-completion-20261020-b3d/gates.log",
-        "builds/modeling-completion-20261020-b3f/gates.log",
-        "builds/modeling-interaction-20261021/batch2-file-menu/batch2-file-menu-gates.log",
-        "builds/modeling-interaction-20261021/batch3-structure-tree/batch3-final-gates.log",
-        "builds/modeling-interaction-20261021/batch4-tree-width/checks/batch4-final-gates.log",
-        "builds/modeling-interaction-20261021/batch5-boundary-link/checks/batch5-final-gates.log",
-        "builds/modeling-interaction-20261021/final/batch1-final-gates.log",
-        "builds/requirements-a21-20261020/gates.log",
-        "builds/requirements-a23-20261020/gates.log",
-        "builds/requirements-close-20261019/gates.log",
-        "builds/requirements-completion-20261018/batch10-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch11-build/ird-batch11-gates.log",
-        "builds/requirements-completion-20261018/batch12-build/ird-batch12-gates.log",
-        "builds/requirements-completion-20261018/batch13-build/ird-batch13-gates.log",
-        "builds/requirements-completion-20261018/batch14-build/ird-batch14-gates.log",
-        "builds/requirements-completion-20261018/batch15-build/ird-batch15-gates.log",
-        "builds/requirements-completion-20261018/batch16-build/ird-batch16-gates.log",
-        "builds/requirements-completion-20261018/batch17-build/ird-batch17-gates.log",
-        "builds/requirements-completion-20261018/batch18-build/ird-batch18-gates.log",
-        "builds/requirements-completion-20261018/batch19-build/ird-batch19-final-gates.log",
-        "builds/requirements-completion-20261018/batch19-build/ird-batch19-gates.log",
-        "builds/requirements-completion-20261018/batch20-build/ird-batch20-gates.log",
-        "builds/requirements-completion-20261018/batch21-build/gates.log",
-        "builds/requirements-completion-20261018/batch22-build/gates.log",
-        "builds/requirements-completion-20261018/batch23-build/gates.log",
-        "builds/requirements-completion-20261018/batch24-build/gates.log",
-        "builds/requirements-completion-20261018/batch25-build/gates.log",
-        "builds/requirements-completion-20261018/batch7-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch8-build/ird-gates.log",
-        "builds/requirements-completion-20261018/batch9-build/ird-gates.log",
-        "builds/wp13-t29-closure/gates.log"
-      ]
-    },
-    {
-      "sha256": "995488bc724fdd13c2918ddf3a54c304f5463ac3c74137126f466c17b61fe76b",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/base-euler.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/base-euler.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/base-euler.png"
-      ]
-    },
-    {
-      "sha256": "6f61e2882867d8c8009a34081cec1463196a3ca415a5111b6fa9c7681917687d",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/body-editor-confirm.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/body-editor-confirm.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/body-editor-confirm.png"
-      ]
-    },
-    {
-      "sha256": "e75d1a4b9f7374425d785f2ecd65c397ae20bd7c6bba1ed3ce47380d04b80ce5",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/body-editor-top.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/body-editor-top.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/body-editor-top.png"
-      ]
-    },
-    {
-      "sha256": "aa779bb94ff5e10a3f89a6d49aac51da9554fa55f2888a94141b43fcfc46114d",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/clean-revision-live-tree-and-form.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/clean-revision-live-tree-and-form.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/clean-revision-live-tree-and-form.png"
-      ]
-    },
-    {
-      "sha256": "6f8ce3b4009e79d7a8070eb5ba714bb3c72832922a03cbca300940b207b47f25",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/conflict-rebuilt-current-tool.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/conflict-rebuilt-current-tool.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/conflict-rebuilt-current-tool.png"
-      ]
-    },
-    {
-      "sha256": "fb621b39fb5a47873e0a1ab13e1d3433a96506614c226fa5141e76985c03dccd",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/continuous-range-rejected.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/continuous-range-rejected.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/continuous-range-rejected.png"
-      ]
-    },
-    {
-      "sha256": "7ff03084f4fa2ab7798bb6573564ab7655953bb76c426711da36826ba1885368",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/continuous-range.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/continuous-range.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/continuous-range.png"
-      ]
-    },
-    {
-      "sha256": "ac820ec503e00a8cbce4d7930425d702784ce7fd5a1daea1cc324f8050f2c1e9",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-deleted-refused.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-deleted-refused.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-deleted-refused.png"
-      ]
-    },
-    {
-      "sha256": "a190df571548b11290c4c605518f27044323346ec86deaec883f9eea971b08c2",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-empty.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-empty.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-empty.png"
-      ]
-    },
-    {
-      "sha256": "d39e5e7bfbeb7220385dd9f3091a131cfb2792141188e2e0909305abbbed06a4",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-long-values.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-long-values.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-long-values.png"
-      ]
-    },
-    {
-      "sha256": "09213a94971116b5d58c1d2902866b6c5c702bfb527f168520ba2e8dbe3167de",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/diff-three-groups.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/diff-three-groups.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/diff-three-groups.png"
-      ]
-    },
-    {
-      "sha256": "3a74cde541c53b3ee9eaa38d923f1047ea1cf90e4584bbf1d9d059d4f39cbdc4",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-change-readonly.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-change-readonly.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-change-readonly.png"
-      ]
-    },
-    {
-      "sha256": "946663fe3fc27064136f6dbc6ea077b04be9de6381c086aeb30ac06df169f7b8",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-change-redo.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-change-redo.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-change-redo.png"
-      ]
-    },
-    {
-      "sha256": "c2559741f544842558aca2b3dad82bb6dfd040d27f7d24c38fbe559556237c90",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-history.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-history.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-history.png"
-      ]
-    },
-    {
-      "sha256": "b718132e2c2f5ed91f6f08cb8bdce98ab1f2e6f7fc4ab1f8e1f8ecac48dc61c4",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/draft-undo-clean-redo-retained.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/draft-undo-clean-redo-retained.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/draft-undo-clean-redo-retained.png"
-      ]
-    },
-    {
-      "sha256": "402737c468295f83c95e1127b8db0ed1729890222aacbffe27f9a3680dece096",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/full-draft-restored-tool.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/full-draft-restored-tool.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/full-draft-restored-tool.png"
-      ]
-    },
-    {
-      "sha256": "5c353b75d08c2c86bb9dab4c6772573762331d3dfc7e60bef4bdcd1d772f0488",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/import-report.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/import-report.png",
-        "builds/modeling-completion-20261020-b3a/gui/import-report.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/import-report.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/import-report.png"
-      ]
-    },
-    {
-      "sha256": "d43b5d063abe098230cc33aeeed91a44d9dc6e393f1399088c29cf6cbecba9ac",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/property-segments-complete.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/property-segments-complete.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/property-segments-complete.png"
-      ]
-    },
-    {
-      "sha256": "559694ad20c5e943b039624b66a3cc08f5842f1dbd35a6ab56d41fe88a9d0447",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/property-segments-long.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/property-segments-long.png"
-      ]
-    },
-    {
-      "sha256": "62940f9da628c3dbf58c7a2525944288b475caa988f4b097189bcf10b4a84f80",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/retained-draft-review.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/retained-draft-review.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/retained-draft-review.png"
-      ]
-    },
-    {
-      "sha256": "ad5c745276c98d147fe4f53b3803b5ac0f1d1db162f574d4e9a9280f9d89e923",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/scene-manager-external.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/scene-manager-external.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/scene-manager-external.png"
-      ]
-    },
-    {
-      "sha256": "2ea12eb051759e403ab1d76bc464db3fe074441deefcb7a4c9784c083c041fa1",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/scene-manager-updated.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/scene-manager-updated.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/scene-manager-updated.png"
-      ]
-    },
-    {
-      "sha256": "3221f673002d8ee06b0da70d22ebc68dd30e5f6da9564bffa2c8011da1562b69",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-body-bottom.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-body-bottom.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body-bottom.png"
-      ]
-    },
-    {
-      "sha256": "7dd4b04263c9d24cce75123b278fd7953cbe8316a3cc16d0dc31ce98a6dbf7ea",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-body.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-body.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-body.png"
-      ]
-    },
-    {
-      "sha256": "35f812926a1ef3b2aef25988d42a01fec449512580061657820a756ed15e3289",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-external.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-external.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-external.png"
-      ]
-    },
-    {
-      "sha256": "ef283dc2be7764f72cfd7621c0824f7580e42c6f832b4225cd4f412b1aab4340",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/tool-manager-top.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/tool-manager-top.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/tool-manager-top.png"
-      ]
-    },
-    {
-      "sha256": "42cb34af9b0aaaee5fb633fa19e2ea39d1e5d1e05e6c683ba49a577038986077",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/workcell-import-report.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/workcell-import-report.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/workcell-import-report.png"
-      ]
-    },
-    {
-      "sha256": "97c9e0d98f7208d27ef0e6f08f3dca56236ae88f49bd661c74ab76615dea01ed",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/xacro-duplicate-error.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/xacro-duplicate-error.png",
-        "builds/modeling-completion-20261020-b3a/gui/xacro-duplicate-error.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/xacro-duplicate-error.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/xacro-duplicate-error.png"
-      ]
-    },
-    {
-      "sha256": "17df458435b404fa1f86cb9cc202533fa91633f2107c77de6e7c7746808f56ca",
-      "paths": [
-        "builds/main-functional-audit-20261021-5fd9a3d1/gui-modeling_gui/xacro-parameters.png",
-        "builds/main-functional-recheck-20261021-b7abcba9/gui-modeling_gui/xacro-parameters.png",
-        "builds/modeling-completion-20261020-b3a/gui/xacro-parameters.png",
-        "builds/modeling-completion-20261020-b3b-display/gui/xacro-parameters.png",
-        "builds/wp13-t29-closure/gui-modeling_gui/xacro-parameters.png"
       ]
     }
   ],
@@ -2259,6 +2197,26 @@
       "bytes": 14975,
       "sha256": "7001736e35ee70a76d2db3cf740cc05512a2d724d400057cb661648648d474bb",
       "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261022.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 2108,
+      "sha256": "a9a668a36635aefbc99bf775fac18ced3c2f90022b63180608325b3fec163621",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261022.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 9963,
+      "sha256": "e550a2b3c31769a79bc6cb1a1d2ee29243ec7e8d260b10ca14a59b54b573b02a",
+      "lifecycle": "current"
     },
     {
       "path": "acceptance/gov-unfrozen-20261010.md",
@@ -5459,6 +5417,16 @@
       "lifecycle": "historical"
     },
     {
+      "path": "acceptance/WP-15-T20-20261022.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-15-T20"
+      ],
+      "bytes": 7055,
+      "sha256": "14ea2e1f2507633513749009da03a20f4c98d6697738faac6af10e8a3c9af95a",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "acceptance/WP-16-T01-20261004.md",
       "kind": "acceptance-record",
       "taskIds": [
@@ -7264,6 +7232,790 @@
       "taskIds": [],
       "bytes": 304,
       "sha256": "767cefa927e257a533fb9c8244d3aa522fcf3b56c53d463beb1844ed75161a8b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/branch-protection.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1110,
+      "sha256": "d2c5f9278c5e456c8fb85d368c594af9f810e51205a76039943e7c607598893b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/build-integration.cmd",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 205,
+      "sha256": "8a5c18679cf83e675c9c0676d7ff6c8a30b5807402ea7948660adfaf61c5d23a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/build-integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2487,
+      "sha256": "954fee3f3d89daec039a0e4c7e8463e02a65c4711d308a2badc74a22562c4d38",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/build-smoke.cmd",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 211,
+      "sha256": "d2e4141b8e3f110602ad456dd0f2f51ac6f2c98fe05eaa9472ec2f348861ea75",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/build-smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2487,
+      "sha256": "954fee3f3d89daec039a0e4c7e8463e02a65c4711d308a2badc74a22562c4d38",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/bypass-c.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 231,
+      "sha256": "aeae26126da9302292db5986904f62506f0d7f12138de6db04602d9e1e1b5f88",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/bypass-ps1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 233,
+      "sha256": "af1352f85febfdfdbd5f1ebdd7d68492e3f809eeed9aee0de297fca1e0390f6b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/cache-check.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 61,
+      "sha256": "bbbca00db799078d1fe2554e00546935c8f9dfa0088a2fa0862c6938283b8ebf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ci-failed.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6722,
+      "sha256": "5b572fe9c54f0572542d07293b28f5c12cc1afc49fd0a63bd7a807db90804be6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ci-run.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 13643,
+      "sha256": "84c4d941983a9a33327c8f7e9ffa23171d4d4cbbc0113f5ba6840ea06561a349",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/configure-integration.cmd",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 392,
+      "sha256": "526a8d64d898b279d6d9493111d0e1900270e80fbce452fa83ad905e10c1d6b6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/configure-integration.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12547,
+      "sha256": "4ee0a54000cae61bcbbb2415c3b97a122798b3d6c6df148607f86d4e1b99f2ba",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/configure-smoke.cmd",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 409,
+      "sha256": "cda59c5e8311212f304c0e1f3b6bccccf9eabc3d5bb284eb02eaca3d2c2d0754",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/configure-smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2303,
+      "sha256": "9db09f837aff8e53b70a0729956bc99b7602a43aa645eb8d3239e35cd9e06c8a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/docs.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 261,
+      "sha256": "c1462132f93da826f45d838c6fc75ee3e1d1f8ae227710384cf73b911a45516b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/implementation-raw-counts.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 139,
+      "sha256": "5a1004e8962ae0f54ca032a3dd76ee0bd7fa634357face14cffb05c99876168b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/inventory-counts.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1046,
+      "sha256": "7b6bd97a4f25abe0c3eafef622b52fdcb9b3615457cdff7d25de375cbf08de5b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/line-evidence.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1092,
+      "sha256": "2970e0851d24fbf0e949bd51448ed60ab66b46a0ca2207382b57f80b31fdfeda",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/omitted-script-paths.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3864,
+      "sha256": "f2eff837640ea00b2d0ed1e6741a83adfcae8e7c75fb7c954f6e37d385f907b5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2502,
+      "sha256": "63d3d5e788ef0f5606365b193843d70e340b52718a540235e732a03424730832",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1353,
+      "sha256": "88dc4977e7ea0e83a299d8275bad9ce9f4ae58735e6ca8793861ee96eed599e0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps51/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 10610,
+      "sha256": "ef639eaeda9b18ca4c4a00e48ea2d357710d09cb50b7a80c2615a8eea95cc004",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7-driver.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2374,
+      "sha256": "4f9826737720f7fea39e200dcc48846ae19505fc0c1d2605de6f1ef94dbc5a97",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/01-clean.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/02-fixed-baseline.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "470925b15962d19765e945ac7fc6f8252a11f52814713fdbace4abf8d72ba6c3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/03-all-units.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 36,
+      "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/04-missing-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 51,
+      "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/05-stale-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 63,
+      "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/06-missing-symbol.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 82,
+      "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/07-inventory-omission.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37,
+      "sha256": "5fc56e52ec50094bd5c8fba72f145432e2c77b738d81c54a1ee31738803a1154",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/08-forged-blob.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/09-inventory-duplicate.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 83,
+      "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/10-inventory-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 109,
+      "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/11-new-source.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 166,
+      "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/12-stale-change-hash.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 151,
+      "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/13-core-even-business.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 97,
+      "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/14-cpp-not-governance.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 128,
+      "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/15-missing-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 14,
+      "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/16-unknown-capability.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 91,
+      "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/17-path-traversal.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 28,
+      "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/18-missing-task-proof.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 76,
+      "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/19-task-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/20-forbidden-scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 79,
+      "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/21-stage-not-approved.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 57,
+      "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/22-final-debt-rejected.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 75,
+      "sha256": "aa5deca6b5ccb7b5160317aac54a08884891d79ba7e6760e98bce64af093b38f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/23-governance-not-algorithm-approval.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 154,
+      "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/24-upstream-readonly.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 64,
+      "sha256": "b05e9438cc091845bf129f96297c5836994b5e6b70a613239adf565434e19382",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/25-missing-record-file.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/26-deletion-undeclared.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 101,
+      "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/27-forged-debt-closure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 121,
+      "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/28-arbitrary-task-ready.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 48,
+      "sha256": "acb736d3acfbe06f8c5e1c156ce7ded2d112e262befec46d0df4e29473fd934e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/29-planned-not-executable.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 66,
+      "sha256": "a0be79dd64eb9718747f8864fe6c9c187f60a615b014b21561fda83a1643c0a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/30-forged-build-target.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 70,
+      "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/reuse-governance.junit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1353,
+      "sha256": "88dc4977e7ea0e83a299d8275bad9ce9f4ae58735e6ca8793861ee96eed599e0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/ps7/reuse-test-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 7187,
+      "sha256": "ab9e93ac51040fe4f170719236f35d961a51e6514b6588167ab15e05cf07ed77",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-after-gov-api.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 337,
+      "sha256": "bd857a01c690022cd851b098b0b9f110a630312adc45a28a29ce40bef51c125b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-after-main-api.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 327,
+      "sha256": "310b951d87a2ed1a06a00d8d07a2e6b829f12d7a6bdcb417c31963ce014b97d6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-after-mainline-api.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 357,
+      "sha256": "39b4444368be1d0c49609f2157c790fa38da46a9a05eb2539affd14f227e6190",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-after-retry.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 160,
+      "sha256": "40d4ee6aa90f1302d18a2ab6f98dca61712c22474bfe2fbf8745045a444d2815",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-after.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 110,
+      "sha256": "e4b5cd6ebb4e2122c71cdc9b42db8e30d3f094875e962736d9c2eea8ebcb1981",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/remote-before.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 183,
+      "sha256": "4681bb3dce4a0776e278312113916ed767e028763c6b464c0a2dd4316e9cece4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/reproduction-status.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 31,
+      "sha256": "916329a4e01d0cf1863d6758c885fe96e173fa10baf22aef780f678f99f9232d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/scope.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 181,
+      "sha256": "2d13ebf92a1a19e9bddfb584426452ac982581850b1b8365ae53e03492929431",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/static-review.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 37047,
+      "sha256": "0cc3dcbe00899cad028f8ab94bd5f818f258a7cfb0ada2aff29e894356ce9197",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/upstream-api-review.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5361,
+      "sha256": "f453df08b28cbf5513df34bced69a32937d4d27b1fcd573ae71f3608a8388d75",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/validate-reuse-frozen.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 123,
+      "sha256": "4899cfe80dda422e361fb72c054400ce74aebdafc483755bd07ad31bed56f6c8",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/validate-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 153,
+      "sha256": "b3dc8f63897441c265e8bf055c4bf4267df4a583327bf72a31f426b3a2869652",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-gov-t21-1/verify-task.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 3346,
+      "sha256": "12927cf9dbbc778e278a6a2166b8ddc16301cf874d97bd50fb882b7ebe53494d",
       "lifecycle": "unverified"
     },
     {
@@ -127022,7 +127774,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1271270,
+      "bytes": 1272480,
       "sha256": null,
       "lifecycle": "unverified"
     },

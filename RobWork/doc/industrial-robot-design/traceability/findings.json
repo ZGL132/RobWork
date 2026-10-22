@@ -9623,6 +9623,26 @@
       "registeredAt": "2026-10-22",
       "title": "WP-17-T11提交正文的四段（What/Why/How/影响面）使用字面\\n而非真实换行，git log中四段挤成一行——内容真实齐备（与验收复现逐项一致）但排版不可读、机器解析四段困难",
       "owner": "提交规范所有者（AGENTS §6.3）。处置：不amend已推送历史；后续实施会话提交模板改用真实换行；随下一治理批消账。"
+    },
+    {
+      "id": "F-957",
+      "source": "traceability/acceptance/GOV-T21-20261022.md#b-1--f-957",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "GOV-T21冻结干净提交的自测无变更可提交，PS7/PS5.1均退出1且冻结31/32用例未执行，CI39740812174同因失败",
+      "owner": "GOV-T21治理门禁所有者",
+      "resolution": "修复夹具冻结对象建立方式，显式报告driverFailure/expected/executed/notRun；重新冻结并全量独立验收，不将30子例failed=0解释为驱动成功。"
+    },
+    {
+      "id": "F-958",
+      "source": "traceability/acceptance/GOV-T21-20261022.md#b-2--f-958",
+      "severity": "blocking",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "GOV-T21 IsProduct后缀过滤漏掉C源码与可执行脚本，未声明.c/.ps1负例均放行；既有mjs黄金生成器/ps1工具未纳入1370库存",
+      "owner": "GOV-T21复用覆盖与库存所有者",
+      "resolution": "覆盖实际编译/include实现和可执行测试/治理工具，静态文档明确分类；新增未跟踪/已提交漏后缀负例，重建覆盖摘要并全量验收。"
     }
   ]
 }

@@ -1,0 +1,3 @@
+?? RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/AcceptanceUndeclared.ps1
+validate-reuse: PASS governance only; inventory=1370 units=20 changed=1 DEBT=16 UNRESOLVED=1368 (not algorithm compliance)
+validator_exit=0

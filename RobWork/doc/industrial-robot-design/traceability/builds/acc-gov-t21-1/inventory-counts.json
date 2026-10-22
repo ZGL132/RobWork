@@ -1,0 +1,86 @@
+[
+  {
+    "Name": "core",
+    "Count": 30
+  },
+  {
+    "Name": "diagnostics",
+    "Count": 38
+  },
+  {
+    "Name": "drivetrain",
+    "Count": 22
+  },
+  {
+    "Name": "dynamics",
+    "Count": 61
+  },
+  {
+    "Name": "evidence",
+    "Count": 37
+  },
+  {
+    "Name": "execution",
+    "Count": 60
+  },
+  {
+    "Name": "foundation-governance",
+    "Count": 3
+  },
+  {
+    "Name": "io",
+    "Count": 37
+  },
+  {
+    "Name": "kinematics",
+    "Count": 104
+  },
+  {
+    "Name": "modeling",
+    "Count": 138
+  },
+  {
+    "Name": "optimization",
+    "Count": 76
+  },
+  {
+    "Name": "policy",
+    "Count": 43
+  },
+  {
+    "Name": "project",
+    "Count": 87
+  },
+  {
+    "Name": "reporting",
+    "Count": 66
+  },
+  {
+    "Name": "requirements",
+    "Count": 92
+  },
+  {
+    "Name": "runtime",
+    "Count": 57
+  },
+  {
+    "Name": "selection",
+    "Count": 71
+  },
+  {
+    "Name": "testkit",
+    "Count": 45
+  },
+  {
+    "Name": "trajectory",
+    "Count": 81
+  },
+  {
+    "Name": "ui",
+    "Count": 162
+  },
+  {
+    "Name": "workflow",
+    "Count": 60
+  }
+]

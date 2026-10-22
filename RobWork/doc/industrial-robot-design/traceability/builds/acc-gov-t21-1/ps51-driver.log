@@ -1,0 +1,46 @@
+01-clean : True (exit=0 expected=PASS)
+02-fixed-baseline : True (exit=1 expected=REUSE-BASELINE)
+03-all-units : True (exit=1 expected=REUSE-UNITS)
+04-missing-source : True (exit=1 expected=REUSE-MISSING)
+05-stale-source : True (exit=1 expected=REUSE-UPSTREAM-HASH)
+06-missing-symbol : True (exit=1 expected=REUSE-UPSTREAM-SYMBOL)
+07-inventory-omission : True (exit=1 expected=REUSE-INVENTORY)
+08-forged-blob : True (exit=1 expected=REUSE-INVENTORY)
+09-inventory-duplicate : True (exit=1 expected=REUSE-INVENTORY)
+10-inventory-unit : True (exit=1 expected=REUSE-INVENTORY)
+11-new-source : True (exit=1 expected=REUSE-UNDECLARED)
+12-stale-change-hash : True (exit=1 expected=REUSE-UNDECLARED)
+13-core-even-business : True (exit=1 expected=REUSE-DUPLICATE)
+14-cpp-not-governance : True (exit=1 expected=REUSE-MODE)
+15-missing-approval : True (exit=1 expected=REUSE-PATH)
+16-unknown-capability : True (exit=1 expected=REUSE-CAPABILITY)
+17-path-traversal : True (exit=1 expected=REUSE-PATH)
+18-missing-task-proof : True (exit=1 expected=REUSE-TASK)
+19-task-scope : True (exit=1 expected=REUSE-SCOPE)
+20-forbidden-scope : True (exit=1 expected=REUSE-SCOPE)
+21-stage-not-approved : True (exit=1 expected=REUSE-STAGE)
+22-final-debt-rejected : True (exit=1 expected=REUSE-MIGRATION)
+23-governance-not-algorithm-approval : True (exit=1 expected=REUSE-GOV-SCOPE)
+24-upstream-readonly : True (exit=1 expected=REUSE-UPSTREAM-READONLY)
+25-missing-record-file : True (exit=1 expected=REUSE-MISSING)
+26-deletion-undeclared : True (exit=1 expected=REUSE-UNDECLARED)
+27-forged-debt-closure : True (exit=1 expected=REUSE-INVENTORY)
+28-arbitrary-task-ready : True (exit=1 expected=REUSE-TASK)
+29-planned-not-executable : True (exit=1 expected=REUSE-TASK-STATE)
+30-forged-build-target : True (exit=1 expected=REUSE-UPSTREAM-TARGET)
+HEAD detached at 64ef0fd07
+You are in a sparse checkout with 19% of tracked files present.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.reuse-validator.ps1
+
+nothing added to commit but untracked files present (use "git add" to track)
+fixture commit failed
+At D:\10_Source_Repos\21_robot\acc-gov-t21-test\RobWork\scripts\industrialrobot\test-reuse-governance.ps1:110 char:26
++     if ($LASTEXITCODE) { throw 'fixture commit failed' }
++                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (fixture commit failed:String) [], RuntimeException
+    + FullyQualifiedErrorId : fixture commit failed
+ 
+exit=1
