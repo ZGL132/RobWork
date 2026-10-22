@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B30-r2",
+  "verdict": "PASS",
+  "reviewedCommit": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "baseCommit": "933dc6016c078b7d674fea68af19c038e0388979",
+  "originalB30": "0900751718849863af1190ece61c8ddb1f1cf547",
+  "createdUtc": "2026-10-22T23:16:36.918873+00:00",
+  "boundary": "仅B30-r2局部独立验收，不授全T01/T02、生产修复、算法替换、新核心、上游扩展或依赖安装权",
+  "closedFinding": {
+    "id": "B30-F01",
+    "status": "closed in this frozen revision",
+    "reason": "两个公开hash行直接绑定Identity.cpp真实fnv1a128，全31行完整依赖摘要已核"
+  },
+  "gates": {
+    "task": 0,
+    "docs": 0,
+    "reuse": 0,
+    "scope": 0,
+    "commit-lint": 0,
+    "diff-check": 0,
+    "inspection": 0,
+    "delta-and-coverage": 0
+  },
+  "matrix": {
+    "changedRows": 31,
+    "bindings": 622,
+    "bindingFailures": 0,
+    "newRows": [],
+    "allPending": true
+  },
+  "rawManifests": [
+    {
+      "label": "original37",
+      "manifest": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/artifact-manifest.json",
+      "count": 37
+    },
+    {
+      "label": "rejected57",
+      "manifest": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/r2/rejected-090075171/archive-manifest.json",
+      "count": 57
+    },
+    {
+      "label": "r2original66",
+      "manifest": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/r2/artifact-manifest.json",
+      "count": 66
+    }
+  ],
+  "rawBlobFailures": 0,
+  "original37AndManifestUnchanged": true,
+  "sourceComparison": {
+    "paths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/CMakeLists.txt",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/DigestSuitabilityTest.cpp"
+    ],
+    "changed": []
+  },
+  "cppRerun": false,
+  "cppRerunReason": "指定范围文档/审计绑定返工；相对原B30产品、probe、CMake零变，引用归档原独验结果",
+  "referencedTests": {
+    "total": 13,
+    "passed": 11,
+    "failed": 2,
+    "skipped": 0,
+    "failedNames": [
+      "ContentVersionPublicFnv_CORE_T02",
+      "ContentIdentityPublicFnv_CORE_T02"
+    ],
+    "cngCount": 14,
+    "hashlibMatch": true
+  },
+  "knownFailures": "F-965：两个公开FNV hash反例仍为failed；GAP-DIGEST-01保持未批准",
+  "freshPythonHashlibCngProperties": 14,
+  "freshFnvOracleFold": "d84cf67ff3e90eee",
+  "searchReruns": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "sha.?256|sha.?2\\b|openssl|bcrypt|cryptopp|crypto",
+        "RobWork/RobWork",
+        "RobWork/RobWorkSim"
+      ],
+      "exit": 1
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "BCryptHash\\(|BCryptCreateHash\\(|BCryptHashData\\(|BCryptDuplicateHash\\(|BCryptFinishHash\\(",
+        "D:/Windows Kits/10/Include/10.0.22621.0/shared/bcrypt.h"
+      ],
+      "exit": 0
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "fnv1a128",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp"
+      ],
+      "exit": 0
+    }
+  ],
+  "environmentNotes": [
+    "仅本地clone --no-hardlinks；无fetch/pull/push/安装/共享树写入",
+    "首次检出因Windows长路径exit128；以git -c core.longpaths=true重试exit0；冻结reuse首次exit1同因git show长路径，临时clone设置core.longpaths=true后重跑；影响限独立Temp clone"
+  ],
+  "notRun": [
+    "C++重建/重跑（按零变范围引用原独验）",
+    "全T01/T02独立验收",
+    "跨平台/性能/超长流/消费者兼容性",
+    "远程操作/依赖安装"
+  ],
+  "findings": [],
+  "archivePolicy": "仅evidence内报告、真实日志、结果、脚本及Git blob引用原件；不包含clone/build/.git；archive-manifest.json仅排除自身"
+}

@@ -1,0 +1,351 @@
+{
+  "rowDeltaCount": 31,
+  "rowDeltas": [
+    {
+      "functionId": "core.ContentDigester.compressBlock",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.tryParseDigest",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.formatDigest",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.fromCanonical",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.tryFromCanonical",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.toCanonical",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.isValid",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.loadBE32",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.storeBE32",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.rotr",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.kSha256K",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.update",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.finalize",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.feed",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentVersion.equal",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentVersion.notEqual",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentVersion.order",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentIdentity.equal",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentIdentity.notEqual",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentIdentity.order",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.ContentDigester.default",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.hash.ContentVersion",
+      "changedKeys": [
+        "search",
+        "inputs",
+        "auditEvidence"
+      ],
+      "addedInputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+          "sha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210"
+        }
+      ],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.hash.ContentIdentity",
+      "changedKeys": [
+        "search",
+        "inputs",
+        "auditEvidence"
+      ],
+      "addedInputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+          "sha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210"
+        }
+      ],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.toHex",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.EmptyString_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.Abc_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.TwoBlock_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.DifferentBytesDifferentDigest_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.FinalizeDisallowsFurtherUse_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    },
+    {
+      "functionId": "core.audit-b30.DigestTest.RoundtripAndStrictParse_UT_ID_D",
+      "changedKeys": [
+        "search",
+        "auditEvidence"
+      ],
+      "addedInputs": [],
+      "removedUnrelatedEvidence": [],
+      "ok": true
+    }
+  ],
+  "coverage": [
+    {
+      "label": "original37",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 37
+    },
+    {
+      "label": "rejected57",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 57
+    },
+    {
+      "label": "r2original66",
+      "missingFromManifest": [],
+      "nonexistentManifestEntries": [],
+      "selfReferenced": false,
+      "count": 66
+    }
+  ],
+  "errors": []
+}

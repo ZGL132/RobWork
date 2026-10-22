@@ -1,0 +1,1 @@
+pwsh -NoProfile -File RobWork\scripts\industrialrobot\validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Head 52285db6f0d276742531ecb7e7bcf73db283e563
