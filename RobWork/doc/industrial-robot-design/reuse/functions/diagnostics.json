@@ -43,7 +43,12 @@
       "functionId": "diagnostics.FileLogFileOps.appendLine",
       "ownerUnit": "diagnostics",
       "requirements": [
-        "ERR-01"
+        "NFR-REL-05"
+      ],
+      "designRefs": [
+        "units/diagnostics.md#7",
+        "units/diagnostics.md#9.6",
+        "tasks/foundation/DIAG-T07.json"
       ],
       "sources": [
         {
@@ -80,7 +85,12 @@
       "functionId": "diagnostics.LoggingPipeline.log",
       "ownerUnit": "diagnostics",
       "requirements": [
-        "ERR-01"
+        "NFR-REL-05"
+      ],
+      "designRefs": [
+        "units/diagnostics.md#7",
+        "units/diagnostics.md#9.6",
+        "tasks/foundation/DIAG-T07.json"
       ],
       "sources": [
         {

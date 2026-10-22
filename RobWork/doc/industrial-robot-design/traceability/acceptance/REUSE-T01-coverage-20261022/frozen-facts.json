@@ -1,0 +1,438 @@
+{
+  "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+  "startedHead": "ce1af19667e6e3e439e15600e5bed7940b171942",
+  "rows": 95.0,
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+      "gitBlob": "ec3230ce3def2f3af5b61e27b92a2e9c05c519a4",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+      "gitBlob": "335ac8066521ef5dc8e3e4c710ebfc4d2bf8f585",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+      "gitBlob": "447d4498a5e57855f717b9892c4222bdcfe074ce",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+      "gitBlob": "42e50a133b514678282c117375a2e016a6d0692d",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+      "gitBlob": "4259e25b2260edb6ecf7118f187ecc96385afb13",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp",
+      "gitBlob": "21a8af180f2f9a0ba496a47345037168282448b2",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+      "gitBlob": "6c157d0bdd27b60a9bd9e7e603d4be33f1110c20",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+      "gitBlob": "ffdefb6ea94896fbf29adc051248fa15568ce086",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp",
+      "gitBlob": "217f4a2445be45e85af3eefe1cd7b558156cee7c",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+      "gitBlob": "d48dac7774fa54a29768ec0ba0dab2f75240087d",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+      "gitBlob": "39c708379eef8917e1226f2c62376f9ff734dfca",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "gitBlob": "6124f36018a2f85e213603f59d0330ae82b4014e",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp",
+      "gitBlob": "cd8eaf48eaec5bd1338401eb51d998d66d15ab27",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "gitBlob": "b44e49acc9242d48feec10d84b1f4b4169f86bef",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "gitBlob": "2c63d8f3e73e21c77dc234f141f408779a237804",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "gitBlob": "6b7161788f97fe1897a0506e08f4eda5c969e1b5",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+      "gitBlob": "21e896828dac9554814f55bbcea1d4f0372206d7",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/pathoptimization/pathlength/PathLengthOptimizer.hpp",
+      "gitBlob": "498aeec3cf62b237292296ee974bb1ab3c34a172",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+      "gitBlob": "80c58baa38d612e3cbf45fd571121b84962d06e5",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/opengl/RenderLines.hpp",
+      "gitBlob": "7d8657a1e54e24c11c92e92d5df1a949824daaa7",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/rwphysics/RK4Integrator.hpp",
+      "gitBlob": "7214bfb3e07dbfa5df04b8119fb0949a79d4374f",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    },
+    {
+      "path": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "gitBlob": "89a0405da8bf9fcfc09b99eb4f207e5cee1791e9",
+      "frozenCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+      "worktreeEqualsFrozen": true
+    }
+  ],
+  "matrices": [
+    {
+      "unit": "core",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "ContentDigester::compressBlock"
+      ]
+    },
+    {
+      "unit": "diagnostics",
+      "rows": 3,
+      "sources": 2,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "StableCodeRegistry::registerCode",
+        "FileLogFileOps::appendLine",
+        "LoggingPipeline::log"
+      ]
+    },
+    {
+      "unit": "drivetrain",
+      "rows": 2,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "singularValuesJacobi",
+        "invertSquareMatrix"
+      ]
+    },
+    {
+      "unit": "dynamics",
+      "rows": 4,
+      "sources": 2,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "buildRneaChain",
+        "computeGeometry",
+        "rneaTorques",
+        "solveLinearSystem"
+      ]
+    },
+    {
+      "unit": "evidence",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "aggregateVerdict"
+      ]
+    },
+    {
+      "unit": "execution",
+      "rows": 2,
+      "sources": 2,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "TaskScheduler::submit",
+        "WorkerSupervisor::spawnNewWorker"
+      ]
+    },
+    {
+      "unit": "io",
+      "rows": 2,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "strictUtf8Check",
+        "canonicalizeJson"
+      ]
+    },
+    {
+      "unit": "kinematics",
+      "rows": 21,
+      "sources": 4,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "FkEvaluator::evaluate",
+        "FkEvaluator::evaluate",
+        "IkSolver::solve",
+        "nearestToolRollTarget",
+        "orientBoxPoint",
+        "orientSampleRotation",
+        "poseFromDirectionRoll",
+        "validateBoxOrientation",
+        "generateRandomPositions",
+        "generateGridPositions",
+        "generateDirections",
+        "splitmix64",
+        "streamSeedFor",
+        "transposeOf",
+        "composeOf",
+        "zyxEulerAngles",
+        "poseError",
+        "constrainedPoseError",
+        "constrainedDampedLeastSquaresStep",
+        "dampedLeastSquaresStep",
+        "makeInitialValues"
+      ]
+    },
+    {
+      "unit": "modeling",
+      "rows": 24,
+      "sources": 6,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "symmetricEigenvalues3x3",
+        "accumulateRotatedInertia",
+        "accumulateParallelAxis",
+        "couplingSingularValues",
+        "rpyToRotation",
+        "rpyToEaa",
+        "rotVec",
+        "rotMul",
+        "transformMul",
+        "rotZ",
+        "rotX",
+        "axisAngleRotation",
+        "rotateTranspose",
+        "rotateTransposeFrame",
+        "rotationAngleBetween",
+        "dhCoreTransform",
+        "dhStaticSegment",
+        "dhRebuildStep",
+        "solveLinearSystem",
+        "numericJacobian",
+        "lmSolve",
+        "rankAndFreeColumns",
+        "rotateInertia",
+        "zeroConfigFK"
+      ]
+    },
+    {
+      "unit": "optimization",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "generateSeededLhsCandidates"
+      ]
+    },
+    {
+      "unit": "policy",
+      "rows": 2,
+      "sources": 2,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "RobWorkCollisionEvaluator::createSession",
+        "CollisionEvaluationSession::evaluate"
+      ]
+    },
+    {
+      "unit": "project",
+      "rows": 2,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "ObjectStore::publishObject",
+        "ObjectStore::readVerified"
+      ]
+    },
+    {
+      "unit": "reporting",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "ReportArchiveCoordinator::publish"
+      ]
+    },
+    {
+      "unit": "requirements",
+      "rows": 2,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "SamplingPlanBuilder::buildPlan",
+        "SamplingPlanBuilder::digest"
+      ]
+    },
+    {
+      "unit": "runtime",
+      "rows": 7,
+      "sources": 3,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "multiplyRotation",
+        "rotateVector",
+        "rotationFromCustomEaa",
+        "composeWorldBaseTcp",
+        "singularValuesOneSidedJacobi",
+        "compileWorkCell",
+        "rotateTransposed"
+      ]
+    },
+    {
+      "unit": "selection",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "LinearCurveEvaluator::evaluate"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "rows": 2,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "parseJson",
+        "dumpJson"
+      ]
+    },
+    {
+      "unit": "trajectory",
+      "rows": 14,
+      "sources": 4,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "interpolateJointLinear",
+        "interpolateCartesianLine",
+        "hermiteH000",
+        "hermiteH100",
+        "hermiteH001",
+        "hermiteH101",
+        "basisH0000",
+        "basisH0010",
+        "basisH0001",
+        "basisH0011",
+        "septicS0",
+        "septicS1",
+        "septicS2",
+        "septicS3"
+      ]
+    },
+    {
+      "unit": "ui",
+      "rows": 2,
+      "sources": 2,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+        "HostView3DGateway::currentTcpPose"
+      ]
+    },
+    {
+      "unit": "workflow",
+      "rows": 1,
+      "sources": 1,
+      "decisions": [
+        "pending"
+      ],
+      "symbols": [
+        "PureStageGateService::evaluate"
+      ]
+    }
+  ],
+  "build": "NOT RUN: read-only coverage review",
+  "gate": "NOT RUN: separate scope"
+}

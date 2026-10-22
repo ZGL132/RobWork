@@ -1,0 +1,102 @@
+[
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+    "matches": true
+  },
+  {
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/Log.hpp",
+    "matches": true
+  },
+  {
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/LogWriter.hpp",
+    "matches": true
+  },
+  {
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
+    "matches": true
+  },
+  {
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "matches": true
+  },
+  {
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+    "matches": true
+  },
+  {
+    "id": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "id": "HOST-SCENE",
+    "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+    "matches": true
+  },
+  {
+    "id": "HOST-SCENE",
+    "path": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+    "matches": true
+  }
+]

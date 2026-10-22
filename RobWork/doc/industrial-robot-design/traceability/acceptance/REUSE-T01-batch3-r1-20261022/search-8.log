@@ -1,0 +1,4 @@
+RobWork/RobWork/src/rw/models/Device.hpp:207:        rw::math::Transform3D< double > baseTframe (rw::core::Ptr<const rw::kinematics::Frame> f,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp:1780:std::vector<rw::math::Transform3D<double>> zeroConfigFK(const runtime::CanonicalModel& model)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp:1840:    const std::vector<rw::math::Transform3D<double>> framesA = zeroConfigFK(compiledA.get());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp:1841:    const std::vector<rw::math::Transform3D<double>> framesB = zeroConfigFK(compiledB.get());

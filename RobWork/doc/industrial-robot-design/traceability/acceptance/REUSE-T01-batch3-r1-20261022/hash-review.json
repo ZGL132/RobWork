@@ -1,0 +1,338 @@
+[
+  {
+    "kind": "source",
+    "id": "diagnostics.StableCodeRegistry.registerCode",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "diagnostics.StableCodeRegistry.registerCode",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "diagnostics.FileLogFileOps.appendLine",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "diagnostics.FileLogFileOps.appendLine",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "diagnostics.LoggingPipeline.log",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "diagnostics.LoggingPipeline.log",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "evidence.aggregateVerdict",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "evidence.aggregateVerdict",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "execution.TaskScheduler.submit",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "execution.TaskScheduler.submit",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "execution.WorkerSupervisor.spawnNewWorker",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "execution.WorkerSupervisor.spawnNewWorker",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "modeling.zeroConfigFK",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "modeling.zeroConfigFK",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "policy.RobWorkCollisionEvaluator.createSession",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "policy.RobWorkCollisionEvaluator.createSession",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "policy.CollisionEvaluationSession.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "policy.CollisionEvaluationSession.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "project.ObjectStore.publishObject",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "project.ObjectStore.publishObject",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "project.ObjectStore.readVerified",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "project.ObjectStore.readVerified",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "reporting.ReportArchiveCoordinator.publish",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Archive.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "reporting.ReportArchiveCoordinator.publish",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "requirements.SamplingPlanBuilder.buildPlan",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "requirements.SamplingPlanBuilder.buildPlan",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "requirements.SamplingPlanBuilder.digest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "requirements.SamplingPlanBuilder.digest",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.LinearCurveEvaluator.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CapabilityCurve.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.LinearCurveEvaluator.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "ui.HostView3DGateway.currentTcpPose",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "ui.HostView3DGateway.currentTcpPose",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "workflow.PureStageGateService.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "workflow.PureStageGateService.evaluate",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/Log.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/LogWriter.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-LOG",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-THREAD",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "UTIL-FILE",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "HOST-SCENE",
+    "path": "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp",
+    "matches": true
+  },
+  {
+    "kind": "upstream",
+    "id": "HOST-SCENE",
+    "path": "RobWork/RobWork/src/rw/graphics/CMakeLists.txt",
+    "matches": true
+  }
+]

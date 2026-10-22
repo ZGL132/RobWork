@@ -34,3 +34,5 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 第三批增加18条候选/权威边界记录，累计95条、20单元均有实际定向审读样本，但这**不等于20单元全功能审计完成**。新增日志/线程/文件/宿主场景候选的边界和8条真实检索见 `batch3-search.json`；未运行新适用性实验。ThreadPool不替代worker隔离，IOUtil不替代project不可变发布，Log不替代diagnostics稳定码，evidence聚合与workflow门控不搬入适配层。policy已有碰撞复用与宿主现有worldTframe调用也需核生命周期、权限和结果消费；预览空WorkCell锚保持pending，不用HOST标签自动洗白。新增发现 `modeling::(anonymous namespace)::zeroConfigFK`，优先核runtime上游FK端口，禁止modeling自建计算模型。
 
 后续公共API探测留在 `probe-r3/`，passed=14、failed/skipped/notRun均0。新增4项：ParallelIK在不可达半径目标耗尽预算仍返回候选（独立圆半径残差1 m，限制证据）；标准DH与四因子定义一致、Craig约定不同；EAA反向对齐默认轴与产品固定X半周相差滚转π；七次多项式非零端导数及0.5/2 s时间缩放（物理时间系数替换后求导，对照解析端点）。日志中的ParallelIK超预算错误是该限制用例的预期输出，不是正常求解能力通过。当前仅调用公开API和既有testkit报告入口，未修改生产算法或新建数值核。
+
+14项API探测增量已独立重建实跑通过（冻结 `4e142e485343e8bade52a8481eefbb447b017989`），原始报告在 `traceability/acceptance/REUSE-T01-api-r3-20261022/`。第三批首轮验收FAIL：日志功能误挂ERR-01、worker权限错指§3.6.3；本次改为NFR-REL-05/DIAG-T07和§3.6.4，仍待返工独立复核。原始FAIL报告在 `REUSE-T01-batch3-r1-20261022/`，不覆盖历史。只读覆盖验收 `REUSE-T01-coverage-20261022/` 另指出惯量SPD、特征值、镜像姿态、正向动力学内部RK4及路径平滑等遗漏；其结论为全功能审计NOT PASS，不是迁移批准。

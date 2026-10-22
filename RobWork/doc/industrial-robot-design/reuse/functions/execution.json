@@ -59,7 +59,7 @@
         "sdurws_ird_execution"
       ],
       "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.3",
+      "permissionRef": "ARCH:3.6.4",
       "capabilityId": "UTIL-THREAD",
       "decision": "pending",
       "status": "pending",

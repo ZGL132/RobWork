@@ -1,0 +1,13 @@
+RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp:49:    class ProximityStrategyRW : public rw::proximity::CollisionStrategy
+RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp:114:         * @copydoc rw::proximity::ProximityStrategy::createModel
+RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp:116:        virtual rw::proximity::ProximityModel::Ptr createModel ();
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:59:                f1 (NULL), f2 (NULL), distance (0), geoIdxA (-1), geoIdxB (-1), idx1 (0), idx2 (0)
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:156:        Result distance (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:173:        Result& distance (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:191:        Result& distance (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:213:        Result distance (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:230:        DistanceStrategy::Result& distance (const rw::core::Ptr<kinematics::Frame> a,
+RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp:252:        DistanceStrategy::Result& distance (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp:142:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp:158:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp:172:        bool inCollision (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,

@@ -1,0 +1,19 @@
+RobWork/RobWork/src/rw/core/LogWriter.hpp:40:    class LogWriter
+RobWork/RobWork/src/rw/core/LogWriter.hpp:54:        void flush ();
+RobWork/RobWork/src/rw/core/LogWriter.hpp:65:        void write (const std::string& str);
+RobWork/RobWork/src/rw/core/LogWriter.hpp:75:        void write (const Message& msg);
+RobWork/RobWork/src/rw/core/LogWriter.hpp:102:            write (str);
+RobWork/RobWork/src/rw/core/LogWriter.hpp:113:            write (msg);
+RobWork/RobWork/src/rw/core/LogWriter.hpp:123:            write (str);
+RobWork/RobWork/src/rw/core/LogWriter.hpp:135:        virtual void doWrite (const std::string& message) = 0;
+RobWork/RobWork/src/rw/core/Log.hpp:34:    class Log;
+RobWork/RobWork/src/rw/core/Log.hpp:82:    class Log
+RobWork/RobWork/src/rw/core/Log.hpp:243:        void setWriter (LogIndex id, rw::core::LogWriter::Ptr writer);
+RobWork/RobWork/src/rw/core/Log.hpp:253:         * log.setWriterForMask(Log::InfoMask | Log::DebugMask, new LogStreamWriter(std::cout));
+RobWork/RobWork/src/rw/core/Log.hpp:260:        void setWriterForMask (int mask, rw::core::LogWriter::Ptr writer);
+RobWork/RobWork/src/rw/core/Log.hpp:280:        void write (LogIndex id, const std::string& message);
+RobWork/RobWork/src/rw/core/Log.hpp:291:        void write (LogIndex id, const rw::core::Message& message);
+RobWork/RobWork/src/rw/core/Log.hpp:304:         * @brief Calls flush on the specified log
+RobWork/RobWork/src/rw/core/Log.hpp:310:        void flush (LogIndex id);
+RobWork/RobWork/src/rw/core/Log.hpp:313:         * @brief Calls flush on all logs
+RobWork/RobWork/src/rw/core/Log.hpp:315:        void flushAll ();

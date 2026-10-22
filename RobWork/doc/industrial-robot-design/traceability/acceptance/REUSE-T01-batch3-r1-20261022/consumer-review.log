@@ -1,0 +1,61 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\diagnostics\src\DiagCodes.cpp:604:void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\diagnostics\src\DiagCodes.cpp:847:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\diagnostics\include\sdurws\ird\diagnostics\DiagCodes.hpp:321:    virtual void registerCode(const CodeDescriptor& descriptor) = 0;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\diagnostics\include\sdurws\ird\diagnostics\DiagCodes.hpp:409:    void registerCode(const CodeDescriptor& descriptor) override;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\src\Sampling.cpp:35:PlanOutcome SamplingPlanBuilder::buildPlan(const WorkRegion& region,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\HostView3DGatewayGuiTest.cpp:323:    EXPECT_FALSE(degraded->currentTcpPose("dev").has_value())
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\gui_test\HostView3DGatewayGuiTest.cpp:350:    const auto pose = gateway->currentTcpPose("dev");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\src\DiagCodes.cpp:461:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:274:    [[nodiscard]] tk::FaultLog log() const { return fault_.log(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:395:    const auto log = faulting.log();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:440:    [[nodiscard]] tk::FaultLog log() const { return fault_.log(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:516:    const auto log = faulting->log();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:559:    [[nodiscard]] tk::FaultLog log() const { return fault_.log(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\contract_test\PeerFaceContractTest.cpp:627:    const auto log = faulting.log();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\PeerBridgeContractTest.cpp:283:    const auto log = adapter.fault.log();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\contract_test\PeerBridgeContractTest.cpp:638:    const auto log = faulting.fault.log();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\include\sdurws\ird\requirements\Sampling.hpp:10: *     样本生成"）、§9.5（ISamplingPlanBuilder 行原文签名："buildPlan(...)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\include\sdurws\ird\requirements\Sampling.hpp:149:    virtual PlanOutcome buildPlan(const WorkRegion& region, const SamplingPlanSpec& spec,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\include\sdurws\ird\requirements\Sampling.hpp:172:    PlanOutcome buildPlan(const WorkRegion& region, const SamplingPlanSpec& spec,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:4833:                       ? m_view3dGateway->currentTcpPose(deviceName)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\HostView3DPreviewBackend.hpp:105:    rw::core::Ptr<rw::models::WorkCell> ensureSessionPreviewAnchor(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\HostView3DPreviewBackend.cpp:381:        workcell = ensureSessionPreviewAnchor(*scene);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\HostView3DPreviewBackend.cpp:471:HostView3DPreviewBackend::ensureSessionPreviewAnchor(WorkCellScene& scene)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\HostView3DGateway.hpp:158:    currentTcpPose(const std::string& deviceName);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\HostView3DGateway.cpp:120:HostView3DGateway::currentTcpPose(const std::string& deviceName)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\app\DiagnosticsAssembly.cpp:45:        stack.registry->registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:261:    return spawnNewWorker(assignment);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:264:WorkerLaunchResult WorkerSupervisor::spawnNewWorker(const WorkerAssignment& assignment)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\src\JointStrategy.cpp:540:                const evidence::VerdictResult verdict = evidence::aggregateVerdict(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\src\JointStrategy.cpp:636:        = evidence::aggregateVerdict(verdictInput, input.snapshot, *m_deps.producers,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\src\DiagCodes.cpp:278:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\requirements\plugin\RequirementsPanelWidget.cpp:2877:    const PlanOutcome outcome = builder.buildPlan(region, spec, buildDiags);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\optimization\src\Constraint.cpp:777:    const evidence::VerdictResult verdict = evidence::aggregateVerdict(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ArchiveFaultContractTest.cpp:351:    tk::FaultLog faultLog() const { return m_fault.log(); }
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\ArchiveCollaborationContractTest.cpp:582:        ev::aggregateVerdict(vi, *m_snapshot, *m_producers, *m_profiles);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\src\Verdict.cpp:379:VerdictResult aggregateVerdict(const VerdictInput& input,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\src\DiagCodes.cpp:268:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\Admission.cpp:351:    const evidence::VerdictResult verdict = evidence::aggregateVerdict(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\evidence\include\sdurws\ird\evidence\Verdict.hpp:499:VerdictResult aggregateVerdict(const VerdictInput& input,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\DiagCodes.cpp:299:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\WorkerSupervisor.hpp:477:    WorkerLaunchResult spawnNewWorker(const WorkerAssignment& assignment);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\DiagCodes.cpp:747:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\contract_test\CommandPipelineContractTest.cpp:359:    EXPECT_THROW(registry.registerCode(duplicate), diagnostics::DiagnosticsError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ObjectStore.hpp:251:    core::ContentVersion publishObject(const core::ObjectId& oid,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ObjectStore.hpp:364:    std::optional<std::vector<std::uint8_t>> readVerified(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ObjectStore.cpp:179:core::ContentVersion ObjectStore::publishObject(const core::ObjectId& oid,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ObjectStore.cpp:328:std::optional<std::vector<std::uint8_t>> ObjectStore::readVerified(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ObjectStore.cpp:413:    auto bytes = readVerified(oid, cv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\DiagCodes.cpp:314:        registry.registerCode(descriptor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\ProjectStoreImpl.cpp:1357:            = assemblyObjects.publishObject(metaOid, metaPayload);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\src\IoDiagnostics.cpp:304:        registry.registerCode(d);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\policy\src\RobWorkCollisionEvaluator.cpp:82:RobWorkCollisionEvaluator::createSession(const EngineeringPolicySet& policy,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\CommandHandlers.cpp:337:        m_ports.jointLimitEvaluator->evaluate(query, policy, *m_ports.nameContext);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\src\Recheck.cpp:541:        request.session->evaluate(query, ctx);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\src\Planner.cpp:175:        const policy::CollisionEvaluation evaluation = m_session->evaluate(query, m_ctx);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\trajectory\src\Planner.cpp:433:    const policy::CollisionEvaluation evaluation = session.evaluate(query, ctx);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:454:            EXPECT_THROW((void)gateService.evaluate(board), workflow::WorkflowError)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\GateAdviceFixtureContractTest.cpp:517:            gateService.evaluate(boardFromJson(in, vocabulary));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\KinEvaluationChannel.cpp:624:        const auto verdict = m_session->evaluate(q);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Collision.cpp:238:        m_session->evaluate(query, kAdapterCallContext);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Collision.cpp:347:            evaluator->createSession(resolvedPolicy, scene.get(), names);

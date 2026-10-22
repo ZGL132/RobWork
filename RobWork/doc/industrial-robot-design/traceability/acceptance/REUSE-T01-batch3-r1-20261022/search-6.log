@@ -1,0 +1,37 @@
+42:     * Given a start \f$ \mathbf{s}\f$, end \f$\mathbf{e}\f$ and duration \f$ d\f$
+51:    template< class T > class LinearInterpolator : public rw::trajectory::Interpolator< T >
+62:         * and taking \b duration time.
+64:         * If \b duration <= 0 an exception is thrown
+68:         * @param duration [in] Time it takes to from one end to the other.
+70:        LinearInterpolator (const T& start, const T& end, double duration) :
+71:            _a (end-start), _b (start), _duration (duration)
+73:            if (_duration <= 0)
+76:            _a = _a / _duration;
+84:        T x (double t) const
+113:        T getEnd () const { return _a *_duration + _b; }
+116:         * @copydoc Interpolator::duration()
+118:        double duration () const { return _duration; }
+123:        double _duration;
+140:    class LinearInterpolator< rw::math::Rotation3D< T > >
+153:         * and taking \b duration time.
+155:         * If \b duration <= 0 an exception is thrown
+159:         * @param duration [in] Time it takes to from one end to the other.
+161:        LinearInterpolator (const rw::math::Rotation3D< T >& start,
+162:                            const rw::math::Rotation3D< T >& end, double duration) :
+164:            _end (end), _quarStart (start), _quarEnd (end), _duration (duration)
+166:            if (_duration <= 0)
+185:            return _quarStart.slerp (_quarEnd, t / _duration).toRotation3D ();
+199:            return rw::math::EAA<T> (change.axis(),change.angle()/_duration).toRotation3D();
+227:         * @copydoc Interpolator::duration()
+230:        double duration () const { return _duration; }
+238:        double _duration;
+247:    class LinearInterpolator< rw::math::Transform3D< T > >
+260:         * and taking \b duration time.
+262:         * If \b duration <= 0 an exception is thrown
+266:         * @param duration [in] Time it takes to from one end to the other.
+268:        LinearInterpolator (const rw::math::Transform3D< T >& start,
+269:                            const rw::math::Transform3D< T >& end, double duration) :
+271:            _end (end), _posInterpolator (start.P (), end.P (), duration),
+272:            _rotInterpolator (start.R (), end.R (), duration)
+323:         * @copydoc Interpolator::duration()
+326:        double duration () const { return _posInterpolator.duration (); }
