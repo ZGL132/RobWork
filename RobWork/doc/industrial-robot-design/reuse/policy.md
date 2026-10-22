@@ -53,7 +53,7 @@ evidence 的 EvaluationOutput/aggregateVerdict/ResultEnvelope 与 diagnostics �
 
 后续语义结项须关联 functions/<unit>.json 的真实生产链、旧内核删除提交、有效正向证据与独立验收，不限于 16 个已知重复文件。catalog 的 candidate/reviewed/verified 是能力证据状态，不替代功能适用性和架构权限。完整补强契约见 audit-contract.md §3～§7。
 
-现有 GOV-T21 pass 不自动验收本次补强；GOV-T22 的本地冻结版本已取得第三轮独立验收 pass，具体 Git 对象/冻结 SHA 见 tasks/GOV-T22.json。远程推送与 CI 尚未完成，不冒充远程交付。后续执行契约须增加 reuseGateAcceptance，引用该真实记录；REUSE-T01 全功能审计仍须完成并独立验收，才可放行 REUSE-T02。文档通过和格式夹具通过均不构成生产迁移通过。
+现有 GOV-T21 pass 不自动验收本次补强；GOV-T22 的本地冻结版本已取得第三轮独立验收 pass，具体 Git 对象/冻结 SHA 见 tasks/GOV-T22.json。远程推送与 CI 尚未完成，不冒充远程交付。后续执行契约须增加 reuseGateAcceptance，引用该真实记录；按migration §12.11，具体能力及依赖完成审计/权限确认后可在精确子任务中实施，完整能力包独立验收后放行依赖/结项；全T01审计继续，是最终收口前置，不是一刀切阻止所有T02～T05的条件。文档通过和格式夹具通过均不构成生产迁移通过。
 
 审计存量时，固定基线中未变动的源码可以登记 decision 与 status 均为 pending/proposal 的功能，受限使用输出 REUSE-AD-PENDING；这只记录待审事实，不授予文件、目标或操作权限。自基线变动的文件、新文件及已解决记录仍受精确权限检查；最终模式拒绝这些未决项。不得为了让审计数据通过而把既有越权行为登记为合法 grant。
 

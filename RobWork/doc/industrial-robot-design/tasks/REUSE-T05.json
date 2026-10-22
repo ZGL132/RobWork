@@ -7,7 +7,8 @@
   "status": "planned",
   "branch": "reuse-t05",
   "dependsOn": [
-    "REUSE-T04"
+    "GOV-T21",
+    "GOV-T22"
   ],
   "requirements": [
     "DYN-01",
@@ -22,5 +23,5 @@
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
   ],
-  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。"
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 所有者2026-10-23批准migration §12.11能力准入；父任务仍planned，具体能力须精确子契约/审计/权限/生产证据/整包独验。未批准缺口仅阻断相关能力；不操作远程。"
 }

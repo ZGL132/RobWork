@@ -2,7 +2,7 @@
 
 本文件承接所有者批准的最终方案，定义审计数据与待实现门禁；不承载第二份架构权威。权限以 [ARCHITECTURE §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19) 为准，执行顺序见 [policy](policy.md)，阶段见 [migration §11](migration.md#11-最终方案补充阶段门2026-10-22)。
 
-**实施状态（GOV-T22）**：补强实现位于既有 `validate-reuse.ps1` 及其私有 `reuse-contract.ps1`，由原 `ird_gates`/CI 调用。冻结版本 `e6f06e5b9` 已取得[第三轮独立验收本地 pass](../traceability/acceptance/GOV-T22-20261022-r3.json)，引用见 tasks/GOV-T22.json；[首轮](../traceability/acceptance/GOV-T22-20261022.json)和[第二轮](../traceability/acceptance/GOV-T22-20261022-r2.json)失败记录原样保留。远程推送受本机代理不可达阻断，远程 CI/保护尚未验证，尚未合入主线。下文格式的结构、摘要、权限申报及结果一致性可机器核查；真实来源、完整调用链和语义仍须独立审查。catalog 全部保持 candidate，未新增真实生产 migrated/closed 记录；后续仍须先完成 REUSE-T01 全功能审计及各任务准入，不以本次治理 pass 直接批准算法替换。
+**实施状态（GOV-T22）**：补强实现位于既有 `validate-reuse.ps1` 及其私有 `reuse-contract.ps1`，由原 `ird_gates`/CI 调用。冻结版本 `e6f06e5b9` 已取得[第三轮独立验收本地 pass](../traceability/acceptance/GOV-T22-20261022-r3.json)，引用见 tasks/GOV-T22.json；[首轮](../traceability/acceptance/GOV-T22-20261022.json)和[第二轮](../traceability/acceptance/GOV-T22-20261022-r2.json)失败记录原样保留。远程推送受本机代理不可达阻断，远程 CI/保护尚未验证，尚未合入主线。下文格式的结构、摘要、权限申报及结果一致性可机器核查；真实来源、完整调用链和语义仍须独立审查。catalog 全部保持 candidate，未新增真实生产 migrated/closed 记录；后续按migration §12.11能力及依赖审计、权限和精确子任务准入；完整能力包仍须独立验收，不能用治理pass代替产品证据或结项。全T01覆盖筛查继续，不作为所有能力实施的统一前置。
 
 ## 1. 权威与唯一数据源
 

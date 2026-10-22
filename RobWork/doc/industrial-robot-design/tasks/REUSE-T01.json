@@ -3250,7 +3250,13 @@
     "RobWork/doc/industrial-robot-design/reuse/diagnostics-registry-manifest-audit.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch35/**",
     "RobWork/doc/industrial-robot-design/reuse/diagnostics-log-file-audit.md",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch36/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch36/**",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T07.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
@@ -3268,7 +3274,7 @@
     "全部20单元及基础构建/测试/脚本按真实功能登记；待审发现不能冒充审计完成",
     "上游具体文件/符号/目标/版本/差异和权限可追溯；四项缺口先检索探测",
     "零生产代码变更；pending或proposal不能授权变动产品代码",
-    "仅冻结SHA独立验收后进入T02；远程未同步不冒充交付"
+    "本任务完整审计须冻结SHA独验；局部能力按migration §12.11独立准入与整包验收，不以本T01未完成阻止无依赖能力；远程未同步不冒充交付"
   ],
   "interUnit": false,
   "governanceAcceptance": {
