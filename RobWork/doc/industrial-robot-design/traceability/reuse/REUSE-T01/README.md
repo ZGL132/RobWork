@@ -113,3 +113,5 @@ B19为19个治理脚本的后续逐功能审计补最小待审格式，未登记
 B21审4治理脚本14条pending，修原lite夹具漏带catalog的gtest检出面；PS7/PS5.1红跑各6p1f/1未执行，修后各8p0f/0skip；分支负例两入口exit1。其余脚本和全T01未完成，见governance-entry-audit.md。
 
 2026-10-23按所有者新指示持续本地执行，不同步远程；B19/B20局部验收原件分别归档于acceptance/REUSE-T01-batch19-20261023与batch20-20261023；两者均不授全T01/T02。
+
+B22补execution登记/接纳26定义，原25例passed、新2例1passed1failed，总26p1f；F964拒绝终结半写保持open，详见execution-admission-audit.md。零产品变更，非全execution/T01/T02。

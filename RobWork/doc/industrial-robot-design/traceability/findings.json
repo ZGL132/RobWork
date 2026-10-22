@@ -9713,6 +9713,16 @@
       "title": "project事务错误映射硬编码70，真实SDK磁盘满112误归WriteRejected",
       "owner": "project / REUSE-T05",
       "resolution": "原IFileOps夹具注入ERROR_DISK_FULL，commit拒绝且旧字节保持，但实际WriteRejected而非DiskFull；原F2注入同错误数字70掩盖缺陷。ObjectStore/StoreClone同常量仅静态同族待核，未跑这些路径。T05复用同单元Archive已采用的SDK常量映射方式收口，先补原回归，不另设数字表。"
+    },
+    {
+      "id": "F-964",
+      "source": "traceability/reuse/REUSE-T01/execution-admission-audit.md / probe-r22",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "execution拒绝Completed终结后登记半写，合法取消随后被拒",
+      "owner": "execution / REUSE-T05",
+      "resolution": "原目标/原RunRegistryAdmission夹具27项26passed1failed，原25项全通过；新增拒Completed后terminationCause仍Completed且Canceled再抛，健康取消正例通过。T05在原写入口先校验允许原因再赋值并落原回归，不新写登记/状态机。当前不改产品，不授全T01/T02。"
     }
   ]
 }

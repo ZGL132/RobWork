@@ -1483,6 +1483,29 @@
           "target": "sdurw_common",
           "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
           "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.cpp",
+          "sha256": "0739aca5c16f471771b1114e34ecc1be8a804bc739255b99dcdf46482232e1ad",
+          "symbols": [
+            "currentTimeMs",
+            "currentTimeUs",
+            "sleepMs"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/ThreadTask.cpp",
+          "sha256": "d8a3f4ee367a247d0e51f11f8e6539032ba1e415472c7cfe8d1da1ad773ea3ee",
+          "symbols": [
+            "execute",
+            "registerFailure"
+          ],
+          "target": "sdurw_common",
+          "targetFile": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+          "targetSha256": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87"
         }
       ],
       "build": {
@@ -1528,7 +1551,8 @@
       "limits": {
         "semantics": "通用线程池/队列，不提供worker进程隔离、作业对象强杀、五元组握手；Queue无公开关闭/容量协议，是否可薄适配须核阻塞退出与有界预算",
         "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
-        "determinism": "未运行本批适用性实验，不承诺等价"
+        "determinism": "未运行本批适用性实验，不承诺等价",
+        "admissionBoundary": "B22读TimerUtil/ThreadTask实现：TimerUtil不可产UTC日历；线程任务不持业务五元组/ResultEnvelope/project归档owner。保留标准时间/既有evidence/project接口，不为复用换一套登记。"
       },
       "ownerUnit": "execution",
       "examples": [],

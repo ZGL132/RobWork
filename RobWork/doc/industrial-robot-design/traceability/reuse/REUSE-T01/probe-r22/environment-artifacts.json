@@ -1,0 +1,84 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B22",
+  "baseCommit": "cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7",
+  "generator": "Visual Studio 17 2022",
+  "arch": "x64",
+  "configureExit": 0,
+  "buildExit": 0,
+  "command": "ird_execution_boundary_audit.exe --gtest_filter=RunRegistryAdmissionTest.* --gtest_output=xml:<out>/gtest.xml --ird_report=<out>/ird-test-report.json",
+  "summary": {
+    "original": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "skipped": 0
+    },
+    "new": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0
+    },
+    "exitCode": 1
+  },
+  "rawExecutableSha256": "e03cbf526bc958ee02cd78c321f0bc128bed2ebf9927866c11918897dcd5cd14",
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp",
+      "sha256": "dd87b143feaa3910bfdf2e65f08a4c4c5cd6ffb56d71aa0e738f4729bece553b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp",
+      "sha256": "f49ec26082a20cef3eec18969ea0bbc233da6c6e4ef5d6d647ff505584988901"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/RunRegistry.hpp",
+      "sha256": "789f7c42bf64a51dd8d157fd152652a8f81aa29e53e17c922021be8661841ac1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/Ports.hpp",
+      "sha256": "d57896558b1ab217b031eb9d4d12c017fc562dd8751301b4a07243cb25aa2030"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+      "sha256": "9f2249370f977d6dac376c4c4be226cf918dcff803ca42dbc030136b7c9e9c4c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+      "sha256": "ffa2cca354603dc40ce5b1a5c8f61e48ab01de4d8d8ab91bfb6650f9814fbe26"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Digest.cpp",
+      "sha256": "f3fa19d15c14d036c31fc04013df46683d4088a6ff0a13a3d6effb88455a5f1a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Envelope.cpp",
+      "sha256": "1353a646a24d7a7480287e3305148cea30b8b55b4ef2d7586bb1e9ca6de96081"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+      "sha256": "24481c65a18885ef13776a9c3713fb70a1cabae9260377e275bd8fcadb946ef8"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/CMakeLists.txt",
+      "sha256": "bae9dc2e8ba25198fa3a378f3f8f58272b1129690d9294703a14d22c6b709437"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22/RegistryBoundaryTest.cpp",
+      "sha256": "5749d2eb5a9f5a4d1b2f04ae9b5a549ec667b3025d8e508f38a5b33b8937cb07"
+    }
+  ],
+  "notRun": [
+    "完整execution原目标全部其他套件",
+    "worker真实进程",
+    "IPC/强杀/心跳",
+    "并发/性能",
+    "GUI",
+    "T01退出/T02"
+  ]
+}
