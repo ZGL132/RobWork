@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "GOV-T22",
+  "verdict": "fail",
+  "reviewedCommit": "0d018a0ba9d1695eef16442f76e9d325276328e7",
+  "parentCommit": "39b57abd5",
+  "reviewer": "独立验收代理 accept_gov_t22_final（未参与实施，无子代理）",
+  "date": "2026-10-22",
+  "worktree": "C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22/RobWork",
+  "branch": "acc/GOV-T22/1",
+  "scope": "冻结提交的12个治理、CI和设计文件；结构门禁及独立语义边界，不验收产品算法迁移",
+  "findings": [
+    {
+      "id": "GOV-T22-ACC-01",
+      "severity": "blocking",
+      "file": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "line": 124,
+      "title": "无类型同名setData被误判为State写入",
+      "reproduction": "独立探针直接加载冻结CheckSourcePermission；输入真实CommandPalette.cpp:188-189的QListWidgetItem构造与setData(Qt::UserRole,...)。无grant被REUSE-AD拒绝，query grant仍被operation write-state拒绝。去掉Qt setData的对照允许。",
+      "impact": "合法Qt元数据编辑会被权限门禁阻断，迫使错误申请上游State写权限；ParamTablePanel.cpp:196、ModelingPanelWidget.cpp:1241/1276存在同类真实调用。",
+      "required": "区分上游State写与Qt/其他同名API；增加真实合法同名路径正例并保留真实State写负例，不能靠扩大授权洗绿。"
+    },
+    {
+      "id": "GOV-T22-ACC-02",
+      "severity": "blocking",
+      "file": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "line": 20,
+      "title": "BOM文本工作树与冻结树摘要不一致",
+      "reproduction": "使用冻结ReadText/Digest读取同一未改动且被追踪的validate-reuse.ps1。工作树首码点35，冻结树首码点65279；工作树摘要c83fdd7fa5c58bff9b58da39782d520f1b238e1cd729b7025f3d7b4a417a9060，冻结摘要db8fde7687ef54c21c8a6b581b95915fd4d962c452b75fc1ee4490c3bb697e59。",
+      "impact": "对允许的产品.ps1等BOM UTF-8源文件，工作树合法凭证会在-Head冻结校验中失效，破坏冻结版本验收一致性。",
+      "required": "统一读取/规范化BOM口径；增加含真实BOM文件的工作树与冻结树一致性正例。"
+    }
+  ],
+  "commands": [
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head 0d018a0ba9d1695eef16442f76e9d325276328e7",
+      "exitCode": 0,
+      "result": "PASS governance only；inventory=1401；DEBT=16；UNRESOLVED=1399；不是算法合规",
+      "log": "GOV-T22-20261022/validate-reuse.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T22.json",
+      "exitCode": 0,
+      "log": "GOV-T22-20261022/validate-task.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "exitCode": 0,
+      "log": "GOV-T22-20261022/validate-docs.log"
+    },
+    {
+      "command": "cmake -DIRD_ROOT=C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22/RobWork/RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022/ird-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+      "exitCode": 0,
+      "result": "现有门禁与fail_t2等负自测实际执行",
+      "log": "GOV-T22-20261022/ird-gates.log"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022/independent-probes.ps1 -RepoRoot C:/Users/zgl18/.codex/worktrees/accept-reuse-gov-t22/RobWork -OutputDir RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022",
+      "exitCode": 1,
+      "passed": 2,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "report": "GOV-T22-20261022/independent-probes.json"
+    }
+  ],
+  "selfTests": {
+    "status": "running",
+    "expectedPerRuntime": 128,
+    "ps7": "GOV-T22-20261022/ps7",
+    "ps51": "GOV-T22-20261022/ps51",
+    "note": "本失败裁决依据已完成独立探针，不把正在执行的测试标通过。最终报告将另提交补充记录。"
+  },
+  "review": {
+    "frameworkReadOnly": "git diff 39b57abd5..0d018a0ba仅12个允许治理文件；无产品/上游算法、vcpkg改动。验收未改实施代码。",
+    "catalog": "schema升级保持基点/ID/上游绑定，全部candidate；空tests/examples/docs明确待审，不冒充生产适用性。",
+    "permissions": "宿主四组文件精确封闭、worker/owner模型操作具名拒绝夹具；但同名API误报阻断本次通过。",
+    "functionClosure": "功能/生产/关闭数据结构与accepted-tree约束已定向审阅；结构夹具合成XML和synthetic pass不是生产实验或真实批准。",
+    "ci": "工作流与镜像新增PS5.1自测并分离输出目录；远程运行和保护设置未验证。"
+  },
+  "limitations": [
+    "本记录为GOV-T22补强失败验收，旧GOV-T21 pass不覆盖本次新增门禁。",
+    "未执行产品数值/GUI迁移测试；本次无生产算法改动，无真实migrated/closed功能记录。",
+    "静态扫描不能完备证明别名、间接工厂、句柄逃逸或结果消费；仍须逐功能独立语义审查。",
+    "远程网络不可达由实施侧报告；本验收未读取远程CI或分支保护，不宣称远程交付完成。"
+  ],
+  "next": "修复阻断缺陷后重新冻结SHA并独立复验；不放行REUSE-T02或算法替换。"
+}
