@@ -1,0 +1,315 @@
+RobWork/RobWorkSim/src\sandbox\NewtonEulerDynamics.cpp:102:	robot->setQ(q,state);
+RobWork/RobWorkSim/gtest\performance\BenchMarkSimple.cpp:62:    ur->setQ(viatarget, state);
+RobWork/RobWorkSim/gtest\performance\BenchMarkStacking.cpp:63:    ur->setQ(viatarget, state);
+RobWork/RobWorkSim/gtest\ode\ODEControlTest.cpp:86:    ur->setQ(viatarget, state);
+RobWork/RobWork/src\sandbox\geometry\RANSACFitting.hpp:186:				bestCloseModel.first->setQuality( consensusSet.size(),  error);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:75:		robotiq->setQ(solutions[0],state);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:86:		EXPECT_NEAR(-0.015,robotiq->baseTframe(fingerLeft, state).P()[0],1e-7);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:87:		EXPECT_NEAR(-0.5,EAA<>(robotiq->baseTframe(fingerLeft, state).R())[2],1e-6);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:105:		robotiq->setQ(solutions[0],state);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:116:		EXPECT_NEAR(0.015,robotiq->baseTframe(fingerRight, state).P()[0],1e-7);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:117:		EXPECT_NEAR(0.5,EAA<>(robotiq->baseTframe(fingerRight, state).R())[2],1e-6);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:135:		robotiq->setQ(solutions[0],state);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:146:		EXPECT_NEAR(-0.015,robotiq->baseTframe(fingerLeft, state).P()[0],1e-7);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:147:		EXPECT_NEAR(0.015,robotiq->baseTframe(fingerRight, state).P()[0],1e-7);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:148:		EXPECT_NEAR(-0.5,EAA<>(robotiq->baseTframe(fingerLeft, state).R())[2],1e-6);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:149:		EXPECT_NEAR(0.5,EAA<>(robotiq->baseTframe(fingerRight, state).R())[2],1e-6);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:91:        device->setQ(qRef,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:93:        device->setQ(qstart,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:96:            device->setQ(solution, state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:134:        device->setQ(qRef,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:136:        device->setQ(qstart,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:138:        device->setQ(qstart,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:144:            device->setQ(solution, state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:152:            device->setQ(solution, state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:80:        device->setQ(q_targets.at(i), state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:90:    device->setQ(q_zero, initial_state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:146:        device->setQ(q_targets.at(i), state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:149:            target.push_back(device->baseTframe(device->getEnds()[j],state));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:160:    device->setQ(q_zero, initial_state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:46:        device->setQ(qRef,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:55:            device->setQ(sol,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:76:        device->setQ(qRef,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:85:            device->setQ(sol,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverKukaIIWATest.cpp:87:		device->setQ(qRef,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverKukaIIWATest.cpp:91:			device->setQ(solutions[i],state);
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.cpp:77:			_device->setQ(*it,diffState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:64:			_device->setQ(*it,diffState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:161:					_device->setQ(pathA[pathA.size()-1],approachState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:214:			_device->setQ(pathA[pathA.size()-1],approachState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:247:	_device->setQ(qTo,fromState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:249:	_device->setQ(qTo,toState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:304:		_gripper->setQ(gripper,invState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:311:				_gripper->setQ(gripper,tempState);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:312:				_device->setQ(qs[i],tempState);
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:168:        _device->setQ(q, state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:123:    _device->setQ(q, _state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:133:			Rotation3D<> rot = inverse(_device->baseTframe(_foi[i], _state).R());
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:161:    //matrix<double> jac = prod(P, _device->baseJframe(_controlFrame, _state).m());
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:195:        _device->setQ(q, state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:201:            _device->setQ(qt, state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:203:            //Jacobian jac1 = _device->baseJframe(_controlFrame, state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:208:            _device->setQ(qt, state);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:209:            //Jacobian jac2 = _device->baseJframe(_controlFrame, state);
+RobWork/RobWork/gtest\trajectory\PathTest.cpp:88:        dev->setQ (q, state);
+RobWork/RobWork/gtest\trajectory\PathTest.cpp:92:        dev->setQ (q, state);
+RobWork/RobWork/gtest\trajectory\PathTest.cpp:133:        dev->setQ (q, state);
+RobWork/RobWork/gtest\trajectory\PathTest.cpp:138:        dev->setQ (q, state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:134:            _hand.setQ(ikHandRes[0].second,state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:162:        _robot.setQ(qRobotApp, state);
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:193:        _hand->setQ (preshapeQ, state);
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.cpp:155:    _device.setQ(q,state);
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.cpp:221:        _device.setQ(q, state);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEBody.cpp:425:        dGeomSetOffsetQuaternion (gdata->geomId, gdata->rot);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEBody.cpp:492:        dGeomSetOffsetQuaternion (gdata->geomId, gdata->rot);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEVelocityDevice.cpp:262:    _rdev->getModel ().setQ (q, state);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEVelocityDevice.cpp:510:&(rDev->getModel()) ); Q offsets = Q::zero( jdev->getQ(state).size() ); jdev->setQ( offsets ,
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:1005:        jdev->setQ (offsets, initState);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:1027:            jdev->setQ( offsets , initState );
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:1211:        jdev->setQ (offsets, state);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:1244:        jdev->setQ (offsets, state);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEKinematicDevice.cpp:114:    _kdev->getModel ().setQ (q1, state);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEKinematicDevice.cpp:159:    //_kdev->getModel().setQ(q, state);
+RobWork/RobWork/gtest\pathoptimization\ClearanceOptimizerTest.cpp:97:		device->setQ(q,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:183:        simple.setQ(qs,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:256:        puma560Device.setQ(q,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:345:    kr16t.setQ(qwp,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:369:    VelocityScrew6D<> bVe = kr16t.baseJframe(kr16_j6,state) * dq;
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:374:    VelocityScrew6D<> eVe = inverse(kr16t.baseTframe(kr16_j6,state).R()) * bVe;
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:376:    VelocityScrew6D<> tVt = inverse(kr16t.baseTframe(kr16t.getEnd(), state).R()) * bVt;
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:392:    Transform3D<double> t_bTf = kr16t.baseTframe(tool,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:396:    Jacobian b_eJq = kr16t.baseJframe(kr16_j6,state);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:397:    Jacobian e_eJb_e(inverse(kr16t.baseTframe(kr16_j6,state).R()));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:405:    Jacobian b_tJe_t(kr16t.baseTframe(kr16_j6,state).R());
+RobWork/RobWork/gtest\models\ParallelLegTest.cpp:102:    leg.setQ (Q (4, 0.1, 0.2, 0.3, 0.4), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:198:    EXPECT_TRUE (ddevice->baseTframe (H, state).equal (Transform3D<> (Vector3D<> (lGaGb, 0, 0))));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:237:    device->setQ (Q (2, 0., 0.015), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:268:    device->setQ (Q (2, 0., -0.015), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:301:    // Test that we get same result with extra active joint, that is then disabled when setting setQ
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:308:    devExtraJoint->setQ (Q (3, 0., 0.2, 0.015), enabled, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:315:    devExtraJoint->setQ (Q (3, 0., 0.2, 0.015), enabled, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:465:        legs[i]->setQ (qh, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:472:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:486:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:497:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:510:    hexapod.setQ (q, state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:613:    robotiqDist->setQ (Q (3, 0., 0.04, 0.), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:637:    robotiqDist->setQ (Q (3, -0.35, 0.04, 0.35), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:661:    robotiqFinger->setQ (Q (3, 0.35, 0.25, 0.25), state);
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:680:    robotiqFinger->setQ (Q (3, 0.5, 0.52, 0.2), state);
+RobWork/RobWorkSim/src\rwsimlibs\swig\sdurwsim.i:720:    virtual void setQ(const rw::math::Q &q, rw::kinematics::State& state);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:186:    gripper->setQ( openQ, state);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:191:        gripper->setQ( openQ+stepQ/(2*i), state );
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:199:    gripper->setQ( openQ+ustepQ*SOFT_LAYER_SIZE, state );
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:186:    gripper->setQ( openQ, state);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:191:        gripper->setQ( openQ+stepQ/(2*i), state );
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:199:    gripper->setQ( openQ+ustepQ*SOFT_LAYER_SIZE, state );
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\Gripper.cpp:98:	dev->setQ(Q(1, minOpening), state);
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.cpp:219:    _device->setQ (q, _state);
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.cpp:222:        Rotation3D<> rot       = inverse (_device->baseTframe (_controlFrame, _state).R ());
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.cpp:233:    Eigen::MatrixXd jac     = P * _device->baseJframe (_controlFrame, _state).e ();
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:81:    _device->setQ (q, _state);
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:87:        Rotation3D<> rot     = inverse (_device->baseTframe (_controlFrame, _state).R ());
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:97:    Eigen::MatrixXd jac = P * _device->baseJframe (_controlFrame, _state).e ();
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:98:    // Eigen::MatrixXd jac = _device->baseJframe(_controlFrame, _state).m();
+RobWork/RobWork/src\rwlibs\algorithms\StructuredLineModel.cpp:178:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\StablePose1DModel.cpp:155:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\StablePose0DModel.cpp:76:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\RANSACModel.hpp:418:        void setQuality (double quality) { _quality = quality; }
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPController.cpp:90:    _device->setQ (q, _state);
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.cpp:60:        device->setQ (q, state);
+RobWork/RobWork/src\rwlibs\algorithms\PointModel.cpp:53:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\PlaneModel.cpp:52:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\LineModel.cpp:52:    setQuality (error);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:61:    _device->setQ (q, _state);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:67:        Rotation3D<> rot = inverse (_device->baseTframe (_controlFrame, _state).R ());
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:85:    MatrixXd jac    = P * _device->baseJframe (_controlFrame, _state).e ();
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:115:        _device->setQ (q, state);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:121:            _device->setQ (qt, state);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:122:            Jacobian jac1 = _device->baseJframe (_controlFrame, state);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:125:            _device->setQ (qt, state);
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:126:            Jacobian jac2 = _device->baseJframe (_controlFrame, state);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:432:        _td->getGripperDevice()->setQ(oq, state);
+RobWork/RobWork/src\rw\trajectory\TimedUtil.cpp:91:        device.setQ (qt.getValue (), state);
+RobWork/RobWork/src\rw\proximity\rwstrategy\ProximityStrategyRW.cpp:193:    qdata.cache->tcollider->setQueryType (pdata.getCollisionQueryType ());
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeToleranceCollider.hpp:67:        virtual void setQueryType (rw::proximity::CollisionStrategy::QueryType type) { _queryType = type; };
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeCollider.hpp:65:        virtual void setQueryType (rw::proximity::CollisionStrategy::QueryType type) { _queryType = type; }
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:65:                    _device->setQ (q, _state);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:53:        _device->setQ (q, state);
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:95:        device.setQ (q, state);
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:96:        Jacobian jac = device.baseJframe (frame, state);
+RobWork/RobWork/src\rw\pathplanning\PathAnalyzer.cpp:66:    _device->setQ (path.front (), _state);
+RobWork/RobWork/src\rw\pathplanning\PathAnalyzer.cpp:72:        _device->setQ (*it, _state);
+RobWork/RobWork/src\rw\pathplanning\PathAnalyzer.cpp:114:        _device->setQ (*it, _state);
+RobWork/RobWork/src\rw\models\SE3Device.hpp:97:         * @copydoc Device::setQ
+RobWork/RobWork/src\rw\models\SE3Device.hpp:101:        void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\SE3Device.cpp:35:void SE3Device::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\ParallelLeg.hpp:90:        rw::math::Jacobian baseJframe (rw::core::Ptr<const rw::kinematics::Frame> frame,
+RobWork/RobWork/src\rw\models\ParallelLeg.hpp:106:        rw::math::Transform3D< double > baseTframe (rw::core::Ptr<const rw::kinematics::Frame> frame,
+RobWork/RobWork/src\rw\models\ParallelLeg.hpp:175:        void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\ParallelLeg.cpp:114:Jacobian ParallelLeg::baseJframe (rw::core::Ptr< const Frame > frame, const State& state) const
+RobWork/RobWork/src\rw\models\ParallelLeg.cpp:119:    const Transform3D<>& vbTe = baseTframe (frame, state);
+RobWork/RobWork/src\rw\models\ParallelLeg.cpp:175:void ParallelLeg::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\ParallelLeg.cpp:194:Transform3D< double > ParallelLeg::baseTframe (rw::core::Ptr< const Frame > frame,
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:89:         * @copydoc Device::setQ
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:92:         * of the parallel device. Based on the value of \b q the setQ() method
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:96:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:101:         * This version of setQ will only set a subset of the actuated joints.
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:116:        virtual void setQ (const rw::math::Q& q, const std::vector< bool >& enabled,
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:119:        /** @copydoc Device::baseJframe */
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:120:        rw::math::Jacobian baseJframe (const rw::core::Ptr<rw::kinematics::Frame> frame,
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:128:void ParallelDevice::setQ (const Q& q, State& s) const
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:131:    setQ (q, enabled, s);
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:347:void ParallelDevice::setQ (const Q& q, const std::vector< bool >& enabled, State& s) const
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:705:Jacobian ParallelDevice::baseJframe (const rw::core::Ptr<Frame> frame, const State& state) const
+RobWork/RobWork/src\rw\models\Models.cpp:114:        device.setQ (q, state);
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:48:     * When using setQ it takes 2 parameters, which corresponds to the distances
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:82:         * @copydoc Device::setQ
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:84:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:152:           @copydoc Device::baseJframe
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:155:        virtual rw::math::Jacobian baseJframe (const rw::core::Ptr<rw::kinematics::Frame> frame,
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:159:           @copydoc Device::baseJframes
+RobWork/RobWork/src\rw\models\MobileDevice.hpp:162:        virtual rw::math::Jacobian baseJframes (const std::vector< rw::kinematics::Frame* >& frames,
+RobWork/RobWork/src\rw\models\MobileDevice.cpp:59:void MobileDevice::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\MobileDevice.cpp:62:    _jointDevice.setQ (q, state);
+RobWork/RobWork/src\rw\models\MobileDevice.cpp:172:Jacobian MobileDevice::baseJframe (const rw::core::Ptr<Frame> frame, const State& state) const
+RobWork/RobWork/src\rw\models\MobileDevice.cpp:178:Jacobian MobileDevice::baseJframes (const std::vector< Frame* >& frames, const State& state) const
+RobWork/RobWork/src\rw\models\JointDevice.hpp:48:     behaviour. Subclasses typically differ in their implementation of setQ()
+RobWork/RobWork/src\rw\models\JointDevice.hpp:79:        /** @copydoc Device::setQ */
+RobWork/RobWork/src\rw\models\JointDevice.hpp:80:        void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\JointDevice.cpp:108:void JointDevice::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\JointDevice.cpp:111:        RW_THROW ("setQ() called for device of size " << (int) getDOF () << " and q of size "
+RobWork/RobWork/src\rw\models\Joint.hpp:79:        // virtual void setQ(const rw::math::Q& q, rw::kinematics::State& state) const = 0;
+RobWork/RobWork/src\rw\models\DeviceJacobianCalculator.cpp:54:        Jacobian jac = dev->baseJframes (_tcps, state);
+RobWork/RobWork/src\rw\models\Device.hpp:88:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state) const = 0;
+RobWork/RobWork/src\rw\models\Device.hpp:207:        rw::math::Transform3D< double > baseTframe (rw::core::Ptr<const rw::kinematics::Frame> f,
+RobWork/RobWork/src\rw\models\Device.hpp:290:         * By default the method forwards to baseJframe().
+RobWork/RobWork/src\rw\models\Device.hpp:324:         * By default the method forwards to baseJframes().
+RobWork/RobWork/src\rw\models\Device.hpp:326:        virtual rw::math::Jacobian baseJframe (rw::core::Ptr<const rw::kinematics::Frame> frame,
+RobWork/RobWork/src\rw\models\Device.hpp:338:        virtual rw::math::Jacobian baseJframes (const std::vector< rw::kinematics::Frame* >& frames,
+RobWork/RobWork/src\rw\models\Device.cpp:27:Transform3D< double > Device::baseTframe (rw::core::Ptr<const Frame> f, const State& state) const
+RobWork/RobWork/src\rw\models\Device.cpp:46:    return baseJframe (getEnd (), state);
+RobWork/RobWork/src\rw\models\Device.cpp:49:Jacobian Device::baseJframe (rw::core::Ptr<const Frame> frame, const State& state) const
+RobWork/RobWork/src\rw\models\Device.cpp:52:    return baseJframes (frames, state);
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:46:       exception is Device::setQ() which is implemented by forwarding the
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:47:       Device::setQ() calls to the sequence of devices. This means that
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:49:       that have an overwritten implementation of Device::setQ().
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:101:           @copydoc Device::setQ
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:103:           The method is implemented via forwarding to the Device::setQ()
+RobWork/RobWork/src\rw\models\CompositeJointDevice.hpp:106:        void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\CompositeJointDevice.cpp:88:void CompositeJointDevice::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\CompositeJointDevice.cpp:95:        // isn't any way of avoiding it currently. The setQ() procedure would
+RobWork/RobWork/src\rw\models\CompositeJointDevice.cpp:101:        _devices[i]->setQ (qdev, state);
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:47:       exception is Device::setQ() which is implemented by forwarding the
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:48:       Device::setQ() calls to the sequence of devices. This means that
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:50:       that have an overwritten implementation of Device::setQ().
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:103:           @copydoc Device::setQ
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:105:           The method is implemented via forwarding to the Device::setQ()
+RobWork/RobWork/src\rw\models\CompositeDevice.hpp:108:        void setQ (const rw::math::Q& q, rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\models\CompositeDevice.cpp:88:void CompositeDevice::setQ (const Q& q, State& state) const
+RobWork/RobWork/src\rw\models\CompositeDevice.cpp:95:        // isn't any way of avoiding it currently. The setQ() procedure would
+RobWork/RobWork/src\rw\models\CompositeDevice.cpp:101:        _devices[i]->setQ (qdev, state);
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWLoader.cpp:97:    void setInitialState (rw::kinematics::State& state) { _dev->setQ (_q, state); }
+RobWork/RobWork/src\rw\loaders\path\PathLoaderCSV.cpp:75:            (*it)->setQ (q, state);
+RobWork/RobWork/src\rw\loaders\path\PathLoader.cpp:74:void setQ (State& state, const Frame& frame, const double* vals)
+RobWork/RobWork/src\rw\loaders\path\PathLoader.cpp:183:            setQ (state, frame, getDoubleArray (n));
+RobWork/RobWork/src\rw\kinematics\StateData.hpp:146:            state.getQState ().setQ (*this, vals);
+RobWork/RobWork/src\rw\kinematics\State.hpp:53:     * getChildren(), getQ() and setQ() utility functions rather than explicitly
+RobWork/RobWork/src\rw\kinematics\State.hpp:87:         * (QState) (containing joint values, for example). The setQStateInState()
+RobWork/RobWork/src\rw\kinematics\State.hpp:92:        void setQStateInState (State& to) const { to.getQState () = getQState (); }
+RobWork/RobWork/src\rw\kinematics\State.hpp:103:         * setQStateInState() (even though they are both fast), so if you have the
+RobWork/RobWork/src\rw\kinematics\State.cpp:108:        _q_state.setQ (data, vals);
+RobWork/RobWork/src\rw\kinematics\QState.hpp:99:         * setQ() and getQ() are related as follows:
+RobWork/RobWork/src\rw\kinematics\QState.hpp:101:         * q_state.setQ(frame, q_in);
+RobWork/RobWork/src\rw\kinematics\QState.hpp:107:        void setQ (const rw::kinematics::StateData& data, const double* vals);
+RobWork/RobWork/src\rw\kinematics\QState.cpp:63:void QState::setQ (const StateData& data, const double* vals)
+RobWork/RobWork/src\rw\kinematics\Frame.hpp:138:         * State::setQ().
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:129:        const Jacobian& serialJac          = tleg->baseJframe (target.tcpFrame, state);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:185:        _device->setQ (q, state);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:164:        _device->setQ (q, state);
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:109:        _device->setQ (getRandomConfig (), state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:71:    _device->setQ (Q::zero (6), tmpState);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:140:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:167:        _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:172:        _device->setQ (adjustedQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:205:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:228:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:238:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:248:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:161:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:188:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:199:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:226:    _device->setQ (tmpQ, state);
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:238:    _device->setQ (tmpQ, state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskVisPlugin.cpp:587:                device->setQ (q, state);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:229:            Transform3D<> bTj = _device->baseTframe (joint, state);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:294:            _device->setQ (q, state);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:406:            Transform3D<> bTj = _device->baseTframe(joint, state);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:460:            _device->setQ(q, state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:286:                _hand->setQ(openQ, state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:682:        dev->setQ (closeQ, state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:695:                dev->setQ (openQ, state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:702:                dev->setQ(closeQ,state);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimulatorPlugin.cpp:474:                //dev->setQ(backup, _dState);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimulatorPlugin.cpp:475:                dev->setQ(goal, _dState);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.cpp:738:        _hand->getModel().setQ(preshape, nstate);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.cpp:749:        _hand->getModel().setQ(_preshapes[_currentPreshapeIDX[i]], nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.cpp:586:        _device->setQ (solutions.front (), _state);
+RobWork/RobWork/src\rwlibs\swig\sdurw.i:133:    void setQ(const std::string& id, rw::math::Q q){ $self->set< rw::math::Q >(id, q); }
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:115:            device.setQ (q1, s1);
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:118:            device.setQ (q2, s2);
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:184:        _device->setQ (q, state);
+RobWork/RobWork/src\rwlibs\swig\sdurw_kinematics.i:226:%ignore rw::kinematics::QState::setQ;
+RobWork/RobWork/src\rwlibs\swig\sdurw_kinematics.i:261:     * setQ() and getQ() are related as follows:
+RobWork/RobWork/src\rwlibs\swig\sdurw_kinematics.i:263:     * q_state.setQ(frame, q_in);
+RobWork/RobWork/src\rwlibs\swig\sdurw_kinematics.i:269:    void setQ(const rw::kinematics::StateData& data, const std::vector<double> vals){
+RobWork/RobWork/src\rwlibs\swig\sdurw_kinematics.i:270:        $self->setQ(data,vals.data());
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:521:    _hand->getModel ().setQ (preQ, _defstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:581:        _hand->getModel ().setQ (_preshape, state);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:655:            _hand->getModel ().setQ (_preshapes[_currentPreshapeIDX[i]], nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:883:                    _hand->getModel ().setQ (preshape, nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:974:                _hand->getModel ().setQ (preshape, nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:979:            _hand->getModel ().setQ (preshape, nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:991:            _hand->getModel ().setQ (_preshapes[_currentPreshapeIDX[i]], nstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1440:    _hand->getModel().setQ(_preshapes[0], state);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1501:    /*   _hand->getModel().setQ(_preshapes[0], state);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.hpp:192:        setQConstraint (const rw::core::Ptr< const rw::pathplanning::QConstraint >& qConstraint);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:61:    _device->setQ (q, _state);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:127:                _device->setQ (qnew, tmp_state);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:267:            _device->setQ (q, tmp_state);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:339:void ClearanceOptimizer::setQConstraint (const QConstraint::CPtr& qConstraint)
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtVelocityDevice.cpp:70:    _rdev->getModel ().setQ (q, state);
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtPositionDevice.cpp:42:    _kdev->getModel ().setQ (_kdev->getQ (state), state);
+RobWork/RobWorkSim/src\rwsimlibs\gui\JogGroup.hpp:88:    void setQ (const rw::math::Q& q) { _q = q; }
+RobWork/RobWorkSim/src\rwsimlibs\gui\JogGroup.cpp:231:    setQ (q);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspSelectionDialog.cpp:242:    _dev->setQ (data.cq, state);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:266:    _hand->getModel ().setQ (preQ, _defstate);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:735:    /*   _hand->getModel().setQ(_preshapes[0], state);
+RobWork/RobWorkSim/src\rwsim\simulator\GraspTaskSimulator.cpp:647:            _hand->setQ (sstate._openQ, nstate);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:331:                    simState.maleDevice->setQ (q, state);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:340:                simState.maleDevice->setQ (simState.maleTarget, simState.state);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:623:                        simState.maleDevice->setQ (q, state);
+RobWork/RobWorkSim/src\rwsim\dynamics\SuctionCup.hpp:81:            return _kindev->setQ (rw::math::Q (1, pressure), state);
+RobWork/RobWorkSim/src\rwsim\dynamics\SuctionCup.cpp:34:    void setQ (const Q& q, State& state) const { _pressure = q; }
+RobWork/RobWorkSim/src\rwsim\dynamics\RigidDevice.cpp:72:        Transform3D<> bTf = _ddev->getModel ().baseTframe (getBodyFrame (), state);
+RobWork/RobWorkSim/src\rwsim\dynamics\RigidDevice.cpp:74:        Jacobian bJf      = _ddev->getModel ().baseJframe (getBodyFrame (), state);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:57:    _jointFrame (j), _dev (dev), _parents (parents), _jac (dev.baseJframe (&j, state)),
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:93:    _jac = _dev.baseJframe (&_jointFrame, state);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:108:    _jointFrame.setQ (state, &_pos);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:129:    _jac = _dev.baseJframe (&_jointFrame, state);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:186:    _jointFrame.setQ (state, &_pos);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:199:    _jac = _dev.baseJframe (&_jointFrame, state);
+RobWork/RobWorkSim/src\rwsim\dynamics\DynamicDevice.hpp:62:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state)
+RobWork/RobWorkSim/src\rwsim\dynamics\DynamicDevice.hpp:64:            _dev->setQ (q, state);
+RobWork/RobWorkSim/src\rwsim\dynamics\DynamicDevice.hpp:79:        // void setQdd(const rw::kinematics::Q& qdd, const rw::kinematics::State& state);
+RobWork/RobWorkSim/src\rwsim\dynamics\KinematicDevice.cpp:70:        Transform3D<> bTf = _ddev->getModel ().baseTframe (getBodyFrame (), state);
+RobWork/RobWorkSim/src\rwsim\dynamics\KinematicDevice.cpp:72:        Jacobian bJf      = _ddev->getModel ().baseJframe (getBodyFrame (), state);
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:19:    _target (_device->baseTframe (_endframe, state)), _targetVel (0, 0, 0, 0, 0, 0), _stime (dt),
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:30:    _target (_device->baseTframe (_endframe, state)), _targetVel (0, 0, 0, 0, 0, 0), _stime (dt),
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:66:    //_device->setQ(_q, _state);
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:68:    Transform3D<> Tcurrent = _device->baseTframe (tcpFrame, state);
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:103:    Transform3D<> Tcurrent = _device->baseTframe (tcpFrame, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:279:            _ddev->getKinematicModel ()->setQ (lastQ, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:300:                    _ddev->getKinematicModel ()->setQ (lastQ, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:531:    Jacobian J = _ddev->getKinematicModel ()->baseJframe (taskFrame, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:545:    const Transform3D<> baseTend    = _ddev->getKinematicModel ()->baseTframe (taskFrame, state);

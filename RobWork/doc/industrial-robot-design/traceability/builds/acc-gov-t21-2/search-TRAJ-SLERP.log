@@ -1,0 +1,16 @@
+RobWork/RobWork/src\sandbox\NvStanHull3D.cpp:512:Quaternion	slerp( Quaternion a, const Quaternion& b, NxF32 interp );
+RobWork/RobWork/src\sandbox\NvStanHull3D.cpp:1169:Quaternion slerp( Quaternion a, const Quaternion& b, NxF32 interp )
+RobWork/RobWork/src\sandbox\NvStanHull3D.cpp:1189:	return slerp(q0,q1,alpha);
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:214:            //Quaternion<> qNext = q1s[i].slerp(q2s[i], nStep);
+RobWork/RobWork/src\rw\trajectory\SQUADInterpolator.hpp:75:            return q0.slerp (q1, h);
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:326:     * The interpolation of rotation is made using a Quaternion slerp interpolation.
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:327:     * See rw::math::Quaternion::slerp for further information.
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:135:     * The interpolation of rotation is made using a Quaternion slerp interpolation.
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:136:     * See rw::math::Quaternion::slerp for further information.
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:185:            return _quarStart.slerp (_quarEnd, t / _duration).toRotation3D ();
+RobWork/RobWork/src\rw\math\Quaternion.hpp:444:         * @brief Calculates a slerp interpolation between \b this and \b v.
+RobWork/RobWork/src\rw\math\Quaternion.hpp:446:         * The slerp interpolation ensures a constant velocity across the interpolation.
+RobWork/RobWork/src\rw\math\Quaternion.hpp:451:        inline const Quaternion< T > slerp (const Quaternion< T >& v, const T t) const
+RobWork/RobWork/src\rw\math\Quaternion.hpp:453:            return Quaternion (_q.slerp (t, v.e ()));
+RobWork/RobWork/src\rwlibs\algorithms\StablePose0DModel.cpp:57:    // average is calculated using slerp
+RobWork/RobWork/src\rwlibs\algorithms\StablePose0DModel.cpp:62:        model = model.slerp (Quaternion<> (s), weight / i);

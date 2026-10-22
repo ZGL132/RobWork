@@ -1,0 +1,26 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+index 73c225b6b..1a0ecb407 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+@@ -413,11 +413,21 @@ add_subdirectory(optimization)
+ # 目标自带引擎自测（干净夹具必须通过＋7 类植入违例必须检出——DTB §2.2
+ # 验收第 5 条），任一命中即目标失败。日常构建不自动挂接该目标（避免每次
+ # 构建全树扫描），CI/一键门禁随 WP-01-T02 挂接。
++# H1—H6 与原边界扫描共用一个门禁目标；复用事实由唯一 PowerShell 校验器维护，
++# 不在 CMake 复制另一套规则。独立冒烟也定位到同一 Git 根，禁止因缺上游链接另写算法。
++get_filename_component(IRD_REUSE_REPO_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../../../.." ABSOLUTE)
++find_program(IRD_REUSE_POWERSHELL NAMES pwsh powershell)
++if(NOT IRD_REUSE_POWERSHELL)
++    message(FATAL_ERROR "H1-H6 reuse gate requires PowerShell (pwsh or powershell)")
++endif()
+ add_custom_target(ird_gates
+     COMMAND "${CMAKE_COMMAND}"
+         "-DIRD_ROOT=${CMAKE_CURRENT_SOURCE_DIR}"
+         "-DIRD_SELFTEST_DIR=${CMAKE_BINARY_DIR}/ird_gates_selftest"
+         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/ird_gates.cmake"
++    COMMAND "${IRD_REUSE_POWERSHELL}" -NoProfile -File
++        "${IRD_REUSE_REPO_ROOT}/RobWork/scripts/industrialrobot/validate-reuse.ps1"
++        -RepoRoot "${IRD_REUSE_REPO_ROOT}"
+     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+     COMMENT "ird_gates：依赖红线与补丁门禁（R-1~R-5/T-1/T-2/SUB/SA-02＋引擎自测）"
+     VERBATIM)

@@ -1,0 +1,1 @@
+PR artifact expected=executed=passed45; skipped=failed=notRun0; complete=true; driverFailure空。validator/driver SHA与冻结源码原字节及本地两版报告完全一致。gov-t21末次ref==冻结SHA。

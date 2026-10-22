@@ -1,0 +1,75 @@
+{
+  "ps7": {
+    "schemaVersion": "ird-reuse-tests/1",
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D",
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true
+  },
+  "ps51": {
+    "schemaVersion": "ird-reuse-tests/1",
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D",
+    "expected": 45,
+    "executed": 45,
+    "notRun": 0,
+    "driverFailure": "",
+    "passed": 45,
+    "skipped": 0,
+    "failed": 0,
+    "complete": true
+  },
+  "injectedDriverFailure": {
+    "schemaVersion": "ird-reuse-tests/1",
+    "validatorSha256": "ED13EA799F8D0E185B9D5886713F913718758D4FFFD80BC391A8CA4BAD03A7E4",
+    "driverSha256": "9507900DED5C87CFAF8CEB36C65A3257ECC4DD85152C6125B64F07A3EF3CC93D",
+    "expected": 45,
+    "executed": 0,
+    "notRun": 45,
+    "driverFailure": "fixture clone failed",
+    "passed": 0,
+    "skipped": 0,
+    "failed": 0,
+    "complete": false
+  },
+  "independentNegatives": [
+    {
+      "name": "independent-unknown-worktree",
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "passed": true
+    },
+    {
+      "name": "independent-committed-mjs",
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "passed": true,
+      "commit": "25f761c8c4f97d6f799fac395b991f68be8b1d54"
+    },
+    {
+      "name": "independent-committed-opaque",
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "passed": true,
+      "commit": "37914de5a779975223fdef558fc47f279d7136fe"
+    },
+    {
+      "name": "independent-stage-ready",
+      "exitCode": 1,
+      "expected": "REUSE-STAGE",
+      "passed": true
+    },
+    {
+      "name": "independent-final-debt",
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "taskId": "GOV-T21",
+  "verdict": "pass",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc",
+  "baseCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "attempt": 2,
+  "mode": "independent-subsession",
+  "record": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.md",
+  "evidence": "RobWork/doc/industrial-robot-design/traceability/builds/acc-gov-t21-2",
+  "scope": "文档、约束与门禁治理；不批准算法扩展或合入",
+  "fixedFindings": ["F-957", "F-958"],
+  "openRelatedFindings": ["F-955", "F-956"]
+}

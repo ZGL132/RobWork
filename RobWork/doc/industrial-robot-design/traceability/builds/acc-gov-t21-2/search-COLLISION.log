@@ -1,0 +1,264 @@
+RobWork/RobWork/src\sandbox\proximity\TreeDistanceCalc.cpp:147:                        res = _bvCollider->inCollision( cobbA, cobbB,ATtB*cobbB.getTransform());
+RobWork/RobWork/src\sandbox\proximity\TreeDistanceCalc.cpp:149:                        res = _bvCollider->inCollision( cobbB, cobbA, inverse(ATtB*cobbB.getTransform()));
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:94:            if(setup.strategy->inCollision(modelA, Ta, modelB, Tb, data))
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:135:            if(setup.strategy->inCollision(modelA, Ta, modelB, Tb, data))
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:182:        setup.strategy->inCollision(modelA, Ta, modelB, Tb, data);
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:116:        EXPECT_TRUE (!PlannerUtil::inCollision (constraint, path));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:199:                EXPECT_TRUE (!PlannerUtil::inCollision (constraint, path));
+RobWork/RobWork/gtest\proximity\ProximityCalculatorTest.cpp:126:    EXPECT_TRUE (res.inCollision ());
+RobWork/RobWork/gtest\proximity\ProximityCalculatorTest.cpp:128:    EXPECT_TRUE (result->at (0).inCollision ());
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:91:            if (setup.strategy->inCollision (modelA, Ta, modelB, Tb, data))
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:139:            if (setup.strategy->inCollision (modelA, Ta, modelB, Tb, data))
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:195:        setup.strategy->inCollision (modelA, Ta, modelB, Tb, data);
+RobWork/RobWork/gtest\loaders\DOMProximitySetupSaver.cpp:77:    cd->inCollision(wcUsingProx->getDefaultState(), &res);
+RobWork/RobWork/gtest\proximity\CollisionTest.cpp:81:    EXPECT_TRUE (strategy->inCollision (o1, a, o2, id));
+RobWork/RobWork/gtest\proximity\CollisionTest.cpp:84:    EXPECT_TRUE (!strategy->inCollision (o1, b, o2, id));
+RobWork/RobWork/gtest\proximity\CollisionTest.cpp:114:    result = detector.inCollision (state);
+RobWork/RobWork/gtest\proximity\CollisionTest.cpp:119:    result = detector.inCollision (state);
+RobWork/RobWork/gtest\proximity\CollisionTest.cpp:126:TEST (CollisionTest, mainCollisionTest)
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:102:	EXPECT_FALSE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*(s/2-offset+eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:103:	EXPECT_TRUE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*(s/2-offset-eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:109:	EXPECT_FALSE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*(s/2-offset+eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:110:	EXPECT_TRUE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*(s/2-offset-eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:146:	EXPECT_TRUE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*0.1),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:147:	EXPECT_FALSE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*10),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:148:	EXPECT_FALSE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*(s-offset+eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:149:	EXPECT_TRUE(strategy->inCollision(frameA,Transform3D<>::identity(),frameB,Transform3D<>(Vector3D<>::z()*(s-offset-eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:155:	EXPECT_TRUE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*0.1),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:156:	EXPECT_FALSE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*10),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:157:	EXPECT_FALSE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*(s-offset+eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:158:	EXPECT_TRUE(strategy->inCollision(modelA,Transform3D<>::identity(),modelB,Transform3D<>(Vector3D<>::z()*(s-offset-eps)),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:195:	EXPECT_TRUE(strategy->inCollision(frameA,Transform3D<>(Vector3D<>::x()*0.1),frameB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:196:	EXPECT_FALSE(strategy->inCollision(frameA,Transform3D<>(Vector3D<>::x()*10),frameB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:197:	EXPECT_FALSE(strategy->inCollision(frameA,Transform3D<>(Vector3D<>::x()*(r*2+offset+eps)),frameB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:198:	EXPECT_TRUE(strategy->inCollision(frameA,Transform3D<>(Vector3D<>::x()*(r*2+offset-eps)),frameB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:204:	EXPECT_TRUE(strategy->inCollision(modelA,Transform3D<>(Vector3D<>::x()*0.1),modelB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:205:	EXPECT_FALSE(strategy->inCollision(modelA,Transform3D<>(Vector3D<>::x()*10),modelB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:206:	EXPECT_FALSE(strategy->inCollision(modelA,Transform3D<>(Vector3D<>::x()*(r*2+offset+eps)),modelB,Transform3D<>::identity(),data));
+RobWork/RobWork/gtest\proximity\CollisionStrategyTest.cpp:207:	EXPECT_TRUE(strategy->inCollision(modelA,Transform3D<>(Vector3D<>::x()*(r*2+offset-eps)),modelB,Transform3D<>::identity(),data));
+RobWork/RobWorkSim/src\rwsim\dynamics\BodyUtil.cpp:25:        if (coldect->inCollision (state, &result, true)) {
+RobWork/RobWorkSim/src\rwsim\util\CollisionFreeSampler.cpp:42:        colfree = _detector->inCollision (state, NULL, true);
+RobWork/RobWorkSim/src\rwsim\sensor\TactileArraySensor.cpp:250:    _narrowStrategy->inCollision (_nmodel, _fThmap, model, wTb, pdata);
+RobWork/RobWorkSim/src\rwsim\sensor\TactileArraySensor.cpp:526:    bool colliding = _tsensor->_narrowStrategy->inCollision (modelA, wTa, modelB, wTb, _pdata);
+RobWork/RobWorkSim/src\rwsim\sensor\TactileArraySensor.cpp:531:            colliding = _tsensor->_narrowStrategy->inCollision (modelA, wTa, modelB, wTb, _pdata);
+RobWork/RobWorkSim/src\rwsim\sensor\TactileArraySensor.cpp:546:            colliding = _tsensor->_narrowStrategy->inCollision (modelA, wTa, modelB, wTb, _pdata);
+RobWork/RobWorkSim/src\rwsim\sensor\TactileArraySensor.cpp:644:        bool collides = _tsensor->_narrowStrategy->inCollision (
+RobWork/RobWorkSim/src\rwsim\simulator\GraspTaskSimulator.cpp:664:            colFreeSetup = !_collisionDetector->inCollision (nstate, &res, false);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:332:                    if (!_collisionDetector->inCollision (state)) {
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:624:                        if (!_collisionDetector->inCollision (state)) {
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.cpp:87:		if (!constraint.inCollision(*bestSolution)) {
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:74:		if (!constraint.inCollision(*bestSolution)) {
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:90:	if (_detector->inCollision(state))
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:195:	if (_detector->inCollision(state))
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:250:	if (_detector->inCollision(fromState))
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:252:	if (_detector->inCollision(toState))
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:280:	if (_detector->inCollision(state))
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:286:	bool handColl = _detector->inCollision(gripState,query);
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:313:				if (!_detector->inCollision(tempState)) {
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1394:    } while (_colDect->inCollision (istate, &colresult, false));
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1401:    while( _colDect->inCollision(state, &result, false) ){
+RobWork/RobWorkSim/src\rwsimlibs\gui\GLViewRW.cpp:86:    detector.inCollision (state, &current);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:192:        if( !detector.inCollision(state,NULL, true)){
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:248:        cstrategy->inCollision(object,Transform3D<>::identity(), ray, rayTrans, data);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:192:        if( !detector.inCollision(state,NULL, true)){
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:248:        cstrategy->inCollision(object,Transform3D<>::identity(), ray, rayTrans, data);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:598:            bool inCollision = false;
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:599:            TIMING ("Collision Resolution: ", inCollision = detectCollisionsRW (tmpState, true));
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:601:            if (!inCollision) {
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:609:                    // if we allready tried reducing the timestep then set the inCollisionFlag
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:621:                bool inCollision = false;
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:623:                        inCollision = detectCollisionsRW (tmpState, true));
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:624:                if (!inCollision) {
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:1950:            bool collides = _narrowStrategy->inCollision (a, aT, b, bT, data);
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESuctionCupDevice.cpp:161:        if (_narrowStrategy->inCollision (objModel, wTobj, _spikedCupModel, wTcup, _pdata)) {
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESuctionCupDevice.cpp:212:        if( _narrowStrategy->inCollision(objModel, wTobj, _spikedCupModel, wTcup, _pdata) ){
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:698:                    getRobWorkStudio ()->getCollisionDetector ()->inCollision (state, &result);
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.cpp:703:                if( getRobWorkStudio()->getCollisionDetector()->inCollision(state, &result) ){
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspSelectionDialog.cpp:472:    while (_colDect->inCollision (state, &result, false)) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:73:        cstrategy->inCollision(object, Transform3D<>::identity(), ray, rayTrans, data);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:440:        if (!cdetect->inCollision(state, &result, true)) {
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:690:    } while (_colDect->inCollision (istate, &colresult, false));
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:697:    while( _colDect->inCollision(state, &result, false) ){
+RobWork/RobWorkSim/src\rwsim\rwphysics\ContactModelFactory.cpp:110:    _toleranceDetector->inCollision (state, &res, false);
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:424:    while (_colDect->inCollision (state, &result, false)) {
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.cpp:1072:    } while(_colDect->inCollision(istate, &colresult, false));
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.cpp:1079:    while( _colDect->inCollision(state, &result, false) ){
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:45:            if (_strategy->inCollision (frame, wTf, _obj, wTobj)) {
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:61:            if (_strategy->inCollision (frame, wTf, _obj, wTobj)) {
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintFactory.cpp:105:    _toleranceDetector->inCollision (state, &res, false);
+RobWork/RobWork/src\rwlibs\pathoptimization\pathlength\PathLengthOptimizer.cpp:278:    return !PlannerUtil::inCollision (_constraint, from, to, testQStart, testQEnd);
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:121:            if (it->second < _minClearance && !_qConstraint->inCollision (qnew)) {
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:128:                if (_stateConstraint != nullptr && _stateConstraint->inCollision (tmp_state)) {
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:131:                if (_qConstraintUser != nullptr && _qConstraintUser->inCollision (qnew)) {
+RobWork/RobWork/src\rw\geometry\BVCollider.hpp:49:        inline bool inCollision (const BVTYPE& bvA, const BVTYPE& bvB,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:24:        bool inCollision (const rw::math::Vector3D< T >& P1, const rw::math::Vector3D< T >& P2,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:28:        bool inCollision (const rw::geometry::Triangle< T >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:31:        bool inCollision (const rw::geometry::Triangle< T >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:87:    bool TriTriIntersectDeviller< T >::inCollision (const rw::geometry::Triangle< value_type >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:90:        return inCollision (P[0], P[1], P[2], Q[0], Q[1], Q[2]);
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:94:    bool TriTriIntersectDeviller< T >::inCollision (const rw::geometry::Triangle< value_type >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:98:        return inCollision (P[0], P[1], P[2], PTQ * Q[0], PTQ * Q[1], PTQ * Q[2]);
+RobWork/RobWork/src\rw\geometry\TriTriIntersectDeviller.hpp:102:    bool TriTriIntersectDeviller< T >::inCollision (const rw::math::Vector3D< T >& P1,
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.cpp:390:    bool inCollision = false;
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.cpp:432:                inCollision = true;
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.cpp:457:                    return inCollision;
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.cpp:465:    return inCollision;
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:38:        bool inCollision (const rw::math::Vector3D< T >& P1, const rw::math::Vector3D< T >& P2,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:42:        bool inCollision (const rw::geometry::Triangle< T >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:45:        bool inCollision (const rw::geometry::Triangle< T >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:177:    bool TriTriIntersectMoller< T >::inCollision (const rw::geometry::Triangle< value_type >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:180:        return inCollision (P[0], P[1], P[2], Q[0], Q[1], Q[2]);
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:184:    bool TriTriIntersectMoller< T >::inCollision (const rw::geometry::Triangle< value_type >& P,
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:188:        return inCollision (P[0], P[1], P[2], PTQ * Q[0], PTQ * Q[1], PTQ * Q[2]);
+RobWork/RobWork/src\rw\geometry\TriTriIntersectMoller.hpp:192:    bool TriTriIntersectMoller< T >::inCollision (const rw::math::Vector3D< T >& P0,
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyBullet.cpp:463:bool ProximityStrategyBullet::inCollision (ProximityModel::Ptr aModel, const Transform3D<>& wTa,
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyBullet.cpp:489:bool ProximityStrategyBullet::inCollision (ProximityModel::Ptr aModel, const Transform3D<>& wTa,
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:131:        if (PlannerUtil::inCollision (_constraint, start) ||
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:132:            PlannerUtil::inCollision (_constraint, goal))
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:143:            RW_ASSERT (!PlannerUtil::inCollision (_constraint, path));
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:172:                if (!_boundsConstraint->inCollision (slide) &&
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:173:                    !PlannerUtil::inCollision (_constraint, path.back (), slide, false, true)) {
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:188:                        // RW_ASSERT(!PlannerUtil::inCollision(_constraint, path));
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:241:            if (!PlannerUtil::inCollision (_constraint, path.back (), next, false, true)) {
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:256:            !PlannerUtil::inCollision (_constraint, path.back (), goal, false, false)) {
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:113:                    if (_constraint->inCollision (*it)) {
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:100:        return a->edge->inCollisionCost () < b->edge->inCollisionCost ();
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:417:        RW_ASSERT (!inCollision (from));
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:418:        RW_ASSERT (!inCollision (to));
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:484:    bool inCollision (const Q& q) { return options.constraint.getQConstraint ().inCollision (q); }
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:649:            if (node->edge->inCollisionPartialCheck ()) {
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:768:    if (!constraint.inCollision (q))
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:828:    if (options.constraint.getQConstraint ().inCollision (from) ||
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLInternal.cpp:829:        options.constraint.getQConstraint ().inCollision (to)) {
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:157:            if (qn.empty () || !_constraint->inCollision (qn))
+RobWork/RobWork/src\rwlibs\pathplanners\sbl\SBLExpand.cpp:197:            if (qn.empty () || !_constraint->inCollision (qn))
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.hpp:64:        bool inCollision (const rw::kinematics::State& state) const;
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.hpp:87:           @brief Subclass implementation of the inCollision() method.
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:41:            return _detector->inCollision (state, 0, true);
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:45:            bool inCollision = _detector->inCollision (state, &res, true);
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:50:            return inCollision;
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:72:            if (sc->inCollision (state))
+RobWork/RobWork/src\rw\pathplanning\StateConstraint.cpp:90:bool StateConstraint::inCollision (const rw::kinematics::State& state) const
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:65:bool inCollision (const RRTStruct& rrt, const Q& q)
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:67:    return rrt.constraint.getQConstraint ().inCollision (q);
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:71:bool inCollision (const RRTStruct& rrt, Node* a, const Q& b)
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:73:    return rrt.constraint.getQConstraint ().inCollision (b) ||
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:74:           rrt.constraint.getQEdgeConstraint ().inCollision (getQ (a), b);
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:103:        if (!inCollision (rrt, qNearNode, q)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:113:        if (!inCollision (rrt, qNearNode, qNew)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:167:        if (inCollision (_rrt, start)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:172:        if (inCollision (_rrt, goal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:177:        if (!_rrt.constraint.getQEdgeConstraint ().inCollision (start, goal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:214:        if (inCollision (_rrt, start)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:219:        if (inCollision (_rrt, goal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:224:        if (!_rrt.constraint.getQEdgeConstraint ().inCollision (start, goal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:265:        if (inCollision (_rrt, start)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:270:        if (inCollision (_rrt, goal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\rrt\RRTQToQPlanner.cpp:275:        if (!_rrt.constraint.getQEdgeConstraint ().inCollision (start, goal)) {
+RobWork/RobWork/src\rw\pathplanning\QToQPlanner.cpp:53:        if (_constraint.getQConstraint ().inCollision (from) ||
+RobWork/RobWork/src\rw\pathplanning\QToQPlanner.cpp:54:            _constraint.getQConstraint ().inCollision (to) ||
+RobWork/RobWork/src\rw\pathplanning\QToQPlanner.cpp:55:            _constraint.getQEdgeConstraint ().inCollision (from, to)) {
+RobWork/RobWork/src\rw\pathplanning\QSampler.cpp:160:            if (!q.empty () && !_constraint->inCollision (q))
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.cpp:74:bool PlannerConstraint::inCollision (const rw::math::Q& q)
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.cpp:76:    return _constraint->inCollision (q);
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.cpp:79:bool PlannerConstraint::inCollision (const rw::math::Q& q1, const rw::math::Q& q2)
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.cpp:81:    return _edge->inCollision (q1, q2);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.hpp:330:        bool inCollision (const rw::math::Q& a, const rw::math::Q& b) const;
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.hpp:344:        bool inCollision (std::list< Node >& path);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:151:bool PRMPlanner::inCollision (const Q& a, const Q& b) const
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:153:    return _constraint->inCollision (a) || _constraint->inCollision (b) ||
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:154:           _edge->inCollision (a, b);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:170:            if (!inCollision (q1, q2)) {
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:302:            if (_constraint->inCollision (q))
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:326:            if (_constraint->inCollision (ran))
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:374:    if (_constraint->inCollision (qInit)) {
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:380:    if (_constraint->inCollision (qGoal)) {
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:420:        bool inCol = inCollision (nodepath);
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:451:        if (_constraint->inCollision (q))
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:459:bool PRMPlanner::inCollision (std::list< Node >& path)
+RobWork/RobWork/src\rwlibs\pathplanners\prm\PRMPlanner.cpp:474:                if (_constraint->inCollision (_graph[n].q)) {
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:106:            if (!q.empty () && !_constraint->inCollision (q))
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:75:        bool inCollision (const rw::math::Q& start, const rw::math::Q& end) const;
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:81:        bool inCollision ();
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:94:        double inCollisionCost () const;
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:104:        bool inCollisionPartialCheck ();
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:109:           To check a path, either call inCollision() or repeatedly call
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:110:           inCollisionPartialCheck() until inCollisionPartialCheck() returns
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:180:           The fixed edge constraint always returns \b value from inCollision().
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:197:           @brief Subclass implementation of the inCollision() method.
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:200:           inCollision().
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:205:           @brief Subclass implementation of the inCollision() method.
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:208:           inCollisionPartialCheck() and isFullyChecked().
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:213:           @brief Subclass implementation of the inCollisionCost() method.
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:218:           @brief Subclass implementation of the inCollisionPartialCheck() method.
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.hpp:220:           By default this method is implemented in terms of inCollision().
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:54:        return _detector->inCollision (state);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:78:            if (sc->inCollision (q))
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:114:        return _constraint->inCollision (q);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:173:bool QConstraint::inCollision (const rw::math::Q& q) const
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:40:double QEdgeConstraintIncremental::inCollisionCost () const
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:51:bool QEdgeConstraintIncremental::inCollision (const rw::math::Q& start,
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:57:bool QEdgeConstraintIncremental::inCollision ()
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:62:bool QEdgeConstraintIncremental::inCollisionPartialCheck ()
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:85:    return instance (start, end)->inCollision ();
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:91:        if (inCollisionPartialCheck ())
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:93:    return inCollisionPartialCheck ();
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:98:    return inCollision ();
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraintIncremental.cpp:186:            if (_constraint->inCollision (q)) {
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.hpp:56:        static bool inCollision (const PlannerConstraint& constraint,
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.hpp:68:        static bool inCollision (const PlannerConstraint& constraint, const rw::math::Q& start,
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.hpp:78:        static inline bool inCollision (const PlannerConstraint& constraint, const rw::math::Q& q)
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.hpp:80:            return constraint.getQConstraint ().inCollision (q);
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:32:bool PlannerUtil::inCollision (const PlannerConstraint& constraint, const rw::math::Q& start,
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:35:    return (checkStart && constraint.getQConstraint ().inCollision (start)) ||
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:36:           (checkEnd && constraint.getQConstraint ().inCollision (end)) ||
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:37:           constraint.getQEdgeConstraint ().inCollision (start, end);
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:40:bool PlannerUtil::inCollision (const PlannerConstraint& constraint, const std::vector< Q >& path)
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:43:        if (constraint.getQConstraint ().inCollision (q))
+RobWork/RobWork/src\rw\pathplanning\PlannerUtil.cpp:50:        if (constraint.getQEdgeConstraint ().inCollision (a, b))
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraint.hpp:77:        bool inCollision (const rw::math::Q& start, const rw::math::Q& end) const
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraint.hpp:140:           @brief Subclass implementation of the inCollision() method.
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraint.hpp:143:           inCollision().
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.hpp:86:        bool inCollision (const rw::math::Q& q);
+RobWork/RobWork/src\rw\pathplanning\PlannerConstraint.hpp:91:        bool inCollision (const rw::math::Q& q1, const rw::math::Q& q2);
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraint.cpp:85:                if (_constraint->inCollision (q)) {
+RobWork/RobWork/src\rw\pathplanning\QEdgeConstraint.cpp:115:            if (constraint->inCollision (qstart, qend))
+RobWork/RobWork/src\rw\pathplanning\QConstraint.hpp:78:        bool inCollision (const rw::math::Q& q) const;
+RobWork/RobWork/src\rw\pathplanning\QConstraint.hpp:83:           The fixed constraint always returns \b value from inCollision().
+RobWork/RobWork/src\rw\pathplanning\QConstraint.hpp:154:           @brief Subclass implementation of the inCollision() method.
+RobWork/RobWork/src\rwlibs\pathplanners\arw\ARWQToQPlanner.cpp:51:                !PlannerUtil::inCollision (_constraint, pos, goal, false, false)) {
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.hpp:235:         * @brief Get the computation time used in the inCollision functions.
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.hpp:241:         * @brief Get the number of times the inCollision functions have been called.
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.hpp:242:         * @return number of calls to inCollision functions.
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.hpp:247:         * @brief Reset the counter for inCollision invocations and the computation timer.
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.hpp:142:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.hpp:158:        bool inCollision (const rw::core::Ptr<kinematics::Frame> a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.hpp:172:        bool inCollision (ProximityModel::Ptr a, const math::Transform3D<double>& wTa,
+RobWork/RobWork/src\rw\proximity\ProximityCalculator.cpp:182:                res = _strategy->inCollision (a, aT, b, bT, data);
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:98:        data.inCollision () = _strategy->isWithinDistance (a, wTa, b, wTb, _tolerance, data);
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:99:        return data.inCollision ();
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:125:bool CollisionStrategy::inCollision (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa, const rw::core::Ptr<Frame> b,
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:132:    data.inCollision () = inCollision (getModel (a), wTa, getModel (b), wTb, data);
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:133:    return data.inCollision ();
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:136:bool CollisionStrategy::inCollision (const rw::core::Ptr<Frame> a, const Transform3D<>& wTa, const rw::core::Ptr<Frame> b,
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:143:    data.inCollision () = inCollision (getModel (a), wTa, getModel (b), wTb, data);
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:144:    return data.inCollision ();
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:147:bool CollisionStrategy::inCollision (ProximityModel::Ptr a, const math::Transform3D<>& wTa,
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:152:    data.inCollision () = doInCollision (a, wTa, b, wTb, data);
+RobWork/RobWork/src\rw\proximity\CollisionStrategy.cpp:153:    return data.inCollision ();
+RobWork/RobWork/src\rwlibs\pathplanners\arw\ARWExpand.cpp:113:            !PlannerUtil::inCollision (_constraint, _path.back (), xn, false, true)) {
+RobWork/RobWork/src\rw\proximity\CollisionDetector.hpp:168:        bool inCollision (const kinematics::State& state, QueryResult* result = 0,
+RobWork/RobWork/src\rw\proximity\CollisionDetector.hpp:178:        bool inCollision (const kinematics::State& state, rw::proximity::ProximityData& data) const;
+RobWork/RobWork/src\rw\proximity\CollisionDetector.hpp:191:        bool inCollision (
+RobWork/RobWork/src\rw\proximity\CollisionDetector.hpp:198:            success = this->inCollision (state, &data, stopAtFirstContact);
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:58:bool CollisionDetector::inCollision (const kinematics::State& state, ProximityData& proxdata) const
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:80:        if (proxdata._collisionData._fullInfo.front ().inCollision ()) {
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:97:            if (d.inCollision ()) {
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:110:bool CollisionDetector::inCollision (const State& state, QueryResult* result,
+RobWork/RobWork/src\rw\proximity\CollisionDetector.cpp:128:    bool coliding = inCollision (state, res);
+RobWork/RobWork/src\rw\proximity\rwstrategy\OBVTreeDFSCollider.hpp:218:            bool incol = _bvCollider->inCollision (cbvA, cbvB, aATtB * cbvB.getTransform ());
+RobWork/RobWork/src\rw\proximity\rwstrategy\OBVTreeDFSCollider.hpp:241:                        if (_primCollider->inCollision (tria, trib, tATtB)) {
+RobWork/RobWork/src\rw\proximity\Raycaster.cpp:83:        if (_cdstrategy->inCollision (
+RobWork/RobWork/src\rw\proximity\ProximityStrategyData.hpp:127:        bool& inCollision () { return _collides; }
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeToleranceCollider.hpp:288:                        _bvCollider->inCollision (cbvA, cbvB, aATtB * cbvB.getTransform ());
+RobWork/RobWork/src\rw\proximity\rwstrategy\BVTreeToleranceCollider.hpp:304:                                    if (_primCollider->inCollision (tria, trib, tATtB)) {

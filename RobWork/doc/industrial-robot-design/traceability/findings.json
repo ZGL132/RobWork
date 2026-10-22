@@ -9623,6 +9623,50 @@
       "registeredAt": "2026-10-22",
       "title": "WP-17-T11提交正文的四段（What/Why/How/影响面）使用字面\\n而非真实换行，git log中四段挤成一行——内容真实齐备（与验收复现逐项一致）但排版不可读、机器解析四段困难",
       "owner": "提交规范所有者（AGENTS §6.3）。处置：不amend已推送历史；后续实施会话提交模板改用真实换行；随下一治理批消账。"
+    },
+    {
+      "id": "F-955",
+      "source": "reuse/migration.md#1",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "全20单元上游复用迁移债务：16文件已知重复实现，其余库存尚需逐功能语义审计；旧done不等于H1-H6合规",
+      "owner": "REUSE-T01…T06 / 各单元所有者",
+      "resolution": "GOV-T21止增并冻结1370文件基线；不在本治理改算法，治理独立pass后按审计/适配/替换/清理执行。"
+    },
+    {
+      "id": "F-956",
+      "source": "traceability/builds/gov-t21/baseline-ci-failure.log",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-22",
+      "title": "基线b12e8503完整GitHub CI模型测试10/47目标失败，后续边界与出包跳过；不得把治理门禁绿解释为全产品CI绿",
+      "owner": "CI/相关单元验收所有者",
+      "resolution": "基线运行39724444980在治理前已失败；本轮记录事实并保留required package阻断合入，不放宽测试、不修改算法。需后续单独调查环境/产品原因。"
+    },
+    {
+      "id": "F-957",
+      "source": "traceability/acceptance/GOV-T21-20261022.md#b-1--f-957",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-22",
+      "title": "GOV-T21冻结干净提交的自测无变更可提交，PS7/PS5.1均退出1且冻结31/32用例未执行，CI39740812174同因失败",
+      "owner": "GOV-T21治理门禁所有者",
+      "resolution": "本轮在干净detached检出亲跑PS7及PS5.1，均expected=executed=passed45、notRun0、driverFailure空、complete=true。注入clone失败为executed0/notRun45/complete=false/JUnit error1/exit1；冻结夹具允许空提交已复核，不采信实施声明。证据builds/acc-gov-t21-2/。",
+      "fixedAt": "2026-10-22",
+      "verification": "独立子会话GOV-T21第2轮；冻结6eab38df81473b3d5248464f3f06d26b6f062fbc；traceability/acceptance/GOV-T21-20261022-r2.md"
+    },
+    {
+      "id": "F-958",
+      "source": "traceability/acceptance/GOV-T21-20261022.md#b-2--f-958",
+      "severity": "blocking",
+      "status": "fixed",
+      "registeredAt": "2026-10-22",
+      "title": "GOV-T21 IsProduct后缀过滤漏掉C源码与可执行脚本，未声明.c/.ps1负例均放行；既有mjs黄金生成器/ps1工具未纳入1370库存",
+      "owner": "GOV-T21复用覆盖与库存所有者",
+      "resolution": "同一源码谓词扩大并拒绝新未知类型；原1370条逐对象未变、补31条至1401。PS7/PS5.1 suffix-c/ps1/mjs等12后缀负例真实拒绝；独立工作树.frob与真实提交对象.mjs/.opaque均REUSE-UNDECLARED/exit1，已核验。16债务与1399未闭环仍明报；不是算法合规结论。证据builds/acc-gov-t21-2/。",
+      "fixedAt": "2026-10-22",
+      "verification": "独立子会话GOV-T21第2轮；冻结6eab38df81473b3d5248464f3f06d26b6f062fbc；traceability/acceptance/GOV-T21-20261022-r2.md"
     }
   ]
 }

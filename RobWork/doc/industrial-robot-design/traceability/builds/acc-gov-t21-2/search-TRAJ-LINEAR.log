@@ -1,0 +1,223 @@
+RobWork/RobWork/gtest\CMakeLists.txt:395:        trajectory/LinearInterpolatorTest.cpp
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:26:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:150:	QLinearInterpolator int1(q1, q2, 1);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:151:	QLinearInterpolator int2(q2, q3, 1);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:152:	QLinearInterpolator int3(q3, q4, 1);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:192:	QLinearInterpolator int1(q1, q2, 1);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:193:	QLinearInterpolator int2(q2, q3, 2);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:194:	QLinearInterpolator int3(q3, q4, 3);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:4:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:16:    LinearInterpolator< Vector2D<> > p1 (Vector2D<> (0, 0), Vector2D<> (1, 5), 2);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:17:    LinearInterpolator< Vector2D<> > p2 (Vector2D<> (1, 5), Vector2D<> (1, 2), 0.1);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:18:    LinearInterpolator< Vector2D<> > p3 (Vector2D<> (1, 5), Vector2D<> (2, 0), 2);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:19:    LinearInterpolator< Vector2D<> > p4 (Vector2D<> (1, 5), Vector2D<> (2, 0), 0.1);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:20:    LinearInterpolator< Vector2D<> > p5 (Vector2D<> (1, 4), Vector2D<> (2, 0), 2);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:21:    LinearInterpolator< Vector2D<> > p6 (Vector2D<> (1, 5), Vector2D<> (1, 0), 2.5);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:43:    LinearInterpolator< Vector2D<> > p1 (Vector2D<> (0, 0), intersect, 2);
+RobWork/RobWork/gtest\trajectory\ParabolicBlendTest.cpp:44:    LinearInterpolator< Vector2D<> > p2 (intersect, end, 1);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:7:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:49:template< typename T > class LinearInterpolatorTest : public testing::Test
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:57:template<> Transform3Dd LinearInterpolatorTest< Transform3Dd >::end ()
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:62:template<> Rotation3Dd LinearInterpolatorTest< Rotation3Dd >::end ()
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:67:template<> Vector3Dd LinearInterpolatorTest< Vector3Dd >::end ()
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:74:TYPED_TEST_CASE (LinearInterpolatorTest, LineTypes);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:76:TYPED_TEST (LinearInterpolatorTest, Constructor)
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:81:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:83:    EXPECT_THROW (LinearInterpolator< TypeParam > (s, e, 0.0), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:84:    EXPECT_THROW (LinearInterpolator< TypeParam > (s, e, -1), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:90:TYPED_TEST (LinearInterpolatorTest, InterpolationSetup)
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:95:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:112:TYPED_TEST (LinearInterpolatorTest, isLinear)
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:117:    LinearInterpolator< TypeParam > li (s, e, d);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:10:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:250:        LinearInterpolator< Transform3D<> >::Ptr ramp =
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:251:            rw::core::ownedPtr (new LinearInterpolator< Transform3D<> > (
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:360:            std::vector< LinearInterpolator< Transform3D<> >::Ptr > linsequence;
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:369:                    linsequence.push_back (ownedPtr (new LinearInterpolator< Transform3D<> > (
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:375:                    linsequence.push_back (ownedPtr (new LinearInterpolator< Transform3D<> > (
+RobWork/RobWork/src\sandbox\loaders\ColladaLoader.cpp:43:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\trajectory.hpp:34:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:190:    #include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:192:%include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:193:ADD_TRAJECTORY_STANDARD_TEMPLATE(LinearInterpolator,rw::trajectory::LinearInterpolator);
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:241:%feature("novaluewrapper") rw::core::Ptr< const rw::trajectory::LinearInterpolator< rw::math::Rotation3D< float > > >;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:242:%feature("novaluewrapper") rw::core::Ptr< rw::trajectory::LinearInterpolator< rw::math::Rotation3D< float > > >;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:27:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:202:        std::vector< LinearInterpolator< Transform3D<> > > interpolators;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:206:                LinearInterpolator< Transform3D<> > (bTeInit, bTeds[i], _interpolationStep));
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:26:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:60:        LinearInterpolator< Transform3D<> > interpolator (bTeInit, bTed, _interpolationStep);
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:26:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:52:                new LinearInterpolator< X > (path[i - 1].getValue (), path[i].getValue (), dt)));
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:124:        Ptr< LinearInterpolator< Q > > interpolator =
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:125:            ownedPtr (new LinearInterpolator< Q > (*it1, *it2, d));
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:156:        LinearInterpolator< Transform3D<> >::Ptr interpolator =
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:157:            ownedPtr (new LinearInterpolator< Transform3D<> > (*it1, *it2, *it3));
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:174:        LinearInterpolator< Transform3D<> >::Ptr interpolator =
+RobWork/RobWork/src\rw\trajectory\TrajectoryFactory.cpp:175:            ownedPtr (new LinearInterpolator< Transform3D<> > (*it1, *it2, duration));
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:26:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:51:        ParabolicBlend (const LinearInterpolator< T >& line1, const LinearInterpolator< T >& line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:87:        explicit ParabolicBlend (const typename LinearInterpolator< T >::CPtr line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:88:                                 const typename LinearInterpolator< T >::CPtr line2, double tau) :
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:99:        ParabolicBlend (const typename LinearInterpolator< T >::Ptr line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:100:                        const typename LinearInterpolator< T >::Ptr line2, double tau) :
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:111:        ParabolicBlend (const LinearInterpolator< T >* line1, const LinearInterpolator< T >* line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:207:        getBlend (const typename LinearInterpolator< rw::math::Rotation3D< T > >::CPtr line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:208:                  const typename LinearInterpolator< rw::math::Rotation3D< T > >::CPtr line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:218:            const LinearInterpolator< rw::math::Vector3D< T > > lin1 (
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:220:            const LinearInterpolator< rw::math::Vector3D< T > > lin2 (
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:228:        getBlend (const LinearInterpolator< rw::math::Rotation3D< T > >& line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:229:                  const LinearInterpolator< rw::math::Rotation3D< T > >& line2, double tau)
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:238:            const LinearInterpolator< rw::math::Vector3D< T > > lin1 (
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:240:            const LinearInterpolator< rw::math::Vector3D< T > > lin2 (
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:251:         * @param line1 [in] LinearInterpolator representing the first rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:252:         * @param line2 [in] LinearInterpolator representing the second rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:256:            rw::core::Ptr< rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > > > line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:257:            rw::core::Ptr< rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > > > line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:268:         * @param line1 [in] LinearInterpolator representing the first rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:269:         * @param line2 [in] LinearInterpolator representing the second rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:273:            rw::core::Ptr< const rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > > >
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:275:            rw::core::Ptr< const rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > > >
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:287:         * @param line1 [in] LinearInterpolator representing the first rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:288:         * @param line2 [in] LinearInterpolator representing the second rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:292:            const rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > >* line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:293:            const rw::trajectory::LinearInterpolator< rw::math::Rotation3D< T > >* line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:304:         * @param line1 [in] LinearInterpolator representing the first rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:305:         * @param line2 [in] LinearInterpolator representing the second rotational segment
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:308:        ParabolicBlend (const LinearInterpolator< rw::math::Rotation3D< T > >& line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:309:                        const LinearInterpolator< rw::math::Rotation3D< T > >& line2, double tau) :
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:415:            rw::core::Ptr< rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > > > line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:416:            rw::core::Ptr< rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > > > line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:433:            rw::core::Ptr< const rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > > >
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:435:            rw::core::Ptr< const rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > > >
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:454:            const rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > >* line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:455:            const rw::trajectory::LinearInterpolator< rw::math::Transform3D< T > >* line2,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:472:        ParabolicBlend (LinearInterpolator< rw::math::Transform3D< T > > line1,
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:473:                        LinearInterpolator< rw::math::Transform3D< T > > line2, double tau) :
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:22: * @file LinearInterpolator.hpp
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:51:    template< class T > class LinearInterpolator : public rw::trajectory::Interpolator< T >
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:55:        typedef typename rw::core::Ptr< LinearInterpolator > Ptr;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:58:        typedef typename rw::core::Ptr< const LinearInterpolator > CPtr;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:61:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:70:        LinearInterpolator (const T& start, const T& end, double duration) :
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:128:     * LinearInterpolator<rw::math::Transform3D<T> > a friend
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:133:     * @brief Implements LinearInterpolator for rw::math::Rotation3D<T>
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:140:    class LinearInterpolator< rw::math::Rotation3D< T > >
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:145:        typedef typename rw::core::Ptr< LinearInterpolator< rw::math::Rotation3D< T > > > Ptr;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:148:        typedef typename rw::core::Ptr< const LinearInterpolator< rw::math::Rotation3D< T > > >
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:152:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:161:        LinearInterpolator (const rw::math::Rotation3D< T >& start,
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:242:     * @brief Implements LinearInterpolator for rw::math::Transform3D<T>
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:247:    class LinearInterpolator< rw::math::Transform3D< T > >
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:252:        typedef typename rw::core::Ptr< LinearInterpolator< rw::math::Transform3D< T > > > Ptr;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:255:        typedef typename rw::core::Ptr< const LinearInterpolator< rw::math::Transform3D< T > > >
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:259:         * @brief Construct LinearInterpolator starting a \b start and finishing in \b end
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:268:        LinearInterpolator (const rw::math::Transform3D< T >& start,
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:329:         * @brief Returns LinearInterpolator for the position part of the transform
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:333:        const LinearInterpolator< rw::math::Vector3D< T > >& getPositionInterpolator () const
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:339:         * @brief Returns LinearInterpolator for the rotation part of the transform
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:343:        const LinearInterpolator< rw::math::Rotation3D< T > >& getRotationInterpolator () const
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:351:        LinearInterpolator< rw::math::Vector3D< T > > _posInterpolator;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:352:        LinearInterpolator< rw::math::Rotation3D< T > > _rotInterpolator;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:356:     * @brief LinearInterpolator with T=rw:math::Q
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:358:    typedef LinearInterpolator< rw::math::Q > QLinearInterpolator;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:361:     * @brief LinearInterpolator with T=rw:math::Transform3D<>
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:363:    typedef LinearInterpolator< rw::math::Transform3D<> > CartesianLinearInterpolator;
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.cpp:18:#include "LinearInterpolator.hpp"
+RobWork/RobWork/src\rw\trajectory\InterpolatorTrajectory.hpp:71:     * LinearInterpolator<Transform3D<> >::Ptr cartInt1 =
+RobWork/RobWork/src\rw\trajectory\InterpolatorTrajectory.hpp:72:     *     ownedPtr(new LinearInterpolator<Transform3D<> >(T1, T2, 1));
+RobWork/RobWork/src\rw\trajectory\InterpolatorTrajectory.hpp:73:     * LinearInterpolator<Transform3D<> >::Ptr cartInt2 =
+RobWork/RobWork/src\rw\trajectory\InterpolatorTrajectory.hpp:74:     *     ownedPtr(new LinearInterpolator<Transform3D<> >(T2, T3, 1));
+RobWork/RobWork/src\rw\trajectory\CMakeLists.txt:19:        LinearInterpolator.cpp
+RobWork/RobWork/src\rw\trajectory\CMakeLists.txt:42:        LinearInterpolator.hpp
+RobWork/RobWork/src\rw\loaders\xml\XMLPathLoader.cpp:28:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:34:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:114:    return XMLTrajectoryFormat::idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:129:    return XMLTrajectoryFormat::idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:143:    return XMLTrajectoryFormat::idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:158:    return XMLTrajectoryFormat::idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:175:    LinearInterpolator< T >* linear =
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectorySaver.cpp:176:        dynamic_cast< LinearInterpolator< T >* > (interpolator.get ());
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:34:        idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:36:        idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:39:        idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:41:        idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:79:const XMLCh* XMLTrajectoryFormat::idQLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:81:    static const XMLStr id ("QLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:91:const XMLCh* XMLTrajectoryFormat::idV3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:93:    static const XMLStr id ("V3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:109:const XMLCh* XMLTrajectoryFormat::idR3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:111:    static const XMLStr id ("R3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:121:const XMLCh* XMLTrajectoryFormat::idT3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.cpp:123:    static const XMLStr id ("T3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:26:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:135:template< class T > class LinearInterpolatorParser
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:138:    static LinearInterpolator< T >* read (xercesc::DOMElement* element)
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:156:        return new LinearInterpolator< T > (vias[0], vias[1], duration);
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:197:    static ParabolicBlend< T >* read (xercesc::DOMElement* element, LinearInterpolator< T >* int1,
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:198:                                      LinearInterpolator< T >* int2)
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:248:        return XMLTrajectoryFormat::idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:263:        return XMLTrajectoryFormat::idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:280:        return XMLTrajectoryFormat::idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:295:        return XMLTrajectoryFormat::idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:322:                LinearInterpolator< T >* linearinterpolator =
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:323:                    LinearInterpolatorParser< T >::read (element);
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:356:                LinearInterpolator< T >* linear1 =
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:357:                    dynamic_cast< LinearInterpolator< T >* > (interpolators[interpolatorIndex - 1]);
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:358:                LinearInterpolator< T >* linear2 =
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:359:                    dynamic_cast< LinearInterpolator< T >* > (interpolators[interpolatorIndex]);
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryLoader.cpp:363:                        "ParabolicBlends can only be constructed between LinearInterpolator's");
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:61:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Q> in the XML format.
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:64:        static const XMLCh* idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:74:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Vector3D<> > in the
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:78:        static const XMLCh* idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:95:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Rotation3D<> > in the
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:99:        static const XMLCh* idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:109:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Transform3D<> > in the
+RobWork/RobWork/src\rw\loaders\xml\XMLTrajectoryFormat.hpp:113:        static const XMLCh* idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMPathLoader.cpp:27:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:28:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:93:    return DOMTrajectoryLoader::idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:109:    return DOMTrajectoryLoader::idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:123:    return DOMTrajectoryLoader::idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:139:    return DOMTrajectoryLoader::idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:156:    LinearInterpolator< T >* linear =
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectorySaver.cpp:157:        dynamic_cast< LinearInterpolator< T >* > (interpolator.get ());
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:170:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Q> in the XML format.
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:173:        static const std::string& idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:183:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Vector3D> in the XML
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:187:        static const std::string& idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:204:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Rotation3D<> > in the
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:208:        static const std::string& idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:218:         * @brief Identifier for rw::trajectory::LinearInterpolator<rw::math::Transform3D<> > in the
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.hpp:222:        static const std::string& idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:27:#include <rw/trajectory/LinearInterpolator.hpp>
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:47:        idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:49:        idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:52:        idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:54:        idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:92:const std::string& DOMTrajectoryLoader::idQLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:94:    static const std::string id ("QLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:104:const std::string& DOMTrajectoryLoader::idV3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:106:    static const std::string id ("V3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:122:const std::string& DOMTrajectoryLoader::idR3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:124:    static const std::string id ("R3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:134:const std::string& DOMTrajectoryLoader::idT3DLinearInterpolator ()
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:136:    static const std::string id ("T3DLinearInterpolator");
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:242:template< class T > class LinearInterpolatorParser
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:245:    static LinearInterpolator< T >* read (DOMElem::Ptr element)
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:252:                RW_THROW ("Expected 2 via points for LinearInterpolator. Found: >2");
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:259:        return new LinearInterpolator< T > (vias[0], vias[1], duration);
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:297:    static ParabolicBlend< T >* read (DOMElem::Ptr element, LinearInterpolator< T >* int1,
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:298:                                      LinearInterpolator< T >* int2)
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:348:        return DOMTrajectoryLoader::idQLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:367:        return DOMTrajectoryLoader::idV3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:384:        return DOMTrajectoryLoader::idR3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:403:        return DOMTrajectoryLoader::idT3DLinearInterpolator ();
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:430:                LinearInterpolator< T >* linearinterpolator =
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:431:                    LinearInterpolatorParser< T >::read (element);
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:460:            LinearInterpolator< T >* linear1 =
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:461:                dynamic_cast< LinearInterpolator< T >* > (interpolators[interpolatorIndex - 1]);
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:462:            LinearInterpolator< T >* linear2 =
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:463:                dynamic_cast< LinearInterpolator< T >* > (interpolators[interpolatorIndex]);
+RobWork/RobWork/src\rw\loaders\dom\DOMTrajectoryLoader.cpp:466:                RW_THROW ("ParabolicBlends can only be constructed between LinearInterpolator's");

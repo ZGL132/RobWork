@@ -1,0 +1,41 @@
+RobWork/RobWork/gtest\math\LinearAlgebraTest.cpp:37:    minv = LinearAlgebra::pseudoInverse(r.e());
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:146:    LinearAlgebra::svd (compliance, U, sigmaTmp, V);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:166:    MatrixXd jac_inv = LinearAlgebra::pseudoInverse(jac);
+RobWork/RobWorkSim/src\rwsim\util\CircleModel.cpp:191:        Jinv = LinearAlgebra::pseudoInverse (J);
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:269:        deltaQ = Q (LinearAlgebra::pseudoInverse (jacobian.e ()) * deltaX.e ());
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:153:                Jp = LinearAlgebra::pseudoInverse (J.e ());
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:125:                Jp = LinearAlgebra::pseudoInverse (J.e ());
+RobWork/RobWork/src\rw\geometry\Line.cpp:118:    LinearAlgebra::svd (covar, U, sigma, V);
+RobWork/RobWorkSim/src\rwsim\dynamics\FixedLink.cpp:277:    Eigen::VectorXd jointVel = LinearAlgebra::pseudoInverse (A) * JT_P;
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:403:            LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:431:            LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:424:    LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:435:        LinearAlgebra::svd (rot.e (), u, w, v);
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:499:    Q deltaQUA (LinearAlgebra::pseudoInverse (uaJointJ) * aJdeltaQA.e ());
+RobWork/RobWork/src\rw\models\ParallelDevice.cpp:579:        deltaQUA = Q (LinearAlgebra::pseudoInverse (uaJointJ) * deltaY.e ());
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:88:    MatrixXd jac_inv = LinearAlgebra::pseudoInverse (jac);
+RobWork/RobWork/src\rwlibs\algorithms\PointPairsRegistration.cpp:128:    LinearAlgebra::svd (H, U, S, V);
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPSolver.cpp:160:        Eigen::MatrixXd Minv = LinearAlgebra::pseudoInverse (M, 1e-12);
+RobWork/RobWork/src\rw\math\LinearAlgebra.hpp:65:        static void svd (const Eigen::Matrix<double,-1,-1>& M, Eigen::Matrix<double,-1,-1>& U, Eigen::Matrix<double,-1,1>& sigma,
+RobWork/RobWork/src\rw\math\LinearAlgebra.hpp:85:        static Eigen::Matrix<double,-1,-1> pseudoInverse (const Eigen::Matrix<double,-1,-1>& am, double precision = 1e-6);
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:26:Eigen::MatrixXd LinearAlgebra::pseudoInverse (const Eigen::MatrixXd& am, double precision)
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:29:        // RW_THROW("pseudoInverse require rows >= to cols!");
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:31:        Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:34:                           svd.singularValues ().array ().abs ().maxCoeff ();
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:35:        return (svd.matrixV () *
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:36:                Eigen::MatrixXd ((svd.singularValues ().array ().abs () > tolerance)
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:37:                                     .select (svd.singularValues ().array ().inverse (), 0))
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:39:                svd.matrixU ().adjoint ())
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:43:        Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:46:                           svd.singularValues ().array ().abs ().maxCoeff ();
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:47:        return svd.matrixV () *
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:48:               Eigen::MatrixXd ((svd.singularValues ().array ().abs () > tolerance)
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:49:                                    .select (svd.singularValues ().array ().inverse (), 0))
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:51:               svd.matrixU ().adjoint ();
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:55:void LinearAlgebra::svd (const Eigen::MatrixXd& M, Eigen::MatrixXd& U, Eigen::VectorXd& sigma,
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:58:    const Eigen::JacobiSVD< Eigen::MatrixXd > svd =
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:60:    U     = svd.matrixU ();
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:61:    sigma = svd.singularValues ();
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:62:    V     = svd.matrixV ();
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:100:    Eigen::MatrixXd jac_inv = LinearAlgebra::pseudoInverse (jac);
+RobWork/RobWork/src\rw\math\PerspectiveTransform2D.cpp:76:    Eigen::VectorXd x = LinearAlgebra::pseudoInverse (A) * y;

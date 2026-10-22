@@ -1,0 +1,507 @@
+RobWork/RobWorkSim/src\sandbox\NewtonEulerDynamics.hpp:59:		void setGravity(double gravity);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:49:	ParallelIKSolver solver(robotiq.get());
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:67:		const std::vector<Q> solutions = solver.solve(targets,state);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:97:		const std::vector<Q> solutions = solver.solve(targets,state);
+RobWork/RobWork/gtest\invkin\ParallelIKSolverTest.cpp:127:		const std::vector<Q> solutions = solver.solve(targets,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:70:    JacobianIKSolver solver_weighted(device,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:71:    solver_weighted.setCheckJointLimits(true);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:72:    solver_weighted.setSolverType(JacobianIKSolver::Weighted);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:73:    solver_weighted.setWeightVector(Eigen::VectorXd::Ones(7));
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:94:        const std::vector<Q> solutions = solver_weighted.solve(T, state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:109:    JacobianIKSolver solver_ref(device,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:110:    solver_ref.setCheckJointLimits(true);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:113:    JacobianIKSolver solver_weighted(device,state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:114:    solver_weighted.setCheckJointLimits(true);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:117:    solver_weighted.setSolverType(JacobianIKSolver::Weighted);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:121:    solver_weighted.setWeightVector(weights);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:137:        const std::vector<Q> weighted_solutions = solver_weighted.solve(T, state);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:139:        const std::vector<Q> ref_solutions = solver_ref.solve(T, state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:42:    const std::string& solverName,
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:85:    IterativeIK::Ptr solver = maker(device, initial_state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:87:    // Check if IK can be solved for all of the targets for a starting
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:93:        const bool ok = !solver->solve(targets.at(i), initial_state).empty();
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:95:            std::cout << "Could not solve IK for solver " << solverName << "\n";
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:104:    const std::string& solverName,
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:155:    IterativeMultiIK::Ptr solver = maker(device, initial_state);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:157:    // Check if IK can be solved for all of the targets for a starting
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:159:    //std::cout << "Solve IK: " << solverName << "\n";
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:163:        const bool ok = !solver->solve(targets.at(i), initial_state).empty();
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:165:            //std::cout << "Could not solve IK for solver " << solverName << "\n";
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:248:    // The IK solvers really aren't impressive right now. In particular the CCD
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:249:    // solver isn't very reliable. Some tuning of these is necessary, I think.
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:253:    // The relative displacement has been set to a small enough number to ensure that only a few iterations are needed to find a solution for the Transpose and DLS solvers
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:291:    PieperSolver solver(dhparams, T6tool);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:293:    std::vector<Q> solutions = solver.solve(baseTend, state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:42:        const ClosedFormIKSolverUR solver(device,wc->getDefaultState());
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:48:        const std::vector<Q> solutions = solver.solve(T, state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:68:        const ClosedFormIKSolverUR solver(device,wc->getDefaultState());
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:78:        solutions = solver.solve(T, state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverURTest.cpp:94:        solutions = solver.solve(T, state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverKukaIIWATest.cpp:69:	ClosedFormIKSolverKukaIIWA solver(device,state);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverKukaIIWATest.cpp:70:	solver.setCheckJointLimits(true);
+RobWork/RobWork/gtest\invkin\ClosedFormIKSolverKukaIIWATest.cpp:89:		const std::vector<Q> solutions = solver.solve(T, state);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:321:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:322:		EXPECT_EQ(std::size_t(1),solver.getSolutions().size());
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:323:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:333:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:334:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:337:		ASSERT_EQ(std::size_t(0),solver.getRealSolutions().size());
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:348:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:349:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:351:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:363:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:364:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:373:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:383:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:384:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:388:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:403:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:404:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:409:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:422:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:423:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:428:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:440:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:441:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:446:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:459:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:460:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:465:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:477:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:478:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:483:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:496:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:497:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:502:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:514:        PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:515:        std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:520:        std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:533:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:534:		solver.setInitialGuess(4);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:535:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:540:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:551:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:552:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:557:		ASSERT_EQ(std::size_t(0),solver.getRealSolutions().size());
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:570:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:571:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:573:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:587:        PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:588:        std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:590:        std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:604:        PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:605:        std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:607:        std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:632:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:633:		solver.setInitialGuess(0);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:634:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:648:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:669:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:670:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:671:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:684:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:685:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:686:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:699:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:700:		solver.setInitialGuess(0.5);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:701:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:721:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:733:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:734:		solver.setInitialGuess(0.5);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:735:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:737:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:751:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:752:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:766:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:779:		PolynomialSolver solver(pol);
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:780:		std::vector<std::complex<double> > sols = solver.getSolutions();
+RobWork/RobWork/gtest\math\PolynomialTest.cpp:799:		std::vector<double> realSols = solver.getRealSolutions();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\CMakeLists.txt:6:# Used to resolve absolute path names
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\Doxyfile.in:330:# set using LOOKUP_CACHE_SIZE. This cache is used to resolve symbols given
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\Doxyfile.in:333:# pre-resolved symbols. If the cache is too small doxygen will become slower.
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\simulatePerturbedTasks.cpp:139:    // resolve output directory
+RobWork/RobWorkSim/src\rwsimlibs\swig\sdurwsim.i:871:    void setGravity(const rw::math::Vector3D<double>& grav);
+RobWork/RobWorkSim/src\rwsimlibs\swig\sdurwsim.i:903:        void setGravity(double x, double y, double z){
+RobWork/RobWorkSim/src\rwsimlibs\swig\sdurwsim.i:904:            $self->DynamicWorkCell::setGravity( rw::math::Vector3D<double>(x,y,z) );
+RobWork/RobWorkSim/src\rwsimlibs\test\IntegratorTest.cpp:124:    dwc->setGravity (Vector3D<> (0, 0, GRAVITY));
+RobWork/RobWorkSim/src\rwsimlibs\test\IntegratorSpringTest.hpp:41:     * well the engines solve for undamped springs.
+RobWork/RobWorkSim/src\rwsimlibs\test\IntegratorSpringTest.cpp:98:    dwc->setGravity (Vector3D<> (0, 0, GRAVITY));
+RobWork/RobWorkSim/src\rwsimlibs\test\IntegratorRotationTest.cpp:69:    dwc->setGravity (Vector3D<>::zero ());
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.hpp:157:        btConstraintSolver* m_solver;
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:67:    m_dynamicsWorld (NULL), m_overlappingPairCache (NULL), m_dispatcher (NULL), m_solver (NULL),
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:73:    m_dynamicsWorld (NULL), m_overlappingPairCache (NULL), m_dispatcher (NULL), m_solver (NULL),
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:317:    /// the default constraint solver. For parallel processing you can use a different solver (see
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:319:    m_solver = new btSequentialImpulseConstraintSolver ();
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:322:        m_dispatcher, m_overlappingPairCache, m_solver, m_collisionConfiguration);
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:333:    m_dynamicsWorld->setGravity (BtUtil::makeBtVector (_dwc->getGravity ()));
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:520:        // delete solver
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtSimulator.cpp:521:        delete m_solver;
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtTactileSensor.hpp:79:         * @param manifold [in] the contact manifold with contact information from bullet solver.
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.hpp:113:         * type of step method, worldStep is direct solver, worldquickstep is faster iterative
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.hpp:114:         * solver. When dynamically simulating robot arms use worldstep, else simulate chains as
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESimulator.cpp:333: * In the quickstep solver, "warm starting" is enabled by default. This involves storing 6 dReal
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODETactileSensor.hpp:61:        // this is for contacts that are not directly specified by the physics solver, eg. if you
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.hpp:23:	const rw::invkin::InvKinSolver *_iksolver;
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.cpp:26:	_iksolver = new ClosedFormURSolver(_device,wc->getDefaultState());
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.cpp:36:	delete _iksolver;
+RobWork/RobWork/src\sandbox\learnbip\RandomSampler.cpp:71:	std::vector<Q> solutions = _iksolver->solve(target,state);
+RobWork/RobWork/src\sandbox\learnbip\Planning.hpp:72:	rw::invkin::InvKinSolver::Ptr _iksolver;
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:42:	_iksolver = ownedPtr(new ClosedFormURSolver(_device,wc->getDefaultState()));
+RobWork/RobWork/src\sandbox\learnbip\Planning.cpp:56:	std::vector<Q> solutions = _iksolver->solve(target,state);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:317:            // Initialize invkin solver
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:318:            InvKinSolver::Ptr solver =
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:322:                orderSolutions (solver->solve (approach, simState.state), qPegDev);
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:608:                // Initialize invkin solver
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:609:                InvKinSolver::Ptr solver =
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:613:                    orderSolutions (solver->solve (approach, simState.state), qPegDev);
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.hpp:235:    rw::core::Ptr< rw::invkin::IterativeIK > _iksolver;
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.cpp:544:    _iksolver = ownedPtr (new JacobianIKSolver (_device, _tcpFrame, _state));
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.cpp:558:    _iksolver = ownedPtr (new JacobianIKSolver (_device, _tcpFrame, _state));
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.cpp:579:    IKMetaSolver metaSolver (_iksolver.get (), _device, (CollisionDetector*) NULL);
+RobWork/RobWorkSim/src\rwsimlibs\gui\SliderTab.cpp:581:    std::vector< Q > solutions = metaSolver.solve (baseTtcp, _state);
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:81:        void setGravity (const rw::math::Vector3D<>& gravity);
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:107:        void setPayload (const rw::math::Vector3D<>& com, double payload,
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:175:        std::vector< rw::math::Wrench6D<> > solve (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:186:        std::vector< double > solveMotorTorques (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:191:         * @brief Check if solver will work for the given device - if not an exception will be
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:192:         * thrown when trying to solve.
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.hpp:193:         * @return true if solver works for the given device, false otherwise.
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.cpp:46:void RecursiveNewtonEuler::setGravity (const Vector3D<>& gravity)
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.cpp:66:void RecursiveNewtonEuler::setPayload (const Vector3D<>& com, double payload,
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.cpp:227:std::vector< Wrench6D<> > RecursiveNewtonEuler::solve (const State& state, const Q dq,
+RobWork/RobWorkSim/src\rwsim\util\RecursiveNewtonEuler.cpp:237:std::vector< double > RecursiveNewtonEuler::solveMotorTorques (const State& state, const Q& dq,
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:43:     * @brief Iterative inverse kinematics solved based on the QPController
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:77:         * @param device [in] Device to solve for         * @param state [in] State of the workcell
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:84:         * @copydoc IterativeMultiIK::solve
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:86:        std::vector<rw::math::Q> solve(const std::vector<rw::math::Transform3D<> >& baseTend,
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:103:        bool solveLocal(const std::vector<rw::math::Transform3D<> > &bTed,
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:63: * @param device [in] Device to solve for         * @param state [in] State of the workcell
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:93:bool IKGPMMSolver::solveLocal(
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:165:        //std::cout << "controller solve" << std::endl;
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:166:        dq = _controller.solve(q, dq, diff);
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:173:std::vector<Q> IKGPMMSolver::solve(
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:224:        if( !solveLocal(bTedVia, maxTmpError, state, maxIterations, true) )
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:230:    if( solveLocal(bTeds, maxTmpError, state, maxIterations, false) ){
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.hpp:93:	rw::math::Q solve(const rw::math::Q& q, const rw::math::Q& dq, const std::vector<rw::math::VelocityScrew6D<> >& tcpvel);
+RobWork/RobWork/src\sandbox\invkin\BasicGPMM.cpp:118:Q BasicGPMM::solve(const Q& q, const Q& dq, const std::vector<rw::math::VelocityScrew6D<> >& tcpvellist)
+RobWork/RobWork/src\sandbox\interiorpoint\InteriorPointOptimizer.hpp:56:    int solve(const Eigen::VectorXd& x_init);
+RobWork/RobWork/src\sandbox\interiorpoint\InteriorPointOptimizer.cpp:328:int InteriorPointOptimizer::solve(const Eigen::VectorXd& x_init) {
+RobWork/RobWork/src\sandbox\interiorpoint\InteriorPointOptimizer.cpp:336:    int n_eq_solves=0;
+RobWork/RobWork/src\sandbox\interiorpoint\InteriorPointOptimizer.cpp:368:            n_eq_solves++;
+RobWork/RobWork/src\sandbox\interiorpoint\InteriorPointOptimizer.cpp:379:    std::cout <<"Search finished. Result is "<< _x << "The accuracy is at least "<< sqrt(diff) <<". The number of LE solves was "<<n_eq_solves<<std::endl;
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.hpp:32: * @brief solves the inverse kinematics problem for a SDH
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.hpp:37:    //! result of this ik solver
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.hpp:57:    IKResult solve(const rw::math::Transform3D<>& bTgrasp,
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.hpp:103:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,
+RobWork/RobWork/src\sandbox\graspplanning\CG3IKSolver2D.cpp:119:CG3IKSolver2D::IKResult CG3IKSolver2D::solve(
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\XQPController.cpp:200:Q XQPController::solve (const rw::math::Q& q, const rw::math::Q& dq,
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.hpp:75:         * Q qns = nps.solve(q, dq, dq1);
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.hpp:83:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dqcurrent,
+RobWork/RobWork/src\rwlibs\algorithms\xqpcontroller\NullSpaceProjection.cpp:72:Q NullSpaceProjection::solve (const Q& q, const Q& dqcurrent, const Q& dq1)
+RobWork/RobWork/src\sandbox\graspplanning\HGraspPlanner3D.cpp:5:#include <rw/invkin/ResolvedRateSolver.hpp>
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:13:#include <rw/invkin/ResolvedRateSolver.hpp>
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:5:#include <rw/invkin/ResolvedRateSolver.hpp>
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:104:    // create the inverse kinematics solvers
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:108:    ResolvedRateSolver ikRobotSolver(&_robot, state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:130:            ikHandRes = ikHandSolver.solve(bTgrasp, approachGrasp, state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:140:            //ikMetaRes= ikRobotSolver.solve(ikHandRes[0].first*_hbTwrist, state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:141:            ikMetaRes = ikMetaSolver.solve( ikHandRes[0].first*_hbTwrist , state, 20, true );
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:142:            //ikMetaSolver.solve( ikHandRes[0].first*_hbTwrist , state, 200, true );
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:156:        ikHandRes = ikHandSolver.solve(bTgrasp, grasp, state);
+RobWork/RobWork/src\sandbox\graspplanning\SDHGraspPlanner2D.cpp:163:        std::vector<Q> ikRobotRes = ikRobotSolver.solve(ikHandRes[0].first*_hbTwrist, state);
+RobWork/RobWork/src\rwlibs\swig\sdurw_pathplanners.i:1025:		// creaty ikmeta solver for the planer
+RobWork/RobWork/src\rwlibs\swig\sdurw_pathplanners.i:1026:        rw::invkin::JacobianIKSolver::Ptr iksolver = rw::core::ownedPtr( new rw::invkin::JacobianIKSolver(dev,state) );
+RobWork/RobWork/src\rwlibs\swig\sdurw_pathplanners.i:1027:       	rw::invkin::IKMetaSolver::Ptr metasolver = rw::core::ownedPtr( new rw::invkin::IKMetaSolver(iksolver, dev, cdect) );
+RobWork/RobWork/src\rwlibs\swig\sdurw_pathplanners.i:1028:		rw::core::Ptr<rw::pathplanning::QIKSampler> sampler = rw::pathplanning::QIKSampler::make(dev,state,metasolver);
+RobWork/RobWork/src\rwlibs\swig\sdurw_invkin.i:65:	#include<rw/invkin/AmbiguityResolver.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_invkin.i:67:%include <rw/invkin/AmbiguityResolver.hpp>
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPController.hpp:79:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.hpp:39:     * @brief Iterative inverse kinematics solved based on the QPController
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.hpp:62:         * @param device [in] Device to solve for         * @param state [in] State of the workcell
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.hpp:67:         * @copydoc rw::invkin::IterativeIK::solve
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.hpp:69:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<>& baseTend,
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.hpp:71:        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPController.cpp:69:Q QPController::solve (const Q& q, const Q& dq, const VelocityScrew6D<>& tcp_screw)
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\QPController.cpp:212:        RW_WARN ("Error QPSolver could not solve with a valid solution");
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.cpp:57:        dq        = qpcontroller->solve (device->getQ (state), dq, diff);
+RobWork/RobWork/src\rwlibs\algorithms\qpcontroller\IKQPSolver.cpp:65:std::vector< Q > IKQPSolver::solve (const Transform3D<>& bTed, const State& initial_state) const
+RobWork/RobWork/src\rwlibs\algorithms\gpm\BasicGPM.cpp:56:Q BasicGPM::solve (const Q& q, const Q& dq, const VelocityScrew6D<>& tcpscrew)
+RobWork/RobWorkSim/src\rwsim\rwphysics\SequintialImpulseSolver.hpp:16:     * @brief a constraint solver that use the sequential impulse algorithm for solving constraints.
+RobWork/RobWorkSim/src\rwsim\rwphysics\SequintialImpulseSolver.hpp:29:         * @brief solves the constraints forces of a group of constraints
+RobWork/RobWorkSim/src\rwsim\rwphysics\SequintialImpulseSolver.hpp:32:        bool solveGroup (CEdgeGroup& group, SolverInfo& info, rw::kinematics::State& state);
+RobWork/RobWorkSim/src\rwsim\rwphysics\SequintialImpulseSolver.cpp:21:bool SequintialImpulseSolver::solveGroup (CEdgeGroup& group, SolverInfo& info,
+RobWork/RobWorkSim/src\rwsim\rwphysics\SequintialImpulseSolver.cpp:61:            // hot start the sequential impulse solver by adding cahced impulses
+RobWork/RobWorkSim/src\rwsim\rwphysics\RWSimulator.hpp:137:        ConstraintSolver* _solver;
+RobWork/RobWorkSim/src\rwsim\rwphysics\RWSimulator.cpp:149:    RW_DEBUG ("Creating contact solver");
+RobWork/RobWorkSim/src\rwsim\rwphysics\RWSimulator.cpp:150:    _solver = new SequintialImpulseSolver ();
+RobWork/RobWorkSim/src\rwsim\rwphysics\RWSimulator.cpp:249:        _solver->solve (groups, sinfo, state);    // solve constraints
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.hpp:264:         * for specifics on what solvers that can be chosen.
+RobWork/RobWork/src\rwlibs\proximitystrategies\ProximityStrategyFCL.hpp:272:         * for specifics on what solvers that can be chosen.
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.hpp:226:        rw::core::Ptr< rw::invkin::JacobianIKSolver > _solver;
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:34:    RW_WARN ("creating solver");
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:35:    _solver = ownedPtr (new rw::invkin::JacobianIKSolver (
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:55:    RW_WARN ("creating solver");
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:56:    _solver = ownedPtr (new rw::invkin::JacobianIKSolver (
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:281:            std::vector< Q > res = _solver->solve (target.lin_target, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:302:                    std::vector< Q > res = _solver->solve (ntarget.lin_target, state);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:420:                            std::vector<Q> res = _solver->solve( _targetQueue[to].lin_target, state
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:586:    RecursiveNewtonEuler dsolver (_rdev);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:616:    dsolver.setGravity (inverse (wTbase.R ()) * GRAVITY);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:622:    dsolver.setEnvironment (
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:625:    // solve for the torques of the robot
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:626:    Q tauCompensate = dsolver.solveMotorTorques (state, ddq, ddq);
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:1621:    state.dwc->setGravity (state.gravity);
+RobWork/RobWorkSim/src\rwsim\control\PoseController.cpp:93:    Q dqtarget = _xqp->solve (q, dq, diff, std::list< XQPController::Constraint > ());
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:18:     * @brief parameters for the constraint solver
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:28:     * @brief Abstraction over a constraint solver for dynamics simulations.
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:30:     * The constraint solver changes forces, velocities and/or position to correct
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:46:         * @brief solves the constraints forces of multiple groups of constraints
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:47:         * @return true if all constraints where solved satisfactory
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:49:        virtual bool solve (std::vector< CEdgeGroup >& groups, SolverInfo& info,
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:53:         * @brief solves the constraints forces of a group of constraints
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:54:         * @return true if all constraints where solved satisfactory
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.hpp:56:        virtual bool solveGroup (CEdgeGroup& group, SolverInfo& info,
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.cpp:6:bool ConstraintSolver::solve (std::vector< CEdgeGroup >& groups, SolverInfo& info,
+RobWork/RobWorkSim/src\rwsim\rwphysics\ConstraintSolver.cpp:10:        if (!solveGroup (groups[i], info, state))
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRusselBeamBase.hpp:50:        virtual void solve (Eigen::VectorXd& xinituser, Eigen::VectorXd& U, Eigen::VectorXd& V) = 0;
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRusselBeamIpopt.hpp:47:         * @brief solve the minimization problem
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRusselBeamIpopt.hpp:53:        void solve (Eigen::VectorXd& xinituser, Eigen::VectorXd& U, Eigen::VectorXd& V);
+RobWork/RobWork/src\rwlibs\softbody\beam\ModRusselBeamIpopt.cpp:36:void ModRusselBeamIpopt::solve (Eigen::VectorXd& xinituser, Eigen::VectorXd& U, Eigen::VectorXd& V)
+RobWork/RobWork/src\rw\invkin.hpp:26:#include <rw/invkin/AmbiguityResolver.hpp>
+RobWork/RobWorkSim/src\rwsim\dynamics\DynamicWorkCell.hpp:359:        void setGravity (const rw::math::Vector3D<>& grav)
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:89:         * @copydoc ClosedFormIK::solve
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:91:        virtual std::vector< math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:113:        void solveTheta456 (double theta1, double theta2, double theta3,
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:119:        std::vector< double > solveTheta3Case1 (double z) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:124:        std::vector< double > solveTheta3Case2 (double r) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:129:        std::vector< double > solveTheta3Case3 (double r, double z) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:131:        double solveTheta2 (double r, double z, double theta3) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:133:        std::vector< double > solveTheta2Case1 (double z, double theta3) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:134:        std::vector< double > solveTheta2Case2 (double r, double theta3) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.hpp:136:        double solveTheta1 (double x, double y, double theta2, double theta3) const;
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:113:std::vector< Q > PieperSolver::solve (const Transform3D<>& baseTend,
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:128:        theta3 = solveTheta3Case1 (r);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:132:            std::vector< double > theta2sol = solveTheta2Case1 (z, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:136:                double theta1 = solveTheta1 (x, y, theta2, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:137:                solveTheta456 (theta1, theta2, theta3, T06, result);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:143:        theta3 = solveTheta3Case2 (z);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:146:            std::vector< double > theta2sol = solveTheta2Case2 (r, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:150:                double theta1 = solveTheta1 (x, y, theta2, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:151:                solveTheta456 (theta1, theta2, theta3, T06, result);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:157:        theta3 = solveTheta3Case3 (r, z);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:162:            double theta2 = solveTheta2 (r, z, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:163:            double theta1 = solveTheta1 (x, y, theta2, theta3);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:165:            solveTheta456 (theta1, theta2, theta3, T06, result);
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:177:void PieperSolver::solveTheta456 (double theta1, double theta2, double theta3, Transform3D<>& T06,
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:251:double PieperSolver::solveTheta1 (double x, double y, double theta2, double theta3) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:455:std::vector< double > PieperSolver::solveTheta2Case2 (double r, double theta3) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:498:std::vector< double > PieperSolver::solveTheta2Case1 (double z, double theta3) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:538:double PieperSolver::solveTheta2 (double r, double z, double theta3) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:594:std::vector< double > PieperSolver::solveTheta3Case1 (double r) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:628:std::vector< double > PieperSolver::solveTheta3Case2 (double z) const
+RobWork/RobWork/src\rw\invkin\PieperSolver.cpp:658:std::vector< double > PieperSolver::solveTheta3Case3 (double r, double z) const
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:66:         * @brief Construct new solver.
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:77:         * @copybrief IterativeIK::solve
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:80:         * and the current state, the method solves the inverse kinematics
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:101:        virtual std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:104:        //! @brief A target definition used in the multi-target solve function.
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:172:         * @brief Version of solve that allows for definition of multiple targets.
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:174:         * This is a more flexible version of solve than the one from the standard InvKinSolver
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.hpp:190:        virtual std::vector< rw::math::Q > solve (const std::vector< Target >& targets,
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:60:std::vector< Q > ParallelIKSolver::solve (const Transform3D<>& dest, const State& wstate) const
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:62:    return solve (std::vector< Target > (1, Target (_device->getEnd (), dest)), wstate);
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:178:std::vector< Q > ParallelIKSolver::solve (const std::vector< Target >& targets,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:113:        //! @brief the type of Jacobian solver
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:136:         * @brief configures the iterative solver to return the best fit
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:149:         * @brief the solver may fail or be very slow if the the solution is too far from the
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:160:         * @brief set the type of solver to use for stepping toward a solution
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:161:         * @param type [in] the type of Jacobian solver
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:163:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:166:         * @copydoc IterativeIK::solve
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:168:        std::vector< math::Q > solve (const std::vector< rw::math::Transform3D<double> >& baseTend,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:185:        bool solveLocal (const std::vector< rw::math::Transform3D<double> >& bTed,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:205:        JacobianSolverType _solverType;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:59:    _solverType (JacobianIKSolverM::SVD)
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:70:    _useInterpolation (true), _solverType (JacobianIKSolverM::SVD)
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:76:bool JacobianIKSolverM::solveLocal (const std::vector< Transform3D<> >& bTed,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:136:        switch (_solverType) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:190:std::vector< Q > JacobianIKSolverM::solve (const std::vector< Transform3D<> >& bTeds,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:217:            solveLocal (bTeds_via, maxError, state, 5, true);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:223:    if (solveLocal (bTeds, maxError, state, maxIterations, false)) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:109:        //! @brief the type of jacobian solver
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:132:         * @copydoc IterativeIK::solve
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:134:        std::vector< math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:148:         * @brief the solver may fail or be very slow if the the solution is too far from the
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:179:         * @brief set the type of solver to use for stepping toward a solution
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:180:         * @param type [in] the type of jacobian solver
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:182:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:185:         * @brief setWeightVector sets the weight vector used for solver type "Weighted"
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:210:        JacobianSolverType _solverType;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:38:    _useInterpolation (false), _checkJointLimits (false), _solverType (SVD),
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:48:std::vector< Q > JacobianIKSolver::solve (const Transform3D<>& bTed,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:63:            /* bool found = */ solveLocal (bTed_via, maxError * 1000, state, 5);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:69:    if (solveLocal (bTed, maxError, state, maxIterations)) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:81:bool JacobianIKSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:109:        switch (_solverType) {
+RobWork/RobWork/src\rw\invkin\IterativeMultiIK.hpp:51:     * By default it solves the problem beginning at the robot base and
+RobWork/RobWork/src\rw\invkin\IterativeMultiIK.hpp:70:         * and the current state, the method solves the inverse kinematics
+RobWork/RobWork/src\rw\invkin\IterativeMultiIK.hpp:88:        solve (const std::vector< rw::math::Transform3D<double> >& baseTend,
+RobWork/RobWork/src\rwlibs\opengl\glext_win32.h:10571:GLAPI void APIENTRY glResolveDepthValuesNV (void);
+RobWork/RobWork/src\rw\invkin\IterativeIK.hpp:51:     * By default it solves the problem beginning at the robot base and
+RobWork/RobWork/src\rw\invkin\IterativeIK.hpp:110:           @brief Default iterative inverse kinematics solver for a device and
+RobWork/RobWork/src\rw\invkin\IterativeIK.hpp:113:           @param device [in] Device for which to solve IK.
+RobWork/RobWork/src\rw\invkin\IterativeIK.hpp:114:           @param state [in] Fixed state for which IK is solved.
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:46:     * Some Polynomials are particularly easy to solve. A polynomial of the form
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:48:     * will be solved by taking the n'th roots of \f$-\frac{b}{a}\f$ directly, giving n distinct
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:54:     * The solver will use the following procedure (here with the precision \f$ \epsilon =
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:77:     * order polynomial with complex coefficients. This polynomial is solved analytically to give
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:89:         * @brief Create a solver for a polynomial with real coefficients.
+RobWork/RobWork/src\rw\math\PolynomialSolver.hpp:95:         * @brief Create a solver for a polynomial with complex coefficients.
+RobWork/RobWork/src\rw\math\PolynomialSolver.cpp:140:    // Try to solve analytically if the polynomial is simple enough
+RobWork/RobWork/src\rw\math\PolynomialSolver.cpp:212:             3) {    // Check if polynomial is degree 3 or less and solve analytically
+RobWork/RobWork/src\rw\invkin\InvKinSolver.hpp:26:     * By default it solves the problem beginning at the robot base and
+RobWork/RobWork/src\rw\invkin\InvKinSolver.hpp:45:         * and the current state, the method solves the inverse kinematics
+RobWork/RobWork/src\rw\invkin\InvKinSolver.hpp:64:        virtual std::vector< math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:47:     * Given an arbitrary iterative inverse kinematics solver, the IKMetaSolver
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:49:     * repeatingly calls the iterative solver with new random start configurations
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:55:     * // create a inverse kinematics solver for your dvs. here we use ResolvedRateSolver
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:56:     * ResolvedRateSolver iksolver(&myDevice); // takes a pointer to your device
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:59:     * // now create the meta solver
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:60:     * IKMetaSolver mSolver(&iksolver, &myDevice, detector);
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:65:     * result = mSolver.solve( pose , state, 200, true );
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:79:         * The IKMetaSolver takes ownership of the \b iksolver. The IKMetaSolver
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:83:         * @param iksolver [in] The basic iksolver to use. Ownership is taken
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:84:         * @param device [in] Device to solve for
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:89:        IKMetaSolver (rw::core::Ptr<rw::invkin::IterativeIK> iksolver,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:96:         * The IKMetaSolver takes ownership of the \b iksolver. To skip testing for
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:99:         * @param iksolver [in] The basic iksolver to use. Ownership is taken
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:100:         * @param device [in] Device to solve for
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:105:        IKMetaSolver (rw::core::Ptr<rw::invkin::IterativeIK> iksolver,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:115:         * @copydoc rw::invkin::IterativeIK::solve
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:119:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:153:         * Tries to solve the inverse kinematics problem using the iterative
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:154:         * inverse kinematics solver provided in the constructor. It tries at
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:167:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.hpp:177:        rw::invkin::IterativeIK::Ptr _iksolver;
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:33:IKMetaSolver::IKMetaSolver (IterativeIK::Ptr iksolver, const Device::Ptr device,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:35:    _iksolver (iksolver),
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:41:IKMetaSolver::IKMetaSolver (IterativeIK::Ptr iksolver, const rw::models::Device::Ptr device,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:43:    _iksolver (iksolver),
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:99:std::vector< Q > IKMetaSolver::solve (const Transform3D<>& baseTend, const State& stateDefault,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:108:        std::vector< Q > solutions = _iksolver->solve (baseTend, state);
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:128:std::vector< Q > IKMetaSolver::solve (const Transform3D<>& baseTend,
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:131:    return solve (baseTend, defaultState, _maxAttempts, _stopAtFirst);
+RobWork/RobWork/src\rw\invkin\IKMetaSolver.cpp:156:    return _iksolver->getTCP ();
+RobWork/RobWork/src\rw\invkin\CMakeLists.txt:15:        AmbiguityResolver.cpp
+RobWork/RobWork/src\rw\invkin\CMakeLists.txt:33:        AmbiguityResolver.hpp
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.hpp:32:     * @brief Analytical inverse kinematics solver to the kinematics of a Universal Robots.
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.hpp:43:         * @brief Construct new closed form solver for a Universal Robot.
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.hpp:55:        //! @copydoc InvKinSolver::solve
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.hpp:56:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rwlibs\opengl\DrawableFactory.cpp:111:    const std::string& filename = IOUtil::resolveFileName (raw_filename, extensions);
+RobWork/RobWork/src\rwlibs\opengl\DrawableFactory.cpp:117:                                                 << " that was resolved to file name " << filename);
+RobWork/RobWork/src\rwlibs\opengl\DrawableFactory.cpp:204:                << " that was resolved to file name "
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:101:std::vector< Q > ClosedFormIKSolverUR::solve (const Transform3D<>& baseTend,
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:40:     * @brief Analytical inverse solver for the Kuka LBR IIWA 7 R800 robot.
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:44:     * This solver will choose a point on this circle randomly and return up to 8 possible
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:54:         * @brief Construct new closed form solver for a Kuka 7 DOF IIWA robot.
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:64:        //! @copydoc InvKinSolver::solve
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:65:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.hpp:78:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:52:    // - the calculation of the circle intersection between two spheres in solve() relies on these
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:70:std::vector< Q > ClosedFormIKSolverKukaIIWA::solve (const Transform3D<>& baseTend,
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:76:    return solve (baseTend, stateArg, randomPerpendicularVector (n));
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:79:std::vector< Q > ClosedFormIKSolverKukaIIWA::solve (const Transform3D<>& baseTend,
+RobWork/RobWork/src\rw\invkin\ClosedFormIK.hpp:47:     * By default it solves the problem beginning at the robot base and
+RobWork/RobWork/src\rw\invkin\ClosedFormIK.hpp:58:   @brief Closed-form IK solver for a device.
+RobWork/RobWork/src\rw\invkin\ClosedFormIK.hpp:63:   The IK solver is currently implemented in terms of PieperSolver. See
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:18:#include "AmbiguityResolver.hpp"
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:28:AmbiguityResolver::AmbiguityResolver (const InvKinSolver::Ptr& invkin,
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:52:AmbiguityResolver::~AmbiguityResolver (void)
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:55:std::vector< Q > AmbiguityResolver::solve (const Transform3D<>& baseTend, const State& state) const
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:57:    std::vector< Q > res1 = _invkin->solve (baseTend, state);
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:86:void AmbiguityResolver::setCheckJointLimits (bool check)
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.cpp:89:rw::kinematics::Frame::CPtr AmbiguityResolver::getTCP () const
+RobWork/RobWork/src\rw\invkin\CCDSolver.hpp:63:         * \copydoc rw::invkin::IterativeIK::solve
+RobWork/RobWork/src\rw\invkin\CCDSolver.hpp:69:        std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\CCDSolver.hpp:83:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:204:bool CCDSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:335:std::vector< Q > CCDSolver::solve (const Transform3D<>& bTed, const State& initial_state) const
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:366:        solveLocal (bTedLocal, maxError * 1000, state, 100);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:373:    if (solveLocal (bTed, maxError, state, maxIterations + 200)) {
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:383:std::vector<Q> CCDSolver::solve(const Transform3D<>& bTed, const State& initial_state) const
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:45:     * The AmbiguityResolver always tests for joint limits.
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:47:    class AmbiguityResolver : public rw::invkin::InvKinSolver
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:51:         * @brief Constructs an AmbiguityResolver
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:52:         * @param invkin [in] The inverse kinematics solver to obtain solutions from
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:55:        AmbiguityResolver (const rw::core::Ptr<rw::invkin::InvKinSolver>& invkin,
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:61:        ~AmbiguityResolver (void);
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:64:         * @brief Calls the InvKinSolver provided and resolves ambiguities.
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:65:         * @copydoc InvKinSolver::solve
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:67:        virtual std::vector< rw::math::Q > solve (const rw::math::Transform3D<double>& baseTend,
+RobWork/RobWork/src\rw\invkin\AmbiguityResolver.hpp:71:         * @brief No effect. The AmbiguityResolver always tests for joint limits.
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:116:    Eigen::SimplicialLLT< Eigen::SparseMatrix< T > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:117:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:134:    Eigen::LLT< Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:135:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:149:        B = solver.solve (B);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:306:    Eigen::SimplicialLLT< Eigen::SparseMatrix< double > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:307:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:322:    Eigen::LLT< Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:323:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:336:        B = solver.solve (B);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:494:    Eigen::SimplicialLLT< Eigen::SparseMatrix< double > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:495:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:512:    Eigen::LLT< Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic > > solver;
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:513:    solver.compute (A);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:528:        B = solver.solve (B);
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:72:    PolynomialSolver solver (der);
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:73:    const std::vector< double > sols = solver.getRealSolutions ();
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:151:    PolynomialSolver solver (pol);
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:152:    std::vector< double > sols = solver.getRealSolutions ();
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:319:    PolynomialSolver solver (pol);
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticUtil.cpp:320:    std::vector< double > sols = solver.getRealSolutions ();
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticCurve.cpp:612:    PolynomialSolver solver (pol);
+RobWork/RobWork/src\rw\geometry\analytic\quadratics\QuadraticCurve.cpp:613:    std::vector< double > sols = solver.getRealSolutions ();
+RobWork/RobWork/src\rw\core\PropertyType.hpp:116:         * @brief Get the type of a value resolved at compile time.
+RobWork/RobWork/src\rw\core\PropertyType.hpp:239:         * @brief Get the type of a generic value T resolved at compile time.
+RobWork/RobWork/src\rw\loaders\Model3DFactory.cpp:125:    const std::string& filename = IOUtil::resolveFileName (raw_filename, extensions);
+RobWork/RobWork/src\rw\loaders\Model3DFactory.cpp:130:                                                 << " that was resolved to file name " << filename);
+RobWork/RobWork/src\rw\loaders\Model3DFactory.cpp:219:                  << StringUtil::quote (raw_filename) << " that was resolved to file name "
+RobWork/RobWork/src\rw\core\IOUtil.hpp:69:         * If \b filename can't be resolved to a readable file, an informative error
+RobWork/RobWork/src\rw\core\IOUtil.hpp:72:         * @param filename [in] The file name to resolve.
+RobWork/RobWork/src\rw\core\IOUtil.hpp:78:        static std::string resolveFileName (const std::string& filename,
+RobWork/RobWork/src\rw\core\IOUtil.cpp:100:std::string resolveSuffix (const std::string& raw_filename, const std::string& suffix)
+RobWork/RobWork/src\rw\core\IOUtil.cpp:109:std::string resolveFileNameHelper (const std::string& raw_filename,
+RobWork/RobWork/src\rw\core\IOUtil.cpp:114:        const std::string& file = resolveSuffix (raw_filename, *p);
+RobWork/RobWork/src\rw\core\IOUtil.cpp:122:std::string IOUtil::resolveFileName (const std::string& raw_filename,
+RobWork/RobWork/src\rw\core\IOUtil.cpp:132:    const std::string& file = resolveFileNameHelper (raw_filename, extensions);
+RobWork/RobWork/src\rw\pathplanning\QSampler.hpp:136:           @param target [in] Target for IK solver.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:48:       @brief Interface for the sampling a configuration that solves an IK
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:60:           @brief Sample a configuration that solves an IK problem for \b
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:81:           @brief An IK sampler based on an iterative IK solver.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:87:           @param state [in] Fixed state with respect to which IK is solved.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:89:           @param solver [in] Optional IK solver for \b device and \b state.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:91:           @param seed [in] Optional sampler of seeds to feed the IK solver.
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:94:           solver. If \b maxAttempts is negative, a default value for \b
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.hpp:99:                                     rw::core::Ptr< rw::invkin::IterativeIK > solver = NULL,
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:38:    IterativeQIKSampler (Device::Ptr device, const State& state, IterativeIK::Ptr solver,
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:41:        _state (state), _solver (solver), _seed (seed), _maxAttempts (maxAttempts)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:43:        if (!_solver)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:44:            _solver = IterativeIK::makeDefault (device, state);
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:67:                    const std::vector< Q > qs = _solver->solve (target, _state);
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:88:    IterativeIK::Ptr _solver;
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:131:QIKSampler::Ptr QIKSampler::make (Device::Ptr device, const State& state, IterativeIK::Ptr solver,
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:134:    return ownedPtr (new IterativeQIKSampler (device, state, solver, seed, maxAttempts));
+RobWork/RobWork/src\rw\loaders\GeometryFactory.cpp:207:            filename = IOUtil::resolveFileName (raw_filename, extensions);
+RobWork/RobWork/src\rw\loaders\GeometryFactory.cpp:217:                                                    << " that was resolved to file name "
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:259:                    // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:337:                    // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:404:                    // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:484:                        // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:554:                    //Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:690:                        // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:778:                        // Resolve type of geometry
+RobWork/RobWork/src\rw\loaders\dom\DOMWorkCellSaver.cpp:867:                        // Resolve type of geometry
+RobWork/RobWork/src\rw\models\ParallelDevice.hpp:111:         * @param enabled [in] vector of same size as \b q, specifying which values to solve for.

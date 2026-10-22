@@ -1,0 +1,34 @@
+[
+  {
+    "name": "independent-unknown-worktree",
+    "exitCode": 1,
+    "expected": "REUSE-UNDECLARED",
+    "passed": true
+  },
+  {
+    "name": "independent-committed-mjs",
+    "exitCode": 1,
+    "expected": "REUSE-UNDECLARED",
+    "passed": true,
+    "commit": "25f761c8c4f97d6f799fac395b991f68be8b1d54"
+  },
+  {
+    "name": "independent-committed-opaque",
+    "exitCode": 1,
+    "expected": "REUSE-UNDECLARED",
+    "passed": true,
+    "commit": "37914de5a779975223fdef558fc47f279d7136fe"
+  },
+  {
+    "name": "independent-stage-ready",
+    "exitCode": 1,
+    "expected": "REUSE-STAGE",
+    "passed": true
+  },
+  {
+    "name": "independent-final-debt",
+    "exitCode": 1,
+    "expected": "REUSE-MIGRATION",
+    "passed": true
+  }
+]

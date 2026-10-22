@@ -1,0 +1,12 @@
+fatal: 'D:/10_Source_Repos/21_robot/acc-gov-t21-r2-evidence/RobWork/doc/industrial-robot-design/traceability/builds/acc-gov-t21-2/nonexistent' does not appear to be a git repository
+fatal: Could not read from remote repository.
+
+Please make sure you have the correct access rights
+and the repository exists.
+Remove-Item: D:\10_Source_Repos\21_robot\acc-gov-t21-r2-test\RobWork\scripts\industrialrobot\test-reuse-governance.ps1:143
+Line |
+ 143 |  …  'ird-reuse-*') { Remove-Item -LiteralPath $sandbox -Recurse -Force }
+     |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Cannot find path 'C:\Users\zgl18\AppData\Local\Temp\ird-reuse-cde5d05c91fb40d08aa4337b93b020a1' because it does
+     | not exist.
+exit=1

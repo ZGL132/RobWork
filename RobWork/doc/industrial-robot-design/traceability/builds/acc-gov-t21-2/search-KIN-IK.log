@@ -1,0 +1,39 @@
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:72:    solver_weighted.setSolverType(JacobianIKSolver::Weighted);
+RobWork/RobWork/gtest\invkin\JacobianIKSolverTest.cpp:117:    solver_weighted.setSolverType(JacobianIKSolver::Weighted);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:183:    sol->setSolverType(JacobianIKSolver::SVD);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:191:    sol->setSolverType(JacobianIKSolver::Transpose);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:197:IterativeIK::Ptr makeJacobianIKSolverDLS(SerialDevice* device, State& state)
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:200:    sol->setSolverType(JacobianIKSolver::DLS);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:216:    sol->setSolverType(JacobianIKSolverM::SVD);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:226:    sol->setSolverType(JacobianIKSolverM::Transpose);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:232:IterativeMultiIK::Ptr makeJacobianIKSolverMDLS(TreeDevice* device, State& state)
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:236:    sol->setSolverType(JacobianIKSolverM::DLS);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:253:    // The relative displacement has been set to a small enough number to ensure that only a few iterations are needed to find a solution for the Transpose and DLS solvers
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:265:    //errcnt = testIKSolver("JacobianIKSolver using DLS", makeJacobianIKSolverDLS, 0.00002);
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:272:    //errcnt = testMultiIKSolver("JacobianIKSolverM using DLS", makeJacobianIKSolverMDLS, 0.00002);
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.hpp:103:        bool solveLocal(const std::vector<rw::math::Transform3D<> > &bTed,
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:93:bool IKGPMMSolver::solveLocal(
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:224:        if( !solveLocal(bTedVia, maxTmpError, state, maxIterations, true) )
+RobWork/RobWork/src\sandbox\invkin\IKGPMMSolver.cpp:230:    if( solveLocal(bTeds, maxTmpError, state, maxIterations, false) ){
+RobWork/RobWork/src\rw\invkin\CCDSolver.hpp:83:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:204:bool CCDSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:366:        solveLocal (bTedLocal, maxError * 1000, state, 100);
+RobWork/RobWork/src\rw\invkin\CCDSolver.cpp:373:    if (solveLocal (bTed, maxError, state, maxIterations + 200)) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:114:        typedef enum { Transpose, SVD, DLS, SDLS } JacobianSolverType;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:163:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.hpp:185:        bool solveLocal (const std::vector< rw::math::Transform3D<double> >& bTed,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:76:bool JacobianIKSolverM::solveLocal (const std::vector< Transform3D<> >& bTed,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:161:            case (SDLS): {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:162:                // TODO: not implemented yet for now we just use DLS
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:164:            case (DLS): {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:171:                // Use these two lines for the traditional DLS method
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:217:            solveLocal (bTeds_via, maxError, state, 5, true);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolverM.cpp:223:    if (solveLocal (bTeds, maxError, state, maxIterations, false)) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:110:        typedef enum { Transpose, SVD, DLS, Weighted } JacobianSolverType;
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.hpp:182:        void setSolverType (JacobianSolverType type) { _solverType = type; };
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:63:            /* bool found = */ solveLocal (bTed_via, maxError * 1000, state, 5);
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:69:    if (solveLocal (bTed, maxError, state, maxIterations)) {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:81:bool JacobianIKSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:132:            case (DLS): {
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:139:                // Use these two lines for the traditional DLS method

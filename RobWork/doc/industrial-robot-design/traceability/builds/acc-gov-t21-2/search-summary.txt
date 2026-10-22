@@ -1,0 +1,10 @@
+KIN-FK: exit=0, lines=315, command=rg -n "setQ|baseTframe|baseJframe" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+KIN-IK: exit=0, lines=39, command=rg -n "solveLocal|setSolverType|DLS" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+MATH-SVD: exit=0, lines=41, command=rg -n "svd|pseudoInverse" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+DYN-RNE: exit=0, lines=507, command=rg -n "solve|setGravity|setPayload" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+DYN-FD: exit=0, lines=2624, command=rg -n "initPhysics|step|load" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+MATH-ROT: exit=0, lines=214, command=rg -n "toRotation3D" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+TRAJ-SLERP: exit=0, lines=16, command=rg -n "slerp" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+TRAJ-LINEAR: exit=0, lines=223, command=rg -n "LinearInterpolator" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+TRAJ-HIGH: exit=0, lines=81, command=rg -n "CubicSplineFactory" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest
+COLLISION: exit=0, lines=264, command=rg -n "inCollision" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest

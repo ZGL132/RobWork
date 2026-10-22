@@ -1,0 +1,81 @@
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:25:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:236:        EXPECT_THROW( CubicSplineFactory::makeNaturalSpline(path), rw::core::Exception );
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:238:        EXPECT_THROW( CubicSplineFactory::makeNaturalSpline(path), rw::core::Exception );
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:255:        QTrajectory::Ptr traj = CubicSplineFactory::makeNaturalSpline(path);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:272:        traj = CubicSplineFactory::makeClampedSpline(path, start, end);
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:305:        QTrajectory::Ptr traj = CubicSplineFactory::makeNaturalSpline(  path );
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:322:        traj = CubicSplineFactory::makeClampedSpline(path, start, end);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:25:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:362:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:364:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:371:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:373:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:384:    auto traj = CubicSplineFactory::makeNaturalSpline (path);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:391:        auto traj2 = CubicSplineFactory::makeClampedSpline (path, this->start (), this->end ());
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:412:    auto traj = CubicSplineFactory::makeNaturalSpline (path);
+RobWork/RobWork/gtest\trajectory\CubicSplineTest.cpp:421:    traj     = CubicSplineFactory::makeClampedSpline (path, start, end);
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:8:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:348:                CubicSplineFactory::makeClampedSpline (path, lastQd, Q::zero (lastQd.size ()));
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:414:       CubicSplineFactory::makeClampedSpline(path, _currentQd, Q::zero( _currentQd.size() ),
+RobWork/RobWorkSim/src\rwsim\control\SerialDeviceController.cpp:432:       CubicSplineFactory::makeClampedSpline(path, _currentQd, Q::zero( _currentQd.size() ),
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:209:	#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:211:%include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:212:%template(makeNaturalSpline) rw::trajectory::CubicSplineFactory::makeNaturalSpline<rw::math::Vector3D<double>>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:213:%template(makeNaturalSpline) rw::trajectory::CubicSplineFactory::makeNaturalSpline<rw::math::Transform3DVector<double>>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:214:%template(makeNaturalSpline) rw::trajectory::CubicSplineFactory::makeNaturalSpline<rw::math::Quaternion<double>>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:216:%template(makeClampedSpline) rw::trajectory::CubicSplineFactory::makeClampedSpline<rw::math::Vector3D<double>>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:217:%template(makeClampedSpline) rw::trajectory::CubicSplineFactory::makeClampedSpline<rw::math::Transform3DVector<double>>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:218:%template(makeClampedSpline) rw::trajectory::CubicSplineFactory::makeClampedSpline<rw::math::Q>;
+RobWork/RobWork/src\rwlibs\swig\sdurw_trajectory.i:219:%template(makeClampedSpline) rw::trajectory::CubicSplineFactory::makeClampedSpline<rw::math::Quaternion<double>>;
+RobWork/RobWork/src\rw\trajectory.hpp:29:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:22: * @file CubicSplineFactory.hpp
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:43:    class CubicSplineFactory
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:78:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:122:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:169:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:308:        CubicSplineFactory ();
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.hpp:310:        virtual ~CubicSplineFactory ();
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:18:#include "CubicSplineFactory.hpp"
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:47:InterpolatorTrajectory< Q >::Ptr CubicSplineFactory::makeNaturalSpline (QPath::Ptr qpath,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:58:CubicSplineFactory::makeNaturalSpline (TimedQPath::Ptr tqpath)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:71:CubicSplineFactory::makeNaturalSpline (const QPath& qpath, const std::vector< double >& times)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:180:InterpolatorTrajectory< Q >::Ptr CubicSplineFactory::makeClampedSpline (QPath::Ptr qpath,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:193:CubicSplineFactory::makeClampedSpline (TimedQPath::Ptr tqpath, const rw::math::Q& dqStart,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:213:CubicSplineFactory::makeNaturalSpline (const Path< T >& path, double timeStep)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:224:CubicSplineFactory::makeNaturalSpline (const Path< Vector3D<> >& path, double timeStep);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:227:CubicSplineFactory::makeNaturalSpline (const Path< Transform3DVector<> >& path, double timeStep);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:230:CubicSplineFactory::makeNaturalSpline (const Path< Q >& path, double timeStep);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:233:CubicSplineFactory::makeNaturalSpline (const Path< Quaternion< double > >& path, double timeStep);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:239:CubicSplineFactory::makeNaturalSpline (const Path< Timed< T > >& path)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:253:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Vector3D<> > >& path);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:256:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Transform3DVector<> > >& path);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:259:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Q > >& path);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:262:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Quaternion< double > > >& path);
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:268:CubicSplineFactory::makeNaturalSpline (const Path< T >& path, const std::vector< double >& times)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:368:CubicSplineFactory::makeNaturalSpline (const Path< Vector3D<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:372:CubicSplineFactory::makeNaturalSpline (const Path< Transform3DVector<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:376:CubicSplineFactory::makeNaturalSpline (const Path< Quaternion<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:382:CubicSplineFactory::makeClampedSpline (const Path< T >& path, const T& dStart, const T& dEnd,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:394:CubicSplineFactory::makeClampedSpline (const Path< Transform3D<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:403:CubicSplineFactory::makeClampedSpline (const Path< Vector3D<> >& path, const Vector3D<>& dStart,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:407:CubicSplineFactory::makeClampedSpline (const Path< Q >& path, const Q& dStart, const Q& dEnd,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:411:CubicSplineFactory::makeClampedSpline (const Path< Transform3DVector<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:416:CubicSplineFactory::makeClampedSpline (const Path< Quaternion<> >& path, const Quaternion<>& dStart,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:423:CubicSplineFactory::makeClampedSpline (const Path< Timed< T > >& tpath, const T& dStart,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:437:CubicSplineFactory::makeClampedSpline (const Path< Timed< Vector3D<> > >& tpath,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:441:CubicSplineFactory::makeClampedSpline (const Path< Timed< Q > >& path, const Q& dStart,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:445:CubicSplineFactory::makeClampedSpline (const Path< Timed< Transform3DVector<> > >& tpath,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:450:CubicSplineFactory::makeClampedSpline (const Path< Timed< Quaternion<> > >& tpath,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:456:CubicSplineFactory::makeClampedSpline (const Path< T >& path, const std::vector< double >& times,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:563:CubicSplineFactory::makeClampedSpline (const Path< Vector3D<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:568:CubicSplineFactory::makeClampedSpline (const Path< Q >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:572:template InterpolatorTrajectory< Transform3DVector<> >::Ptr CubicSplineFactory::makeClampedSpline (
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:577:CubicSplineFactory::makeClampedSpline (const Path< Quaternion<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:586:CubicSplineFactory::makeNaturalSpline (const Path< Transform3D<> >& path, double timeStep)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:596:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Transform3D<> > >& path)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:609:CubicSplineFactory::makeNaturalSpline (const Path< rw::math::Transform3D<> >& path,
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:624:CubicSplineFactory::makeSQUAD (const Path< rw::math::Quaternion<> >& path, double timeStep)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:633:CubicSplineFactory::makeSQUAD (const Path< Timed< rw::math::Quaternion<> > >& tpath)
+RobWork/RobWork/src\rw\trajectory\CubicSplineFactory.cpp:645:CubicSplineFactory::makeSQUAD (const Path< rw::math::Quaternion<> >& path,
+RobWork/RobWork/src\rw\trajectory\CMakeLists.txt:15:        CubicSplineFactory.cpp
+RobWork/RobWork/src\rw\trajectory\CMakeLists.txt:38:        CubicSplineFactory.hpp

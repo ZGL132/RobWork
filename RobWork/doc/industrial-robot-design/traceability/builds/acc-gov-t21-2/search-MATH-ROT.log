@@ -1,0 +1,214 @@
+RobWork/RobWorkSim/gtest\performance\BenchMarkStacking.cpp:76:    //Transform3D<> t3d_target( Vector3D<>(0.669, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\performance\BenchMarkStacking.cpp:77:    Transform3D<> t3d_target( Vector3D<>(0.7, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\performance\BenchMarkStacking.cpp:81:    Rotation3D<> t3d_offset = RPY<>(0,0,0).toRotation3D();
+RobWork/RobWorkSim/gtest\performance\BenchMarkSimple.cpp:75:    //Transform3D<> t3d_target( Vector3D<>(0.669, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\performance\BenchMarkSimple.cpp:76:    Transform3D<> t3d_target( Vector3D<>(0.7, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\performance\BenchMarkSimple.cpp:80:    Rotation3D<> t3d_offset = RPY<>(0,0,0).toRotation3D();
+RobWork/RobWorkSim/gtest\ode\ODEControlTest.cpp:99:    //Transform3D<> t3d_target( Vector3D<>(0.669, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\ode\ODEControlTest.cpp:100:    Transform3D<> t3d_target( Vector3D<>(0.7, -0.131,0.142), RPY<>(-1.462,0,-3.115).toRotation3D() );
+RobWork/RobWorkSim/gtest\ode\ODEControlTest.cpp:104:    Rotation3D<> t3d_offset = RPY<>(0,0,0).toRotation3D();
+RobWork/RobWorkSim/gtest\dynamics\ConstraintTest.cpp:45:	const Transform3D<> pTc(Vector3D<>(-1.1,2.2,-3.3),EAA<>(0,-Pi,0).toRotation3D());
+RobWork/RobWorkSim/gtest\testfiles\scripts\simple_HFCP.lua:15:t3d_target = rw.Transform3D( rw.Vector3D(0.609, -0.131,0.05), rw.RPY(-1.608,0,-2.790):toRotation3D() )
+RobWork/RobWorkSim/gtest\testfiles\scripts\simple_HFCP.lua:19:t3d_offset = rw.Transform3D( rw.Vector3D(0, 0,0), rw.RPY(-0,0,0):toRotation3D() )
+RobWork/RobWork/gtest\trajectory\TrajectoryFactoryTest.cpp:40:	return Transform3D<>((T2.P()+T1.P())/2.,T1.R()*EAA<>(eaaVec(T1.R(),T2.R())/2.).toRotation3D());
+RobWork/RobWork/gtest\trajectory\TrajectoryFactoryTest.cpp:49:		const Transform3D<> T2(Vector3D<>(0.2,0.3,0.4), EAA<>(0,0,45*Deg2Rad).toRotation3D());
+RobWork/RobWork/gtest\trajectory\TrajectoryFactoryTest.cpp:50:		const Transform3D<> T3(Vector3D<>(-0.2,0.3,0.7), EAA<>(45*Deg2Rad,0,45*Deg2Rad).toRotation3D());
+RobWork/RobWork/gtest\trajectory\trajectory.cpp:92:    RampInterpolator<Rotation3D<> > rampR(start.toRotation3D(),end.toRotation3D(),0.8,0.1);
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:58:        Transform3D<> t (pos, rpy.toRotation3D ());
+RobWork/RobWork/gtest\algorithms\RANSACTest.cpp:286:        StablePose0DModel referenceModel (RPY<> (0.1, 0.45, 0.0).toRotation3D ());
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:38:    return position * EAAd(displacement).scaleAngle(dt).toRotation3D();
+RobWork/RobWork/gtest\trajectory\LinearInterpolatorTest.cpp:45:    res.R () = position.R () * EAAd(displacement.R()).scaleAngle(dt).toRotation3D();
+RobWork/RobWorkSim/src\rwsimlibs\test\IntegratorTest.cpp:107:    frame->setTransform (Transform3D<> (Vector3D<>::zero (), RPY<> (0, Pi / 4, 0).toRotation3D ()),
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:188:        EXPECT_LE((joint1->getTransform(state).R().e() - EAA<>(0.0, 0.0, Pi/2.0).toRotation3D().e()).lpNorm<Eigen::Infinity>() , 1e-6);
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:195:        EXPECT_LE((bTe_s.R().e() - EAA<>(0.0, 0.0, Pi/2.0).toRotation3D().e()).lpNorm<Eigen::Infinity>() , 1e-6);
+RobWork/RobWork/gtest\models\PrismaticJointTest.cpp:27:		const Rotation3D<> rot = RPY<>(0,Pi/2,0).toRotation3D();
+RobWork/RobWork/gtest\models\PrismaticJointTest.cpp:29:		const Transform3D<> wTp(Vector3D<>::x()*0.05,RPY<>(0,-Pi/4,0).toRotation3D());
+RobWork/RobWork/gtest\models\PrismaticJointTest.cpp:51:		const Transform3D<> wTp(Vector3D<>::x()*0.05,RPY<>(0,-Pi/4,0).toRotation3D());
+RobWork/RobWork/gtest\models\PrismaticJointTest.cpp:72:		const Rotation3D<> rot = RPY<>(0,Pi/2,0).toRotation3D();
+RobWork/RobWork/gtest\models\PrismaticJointTest.cpp:74:		const Transform3D<> wTp(Vector3D<>::x()*0.05,RPY<>(0,-Pi/4,0).toRotation3D());
+RobWork/RobWork/gtest\models\JointTest.cpp:270:	static const Rotation3D<> revRend = RPY<>(-Pi/2,0,Pi/2).toRotation3D();
+RobWork/RobWork/gtest\models\JointTest.cpp:286:	static const Rotation3D<> revRend = RPY<>(-Pi/2,0,Pi/2).toRotation3D();
+RobWork/RobWork/gtest\math\EAATest.cpp:77:    EAA<> xe0 (e0.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:85:    EAA<> xe180_1 (e180_1.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:92:    EAA<> xe180_2 (e180_2.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:99:    EAA<> xe180_3 (e180_3.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:117:                EAA<> xe180 (e180.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:140:                EAA<> xe180 (e180.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:160:                EAA<> xe180 (e180.toRotation3D ());
+RobWork/RobWork/gtest\math\EAATest.cpp:174:    Rotation3D<> rot = e1.toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEUtil.cpp:76:        return Transform3D<> (d * n, EAA<> (Vector3D<>::z (), n).toRotation3D ());
+RobWork/RobWork/gtest\math\LinearAlgebraTest.cpp:31:    Rotation3D<> r = eaa.toRotation3D();
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:76:    		const Rotation3D<> R = EAA<>(0.1,0.2,0.3).toRotation3D();
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:87:    		const Rotation3D<> R = EAA<>(0.1,0.2,0.3).toRotation3D();
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:120:    		const PerspectiveTransform2D<> write(EAA<>(0.1,0.2,0.3).toRotation3D().e());
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:181:    		const Quaternion<> write(EAA<>(0.1,0.2,0.3).toRotation3D());
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:207:    		const Rotation3D<> write = EAA<>(0.1,0.2,0.3).toRotation3D();
+RobWork/RobWork/gtest\math\MathSerializationTest.cpp:243:    		const Transform3D<> write(Vector3D<>(1.2,2.3,3.4),EAA<>(0.1,0.2,0.3).toRotation3D());
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESuctionCupDevice.cpp:71:            Rotation3D<> rotZ = RPY<> (2 * Pi / M * j, 0, 0).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODESuctionCupDevice.cpp:210:        //Transform3D<> yTz( RPY<>(0,0,Pi/2).toRotation3D() );
+RobWork/RobWork/gtest\math\RPYTest.cpp:40:    //Test toRotation3D and RPY(const Rotation3D<T>&) constructor
+RobWork/RobWork/gtest\math\RPYTest.cpp:41:    Rotation3D<> rot3d = rpy1.toRotation3D();
+RobWork/RobWork/gtest\math\RPYTest.cpp:52:    rot3d = rpy1.toRotation3D();
+RobWork/RobWork/gtest\math\Rotation3DTest.cpp:173:    const Rotation3D<> r3 = eaa.toRotation3D();
+RobWork/RobWork/gtest\math\Rotation3DTest.cpp:194:    const Rotation3D<> rotcomp1 = eaacomp1.toRotation3D();
+RobWork/RobWork/gtest\math\Rotation3DTest.cpp:197:    const Rotation3D<> rotcomp2 = eaacomp2.toRotation3D();
+RobWork/RobWork/gtest\math\Rotation3DTest.cpp:203:    const Rotation3D<> rotcomp3 = eaacomp3.toRotation3D();
+RobWork/RobWork/gtest\math\QuaternionTest.cpp:162:            rot = RPY<> (0, 0, 0).toRotation3D ();
+RobWork/RobWork/gtest\math\QuaternionTest.cpp:170:        Rotation3D<> res = q.toRotation3D ();
+RobWork/RobWork/gtest\math\QuaternionTest.cpp:187:    // Test toRotation3D and Quaternion(const Rotation3D&) constructor
+RobWork/RobWork/gtest\math\QuaternionTest.cpp:188:    Rotation3D<> r1 = q1.toRotation3D ();
+RobWork/RobWork/gtest\math\Transform3DTest.cpp:45:    const Rotation3D<> r1 = eaa.toRotation3D();
+RobWork/RobWork/gtest\math\Transform3DTest.cpp:66:    const Rotation3D<> rotcomp1 = eaacomp1.toRotation3D();
+RobWork/RobWork/gtest\math\Transform3DTest.cpp:71:    const Rotation3D<> rotcomp2 = eaacomp2.toRotation3D();
+RobWork/RobWork/gtest\math\Transform3DTest.cpp:79:    const Rotation3D<> rotcomp3 = eaacomp3.toRotation3D();
+RobWork/RobWork/gtest\math\UtilTest.cpp:74:    Transform3D<> t2(Vector3D<>(1, 0, 0), RPY<>(1.4, 0, 0).toRotation3D());
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:475:                            .toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:497:                EAA<> (wTconstraint.R () * Vector3D<>::z (), motorLinDirs[0]).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:540:                            .toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\ode\ODEConstraint.cpp:562:                EAA<> (wTconstraint.R () * Vector3D<>::z (), motorAngDirs[0]).toRotation3D ();
+RobWork/RobWork/gtest\proximity\collisionStrategy.cpp:158:            config.push_back( Transform3D<>(v,r.toRotation3D() ));
+RobWork/RobWork/gtest\proximity\distanceStrategy.cpp:169:            config.push_back (Transform3D<> (v, r.toRotation3D ()));
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.cpp:721:    			_handBase->setTransform( wThb*Transform3D<>(pos,rpy.toRotation3D()) , nstate);
+RobWork/RobWork/gtest\proximity\DistanceMultiStrategyTest.cpp:215:    static const Rotation3D<> R(eaa.toRotation3D());
+RobWork/RobWork/gtest\proximity\DistanceStrategyTest.cpp:230:    static const Rotation3D<> R(eaa.toRotation3D());
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:576:        trans.R () = eaa.toRotation3D () /*trans.R()*/;
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:579:        Rotation3D<> rot10 = EAA<> (normalize (pose._rotAxes[0]), 10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:581:        Rotation3D<> rot20 = EAA<> (normalize (pose._rotAxes[0]), 20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:584:        Rotation3D<> rot30 = EAA<> (normalize (pose._rotAxes[0]), 0).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:587:        Rotation3D<> rot10i = EAA<> (normalize (pose._rotAxes[0]), -10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GSupportPosePlugin.cpp:589:        Rotation3D<> rot20i = EAA<> (normalize (pose._rotAxes[0]), -20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GLViewRW.cpp:171:    _viewRotation (RPY< float > (0, 0, static_cast< float > (-45 * Deg2Rad)).toRotation3D ()),
+RobWork/RobWorkSim/src\rwsimlibs\gui\GLViewRW.cpp:511:              rpyrot.toRotation3D(rot);
+RobWork/RobWorkSim/src\rwsimlibs\gui\GLViewRW.cpp:521:            Rotation3D< float > thisRot = cast< float > (quat.toRotation3D ());
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:576:        trans.R () = eaa.toRotation3D () /*trans.R()*/;
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:579:        Rotation3D<> rot10 = EAA<> (normalize (pose._rotAxes[0]), 10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:581:        Rotation3D<> rot20 = EAA<> (normalize (pose._rotAxes[0]), 20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:584:        Rotation3D<> rot30 = EAA<> (normalize (pose._rotAxes[0]), 0).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:587:        Rotation3D<> rot10i = EAA<> (normalize (pose._rotAxes[0]), -10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\plugins\PSupportPosePlugin.cpp:589:        Rotation3D<> rot20i = EAA<> (normalize (pose._rotAxes[0]), -20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\bullet\BtBody.cpp:107:        t3d.R () = EAA<> (_rwBodyKinematic->getAngVelW (state) * dt).toRotation3D () * t3d.R ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:452:    return rot.toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:466:    return point * rot.toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:474:    return rot.toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:482:    return point * rot.toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\RestingPoseDialog.cpp:540:        rot          = RPY<> (roll, pitch, yaw).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:608:        wTb.R () = inverse (eaa.toRotation3D ()) * wTb.R ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:611:        Rotation3D<> rot10 = EAA<> (normalize (pose._rotAxes[0]), 10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:613:        Rotation3D<> rot20 = EAA<> (normalize (pose._rotAxes[0]), 20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:616:        Rotation3D<> rot30 = EAA<> (normalize (pose._rotAxes[0]), 0).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:619:        Rotation3D<> rot10i = EAA<> (normalize (pose._rotAxes[0]), -10 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\SupportPoseAnalyserDialog.cpp:621:        Rotation3D<> rot20i = EAA<> (normalize (pose._rotAxes[0]), -20 * Deg2Rad).toRotation3D ();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\CSGModel.cpp:137:	Transform3D<> t(Vector3D<>(), RPY<>(r, p, y).toRotation3D());
+RobWork/RobWork/src\sandbox\loaders\ColladaLoader.cpp:1258:            transTmp->transform = Transform3D<>( eaa.toRotation3D() );
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:261:                //target.R() = rot*RPY<>(Math::ran(0.0,Pi), 0, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:267:                Rotation3D<> trot = rot2*RPY<>(Math::ran(0.0,Pi*2.0), 0, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\evaluatePerturbedTasks.cpp:269:                trot = trot * RPY<>(0, 90*Deg2Rad, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:261:                //target.R() = rot*RPY<>(Math::ran(0.0,Pi), 0, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:267:                Rotation3D<> trot = rot2*RPY<>(Math::ran(0.0,Pi*2.0), 0, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:269:                trot = trot * RPY<>(0, 90*Deg2Rad, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspPlugin.cpp:586:			rot = EAA<>(Vector3D<>::z(), -5.0*Deg2Rad).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspPlugin.cpp:593:			rot = EAA<>(Vector3D<>::z(), 5.0*Deg2Rad).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspPlugin.cpp:600:			rot = EAA<>(viewT.R() * Vector3D<>::x(), -5.0*Deg2Rad).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspPlugin.cpp:607:			rot = EAA<>(viewT.R() * Vector3D<>::x(), 5.0*Deg2Rad).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\JawPrimitive.cpp:56:	Transform3D<> t(Vector3D<>(), RPY<>(0, -_chamferAngle, 0).toRotation3D());
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:55:				samples.push_back(SurfaceSample(Transform3D<>(pos, rpy.toRotation3D()), graspW));
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:337:	task->_hints.push_back(Transform3D<>(pos, rpy.toRotation3D()));
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:363:	task->_alignments.push_back(Alignment(Transform3D<>(pos, rpy.toRotation3D()), distq));
+RobWork/RobWorkSim/src\rwsim\util\BoxPoseSampler.hpp:41:            Transform3D<> target (position, rpy.toRotation3D ());
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:317:            t3d.R ()     = RPY<> (v[0], v[1], v[2]).toRotation3D ();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:69:        Transform3D<> rayTrans(pos-faceNormal*0.001, RPY<>(Math::ran(-0.1, 0.1), Math::ran(-0.1, 0.1), Math::ran(-0.1, 0.1)).toRotation3D()*rot);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:96:				Rotation3D<> trot = rot2*RPY<>(Math::ran(0.0,Pi*2.0), 0, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:99:				trot = trot * RPY<>(0, 90*Deg2Rad, 0).toRotation3D();
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.cpp:139:					Transform3D<> aligned(RPY<>(0, angle(targetW.R()*Vector3D<>::z(), hint.R()*Vector3D<>::z()), 0).toRotation3D() * hint.R());
+RobWork/RobWorkSim/src\rwsim\util\SurfacePoseSampler.hpp:90:                target.R () = eaa.toRotation3D ();
+RobWork/RobWork/src\sandbox\csg\CSGModel.cpp:138:	Transform3D<> t(Vector3D<>(), RPY<>(r, p, y).toRotation3D());
+RobWork/RobWorkSim/src\rwsim\util\PlanarSupportPoseGenerator.cpp:415:    Rotation3D<> R = eaa.toRotation3D ();
+RobWork/RobWorkSim/src\rwsim\util\PlanarSupportPoseGenerator.cpp:428:        // Rotation3D<> rot = RPY<>(Math::ran(-d,d),Math::ran(-d,d),Math::ran(-d,d)).toRotation3D();
+RobWork/RobWorkSim/src\rwsim\util\PlanarSupportPoseGenerator.cpp:429:        Rotation3D<> rot = RPY<> (0, Random::ran (-d, d), Random::ran (-d, d)).toRotation3D () * R;
+RobWork/RobWorkSim/src\rwsim\util\PlanarSupportPoseGenerator.cpp:434:        //        RPY<>(0,Math::ran(-d,d),Math::ran(-d,d)).toRotation3D()*Vector3D<>(0,0,1);
+RobWork/RobWorkSim/src\rwsim\drawable\RenderCircles.cpp:71:        Rotation3D<> rot = EAA<> (n, _stepSize).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspSelectionDialog.cpp:505:        nt3d.R ()          = t3d.R () * Rotation3D<> (RPY<> (roll, pitch, yaw).toRotation3D ());
+RobWork/RobWorkSim/src\rwsim\simulator\AssemblySimulator.cpp:563:            Rotation3D<> contact   = EAA<> (Vector3D<>::z (), n).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:727:    Rotation3D<> rrot  = RPY<> (roll, pitch, yaw).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:751:                          .toRotation3D () /* * bTo.R()*/;
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:759:    // Rotation3D<> hR = RPY<>(Math::ran(0,Pi),0,0).toRotation3D() * hT.R();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog1.cpp:772:            nt3d.R() = t3d.R()*Rotation3D<>( RPY<>(roll,pitch,yaw).toRotation3D() );
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:948:                    _handBase->setTransform (wThb * Transform3D<> (pos, rpy.toRotation3D ()),
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1451:    Rotation3D<> hR = RPY<> (roll, pitch, yaw).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1472:    // Rotation3D<> hR = RPY<>(Math::ran(0,Pi),0,0).toRotation3D() * hT.R();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1493:    Rotation3D<> rrot  = RPY<> (roll, pitch, yaw).toRotation3D ();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1516:                          .toRotation3D () /* * bTo.R()*/;
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1525:    // Rotation3D<> hR = RPY<>(Math::ran(0,Pi),0,0).toRotation3D() * hT.R();
+RobWork/RobWorkSim/src\rwsimlibs\gui\GraspRestingPoseDialog.cpp:1538:            nt3d.R() = t3d.R()*Rotation3D<>( RPY<>(roll,pitch,yaw).toRotation3D() );
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:200:        Rotation3D<> rotDiff = randRPY (_roll, _pitch, _yaw).toRotation3D ();
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:213:        // Rotation3D<> rot = eaa.toRotation3D()*hbTo.R();
+RobWork/RobWork/src\sandbox\graspplanning\SBGraspPlanner3D.cpp:215:        // Rotation3D<> rotDiff = randRPY(Pi/2, _thresAngle,_thresAngle).toRotation3D();
+RobWork/RobWorkSim/src\rwsim\rwphysics\EulerIntegrator.cpp:25:    rot = eaa.toRotation3D () * rot;
+RobWork/RobWorkSim/src\rwsim\rwphysics\RK4Integrator.cpp:50:    rot = eaa.toRotation3D () * rot;
+RobWork/RobWorkSim/src\rwsim\dynamics\OBRManifold.cpp:71:        //_t3d.R() = _t3d.R()*EAA<>(_normal,nnorm).toRotation3D();
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:330:            return _blendRot * eaa.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:342:            return eaa.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:354:            return eaa.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:185:            return _quarStart.slerp (_quarEnd, t / _duration).toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\LinearInterpolator.hpp:199:            return rw::math::EAA<T> (change.axis(),change.angle()/_duration).toRotation3D();
+RobWork/RobWork/src\rw\trajectory\InterpolatorUtil.hpp:78:                res.R () = quar.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:383:            rw::math::Rotation3D< T > srot = _start.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:386:            return srot * rot.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:398:            return rot.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:410:            return rot.toRotation3D ();
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:417:        rw::math::Rotation3D< T > getStart () const { return _start.toRotation3D (); }
+RobWork/RobWork/src\rw\trajectory\RampInterpolator.hpp:423:        rw::math::Rotation3D< T > getEnd () const { return _end.toRotation3D (); }
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:565:                    rot      = quat.toRotation3D ();
+RobWork/RobWork/src\rw\geometry\Line.cpp:142:    // Rotation3D<> rot =< EAA<>(Vector3D<>::z(), normal).toRotation3D();
+RobWork/RobWork/src\rw\math\EAA.cpp:130:template< class T > const Rotation3D< T > EAA< T >::toRotation3D () const
+RobWork/RobWork/src\rw\math\Math.hpp:125:            return RPY< A > (roll, pitch, yaw).toRotation3D ();
+RobWork/RobWork/src\rw\math\Math.hpp:357:            return ranQuaternion< T > ().toRotation3D ();
+RobWork/RobWork/src\rw\math\EAA.hpp:177:         * @copydoc Rotation3DVector::toRotation3D()
+RobWork/RobWork/src\rw\math\EAA.hpp:196:        virtual const rw::math::Rotation3D< T > toRotation3D () const;
+RobWork/RobWork/src\rw\math\EAA.hpp:420:            return EAA< T > (this->toRotation3D () * rhs.toRotation3D ());
+RobWork/RobWork/src\rw\math\EAA.hpp:442:         * @return EAA ( this->toRotation3D() * rhs)
+RobWork/RobWork/src\rw\math\EAA.hpp:446:            return EAA (this->toRotation3D () * rhs);
+RobWork/RobWork/src\rw\math\Quaternion.hpp:88:            setRotation (rot.toRotation3D ());
+RobWork/RobWork/src\rw\math\Quaternion.hpp:228:        inline const rw::math::Rotation3D< T > toRotation3D () const
+RobWork/RobWork/src\rw\math\Rotation3D.cpp:32:    Rotation3D (rotVec.toRotation3D ())
+RobWork/RobWork/src\rw\math\Transform3D.hpp:101:         * Transform3D(d, r.toRotation3D()).
+RobWork/RobWork/src\rw\math\Transform3D.hpp:107:            _d (d), _R (r.toRotation3D ())
+RobWork/RobWork/src\rw\math\RPY.hpp:71:         * @copydoc Rotation3DVector::toRotation3D
+RobWork/RobWork/src\rw\math\RPY.hpp:73:        const Rotation3D< T > toRotation3D () const;
+RobWork/RobWork/src\rw\math\RPY.cpp:74:template< class T > const Rotation3D< T > RPY< T >::toRotation3D () const
+RobWork/RobWork/src\rw\math\Rotation3DVector.hpp:51:        virtual const rw::math::Rotation3D< T > toRotation3D () const = 0;
+RobWork/RobWork/src\rw\math\Transform3DVector.hpp:412:        EAA< T > toEAA () const { return EAA< T > (this->toQuaternion ().toRotation3D ()); }
+RobWork/RobWork/src\rw\geometry\TriMeshSurfaceSampler.cpp:128:            target.R () = eaa.toRotation3D ();
+RobWork/RobWork/src\rwlibs\csg\CSGModel.cpp:58:    Transform3D<> t (Vector3D<> (), RPY<> (r, p, y).toRotation3D ());
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:460:        return readRPY (element, false).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:462:        return readEAA (element, false).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\xml\XMLBasisTypes.cpp:464:        return readQuaternion (element, false).toRotation3D ();
+RobWork/RobWork/src\rwlibs\assembly\PiHStrategy.cpp:210:                              Transform3D<> (RPY<> (0, 0, -angleTotarget).toRotation3D ()) *
+RobWork/RobWork/src\rwlibs\assembly\PiHStrategy.cpp:215:                              Transform3D<> (RPY<> (0, 0, -dAngle).toRotation3D ()) *
+RobWork/RobWork/src\rwlibs\assembly\CircularPiHControlStrategy.cpp:113:                    .toRotation3D ();
+RobWork/RobWork/src\rwlibs\assembly\CircularPiHControlStrategy.cpp:118:                EAA<> (rotVec, 1 * Deg2Rad).toRotation3D () * response->femaleTmaleTarget.R ();
+RobWork/RobWork/src\rwlibs\assembly\CircularPiHControlStrategy.cpp:148:    const Rotation3D<> rotZ = EAA<> (z, theta).toRotation3D ();
+RobWork/RobWork/src\rwlibs\assembly\CircularPiHControlStrategy.cpp:153:    Vector3D<> cylDir       = normalize (EAA<> (y, -angle).toRotation3D () * x);
+RobWork/RobWork/src\rw\loaders\model3d\LoaderOBJ.cpp:713:    Rotation3D<> rotNtoZ = eaa.toRotation3D ();
+RobWork/RobWork/src\rw\loaders\model3d\LoaderAC3D.cpp:210:                    Rotation3D<> rotNtoZ = eaa.toRotation3D ();
+RobWork/RobWork/src\rw\loaders\model3d\Loader3DS.cpp:104:            rpyZ.toRotation3D () * rpyY.toRotation3D () * rpyX.toRotation3D ();
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:78:        Rotation3D<> (EAA<> (normalize (wristPos), Vector3D<> (1, 0, 0)).toRotation3D ());
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:83:    _rotAlignDH4 = EAA<> (normalize (wristOffset), Vector3D<> (1, 0, 0)).toRotation3D ();
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverKukaIIWA.cpp:268:    return EAA<> (v, Random::ran (0, 2 * Pi)).toRotation3D () * perp;
+RobWork/RobWork/src\rw\loaders\rwxml\XMLRWLoader.cpp:850:        t3d.R ()            = RPY<> (0, 0, Pi / 2).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\rwxml\XMLParserUtil.hpp:539:            rw::math::Rotation3D<> rot = (*_rpy).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:392:        Rotation3D<> rot = quat.toRotation3D ();
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:460:        return readRPY (element, false).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:462:        return readEAA (element, false).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\dom\DOMBasisTypes.cpp:464:        return readQuaternion (element, false).toRotation3D ();
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:189:        return readRPY (tree.get_child ("RPY")).toRotation3D ();
+RobWork/RobWork/src\rwlibs\algorithms\PointPairsRegistration.cpp:86:    Rotation3D<> rot (qua.toRotation3D ());
+RobWork/RobWork/src\rwlibs\algorithms\StablePose0DModel.cpp:65:    _rot = model.toRotation3D ();
+RobWork/RobWork/src\rw\graspplanning\GWSMeasure3D.cpp:62:    Rotation3D<> rot (eaa.toRotation3D ());
+RobWork/RobWork/src\rw\models\PrismaticSphericalJoint.cpp:61:    const Rotation3D<> RzInv = EAA<> (axisz, -q2).toRotation3D ();
+RobWork/RobWork/src\rw\models\PrismaticSphericalJoint.cpp:62:    const Rotation3D<> RyInv = EAA<> (RzInv * axisy, -q1).toRotation3D ();
+RobWork/RobWork/src\rw\models\PrismaticUniversalJoint.cpp:59:    const Rotation3D<> RyInv = EAA<> (axisy, -q1).toRotation3D ();
+RobWork/RobWork/src\rw\models\SE3Device.cpp:38:    Transform3D<> t3d (Vector3D<> (q[0], q[1], q[2]), EAA<> (q[3], q[4], q[5]).toRotation3D ());
+RobWork/RobWork/src\rw\models\SphericalJoint.cpp:58:    const Rotation3D<> RzInv = EAA<> (axisz, -q2).toRotation3D ();
+RobWork/RobWork/src\rw\models\SphericalJoint.cpp:59:    const Rotation3D<> RyInv = EAA<> (RzInv * axisy, -q1).toRotation3D ();
+RobWork/RobWork/src\rw\models\UniversalJoint.cpp:97:    const Rotation3D<> RyInv = EAA<> (axisy, -q1).toRotation3D ();
