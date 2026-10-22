@@ -1,0 +1,4 @@
+<testsuite name="reuse-governance" tests="2" failures="0" skipped="0">
+  <testcase name="independent-closure-no-bom-control" />
+  <testcase name="independent-closure-bom-same-accepted-bytes" />
+</testsuite>
