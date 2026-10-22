@@ -1,0 +1,27 @@
+# REUSE-T01：宿主预览实际接线与清理
+
+本批补COV-15并继续审查隐藏图形工具：HostView3DPreviewBackend、HostView3DGateway、QtTextBillboard的列明定义。其余HOST-PRESENT/HOST-COMPILE及UiPlugin大量装配回调不因本批自动结项。函数矩阵/精确区段为唯一登记，产品与上游未改，全部仍pending。
+
+## 真实场景与网关
+
+draw按studio当前WorkCell优先，空时ensureSessionPreviewAnchor复用scene已有WorkCell；两者皆空才建仅WORLD的会话场景锚并scene.setWorkCell、viewer.setWorldNode。这个空锚不发布为studio工程模型，不参与FK/证据身份，不能视为新计算模型许可；现有HOST-RENDER只给精确文件/操作，不能因例外ID自动放行所有construct。clear对当前scene按m_nodeNames调用removeDrawable后清列表，不还原/销毁场景锚。上游removeDrawable(name)未找到节点实际返回true，产品“false”注释不准确；本批仅核实现，不改注释。
+
+实际addRender/addFrameAxis消费工位世界点或已解析帧、二进制角序盒框、采样格与业务颜色；Frame非owning Ptr由WorkCell/场景保活，UI线程调用。上游addRender返回DrawableNode，但后端只存名，不查返回值；后续可用已有Drawable transform/返回句柄，不建第二SceneGraph。draw在前置成功后先clear再逐项add；中途异常没有回滚逻辑，不能由“原子替换”注释证明失败保旧。clear换场景后可能只移除新场景同名节点，旧场景由宿主清除顺序收口须实测；不把静态疑点报为已复现缺陷。
+
+Gateway拾取经nameMap反解/分发/SelectionService，不自造前缀。applyPresentation的void alias依赖供方类型契约，先object.apply成功才release旧对象；其remove是否真正摘场景由具体对象语义决定，不能泛化为清空WorkCell。applyPreview仅后端draw返回true才更新缓存；HostView3DGatewayGuiTest使用假draw，失败保旧断言不证明真实渲染中途异常安全。onSceneCleared显式release呈现/remove预览；Widget/GL真实生命周期测试仍待T05。
+
+currentTcpPose实际直接消费Kinematics::worldTframe，Frame/State现取、返回世界系值，不作为runtime工程真值。UiPlugin::assembleView3DGateway约4746起真实绑定pickFrame、studio当前State与resolveTcpFrame；后者findDevice<JointDevice>(deviceName)->getEnd，不是查runtime工具TCP映射。不能仅因接口名含TCP就声称工具偏移/多TCP已适配；工具切换、同模型State、世界/基座系与生命周期仍需验证。新旧矩阵仅登记实际语义，不修产品。
+
+## 候选复用与最小边界
+
+StationMarkerRender手画三轴，原“addFrameAxis只在帧原点所以必须自绘”的排除不充分：上游RenderFrame可直接draw、DrawableNode有setTransform，组合可表达世界偏移点，无须新Frame/WorkCell。RenderFrame不同DrawType使用GLU实体/线型，轴形/palette/alpha与GL状态须验；候选存在不等于必须改变现有视觉或复制其源码。RegionOutlineRender的12边及格线可候选RenderLines，但其实现顶点double转float、用配置_alpha而非回调alpha；逐点GL_POINTS/分色/选中圈不可整体当线集迁移。优先最小组合，禁止图形后端平台。
+
+PreviewColorScope已有栈上GL属性保存/恢复。QtTextBillboard已复用QFont/QImage/QPainter/QString、上游Transform3D inverse/Rotation和Frame::wTf；不是自写字体/运动学。RenderText确实有GLUT bitmap字符串与字体路径，中文不宜直接替换；不能只看名字便重用导致CJK退化，也不能照搬其billboard代码。应按既有图形抽象保留Qt栅格化所需薄层，验证几何/GL/缓存边界。
+
+QtTextBillboard静态map按context指针变化清缓存，纹理不主动删除；新文本集合增长、context地址复用、上传失败、pixel unpack状态与GL进入状态恢复尚未证。drawBillboard显式enable/disable blend/texture，不恢复所有进入状态；PreviewColorScope包住工位绘制，但独立QtTextBillboardRender路径不能自动继承它。以上是静态待核，不声称已复现GUI故障。
+
+## 文件、目标与权限不能混同
+
+ARCH §3.6.2现表列生产target为sdurws_ird_ui_plugin；真实ui/CMakeLists.txt还把这三个TU编入sdurws_ird_studio，Gateway另编入sdurws_ird_ui_gui_test（if TARGET sdurws）。矩阵据实际列target，不凭同源传播grant。正式studio与GUI测试须精确文件/target/操作核权，必要时同步权威登记；本批不擅自扩表或填grant。QtTextBillboard不在四项HOST文件族却借Frame调用wTf，更须核精确权限与最小承载，不自动继承HOST-RENDER/HOST-PRESENT。UiPlugin装配直接持场景/帧也不因其转发四个例外而豁免。两类业务文件的三形态、worker零宿主指针/Widgets与L2零Qt边界均保持。
+
+上游WorkCellSceneTest测试场景设置/移除，但不能证明产品真实装配、GL状态/中文/切场景；本批未跑它。catalog只扩真实公共API、实现、原target与上游测试资源，review仍candidate。后续T05优先复用现有宿主测试与Windows VS x64/windows平台、逐绝对exe运行，补真实生产入口消费、异常与断开变红。当前C++/GUI/GL/性能NOT RUN，不授全UI或T01 PASS，不推进T02。

@@ -1546,7 +1546,10 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch12-r2-20261023/task.exit.txt",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch12-r2-20261023/task.log",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-task.log",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-docs.log"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-definitions.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
