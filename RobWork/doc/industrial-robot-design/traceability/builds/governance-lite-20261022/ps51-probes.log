@@ -1,0 +1,57 @@
+Case: deep-rejects-invalid-index
+powershell.exe : warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will
+ be replaced by CRLF the next time Git touches it
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-6933e2086101447f9d97ae48921ac98a\RobWork\scripts\industrialrobot\validat
+e-docs.ps1 : evidence-index.json is not valid JSON: Invalid object passed in, ':' or '}' expected. (15): { invalid-inde
+x
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+
+
+Case: default-ignores-optional-index
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+powershell.exe : warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md', LF will
+ be replaced by CRLF the next time Git touches it
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-docs: PASS (20 units, 12 trace entries, 377 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)
+
+Case: empty-title
+  [FAIL] message[0]
+         - 标题前缀后为空: [docs]
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: free-body
+  [PASS] message[0]
+commit-lint: PASS（1 个提交全部合规）
+
+Case: generic-title
+  [FAIL] message[0]
+         - 标题无信息量（禁用空话）: [docs] 更新文件
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: no-prefix
+  [FAIL] message[0]
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: 精简普通任务入口
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）
+
+Case: short-doc
+  [PASS] message[0]
+commit-lint: PASS（1 个提交全部合规）
+
+Case: unknown-prefix
+  [FAIL] message[0]
+         - 标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: [unknown] 精简入口
+commit-lint: FAIL —— 1/1 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）

@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · trajectory 单元详细设计（阶段 C）
 
-> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
 
 
 > 2026-10-06 新建（WP-16-T01 承接）。本文是 trajectory 单元的唯一详细设计：依据 REQUIREMENTS TRJ-01～08 与 ARCHITECTURE §3.1/§4/§7.2/§7.5/§7.6 的分配，把输入快照与身份、轨迹数据模型、PTP、笛卡尔直线段与 IK 连续性、路径连接与连续性、RobWork 规划器与 policy 交接、平滑与 TRJ-04 复检协议、时间参数化与节拍、轨迹质量与 evidence 素材、execution/evidence/project/diagnostics/ui 协作、公共接口、插件界面边界、验证与故障注入矩阵、任务拆分与追踪矩阵写到可直接实现的深度。**本文只做详细设计：不实现产品源码、不创建 CMakeLists/插件/worker/测试文件、不修改需求/架构/其他单元卡、不恢复或复制 old/ 历史实现；不自行宣布 Accepted，不把本文自审写成实现测试或正式验收通过。**

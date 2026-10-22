@@ -1,0 +1,134 @@
+Case: 01-clean
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+
+Case: 02-fixed-baseline
+REUSE-BASELINE : fixed baseline/schema mismatch
+
+Case: 03-all-units
+REUSE-UNITS : all 20 units required
+
+Case: 04-missing-source
+REUSE-MISSING : RobWork/RobWork/src/rw/missing.hpp
+
+Case: 05-stale-source
+REUSE-UPSTREAM-HASH : RobWork/RobWork/src/rw/models/Device.hpp
+
+Case: 06-missing-symbol
+REUSE-UPSTREAM-SYMBOL : RobWork/RobWork/src/rw/models/Device.hpp: NoSuchSymbol123
+
+Case: 07-inventory-omission
+REUSE-INVENTORY : coverage 1400/1401
+
+Case: 08-forged-blob
+REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 09-inventory-duplicate
+REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 10-inventory-unit
+REUSE-INVENTORY : classification/unit/task: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 11-new-source
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cpp : 82f1518a4af50c7fe93f885f2f3718d31a2d4c56d6edff010d919a743bcb34cd
+
+Case: 12-stale-change-hash
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : b20e5033d853b4688afc9a51bbf05f3a77511d4e6a40402506904eed32eac421
+
+Case: 13-core-even-business
+REUSE-DUPLICATE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Duplicate.cpp
+
+Case: 14-cpp-not-governance
+REUSE-MODE : governance cannot cover algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/WrongMode.cpp
+
+Case: 15-missing-approval
+REUSE-PATH :
+
+Case: 16-unknown-capability
+REUSE-CAPABILITY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : NONE
+
+Case: 17-path-traversal
+REUSE-PATH : ../outside.cpp
+
+Case: 18-missing-task-proof
+REUSE-TASK : RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json
+
+Case: 19-task-scope
+REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 20-forbidden-scope
+REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 21-stage-not-approved
+REUSE-STAGE : REUSE-T01: no frozen governance acceptance
+
+Case: 22-final-debt-rejected
+REUSE-MIGRATION : debt=16 unresolved=1399; final semantic closure required
+
+Case: 23-governance-not-algorithm-approval
+REUSE-GOV-SCOPE : governance authorization cannot cover product algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Business.cpp
+
+Case: 24-upstream-readonly
+REUSE-UPSTREAM-READONLY : RobWork/RobWork/src/rw/Undeclared.cpp
+
+Case: 25-missing-record-file
+REUSE-MISSING : RobWork/doc/industrial-robot-design/tasks/Absent.json
+
+Case: 26-deletion-undeclared
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : deleted
+
+Case: 27-forged-debt-closure
+REUSE-INVENTORY : baseline classification is immutable: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt
+
+Case: 28-arbitrary-task-ready
+REUSE-TASK : OTHER-T99: reuse contract required
+
+Case: 29-planned-not-executable
+REUSE-TASK-STATE : REUSE-T01: execution needs ready/done contract
+
+Case: 30-forged-build-target
+REUSE-UPSTREAM-TARGET : nonexistent: build registration missing/stale
+
+Case: 31-frozen-head
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+
+Case: 32-frozen-head-ignores-dirty-tree
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+
+Case: 33-frozen-head-repeatable
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+
+Case: suffix-c
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.c : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-cu
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cu : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-html
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.html : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-inc
+REUSE-UNDECLARED : new product file type requires governance registration: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.inc
+
+Case: suffix-inl
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.inl : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-ipp
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ipp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-mjs
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.mjs : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-opaque
+REUSE-UNDECLARED : new product file type requires governance registration: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.opaque
+
+Case: suffix-ps1
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ps1 : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-py
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.py : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-tpp
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.tpp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570
+
+Case: suffix-ts
+REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ts : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570

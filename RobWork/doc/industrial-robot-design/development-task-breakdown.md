@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · 实现任务拆分（development-task-breakdown）
 
-> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
 
 
 | 字段 | 值 |
@@ -9,7 +9,7 @@
 | 文档版本 | v0.96（2026-10-18，F-925 消账：§5.1 脚本清单增 run-flake-probe（重复运行＋后台负载＋失败用例点名）；rule-enforcement v1.4 登记为观测工具；UI ui_test 在 4 负载进程下 5/5 全绿，失败捕获路径经合成 XML 自检）。前一版本 v0.95 保留如下。 |
 | 文档版本 | v0.95（2026-10-18，F-934 消账：§5.1 commit-lint 行补 CI 挂载——GitHub workflow 增 fetch-depth 0＋新增提交范围步骤，GitLab 增 GIT_DEPTH 0＋同款步骤；YAML 语法与命令本地验证，云端首跑待观察）。前一版本 v0.94 保留如下。 |
 | 文档版本 | v0.94（2026-10-18，kinematics 清理批：§2.16 T19 行符号归属订正为 KinPanelRotation::rotationFromRpySi、inputs 列补 KinPanelRotation、kGimbalEpsilon 单一来源；F-932/F-933 消账；kinematics.md v0.33 同批）。前一版本 v0.93 保留如下。 |
-| 文档版本 | v0.93（2026-10-18，commit-lint 止增批：§5.1 脚本清单增 commit-lint〔前缀白名单＋标题非空话＋四段正文；-Range 只查新增提交，历史 F-012 豁免〕；AGENTS §6.3 同步自检与 passed/skipped 计数口径〔F-926 消账〕；F-012 整族销案〔历史不回写〕）。前一版本 v0.92 保留如下。 |
+| 文档版本 | v0.93（2026-10-18，commit-lint 止增批：§5.1 脚本清单增 commit-lint〔前缀白名单＋标题非空话（2026-10-22 取消固定四段正文）；-Range 只查新增提交，历史 F-012 豁免〕；AGENTS §6.3 同步自检与 passed/skipped 计数口径〔F-926 消账〕；F-012 整族销案〔历史不回写〕）。前一版本 v0.92 保留如下。 |
 | 文档版本 | v0.92（2026-10-18，WP-15-T19 合入收尾：wp15-t19〔87fec2c3..b9601d97b8ba，独立验收 attempt 1 PASS——0 阻断／2 建议 F-932/F-933，记录 traceability/acceptance/wp-15-t19-20261018.md @ acc/wp-15-t19/1 775cc37e〕按 PIPE §4.7 先合记录（10917d0c）后合代码（04ea1704）--no-ff 并入 redesign-main〔87fec2c3..04ea1704，零冲突〕；契约 WP-15-T19 翻 done；evidence-index 再生成；验收段补齐 GUI 用例运行（集成/冒烟各 20/20）。前一版本 v0.91 保留如下。 |
 | 文档版本 | v0.91（2026-10-18，WP-15-T19 按所有者裁决路线 A 实施：§2.16 T19 行更新为「插件 Eigen 头文件轴角组合＋集成等价钉」；契约 status ready（blocked 解除）；kinematics.md v0.32 §11 行同步）。前一版本 v0.90 保留如下。 |
 | 文档版本 | v0.91（2026-10-20，WP-13-T25 立卡〔旁支并行批〕：§2.14 增 WP-13-T25 行——建模审计 20261019-601ffa0e 中 F06/F01/F07/F14 四项的并行修复（独立 worktree C:/zcode-wt/wp13-t25 自基线 f873984b，与主任务 WP-13-T24 并行不冲突：主任务保留 F16 及 F08/F09/F10/F11/F12）；契约 tasks/foundation/WP-13-T25.json 同批（ready）；F06 已实现验证——§2.14 行内登记；modeling.md v0.55 同批）。前一版本 v0.90 保留如下。 |
@@ -898,26 +898,25 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 | Qt | 仅 L3 及以上按层规则允许（ui 界面目标 Widgets 唯一例外，§4.5）；L2 计算内核与业务计算库零 Qt（R-3） |
 | 验证口径（F-517 S2/S3＋F-518 防复发，UI-T60 随批登记） | ①集成模式验证口径＝**受影响目标冷构建**（fresh worktree 全框架字面构建含框架侧 RWSimulatorPlugin 等宿主外插件失败——与送验 SHA 无关，不入验收面；受影响目标集由契约触达面决定）；②**宿主接线批次必建 `sdurws_ird_ui_plugin`**（该目标不在受影响测试目标集内——F-518 教训：UI-T56 宿主直调模块面但漏登装配门面转发器，断链潜伏两轮验收；后续宿主接线新增模块方法时须同步补门面转发并构建本目标验证）；③`ird_gates` 输出经 MSBuild 存在消息粘连与对称双回显——双侧比对按**引擎自报汇总计数**（如'命中 101 项'）或粘连感知提取，勿按物理行数；归一化多重集比对以引擎逐项输出为准 |
 | 合并后复验与排除面口径（F-622/F-623，2026-10-10） | ①fresh 树全框架字面构建中框架侧宿主外插件（RWSimulatorPlugin/bt_plugin 等）的编译失败属「验证口径」行排除面——不阻断验收，但受影响或新增的 `sdurws_ird_*` 目标须以 `cmake --build <dir> --config Release --target <目标>` 显式构建验证（F-622）；②任何合并（含流水线竞态并入）后的复验前必须**显式重配**（`cmake -S <src> -B <build>` 全参数重跑）——VS 生成器增量构建对合并新增的测试目标会静默缺位于陈旧 solution（F-623 实测：ZERO_CHECK 重生成 vcxproj 而陈旧 .sln 不含之，`cmake --build` 静默跳过、验证面无声缩水） |
-| 回归留痕全集口径（F-513①＋F-511/F-512，UI-T62 治理清扫登记） | 受影响套件 gtest XML/log **全量落盘**（--gtest_output 用绝对路径——F-508 教训）＋ird_gates 双侧 hits 归一化文件＋gate-all.log——缺任一为留痕不全；未触碰套件的回归结论明文**以验收复现为准**（不虚构『会话执行记录』指代） |
+| 回归留痕口径（2026-10-22） | 保存受影响验证的原始日志、gtest XML/per-exe JSON 与命令结果；不要求为小改生成 gate-all.log、重复归一化摘要或重建全库索引。未执行项如实列出 |
 | 契约模板口径（F-503/F-504，UI-T62 治理清扫澄清——UI-T53 已合入不追改） | 契约 allowedFiles 须含**契约自身路径**（tasks/foundation/<id>.json——立项提交触及自身）＋**附带修复文件逐个列出**（跨单元顺手修复不入泛化模式；UI-T50 先例同款） |
 | 语言/工具链 | MSVC 2022 x64（现有构建树）；门禁脚本用 CMake 脚本模式（`cmake -P`）＋git，零 Python |
-| 治理脚本口径（v0.9） | 调用方式 `pwsh -File`（pwsh 7.6.5 已装）或 `powershell -File`（5.1 系统自带）均可——脚本对仓库根做三段自检解析（显式 -RepoRoot > $PSScriptRoot > MyInvocation），与调用方式无关（findings F-001 修复口径）；脚本清单：validate-docs / validate-task / verify-task（含 -DryRun）/ validate-state（流水线状态，PIPE §0.2）/ pipeline-lock（流水线 tick 原子锁，PIPE §0.1，v0.10）/ verify-task-scope（任务改动范围机器预检：base..head 逐文件 vs 契约 allowedFiles/forbiddenFiles，ACC §4.1 机器面，2026-10-18 落位——F-928）/ commit-lint（提交信息门禁：前缀白名单＋标题非空话＋四段正文；`-Range` 只查新增提交，历史存量按 F-012 豁免，2026-10-18 落位——F-934；CI 双模板已挂载，GitHub fetch-depth 0＋GitLab GIT_DEPTH 0）/ run-flake-probe（偶发失败探针：测试 exe 重复运行＋可选后台 CPU 负载，逐次落盘 XML/stdout/stderr 并在汇总点名失败用例；2026-10-18 落位——F-925）。另：validate-docs 自 2026-10-18 起内置两项台账门禁——traceability/ 未跟踪证据即失败（F-929）、findings 状态/fixedAt 一致性（F-930） |
+| 治理脚本口径（v0.9） | 调用方式 `pwsh -File`（pwsh 7.6.5 已装）或 `powershell -File`（5.1 系统自带）均可——脚本对仓库根做三段自检解析（显式 -RepoRoot > $PSScriptRoot > MyInvocation），与调用方式无关（findings F-001 修复口径）；脚本清单：validate-docs / validate-task / verify-task（含 -DryRun）/ validate-state（流水线状态，PIPE §0.2）/ pipeline-lock（流水线 tick 原子锁，PIPE §0.1，v0.10）/ verify-task-scope（任务改动范围机器预检：base..head 逐文件 vs 契约 allowedFiles/forbiddenFiles，ACC §4.1 机器面，2026-10-18 落位——F-928）/ commit-lint（提交信息门禁：前缀白名单＋标题非空话（2026-10-22 取消固定四段正文）；`-Range` 只查新增提交，历史存量按 F-012 豁免，2026-10-18 落位——F-934；CI 双模板已挂载，GitHub fetch-depth 0＋GitLab GIT_DEPTH 0）/ run-flake-probe（偶发失败探针：测试 exe 重复运行＋可选后台 CPU 负载，逐次落盘 XML/stdout/stderr 并在汇总点名失败用例；2026-10-18 落位——F-925）。另：validate-docs 保留 findings 状态/fixedAt 一致性；证据索引与未跟踪证据全库检查自 2026-10-22 改为显式 -DeepEvidence 审计 |
 | 开发期宿主验证通道（v0.17，O-38） | ui 宿主插件 `sdurws_ird_ui_plugin` 开发期经框架 RobWorkStudio `Plugins→Load plugin` 动态加载做界面级操作验证——动态加载**仅限开发期**，产品交付路径零新增动态加载入口（SA-01 静态白名单不变，正式装配归 WP-24-T03）；插件目标属 ird_gates plugin 分类面（Qt 链接合法），其 Q_OBJECT/插件元数据所需 AUTOMOC 仅该目标开启（ui 库本体与既有目标维持关闭） |
 | 插件 GUI 手动验证通道（v0.20，owner 指示 2026-09-26） | **每个 `_plugin` 交付任务完成时，必须可经 VS 集成编译（`cmake --build build --config Release`）后启动 GUI 人工点验界面功能**。默认形态＝单元自持开发验证 harness `sdurws_ird_<unit>_app`（`_app` 后缀＝ird_gates 分类面 Qt 合法形态；先例 ui `sdurws_ird_ui_app`〔UI-T15〕、modeling `sdurws_ird_modeling_app`〔WP-13-T15 增量〕）——装配任务（WP-24-T03）前的过渡通道，真实域路径＋最小注入（编辑目标提供器/命令提交回显），不虚构提交语义；harness 源码置于 `app/` 子目录（产品扫描域零触碰），不改变产品交付路径与装配契约。验证步骤与截图留痕入 `traceability/builds/<task>/`。WP-24-T03 落位后，面板在真实宿主内的手动验证按同一 DoD 条目执行。宿主遍历脚本（对装配后宿主做自动化"基本流程不崩溃＋最终效果可见"断言遍历，如 requirements-tour/modeling-tour 形态）为推荐的批量留痕载体（v0.97，DOC-T16）——脚本化不替代人工点验与 §5.2 DoD 第 5~7 条 |
 | 产品交付路径（v0.26，WP-24-T09 处置登记） | **产品交付路径唯一＝`sdurws_ird_studio`（宿主融合形态装配路径，WP-24-T08 落位）＋`sdurws_ird_execution_worker`（计算 worker）**，交付形态＝staging 安装树（ARCH §5.4 部署结构 bin/plugins/share；安装规则落点 industrialrobot/ui/CMakeLists.txt——全产品唯一 install 段）。开发验证通道**保留但移出产品交付路径**（D13 二选一的保留支，B1-SPEC §5.4 条件④）：`sdurws_ird_ui_app`／各域 `_app` harness 与 `sdurws_ird_ui_plugin` 动态加载通道不入安装规则——`_plugin` 动态加载产物（MODULE .dll）物理上不在安装树中；`_app` harness 的 `--auto` 冒烟序列（WP-13-T20/WP-14-T10/WP-15-T18 验收口径）与 `ird_modeling_nav_deprecated_marker`／`requirementsNavDeprecationLabel`／`kinematicsNavDeprecationLabel` 三个域面板 deprecated 自持导航标记**随开发验证通道一并保留**（标记落点在建模/需求/运动学三域 plugin/ 私有面，删除须扩 forbiddenFiles 且将破坏上述 `--auto` 冒烟断言——acceptance 4"顺手删除仍被开发验证依赖的载体而不留登记＝验收阻断项"的反向适用；三域树面迁移已完成，标记仅存在于域面板自持区域，产品宿主装配面不呈现）。逐项处置与依据登记＝traceability/builds/wp24-t09/retirement-checklist.md |
 | fresh 树运行时前置（2026-10-04，F-475/F-007② 登记闭环） | 全新克隆/worktree 构建后运行测试 exe／GUI 前的手工补齐清单（主树为存量增量产物掩盖，fresh 树必踩）：①框架 DLL 仅 `sdurws_ird_studio` 目标 POST_BUILD 复制——fresh 树跑各 `_test`/`_gui_test` 前先构建 `sdurws_ird_studio`（或手工复制框架 DLL 至构建树 bin 目录）；②vcpkg DLL 前置＝`vcpkg/installed/x64-windows/bin`（gtest/Qt 运行时经 toolchain 即位，直跑 exe 需 PATH）；③python313.dll 经系统 Miniconda PATH 解析（ui_test 依赖链）；④`RobWorkStudio.ini.template.static` 被 .gitignore `[Bb]in/` 规则吞没不入库——该文件必须位于**源码树侧** `RobWork/RobWorkStudio/bin/`（`configure_file` 输入＝`${RWS_ROOT}/bin/RobWorkStudio.ini.template.static`，`RWS_ROOT` 即 RobWorkStudio 源码树；fresh worktree 为 `<worktree>/RobWork/RobWorkStudio/bin/`），从既有检出复制；**构建树侧 `build/RobWorkStudio/bin/` 不构成有效前置**（F-927 勘误 2026-10-18——F-907 原『复制至构建树源码侧』表述作废；缺该文件时配置卡 `RobWorkStudio/src/CMakeLists.txt:58`；AGENTS §4.1 同步订正）；⑤集成模式配置命令必须带 vcpkg toolchain 参数（F-907——fresh 树缺参时 FindBoost 失败 missing Boost_INCLUDE_DIR/filesystem/system/program_options/date_time；存量 build/ 缓存已带参故日常构建不踩；AGENTS §4.1 命令行已补参）。工程化选项（测试目标 POST_BUILD 统一复制面／.gitignore 白名单例外）留待构建约定所有者后续批决策，本行先行登记现状口径；⑥vcpkg toolchain 供给（2026-10-10，F-628 落地）：worktree 的 vcpkg 供给**优先用 gate-all `-Toolchain` 绝对路径参数直引主仓 vcpkg**（集成与冒烟两处配置共用一参，如 `-Toolchain D:/<主仓>/vcpkg/scripts/buildsystems/vcpkg.cmake`）——从根上消除对 junction 供给的依赖（2026-10-09/10-10 两次清理穿透事故的系统性对策）；junction 退为**缺省行为下的兼容手段**（不传参时脚本回落 `<仓库根>/vcpkg/...` 推定路径，需 junction 在位），且清理必须先核 LinkType 等于 Junction 再删链接本身、严禁对 junction 路径做递归删除（与头部版本行 junction 清理纪律同口径） |
 | 流水线状态文件口径（2026-10-12 治理批） | `traceability/pipeline/state.json` 为早期 UI 流水线（PIPE）遗留状态文件，trajectory 阶梯流水线各批不入此文件——批次留痕以各批验收记录分支（traceability/acceptance/）与单元卡 §22 为准 |
 
-### 5.2 统一完成定义（DoD，§2 全部任务的默认验收基线）
+### 5.2 统一完成定义（DoD）
 
-1. **构建**：双模式配置构建零错误（纯文档任务免除）。
-2. **门禁**：`ird_gates` 对本次变更零命中（含新启用红线扩展）。
-3. **验证**：任务"验收标准"列全部用例通过并**留痕**（gtest XML＋`ird-test-report.json`＋构建日志）；**任何未执行测试不得标注通过**；失败如实登记失败状态与原因。
-4. **同步**：实现与任务卡（或本文任务行）零偏差，或偏差已按 §5.4 登记；待裁决项状态更新。
-5. **插件 GUI 验证**（v0.20 增补，owner 指示 2026-09-26；v0.97 强化——DOC-T16，2026-10-19；适用 `_plugin` 交付任务及一切触达插件面板交互的任务）：①人工点验——按 §5.1"插件 GUI 手动验证通道"行完成 harness（或装配后宿主）启动点验（集成模式构建零错误后可执行文件直接启动、面板可见、核心交互〔选中联动/编辑流/命令目录〕可操作），步骤与截图留痕入 `traceability/builds/<task>/`；②**生产路径测试固化**——点验过的关键交互链必须在同批次固化为 Widgets 级生产路径测试（驱动真实控件事件流：对话框回传值、字段提交路径、批次撤销记账等）进常驻回归；呈现模型投影测试与领域函数测试**不得替代**（依据＝需求模块全功能审计 A-01~A-12——缺陷全部位于"领域函数正确、生产接线断裂"层，投影级测试按构造覆盖不到）；③豁免收紧——环境受限无法执行时，必须在送验记录中如实登记原因并经**所有者确认**后方可豁免，实施者不得自行登记；未执行项逐条列出，不得以组件级测试绿色替代。
-6. **入口与布局冒烟**（v0.97 新增，DOC-T16）：任务触达的面板/对话框/向导，交付时须含入口存在性断言（菜单项/按钮/向导页可打开、域命令登记齐备）与默认窗口尺寸（1920×1080）下关键控件可见性断言；入口缺失或裁切即 FAIL——"能力在领域层可用"不构成替代（审计 A-07/A-12 教训）。
-7. **跨域消费链回归**（v0.97 新增，DOC-T16）：任务触碰跨域消费面（如需求→运动学消费、project 修订对象集完整性、快照组装输入面）时，对端消费断言随本任务交付并在双模式回归留痕，不得留待下游任务（wp14-t12 修复批 A-13~A-16 教训）。
+执行根 AGENTS.md §4 的影响验证矩阵，不再要求每次普通修正都双模式全量构建。
 
+1. 受影响目标构建、测试和架构/复用门禁真实通过；文档/治理脚本无需无关 C++ 构建。
+2. 当前 acceptance 均有真实证据；已有 XML/per-exe JSON 输出机制沿用，计数区分 passed/skipped/failed；未执行不能标通过。
+3. 只同步实际变化的需求/设计/契约；同一事实不在多份台账重复登记。
+4. GUI 交互变更须真实 Widgets 生产路径、入口/布局验证及必要人工点验；组件测试不能替代。环境豁免须所有者确认。
+5. 跨域消费面变化须含对端契约回归；构建、依赖、公共接口或核心算法变化增加独立冒烟及必要数值/性能验证。
 ### 5.3 全局禁止项（每个任务的默认红线）
 
 ① 不继承、不恢复 `old/` 历史实现（且 old/ 磁盘不存在，O-01）；② L2 计算内核与业务计算库零 Qt；③ 业务域目标互链（R-1）、跨单元私有头（R-2）、RobWork 名称前缀拼接/剥离（R-4，例外见 §4.5）、proximity 直链（R-5）；④ 不修改其他单元公共头与上游文档正文（增量修订除外）；⑤ 框架零源码修改，先登记后改动（SA-02）；⑥ testkit 不随产品分发（T-1）、testkit 仅依赖 core＋标准库（T-2）；⑦ 不新建 WP-25 外编号；需求语义不得被任务收窄或扩大（验收一律回指 REQUIREMENTS/AT）。
@@ -946,10 +945,11 @@ googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模�
 | 完成登记 | 任务完成状态随实现提交或紧随提交登记（本表 §2 状态或治理日志），不积压 |
 | 框架改动 | 先更新 `patches/PATCHES.md`＋出 patch 文件，后改动（SA-02 顺序）；门禁按登记核对 |
 
-### 5.7 会话上下文交接最小信息（AI 实现工作流）
+### 5.7 会话流程与最小交接
 
-一次实现会话的输入固定为：①本文该任务行（含 DoD/禁止项）；②其"输入"列指向的文档章节（任务卡行/上游条款）；③其前置任务的产出清单（公共头/目标/数据集）。**会话流程为三段式（v0.6，详见 acceptance-protocol.md）**：实施段——实施者单会话领取单份 ready 契约，在 `wp<nn>-t<kk>` 分支完成实现→双模式构建→`ird_gates`→用例执行留痕→文档同步→commit 并推送，发出验收请求，**不得自行合入 redesign-main**；验收段——独立上下文的验收者按 acceptance-protocol.md 对抗式核查（重跑构建与 verify、红线与注释规范、测试真实失败能力），产出 pass/fail＋证据写入 traceability/acceptance/；合入段——pass 后由所有者决策合入，分歧与语义拿不准按 §4 登记待裁决。任何一步失败停在原地登记，不带病前进；发现上游缺陷按 §5.4 登记，不私自裁决。所有持久状态落文档与代码，不依赖会话间记忆。
+根 AGENTS.md §1/§6 为执行入口：当前任务＋相关章节 → 修改 → 按影响验证 → 必要文档同步 → commit/push。普通修正不强制额外画像、设计/计划、契约独立编译、交接模板或全新上下文验收；高风险与复用迁移按 ACC 独立验收，合入由所有者决策。
 
+交接只给任务/分支/SHA、行为变化、真实验证/证据、未完成项和下一步；已有报告直接引用。自动编排继续使用 PIPE 状态机与锁，人工任务不维护流水线状态。2026-10-22 的本次修订取代旧版普遍三段式与重复验证要求，不改变需求或复用阶段门。
 ---
 
 ## 6. 自检清单核对结果（v0.2 交付时逐项核对）

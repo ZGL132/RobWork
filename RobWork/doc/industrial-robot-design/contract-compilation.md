@@ -1,33 +1,10 @@
-# 契约编译协议（contract-compilation）
+# 任务契约维护（CCP）
 
-> **GOV-T21 生效约束（2026-10-22）**：执行根 AGENTS.md §0.1 H1—H6；先读 `reuse/policy.md`、`reuse/migration.md`、`reuse/catalog.json` 与逐文件 `reuse/inventory.json`（路径相对设计根）。直接 API > 薄适配 > 最小上游扩展 > 新实现。后两项先提交缺口证据并取得所有者明确批准。旧“从零/自持内核/冒烟缺库所以重写”不构成重复实现许可；历史 done 不等于复用合规。新任务/PR 必须附逐文件复用证据和真实门禁结果；治理独立验收 pass 前不得进入适配/算法变更。
+2026-10-22 精简：普通修正/文档维护以用户请求为范围，不另编契约。已有任务或需排队的复杂任务维护既有 JSON schema；编制者可兼实施者，不强制另开编译评审会话、写编译台账或再做一次独立放行。高风险变更的独立验收按根 AGENTS.md §6.4，H1—H6 与迁移阶段门保持有效。
 
+## 1. 何时维护
 
-| 字段 | 值 |
-| --- | --- |
-| 文档版本 | v1.4（2026-10-18：§2 verify 门槛增补——含 `_test`/`_contract_test` 的任务必须显式登记测试目标构建行且位于 ctest 行之前；F-300 家族 23 条契约回填的模板规则来源。前一版 v1.3＝F-414 branch 句法裁定） |
-| 文档代号 | CCP |
-| 上游 | development-task-breakdown.md §2/§8（任务行登记与契约家族归属）、units/&lt;unit&gt;.md 任务拆分表（编译源）、acceptance-protocol.md §2（评审独立性）、automation-pipeline.md §0（阅读阶梯的前提） |
-| 适用范围 | `tasks/` 与 `tasks/foundation/` 下一切执行契约的 planned→ready 编译，及 ready 契约的后续修订 |
-| 留痕载体 | 编译评审结论追加登记 `traceability/contract-compile-log.md`（一行一契约；v1.1 建册并补录既有 10 份 ready/done 契约——含 branch/interUnit/knownPitfalls 逐份判定） |
-
-## 文档职责（本文负责／本文不负责／下游入口）
-
-> 2026-10-17 随 Agent-native 治理 Task 3 增补（加法修订，不改变既有章节语义与编号）。
-
-- **本文负责**：`tasks/` 下执行契约的 planned→ready 编译协议（角色与时机、质量标准、评审放行、branch/interUnit/knownPitfalls 判定）与 ready 契约后续修订规程。
-- **本文不负责**：任务行登记与契约家族归属（DTB §2/§8）；单元卡任务拆分表内容（units/*.md——编译源）；验收（ACC）；编排（PIPE）。
-- **下游入口**：`tasks/` 与 `tasks/foundation/`（契约本体）、`traceability/contract-compile-log.md`（编译留痕）、`validate-task.ps1`（字段完备性机器把关）、`context/reading-paths.md` §0（任务契约 schema 映射）。
-
-## 0. 为什么需要本协议
-
-自动化流水线（PIPE）的全部核心机制——阅读阶梯按 designRefs 锚点定向阅读、防偷懒按 acceptance 逐条自证、验收按逐条证据表裁决——都以**"契约是单元卡的忠实编译产物"**为前提。现状是 150 份契约中绝大多数为占位（planned，空 requirements、泛化 acceptance、无锚点 designRefs、占位 title），而 planned→ready 的编译环节此前没有协议：谁编译、质量标准、是否评审均无载体。契约质量是实现的精度上限，本协议补上该环节（PIPE v1.3 审核结论 P0-1）。
-
-## 1. 角色与时机
-
-- **编译者**＝治理会话（所有者委托）。独立性约束：编译者不得担任该契约的实施者；§3 第 6 步的评审者不得与编译者为同一会话。
-- **时机**：任务进入流水线 queue 之前必须已 ready（PIPE §3 守卫 4 的机器前提）；所有者下达"调整队列"口令前，应确认拟入队契约已按本协议编译放行。
-- **首个适用对象**＝DOC-T03（foundation 52 份 planned 契约逐份回填放行）；后续批次（project/execution/io/ui/reporting 等 72 份，以及 modeling/kinematics 等 14 单元编卡后的新契约）一律同规范。
+已有契约的验收语义、范围或验证发生实质变化时同步修改；普通实现细节只改对应权威文档，不机械同步多份状态。自动队列仍只领取满足前置的 ready 契约。
 
 ## 2. 编译产物质量标准（逐字段 ready 门槛）
 
@@ -46,40 +23,15 @@
 | `interUnit=true 时` | `knownPitfalls` 必填：与本任务接口/数据相关的已登记语义陷阱（单元卡 §10.2 类 P-xx、`traceability/foundation-contract-review.md` 的 CR-xx、DTB §4 的 O-xx），每条附一句处置约束或 blocked 触发条件。机器校验 ID 句法（validate-task ③）。**陷阱随契约走**——阅读阶梯禁止通读，实施者不该被指望自己翻三处登记册；interUnit=false 时可自愿登记（如 WP-01-T01 的 O-21/O-12） |
 | `note` | 编译决策、豁免依据、与卡行的既登记偏差 |
 
-## 3. 编译步骤（七步）
 
-1. **读源**：卡内该任务行（§9/§12 类任务拆分表）＋其"输入"列锚定章节＋"产出"列文件清单。
-2. **汇总陷阱**：从三处登记册（单元卡 §10.2、foundation-contract-review.md、DTB §4）筛出与本任务相关的条目——这一步的产物就是 `knownPitfalls` 与 blocked 触发条件。
-3. **起草**：按 §2 逐字段成文；acceptance 从卡行"完成条件"逐条展开并补测试映射。
-4. **自检**：§2 表逐字段核对＋四个禁止（空 requirements、泛化 acceptance、设计文档无锚点、占位 title）。
-5. **机器校验**：`validate-task.ps1` 三查全过＋`validate-docs.ps1` 通过。
-6. **独立评审**：另一会话对抗式核对"卡行↔契约"逐字段一致性与可验证性（独立性参照 ACC §2：全新上下文、只比产物、为不通过找证据）；结论追加登记 `traceability/contract-compile-log.md`；不通过→回到第 3 步。
-7. **放行**：status→ready；由所有者确认入队（state.json `queue` 或"调整队列"口令）。
+## 3. 操作
 
-### 3.1 B.1 批次编译放行附加规则
+读取相关任务行与设计章节 → 填写范围、前置、具体 acceptance 和 verify → 运行 validate-task.ps1 → 提交。verify 中含测试时先构建对应测试目标；不重复编写相同验证命令。复用迁移按 reuse/policy.md 保留逐文件证据与批准引用。
 
-DOC-T14 及其 11 份后续契约属于一个不可拆分的治理批次，但“不可拆分”只表示放行顺序和状态写入原子性，不表示实现必须一次完成。治理会话必须先运行 `validate-b1-batch.ps1`，再依次完成以下动作：
+## 4. 编卡
 
-1. 复核 DOC-T14 的设计链、12 份契约和 `b1-host-integration-batch.json`；任何阻断问题先把 DOC-T14 保持 `design-written`，不得放行下游。
-2. 在同一持锁状态写入中，将 DOC-T14 置 `done`，将 11 份实现契约按 manifest 顺序置 `ready`；若无法保证原子写入，则全部保持原状态并登记失败。
-3. queue 只接受 manifest 顺序；不得使用目录字母序、`foundation-tasks.json` 数组顺序或人工预测替代 manifest。
-4. `WP-24-T03-COMPLETE` 未满足时，WP-24-T08 保持 `ready` 但不可领取，或由治理会话保持其前置批次状态；不得将悬空 `dependsOn` 写入契约。门禁满足后重新运行机器校验并追加编译日志。
-5. 当前所有者禁止使用子智能体。独立评审由同一治理会话顺序扮演“评审者”角色完成时，评审记录必须明确独立性降级；若所有者恢复跨会话评审，须先修订 PIPE/CCP 后再放行。
+新增单元设计以需求/架构为依据，接口与验收写清即可；不增加固定章节数量或重复计划文档。
 
-## 4. 编卡任务（T01）的产物质量标准
+## 5. 冲突
 
-"编写单元任务卡"类任务（先例 DIAG-T01、UI-T01，后续 12 张卡同）的完成标准＝**卡通过同款评审**：跨卡一致性（contract-review 流程，先例 traceability/foundation-contract-review.md）、引用锚点真实存在、**任务行可按本协议编译**（每行具备输入/产出/依赖/验证方式/完成条件五要素）。卡不可编译＝编卡任务未完成——这是防止后期 14 张卡质量参差、契约编译集体返工的前置闸。
-
-## 5. 修订与缺陷处置
-
-- ready 契约的修订＝治理增量修订：同一提交内更新契约本体＋`contract-compile-log.md` 追加一行修订说明；**实施者不得私改契约**。
-- 实施/验收中发现契约缺陷（acceptance 不可验证、designRefs 锚点失真、范围缺失、陷阱漏登）→ 任务转 `blocked`＋登记 DTB §4 或 `traceability/findings.json`，修订契约并重新走 §3 第 5~7 步后方可继续——不得在代码中自行解释（DTB §8 既定纪律）。
-
-## 6. 变更记录
-
-| 版本 | 日期 | 说明 |
-| --- | --- | --- |
-| v1.0 | 2026-09-10 | 随流水线 v1.3 审核修复建立：编译角色与时机、逐字段 ready 门槛（含 interUnit/knownPitfalls"陷阱随契约走"）、七步编译与独立评审、编卡任务质量标准、契约缺陷处置路径 |
-| v1.1 | 2026-09-10 | 二轮审查修复（P1-4：门槛此前实际未生效）：①interUnit 由"建议 bool"收紧为 ready/done 必填 bool（validate-task 缺字段即失败——此前 139/139 份契约集体缺失等于守卫被绕空）；②新增 branch 必填字段（PIPE v1.4 结构化 queue 的唯一来源）；③traceability/contract-compile-log.md 建册，既有 10 份 ready/done 契约按补录批次登记（branch/interUnit/knownPitfalls 逐份判定留痕），后续编译不再有补录 |
-| v1.4 | 2026-10-18 | F-300 家族（23 条契约 verify 缺测试目标构建行）整族回填：§2 verify 门槛增补测试面完备性——含 `_test`/`_contract_test` 的任务必须显式登记构建行且先于 ctest 行；机器校验零变化（validate-task 不新增字段检查），属编译评审口径强化 |
-| v1.3 | 2026-09-27 | F-414 口径裁定（所有者 2026-09-27，DOC-T14 独立评审发现随附）：§2 branch 门槛措辞修订——`wp<nn>-t<kk>`（≙ 映射）与 `<单元/族前缀>-t<序号>` 两种小写句法**等价任选**，批内 manifest/queue/契约同名同值即可、跨批不强制统一；消除"单元任务必须 wp 式"的歧义读法，B.1 批次 11 份契约（ui-t19 等）据此免改名。机器校验零变化 |
+需求/架构语义冲突交所有者裁决；实现范围内的例行修订由执行者直接完成。已完成历史不改写为新的批准依据。

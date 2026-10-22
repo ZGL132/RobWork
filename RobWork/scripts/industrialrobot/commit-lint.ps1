@@ -1,36 +1,7 @@
-﻿# 提交信息门禁（commit-lint，2026-10-18 治理批）。
-#
-# 职责：把 AGENTS.md §6.3 的提交信息约定（前缀体系＋标题动词开头＋正文四段）
-# 从"行为自觉"升级为可执行检查。**只对新提交生效**——历史提交不可改写
-# （§6.3 红线），存量风格债由 findings F-012 整族销案，不回写历史。
-#
-# 背景（为什么现在做）：
-#   ACC §4.9 与 AGENTS §6.3 一直要求四段式正文与规范标题，但此前没有任何
-#   脚本会因此变红；F-012（DOC-T04 标题非动词开头）与 F-926（验证段计数
-#   "84/84"掩盖 1 项 skip）都是同一类"写的时候没人查"的漂移。本脚本提供
-#   `-Range`（CI 只查本次推送/PR 的新提交）与 `-Message`（自测/预检）两种
-#   入口，做到止增而不追改历史。
-#
-# 检查规则（任一失败即 exit 1）：
-#   ① 标题前缀 ∈ 白名单：[WP-nn-Tkk] / [DTB] / [docs] / [units] / [ARCH] /
-#      [governance] / [ACC] / [PIPE] / [CCP]（AGENTS §6.2）；合并提交豁免。
-#   ② 标题在去掉前缀后非空、不是无信息量文案（"修复 bug/优化代码/更新文件/
-#      update/fix"），长度 ≤ 80 字符（AGENTS "≤ 50 字左右"的机器上界）。
-#   ③ 正文包含四段标记：改动内容（What）/ 改动原因（Why）/ 验证（How）/
-#      影响面（含"影响面与兼容性"写法）。WIP 提交（标题或正文显式 WIP）豁免
-#      四段，但前缀与标题仍须合规——半成品允许，含糊不允许。
-#   ④ 验证段若出现 "N/N" 形式且同一段含"跳过/skipped"，不在此处做语义判分
-#      （无法稳定机器判定"是否掩盖"）；F-926 的口径要求由 AGENTS §6.3 文本
-#      承载，review 抽查。脚本只保证四段在、标题可追溯。
-#
-# 用法：
-#   pwsh -File commit-lint.ps1 [-Range <base>..<head>] [-RepoRoot <仓库根>]
-#   pwsh -File commit-lint.ps1 -Message "标题`n`n改动内容（What）：..."   # 自测/预检
-#   -Range 缺省＝origin/redesign-main..HEAD（本地提交相对主线的新增面）。
-#
-# 追溯：AGENTS §6.3；ACC §4.9；findings F-012（历史豁免）/F-926（计数口径）；
-# rule-enforcement.md §2 执法者清单；DTB §5.1 脚本清单。
-
+﻿# 提交信息门禁：检查新增提交的合法前缀、有信息量的标题及长度。
+# 根 AGENTS.md §6.3（2026-10-22 精简）：不再要求四段正文；验证结论仍须真实。
+# -Range 默认 origin/redesign-main..HEAD；-Message 用于预检；AllowWip 保留调用兼容性。
+# 历史提交不回写。中文 Git 输出统一 UTF-8，避免 Windows 编码误判。
 param(
   [string]$Range = "",
   [string]$RepoRoot = "",
@@ -61,7 +32,6 @@ $repoTop = (Resolve-Path $repoTop).Path
 # 不在脚本里私开）。合并提交（Merge ...）不是人工提交，整条检查豁免。
 $prefixRe = '^\[(WP-\d{2}-T\d{2}|DTB|docs|units|ARCH|governance|ACC|PIPE|CCP)\]'
 $genericRe = '^(修复\s*bug|优化代码|更新文件|修改文件|update|fix)[。.!！]?$'
-$sectionMarkers = @('改动内容（What）', '改动原因（Why）', '验证（How）', '影响面')
 
 function Test-CommitMessage([string]$Text, [string]$Id) {
   $errors = @()
@@ -81,13 +51,8 @@ function Test-CommitMessage([string]$Text, [string]$Id) {
   if ($afterPrefix -match $genericRe) { $errors += "标题无信息量（禁用空话）: $title" }
   if ($title.Length -gt 80) { $errors += "标题过长（>80 字符，AGENTS 要求 ≤50 字左右）: $($title.Length)" }
 
-  # WIP 提交：允许半成品，但必须显式声明（AGENTS §6.3：WIP 需标注"缺 xxx"）。
-  $isWip = ($AllowWip -or $title -match '\[WIP\]' -or $Text -match '(?m)^WIP[：:]')
-  if (-not $isWip) {
-    foreach ($m in $sectionMarkers) {
-      if ($Text -notmatch [regex]::Escape($m)) { $errors += "正文缺少段标记: $m" }
-    }
-  }
+  # 根 AGENTS §6.3：保留可追溯前缀与有信息量标题，取消四段正文形式检查。
+  # 原因/验证/影响由实际改动决定篇幅；AllowWip 参数保留兼容已有调用。
   return $errors
 }
 
