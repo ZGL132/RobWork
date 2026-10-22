@@ -26,6 +26,7 @@
 #include <sdurws/ird/core/Digest.hpp>  // ContentDigester——确定性临时句柄派生（SHA-256）
 #include <sdurws/ird/modeling/DiagCodes.hpp>  // kMdlTemplateDisabled/kMdlImportTemplateRange——码常量唯一书写点
 #include "DraftIdentity.hpp"                       // deriveDraftObjectId/makeSeedLink（UI-T47 提升——单元内共享头）
+#include "LocalNameValidation.hpp" // GF-A名称输入沿同一域规则，不由UI改写。
 #include "RpyMath.hpp"                             // rpymath::rpyToRotation——RPY 正解唯一实现（UI-T53 提升共享）
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>  // defaultMaterialDensity——材料密度默认表（单一权威；经 DraftIdentity.hpp 使用）
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // rotationFromCustomEaa——EAA→R 唯一权威换算点（I-MDL-7/P-RT-4）
@@ -742,6 +743,118 @@ std::optional<JointEditError> applyJointFieldEdit(ModelingWorkingSet& ws,
         editJointFieldImpl(ws.design, jointIndex, field, value);
     if (rejection.has_value()) { return rejection; }
     appendChangeRecord(ws, jointIndex, field);
+    return std::nullopt;
+}
+
+std::optional<JointFormEditError> applyJointFormEdit(
+    ModelingWorkingSet& ws, const JointEntry& expected, const JointEntry& proposed)
+{
+    // 第一步按OID而非旧下标定位，重排后仍是同一对象；失败只产值，绝不写ws。
+    using Code = JointFormEditErrorCode;
+    const auto fail = [](Code code, const char* key, std::string detail) {
+        return std::optional<JointFormEditError>{{code, key, std::move(detail), std::nullopt}};
+    };
+    auto it = std::find_if(ws.design.joints.begin(), ws.design.joints.end(),
+        [&](const JointEntry& joint) { return joint.objectId == expected.objectId; });
+    if (it == ws.design.joints.end()) { return fail(Code::TargetMissing, "target", "目标关节已不存在"); }
+    if (*it != expected) { return fail(Code::StaleBaseline, "target", "草稿基线已变化，请重载或重新确认输入"); }
+    if (proposed.objectId != expected.objectId) { return fail(Code::IdentityChanged, "target", "整表编辑不能更换关节身份"); }
+    if (proposed.dhDerived != expected.dhDerived) { return fail(Code::UnsupportedFieldChange, "dhDerived", "DH权威或派生缓存不能在此表单修改"); }
+    if (proposed == expected) { return std::nullopt; } // 无差异不产生空摘要/空历史。
+    if (!inputquality::isLegalLocalName(proposed.localName)) {
+        return fail(Code::InvalidLocalName, "local-name", "局部名称须非空且只含[A-Za-z0-9_.-]");
+    }
+    for (const auto& joint : ws.design.joints) {
+        if (joint.objectId != expected.objectId && joint.localName == proposed.localName) {
+            return fail(Code::DuplicateLocalName, "local-name", "与同设备关节名称重复");
+        }
+    }
+    for (const auto& link : ws.design.links) {
+        if (link.localName == proposed.localName) {
+            return fail(Code::DuplicateLocalName, "local-name", "与同设备连杆名称重复");
+        }
+    }
+    // 第二步只修改候选副本；最终类型先装配，避免旧类型/旧限位的提交顺序造成假冲突。
+    const std::size_t index = static_cast<std::size_t>(it - ws.design.joints.begin());
+    ModelingWorkingSet candidate = ws;
+    auto& target = candidate.design.joints[index];
+    const bool typeChanged = proposed.type != expected.type;
+    if(proposed.type!=JointType::Revolute&&proposed.type!=JointType::Continuous
+        &&proposed.type!=JointType::Prismatic&&proposed.type!=JointType::Fixed){
+        return fail(Code::UnsupportedFieldChange,"type","关节类型不在支持的四类中");
+    }
+    if (candidate.design.authority == AuthorityMode::StandardDH
+        && proposed.type != JointType::Revolute && proposed.type != JointType::Continuous) {
+        return fail(Code::UnsupportedFieldChange, "type", "StandardDH仅支持旋转关节，请先转换权威模式");
+    }
+    target.type = proposed.type;
+    target.localName = proposed.localName;
+    std::optional<JointFormEditError> error;
+    const auto apply = [&](JointEditField field, const JointEditValue& value, const char* key) {
+        if (error) { return; }
+        if (auto e = editJointFieldImpl(candidate.design, index, field, value)) {
+            error = JointFormEditError{Code::FieldRejected, key, e->detail, *e};
+        }
+    };
+    // 新提供值一律经原域内核校验并标UserProvided；字段清空仅允许类型变更造成的适用性变化。
+    const auto sourced = [&](const auto& oldValue, const auto& newValue, auto& destination,
+                             JointEditField field, const char* key, bool allowMissing,
+                             bool allowInapplicable) {
+        if (oldValue == newValue || error) { return; }
+        if (const auto value = newValue.tryValue()) { apply(field, JointEditValue{*value}, key); }
+        else if (typeChanged
+                 && ((allowMissing && newValue.state() == core::FieldState::NotProvided)
+                     || (allowInapplicable && newValue.state() == core::FieldState::NotApplicable))) {
+            destination = newValue;
+        } else { error = *fail(Code::InvalidFieldState, key, "不能清空已提供字段或伪造适用状态"); }
+    };
+    sourced(expected.axis, proposed.axis, target.axis, JointEditField::Axis, "axis-x", false, false);
+    // Origin的变体承载六分量，复用原点唯一正解；不在此复制旋转组合公式。
+    if (!error && proposed.origin != expected.origin) {
+        if (const auto pose = proposed.origin.tryValue()) {
+            if (authorityEditGuard(candidate.design.authority, AuthorityLockedField::Origin)) {
+                error = JointFormEditError{Code::FieldRejected, "origin-x", "StandardDH原点为派生只读",
+                    JointEditError{JointEditErrorCode::AuthorityLocked, "StandardDH原点为派生只读"}};
+            } else {
+                // 已有JointPose是域值，检查矩阵有限和正交后直接保留，避免Euler反解重构误差。
+                // 1e-12为双精度三角函数构造旋转的舍入容差（非建模精度阈值）；
+                // 同时要求行列式+1，拒绝正交但镜像的矩阵，不静默修复输入。
+                const auto& r = pose->r(); bool valid = true;
+                for (int row=0; row<3; ++row) {
+                    valid = valid && std::isfinite(pose->d()[row]);
+                    for (int col=0; col<3; ++col) { valid = valid && std::isfinite(r(row,col)); }
+                }
+                for (int a=0; a<3; ++a) for (int b=0; b<3; ++b) {
+                    double dot=0; for(int k=0;k<3;++k){dot+=r(k,a)*r(k,b);}
+                    valid=valid&&std::abs(dot-(a==b?1.0:0.0))<=1e-12;
+                }
+                const double det=r(0,0)*(r(1,1)*r(2,2)-r(1,2)*r(2,1))
+                    -r(0,1)*(r(1,0)*r(2,2)-r(1,2)*r(2,0))+r(0,2)*(r(1,0)*r(2,1)-r(1,1)*r(2,0));
+                if (!valid || std::abs(det-1.0)>1e-12) { error=*fail(Code::InvalidFieldState,"origin-x","原点位姿须为有限刚体变换"); }
+                else { target.origin=core::SourcedValue<JointPose>::provided(*pose,core::ValueProvenance::make(core::ProvenanceKind::UserProvided)); }
+            }
+        } else { error=*fail(Code::InvalidFieldState,"origin-x","原点不能由此清空"); }
+    }
+    if (proposed.zeroOffset != expected.zeroOffset) { apply(JointEditField::ZeroOffset, proposed.zeroOffset, "zero-offset"); }
+    const bool continuous=proposed.type==JointType::Continuous, fixed=proposed.type==JointType::Fixed;
+    sourced(expected.bounds,proposed.bounds,target.bounds,JointEditField::Bounds,"bounds-min",!continuous,continuous);
+    sourced(expected.workingRange,proposed.workingRange,target.workingRange,JointEditField::WorkingRange,"working-range-min",true,!continuous);
+    sourced(expected.maxVelocity,proposed.maxVelocity,target.maxVelocity,JointEditField::MaxVelocity,"max-velocity",!fixed,fixed);
+    sourced(expected.maxAcceleration,proposed.maxAcceleration,target.maxAcceleration,JointEditField::MaxAcceleration,"max-acceleration",!fixed,fixed);
+    if (error) { return error; }
+    if (typeChanged && ((continuous && target.bounds.state()!=core::FieldState::NotApplicable)
+        || (!continuous && target.workingRange.state()==core::FieldState::Provided)
+        || (fixed && (target.maxVelocity.state()!=core::FieldState::NotApplicable
+                      || target.maxAcceleration.state()!=core::FieldState::NotApplicable)))) {
+        return fail(Code::InvalidFieldState,"type","类型与限位/工作范围/速度适用状态冲突，请查看类型切换影响");
+    }
+    // 第三步只有全部通过才一次采纳；摘要和完整工作集也留在候选中，分配失败不会半写。
+    if (target == expected) { return std::nullopt; }
+    ModelingChangeRecord record;
+    record.subject="joints["+std::to_string(index)+"]";
+    record.summary="整表修改关节：名称、类型、轴向、原点、零位、范围及最大速度/最大加速度";
+    candidate.changes.push_back(std::move(record));
+    ws=std::move(candidate);
     return std::nullopt;
 }
 

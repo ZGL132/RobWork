@@ -323,6 +323,14 @@ struct ModelingPluginAssembly {
     ///        false＝未接线/非本域对象，不出诊断）。
     bool reportView3DPick(const sdurws::ird::core::ObjectId& oid);
 
+    /**
+     * @brief 项目关闭/切换前处置未确认表单输入；仅UI线程，非线程安全。
+     * @param continuation [in] 暂存确认/放弃后执行一次的后续动作；宿主负责生命周期守卫。
+     * @return 无暂存/未装配返回true（不执行continuation）；有暂存返回false并展现
+     *         非模态决议。非法输入无法确认；留在原页不执行后续动作。零项目写入。
+     */
+    bool guardPendingInputs(std::function<void()> continuation);
+
     ModelingPluginAssembly();
     ~ModelingPluginAssembly();
     ModelingPluginAssembly(ModelingPluginAssembly&&) noexcept;

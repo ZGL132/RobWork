@@ -274,6 +274,7 @@ bool ModelingUiModule::reportView3DPick(const core::ObjectId& oid)
 {
     m_guard.assertOnUiThread();  // §3.4——选中写入口只允许 UI 线程
     if (!m_adapter) { return false; }  // 未接线＝无上报通道（诚实 false）
+    if(!guardPendingInputs([this,oid]{reportView3DPick(oid);})){return true;} // 消费拾取，守卫前不改共享选择/高亮。
     return m_adapter->reportView3DPick(oid);
 }
 
@@ -730,6 +731,7 @@ void ModelingUiModule::recomputeReadiness()
 void ModelingUiModule::onSessionDetached()
 {
     m_guard.assertOnUiThread();
+    if(m_panel){m_panel->invalidateJointContext(true);}
     ++m_reviewSessionGeneration; // 模态对照窗口可能尚在；先作废其定位，再清项目对象。
     // 会话边界先切断保存通知，关闭后的空工作集不能成为下一项目的脏草稿。
     m_draftChanged = {};
@@ -806,6 +808,12 @@ void ModelingUiModule::onRevisionCommitted(const core::BranchId& branch,
 // 会话锚定与应用回执（T03b-2——apply 网关的模块半区）
 // =====================================================================
 
+bool ModelingUiModule::guardPendingInputs(std::function<void()> continuation)
+{
+    m_guard.assertOnUiThread();
+    return !m_panel||m_panel->guardJointLeave(std::move(continuation));
+}
+
 bool ModelingUiModule::hasPendingDraft() const
 {
     m_guard.assertOnUiThread();
@@ -836,6 +844,7 @@ void ModelingUiModule::bindSessionAnchor(const core::BranchId& branch,
         // 由宿主PreparationFailed收口。首次无锚种子仍沿下面原绑定路径。
         refreshCleanRevision(branch,base);return;
     }
+    if(changed&&m_panel){m_panel->invalidateJointContext(false);}
     m_session.branch = branch;
     m_session.baseRevision = base;
     if(changed){clearDraftHistory();} // 新分支/新基线不能沿用另一会话的回退点。
@@ -978,6 +987,9 @@ void ModelingUiModule::noteAppliedRevision(
     pushAppliedPreviewToPanel();  // 定格即推送（UI-T59 接线缺口修复——此前
                                   // 仅存会话未达面板，预览页恒空态）
     clearDraftHistory(); // 应用成功消费全部未应用编辑，本地撤销不得越过该边界。
+    // 首次发布会回填原先为空的根OID，重开也会更换修订锚；同一个关节OID
+    // 不能继续借用旧Submit闭包，否则下一次合法编辑会永久报目标过期。
+    if(m_panel){m_panel->invalidateJointContext(false);}
     recomputeReadiness();  // 应用后基线前移——就绪状态同步刷新
 }
 
@@ -1091,14 +1103,14 @@ ModelingWorkingSet ModelingUiModule::readRevisionWorkingSet(
 void ModelingUiModule::refreshCleanRevision(const core::BranchId& branch,const core::RevisionId& revision)
 {
     auto candidate=readRevisionWorkingSet(branch,revision);
-    // 完整候选已验证才允许替换；这里没有用户旧编辑，不产生“冲突迁移”素材。
-    if(m_panel){m_panel->cancelPendingForHistoryRestore();}
+    // 权威草稿是干净的，但表单仍可能保留未确认文本；外部修订不能把它
+    // 当作历史恢复直接丢弃。应用回执统一标旧页过期，用户显式重置后再编辑。
     m_session.branch=branch;
     m_session.draft=std::move(candidate);
     m_session.importedSelfCollisionCandidates.clear(); // 外部修订不携带本会话导入报告。
     noteAppliedRevision(revision,m_session.draft.rootObjectId);
     if(m_panel){m_panel->setOutcomeMessage(QString::fromUtf8(
-        "已完整读取项目新修订的建模工作集；未确认表单已刷新，当前无未应用编辑。"));}
+        "已完整读取项目新修订的建模工作集；若表单保留旧输入，请重置后重新编辑。"));}
 }
 
 void ModelingUiModule::bindRevisionDraftReader(

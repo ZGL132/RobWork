@@ -1036,3 +1036,7 @@ project 读 revisions/<rev-id>/ 清单 → RevisionId::fromCanonical（目录名
 只在core测试目标加入TestMainReport.cpp并链接testkit/gTest，监听器由testkit统一管理；
 core产品库与公共头零变化。本轮集成65通过、独立63通过，均0失败0跳过，原生JSON/XML逐例一致；
 框架集成注册面差异如实分列，旧缺失证据不回填。留痕见wp13-t29-closure。
+
+## WP-13-T30 / GF-A 单位字典增量（2026-10-21）
+
+经所有者批准，仅在Units.cpp注册表表尾增加mm/s、mm/s^2（对应LinearVelocity/LinearAcceleration，SI因子0.001）、deg/s、deg/s^2（对应AngularVelocity/AngularAcceleration，SI因子π/180）。原17项顺序和符号保留；不增加量纲，不改变持久化或UnitToken公共形状。建模显示单位统一复用core::Quantity/convert，插件不重复换算。UnitsTest.ModelingDerivativeDisplayUnits_UX05_T30验证四项查找、量纲和真实换算；红绿及全套回归按本批报告真实结论登记，不以设计注册替代执行通过。

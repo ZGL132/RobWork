@@ -40,9 +40,11 @@
 #include <QLabel>
 #include <QPlainTextEdit>
 #include <QLineEdit>
+#include <QKeyEvent>
 #include <QComboBox>
 #include <QDoubleSpinBox>
 #include <QTableWidget>
+#include <QToolButton>
 #include <QTreeWidgetItemIterator>
 #include <QPushButton>
 #include <QDialog>          // F14：耦合编辑模态
@@ -181,6 +183,10 @@ QList<QPushButton*> commandButtonsOf(
 }
 
 }  // namespace
+
+QLineEdit* jointField(QWidget* host, const char* fieldKey);
+void typeJointField(QLineEdit* field, const QString& text);
+void confirmJointForm(QWidget* host);
 
 // =====================================================================
 // 夹具：工作集＋面板＋现取辅助
@@ -533,16 +539,23 @@ TEST_F(ModelingPanelGuiTest, ReplacedJointCannotInheritOldInput_UX05_T30)
     IRD_TEST_INFO("UX-05",{"AT-28"},std::nullopt);
     m_panel->focusObject(m_ws.design.joints[0].objectId);
     auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");
-    auto* table=host->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
-    for(int r=0;r<table->rowCount();++r){if(table->item(r,0)->data(Qt::UserRole).toString()=="origin-x"){
-        table->item(r,1)->setText("0.25");QApplication::processEvents();
-    }}
+    ASSERT_NE(jointField(host,"origin-x"),nullptr);typeJointField(jointField(host,"origin-x"),"0.25");
+    const auto originalId=m_ws.design.joints[0].objectId;
     m_ws.design.joints[0].objectId=core::ObjectId::generate();
+    const auto before=m_ws;
     m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QApplication::processEvents();table=host->findChild<QTableWidget*>("ird_param_table");ASSERT_NE(table,nullptr);
-    for(int r=0;r<table->rowCount();++r){if(table->item(r,0)->data(Qt::UserRole).toString()=="origin-x"){
-        EXPECT_DOUBLE_EQ(table->item(r,1)->text().toDouble(),0.0);
-    }}
+    QApplication::processEvents();
+    // GF-A保留旧对象输入并要求显式离页决议；同链序的新OID不能继承旧暂存。
+    EXPECT_EQ(jointField(host,"origin-x")->text(),QStringLiteral("0.25"));
+    host->findChild<QPushButton*>("ird_param_apply")->click();
+    host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_EQ(m_ws,before)<<"已被替换的对象不能把旧输入写到新OID";
+    host->findChild<QPushButton*>("ird_joint_leave_discard")->click();QApplication::processEvents();
+    ASSERT_NE(jointField(host,"origin-x"),nullptr);
+    EXPECT_NE(m_ws.design.joints[0].objectId,originalId);
+    EXPECT_DOUBLE_EQ(jointField(host,"origin-x")->text().toDouble(),0.0);
+    EXPECT_EQ(m_ws,before);
+
 }
 
 /**
@@ -706,6 +719,32 @@ int jointEditRowOf(const QTableWidget& table, const char* fieldKey)
     return -1;
 }
 
+/** @brief 查找完整关节分组表单中的单一字段入口，缺失时由调用断言定位错误。 */
+QLineEdit* jointField(QWidget* host, const char* fieldKey)
+{
+    return host == nullptr ? nullptr : host->findChild<QLineEdit*>(
+        QStringLiteral("ird_joint_field_") + QString::fromLatin1(fieldKey));
+}
+
+/** @brief 以真实键盘事件替换字段文本，触发与用户输入相同的textEdited候选路径。 */
+void typeJointField(QLineEdit* field, const QString& text)
+{
+    if (field == nullptr) { return; }
+    field->setFocus(); field->selectAll();
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_unknown, Qt::NoModifier, text);
+    QApplication::sendEvent(field, &event); QApplication::processEvents();
+}
+
+/** @brief 通过页面常驻按钮执行关节整表确认，覆盖校验与唯一草稿写入口。 */
+void confirmJointForm(QWidget* host)
+{
+    if (host == nullptr) { return; }
+    auto* apply = host->findChild<QPushButton*>("ird_param_apply");
+    if (apply != nullptr) { apply->click(); QApplication::processEvents(); }
+    auto* yes = host->findChild<QPushButton*>("ird_param_confirm_yes");
+    if (yes != nullptr) { yes->click(); QApplication::processEvents(); }
+}
+
 /**
  * @brief MDL-12/AT-17：continuous工程范围必须经真实表单两步确认，不能冒充限位。
  * 验证多圈rad输入不取模、取消零修改、范围整体更新及只读门控；仅UI线程运行。
@@ -713,94 +752,56 @@ int jointEditRowOf(const QTableWidget& table, const char* fieldKey)
 TEST_F(ModelingPanelGuiTest, ContinuousRangeConfirmCancelAndReadOnly_MDL12_AT17)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-12","MDL-06"},std::vector<std::string>{"AT-17"});
-    // 复现导入后未确认continuous状态：保留类型，bounds不适用，工程范围缺失。
     auto& joint=m_ws.design.joints[0];joint.type=JointType::Continuous;
     joint.bounds=core::SourcedValue<JointLimits>::notApplicable();
     joint.workingRange=core::SourcedValue<JointLimits>::notProvided();
-    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
-    m_panel->focusObject(joint.objectId);
+    m_panel->refreshPanel(m_ws,ModelReadinessReport{});m_panel->focusObject(joint.objectId);
     m_panel->resize(1280,900);m_panel->show();QApplication::processEvents();
-    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
-    const int lo=jointEditRowOf(*table,"working-range-min");
-    const int hi=jointEditRowOf(*table,"working-range-max");
-    ASSERT_GE(lo,0)<<"continuous工程范围下限入口缺失";
-    ASSERT_GE(hi,0)<<"continuous工程范围上限入口缺失";
-    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0)<<"工程范围不得冒充限位";
-    auto* host=m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
-    const auto before=m_ws;
-    const QString initialLower=table->item(lo,1)->text();
-    // 首次仅填写一端不能凭空补齐另一端；该失败亦不得推进权威来源/历史。
-    table->item(lo,1)->setText(QStringLiteral("-8"));QApplication::processEvents();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
-    EXPECT_EQ(m_ws,before)<<"缺一端必须拒绝，不能伪造默认范围";
-    EXPECT_EQ(table->item(lo,1)->text(),initialLower)<<"拒绝后显示须回到未确认值，不能显示已接受-8";
-    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
-    QApplication::processEvents();EXPECT_EQ(m_ws,before)<<"输入不能提前确认工程范围";
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_cancel"))->click();
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* lower=jointField(host,"working-range-min");auto* upper=jointField(host,"working-range-max");
+    ASSERT_NE(lower,nullptr);ASSERT_NE(upper,nullptr);EXPECT_EQ(jointField(host,"bounds-min"),nullptr);
+    const auto before=m_ws;typeJointField(lower,"-8");confirmJointForm(host);EXPECT_EQ(m_ws,before);
+    EXPECT_EQ(lower->text(),QStringLiteral("-8"))<<"整表拒绝应保留非法/不完整输入";
+    typeJointField(upper,"10");host->findChild<QPushButton*>("ird_param_cancel")->click();
     EXPECT_EQ(m_ws,before)<<"取消必须零写入";
-    table->item(lo,1)->setText(QStringLiteral("-8"));table->item(hi,1)->setText(QStringLiteral("10"));
-    QApplication::processEvents();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
-    EXPECT_EQ(m_ws,before)<<"展示确认区仍不能写入";
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
-    ASSERT_TRUE(joint.workingRange.tryValue().has_value());
-    EXPECT_EQ(joint.workingRange.value(),(JointLimits{-8,10}));
-    EXPECT_EQ(joint.workingRange.provenance().kind,core::ProvenanceKind::UserProvided);
-    EXPECT_EQ(joint.type,JointType::Continuous);EXPECT_EQ(joint.bounds.state(),core::FieldState::NotApplicable);
-    EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1)<<"一对端点只记一次变更";
-    // 让工程范围两行真正进入表格视口，再断言裁剪几何并留图；创建了控件不等于可见。
-    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);
-    QApplication::processEvents();
-    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(lo,0))));
-    EXPECT_TRUE(table->viewport()->rect().contains(table->visualItemRect(table->item(hi,0))));
-    const QString evidence=qEnvironmentVariable("IRD_MODELING_GUI_EVIDENCE_OUT");
-    if(!evidence.isEmpty()){QDir().mkpath(evidence);EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range.png"));}
-    // 反向区间通过真实编辑链提交，域必须拒绝并回填原权威范围。
-    const auto accepted=m_ws;
-    table->item(lo,1)->setText(QStringLiteral("11"));QApplication::processEvents();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
-    EXPECT_EQ(m_ws,accepted);
-    EXPECT_EQ(table->item(lo,1)->text(),QStringLiteral("-8"))<<"领域拒绝后表单不得保留11为已应用基线";
-    EXPECT_EQ(table->item(hi,1)->text(),QStringLiteral("10"));
-    table->scrollToItem(table->item(hi,0),QAbstractItemView::PositionAtBottom);QApplication::processEvents();
-    if(!evidence.isEmpty()){EXPECT_TRUE(m_panel->grab().save(evidence+"/continuous-range-rejected.png"));}
-    m_panel->setWritable(false);
-    EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"))->isEnabled());
+    lower=jointField(host,"working-range-min");upper=jointField(host,"working-range-max");
+    typeJointField(lower,"-8");typeJointField(upper,"10");confirmJointForm(host);
+    const auto& accepted=m_ws.design.joints[0];ASSERT_TRUE(accepted.workingRange.tryValue().has_value());
+    EXPECT_EQ(accepted.workingRange.value(),(JointLimits{-8,10}));
+    EXPECT_EQ(accepted.workingRange.provenance().kind,core::ProvenanceKind::UserProvided);
+    EXPECT_EQ(accepted.bounds.state(),core::FieldState::NotApplicable);EXPECT_EQ(m_ws.changes.size(),before.changes.size()+1);
+    auto* scroll=host->findChild<QScrollArea*>("ird_joint_form_scroll");ASSERT_NE(scroll,nullptr);
+    scroll->ensureWidgetVisible(jointField(host,"working-range-max"));QApplication::processEvents();
+    EXPECT_TRUE(jointField(host,"working-range-min")->isVisible());EXPECT_TRUE(jointField(host,"working-range-max")->isVisible());
+    const auto committed=m_ws;lower=jointField(host,"working-range-min");typeJointField(lower,"11");confirmJointForm(host);EXPECT_EQ(m_ws,committed);
+    m_panel->setWritable(false);EXPECT_FALSE(jointField(host,"working-range-min")->isEnabled());
+    EXPECT_FALSE(host->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_TRUE(host->findChild<QComboBox*>("ird_joint_angle_unit")->isEnabled());
 }
 
-/** @brief MDL-12/UX-05：同关节类型更新须重建schema，排队旧字段不写新模型。 */
+
 TEST_F(ModelingPanelGuiTest, ContinuousRangeSchemaRebuildKeepsQueuedModelAlive_MDL12_AT17)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-12","UX-05"},std::vector<std::string>{"AT-17"});
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    auto* oldTable=jointEditTable(*m_panel);ASSERT_NE(oldTable,nullptr);
-    // itemChanged故意留在事件队列；同索引换schema时不能解引用已销毁模型。
-    oldTable->item(jointEditRowOf(*oldTable,"bounds-min"),1)->setText(QStringLiteral("-7"));
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* old=jointField(host,"bounds-min");ASSERT_NE(old,nullptr);typeJointField(old,"-7");
     m_ws.design.joints[0].type=JointType::Continuous;
     m_ws.design.joints[0].bounds=core::SourcedValue<JointLimits>::notApplicable();
     m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notProvided();
-    const auto before=m_ws;
-    m_panel->refreshPanel(m_ws,ModelReadinessReport{});
+    const auto before=m_ws;m_panel->refreshPanel(m_ws,ModelReadinessReport{});
     QApplication::processEvents();QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
-    auto* table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
-    EXPECT_GE(jointEditRowOf(*table,"working-range-min"),0);
-    EXPECT_LT(jointEditRowOf(*table,"bounds-min"),0);EXPECT_EQ(m_ws,before);
-    // 再切非continuous，证明工程范围行不泄露给移动关节，单位随schema重建。
+    auto* bounds=jointField(host,"bounds-min");ASSERT_NE(bounds,nullptr);EXPECT_EQ(bounds->text(),QStringLiteral("-7"));
+    EXPECT_FALSE(host->findChild<QPushButton*>("ird_param_apply")->isEnabled());EXPECT_EQ(m_ws,before);
+    host->findChild<QPushButton*>("ird_param_cancel")->click();QApplication::processEvents();
+    EXPECT_NE(jointField(host,"working-range-min"),nullptr);EXPECT_EQ(jointField(host,"bounds-min"),nullptr);EXPECT_EQ(m_ws,before);
     m_ws.design.joints[0].type=JointType::Prismatic;
     m_ws.design.joints[0].workingRange=core::SourcedValue<JointLimits>::notApplicable();
     m_panel->refreshPanel(m_ws,ModelReadinessReport{});QApplication::processEvents();
-    table=jointEditTable(*m_panel);ASSERT_NE(table,nullptr);
-    EXPECT_GE(jointEditRowOf(*table,"bounds-min"),0);EXPECT_LT(jointEditRowOf(*table,"working-range-min"),0);
+    EXPECT_NE(jointField(host,"bounds-min"),nullptr);EXPECT_EQ(jointField(host,"working-range-min"),nullptr);
 }
 
-/**
- * 编辑页空态→选中建页链（UI-T53——B.1"结构树选择→详细编辑页"主入口）：
- * 无选中＝诚实空态（零表格——不伪造编辑页）；选中关节＝14 行数值表装配
- * （轴向 3＋原点 6＋零位 1＋限位 2＋F01 速度/加速度 2）；切到连杆＝面板
- * 收起回空态（编辑页只对关节供给——工具/场景归后续批次）。
- */
+
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_UI_T53)
 {
     IRD_TEST_INFO("MDL-07", {}, std::nullopt);
@@ -811,23 +812,20 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_U
     ASSERT_NE(hint, nullptr);
     EXPECT_FALSE(hint->text().isEmpty()) << "空态提示缺失（ERR-01——不伪造页也不留白）";
 
-    // 选中关节→建页：14 行（登记序＝装配序；F01 表尾追加速度/加速度两行）。
+    // 选中关节→建完整分组页：14个唯一字段控件；不装配重复参数表。
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QTableWidget* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr) << "选中关节后编辑页未装配";
-    EXPECT_EQ(table->rowCount(), 14) << "编辑页字段集非 14 行（轴向 3＋原点 6＋零位 1＋限位 2＋速度/加速度 2——F01）";
-    EXPECT_NE(jointEditRowOf(*table, "origin-x"), -1);
-    EXPECT_NE(jointEditRowOf(*table, "origin-yaw"), -1);
-    EXPECT_NE(jointEditRowOf(*table, "bounds-max"), -1);
-    EXPECT_NE(jointEditRowOf(*table, "max-velocity"), -1) << "F01：最大速度行未装配";
-    EXPECT_NE(jointEditRowOf(*table, "max-acceleration"), -1) << "F01：最大加速度行未装配";
+    QWidget* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* form=host->findChild<QWidget*>("ird_joint_grouped_form");ASSERT_NE(form,nullptr);
+    EXPECT_EQ(form->findChildren<QLineEdit*>(QRegularExpression("ird_joint_field_.*")).size(),14);
+    for(const char* key:{"origin-x","origin-yaw","bounds-max","max-velocity","max-acceleration"}){
+        EXPECT_NE(jointField(form,key),nullptr)<<key;
+    }
+    EXPECT_EQ(form->findChild<QTableWidget*>("ird_param_table"),nullptr);
 
     // 切到连杆→回空态（非关节目标无数值编辑页——诚实收口；收起打在
     // ParamTablePanel 根的显式隐藏位上，内层表格只随父链不可见）。
     m_panel->focusObject(m_ws.design.links[0].objectId);
-    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
-    ASSERT_NE(host, nullptr);
-    QWidget* tablePanel = host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"));
+    QWidget* tablePanel = host->findChild<QWidget*>(QStringLiteral("ird_joint_grouped_form"));
     if (tablePanel != nullptr) {
         EXPECT_TRUE(tablePanel->isHidden()) << "连杆选中后编辑页未收起";
     }
@@ -842,22 +840,29 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_EmptyStateAndBuildOnSelection_U
  * 恰一条变更记录（域内核 ZYX 组合——本用例只钉 UI→域链路，矩阵元素归
  * TemplateTest）。
  */
+/** @brief GF-A/AT-01：同一次表单内合法原点和非法速度必须整表拒绝，不能部分成功。 */
+TEST_F(ModelingPanelGuiTest, JointFormRejectsWholeCandidate_MDL01_AT01_T30)
+{
+    IRD_TEST_INFO("MDL-01", {"AT-01"}, std::nullopt);
+    m_panel->focusObject(m_ws.design.joints[0].objectId);
+    const auto before = m_ws;
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");
+    typeJointField(jointField(host,"origin-x"),"0.25");
+    typeJointField(jointField(host,"max-velocity"),"-1");
+    confirmJointForm(host);
+    EXPECT_EQ(m_ws, before); // 验证完整工作集（含changes），不是只断言被拒的速度字段。
+}
+
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_OriginEditApplyChain_UI_T53)
 {
     IRD_TEST_INFO("MDL-09", {}, std::nullopt);
 
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QTableWidget* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr);
-    const int row = jointEditRowOf(*table, "origin-x");
-    ASSERT_GE(row, 0) << "origin-x 行未装配";
-
-    // 值列就地编辑（itemChanged→单发排队的 setEditText——processEvents 冲刷）。
-    table->item(row, 1)->setText(QStringLiteral("0.5"));
-    QApplication::processEvents();
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    auto* originField=jointField(host,"origin-x");ASSERT_NE(originField,nullptr);
+    typeJointField(originField,QStringLiteral("0.5"));
 
     // 表单级确认应用（UX-07 两步：应用→确认区→确认）。
-    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     QPushButton* applyBtn = host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"));
     ASSERT_NE(applyBtn, nullptr);
     applyBtn->click();
@@ -891,23 +896,10 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T
     m_panel->refreshPanel(m_ws, emptyReport);
 
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QTableWidget* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr);
-    const int row = jointEditRowOf(*table, "axis-z");
-    ASSERT_GE(row, 0);
-
-    table->item(row, 1)->setText(QStringLiteral("0"));
-    QApplication::processEvents();
     QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
-    host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
-
-    // 拒绝面：状态行警示＋工作集不变（域裁决唯一——UI 零旁路）。
-    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
-    ASSERT_NE(status, nullptr);
-    EXPECT_TRUE(status->text().contains(QStringLiteral("authority-locked")))
-        << "拒绝原因未就地呈现（UX-03——比较型原因）";
-    EXPECT_EQ(m_ws, before) << "拒绝路径工作集字节不变（V-14）";
+    auto* axis=jointField(host,"axis-z");ASSERT_NE(axis,nullptr);
+    EXPECT_FALSE(axis->isEnabled())<<"StandardDH派生轴线必须在编辑入口禁用并避免无效确认路径";
+    EXPECT_EQ(m_ws, before) << "只读派生字段保持工作集不变";
 }
 
 /**
@@ -920,47 +912,25 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_DhAuthorityRejectsAxisEdit_UI_T
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_TypeComboBoxChainAndRejectFallback_UI_T66)
 {
     IRD_TEST_INFO("I-MDL-4", {}, std::nullopt);
-
-    m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QComboBox* typeBox =
-        m_panel->findChild<QComboBox*>(QStringLiteral("ird_modeling_edit_type"));
-    ASSERT_NE(typeBox, nullptr) << "类型下拉未装配（编辑页枚举行缺席）";
-    ASSERT_EQ(typeBox->currentText(), QStringLiteral("Revolute"))
-        << "回填失真（当前权威类型应直投下拉）";
-
-    // ①合法轨：切 Prismatic——域接受（限位保留＋workingRange 缺）。
-    const int prismatic = typeBox->findText(QStringLiteral("Prismatic"));
-    ASSERT_GE(prismatic, 0);
-    typeBox->setCurrentIndex(prismatic);
-    QApplication::processEvents();
-    EXPECT_TRUE(m_ws.design.joints[0].type == JointType::Prismatic)
-        << "类型编辑未达域（L-2 分流链断裂）";
-    ASSERT_EQ(m_ws.changes.size(), std::size_t{1});
-    EXPECT_NE(m_ws.changes[0].summary.find("修改关节类型"), std::string::npos)
-        << "变更记录缺席（域 append-only 留痕）";
-    EXPECT_EQ(typeBox->currentText(), QStringLiteral("Prismatic"));
-
-    // ②拒绝轨：切 Continuous——限位 Provided 冲突（域 TypeBoundsConflict）。
-    const int continuous = typeBox->findText(QStringLiteral("Continuous"));
-    ASSERT_GE(continuous, 0);
-    typeBox->setCurrentIndex(continuous);
-    QApplication::processEvents();
-    // 拒绝面：类型保持 Prismatic＋下拉回退权威值（用户所见与权威一致）＋
-    // 拒绝原因就地呈现。
-    EXPECT_TRUE(m_ws.design.joints[0].type == JointType::Prismatic)
-        << "被拒类型落位（域守卫失守——I-MDL-4 组合约束旁路）";
-    EXPECT_EQ(typeBox->currentText(), QStringLiteral("Prismatic"))
-        << "下拉未回退权威值（幻影选择——ERR-01）";
-    QLabel* status = m_panel->findChild<QLabel*>(QStringLiteral("ird_modeling_status_line"));
-    ASSERT_NE(status, nullptr);
-    EXPECT_TRUE(status->text().contains(QStringLiteral("Continuous")))
-        << "组合约束拒绝原因未呈现（限位冲突详情）";
+    m_panel->focusObject(m_ws.design.joints[0].objectId);const auto before=m_ws;
+    auto* type=m_panel->findChild<QComboBox*>("ird_modeling_edit_type");ASSERT_NE(type,nullptr);
+    type->setCurrentIndex(type->findData(static_cast<int>(JointType::Prismatic)));QApplication::processEvents();
+    EXPECT_EQ(m_ws,before) << "GF-A：类型下拉只暂存，不能立即写草稿";
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");
+    host->findChild<QPushButton*>("ird_param_apply")->click();host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_EQ(m_ws,before) << "跨量纲没有补全不能确认，旧rad不得直接当作m";
+    for(const auto& pair:std::vector<std::pair<const char*,const char*>>{{"zero-offset","0.01"},{"bounds-min","-0.2"},{"bounds-max","0.3"}}){
+        typeJointField(jointField(host,pair.first),QString::fromLatin1(pair.second));}
+    host->findChild<QPushButton*>("ird_param_apply")->click();host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_EQ(m_ws.design.joints[0].type,JointType::Prismatic);ASSERT_EQ(m_ws.changes.size(),1u);
+    const auto accepted=m_ws;
+    type->setCurrentIndex(type->findData(static_cast<int>(JointType::Continuous)));QApplication::processEvents();
+    host->findChild<QPushButton*>("ird_param_apply")->click();host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_EQ(m_ws,accepted) << "移动转角量必须重填零偏，不得自动换解释";
+    host->findChild<QPushButton*>("ird_param_cancel")->click();EXPECT_EQ(type->currentData().toInt(),static_cast<int>(JointType::Prismatic));
 }
 
-/**
- * 编辑页 L-7 门控（UI-T53——只读会话＝ParamTablePanel 整体禁用；域出口侧
- * applyJointDetailEdits 另有防御面，本用例钉控件半区）。
- */
+/** @brief GF-A只读允许单位/折叠浏览，但主输入、表值编辑及最终提交必须被禁用。 */
 TEST_F(ModelingPanelGuiTest, JointDetailEditPane_ReadOnlySessionDisablesPanel_UI_T53)
 {
     IRD_TEST_INFO("MDL-07", {}, std::nullopt);
@@ -973,9 +943,12 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_ReadOnlySessionDisablesPanel_UI
 
     QWidget* host = readonlyPanel.findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     ASSERT_NE(host, nullptr);
-    QWidget* tablePanel = host->findChild<QWidget*>(QStringLiteral("ird_param_table_panel"));
-    ASSERT_NE(tablePanel, nullptr);
-    EXPECT_FALSE(tablePanel->isEnabled()) << "只读会话编辑页未整体禁用（L-7 门控失守）";
+    QWidget* form = host->findChild<QWidget*>(QStringLiteral("ird_joint_grouped_form"));
+    ASSERT_NE(form, nullptr);
+    EXPECT_FALSE(host->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    EXPECT_FALSE(host->findChild<QLineEdit*>("ird_joint_field_origin-x")->isEnabled());
+    EXPECT_EQ(host->findChild<QTableWidget*>("ird_param_table"),nullptr);
+    EXPECT_TRUE(host->findChild<QComboBox*>("ird_joint_angle_unit")->isEnabled()) << "只读仍可浏览单位";
 }
 
 // =====================================================================
@@ -2190,6 +2163,12 @@ TEST_F(ModelingPanelGuiTest, PoseSetEdit_Chain_UI_T60)
     // 无位姿集对象也可用：新建不需要既有对象）。
     ModelReadinessReport emptyReport;
     m_panel->refreshPanel(m_ws, emptyReport);
+    QWidget* poseArea = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_pose_area"));
+    ASSERT_NE(poseArea, nullptr);
+    const auto poseTitle = poseArea->findChild<QLabel*>(QStringLiteral("ird_card_title"));
+    ASSERT_NE(poseTitle, nullptr);
+    EXPECT_EQ(poseTitle->text(), QStringLiteral("命名位姿与关节构型"))
+        << "命名位姿字段必须统一归入唯一主题卡片";
     QPushButton* addBtn = m_panel->findChild<QPushButton*>(QStringLiteral("ird_modeling_pose_add"));
     ASSERT_NE(addBtn, nullptr) << "位姿集页承载缺失（UI-T60）";
     addBtn->click();
@@ -2269,6 +2248,12 @@ TEST_F(ModelingPanelGuiTest, DrivetrainEdit_Chain_UI_T60)
         }
     }
     ASSERT_NE(dtPanel, nullptr) << "传动数值表未构建（UI-T60）";
+    QWidget* dtArea = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_drivetrain_area"));
+    ASSERT_NE(dtArea, nullptr);
+    const auto dtTitle = dtArea->findChild<QLabel*>(QStringLiteral("ird_card_title"));
+    ASSERT_NE(dtTitle, nullptr);
+    EXPECT_EQ(dtTitle->text(), QStringLiteral("传动参数"))
+        << "传动参数与耦合入口必须置于统一主题卡片内";
     const int row0 = posePageRowOf(*dtTable, "dt-ratio-0");
     dtTable->item(row0, 1)->setText(QStringLiteral("100"));
     QApplication::processEvents();
@@ -2362,14 +2347,13 @@ TEST_F(ModelingPanelGuiTest, FirstSelectionShowsImportedValuesWithoutCancel_UI_T
     const auto err = applyJointFieldEdit(m_ws, 1, JointEditField::Origin, value);
     ASSERT_FALSE(err.has_value());
     m_panel->focusObject(m_ws.design.joints[1].objectId);
-    auto* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr);
+    auto* form = m_panel->findChild<QWidget*>("ird_joint_grouped_form");
+    ASSERT_NE(form, nullptr);
     for (const auto& field : std::vector<std::pair<const char*, double>>{
              {"axis-y", m_ws.design.joints[1].axis.value()[1]}, {"origin-x", 0.12}, {"origin-y", -0.03}, {"origin-z", 0.4}}) {
-        const int row = jointEditRowOf(*table, field.first);
-        ASSERT_GE(row, 0);
+        auto* editor=jointField(form,field.first);ASSERT_NE(editor,nullptr);
         bool ok = false;
-        const double number = table->item(row, 1)->text().toDouble(&ok);
+        const double number = editor->text().toDouble(&ok);
         EXPECT_TRUE(ok) << "首次回填不得显示未设：" << field.first;
         EXPECT_DOUBLE_EQ(number, field.second) << field.first;
     }
@@ -2380,14 +2364,11 @@ TEST_F(ModelingPanelGuiTest, SameObjectRefreshKeepsPendingValue_UI_T79)
 {
     IRD_TEST_INFO("UX-05", {}, std::nullopt);
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    auto* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr);
-    table->item(jointEditRowOf(*table, "origin-x"), 1)->setText(QStringLiteral("0.123"));
-    QApplication::processEvents();
+    auto* host=m_panel->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* field=jointField(host,"origin-x");ASSERT_NE(field,nullptr);typeJointField(field,QStringLiteral("0.123"));
     m_panel->refreshPanel(m_ws, ModelReadinessReport{});
-    EXPECT_EQ(table->item(jointEditRowOf(*table, "origin-x"), 1)->text(), QStringLiteral("0.123"));
+    EXPECT_EQ(jointField(host,"origin-x")->text(), QStringLiteral("0.123"));
     // 点确认必须仍有变更明细，防止仅屏幕保留旧文字、模型暂存已被清空。
-    auto* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     EXPECT_FALSE(host->findChild<QWidget*>(QStringLiteral("ird_param_confirm_region"))->isHidden());
 }
@@ -2579,15 +2560,11 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_MaxVelocityEditAndRejectChain_M
     IRD_TEST_INFO("MDL-01", {}, std::nullopt);
 
     m_panel->focusObject(m_ws.design.joints[0].objectId);
-    QTableWidget* table = jointEditTable(*m_panel);
-    ASSERT_NE(table, nullptr);
-    const int row = jointEditRowOf(*table, "max-velocity");
-    ASSERT_GE(row, 0) << "F01：最大速度行未装配";
+    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    auto* velocityField=jointField(host,"max-velocity");ASSERT_NE(velocityField,nullptr);
 
     // 合法值链：1.25 rad/s →两步确认→域接受。
-    table->item(row, 1)->setText(QStringLiteral("1.25"));
-    QApplication::processEvents();
-    QWidget* host = m_panel->findChild<QWidget*>(QStringLiteral("ird_modeling_edit_host"));
+    typeJointField(velocityField,QStringLiteral("1.25"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
     QApplication::processEvents();
@@ -2599,23 +2576,18 @@ TEST_F(ModelingPanelGuiTest, JointDetailEditPane_MaxVelocityEditAndRejectChain_M
     ASSERT_FALSE(m_ws.changes.empty());
     EXPECT_NE(m_ws.changes.back().summary.find("最大速度"), std::string::npos);
 
-    // 拒绝链：-0.5 →域拒绝（负值）→工作集保持 1.25（原子性），表格按
+    // 拒绝链：-0.5 →域拒绝（负值）→工作集保持 1.25（原子性），表单保留原串
     // 真实草稿回填（F04 教训：拒绝后不得残留被拒输入值）。
-    table->item(row, 1)->setText(QStringLiteral("-0.5"));
-    QApplication::processEvents();
+    velocityField=jointField(host,"max-velocity");typeJointField(velocityField,QStringLiteral("-0.5"));
     host->findChild<QPushButton*>(QStringLiteral("ird_param_apply"))->click();
     host->findChild<QPushButton*>(QStringLiteral("ird_param_confirm_yes"))->click();
     QApplication::processEvents();
     ASSERT_EQ(m_ws.design.joints[0].maxVelocity.state(), core::FieldState::Provided);
     EXPECT_DOUBLE_EQ(m_ws.design.joints[0].maxVelocity.value(), 1.25)
         << "负值被拒后工作集须保持原值（拒绝原子性）";
-    // 表格显示＝真实草稿回填（拒绝回执链——confirm 后回填钩子）。
-    QTableWidget* refreshed = jointEditTable(*m_panel);
-    ASSERT_NE(refreshed, nullptr);
-    const int refreshedRow = jointEditRowOf(*refreshed, "max-velocity");
-    ASSERT_GE(refreshedRow, 0);
-    EXPECT_EQ(refreshed->item(refreshedRow, 1)->text(), QStringLiteral("1.25"))
-        << "拒绝后表格须显示真实草稿值而非被拒输入（F04 同族纪律）";
+    // 新表单保留用户原串，便于纠正；权威草稿仍为1.25。
+    EXPECT_EQ(jointField(host,"max-velocity")->text(), QStringLiteral("-0.5"))
+        << "GF-A领域拒绝须保留输入供纠正；权威草稿仍为1.25";
 }
 
 // =====================================================================

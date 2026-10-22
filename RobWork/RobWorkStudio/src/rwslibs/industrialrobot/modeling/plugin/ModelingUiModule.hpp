@@ -398,6 +398,8 @@ public:
      * @throws std::runtime_error 内部工作集无法编码，不能将失败当作无编辑。
      * 仅UI线程调用，仅读取模块拥有的工作集；SI/集合规范沿唯一Codec。
      */
+    /// GF-A：宿主离页守卫，面板未创建等同于无暂存，仅UI线程。
+    bool guardPendingInputs(std::function<void()> continuation);
     bool hasPendingDraft() const;
 
 

@@ -5,10 +5,12 @@
  */
 #include "ModelingToolEditor.hpp"
 #include "src/LocalNameValidation.hpp"
+#include <sdurws/ird/ui/UiTheme.hpp>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -100,7 +102,12 @@ ModelingToolEditor::ModelingToolEditor(QWidget* parent,Accept accept,Choose choo
     setObjectName("ird_modeling_tool_editor");auto* layout=new QVBoxLayout(this);
     auto* hint=new QLabel("工具随法兰安装。新工具初始TCP在工具原点；确认后可到安装/TCP页编辑位姿和完整TCP目录。确认只写草稿。",this);
     hint->setWordWrap(true);layout->addWidget(hint);
-    auto* form=new QFormLayout;layout->addLayout(form);
+    // 工具页与需求页共用同一主题卡片，使对象信息和几何来源在所有子页中有稳定分组。
+    QVBoxLayout* objectContent=nullptr;
+    auto* objectCard=ui::createCard(this,QStringLiteral("工具与几何"),
+        QStringLiteral("选择工具对象并编辑名称、显示名称和几何来源；修改只暂存到草稿。"),&objectContent);
+    layout->addWidget(objectCard);
+    auto* form=new QFormLayout;objectContent->addLayout(form);
     m_objects=new QComboBox(this);m_objects->setObjectName("ird_tool_objects");form->addRow("工具",m_objects);
     m_name=new QLineEdit(this);m_name->setObjectName("ird_tool_name");form->addRow("局部名称",m_name);
     m_display=new QLineEdit(this);m_display->setObjectName("ird_tool_display");form->addRow("显示名称",m_display);
@@ -109,14 +116,18 @@ ModelingToolEditor::ModelingToolEditor(QWidget* parent,Accept accept,Choose choo
     m_resource=new QComboBox(this);m_resource->setObjectName("ird_tool_resource");form->addRow("已有资源",m_resource);
     auto* pathRow=new QHBoxLayout;m_path=new QLineEdit(this);m_path->setReadOnly(true);m_path->setObjectName("ird_tool_path");pathRow->addWidget(m_path,1);
     m_browse=new QPushButton("选择文件…",this);m_browse->setObjectName("ird_tool_browse");pathRow->addWidget(m_browse);form->addRow("外部网格",pathRow);
-    m_default=new QCheckBox("设为默认TCP所属工具（沿用当前默认键，其他工具使用首个TCP）",this);m_default->setObjectName("ird_tool_default");layout->addWidget(m_default);
-    m_confirm=new QCheckBox("确认删除当前工具（共享资源与历史保留）",this);m_confirm->setObjectName("ird_tool_confirm_remove");layout->addWidget(m_confirm);
-    auto* buttons=new QHBoxLayout;layout->addLayout(buttons);
+    QVBoxLayout* actionsContent=nullptr;
+    auto* actionsCard=ui::createCard(this,QStringLiteral("默认引用与草稿操作"),
+        QStringLiteral("默认TCP选择和删除确认属于不同操作；确认只写草稿，不发布正式三维。"),&actionsContent);
+    layout->addWidget(actionsCard);
+    m_default=new QCheckBox("设为默认TCP所属工具（沿用当前默认键，其他工具使用首个TCP）",this);m_default->setObjectName("ird_tool_default");actionsContent->addWidget(m_default);
+    m_confirm=new QCheckBox("确认删除当前工具（共享资源与历史保留）",this);m_confirm->setObjectName("ird_tool_confirm_remove");actionsContent->addWidget(m_confirm);
+    auto* buttons=new QHBoxLayout;actionsContent->addLayout(buttons);
     m_apply=new QPushButton("确认写入草稿",this);m_apply->setObjectName("ird_tool_apply");buttons->addWidget(m_apply);
     m_remove=new QPushButton("删除工具",this);m_remove->setObjectName("ird_tool_remove");buttons->addWidget(m_remove);
     auto* cancel=new QPushButton("取消暂存",this);cancel->setObjectName("ird_tool_cancel");buttons->addWidget(cancel);
-    auto* pose=new QPushButton("编辑安装与TCP",this);pose->setObjectName("ird_tool_pose");layout->addWidget(pose);
-    m_feedback=new QLabel(this);m_feedback->setWordWrap(true);m_feedback->setObjectName("ird_tool_feedback");layout->addWidget(m_feedback);
+    auto* pose=new QPushButton("编辑安装与TCP",this);pose->setObjectName("ird_tool_pose");actionsContent->addWidget(pose);
+    m_feedback=new QLabel(this);m_feedback->setWordWrap(true);m_feedback->setObjectName("ird_tool_feedback");actionsContent->addWidget(m_feedback);
     // 工具与连杆共用BodyData语义；子页出口必须同时核对工具及完整管理基线。
     m_body=new ModelingBodyEditor(this,[this](const core::ObjectId& id,const BodyData& before,const ManualBodyResult& after,std::string& error){
         if(!m_writable||!m_before||m_id!=id){error="工具目标或权限已改变，未写入物性。";return false;}

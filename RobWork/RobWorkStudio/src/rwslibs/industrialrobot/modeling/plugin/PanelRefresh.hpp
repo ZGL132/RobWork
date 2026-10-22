@@ -93,10 +93,14 @@ private:
  * 入队顺序即组序）。0＝独立单条（属性行单字段轨的兼容缺省——每条自成
  * 一组，重演语义与 UI-T41 时代逐条裁决完全一致）。
  */
+/** @brief OID关节整表意图；队列持有值副本，仅UI线程，SI/父连杆系。 */
+struct PendingJointForm { JointEntry expected; JointEntry proposed; };
+
 struct PendingEdit {
     std::size_t jointIndex = 0;  ///< 关节下标（链序——域函数入参）
     JointEditField field = JointEditField::Type;  ///< 待编辑字段（词表）
     JointEditValue value{};      ///< 新值载荷（备择与 field 匹配——契约同域函数）
+    std::optional<PendingJointForm> form; ///< GF-A原子轨；空时保留原字段轨。
     std::uint64_t groupId = 0;   ///< 重演组标识（UI-T66——0＝独立单条；同组
                                  ///  连续条目整组重演/整组手工处置）
 };
@@ -225,8 +229,10 @@ public:
             // 用户决议以组为单位：discardPendingFrom(组首) 或重编辑）。
             for (std::size_t k = i; k < end; ++k) {
                 const PendingEdit& e = m_pending[k];
-                if (applyJointFieldEdit(ws, e.jointIndex, e.field, e.value)
-                        .has_value()) {
+                const bool rejected=e.form
+                    ? applyJointFormEdit(ws,e.form->expected,e.form->proposed).has_value()
+                    : applyJointFieldEdit(ws,e.jointIndex,e.field,e.value).has_value();
+                if (rejected) {
                     m_manualIntervention = true;
                     m_blockedAt = i;  // 组首（整组手工处置的锚）
                     m_refreshSink();  // ④失败态同样全面板刷新（横幅可见）

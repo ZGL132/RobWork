@@ -887,9 +887,9 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
     regionScroll->setWidgetResizable(true);
     regionScroll->setFrameShape(QFrame::NoFrame);
     auto* regionFormHost = new QWidget(regionScroll);
-    // UI-T37 R1 卡片化（acceptance 1/2）：区域检查器→四卡（基础属性/空间
-    // 包围盒〔复合行〕/采样与达标〔滑块双联＋计数预览〕/高级参数〔折叠〕）。
-    // 盒卡与采样卡为自定义行宿主（复合控件直挂 VBox）；基础/高级卡仍为
+    // UI-T37 R1 卡片化（acceptance 1/2）：区域检查器→三卡（基础属性/空间
+    // 包围盒〔复合行〕/采样与附加约束〔滑块双联＋计数预览〕）。
+    // 盒卡与采样卡为自定义行宿主（复合控件直挂 VBox）；基础卡仍为
     // QFormLayout（renderRegionPage 按字段键路由）。
     auto* regionHostLay = new QVBoxLayout(regionFormHost);
     regionHostLay->setContentsMargins(0, 0, 0, 0);
@@ -914,23 +914,15 @@ void RequirementsPanelWidget::buildRegionPage(QTabWidget* pages)
         regionFormHost,
         regionCardText("panel.requirements.card.region-sampling.title"),
         regionCardText("panel.requirements.card.region-sampling.help"), &content);
-    m_regionSamplingLay = content;  // 滑块双联/计数复合行直挂
+    m_regionSamplingLay = content;  // 采样复合行与字段表的稳定宿主
+    m_regionSamplingRowsLay = new QVBoxLayout;
+    m_regionSamplingRowsLay->setContentsMargins(0, 0, 0, 0);
+    m_regionSamplingLay->addLayout(m_regionSamplingRowsLay);
+    // 顺序与附加约束属于区域常规定义，直接放入采样卡，避免重复的高级表。
+    m_regionSamplingForm = new QFormLayout;
+    m_regionSamplingForm->setLabelAlignment(Qt::AlignRight);
+    m_regionSamplingLay->addLayout(m_regionSamplingForm);
     regionHostLay->addWidget(m_regionSamplingCard);
-    m_regionAdvancedCard = ui::createCard(
-        regionFormHost,
-        regionCardText("panel.requirements.card.region-advanced.title"),
-        regionCardText("panel.requirements.card.region-advanced.help"), &content,
-        /*startCollapsed=*/true);  // 默认收起（高级参数去噪——设计规格 §4）
-    // 返工⑤：卡片折叠统一走 createCard 标题栏折叠三角（原卡外"展开 ▸"
-    // 独立按钮与 setVisible 翻转退役——第二折叠形态消账，折叠机制单一化）。
-    m_regionAdvancedBody = new QWidget(m_regionAdvancedCard);
-    auto* advancedLay = new QVBoxLayout(m_regionAdvancedBody);
-    advancedLay->setContentsMargins(0, 0, 0, 0);
-    m_regionAdvancedForm = new QFormLayout;
-    m_regionAdvancedForm->setLabelAlignment(Qt::AlignRight);
-    advancedLay->addLayout(m_regionAdvancedForm);
-    content->addWidget(m_regionAdvancedBody);
-    regionHostLay->addWidget(m_regionAdvancedCard);
     regionHostLay->addStretch(1);
     regionScroll->setWidget(regionFormHost);
     lay->addWidget(regionScroll, /*stretch=*/1);
@@ -1952,8 +1944,10 @@ void RequirementsPanelWidget::resetForSessionDetached()
     clearForm(m_stationOrientForm);
     clearForm(m_regionBasicForm);
     clearVBox(m_regionBoxLay);
-    clearVBox(m_regionSamplingLay);
-    clearForm(m_regionAdvancedForm);
+    clearVBox(m_regionSamplingRowsLay);
+    m_regionSamplingForm = new QFormLayout;
+    m_regionSamplingForm->setLabelAlignment(Qt::AlignRight);
+    m_regionSamplingLay->addLayout(m_regionSamplingForm);
     clearForm(m_conditionForm);
     if (m_validationCounts != nullptr) {
         m_validationCounts->clear();
@@ -3041,13 +3035,15 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                              ? nodeAnchor(m_regionTable->currentItem())
                              : std::optional<core::ObjectId>();
     // 区域检查器（选中区域行→regionFieldsFor；未选中＝空卡片——不虚构）。
-    // UI-T37 R1：卡片化路由（基础/包围盒复合行/采样达标/高级折叠）。
+    // UI-T37 R1：卡片化路由（基础/包围盒复合行/采样与附加约束）。
     // 盒中心/盒尺寸三标量行视觉合并为复合行——各编辑器保持原 fieldKey/
     // 权威值/提交槽（irdFieldKey 定位面与提交语义零变化）。
     clearFormRows(m_regionBasicForm);
     clearBoxRows(m_regionBoxLay);
-    clearBoxRows(m_regionSamplingLay);
-    clearFormRows(m_regionAdvancedForm);
+    clearBoxRows(m_regionSamplingRowsLay);
+    m_regionSamplingForm = new QFormLayout;
+    m_regionSamplingForm->setLabelAlignment(Qt::AlignRight);
+    m_regionSamplingLay->addLayout(m_regionSamplingForm);
     std::optional<core::ObjectId> selectedRegion;
     if (m_regionTable->currentItem() != nullptr) {
         selectedRegion = nodeAnchor(m_regionTable->currentItem());
@@ -3257,8 +3253,8 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             lay->addWidget(slider, /*stretch=*/1);
             lay->addWidget(edit);
             lay->addWidget(new QLabel(QStringLiteral("%"), this));
-            m_regionSamplingLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
-            m_regionSamplingLay->addWidget(cell);
+            m_regionSamplingRowsLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
+            m_regionSamplingRowsLay->addWidget(cell);
         };
 
         // 采样计数复合行（acceptance 2——三轴分割数＋『共 N 个离散点』实时
@@ -3333,8 +3329,8 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             lay->addWidget(new QLabel(QStringLiteral("×"), this));
             lay->addWidget(countLabel);
             lay->addStretch(1);
-            m_regionSamplingLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
-            m_regionSamplingLay->addWidget(cell);
+            m_regionSamplingRowsLay->addWidget(new QLabel(QString::fromStdString(fr.label), this));
+            m_regionSamplingRowsLay->addWidget(cell);
             syncCount();
         };
 
@@ -3380,7 +3376,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
                 // 姿态覆盖率『未设』＝灰显占位（本批已入词表——有值即可滑；
                 // 未设态收进高级卡占位呈现，不伪造零）。
                 if (fr.valueText == "未设") {
-                    renderRegionTextRow(m_regionAdvancedForm, fr);
+                    renderRegionTextRow(m_regionSamplingForm, fr);
                 } else {
                     renderCoverageRow(fr);
                 }
@@ -3389,7 +3385,7 @@ void RequirementsPanelWidget::renderRegionPage(const RequirementWorkingSet& ws)
             if (k == "sequence-key" || k == "note" || k == "sampling-spacing"
                 || k == "sampling-normalized" || k == "sampling-random"
                 || k == "orientation-sampling") {
-                renderRegionTextRow(m_regionAdvancedForm, fr);
+                renderRegionTextRow(m_regionSamplingForm, fr);
                 continue;
             }
             if (k == "enabled") {

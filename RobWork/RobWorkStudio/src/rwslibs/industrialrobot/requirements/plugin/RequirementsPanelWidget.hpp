@@ -419,9 +419,8 @@ private:
     QVBoxLayout* m_regionBoxLay = nullptr;    ///< 卡②复合行宿主
     QGroupBox* m_regionSamplingCard = nullptr;   ///< 区域卡③采样与达标
     QVBoxLayout* m_regionSamplingLay = nullptr;  ///< 卡③宿主（滑块/计数复合行）
-    QGroupBox* m_regionAdvancedCard = nullptr;   ///< 区域卡④高级参数（默认折叠）
-    QWidget* m_regionAdvancedBody = nullptr;  ///< 折叠体（toggle 切换可见性）
-    QFormLayout* m_regionAdvancedForm = nullptr; ///< 折叠体行宿主
+    QVBoxLayout* m_regionSamplingRowsLay = nullptr; ///< 采样复合行子布局（可安全重建）
+    QFormLayout* m_regionSamplingForm = nullptr; ///< 采样卡内顺序/附加约束字段行宿主
 
     /// 工位值提交（复合/二态控件共用轨——队列化出信号处理器：提交链同步
     /// 刷新重建控件树，槽内直执＝发射控件被删 use-after-free——返工修复）。

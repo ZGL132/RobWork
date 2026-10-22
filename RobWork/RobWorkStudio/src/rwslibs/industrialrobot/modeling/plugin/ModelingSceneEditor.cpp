@@ -6,10 +6,12 @@
 #include "ModelingSceneEditor.hpp"
 #include "GeometryResourceFlow.hpp"
 #include "src/LocalNameValidation.hpp" // 同单元私有规则：与规范桥同一输入质量门。
+#include <sdurws/ird/ui/UiTheme.hpp>
 #include <QCheckBox>
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -99,7 +101,12 @@ ModelingSceneEditor::ModelingSceneEditor(QWidget* parent,Accept accept,Choose ch
     auto* hint=new QLabel(QStringLiteral("场景固定帧／障碍物（世界坐标系固连）。确认只改草稿；顶栏应用草稿才产生项目修订。"
         "使用『编辑世界位姿』编辑位置m／姿态rad；不随基座安装旋转。"),this);
     hint->setWordWrap(true);layout->addWidget(hint);
-    auto* form=new QFormLayout();layout->addLayout(form);
+    // 场景页与工具、需求页使用同一主题卡片，把对象身份和几何资源入口合并成完整主分组。
+    QVBoxLayout* objectContent=nullptr;
+    auto* objectCard=ui::createCard(this,QStringLiteral("场景对象与几何"),
+        QStringLiteral("场景对象固定在世界坐标系；网格、角色和名称在此统一编辑。"),&objectContent);
+    layout->addWidget(objectCard);
+    auto* form=new QFormLayout();objectContent->addLayout(form);
     m_objects=new QComboBox(this);m_objects->setObjectName("ird_scene_objects");form->addRow("场景对象",m_objects);
     m_name=new QLineEdit(this);m_name->setObjectName("ird_scene_name");form->addRow("局部名称",m_name);
     m_role=new QComboBox(this);m_role->setObjectName("ird_scene_role");
@@ -112,14 +119,18 @@ ModelingSceneEditor::ModelingSceneEditor(QWidget* parent,Accept accept,Choose ch
     m_path->setReadOnly(true);pathRow->addWidget(m_path,1);
     m_browse=new QPushButton("选择文件…",this);m_browse->setObjectName("ird_scene_browse");pathRow->addWidget(m_browse);
     form->addRow("外部网格",pathRow);
+    QVBoxLayout* actionsContent=nullptr;
+    auto* actionsCard=ui::createCard(this,QStringLiteral("草稿操作"),
+        QStringLiteral("确认、删除和世界位姿编辑都作用于草稿；发布仍由项目级应用草稿完成。"),&actionsContent);
+    layout->addWidget(actionsCard);
     m_confirm=new QCheckBox("确认删除当前对象（共享资源和历史保留）",this);
-    m_confirm->setObjectName("ird_scene_confirm_remove");layout->addWidget(m_confirm);
-    auto* buttons=new QHBoxLayout();layout->addLayout(buttons);
+    m_confirm->setObjectName("ird_scene_confirm_remove");actionsContent->addWidget(m_confirm);
+    auto* buttons=new QHBoxLayout();actionsContent->addLayout(buttons);
     m_apply=new QPushButton("确认写入草稿",this);m_apply->setObjectName("ird_scene_apply");buttons->addWidget(m_apply);
     m_remove=new QPushButton("删除对象",this);m_remove->setObjectName("ird_scene_remove");buttons->addWidget(m_remove);
     auto* cancel=new QPushButton("取消暂存",this);cancel->setObjectName("ird_scene_cancel");buttons->addWidget(cancel);
-    auto* pose=new QPushButton("编辑世界位姿",this);pose->setObjectName("ird_scene_pose");layout->addWidget(pose);
-    m_feedback=new QLabel(this);m_feedback->setWordWrap(true);m_feedback->setObjectName("ird_scene_feedback");layout->addWidget(m_feedback);
+    auto* pose=new QPushButton("编辑世界位姿",this);pose->setObjectName("ird_scene_pose");actionsContent->addWidget(pose);
+    m_feedback=new QLabel(this);m_feedback->setWordWrap(true);m_feedback->setObjectName("ird_scene_feedback");actionsContent->addWidget(m_feedback);
     layout->addStretch(1);
     connect(m_source,qOverload<int>(&QComboBox::currentIndexChanged),this,[this]{updateInputs();});
     connect(m_objects,qOverload<int>(&QComboBox::currentIndexChanged),this,[this](int index){

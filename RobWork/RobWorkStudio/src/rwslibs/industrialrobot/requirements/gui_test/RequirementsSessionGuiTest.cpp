@@ -264,13 +264,11 @@ TEST_F(RequirementsSessionGuiTest, StationBatchParametersAtomic_UX05_WP14T12)
     batch->findChild<QPushButton*>("ird_param_apply")->click();
     batch->findChild<QPushButton*>("ird_param_confirm_yes")->click();
     QApplication::processEvents();
-    std::fprintf(stderr, "[s8]\n");
     const auto after = m_editor.workingSet().points.entries.front();
     EXPECT_DOUBLE_EQ(after.pose.position.value()[0], 0.25);
     EXPECT_DOUBLE_EQ(after.pose.position.value()[1], 0.5);
     EXPECT_DOUBLE_EQ(after.pose.position.value()[2], before.pose.position.value()[2]);
     EXPECT_DOUBLE_EQ(after.tolerance.positionTolerance, 0.002);
-    std::fprintf(stderr, "[s9]\n");
     ASSERT_TRUE(m_editor.undoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), before);
     ASSERT_TRUE(m_editor.redoLocal()); EXPECT_EQ(m_editor.workingSet().points.entries.front(), after);
 }
@@ -3027,42 +3025,39 @@ TEST_F(RequirementsSessionGuiTest, ReadOnlyStagedBeforePanelCreate_L_R12)
         << "只读禁用原因未呈现";
 }
 
-/// UI-T39 审核返工三.5（卡片折叠跨刷新保持）：收起区域高级卡后触发区域
-/// 页重投影（refreshPanel——render 只填行、卡片构造期一次），折叠态不因
-/// 刷新复位（UiTheme::createCard 的 fold 会话态跨刷新保持的回归钉）。
-TEST_F(RequirementsSessionGuiTest, CollapseSurvivesFieldRefresh_UI_T39)
+/// UI-T39：区域字段统一收进采样卡；页面不再创建“高级参数”第二卡，且
+/// 唯一采样卡的折叠态在字段重投影后保持（卡片构造期一次）。
+TEST_F(RequirementsSessionGuiTest, RegionUsesSingleSamplingCard_UI_T39)
 {
     IRD_TEST_INFO("ERR-01", {}, std::nullopt);
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     m_panel->focusObject(m_editor.workingSet().regions.entries.front().objectId);
     QApplication::processEvents();
 
-    // 区域高级卡折叠钮定位：卡是高级参数卡（QGroupBox#ird_card 之一）——
-    // 经卡标题文本找到卡，再取卡内 fold 钮（ird_card_fold 锚——UiTheme
-    // createCard 的定位面；checked＝展开态，▶＝已收起）。
+    // 旧“高级参数”卡必须彻底消失；附加字段与采样字段共用唯一卡片。
     QToolButton* fold = nullptr;
     const QList<QGroupBox*> cards = m_panel->findChildren<QGroupBox*>();
     for (QGroupBox* card : cards) {
         QLabel* title = card->findChild<QLabel*>(QStringLiteral("ird_card_title"));
-        if (title != nullptr && title->text().contains(QStringLiteral("高级参数"))) {
+        ASSERT_TRUE(title == nullptr ||
+                    !title->text().contains(QStringLiteral("高级参数")))
+            << "区域页仍存在已删除的高级参数卡";
+        if (title != nullptr && title->text().contains(QStringLiteral("采样"))) {
             fold = card->findChild<QToolButton*>(QStringLiteral("ird_card_fold"));
-            break;
         }
     }
-    ASSERT_NE(fold, nullptr) << "区域高级卡折叠钮未定位（ird_card_fold 锚漂移）";
-    // 契约前置：高级参数卡默认收起（startCollapsed=true——去噪设计规格 §4）。
-    ASSERT_FALSE(fold->isChecked())
-        << "前置失真：高级卡应默认收起（startCollapsed 契约面回归）";
-    // 用户展开（审核四.3 的真实诉求：用户展开后不应因一次刷新自动收起）。
-    fold->setChecked(true);  // 展开态（toggled 轨——与手点同一数据流）
+    ASSERT_NE(fold, nullptr) << "区域采样与附加约束卡折叠钮未定位";
+    ASSERT_TRUE(fold->isChecked())
+        << "区域完整参数初始必须可见";
+    fold->setChecked(false);  // 折叠态（toggled 轨——与手点同一数据流）
     QApplication::processEvents();
-    ASSERT_TRUE(fold->isChecked());
+    ASSERT_FALSE(fold->isChecked());
 
     // 重投影（字段编辑/校验刷新的真实路径）后展开态保持。
     m_panel->refreshPanel(m_editor.workingSet(), m_report);
     QApplication::processEvents();
-    EXPECT_TRUE(fold->isChecked())
-        << "刷新后展开态被复位（卡片折叠跨刷新保持回归——用户展开不应被收起）";
+    EXPECT_FALSE(fold->isChecked())
+        << "刷新后唯一分组卡的用户折叠态应保留";
 }
 
 /// UI-T39 审核返工五.1（命令按输入类型取锚）：选中区域后触发镜像——

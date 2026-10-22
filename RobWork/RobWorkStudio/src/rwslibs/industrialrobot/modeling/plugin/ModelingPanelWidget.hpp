@@ -58,6 +58,7 @@ namespace sdurws::ird::modeling {
 class ModelingBodyEditor;
 class ModelingSceneEditor;
 class ModelingToolEditor;
+class JointGroupedForm;
 
 /**
  * @brief 建模域面板 widget（五区合一——挂位于 ui 中央区 StageId=modeling 位）。
@@ -107,6 +108,10 @@ public:
     /** @brief PM-04：绑定旧稿只读对照动作；[in] review为空时禁用，允许只读会话查看。 */
     void setRetainedReviewAction(PostEditAction review);
     /** @brief 局部历史恢复前丢弃未确认表单输入，防旧暂存覆盖恢复后的权威值。零草稿写入。 */
+    /// GF-A：统一非模态离页；无输入返回true，有输入由决议执行action。
+    bool guardJointLeave(std::function<void()> action);
+    /// 项目/分支边界作废旧页世代；discard仅在已完成关闭决议时丢输入。
+    void invalidateJointContext(bool discard);
     void cancelPendingForHistoryRestore();
 
     /// 命令标题文案解析器形态（titleKey→工程用语——宿主接 ui::resolveText）。
@@ -225,7 +230,7 @@ private Q_SLOTS:
     /// 命令按钮激活（域工具区——转发注入的提交出口）。
     void onCommandButtonClicked();
     /// 编辑页关节类型切换（UI-T66——L-2 分流 Type 域分支；拒绝回退权威值）。
-    void onJointEditTypeChanged(int index);
+
 
 private:
     // ---- 五区构建（构造期一次——布局骨架；内容全部走 refreshPanel）----
@@ -267,7 +272,7 @@ private:
 
     /// 编辑页出口（ParamEditSet→域编辑流分组转译——.cpp 内定义的具体类；
     /// 域裁决唯一在 applyJointFieldEdit，本类零判定）。
-    class JointDetailEditOutlet;
+
 
     /// 编辑页签骨架（构造期一次——提示行＋ParamTablePanel 宿主容器）。
     void buildJointEditPane(QVBoxLayout* bottom);
@@ -275,15 +280,8 @@ private:
     /// 驱动）：换目标＝重建模型（specs 量纲随关节类型），同目标＝推基线
     /// （暂存编辑保留——未完成输入不因刷新丢失）。
     void refreshJointEditPane();
-    /// 编辑页模型重建（字段集 12 行装配＋createParamTablePanel 挂载）。
-    void rebuildJointEditModel(const JointEntry& joint);
-    /// 权威值→表单基线回填（SI 真值；未提供字段＝nullopt 基线——kFieldUnset
-    /// 占位呈现，不伪造 0）。
-    void pushJointEditBaselines(const JointEntry& joint);
-    /// 出口移交落点（IFormEditOutlet::applyEdits 转接——键分组装配域编辑
-    /// 流：axis-*→Axis、origin-*→Origin、zero-offset→ZeroOffset、
-    /// bounds-*→Bounds；提交序固定登记序，单组拒绝不阻断其余组）。
-    void applyJointDetailEdits(const ui::ParamEditSet& editSet);
+    /// 未确认关节输入的统一非模态离页守卫；action只在用户决议后执行。
+
 
     // ---- UI-T54 基座安装姿态编辑页（"编辑"页签第二模式——锚外对象入口）----
 
@@ -409,15 +407,12 @@ private:
     QPointer<QPushButton> m_collisionCopyBtn;
 
     // ---- UI-T53 关节详细编辑页（"编辑"页签——构造期挂树，随 Qt 析构）----
-    std::unique_ptr<ui::IFormEditOutlet> m_jointEditOutlet; ///< 移交出口（构造期一次——转译到本面板域编辑流）
-    QWidget* m_jointEditHost = nullptr;       ///< 页签容器（提示行＋面板宿主——QVBoxLayout 承载）
-    QWidget* m_jointEditTypeRow = nullptr;    ///< 类型枚举行容器（UI-T66——空态隐藏/目标态显示）
-    QComboBox* m_jointEditTypeBox = nullptr;  ///< 关节类型下拉（UI-T66——域 Type 词表直投）
-    QLabel* m_jointEditHint = nullptr;        ///< 空态提示（非关节选中/无会话——不伪造编辑页）
-    QWidget* m_jointEditPanel = nullptr;      ///< createParamTablePanel 产物（换选中目标时重建）
-    std::unique_ptr<ui::ParamEditModel> m_jointEditModel;  ///< 编辑会话模型（基线/暂存/就地错误三层——ui 公共件）
-    std::optional<std::size_t> m_jointEditTarget;  ///< 页当前绑定关节下标（nullopt＝未绑定——重建/推基线分路锚）
-    std::optional<JointType> m_jointEditSchemaType; ///< 字段集/单位随类型；同索引换类型仍须重建。
+    std::uint64_t m_jointFormGeneration=0; ///< 目标/项目世代，防旧控件迟到提交。
+    std::uint64_t m_jointBoundGeneration=0; ///< 当前页绑定的世代；重置旧输入后必须重建提交回调。
+    JointGroupedForm* m_jointForm=nullptr; ///< 当前整表页，Qt父子所有权，仅UI线程。
+    QWidget* m_jointEditHost=nullptr; ///< 当前页宿主。
+    QLabel* m_jointEditHint=nullptr; ///< 无关节/会话空态说明。
+    QWidget* m_jointEditPanel=nullptr; ///< 当前页身份，旧页退出控件树后延迟销毁。
 
     // ---- UI-T54 基座安装姿态编辑页（raw 指针＝Qt 父子所有权）----
     QStackedWidget* m_editStack = nullptr;      ///< 编辑页签模态堆栈（0＝关节区，1＝基座安装页）
@@ -471,6 +466,7 @@ private:
     class PoseSetEditOutlet;                      ///< config 表移交壳
     std::unique_ptr<ui::IFormEditOutlet> m_poseSetOutlet;  ///< config 页出口
     QWidget* m_poseSetArea = nullptr;             ///< 位姿集页容器（stacked 第 5 页）
+    QVBoxLayout* m_poseSetFormLayout = nullptr;   ///< 命名位姿唯一分组卡的内容布局
     QComboBox* m_poseSetCombo = nullptr;          ///< 条目选择（键呈现）
     QPushButton* m_poseSetAddBtn = nullptr;       ///< 新增条目（pose-N 零位姿种子）
     QPushButton* m_poseSetRemoveBtn = nullptr;    ///< 删除条目
@@ -490,6 +486,7 @@ private:
     ModelingBodyEditor* m_bodyEditor = nullptr; ///< F10内联编辑器，Qt拥有，仅UI线程访问。
     QWidget* m_bodyArea = nullptr; ///< 可滚动连杆物性页，不持工作集。
     QWidget* m_drivetrainArea = nullptr;          ///< 传动页容器（stacked 第 6 页）
+    QVBoxLayout* m_drivetrainFormLayout = nullptr; ///< 传动参数唯一分组卡的内容布局
     QWidget* m_drivetrainPanel = nullptr;         ///< 传动数值表（ratio/摩擦/力矩）
     std::unique_ptr<ui::ParamEditModel> m_drivetrainModel;    ///< 传动编辑模型
     std::size_t m_drivetrainJointCount = 0;       ///< 行缓存（关节表变化→重建）
