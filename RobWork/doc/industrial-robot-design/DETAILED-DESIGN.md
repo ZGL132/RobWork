@@ -16,6 +16,7 @@
 - ARCHITECTURE.md：单元边界、端口、分层和依赖白名单。
 - units/<unit>.md：单元内部接口、数据模型、状态机、错误语义和单元测试。
 - development-task-breakdown.md：主 WP 交付目标、跨单元集成、里程碑和退出条件。
+- 复用权限只在 ARCHITECTURE §3.6 / SA-19 定义；[reuse/audit-contract.md](reuse/audit-contract.md) 定义 catalog/逐功能矩阵、待实现门禁和生产证据格式，单元卡仅链接并补本单元边界。全部 20 单元均受审计，不限于已知重复项；不恢复 old/ 不等于可重写上游。
 - 需求追踪矩阵：位于 development-task-breakdown.md §3，维护需求 → AT → 单元任务 → 主 WP 的唯一映射。
 
 **本文职责边界**（2026-10-17 随治理 Task 3 增补）：本文负责 20 单元详设**索引**与状态视图；不负责单元内部语义（各 `units/<unit>.md` 为权威）、任务排期（DTB）、执行状态（`traceability/pipeline/state.json`）。下游入口：`units/<unit>.md`、`traceability/unit-status.json`、`traceability/phase-one-task-index.json`。

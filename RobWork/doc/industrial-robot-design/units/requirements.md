@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · requirements 单元详细设计（阶段 B）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 > 2026-09-22 新建（WP-14-T01 承接）。本文是 requirements 单元的唯一详细设计：依据 REQUIREMENTS REQ-01～12 与 ARCHITECTURE §3.1/§3.3 的分配，把任务点/工作区域/工况数据模型、姿态规则、镜像阵列、CSV/JSON 业务映射、必验范围与采样计划定义、需求就绪校验、evidence/kinematics/trajectory/optimization 输入交接、命令与撤销/重做、插件界面写到可直接实现的深度。本文只做详细设计；不自行宣布 Accepted，不视任何自审为实现测试或正式验收。

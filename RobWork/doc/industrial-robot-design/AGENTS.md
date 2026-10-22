@@ -7,4 +7,5 @@
 - traceability/ 保留真实验证与历史验收证据；不改写历史证据，不批量删除。新证据注明命令、结果及相关任务，不要求同时维护全库摘要索引。
 - context/README.md 是可选工具说明；新增设计根级资产仍登记 asset-inventory.json，普通文件编辑不用刷新清单。
 - 复用政策原文在根 §0.1；需复用迁移时定向读 reuse/policy.md、相关 catalog/inventory 条目和 migration 阶段。治理独立验收阶段门继续有效。
+- 上游使用权限唯一见 ARCHITECTURE §3.6 / SA-19；审计数据/待实现门禁见 reuse/audit-contract.md。逐功能审计覆盖全部单元，不能以 16 个重复文件封顶；新增补强按 migration §11 验收，不与旧 GOV-T21 pass 混同。不手写重复功能台账。
 - 流水线状态只在自动编排时读写 traceability/pipeline/state.json，不复制状态到其他台账。纯人工任务不走 PIPE。

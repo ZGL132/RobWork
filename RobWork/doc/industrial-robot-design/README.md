@@ -2,9 +2,9 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v1.0（2026-10-17，随 Agent-native 治理 Task 3 建立） |
+| 文档版本 | v1.1（2026-10-22，同步精简入口及最终复用方案；v1.0 于 2026-10-17 建立） |
 | 定位 | 设计文档树的人类读者入口：项目定位、阶段快照、入口表、变更速查、最短阅读路径 |
-| 读者 | **人类**工程师/新协作者。Agent 不经本文件——Agent 的进入阶梯是根 AGENTS.md §6.1 → 本树 `AGENTS.md` → `context/README.md`（上下文经济学：默认阅读集不扩容） |
+| 读者 | **人类**工程师/新协作者；Agent 以根 AGENTS.md §1 的最小上下文规则进入，按任务定位本树规则和相关章节，不强制通读 context |
 | 维护 | 每个治理/合入批次随批小步更新 §2 阶段快照；结构性变更（新入口）须同步 `context/asset-inventory.json` |
 
 ## 1. 项目定位
@@ -28,16 +28,18 @@
 | 查流水线当前状态 | `traceability/pipeline/state.json`（唯一权威，schema 见 PIPE §0.2） |
 | 查问题/缺陷登记 | `traceability/findings.json`（登记簿）；待裁决项另见 `governance-log.md` |
 | 查验收/测试证据 | `traceability/acceptance/`（验收记录）＋ `traceability/gtest-reports/`（统一证据索引随治理 Task 7 建） |
-| Agent 协作规则 | 本树 `AGENTS.md` → `context/README.md`（资产七类分层）→ `context/reading-paths.md`（五条任务型路径） |
+| Agent 协作规则 | 根 AGENTS.md §1/§6 与本树 AGENTS.md；context 工具按需使用 |
 | 查规则执法方式 | `context/rule-enforcement.md`（gate/review/behavioral 分级审计表） |
+| 查上游复用/权限/迁移 | `ARCHITECTURE.md` §3.6 / SA-19 → `reuse/policy.md`；catalog/逐功能格式与待实现门禁见 `reuse/audit-contract.md`，阶段见 `reuse/migration.md` §11 |
 
 ## 4. 变更规则速查
 
 - 提交前缀：`[DTB]` / `[units]` / `[ARCH]` / `[governance]` / `[docs]`（语义见根 AGENTS.md §6.2）；纯文档修订可在 `redesign-main` 小步提交。
 - 本树根级新增文件/目录**必须**同步登记 `context/asset-inventory.json`，否则 `validate-docs.ps1` 门禁失败。
-- 权威关系（谁说了算）与修订纪律：本树 `AGENTS.md` §2/§4；资产分层与默认上下文规则：`context/README.md`。
+- 权威关系与执行规则：根 AGENTS.md 与本树 AGENTS.md；资产分层工具说明按需查 `context/README.md`。
+- 上游复用覆盖全部 20 单元及函数/类/接口/工具/测试/构建，不限于 16 个已知重复文件。“从头构建”只排除恢复 old/，不允许重写上游核心；本轮文档治理不表示新增权限/功能证据门禁已实现或验收，不放行适配层/算法替换。
 
 ## 5. 最短阅读路径
 
 - **人类新人**：本文件 → `ARCHITECTURE.md` §1–§3（20 单元组成/分层/端口）→ `DETAILED-DESIGN.md` 文档分工 → 所在领域的 `units/<unit>.md` → `development-task-breakdown.md` §0（主 WP 结构）。
-- **Agent**：根 AGENTS.md §6.1 分层阅读顺序（根规则 → 分区规则 → 单元卡 → 任务 JSON → 验证脚本 → 证据）；具体到某类任务的"必须读/按需读/禁止默认读"清单见 `context/reading-paths.md`。
+- **Agent**：根 AGENTS.md §1 → 定位本任务相关单元/契约与引用章节 → 按影响验证；context 仅作可选工具，不扩大默认阅读集。

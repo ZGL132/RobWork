@@ -932,6 +932,8 @@ L5  应用壳装配（RobWorkStudioApp 壳＋静态白名单 SA-01；策略编�
 
 ### 5.5 测试框架接入（定稿）
 
+**复用治理增量（2026-10-22）**：上游函数/类/接口以及工具、测试、构建基础均先检索再决定直接用或薄适配；不得为满足旧任务卡自持重复核心。权限归 ARCHITECTURE §3.6 / SA-19，审计数据与新增门禁验收归 reuse/audit-contract.md，阶段准入归 reuse/migration.md §11。本轮仅文档落地；新增门禁须在原工具链内实施并独立验收，完成全功能审计后再进入 REUSE-T02～T05。既有 done/旧治理 pass 不能豁免。按根 §4 选择验证，普通文档不跑产品双模式构建。
+
 googletest **经 vcpkg 安装**（`vcpkg install gtest:x64-windows`，经典模式），industrialrobot 全部 `_test`/`_contract_test` 目标统一经 `find_package(GTest CONFIG REQUIRED)` 接入：失败即停（REQUIRED），不静默跳过；不要求框架开启 `USE_gtest`（保持 OFF）、不消费从未生成的 `RW::gtest`、不源码 vendor、不混用两份 gtest；测试 main 自持（`GTest::gtest_main` 或 testkit RecordListener 适配）；沿用框架 `ADD_RW_GTEST` 宏语义（`add_test`＋`<target>_report` XML 报告目标），宏定义放各单元 CMake；首次安装的版本登记于 §4.4 定稿行（随增量修订更新）。测试用例命名带需求/AT 追溯字段（`ird-test-report.json` 承载）。
 
 **gtest 留痕双 report 口径（v0.57 补登，GOV-DOC 治理批 2026-10-10——F-571 消账）**：入库 gtest 留痕的**权威计数＝各测试 exe 经 testkit `--ird_report=<path>` 直写的 per-exe `ird-test-report` JSON＋同模式 gtest XML**，两者同批产出、逐目标配对；`traceability/gtest-reports/<batch>/` 目录按「测试目标 × 构建模式（集成/冒烟）」分件，即 **wp20-t10 返工轮（acc/wp-20-t10/2）确立的八件形态**——模型/契约两测试目标 × 集成/冒烟两模式 ×（XML＋JSON）共 8 件（命名如 `sdurws_ird_<unit>_test-integration.xml`／`ird-test-report-integration.json`／`ird-test-report-contract-integration.json` 等）。登记口径：单一 `ird-test-report.json` 混装单目标或多目标合计＝**不合规留痕**（模型目标无 per-exe JSON、或 JSON 口径与 XML/实测计数不一致均视为口径漂移——acc/wp-22-t07/1 S-1 与 acc/wp-22-t08/1 同型确认后合并转登的 F-571「gtest 留痕双 report 口径漂移」随本补登消账；后续批次由实施者按本口径生成双件留痕，验收按八件形态核对）。登记附注：F-571 编号在 findings.json 中后被 2026-10-09 全单元代码审查（audit/unit-code-review-20261009）的三条 P0 发现占用（现 F-571＝ApplyRobotDesignHandler 候选未播种基线，已 fixed）——原「gtest 留痕双 report 口径漂移」条目在该次编号冲突中失联，本段为该义务的权威消账记录（消账依据＝acc/wp-22-t08/1 转登原文，git 历史可考）。

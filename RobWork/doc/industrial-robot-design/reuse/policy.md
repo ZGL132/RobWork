@@ -5,9 +5,9 @@
 ## 1. 不可跳过的顺序
 
 1. 从根 AGENTS.md 进入，只读本任务涉及的协议章节、migration 阶段、catalog/inventory 条目和契约；全量库存交机器检查，不默认加载到上下文。
-2. 检索 RobWork/RobWorkSim 的源码、公共头、构建目标、测试、示例，记录命令、范围、版本、具体符号和适用边界。找不到一次不等于没有能力。
+2. 先按 ARCHITECTURE §3.6 / SA-19 确认对象/操作权限，再按需求分批检索 RobWork/RobWorkSim 的源码、公共头、构建目标、测试、示例和文档，反查产品隐藏实现并作适用性探测；记录命令、范围、版本、具体符号和适用边界。找不到一次不等于没有能力。
 3. 按直接 API → 薄封装/适配 → 最小上游扩展 → 新实现选择。后两项须先提交 extensions/ 中的完整提案并取得所有者明确批准。
-4. 任务须有 reuse 字段及 changes/<taskId>.json；所有产品源码/测试/CMake 变动逐文件绑定内容摘要、能力、方式及验证命令。仅 include 或链接库不能证明生产路径真正复用。
+4. 产品变更任务须有 reuse 字段及 changes/<taskId>.json；所有产品源码/测试/CMake 变动逐文件绑定内容摘要、能力、方式及验证命令。补强后的逐功能矩阵、catalog 格式与 direct/adapter 生产正向证据按 [audit-contract.md](audit-contract.md)；该补强验收前执行现有文件凭证，不能据此宣称语义审计通过。普通文档维护不额外编制产品变更凭证。
 5. 按根 AGENTS.md §4 执行相关验证并提交推送；复用迁移保留双模式验证、独立验收及不可变记录，所有者决定合入。普通文档维护无需算法迁移的全部流程，实施者不能自签批准。
 
 ## 2. 基线不是豁免
@@ -20,7 +20,9 @@ classification 为 migration-debt 的文件已有重复证据；audit-required �
 
 ## 3. 类型、权威与生命周期
 
-内部优先用 rw::math/rw::models/rw::kinematics/rwsim 类型；业务 DTO、稳定诊断码、证据与命令端口保留，由单元内私有适配器连接。runtime 唯一维护名称、编译模型、关节/TCP 映射、权威角与 q_rw 转换；policy 唯一维护共享策略。不扩大业务单元互链，不跨私有头，L2 零 Qt。
+权限唯一维护于 [ARCHITECTURE §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)：纯值直接用、受控模型视图与任务私有会话、宿主呈现精确例外分别审查；runtime 是模型 owner，不能把“使用 rw 类型”解释为任意构造权。业务 DTO、稳定诊断码、证据与命令端口保留，仅在必要边界使用私有薄适配器。runtime 维护名称、编译模型、关节/TCP 映射、权威角与 q_rw 转换；policy 维护共享策略。不扩大业务单元互链，不跨私有头，L2 零 Qt。
+
+evidence 的 EvaluationOutput/aggregateVerdict/ResultEnvelope 与 diagnostics 的注册表/文案权威、worker 进程边界均按 SA-19；不得在业务或 adapter 中另写 envelope/码表或把宿主 WorkCell 作为计算真值。直接 API 可满足契约时不强加 wrapper；不建全库 facade、第二模型层或通用 backend 框架。
 
 已发布快照不可变；State、IK 求解器、仿真引擎按任务/线程独占。必须明确 m/rad/kg/N/N·m、坐标系、所有权、载荷和摩擦唯一计入点。公共接口按契约版本迁移，不直接插入虚表并声称 ABI 不变。上游抛错须转译，不伪造成功、迭代数、取消响应或能力位。
 
@@ -36,7 +38,7 @@ classification 为 migration-debt 的文件已有重复证据；audit-required �
 
 治理任务 GOV-T21 的验收对象为冻结 SHA。后续 REUSE 任务在进入 ready 前，必须登记 governanceAcceptance（验收记录提交、路径、被验收 SHA）；门禁读取该 Git 对象核对 verdict=pass、taskId=GOV-T21 和 reviewedCommit，并检查被验收提交为当前祖先。未取得记录时后续任务保持 planned，不触碰计算内核。
 
-每项能力缺口单独停在提案阶段，不缩小既有需求、放宽容差或启用旧内核兜底。独立验收失败先返工并重新全量验收；不得自行合入 redesign-main。main 冻结、上游源码只读及 SA-02 补丁纪律继续有效。
+每项能力缺口单独停在提案阶段，不缩小既有需求、放宽容差或启用旧内核兜底。独立验收失败先返工并对受影响范围完整重验、独立复验；不得自行合入 redesign-main。main 冻结、上游源码只读及 SA-02 补丁纪律继续有效。
 
 ## 6. 入口与门禁契约
 
@@ -48,6 +50,10 @@ classification 为 migration-debt 的文件已有重复证据；audit-required �
 ## 7. 库存结项协议
 
 本轮库存是不可变历史事实，不能通过更改classification洗白。RequireMigrationComplete当前必须拒绝存量债务；REUSE-T06须按独立批准的契约增加逐文件/逐功能关闭证据（迁移提交、上游调用测试、独立验收），之后再启用最终零债务判定；不得简单清空库存或改基点。
+
+后续语义结项须关联 functions/<unit>.json 的真实生产链、旧内核删除提交、有效正向证据与独立验收，不限于 16 个已知重复文件。catalog 的 candidate/reviewed/verified 是能力证据状态，不替代功能适用性和架构权限。完整补强契约见 audit-contract.md §3～§7。
+
+现有 GOV-T21 pass 不自动验收本次补强；按 migration.md §11 先完成权限/矩阵/正向证据门禁及独立验收，再放行 REUSE-T02。文档通过仅表示规则已登记，新增机器检查尚未实现；禁止直接推进适配层或算法替换。
 
 ## 8. 验收返工GOV-T21/1
 

@@ -2,6 +2,8 @@
 
 本文件只登记未决能力，不构成扩展批准。每项须另建完整提案并独立取得所有者明确授权。
 
+GAP-IK/RNE/FD/TRJ 当前均为待检索/验证，不表示已证实上游无能力。按 [audit-contract §2](../audit-contract.md#2-需求驱动的双向审计) 合并上游 review 与项目功能审计：优先直接 API 和最薄适配，实际不能满足原需求时才提最小上游扩展。SA-19、宿主例外、business-specific 分类和本轮文档批准均不能批准新核心；不得用“业务算法＋架构例外”绕过 H1/H2/H6。
+
 | ID | 检索起点与已知差异 | 优先适配/候选扩展点 | 阻止事项 |
 | --- | --- | --- | --- |
 | GAP-IK | rw/invkin/JacobianIKSolver.hpp、IterativeIK.hpp、rwlibs/algorithms/qpcontroller/IKQPSolver.hpp；现有接口未证实支持任务掩码、自由滚转、双容差与真实迭代观测 | 复用原求解器，必要时在原抽象增加任务误差/行选择/取消观测 | 不新写 DLS/约束差分核心，不用后过滤冒充仅位置求解 |

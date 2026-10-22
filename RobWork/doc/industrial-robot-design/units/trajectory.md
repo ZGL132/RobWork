@@ -1,6 +1,6 @@
 # 工业机械臂设计软件 · trajectory 单元详细设计（阶段 C）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 > 2026-10-06 新建（WP-16-T01 承接）。本文是 trajectory 单元的唯一详细设计：依据 REQUIREMENTS TRJ-01～08 与 ARCHITECTURE §3.1/§4/§7.2/§7.5/§7.6 的分配，把输入快照与身份、轨迹数据模型、PTP、笛卡尔直线段与 IK 连续性、路径连接与连续性、RobWork 规划器与 policy 交接、平滑与 TRJ-04 复检协议、时间参数化与节拍、轨迹质量与 evidence 素材、execution/evidence/project/diagnostics/ui 协作、公共接口、插件界面边界、验证与故障注入矩阵、任务拆分与追踪矩阵写到可直接实现的深度。**本文只做详细设计：不实现产品源码、不创建 CMakeLists/插件/worker/测试文件、不修改需求/架构/其他单元卡、不恢复或复制 old/ 历史实现；不自行宣布 Accepted，不把本文自审写成实现测试或正式验收通过。**

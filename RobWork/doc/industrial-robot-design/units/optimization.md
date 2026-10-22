@@ -1,6 +1,6 @@
 # optimization 单元详细设计（L4 业务域——阶段 B/OPT-B 与阶段 D/OPT-D）
 
-> 上游复用、阶段门与最小上下文统一执行根 AGENTS.md §0.1/§1；本文件只按相关章节取用。
+> 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 
 | 字段 | 值 |

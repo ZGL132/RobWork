@@ -5,14 +5,14 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.14（2026-10-12 O-09 裁决落地——§3.5 补登 io↔project/io↔runtime 两条注入式协作边说明〔非编译边，编译白名单与 R-1/R-2 门禁零变化〕，详见变更记录 v0.14 行；v0.13＝方案 B.1 宿主融合产品形态冻结：新增 SA-18＋§7.12 双树边界与选择联动——O-43 宿主融合方向的终态化收口，所有者 2026-09-27 批准，设计规格 `RobWork/docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md`；需求语义零变化；v0.12＝全链一致性审计事实修正；v0.11＝A6～A8 复审表述清理） |
-| 日期 | 2026-09-27 |
+| 文档版本 | v0.15（2026-10-22；SA-19 上游使用权限与纯净性；此前版本见变更记录） |
+| 日期 | 2026-10-22 |
 | 状态 | `Draft`（待评审） |
 | 文档代号 | ARCH |
 | 上游 | `REQUIREMENTS.md` v1.16（唯一需求权威源，状态 `Accepted`；v1.14 C1～C4、v1.15 C5～C7、v1.16 C8 为签署后变更） |
 | 下游 | `DETAILED-DESIGN.md`（20 单元详设，后续产出）、`units/*.md`（单元任务卡，后续产出）、`development-task-breakdown.md`（构建/任务约定，后续产出） |
 | 构建落位 | `RobWork/RobWorkStudio/src/rwslibs/industrialrobot/`（20 单元骨架已建，见该目录 `CMakeLists.txt`） |
-| 实现口径 | **从头构建**（REQUIREMENTS v1.9 确立、v1.11 重申主代码基线为"无"）：一切实现按需求与下游设计文档新建，不继承、不恢复任何历史实现源码 |
+| 实现口径 | **从头构建**（REQUIREMENTS v1.9 确立、v1.11 重申主代码基线为"无"）：产品业务组织按需求与下游设计文档构建，不继承、不恢复 old/ 产品历史源码；上游能力须优先直接复用或必要薄适配，不得据此重写核心（SA-19） |
 | 参考资产 | `./old/`（仓库根，src/plans/specs 共 523 文件，可读）——**仅功能范围对照**（需求附录 A 台账），不作语义来源（RV-13）、不作实现继承 |
 
 > **文档地位**：本文是架构层的唯一权威文档。需求语义一律以 `REQUIREMENTS.md` 条目为自足定义（RV-13），本文只回答"系统如何组织以满足需求"：组成结构、边界规则、关键机制、运行时形态与决策依据。本文不定义需求验收标准，不进行单元内部详细设计（归 DETAILED-DESIGN / units 任务卡）。
@@ -235,6 +235,61 @@ workflow 是业务层之上的**编排单元**：消费平台事件（修订产�
 | 事件总线、命令上下文回调等实例 | 运行时注入 | L5 应用壳装配注入；消费方零编译期依赖 |
 
 门禁实施：上表之外的同层边（含反向边与新边）＝未登记依赖，构建失败；表内有向无环（project←execution/reporting、diagnostics←project/execution/io/ui，无回边）。上表『io ↔ project』『io ↔ runtime』两行为 2026-10-12 O-09 裁决补登的**注入式协作边说明**（P-IO-1/P-PR-5 消账）——只登记协作语义、不构成编译链接白名单：任一侧引入对侧头文件或链接目标，仍按表外同层边构建失败。
+
+---
+
+### 3.6 上游使用权限与纯净性（SA-19）
+
+本节承接所有者 2026-10-22 最终复用方案及文档治理指令，补足“谁可以碰什么”；不改变需求范围、R-1～R-4、SA-02/04/06/08/12/13/18 或既有依赖白名单。**先审架构权限，再检索上游、验证适用性、选择最薄实现并证明生产结果消费**。用了上游 API 不代表可以接管其权威对象；权限例外不批准新核心算法。
+
+#### 3.6.1 使用形态与 owner
+
+| 形态 | 允许范围 | 禁止与适配边界 |
+| --- | --- | --- |
+| 纯值/无状态运算 | 各单元按需求直接使用 Q、Transform3D、Rotation3D、RPY、LinearAlgebra 等值与函数 | 不是放开整个 rw::math；全局随机源、可变缓存、外部状态另按确定性与线程契约审查 |
+| runtime 受控视图/借持 | 计算库通过 runtime 公共契约取得模型/名称视图；业务适配器可持任务私有 State、IKSolver、仿真会话 | 不构造第二条权威模型链、不改已发布 WC/DWC 拓扑/物性、不让借持句柄逃逸生命周期；会话写入与权威结构写入分开审查 |
+| 宿主呈现例外 | 仅 §3.6.2 登记的 ui/plugin 文件可接宿主图形/呈现对象 | 仅呈现 State、挂接和绘制；不是领域计算真值、结果身份或新的模型构造规则 |
+| runtime owner | 编译/物化 WC、DWC、Device/Frame、名称映射及发布；各进程实例复用同一构造规则 | 不是全局共享可变 State；policy 仍拥有碰撞语义，execution 仍拥有调度与结果接纳 |
+
+头分类含 `rw/math` 值、`rw/models`、`rw/kinematics` 模型/State、invkin/trajectory/pathplanning/proximity、`rwsim`、loaders、graphics/rwlibs/rws；**按具体类型/操作授权，不按整个前缀一刀切**。Device::setQ 对任务私有 State 的更新不同于改模型结构。直接 rw/rwsim 算法可在权限允许的私有业务适配器中调用，无需把全部算法迁入 runtime。
+
+`RuntimeSnapshot::workCellHandle()`（`runtime/include/sdurws/ird/runtime/Snapshot.hpp`）是已存在的非 const 上游兼容借持：仅按碰撞适配契约使用，必须由快照保活、禁止结构写入/跨进程传递/扩大暴露。不能因返回非 const 就整类判违规，也不能因外层方法为 const 就推定安全。收窄接口须经兼容设计与独立验收，不在本轮改产品接口。
+
+#### 3.6.2 宿主例外封闭清单
+
+以下路径均相对 `industrialrobot/`，每项包含同名 `.hpp/.cpp`；登记的是精确路径与操作，不豁免文件内一切代码。生产目标为 ui 的宿主插件装配（`sdurws_ird_ui_plugin`，见 ui/CMakeLists.txt）；同源测试编译须单列测试目标权限，不能借测试白名单放开生产。
+
+| ID | 精确文件族 | 授权操作 | 约束 |
+| --- | --- | --- | --- |
+| HOST-RENDER | ui/plugin/HostView3DPreviewBackend | WorkCellScene/Frame/Drawable/Render 与宿主视图绘制 | 使用已有呈现输入，不建计算模型、不产工程结论 |
+| HOST-PRESENT | ui/plugin/HostPresentationAdapters | HostPresentationView 的挂接、移除、名称投影、已发布模型几何遍历与会话 State 同步 | 视图来自 runtime 工厂；setWorkCell 不变成第二编译链；不修改发布模型结构 |
+| HOST-COMPILE | ui/plugin/HostCompilePort | 调用 runtime 编译器/快照工厂/编译探针，衔接 project 查询与 io 资源 | 仅编排既有公共端口；不能在宿主另写 WC/DWC 构造规则 |
+| HOST-GATEWAY | ui/plugin/HostView3DGateway | 通过受控 TCP Frame/当前 State 读取呈现位姿，拾取与发布网关 | 会话借用按来源保活，不把宿主视图回灌为工程计算真值 |
+
+本表经对应源文件及 ui/CMakeLists.txt 定位登记，**不宣称全部现有宿主接线已经通过权限审计**。其他文件（含壳层装配）如实际需要受限操作，须先登记精确文件/目标/操作、来源与生命周期、原因及退出条件，经架构确认；未列出不自动继承，也不得因此新增通用模型所有者。后续 IRD-GATE-AD 的机读权限记录引用本表 ID，并复核每个操作。
+
+#### 3.6.3 evidence / diagnostics 承重边界
+
+evidence 是 L2 计算承重边界，零 Qt、无项目写入、无调度/宿主副作用；业务按 `units/evidence.md` 的 `EvaluationOutput` 产出 evidence/proof/searchRecord/verdictInputs/payload/结构化 diagnostics 及 provenance，不限缩成只有 payload。结果统一经既有 `aggregateVerdict` / `ResultEnvelope::make`，禁止另造 envelope、状态归并或当前性规则。调用侧可按契约组装，不得重新实现该语义。
+
+core 维护纯诊断数据契约；diagnostics 是 L3 平台服务，但其自身目标仍零 Qt，StableCodeRegistry 与稳定码/文案为单一权威。业务只选择已注册稳定码并提供结构化参数/对象/因果关联，不另设码表或替换正式诊断文案；日志不能替代正式诊断。policy 共享策略与碰撞判定、project 修订写路径均不迁入 adapter。
+
+#### 3.6.4 worker 边界与执法
+
+进程间仅传冻结输入/物化数据、值与身份，不传 WC/DWC/State 指针、借持句柄或宿主对象。runtime 在每个 worker 内按同一规则重建/物化；State/solver/engine 按任务独占，execution 管理启动、调度、取消和结果接纳。worker 不链接宿主呈现/Widgets，L2 仍零 Qt。
+
+IRD-GATE-AD 须检查文件＋编译目标＋头/类型＋操作权限，覆盖 load/clone/factory/结构 mutation 和句柄逃逸，不能只搜索 `new WorkCell`。检查实施契约在 [reuse/audit-contract.md](reuse/audit-contract.md)；当前文档补强不等于门禁已经落地。静态检查不能判定的语义交独立审查；未批准的模型构造与越权写入不得以 catalog“复用上游”放行。
+
+#### 3.6.5 SA-19 被否备选（本次登记）
+
+| 备选 | 否决原因 |
+| --- | --- |
+| B：只要调用上游即允许任意单元持有/构造模型 | 不能保证 ARC-03 真值、名称与生命周期唯一 |
+| C：全部 rw 类型都经统一 facade/DTO，值运算也包装 | 扩大代码和维护面，制造与上游平行抽象 |
+| D：只有文件/关键词凭证，无操作权限与生产证据 | 检不出隐蔽工厂构造、调用后弃用结果和改名内核 |
+| E：宿主/worker 整目录豁免，或批准架构例外即允许新算法 | 扩散双构造链/跨进程句柄，绕过 H1/H2/H6 |
+
+B/C/D/E 是本次备选标识，不追认未核实的历史编号。采用本节的分形态、精确权限与最薄调用；catalog 和矩阵引用 SA-19，不形成互不引用的第二架构。
 
 ---
 
@@ -673,6 +728,8 @@ RobotDesign 安装姿态 = 倒挂 180° → 编译进 CanonicalModel 的 R_world
 
 ## 9. 架构决策登记册
 
+2026-10-22 增量：SA-19 为上游复用权限与纯净性治理；只批准文档规则，新增门禁实现须验收，扩展/新核心仍逐项提案批准。
+
 | ID | 决策 | 定义处 | 主要需求 | 被取代方案（摘要） |
 | --- | --- | --- | --- | --- |
 | SA-01 | 静态白名单插件宿主，无运行时动态加载 | §2.4 | NFR-SEC-04、ARC-02 | 旧代码动态插件加载/卸载入口（需求附录 B 裁决排除） |
@@ -693,6 +750,7 @@ RobotDesign 安装姿态 = 倒挂 180° → 编译进 CanonicalModel 的 R_world
 | SA-16 | CommandRegistry＋HotkeyBindingTable 收归 ui：全局快捷键唯一注册点、重复绑定注册边界拒绝、命令面板模糊搜索兜底 | §7.11 | UX-13（M-13）、PM-14、NFR-MNT-07 延伸 | 各插件私占全局快捷键、命令入口分散 |
 | SA-17 | 项目写锁＝OS 级排他锁持续持有＋锁文件（PID/心跳仅作诊断）；接管仅经 OS 锁获取（原子，并发接管仅一成功）；失权写事务拒绝；存储上下文与界面会话分离（锁保持至在途运行归档完成）；全部写入口收口 project 存储端口 | §6.8 | PM-07、PM-08、NFR-REL-02 | 心跳判活的接管（卡顿进程恢复/并发接管→双写者）；双实例无锁双写；第二实例阻塞等待锁 |
 | SA-18 | 宿主融合产品形态（方案 B.1）：RobWorkStudio 唯一产品主窗口、ui 平台能力转宿主内部控制器、工业项目树业务主导航、官方 TreeView 已应用 WorkCell 辅助运行时树、RWStudioView3D 唯一三维视图、呈现 WorkCell 与计算 RuntimeSnapshot 隔离但复用同一构造规则、方案 A 面板经 Provider 渐进迁移 | §7.12 | UX-09/12、ARC-02/03/04（复用不变）、O-38/O-43（承接终态化） | 双主窗口并行形态；项目树与 TreeView 边界混载；呈现侧私建第二 WorkCell 构造路径；一次性推倒重写方案 A 面板 |
+| SA-19 | 上游分形态使用、runtime owner、宿主精确例外、证据/诊断承重墙、worker 隔离；功能级复用与权限分别举证 | §3.6 | ARC-02/03/04/05、CON-04/05/06、NFR-MNT-01/02/03、H1—H6 | §3.6.5 B/C/D/E；不批准平行核心或通用二次框架 |
 
 登记册维护规则：新增/修改决策走设计变更评审；影响需求语义或验收的，先在 `REQUIREMENTS.md` 走需求变更（其 §2.1/§3 及修订记录体系即变更通道——需求文档现无变更管理专章，已登记为待同步项，见 §11.3）；每次修订在文末变更记录登记。
 
@@ -796,6 +854,7 @@ WP-00～25 为需求文档预留的任务包编号，单元↔WP 对应沿用其
 | v0.12 | 2026-09-10 | 全链一致性审计事实修正（不改任何架构语义/决策）：①§1.4 附录引用清单补附录 D（v1.13 起存在，正文 §7.6 已引用）；②§10.2 分期子项清单补列 PM-08-S1（原"共 12 条"实列 11 条）；③PILOT-01/02、DEL-01/02 的 ID 级落点缺失登记为 DTB §4.2 O-32（WP-22/24 细化前由架构侧补登，本文不私设落点） |
 | v0.13 | 2026-09-27 | 方案 B.1 宿主融合产品形态冻结（所有者 2026-09-27 批准；DOC-T14 治理批次）：新增 **SA-18**＋**§7.12**——宿主唯一（RobWorkStudio 唯一产品主窗口，ui 平台能力转宿主内部控制器）、双树边界（工业项目树业务主导航 vs 官方 TreeView 已应用 WorkCell 辅助运行时树，节点清单封闭）、选择联动四条（L1~L3 承诺＋L4 明示不承诺 TreeView 树行反向选中）、呈现 WorkCell 与计算 RuntimeSnapshot 隔离但复用同一构造规则、方案 A 面板 Provider 渐进迁移（不整体推倒重写）、`_plugin`/`_app` 过渡期保留为开发验证通道。O-38/O-43 宿主融合方向的终态化承接；SA-01/SA-02/SA-04/SA-05/SA-16 全部不变；需求语义零变化。设计规格：`RobWork/docs/superpowers/specs/2026-09-27-host-integrated-b1-design.md`；执行契约链 UI-T19~T23/RT-T14/WP-13-T20/WP-14-T10/WP-15-T18/WP-24-T08/T09 随 DTB v0.22 登记 |
 | v0.14 | 2026-10-12 | O-09 裁决落地（架构所有者；P-PR-5/P-IO-1/O-09 同案——裁决申请 traceability/wp04-t16-adjudication-requests.md）：§3.5 补登 io↔project、io↔runtime 两条**注入式协作边说明**——维持 io 注入式协作形态、不引入静态链接边（编译白名单与 R-1/R-2 门禁零变化），WP-04-T17/T18（project 阶段 B 包/固化）依赖口径随之确定为注入式；消账同步 governance-log §1.6/§1.9/§2 与 io.md/project.md 单元卡。需求语义零变化 |
+| v0.15 | 2026-10-22 | 所有者最终复用方案的文档治理：新增 §3.6 / SA-19（分形态权限、runtime owner、四组宿主精确例外、evidence/diagnostics 与 worker 边界、B/C/D/E 被否备选）；链接逐功能审计/catalog/正向证据及待实现门禁契约。需求及依赖白名单不变，本轮不改产品代码/门禁实现，不批准新核心。 |
 
 
 ## 2026-09-10 文档同步状态

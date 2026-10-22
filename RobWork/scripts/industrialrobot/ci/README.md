@@ -14,6 +14,12 @@
 
 ## 已固化结论（缓存回退键与模板供给——契约 acceptance 4 的对齐内容）
 
+### 上游复用补强的 CI 接入契约（2026-10-22）
+
+现有复用检查不等同逐功能/权限审计。后续只扩展同一 `validate-reuse.ps1`、`test-reuse-governance.ps1`、`ird_gates.cmake`/白名单及既有 workflow；规则与对抗验收表见设计区 [reuse/audit-contract.md §7](../../../doc/industrial-robot-design/reuse/audit-contract.md#7-门禁实施与对抗验收矩阵待实现)。覆盖 IRD-GATE-AD、功能覆盖、适用性、direct/adapter 生产正向证据、证据新鲜度、依赖复用及语义结项。
+
+本轮未改脚本或 workflow，新增规则**尚未实现**，不得写作 CI 已强制。实施时模板/部署文件同批同步，相关正负夹具在支持的 PS7/PS5.1 环境真实执行并产 JUnit/JSON；新增门禁独立冻结 SHA 验收前不放行 REUSE-T02。分支保护须读取实时仓库设置核验，文档和绿色旧检查不证明新规则已启用。纯文档维护按根 AGENTS §4 验证，不要求无关产品构建。
+
 1. **双 ini 模板供给**：CI 配置期缺失的两个 gitignored 模板（`RobWorkStudio.ini.template.static`／`ini.shared.in`）由基建步内嵌同文生成（与主树模板逐字节一致，eb777e2 验证）——同时消解 findings **F-007** 的"全新树配置卡死"半边（ini 模板项；toolchain/Qt 前缀项由 workflow 的 `CMAKE_PREFIX_PATH` env＋vcpkg 安装步承载）。
 2. **缓存回退键**：`restore-keys` 前缀回退（workflow 变更导致 cache key 变化时命中前缀即跳过依赖安装；保存步 `cache-hit != 'true'` 才写）。
 3. **缓存白名单**：仅 `.cache/industrial-robot/{dependencies,packages}/`，不缓存测试结果/结果库/项目快照；失败工件 `when: always`。
