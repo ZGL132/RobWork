@@ -1,0 +1,48 @@
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:219:        RevoluteJoint *joint1 = new RevoluteJoint("Joint1",Transform3D<>::craigDH( 0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:220:        RevoluteJoint *joint2 = new RevoluteJoint("Joint2",Transform3D<>::craigDH( -Pi/2.0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:221:        RevoluteJoint *joint3 = new RevoluteJoint("Joint3",Transform3D<>::craigDH( 0, a2, d3, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:222:        RevoluteJoint *joint4 = new RevoluteJoint("Joint4",Transform3D<>::craigDH( -Pi/2.0, a3, d4, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:223:        RevoluteJoint *joint5 = new RevoluteJoint("Joint5",Transform3D<>::craigDH( Pi/2.0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:224:        RevoluteJoint *joint6 = new RevoluteJoint("Joint6",Transform3D<>::craigDH( -Pi/2.0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:286:    RevoluteJoint *joint1 = new RevoluteJoint("Joint1",Transform3D<>::craigDH( 0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:287:    RevoluteJoint *joint2 = new RevoluteJoint("Joint2",Transform3D<>::craigDH( Pi/2.0, 0.26, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:288:    RevoluteJoint *joint3 = new RevoluteJoint("Joint3",Transform3D<>::craigDH( 0, 0.68, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:289:    RevoluteJoint *joint4 = new RevoluteJoint("Joint4",Transform3D<>::craigDH( Pi/2.0, -0.035, -0.67, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:290:    RevoluteJoint *joint5 = new RevoluteJoint("Joint5",Transform3D<>::craigDH( -Pi/2.0, 0, 0, 0));
+RobWork/RobWork/gtest\models\SerialDeviceTest.cpp:291:    RevoluteJoint *joint6 = new RevoluteJoint("Joint6",Transform3D<>::craigDH( Pi/2.0, 0, 0, 0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:22:#include <rw/models/DHParameterSet.hpp>
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:276:int testClosedFormWithQ(const Q& q, std::vector<DHParameterSet>& dhparams) {
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:281:        T06 = T06*Transform3D<>::craigDH(
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:300:            T06 = T06*Transform3D<>::craigDH(
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:329:    std::vector<DHParameterSet> dhparams;
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:330:    dhparams.push_back(DHParameterSet(0,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:331:    dhparams.push_back(DHParameterSet(-90*Deg2Rad, 0.26, 0, 0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:332:    dhparams.push_back(DHParameterSet(0,0.68,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:333:    dhparams.push_back(DHParameterSet(-90*Deg2Rad,-0.035,0.67,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:334:    dhparams.push_back(DHParameterSet(-90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:335:    dhparams.push_back(DHParameterSet(90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:352:    std::vector<DHParameterSet> dhparams2;
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:353:    dhparams2.push_back(DHParameterSet(0,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:354:    dhparams2.push_back(DHParameterSet(-90*Deg2Rad, 0, 0, 0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:355:    dhparams2.push_back(DHParameterSet(0,0.68,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:356:    dhparams2.push_back(DHParameterSet(-90*Deg2Rad,-0.035,0.67,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:357:    dhparams2.push_back(DHParameterSet(-90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:358:    dhparams2.push_back(DHParameterSet(90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:363:    std::vector<DHParameterSet> dhparams3;
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:366:    dhparams3.push_back(DHParameterSet(0,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:367:    dhparams3.push_back(DHParameterSet(0, 0.26, 0, 0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:368:    dhparams3.push_back(DHParameterSet(90*Deg2Rad,0.68,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:369:    dhparams3.push_back(DHParameterSet(-90*Deg2Rad,-0.035,0.67,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:370:    dhparams3.push_back(DHParameterSet(-90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\invkin\InvKinTest.cpp:371:    dhparams3.push_back(DHParameterSet(90*Deg2Rad,0,0,0));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:360:        new RevoluteJoint (scope + ".joint1", Transform3D<>::craigDH (0, 0, 0, yaw));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:362:        scope + ".joint2", Transform3D<>::craigDH (Pi / 2.0, 0, 0, Pi / 2.0 + pitch));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:364:        new PrismaticJoint (scope + ".joint3", Transform3D<>::craigDH (Pi / 2.0, 0, 0, 0));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:366:        new RevoluteJoint (scope + ".joint4", Transform3D<>::craigDH (-Pi / 2.0, 0, 0, Pi / 2.0));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:368:        new RevoluteJoint (scope + ".joint5", Transform3D<>::craigDH (Pi / 2.0, 0, 0, -Pi / 2.0));
+RobWork/RobWork/gtest\models\ParallelDeviceTest.cpp:370:        new RevoluteJoint (scope + ".joint6", Transform3D<>::craigDH (Pi / 2.0, 0, 0, Pi / 2.0));
+RobWork/RobWork/gtest\geometry\HyperSphereTest.cpp:39:	const std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);
+RobWork/RobWork/gtest\geometry\HyperSphereTest.cpp:61:	const std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);
+RobWork/RobWork/gtest\geometry\HyperSphereTest.cpp:82:	const std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);
+RobWork/RobWork/gtest\geometry\HyperSphereTest.cpp:105:	const std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);
+RobWork/RobWork/gtest\geometry\HyperSphereTest.cpp:128:	const std::vector<Eigen::VectorXd> cartesian = sphere.uniformDistributionCartesian(delta);

@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "ird-independent-batch-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "batch2-r1",
+  "verdict": "fail",
+  "reviewedCommit": "4e2239f7672f367fff436ab83b7db56d49d19cfe",
+  "baseCommit": "849e03a321a1ce9642f13de4e907d9df2fb214a5",
+  "scope": "第二批53条新增pending关系（7个新增涉及单元），3项新增catalog候选和10条检索证据及docs/task；累计77关系/10单元；非全功能审计、非生产复用、非T02准入",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-batch2-20261022-213631\\repo",
+  "trackedStatus": "",
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-search.json"
+  ],
+  "forbiddenScopeChanges": false,
+  "checks": {
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "diff-check": {
+      "exitCode": 0,
+      "log": "diff-check.log"
+    }
+  },
+  "matrix": {
+    "newRelations": 53,
+    "allPending": true,
+    "allRegionAndInputHashesMatch": true,
+    "allTargetsDeclared": true,
+    "allRequirementIdsExist": true,
+    "requirementSemanticDefects": 1,
+    "qualifiedSymbols": "53个新增项逐项按匿名空间闭合/类成员/嵌套namespace核对，无新定位缺陷",
+    "cumulativeRelations": 77,
+    "closedFiles": 0
+  },
+  "catalog": {
+    "newIds": [
+      "MATH-DH",
+      "MATH-RANDOM",
+      "GEOM-SPHERE-SAMPLING"
+    ],
+    "allCandidate": true,
+    "bindingsMatch": true
+  },
+  "searchReplay": {
+    "commands": 10,
+    "allExactOutputExitMatches": true,
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "exit1MeansNoMatchesOnly": true,
+    "report": "search-replay.json"
+  },
+  "semanticChecks": [
+    "generateGridPositions是确定性体心枚举：x慢/z快、旋转盒、零计数和u64回卷拒绝；capabilityId=NONE，没有绑定Random。",
+    "generateRandomPositions/SeedMix/LHS确实使用私有64位流；Random.cpp是匿名空间全局boost::mt19937、unsigned种子，未认定等价。",
+    "generateDirections为固定N斐波那契；HyperSphere是delta角分辨率驱动的可变样本数，不声称等价。",
+    "DH核心Rz(theta)Tz(d)、静段Tx(a)Rx(alpha)、重建前后静段与上游DH/craigDH约定分别核对，候选保留offset/顺序界限；DHParameterSet确实只读既存DHSet属性。",
+    "DhConvert的消元/中心差分/LM/秩检测确实是自持数值路径，NONE/pending不授予保留许可。",
+    "上游sdurw_sandbox真实add_library位于if(build)，rw_subsys_option默认OFF；未宣称可直接安装/使用。",
+    "Ik zyxEulerAngles输出roll/pitch/yaw，对照RobWork RPY构造yaw/pitch/roll；pending差异要求核奇异分支，未声称可直接等价。",
+    "poseError是空间旋转向量；constrainedPoseError使用参考系Euler分量，DLS与约束差分仍待替换，不将EAA行选择当作Euler语义。",
+    "CartesianLine是显式最短弧slerp并有端点快速返回；Smooth/TimeParam确实为五次/七次基及一至三阶导，时间h^-k适配边界正确。",
+    "Digest为FIPS SHA256压缩；JsonLite为递归Parser/序列化入口；Json canonical writer身份语义与底层编码复用分开，UTF8表与Csv副本事实成立。"
+  ],
+  "findings": [
+    {
+      "id": "T01-B2-01",
+      "priority": "P2",
+      "path": "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+      "line": 9,
+      "title": "为UTF-8校验登记相关需求或任务/规范",
+      "detail": "io.strictUtf8Check的唯一requirements=NFR-SEC-02。该需求只定义单文件大小、XML/压缩递归深度和解压量预算；Json.cpp145-162是字节DFA合法性检查，不包含预算。实际严格UTF-8依据是units/io.md§5.9.1（603行编码行）及IO-T04任务。应引用相关契约/规范或任务，避免把编码正确性当成资源预算实现证据；不需要修改权威需求。",
+      "evidence": [
+        "requirements-review.json",
+        "matrix-review.json"
+      ]
+    },
+    {
+      "id": "T01-B2-02",
+      "priority": "P2",
+      "path": "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+      "line": 1114,
+      "relatedLine": 1165,
+      "title": "修正Windows下无法遍历源文件的球面检索命令",
+      "detail": "GEOM-SPHERE-SAMPLING.search/resourceSearch.command将HyperSphere.*作为路径。PowerShell不展开该原生命令参数，rg报os error123并返回2，仅继续输出gtest命中，未搜索HyperSphere实现。使用显式HyperSphere.hpp/HyperSphere.cpp，或目录加-g HyperSphere.*。此问题与batch2-search.json的10条正确日志独立；后者重放全部匹配。",
+      "evidence": [
+        "catalog-sphere-search.log",
+        "catalog-sphere-search.exit.txt"
+      ]
+    }
+  ],
+  "notRun": [
+    "C++构建/测试（本批无产品改动）",
+    "新增适用性/生产探测",
+    "完整上游集",
+    "全20单元及全功能审计",
+    "140治理自测",
+    "DeepEvidence",
+    "远程CI/推送/合入（代理阻断保留未执行）"
+  ],
+  "bindings": {
+    "RobWork/scripts/industrialrobot/validate-task.ps1": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55",
+    "RobWork/scripts/industrialrobot/validate-docs.ps1": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1": "050709d142f038ad3fa7af8fac3adba7ec647f2ca8700b079d3ddfa8afce4857",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1": "09fe4502ddb348e18986f6b50ab2e9cbe4f8fbc9a8979e4b1767178223d165fa",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-search.json": "5c92ca16d3b2dfccd521967da028ab68c55e8bae0855bb4364e64991d7131416"
+  }
+}

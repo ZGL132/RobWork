@@ -1,0 +1,14 @@
+26:#include <boost/random/variate_generator.hpp>
+31:boost::mt19937 generator;
+36:boost::variate_generator< boost::mt19937&, dist_type >
+37:    normal_distribution (generator, boost::normal_distribution< double > (0, 1));
+40:double Random::ranNormalDist (double mean, double sigma)
+45:double Random::ran ()
+47:    return distributor (generator);
+50:void Random::seed (unsigned seed)
+53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+56:void Random::seed ()
+61:double Random::ran (double from, double to)
+72:        res = from + (to - from) * Random::ran ();
+78:int Random::ranI (int from, int to)
+80:    return (int) floor (Random::ran (from, to));

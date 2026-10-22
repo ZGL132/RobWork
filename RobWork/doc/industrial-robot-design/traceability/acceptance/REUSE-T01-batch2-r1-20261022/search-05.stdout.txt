@@ -1,0 +1,31 @@
+1:set(SUBSYS_NAME sdurw_sandbox)
+6:rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} OFF DEPENDS ${SUBSYS_DEPS})
+28:        optimization/Optimizer.cpp
+29:        optimization/StopCondition.cpp
+30:        optimization/OptimizerFactory.cpp
+31:        optimization/DownhillOptimizer.cpp
+32:        optimization/LineSearch.cpp
+33:        optimization/GoldenSectionLineSearch.cpp
+34:        optimization/DirectionSetOptimizer.cpp
+35:        optimization/TaxiCabOptimizer.cpp
+36:        optimization/PowellOptimizer.cpp
+37:        optimization/GradientOptimizer.cpp
+38:        optimization/GradientDescentOptimizer.cpp
+39:        optimization/BFGSOptimizer.cpp
+40:        optimization/SimulatedAnnealingOptimizer.cpp
+55:        optimization/Optimizer.hpp
+56:        optimization/StopCondition.hpp
+57:        optimization/OptimizerFactory.hpp
+58:        optimization/LineSearch.hpp
+59:        optimization/GoldenSectionLineSearch.hpp
+60:        optimization/DownhillOptimizer.hpp
+61:        optimization/DirectionSetOptimizer.hpp
+62:        optimization/TaxiCabOptimizer.hpp
+63:        optimization/PowellOptimizer.hpp
+64:        optimization/GradientOptimizer.hpp
+65:        optimization/GradientDescentOptimizer.hpp
+66:        optimization/BFGSOptimizer.hpp
+67:        optimization/SimulatedAnnealingOptimizer.hpp
+70:    add_library(sdurw_sandbox ${SRC_FILES} ${SRC_FILES_HPP})
+71:    target_link_libraries(sdurw_sandbox sdurw_csgjs sdurw)
+72:    install(TARGETS sdurw_sandbox DESTINATION ${LIB_INSTALL_DIR})

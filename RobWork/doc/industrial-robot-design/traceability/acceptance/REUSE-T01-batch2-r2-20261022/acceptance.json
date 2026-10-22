@@ -1,0 +1,146 @@
+{
+  "schemaVersion": "ird-independent-batch-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "batch2-r2",
+  "verdict": "pass",
+  "reviewedCommit": "ce1af19667e6e3e439e15600e5bed7940b171942",
+  "baseCommit": "849e03a321a1ce9642f13de4e907d9df2fb214a5",
+  "reworkBaseCommit": "4e2239f7672f367fff436ab83b7db56d49d19cfe",
+  "priorAcceptance": {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-batch2-20261022-213631\\acceptance.json",
+    "verdict": "fail",
+    "preserved": true
+  },
+  "scope": "第二批53条新增pending关系（7个新增涉及单元），3项新增catalog候选和10条检索证据及docs/task；累计77关系/10单元；非全功能审计、非生产复用、非T02准入",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-batch2-r2-20261022-214644\\repo",
+  "trackedStatus": "",
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-rework-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-search.json"
+  ],
+  "reworkFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-rework-search.json"
+  ],
+  "forbiddenScopeChanges": false,
+  "checks": {
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "diff-check": {
+      "exitCode": 0,
+      "log": "diff-check.log"
+    },
+    "rework-diff-check": {
+      "exitCode": 0,
+      "log": "rework-diff-check.log"
+    },
+    "inspect": {
+      "exitCode": 0,
+      "log": "inspect.log"
+    }
+  },
+  "matrix": {
+    "newRelations": 53,
+    "cumulativeRelations": 77,
+    "allPending": true,
+    "allRegionAndInputsMatch": true,
+    "allTargetsDeclared": true,
+    "closedFiles": 0
+  },
+  "catalog": {
+    "newIds": [
+      "MATH-DH",
+      "MATH-RANDOM",
+      "GEOM-SPHERE-SAMPLING"
+    ],
+    "allCandidate": true,
+    "bindingsMatch": true
+  },
+  "originalSearchReplay": {
+    "commands": 10,
+    "outputContentExitMatches": true,
+    "exactOrderCount": 9,
+    "orderOnlyDifference": "Search8 rg recursive parallel traversal may reorder lines; all48 lines identical, stderr and exit identical; no matching content changed.",
+    "report": "search-replay.json",
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "reworkSearchReplay": {
+    "commands": 1,
+    "allContentExitMatch": true,
+    "report": "rework-search-replay.json",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0
+  },
+  "reworkVerification": [
+    {
+      "id": "T01-B2-01",
+      "verdict": "pass",
+      "evidence": "strictUtf8Check requirements now IO-T04, explicit designRefs units/io.md §5.9.1 encoding contract and existing IO-T04 task; task and exact design encoding row exist. Neither authoritative requirement nor task/design source changed."
+    },
+    {
+      "id": "T01-B2-02",
+      "verdict": "pass",
+      "evidence": "catalog search/resourceSearch both explicitly list .hpp/.cpp. Rework command replay exit0, includes interface and implementation hits; stderr empty and recorded results match."
+    }
+  ],
+  "findings": [],
+  "semanticChecks": [
+    "generateGridPositions是确定性体心枚举：x慢/z快、旋转盒、零计数和u64回卷拒绝；capabilityId=NONE，没有绑定Random。",
+    "generateRandomPositions/SeedMix/LHS确实使用私有64位流；Random.cpp是匿名空间全局boost::mt19937、unsigned种子，未认定等价。",
+    "generateDirections为固定N斐波那契；HyperSphere是delta角分辨率驱动的可变样本数，不声称等价。",
+    "DH核心Rz(theta)Tz(d)、静段Tx(a)Rx(alpha)、重建前后静段与上游DH/craigDH约定分别核对，候选保留offset/顺序界限；DHParameterSet确实只读既存DHSet属性。",
+    "DhConvert的消元/中心差分/LM/秩检测确实是自持数值路径，NONE/pending不授予保留许可。",
+    "上游sdurw_sandbox真实add_library位于if(build)，rw_subsys_option默认OFF；未宣称可直接安装/使用。",
+    "Ik zyxEulerAngles输出roll/pitch/yaw，对照RobWork RPY构造yaw/pitch/roll；pending差异要求核奇异分支，未声称可直接等价。",
+    "poseError是空间旋转向量；constrainedPoseError使用参考系Euler分量，DLS与约束差分仍待替换，不将EAA行选择当作Euler语义。",
+    "CartesianLine是显式最短弧slerp并有端点快速返回；Smooth/TimeParam确实为五次/七次基及一至三阶导，时间h^-k适配边界正确。",
+    "Digest为FIPS SHA256压缩；JsonLite为递归Parser/序列化入口；Json canonical writer身份语义与底层编码复用分开，UTF8表与Csv副本事实成立。"
+  ],
+  "README": "Names original frozen FAIL and corrections; keeps original batch2-search and prior FAIL unchanged.",
+  "notRun": [
+    "C++构建/测试（本批无产品改动）",
+    "新增适用性/生产探测",
+    "完整上游集",
+    "全20单元及全功能审计",
+    "140治理自测",
+    "DeepEvidence",
+    "远程CI/推送/合入（代理阻断保留未执行）"
+  ],
+  "bindings": {
+    "RobWork/scripts/industrialrobot/validate-task.ps1": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55",
+    "RobWork/scripts/industrialrobot/validate-docs.ps1": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1": "050709d142f038ad3fa7af8fac3adba7ec647f2ca8700b079d3ddfa8afce4857",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1": "09fe4502ddb348e18986f6b50ab2e9cbe4f8fbc9a8979e4b1767178223d165fa",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-search.json": "5c92ca16d3b2dfccd521967da028ab68c55e8bae0855bb4364e64991d7131416",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch2-rework-search.json": "af2e171a47ac04fb9b24baf6853daff2f32f0025e8ddedbec0c3e7ac64c57021"
+  }
+}

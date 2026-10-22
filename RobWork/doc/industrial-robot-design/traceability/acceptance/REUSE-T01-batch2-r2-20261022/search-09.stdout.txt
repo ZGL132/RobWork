@@ -1,0 +1,2 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp:145:bool strictUtf8Check(std::string_view bytes, std::size_t* failIndex)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp:2001:            if (!strictUtf8Check(body, &failIdx)) {

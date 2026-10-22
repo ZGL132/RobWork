@@ -29,6 +29,8 @@
 #include <rwsimlibs/bullet/BtSimulator.hpp>
 #include <rw/trajectory/LinearInterpolator.hpp>
 #include <rw/trajectory/LloydHaywardBlend.hpp>
+#include <array>
+#include <cmath>
 #include <memory>
 
 // 验证建模 SPD 判定的候选能力：上游特征值求解能否保留排序及极小尺度。
@@ -209,4 +211,83 @@ TEST(ReuseAudit, JacobianSolverHalfTurnNeedsIndependentValidation) {
     EXPECT_TRUE(reportedConverged); // 实测上游差异，不允许生产沿用其成功判定。
     const EAA<> actualResidual(inverse(device->baseTend(state).R()) * target.R());
     EXPECT_NEAR(rw::math::Pi, actualResidual.angle(), 1e-12);
+}
+
+// GAP-IK/KIN-02：ParallelIK耗尽预算后仍可能返回候选，非空不能作为成功证据。
+TEST(ReuseAudit, ParallelSolverBudgetExhaustionStillReturnsCandidate) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>(Vector3D<>(1, 0, 0)));
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    ParallelLeg leg(std::vector<Frame*>{base, joint, tcp});
+    ParallelDevice device(ParallelDevice::Legs{&leg}, "view", state);
+    device.setBounds({Q(1, -3.14), Q(1, 3.14)});
+    rw::invkin::ParallelIKSolver solver(&device);
+    solver.setMaxIterations(2);
+    solver.setMaxError(1e-10);
+    VectorND<6, bool> enabled;
+    for (int i = 0; i < 6; ++i) enabled[i] = i < 3;
+    const Transform3D<> target(Vector3D<>(2, 0, 0));
+    const auto solutions = solver.solve(
+        std::vector<rw::invkin::ParallelIKSolver::Target>{{tcp, target, enabled}}, state);
+    // 独立几何界限：TCP只能在半径1 m的圆上，(2,0,0)至少相差1 m。
+    ASSERT_EQ(1u, solutions.size());
+    State candidate = state;
+    device.setQ(solutions.front(), candidate);
+    EXPECT_NEAR(1.0, (leg.baseTend(candidate).P() - target.P()).norm2(), 1e-12);
+    EXPECT_DOUBLE_EQ(0.0, joint->getData(state)[0]); // 输入State仍未被上游solve修改。
+}
+
+// MDL-10：标准DH可用上游API直接构造；与Craig约定不能混用。
+TEST(ReuseAudit, StandardDhMatchesOrderedRigidTransforms) {
+    using namespace rw::math;
+    const double alpha = 0.4, a = 0.3, d = -0.2, theta = 0.7; // rad、m、m、rad。
+    const auto standard = Transform3D<>::DH(alpha, a, d, theta);
+    // 用独立四因子几何定义作对照，不调用产品dhCoreTransform等旧实现。
+    const auto composition = Transform3D<>(RPY<>(theta, 0, 0).toRotation3D())
+        * Transform3D<>(Vector3D<>(0, 0, d))
+        * Transform3D<>(Vector3D<>(a, 0, 0))
+        * Transform3D<>(RPY<>(0, 0, alpha).toRotation3D());
+    EXPECT_LT((standard.e() - composition.e()).norm(), 1e-14);
+    EXPECT_GT((standard.e() - Transform3D<>::craigDH(alpha, a, d, theta).e()).norm(), 0.1);
+}
+
+// KIN-04：上游能对齐反向向量，但其默认半周轴与产品固定X分支不同。
+TEST(ReuseAudit, AntiparallelAlignmentNeedsExplicitRollConvention) {
+    using namespace rw::math;
+    const Vector3D<> z(0, 0, 1);
+    const auto aligned = EAA<>(z, -z).toRotation3D();
+    EXPECT_LT((aligned * z + z).norm2(), 1e-14);
+    const auto productConvention = RPY<>(0, 0, Pi).toRotation3D();
+    EXPECT_LT((productConvention * z + z).norm2(), 1e-14);
+    // 两者都满足方向；相差的工具滚转不能当成无关误差丢弃。
+    EXPECT_NEAR(Pi, EAA<>(inverse(aligned) * productConvention).angle(), 1e-12);
+}
+
+// TRJ-05：非零端导数和时间缩放也可交上游Polynomial求值，不仅限静止端点。
+TEST(ReuseAudit, PolynomialNonzeroEndpointDerivativesWithTimeScale) {
+    // 独立解析端点：p(0)及各阶导为1/2/6/24；p(1)为36/168/756/3024。
+    const std::array<double, 4> left{1, 2, 6, 24}, right{36, 168, 756, 3024};
+    for (double h : {0.5, 2.0}) { // 段时长，s；物理时间t=h*u。
+        // 在系数上完成u=t/h替换，再以物理时间求导；避免把断言两边同除h冒充缩放测试。
+        std::vector<double> temporalCoefficients;
+        for (int i = 0; i < 8; ++i)
+            temporalCoefficients.push_back((i + 1.0) / std::pow(h, i));
+        const rw::math::Polynomial<> temporal(temporalCoefficients);
+        for (double u : {0.0, 1.0}) {
+            const auto derivatives = temporal.evaluateDerivatives(h * u, 3);
+            const auto& expected = u == 0.0 ? left : right;
+            for (int k = 0; k <= 3; ++k)
+                EXPECT_NEAR(expected[k] / std::pow(h, k),
+                            derivatives[k], 1e-9);
+        }
+    }
 }

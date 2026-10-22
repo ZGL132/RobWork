@@ -32,3 +32,5 @@ $env:PATH='D:/10_Source_Repos/21_robot/RobWork/build/RobWorkSim/bin/Release;D:/1
 第二批首轮独立验收FAIL（`4e2239f7672f367fff436ab83b7db56d49d19cfe`）：UTF-8 DFA误绑定资源预算需求，HyperSphere catalog检索路径通配符在Windows返回2。返工将前者追溯到IO-T04/units/io.md §5.9.1编码契约，后者显式列出.hpp/.cpp；真实重跑见 `batch2-rework-search.json`，exitCode=0。不修改权威需求、不覆盖原搜索或失败报告，不把仅修正登记声称为能力适用性验证。
 
 第三批增加18条候选/权威边界记录，累计95条、20单元均有实际定向审读样本，但这**不等于20单元全功能审计完成**。新增日志/线程/文件/宿主场景候选的边界和8条真实检索见 `batch3-search.json`；未运行新适用性实验。ThreadPool不替代worker隔离，IOUtil不替代project不可变发布，Log不替代diagnostics稳定码，evidence聚合与workflow门控不搬入适配层。policy已有碰撞复用与宿主现有worldTframe调用也需核生命周期、权限和结果消费；预览空WorkCell锚保持pending，不用HOST标签自动洗白。新增发现 `modeling::(anonymous namespace)::zeroConfigFK`，优先核runtime上游FK端口，禁止modeling自建计算模型。
+
+后续公共API探测留在 `probe-r3/`，passed=14、failed/skipped/notRun均0。新增4项：ParallelIK在不可达半径目标耗尽预算仍返回候选（独立圆半径残差1 m，限制证据）；标准DH与四因子定义一致、Craig约定不同；EAA反向对齐默认轴与产品固定X半周相差滚转π；七次多项式非零端导数及0.5/2 s时间缩放（物理时间系数替换后求导，对照解析端点）。日志中的ParallelIK超预算错误是该限制用例的预期输出，不是正常求解能力通过。当前仅调用公开API和既有testkit报告入口，未修改生产算法或新建数值核。
