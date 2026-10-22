@@ -83,3 +83,7 @@ B11语义独立验收PASS见`../../acceptance/REUSE-T01-batch11-20261023/`（冻
 第十三批补Xacro/通道协议54关系：已用pugixml与core摘要的路径按实际记录，输出转义/固定LE及业务协议分开审；见`xacro-channel-audit.md`。本批无C++实跑/产品改动，不关闭库存或T01。
 
 B12首轮独立FAIL（B12-P2-01）归档`../../acceptance/REUSE-T01-batch12-r1-20261023/`：原说明错误地把running也称为历史位；已修正当前运行态与其余三个历史观测位之分并更新关联摘要，产品未改，待独立复验。
+
+B13独立语义验收PASS（冻结63e86ba5，限54关系）见`../../acceptance/REUSE-T01-batch13-20261023/`；B12返工复验PASS仅关闭B12-P2-01，见`../../acceptance/REUSE-T01-batch12-r2-20261023/`，原FAIL保留。
+
+第十四批补project/reporting codec 132条关系，精确区段见`batch14-definitions.json`，边界见`persistence-report-codec-audit.md`；无产品/上游/依赖修改，无本批C++实跑，未关闭库存/全T01。最近本地提交因GitHub443不可达未全部远程交付，不推进T02。

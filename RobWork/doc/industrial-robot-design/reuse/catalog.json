@@ -1791,6 +1791,14 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "reporting",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "operations": [

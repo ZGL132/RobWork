@@ -1,0 +1,2926 @@
+[
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 22,
+    "end": 63,
+    "expected": "10db7de5040567497729f233ce4b724df058fa69cfbaadef65fdf7c22eb2f8f1",
+    "actual": "10db7de5040567497729f233ce4b724df058fa69cfbaadef65fdf7c22eb2f8f1",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putU16",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 65,
+    "end": 69,
+    "expected": "8ca7674698d8c695e426caaec7f86ef04560f567457f743cfa555c48c6493c5b",
+    "actual": "8ca7674698d8c695e426caaec7f86ef04560f567457f743cfa555c48c6493c5b",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putStr",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 72,
+    "end": 87,
+    "expected": "bbd12561054ad5c79e597b0b213c93bbbc571d86f2b215f05a58c4c7f3b9a55f",
+    "actual": "bbd12561054ad5c79e597b0b213c93bbbc571d86f2b215f05a58c4c7f3b9a55f",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getStr",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 89,
+    "end": 93,
+    "expected": "e08174adf7ba12b4f444ab01392cbc638af5a76abe515edf7c5d88ce95a91e4c",
+    "actual": "e08174adf7ba12b4f444ab01392cbc638af5a76abe515edf7c5d88ce95a91e4c",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.putBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 95,
+    "end": 109,
+    "expected": "8b6fa46eed13d101e55140f8567d7c0f87fb7daed1bd6c86a968d6a546aed426",
+    "actual": "8b6fa46eed13d101e55140f8567d7c0f87fb7daed1bd6c86a968d6a546aed426",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.getBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 112,
+    "end": 122,
+    "expected": "e37c720b70916602335312a1632f4af19d5c8531feaa990e920abaa675231b5d",
+    "actual": "e37c720b70916602335312a1632f4af19d5c8531feaa990e920abaa675231b5d",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.digestToHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 130,
+    "end": 155,
+    "expected": "11c765aad9552ae1ae66ebb0c2225502c106b2393b3d2942a9e98e10ac683209",
+    "actual": "11c765aad9552ae1ae66ebb0c2225502c106b2393b3d2942a9e98e10ac683209",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeIdentityBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 157,
+    "end": 198,
+    "expected": "e755cf1b4e896085e9fdd36e428a1809f0b63834fd1038e9ffcf8e9419716325",
+    "actual": "e755cf1b4e896085e9fdd36e428a1809f0b63834fd1038e9ffcf8e9419716325",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeIdentityBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 204,
+    "end": 234,
+    "expected": "c26c6a94621c6853a643becdfd6647d2bf582190ab8128ca0b214c4063329679",
+    "actual": "c26c6a94621c6853a643becdfd6647d2bf582190ab8128ca0b214c4063329679",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFrame",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 236,
+    "end": 303,
+    "expected": "71ab7e5ba5da91662fc69c9f3f885562215e5f122123f2104484b16facb8bfc5",
+    "actual": "71ab7e5ba5da91662fc69c9f3f885562215e5f122123f2104484b16facb8bfc5",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameAssembler.feed",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 309,
+    "end": 317,
+    "expected": "566afeba61b21b1f537593753cac7f0281c7554e8bf5391c0fff7eab6aee654b",
+    "actual": "566afeba61b21b1f537593753cac7f0281c7554e8bf5391c0fff7eab6aee654b",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 319,
+    "end": 382,
+    "expected": "5e64a3d56a64e1a5af2f665eaf068232d8200ce745cdc9967b15e6860c2682ea",
+    "actual": "5e64a3d56a64e1a5af2f665eaf068232d8200ce745cdc9967b15e6860c2682ea",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.accept",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 384,
+    "end": 397,
+    "expected": "5f104efa491dedd36706c1c015c7d67332eb4fa41af623deeae88621083ec63e",
+    "actual": "5f104efa491dedd36706c1c015c7d67332eb4fa41af623deeae88621083ec63e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 399,
+    "end": 412,
+    "expected": "eb5b4d0e1a5f4c0efdbbd8710e8521ea62c12f68a389543db34c98d7c496525a",
+    "actual": "eb5b4d0e1a5f4c0efdbbd8710e8521ea62c12f68a389543db34c98d7c496525a",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 418,
+    "end": 430,
+    "expected": "3230b9ff5f2f36b5c3f9b8c07f2e657bb9575d041869088353b6502a6b5f6de5",
+    "actual": "3230b9ff5f2f36b5c3f9b8c07f2e657bb9575d041869088353b6502a6b5f6de5",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.isFragmentableType",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 432,
+    "end": 468,
+    "expected": "4b96334df4c1f1e85975a9ef9a40a1d2a61751800680f635baac89c5213403d1",
+    "actual": "4b96334df4c1f1e85975a9ef9a40a1d2a61751800680f635baac89c5213403d1",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.fragmentMessage",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 470,
+    "end": 567,
+    "expected": "68e387d33f743c5c6fec960b7e4b4a6bf3b8c249138cb880b79d73cdab369044",
+    "actual": "68e387d33f743c5c6fec960b7e4b4a6bf3b8c249138cb880b79d73cdab369044",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.MessageReassembler.accept",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 824,
+    "end": 835,
+    "expected": "4ee27ac1b40007e45c6170c1c4159a74f41e595602e4fea6135dc13b7c5aaa07",
+    "actual": "4ee27ac1b40007e45c6170c1c4159a74f41e595602e4fea6135dc13b7c5aaa07",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.manifestDigestHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 837,
+    "end": 845,
+    "expected": "22b38acab1429491cad3d906a3b9e0b9fd893286e9aaf58ef8a2ad8949ef7406",
+    "actual": "22b38acab1429491cad3d906a3b9e0b9fd893286e9aaf58ef8a2ad8949ef7406",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.computeContentIdentity",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 847,
+    "end": 851,
+    "expected": "3de2b466e1511276f9f10b1fe8b767efd5cbf3079a91d67e86c1a67efff69b25",
+    "actual": "3de2b466e1511276f9f10b1fe8b767efd5cbf3079a91d67e86c1a67efff69b25",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.contentIdentityMatches",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 573,
+    "end": 579,
+    "expected": "b03c5f913e4e03f47938e7d10cfd112676c8253530f2f143044bec88dcc8fa81",
+    "actual": "b03c5f913e4e03f47938e7d10cfd112676c8253530f2f143044bec88dcc8fa81",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHello",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 581,
+    "end": 597,
+    "expected": "79dd53bc5cf1e9e75d1315038fa62cce7739c36359597cc0bec4463c7fa7da0e",
+    "actual": "79dd53bc5cf1e9e75d1315038fa62cce7739c36359597cc0bec4463c7fa7da0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHello",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 599,
+    "end": 606,
+    "expected": "2c8cbe53087a35460f6c1e6109b49325d3f1cd0da4391197ea366dc93c2441e3",
+    "actual": "2c8cbe53087a35460f6c1e6109b49325d3f1cd0da4391197ea366dc93c2441e3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeHelloAck",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 608,
+    "end": 625,
+    "expected": "f22468eb0203b341c0e24238158d00eeef4467e4fcea14626d641e73cef519a8",
+    "actual": "f22468eb0203b341c0e24238158d00eeef4467e4fcea14626d641e73cef519a8",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeHelloAck",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 627,
+    "end": 635,
+    "expected": "e38a40ab230c2b48618f24eeb7aaeb7f7e690eae163f3fa4b6942ed4271ebdfc",
+    "actual": "e38a40ab230c2b48618f24eeb7aaeb7f7e690eae163f3fa4b6942ed4271ebdfc",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeDispatchRequest",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 637,
+    "end": 663,
+    "expected": "f17fe2ee4ad0355355c65b3e5d0f049423924cbc12cb1692ff27a8528dcc20e2",
+    "actual": "f17fe2ee4ad0355355c65b3e5d0f049423924cbc12cb1692ff27a8528dcc20e2",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeDispatchRequest",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 665,
+    "end": 673,
+    "expected": "b3020a07de2ebc2f218d158215219e2173cfeb0d32639a19ec229aae0fbc9a0e",
+    "actual": "b3020a07de2ebc2f218d158215219e2173cfeb0d32639a19ec229aae0fbc9a0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeProgress",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 675,
+    "end": 703,
+    "expected": "87b17d2254978bfcb9623b36f67920dcbdca6d507a6268fbd8c546048366b0e7",
+    "actual": "87b17d2254978bfcb9623b36f67920dcbdca6d507a6268fbd8c546048366b0e7",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeProgress",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 705,
+    "end": 711,
+    "expected": "1ca37d9d08175a74d90ed5aec3ab2f8c608fdb6e43b445e7d658e05f934fb96f",
+    "actual": "1ca37d9d08175a74d90ed5aec3ab2f8c608fdb6e43b445e7d658e05f934fb96f",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeResultBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 713,
+    "end": 729,
+    "expected": "2e291abba2a2d2927bc30b407aa83b9e3ddcb74250568f44e6ef0679441b8b00",
+    "actual": "2e291abba2a2d2927bc30b407aa83b9e3ddcb74250568f44e6ef0679441b8b00",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeResultBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 731,
+    "end": 737,
+    "expected": "8c4e6ea204220cbe53db37b981148bd11bd4f09d6fb4eb760fefb210c3448b7b",
+    "actual": "8c4e6ea204220cbe53db37b981148bd11bd4f09d6fb4eb760fefb210c3448b7b",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeCheckpointBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 739,
+    "end": 756,
+    "expected": "eebe99161c78cd1abde3b20f8f6bb98103840105e6324fccc4ea8b4dfc1baf90",
+    "actual": "eebe99161c78cd1abde3b20f8f6bb98103840105e6324fccc4ea8b4dfc1baf90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeCheckpointBatch",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 758,
+    "end": 765,
+    "expected": "a58a75fc514569507a9183c488162535f2735fff7fc19169f1ac6c606d2b70ff",
+    "actual": "a58a75fc514569507a9183c488162535f2735fff7fc19169f1ac6c606d2b70ff",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeFinalOutput",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 767,
+    "end": 789,
+    "expected": "dd366ff4fd57c4a170039d40a9eef707c6add6424c4b20054d39f0459a13902d",
+    "actual": "dd366ff4fd57c4a170039d40a9eef707c6add6424c4b20054d39f0459a13902d",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeFinalOutput",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 791,
+    "end": 798,
+    "expected": "01372b1d4efad689405cc9f9ef5ed04a66bd8b1424a917dd0dcbff2ec7fe6b0e",
+    "actual": "01372b1d4efad689405cc9f9ef5ed04a66bd8b1424a917dd0dcbff2ec7fe6b0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.encodeErrorReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+    "start": 800,
+    "end": 818,
+    "expected": "0ea0f44e586e0ca88b8b9d6bc41660febcb7d71636ae1dea07827f0de3c9e528",
+    "actual": "0ea0f44e586e0ca88b8b9d6bc41660febcb7d71636ae1dea07827f0de3c9e528",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt",
+    "expected": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "actual": "d3d0f33f994f72c0483e7af2e13b6bc0a816ba6c69dbcd96d25a5c98155cdd90",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/ChannelProtocol.hpp",
+    "expected": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "actual": "4cfc4676e540b677c9a4a1395e24b6e98493a2cf2fd2011e7adbef1572d04c0e",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/ChannelProtocolTest.cpp",
+    "expected": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "actual": "ed572097de6aa80cce45e7bf08526510146239e32b80550a51998562416af322",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "execution.ChannelProtocol.decodeErrorReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 73,
+    "end": 83,
+    "expected": "9b6b6a25c04aba2b7250805c92544521c8d45e1f65bef67fb89000a4ac52d7c9",
+    "actual": "9b6b6a25c04aba2b7250805c92544521c8d45e1f65bef67fb89000a4ac52d7c9",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 98,
+    "end": 104,
+    "expected": "a3a7ffc3c57ecd24fedc8948fce3541d69a7acca8fe51388139d112b4299741a",
+    "actual": "a3a7ffc3c57ecd24fedc8948fce3541d69a7acca8fe51388139d112b4299741a",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.LineIndex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 107,
+    "end": 115,
+    "expected": "e3378d9838c13dec7762fe87de772139d3d46a7ec33656621d9b1d4eccd4f5ac",
+    "actual": "e3378d9838c13dec7762fe87de772139d3d46a7ec33656621d9b1d4eccd4f5ac",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.LineIndex.lineColumn",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 148,
+    "end": 161,
+    "expected": "f64d5a8de1df2ad22e238afb4851f163ec26543236cf37be8c07b34c384bd7e5",
+    "actual": "f64d5a8de1df2ad22e238afb4851f163ec26543236cf37be8c07b34c384bd7e5",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.flushDiags",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 172,
+    "end": 185,
+    "expected": "51d2361f47fd24c86a834c80cd9bab750c9d68b8a8e0e372c26d4b02660c891b",
+    "actual": "51d2361f47fd24c86a834c80cd9bab750c9d68b8a8e0e372c26d4b02660c891b",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlText",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 191,
+    "end": 205,
+    "expected": "0113142a8bc15a83f6d8aa7a00dc9d83b25d01961079ef7059aca63e949c9e20",
+    "actual": "0113142a8bc15a83f6d8aa7a00dc9d83b25d01961079ef7059aca63e949c9e20",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.escapeXmlAttribute",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 219,
+    "end": 233,
+    "expected": "3e3f0be5924e94c5648066be6222a6e85fccc770cda484c89b2d10c2232288b9",
+    "actual": "3e3f0be5924e94c5648066be6222a6e85fccc770cda484c89b2d10c2232288b9",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.isPlainIdentifier",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 263,
+    "end": 264,
+    "expected": "875eddaca334ffcf737bbe0c740bd14de165c8f81b028f8f5fee55457f290aa0",
+    "actual": "875eddaca334ffcf737bbe0c740bd14de165c8f81b028f8f5fee55457f290aa0",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.SourceFile.SourceFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 300,
+    "end": 311,
+    "expected": "6142ecfea11239dde33e2f86874890403d4436978d148913c86975802f022493",
+    "actual": "6142ecfea11239dde33e2f86874890403d4436978d148913c86975802f022493",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.fail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 316,
+    "end": 333,
+    "expected": "8885f1304a9d96be8b54d10140568aa9003205341b166704329a8ed7faeafc48",
+    "actual": "8885f1304a9d96be8b54d10140568aa9003205341b166704329a8ed7faeafc48",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 337,
+    "end": 351,
+    "expected": "770de0f58cc886e22c4c5461743a74a30972f0ce69e1e5524915e1c0d7f070c0",
+    "actual": "770de0f58cc886e22c4c5461743a74a30972f0ce69e1e5524915e1c0d7f070c0",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 354,
+    "end": 358,
+    "expected": "726b6e4d15c776d3296701421158bd7891f408581bd801bfc0d391c68883aaec",
+    "actual": "726b6e4d15c776d3296701421158bd7891f408581bd801bfc0d391c68883aaec",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.spanOf",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 362,
+    "end": 373,
+    "expected": "ae95d9328e287a01ce8825b81b2e9c6a8016c13a26250b8d342e670da96f6b45",
+    "actual": "ae95d9328e287a01ce8825b81b2e9c6a8016c13a26250b8d342e670da96f6b45",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.Engine.resolveSymbol",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 403,
+    "end": 506,
+    "expected": "ec509a96e6391109bfd4002dc792201054bcd0cd427d54674871e83aac1ea337",
+    "actual": "ec509a96e6391109bfd4002dc792201054bcd0cd427d54674871e83aac1ea337",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.substituteText",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 524,
+    "end": 546,
+    "expected": "a2eed9ef6f02c9600723f2478ee30f285ea70e98f5b3474e77f666c516dc00e2",
+    "actual": "a2eed9ef6f02c9600723f2478ee30f285ea70e98f5b3474e77f666c516dc00e2",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitChildren",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 557,
+    "end": 872,
+    "expected": "676f26c7de7cbeaff2a32db295709d7fcd45ecdc8dc86bfda4c518c4cb2ec4f8",
+    "actual": "676f26c7de7cbeaff2a32db295709d7fcd45ecdc8dc86bfda4c518c4cb2ec4f8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.emitElement",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 882,
+    "end": 924,
+    "expected": "23ec09c6cbd720ddb2bdb55a69c4134ae947a503d8e73c432f5c523bfd76bdcd",
+    "actual": "23ec09c6cbd720ddb2bdb55a69c4134ae947a503d8e73c432f5c523bfd76bdcd",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.detectIncludeCycle",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+    "start": 933,
+    "end": 1142,
+    "expected": "0a73218ea2a14c19258c56ee86696aee94e3c89165edaedefa0b1a5a7ab28420",
+    "actual": "0a73218ea2a14c19258c56ee86696aee94e3c89165edaedefa0b1a5a7ab28420",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "expected": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "actual": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+    "expected": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "actual": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+    "expected": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "actual": "20b10613f78455152b9344a4f7cf35a8c9f9f0f68663921ac3df851e346d4787",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RelKeyNormalizer.hpp",
+    "expected": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "actual": "1cac9b75bc00ab7a112f999167d39d02a6a3c20902624b51eda3ab660f8022b8",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch13-search.json",
+    "expected": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "actual": "066d714be2b786d4cee14aeab4b8467d18e782a50d9b5f71e59b9963683da1cb",
+    "pass": true
+  },
+  {
+    "function": "modeling.XacroExpand.XacroExpandService.expand",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/xacro-channel-audit.md",
+    "expected": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "actual": "b45b77e57d91b557c040eb65c2f7a22564ae3705f34ba30de0bf43f54e0ae0b3",
+    "pass": true
+  },
+  {
+    "function": "UTIL-BINARCHIVE",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+    "expected": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6",
+    "actual": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6",
+    "pass": true
+  },
+  {
+    "function": "UTIL-BINARCHIVE",
+    "kind": "target",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "expected": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87",
+    "actual": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87",
+    "pass": true
+  },
+  {
+    "function": "UTIL-BINARCHIVE",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+    "expected": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733",
+    "actual": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733",
+    "pass": true
+  },
+  {
+    "function": "UTIL-BINARCHIVE",
+    "kind": "target",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "expected": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87",
+    "actual": "3864dc46dcef3498cea984e8a3201e3e6ef0dc5b6da6acaa841a4f6598988e87",
+    "pass": true
+  },
+  {
+    "function": "UTIL-BINARCHIVE",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/gtest/common/SerializationTest.cpp",
+    "expected": "e4c74384bd7701f19452ce52fc6583bff40916f4b8f9a8303fecec27a5538c11",
+    "actual": "e4c74384bd7701f19452ce52fc6583bff40916f4b8f9a8303fecec27a5538c11",
+    "pass": true
+  },
+  {
+    "function": "UTIL-XML",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+    "expected": "7d458d0d9498f3a3719b9127be95618d7c584cb9b0ba848278b9dd6909ccee69",
+    "actual": "7d458d0d9498f3a3719b9127be95618d7c584cb9b0ba848278b9dd6909ccee69",
+    "pass": true
+  },
+  {
+    "function": "UTIL-XML",
+    "kind": "target",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "expected": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479",
+    "actual": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479",
+    "pass": true
+  },
+  {
+    "function": "UTIL-XML",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/src/rw/core/BoostXMLParser.hpp",
+    "expected": "45613a74ebce1db8b4d54cb6dfed095c5d2b23dc234be9e7f914eb383485bf67",
+    "actual": "45613a74ebce1db8b4d54cb6dfed095c5d2b23dc234be9e7f914eb383485bf67",
+    "pass": true
+  },
+  {
+    "function": "UTIL-XML",
+    "kind": "target",
+    "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+    "expected": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479",
+    "actual": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479",
+    "pass": true
+  },
+  {
+    "function": "UTIL-XML",
+    "kind": "catalog",
+    "path": "RobWork/RobWork/gtest/core/PluginTest.cpp",
+    "expected": "2fbe0418bb3e23aebd9d562061f5a19a43db4fa488b1463f6a7997cc1af673cb",
+    "actual": "2fbe0418bb3e23aebd9d562061f5a19a43db4fa488b1463f6a7997cc1af673cb",
+    "pass": true
+  }
+]

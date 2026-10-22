@@ -1,0 +1,20 @@
+workflow/src/CloseSupervisor.cpp:62:     if (m_running.load(std::memory_order_acquire)) {
+workflow/src/CloseSupervisor.cpp:73:     // 复位本次监督的过程态（观测位不在此复位——历史事实保留，见 stop 注；
+workflow/src/CloseSupervisor.cpp:76:     m_running.store(true, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:92:     m_running.store(false, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:128:             m_storeClosedObserved.store(true, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:129:             m_running.store(false, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:143:             m_abandonDiagObserved.store(true, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:157:             m_gaveUp.store(true, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:165:             m_running.store(false, std::memory_order_release);
+workflow/src/CloseSupervisor.cpp:175:     // 准——m_storeClosedObserved 只在真实观测到 closed() 时置位）。
+workflow/src/CloseSupervisor.cpp:176:     m_running.store(false, std::memory_order_release);
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:157:      *        ——历史事实不因重启清零）。
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:162:     bool running() const noexcept { return m_running.load(std::memory_order_acquire); }
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:167:         return m_storeClosedObserved.load(std::memory_order_acquire);
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:173:         return m_abandonDiagObserved.load(std::memory_order_acquire);
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:178:     bool gaveUp() const noexcept { return m_gaveUp.load(std::memory_order_acquire); }
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:192:     std::atomic<bool> m_running{false};         ///< 监督线程存活位（观测面）
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:193:     std::atomic<bool> m_storeClosedObserved{false};///< 闭合观测位（①段产物）
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:194:     std::atomic<bool> m_abandonDiagObserved{false};///< 兜底诊断位（③段产物）
+workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp:195:     std::atomic<bool> m_gaveUp{false};          ///< 放弃监督位（④段产物）
