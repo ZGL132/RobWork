@@ -125,3 +125,5 @@ B24补锁/原回归14关系，修真实worktree空token假成功及TK-T01 done�
 B25补状态校验19关系并刷新B24相关14条pending输入；修整数/伪GUID/跨偏移误判，红PS7为4p3f、PS51为2p5f，绿各7p0f，原回归两宿主均PASS且原生状态子进程各自运行。B23局部PASS原样归档，非全schema/全T01/T02，无远程同步。
 
 B26审findings并集解算入口10段、回归入口3条语义关系；真实Git红两Shell各6p2f，绿各8p0f；原流水线回归两Shell通过。修顶层大小写比较与Windows编码，证据见governance-union-audit.md；B24/B25局部验收原件已归档。全T01/T02仍未完成，不同步远程。
+
+B26首冻结aa31f6d9因归档autocrlf转换被独立验收拒绝；已以原字节重新暂存B24 173件/B25 159件并逐Git对象核对零差异，后续以修正版SHA重验。旧FAIL及修正过程保留，未粉饰为PASS。

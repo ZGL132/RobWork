@@ -1,0 +1,95 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B26",
+  "reviewedCommit": "aa31f6d99744b71b6efef221b98ec45a159286f2",
+  "parentCommit": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "verdict": "FAIL_LOCAL_B26_ARCHIVE_RAW_MISMATCH",
+  "blockingFindings": [
+    "B24/B25历史独立验收原件归档经Git换行过滤后，与原Temp文件raw字节不一致。B24 173件中94件不同；B25含manifest自身159件中149件不同。"
+  ],
+  "freeze": {
+    "noSharedWrites": true,
+    "headMatched": true,
+    "branch": "reuse-t01",
+    "parentMatched": true,
+    "initialAndFinalStatus": "?? .cache/"
+  },
+  "staticReview": {
+    "noProductFrameworkVcpkgChanges": true,
+    "caseSensitiveGuards": 2,
+    "codeChanges": "仅merge-findings-union.ps1 BOM/两处-cne，test-pipeline-pipeline.ps1三方Git索引回归",
+    "archiveNestedGitDirectories": 0,
+    "bom": "EF-BB-BF",
+    "archiveGitlinks": 0
+  },
+  "actualRuns": [
+    {
+      "explicitBoundaryPassed": 3,
+      "log": "pipeline-ps7.log",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "totalCaseCount": "not inferred",
+      "name": "PS7完整pipeline",
+      "explicitUnionBoundaries": 3,
+      "explicitBoundaryFailed": 0,
+      "exitCode": 0
+    },
+    {
+      "explicitBoundaryPassed": 3,
+      "log": "pipeline-ps51.log",
+      "command": "powershell -NoProfile -File RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+      "totalCaseCount": "not inferred",
+      "name": "PS5.1完整pipeline",
+      "explicitUnionBoundaries": 3,
+      "explicitBoundaryFailed": 0,
+      "exitCode": 0
+    },
+    {
+      "skipped": 0,
+      "failed": 0,
+      "exitCode": 0,
+      "name": "validate-task",
+      "passed": 1,
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+      "log": "validate-task.log"
+    },
+    {
+      "log": "archive-raw-report.json",
+      "failed": 243,
+      "command": "git ls-tree -r <frozenSHA> -- <archive>; git hash-object --no-filters -- <originalTempFile>",
+      "skipped": 0,
+      "B25": {
+        "checked": 159,
+        "failed": 149,
+        "passed": 10
+      },
+      "name": "archiveRaw",
+      "passed": 89,
+      "B24": {
+        "checked": 173,
+        "failed": 94,
+        "passed": 79
+      }
+    }
+  ],
+  "interrupted": [
+    {
+      "name": "validate-reuse -Head frozenSHA",
+      "result": "INTERRUPTED after confirmed blocking archive defect; no success claimed",
+      "log": "validate-reuse.log"
+    }
+  ],
+  "notRun": [
+    "进一步独立8边界对抗套件（完整pipeline中3个真实Git三方边界已执行）",
+    "validate-docs",
+    "commit-lint",
+    "以B25 SHA为base的verify-task-scope",
+    "C++/GUI/数值/性能",
+    "DeepEvidence",
+    "全REUSE-T01/T02及迁移验收",
+    "远程CI/同步/提交/合入"
+  ],
+  "limit": "父会话确认冻结对象归档缺陷后要求停止旧SHA重复昂贵全验；仅核实阻断并保存已运行证据。下一冻结对象须完整重验相关项。",
+  "permissionsGranted": [],
+  "evidenceRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023"
+}
