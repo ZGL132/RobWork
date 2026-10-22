@@ -194,6 +194,11 @@ add_library(sdurws_ird_modeling_plugin STATIC
     plugin/GeometryResourceFlow.cpp  # UI-T48——几何资源选择流（io 端口真装＋对话框编排）
     plugin/PanelCommandCatalog.cpp   # 十条域命令登记数据（ACC4——卡 §9.7.3 表值化）
     plugin/HostMigrationProviders.cpp  # 宿主迁移三接入面（WP-13-T20——B1-SPEC §5.1，零 Qt）
+    # GF-A：暂存会话与分组控件同属插件，不引入计算库的Qt依赖。
+    plugin/JointFormSession.cpp
+    plugin/JointFormSession.hpp
+    plugin/JointGroupedForm.cpp
+    plugin/JointGroupedForm.hpp
     plugin/ModelingPanelWidget.cpp   # 五区面板 widget（Q_OBJECT——AUTOMOC 载体）
     plugin/ModelingPanelWidget.hpp   #   （头入源列表——AUTOMOC 扫描 Q_OBJECT 声明）
     plugin/ModelingUiModule.cpp      # ui.md §11.2 模块实现（buildDraftCommand 域侧组装）
@@ -684,6 +689,7 @@ ird_add_gtest(sdurws_ird_modeling_test)
 add_executable(sdurws_ird_modeling_gui_test
     gui_test/TestMainReport.cpp
     gui_test/ModelingPanelGuiTest.cpp
+    gui_test/JointGroupedFormGuiTest.cpp
     # WP-13-T24：真实生产导入对话框，验证参数编辑/报告可读性及取消原子性。
     gui_test/ModelingImportGuiTest.cpp)
 

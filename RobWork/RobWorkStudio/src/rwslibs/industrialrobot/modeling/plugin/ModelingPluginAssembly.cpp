@@ -23,6 +23,11 @@ bool ModelingPluginAssembly::hasPendingDraft() const
     return m_impl && m_impl->hasPendingDraft();
 }
 
+bool ModelingPluginAssembly::guardPendingInputs(std::function<void()> continuation)
+{
+    return !m_impl || m_impl->guardPendingInputs(std::move(continuation));
+}
+
 void ModelingPluginAssembly::bindDraftChanged(std::function<void()> callback)
 {
     if(m_impl){m_impl->bindDraftChanged(std::move(callback));}

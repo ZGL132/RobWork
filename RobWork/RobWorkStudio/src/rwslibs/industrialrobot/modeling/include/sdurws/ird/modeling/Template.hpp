@@ -530,6 +530,36 @@ struct JointEditError {
     bool operator!=(const JointEditError& o) const noexcept { return !(*this == o); }
 };
 
+/** @brief GF-A整表编辑的局部拒绝原因；值结果仅供编辑页定位，不是跨域诊断码。 */
+enum class JointFormEditErrorCode {
+    TargetMissing, StaleBaseline, IdentityChanged, UnsupportedFieldChange,
+    InvalidLocalName, DuplicateLocalName, InvalidFieldState, FieldRejected
+};
+
+/**
+ * @brief 一个关节整表编辑拒绝结果；纯值由调用方持有，可跨线程只读传递。
+ * fieldKey采用编辑字段键，fieldError保留既有领域拒绝，禁止靠解析中文detail猜错误。
+ */
+struct JointFormEditError {
+    JointFormEditErrorCode code; ///< 局部拒绝分类，无物理单位。
+    std::string fieldKey; ///< 错误字段或目标键，供界面展开并定位。
+    std::string detail; ///< 中文可定位原因；拒绝不修改工作集。
+    std::optional<JointEditError> fieldError; ///< 字段域拒绝明细；非字段拒绝为空。
+};
+
+/**
+ * @brief MDL-01/07：按最终关节候选原子编辑，接受追加一条摘要，拒绝零修改。
+ * @param ws [in,out] 当前可编辑工作集，调用方持有；本函数不访问项目或三维。
+ * @param expected [in] 打开表单时的基线关节；以稳定OID定位，当前值不同即拒绝。
+ * @param proposed [in] 同OID最终候选；位置m、角度rad，速度/加速度随类型为SI。
+ * 允许名称/类型/轴/原点/零偏/范围/速度/加速度；dhDerived不可由此修改。
+ * 已提供新值来源由领域赋UserProvided，类型导致的状态变化须合法；不静默清字段。
+ * @return 空表示接受（同值请求零摘要），非空表示完整ws及changes均保持原样。
+ * 纯函数，无共享状态/外部副作用；同一ws的并发写由调用方串行化，不抛业务异常。
+ */
+std::optional<JointFormEditError> applyJointFormEdit(
+    ModelingWorkingSet& ws, const JointEntry& expected, const JointEntry& proposed);
+
 /**
  * @brief 关节原点编辑值（UI-T53——Origin 字段的编辑载荷）。
  *

@@ -29,6 +29,7 @@
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/FormEditCommon.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/ParamTablePanel.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/ParamTablePanelGuiTest.cpp",
@@ -44,6 +45,7 @@
     "RobWork/doc/industrial-robot-design/traceability/builds/modeling-interaction-20261021/**",
     "RobWork/docs/superpowers/plans/2026-10-21-modeling-interaction-repair.md",
     "RobWork/docs/superpowers/specs/2026-10-21-modeling-grouped-form-design.md",
+    "RobWork/docs/superpowers/specs/2026-10-01-requirements-panel-ux-redesign.md",
     "RobWork/docs/superpowers/plans/2026-10-21-modeling-grouped-form-implementation.md",
     "RobWork/doc/industrial-robot-design/traceability/production-assembly-manifest.json",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/SafePath.cpp",
@@ -54,7 +56,21 @@
     "RobWork/doc/industrial-robot-design/units/runtime.md",
     "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/Template.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/assembly/sdurws/ird/modeling/ModelingPluginAssembly.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingSceneEditor.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingToolEditor.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/ModelingUiModuleHostWiringGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/RequirementsSessionGuiTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/UiText.cpp",
+    "RobWork/doc/industrial-robot-design/units/requirements.md"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -92,7 +108,12 @@
     "第4批结构树默认窄栏，支持连续缩窄到1像素及0收起并恢复；窄栏操作横向可达、选择/折叠保留且零脏化；完整关节分组表单仅交付设计，不计入实现通过。验证后人工暂停。",
     "第4批追加：建模树关节/连杆选择上报唯一共享服务并驱动正式三维高亮，无几何关节有帧原点标记；切换/清空清旧高亮，下行不回环，纯草稿缺对应物不伪造高亮，零写入。",
     "第5批修复人工反馈base未高亮：宿主从同OID的权威名称条目选取当前WC实际存在的首/末连杆帧，中间连杆/关节/设备语义不变；红绿回归和正式三维验证后人工暂停。",
-    "第5批已获所有者人工通过；完整分组表单本轮仅设计及实施分解，产品未实施。拟议整表领域公共入口另行精确登记，不把设计文档允许面视为公共接口实施授权。"
+    "第5批已获所有者人工通过；完整分组表单本轮仅设计及实施分解，产品未实施。拟议整表领域公共入口另行精确登记，不把设计文档允许面视为公共接口实施授权。",
+    "所有者批准按完整分组表单方案实施GF-A：Template.hpp整表入口及core四个衍生单位按设计精确放行，统一暂存、原子草稿/单次撤销、真实窗口及三维验证后人工暂停。",
+    "GF-A项目关闭/切换通过已登记装配guardPendingInputs统一非模态暂存守卫，不借私有头或新增业务依赖边。",
+    "所有建模与需求子页采用一致的主题分组表单；关节全部14个业务字段只保留一套分组编辑控件，不出现重复高级参数表。",
+    "工具、场景、基座/命名位姿/工况/区域等编辑页保留独立对象表和差异表语义，所有对象编辑字段可在主题卡片中直接发现；需求区域附加约束默认可见。",
+    "每批实现后自动完成代码/GUI验证并留痕；用户选择暂停人工验证的流程改为继续自动推进，不在工具对话框等待用户。"
   ],
-  "note": "所有者2026-10-21要求先修复完整建模交互再人工终验；沿用推荐方案自动实施授权。基线04b69c307；不改公共接口/依赖边/存储，实施方案见同日modeling-interaction-repair计划。 用户追加：每批修改验证完成提供人工步骤后暂停，等待人工反馈；本契约整体保持ready，不假报全部修复完成。装配清单仅同步UiPlugin include引起的两处行号漂移。"
+  "note": "所有者2026-10-21授权自动完成建模与需求全部子页面的分组表单统一及所有功能交互修复，不弹选项或等待人工，按推荐方案持续实施。公共接口、产品数据格式和业务语义不因视觉整理而改变。"
 }

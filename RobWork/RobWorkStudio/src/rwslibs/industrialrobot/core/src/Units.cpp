@@ -1,6 +1,6 @@
 /**
  * @file   Units.cpp
- * @brief  单位注册表（R1 冻结 17 token）＋UnitToken/Quantity 实现＋唯一换算入口。
+ * @brief  单位注册表（R1原17项＋GF-A四项显示单位）及唯一换算入口。
  *
  * 设计依据：
  *   - units/core.md §4.4（R1 单位表：SI 因子表逐项）/§5.4（签名）/§8 UT-UNIT
@@ -27,7 +27,7 @@ struct UnitRow {
     double factor;
 };
 
-/// R1 全量 17 条（覆盖 14 量纲；PI 精度足够 rad/deg 换算的 1e-12 相对容差）。
+/// 原R1的17项保持原顺序，GF-A在表尾补4项；覆盖14量纲，PI满足1e-12换算容差。
 constexpr UnitRow kUnitTable[] = {
     // length
     {"m",       QuantityKind::Length,       1.0},
@@ -52,6 +52,11 @@ constexpr UnitRow kUnitTable[] = {
     // voltage / dimensionless
     {"V",       QuantityKind::Voltage,      1.0},
     {"1",       QuantityKind::Dimensionless, 1.0},
+    // GF-A/UX-05：仅在表尾补显示制式，旧token索引与SI定义保持稳定。
+    {"mm/s",    QuantityKind::LinearVelocity, 0.001},
+    {"mm/s^2",  QuantityKind::LinearAcceleration, 0.001},
+    {"deg/s",   QuantityKind::AngularVelocity, 3.14159265358979323846 / 180.0},
+    {"deg/s^2", QuantityKind::AngularAcceleration, 3.14159265358979323846 / 180.0},
 };
 
 constexpr std::uint16_t kInvalidIndex = 0xFFFF;

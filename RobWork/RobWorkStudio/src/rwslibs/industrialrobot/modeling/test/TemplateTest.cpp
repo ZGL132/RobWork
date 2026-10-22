@@ -78,6 +78,8 @@ using sdurws::ird::modeling::creationEntryGuard;
 using sdurws::ird::modeling::defaultMaterialDensity;
 using sdurws::ird::modeling::applyJointFieldEdit;
 using sdurws::ird::modeling::applyJointFieldEditBatch;
+using sdurws::ird::modeling::applyJointFormEdit;
+using sdurws::ird::modeling::JointFormEditErrorCode;
 using sdurws::ird::modeling::judgeChainCapability;
 using sdurws::ird::modeling::jointEditErrorCodeToken;
 using sdurws::ird::modeling::kHybridChainStage;
@@ -1115,4 +1117,77 @@ TEST(MdlTemplateEdit, VelocityAccelerationEditRules_WP13T25)
                                                  JointEditValue{1.0});
     ASSERT_TRUE(fixedReject.has_value());
     EXPECT_EQ(fixedReject->code, JointEditErrorCode::TypeBoundsConflict);
+}
+
+/** @brief GF-A/AT-01：混合合法原点和非法速度必须完整拒绝，候选不能污染原工作集。 */
+TEST(JointFormEdit, AtomicRejectAndSingleChange_MDL01_AT01_T30)
+{
+    auto ws=makeSixAxisDraft(); const auto before=ws; const auto expected=ws.design.joints[0];
+    auto proposed=expected; proposed.localName="joint_one";
+    proposed.maxVelocity=sdurws::ird::core::SourcedValue<double>::provided(-1,ValueProvenance::make(ProvenanceKind::UserProvided));
+    const auto rejected=applyJointFormEdit(ws,expected,proposed);
+    ASSERT_TRUE(rejected); EXPECT_EQ(rejected->fieldKey,"max-velocity"); EXPECT_EQ(ws,before);
+    proposed.maxVelocity=sdurws::ird::core::SourcedValue<double>::provided(0,ValueProvenance::make(ProvenanceKind::UserProvided));
+    EXPECT_FALSE(applyJointFormEdit(ws,expected,proposed));
+    EXPECT_EQ(ws.design.joints[0].objectId,expected.objectId); EXPECT_EQ(ws.design.joints[0].localName,"joint_one");
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1);
+    const auto after=ws; EXPECT_FALSE(applyJointFormEdit(ws,ws.design.joints[0],ws.design.joints[0])); EXPECT_EQ(ws,after);
+    EXPECT_EQ(applyJointFormEdit(ws,expected,proposed)->code,JointFormEditErrorCode::StaleBaseline);
+}
+
+/** @brief GF-A/MDL-07：名称空间和稳定身份拒绝必须早于采纳。 */
+TEST(JointFormEdit, NamesIdentityAndDhAreProtected_MDL07_T30)
+{
+    auto ws=makeSixAxisDraft(); const auto before=ws; const auto base=ws.design.joints[0];
+    auto p=base;p.localName="非法名称";
+    EXPECT_EQ(applyJointFormEdit(ws,base,p)->code,JointFormEditErrorCode::InvalidLocalName);
+    p=base;p.localName=ws.design.links[0].localName;
+    EXPECT_EQ(applyJointFormEdit(ws,base,p)->code,JointFormEditErrorCode::DuplicateLocalName);
+    p=base;p.objectId=sdurws::ird::core::ObjectId::generate();
+    EXPECT_EQ(applyJointFormEdit(ws,base,p)->code,JointFormEditErrorCode::IdentityChanged);
+    EXPECT_EQ(ws,before);
+}
+
+/** @brief GF-A/AT-17：Continuous转换按最终组合一次接受；不能先清原限位再失败。 */
+TEST(JointFormEdit, FinalTypeStateAndRange_MDL12_AT17_T30)
+{
+    auto ws=makeSixAxisDraft(); const auto before=ws; auto old=ws.design.joints[0]; auto p=old;
+    p.type=JointType::Continuous;
+    EXPECT_TRUE(applyJointFormEdit(ws,old,p)); EXPECT_EQ(ws,before);
+    p.bounds=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    p.workingRange=sdurws::ird::core::SourcedValue<JointLimits>::provided({-8,9},ValueProvenance::make(ProvenanceKind::UserProvided));
+    ASSERT_FALSE(applyJointFormEdit(ws,old,p));
+    EXPECT_EQ(ws.changes.size(),before.changes.size()+1); EXPECT_EQ(ws.design.joints[0].workingRange.value().second,9);
+    old=ws.design.joints[0];p=old;p.type=JointType::Fixed;
+    p.workingRange=sdurws::ird::core::SourcedValue<JointLimits>::notApplicable();
+    p.maxVelocity=sdurws::ird::core::SourcedValue<double>::notApplicable();
+    p.maxAcceleration=sdurws::ird::core::SourcedValue<double>::notApplicable();
+    ASSERT_FALSE(applyJointFormEdit(ws,old,p)); EXPECT_EQ(ws.design.joints[0].type,JointType::Fixed);
+}
+
+/** @brief GF-03/10/11：OID定位、来源白名单和非法轴/位姿均原子拒绝，未改缺供不阻无关编辑。 */
+TEST(JointFormEdit, BoundaryValuesOidAndProvenance_MDL09_T30)
+{
+    IRD_TEST_INFO("MDL-09",{"AT-01"},std::nullopt);
+    auto ws=makeSixAxisDraft();const auto before=ws;const auto old=ws.design.joints[0];
+    const auto user=ValueProvenance::make(ProvenanceKind::UserProvided);
+    for(const auto axis:std::vector<rw::math::Vector3D<double>>{{0,0,0},{0,0,std::numeric_limits<double>::denorm_min()},
+        {0,0,std::numeric_limits<double>::infinity()}}){
+        auto next=old;next.axis=sdurws::ird::core::SourcedValue<rw::math::Vector3D<double>>::provided(axis,user);
+        EXPECT_TRUE(applyJointFormEdit(ws,old,next));EXPECT_EQ(ws,before);
+    }
+    auto next=old;next.origin=sdurws::ird::core::SourcedValue<sdurws::ird::modeling::JointPose>::provided(
+        sdurws::ird::modeling::JointPose(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0),rw::math::Rotation3D<double>(1,0,0,0,1,0,0,0,-1))),user);
+    EXPECT_TRUE(applyJointFormEdit(ws,old,next));EXPECT_EQ(ws,before);
+    next=old;next.axis=sdurws::ird::core::SourcedValue<rw::math::Vector3D<double>>::notProvided();
+    EXPECT_TRUE(applyJointFormEdit(ws,old,next));EXPECT_EQ(ws,before);
+    // 重排后旧下标不再指向目标，但OID入口仍应只改原目标。
+    std::swap(ws.design.joints[0],ws.design.joints[1]);next=old;next.zeroOffset=0.4;
+    ASSERT_FALSE(applyJointFormEdit(ws,old,next));EXPECT_DOUBLE_EQ(ws.design.joints[1].zeroOffset,0.4);
+    EXPECT_EQ(ws.design.joints[0],before.design.joints[1]);
+    ws=before;ws.design.joints.erase(ws.design.joints.begin());const auto deleted=ws;
+    EXPECT_EQ(applyJointFormEdit(ws,old,next)->code,JointFormEditErrorCode::TargetMissing);EXPECT_EQ(ws,deleted);
+    ws=before;ws.design.authority=AuthorityMode::StandardDH;const auto dh=ws;
+    next=old;next.axis=sdurws::ird::core::SourcedValue<rw::math::Vector3D<double>>::provided({1,0,0},user);
+    EXPECT_TRUE(applyJointFormEdit(ws,old,next));EXPECT_EQ(ws,dh);
 }

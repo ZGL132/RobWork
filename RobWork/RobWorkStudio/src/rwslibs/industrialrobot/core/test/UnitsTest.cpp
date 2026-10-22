@@ -52,6 +52,23 @@ TEST(UnitsConvert, KnownConversions_UT_UNIT)
     EXPECT_DOUBLE_EQ(*tryConvert(1234.0, *mm, *m), convert(1234.0, *mm, *m));
 }
 
+/** @brief GF-A/UX-05：显示单位必须连同速度及加速度真实换算，不能在UI私算。 */
+TEST(UnitsConvert, ModelingDerivativeDisplayUnits_UX05_T30)
+{
+    const char* display[] = {"mm/s", "mm/s^2", "deg/s", "deg/s^2"};
+    const char* si[] = {"m/s", "m/s^2", "rad/s", "rad/s^2"};
+    for (std::size_t i = 0; i < 4; ++i) {
+        const auto from = UnitToken::find(display[i]);
+        ASSERT_TRUE(from.has_value()) << display[i];
+        const auto to = UnitToken::find(si[i]); ASSERT_TRUE(to.has_value());
+        const double value = i < 2 ? 1000.0 : 180.0;
+        const double expected = i < 2 ? 1.0 : 3.14159265358979323846;
+        expectNearRel(convert(value, *from, *to), expected, expected);
+        expectNearRel(convert(convert(value, *from, *to), *to, *from), value, value);
+        EXPECT_FALSE(tryConvert(value, *from, *UnitToken::find("kg")));
+    }
+}
+
 /** 量纲不匹配：N*m→N 抛/空（§8 明文）；反向同。 */
 TEST(UnitsConvert, DimensionMismatch_UT_UNIT)
 {

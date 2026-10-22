@@ -27,6 +27,7 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QWidget>
@@ -40,6 +41,7 @@
 #include <QTimer>
 #include <QTemporaryDir>
 #include <QFile>
+#include <QGroupBox>
 #include <QFileInfo> // F08真实中文网格文件选择，路径始终沿Qt UTF-8转换。
 #include <functional> // 文件对话嵌套事件的边界动作，不替代域逻辑。
 #include <QFileDialog>
@@ -932,6 +934,8 @@ TEST(ModelingUiModuleHostWiring, EmptySceneManagementReachable_MDL15_AT28)
     entry->click();QApplication::processEvents();
     auto* manager=panel->findChild<QWidget*>("ird_modeling_scene_editor");
     ASSERT_NE(manager,nullptr);EXPECT_TRUE(manager->isVisible());
+    const auto sceneCards=manager->findChildren<QGroupBox*>("ird_card");
+    ASSERT_GE(sceneCards.size(),2)<<"场景对象与草稿操作应按统一主题卡片分组";
 }
 
 /** @brief F10/MDL-05：真实模块仅记一次局部历史，恢复清暂存且零命令/修订。 */
@@ -1052,6 +1056,8 @@ TEST(ModelingUiModuleHostWiring, EmptyToolManagerEntry_MDL13_AT01)
     entry->click();QApplication::processEvents();
     auto* editor=panel->findChild<QWidget*>("ird_modeling_tool_editor");
     ASSERT_NE(editor,nullptr);EXPECT_TRUE(editor->isVisible());
+    const auto toolCards=editor->findChildren<QGroupBox*>("ird_card");
+    ASSERT_GE(toolCards.size(),2)<<"工具对象与草稿操作应按统一主题卡片分组";
 }
 
 /** @brief F12/MDL-15：真实Windows文件选择/外部网格来源、确认前零写入与资源摘要。 */
@@ -1481,4 +1487,119 @@ TEST(ModelingUiModuleHostWiring, WorkCellImportCommandButtonRegistered_MDL18_AT3
     EXPECT_FALSE(button->isEnabled())<<"L-7：写命令在只读会话必须禁用";
     module.setWritable(true);
     EXPECT_TRUE(button->isEnabled())<<"恢复可写后导入按钮必须可用";
+}
+
+/** @brief GF-04/09/10：真实模块整表一次历史、树切换待决议和同OID新项目世代拒绝。 */
+TEST(ModelingUiModuleHostWiring, GroupedFormOneHistoryAndNavigation_MDL07_T30)
+{
+    IRD_TEST_INFO("MDL-07",{"AT-01"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(core::BranchId::generate(),revision);module.noteAppliedRevision(revision,core::ObjectId::generate());
+    std::unique_ptr<QWidget> widget(module.createPanel());auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());ASSERT_NE(panel,nullptr);
+    widget->resize(1100,850);widget->show();panel->focusObject(module.session().draft.design.joints[0].objectId);QApplication::processEvents();
+    const auto before=module.session().draft;
+    auto* host=widget->findChild<QWidget*>("ird_modeling_edit_host");ASSERT_NE(host,nullptr);
+    auto* name=host->findChild<QLineEdit*>("ird_joint_local_name");ASSERT_NE(name,nullptr);
+    name->setText("renamed_joint");Q_EMIT name->textEdited("renamed_joint");
+    for(const auto& pair:std::vector<std::pair<const char*,const char*>>{{"origin-z","0.17"},{"max-velocity","1.25"}}){
+        auto* edit=host->findChild<QLineEdit*>(QString("ird_joint_field_")+pair.first);ASSERT_NE(edit,nullptr);
+        edit->setText(pair.second);Q_EMIT edit->textEdited(pair.second);
+    }
+    const auto first=before.design.joints[0].objectId,second=before.design.joints[1].objectId;
+    panel->focusObject(second);EXPECT_EQ(panel->selectedAnchor(),first);EXPECT_EQ(module.session().draft,before);
+    host->findChild<QPushButton*>("ird_joint_leave_stay")->click();EXPECT_EQ(panel->selectedAnchor(),first);
+    host->findChild<QPushButton*>("ird_param_apply")->click();host->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    const auto after=module.session().draft;EXPECT_EQ(after.design.joints[0].localName,"renamed_joint");ASSERT_EQ(after.changes.size(),1u);
+    auto* undo=widget->findChild<QPushButton*>("ird_modeling_draft_undo");auto* redo=widget->findChild<QPushButton*>("ird_modeling_draft_redo");
+    ASSERT_TRUE(undo->isEnabled());undo->click();EXPECT_EQ(module.session().draft,before);EXPECT_FALSE(undo->isEnabled());
+    redo->click();EXPECT_EQ(module.session().draft,after);EXPECT_FALSE(redo->isEnabled());EXPECT_EQ(module.session().baseRevision,revision);
+    // 项目离页守卫与树守卫共用；用户放弃只丢暂存，不撤销已接受草稿。
+    auto* x=host->findChild<QLineEdit*>("ird_joint_field_origin-x");ASSERT_NE(x,nullptr);x->setText("0.2");Q_EMIT x->textEdited("0.2");
+    int left=0;EXPECT_FALSE(module.guardPendingInputs([&]{++left;}));host->findChild<QPushButton*>("ird_joint_leave_discard")->click();
+    EXPECT_EQ(left,1);EXPECT_EQ(module.session().draft,after);
+}
+
+/** @brief GF-10：会话世代变化保留旧文本但拒写，重置后重新绑定且旧页排队信号失效。 */
+TEST(ModelingUiModuleHostWiring, GroupedContextResetRebindsAndRejectsOldPage_MDL07_T30)
+{
+    IRD_TEST_INFO("MDL-07",{"AT-01"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();
+    std::unique_ptr<QWidget> widget(module.createPanel());auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());
+    widget->resize(1100,850);widget->show();const auto id=module.session().draft.design.joints[0].objectId;
+    panel->focusObject(id);QApplication::processEvents();
+    // 首次项目应用从无根草稿回填真实根OID，关节身份不变也必须可继续编辑。
+    module.noteAppliedRevision(core::RevisionId::generate(),core::ObjectId::generate());
+    const auto before=module.session().draft;
+    auto* old=widget->findChild<QWidget*>("ird_joint_grouped_form");ASSERT_NE(old,nullptr);
+    auto* edit=old->findChild<QLineEdit*>("ird_joint_field_origin-x");edit->setText("0.19");Q_EMIT edit->textEdited("0.19");
+    panel->invalidateJointContext(false);panel->focusObject(id);
+    EXPECT_EQ(edit->text(),"0.19");EXPECT_FALSE(old->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    old->findChild<QPushButton*>("ird_param_confirm_yes")->click();EXPECT_EQ(module.session().draft,before);
+    old->findChild<QPushButton*>("ird_param_cancel")->click();
+    auto* fresh=widget->findChild<QWidget*>("ird_joint_grouped_form");ASSERT_NE(fresh,nullptr);EXPECT_NE(fresh,old);
+    // deleteLater尚未执行，旧控件人为排队点击也必须被世代检查拒绝。
+    old->findChild<QPushButton*>("ird_param_confirm_yes")->click();EXPECT_EQ(module.session().draft,before);
+    edit=fresh->findChild<QLineEdit*>("ird_joint_field_origin-x");ASSERT_TRUE(edit->isEnabled());
+    edit->setText("0.23");Q_EMIT edit->textEdited("0.23");
+    fresh->findChild<QPushButton*>("ird_param_apply")->click();fresh->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_DOUBLE_EQ(module.session().draft.design.joints[0].origin.value().d()[0],0.23);
+    // 无暂存的后续世代变化也须自动重绑，不能遗留永久失效的提交闭包。
+    panel->invalidateJointContext(false);panel->focusObject(id);
+    fresh=widget->findChild<QWidget*>("ird_joint_grouped_form");edit=fresh->findChild<QLineEdit*>("ird_joint_field_origin-x");
+    edit->setText("0.24");Q_EMIT edit->textEdited("0.24");
+    fresh->findChild<QPushButton*>("ird_param_apply")->click();fresh->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_DOUBLE_EQ(module.session().draft.design.joints[0].origin.value().d()[0],0.24);
+}
+
+
+/** @brief GF-09：域树和三维拾取在决议前不改变共享选择；取消、放弃、确认分别保持一致。 */
+TEST(ModelingUiModuleHostWiring, GroupedTreeAnd3DPickUseOneLeaveGuard_UX07_T30)
+{
+    IRD_TEST_INFO("UX-07",{"AT-01"},std::nullopt);
+    ui::SelectionService::Deps deps;deps.nameMap=std::make_shared<DiffDraftNameMap>();
+    deps.treeLocator=[](const core::ObjectId&){return true;};ui::SelectionService selection(deps);
+    ModelingUiModule module;module.seedTemplateSession();std::unique_ptr<QWidget> widget(module.createPanel());
+    auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());module.attachSelectionService(selection);
+    widget->resize(1100,850);widget->show();auto* tree=widget->findChild<QTreeWidget*>("ird_modeling_struct_tree");
+    const auto a=module.session().draft.design.joints[0].objectId,b=module.session().draft.design.joints[1].objectId;
+    const auto choose=[&](const core::ObjectId& id){for(QTreeWidgetItemIterator it(tree);*it;++it){
+        if((*it)->text(1).toStdString()==id.toCanonical()){tree->setCurrentItem(*it);return;}}FAIL()<<"真实树缺少目标";};
+    choose(a);QApplication::processEvents();const auto before=module.session().draft;
+    auto* edit=widget->findChild<QLineEdit*>("ird_joint_field_origin-x");edit->setText("0.32");Q_EMIT edit->textEdited("0.32");
+    choose(b);EXPECT_EQ(panel->selectedAnchor(),a);EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{a});
+    widget->findChild<QWidget*>("ird_joint_grouped_form")->findChild<QPushButton*>("ird_joint_leave_stay")->click();EXPECT_EQ(module.session().draft,before);
+    ASSERT_TRUE(module.reportView3DPick(b));EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{a});
+    widget->findChild<QWidget*>("ird_joint_grouped_form")->findChild<QPushButton*>("ird_joint_leave_discard")->click();EXPECT_EQ(panel->selectedAnchor(),b);
+    EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{b});EXPECT_EQ(module.session().draft,before);
+    edit=widget->findChild<QLineEdit*>("ird_joint_field_origin-x");edit->setText("0.43");Q_EMIT edit->textEdited("0.43");
+    choose(a);widget->findChild<QWidget*>("ird_joint_grouped_form")->findChild<QPushButton*>("ird_joint_leave_apply")->click();
+    EXPECT_TRUE(widget->findChild<QWidget*>("ird_joint_grouped_form")->findChild<QWidget*>("ird_param_confirm_region",Qt::FindDirectChildrenOnly)->isVisible())
+        <<widget->findChild<QLabel*>("ird_joint_form_status")->text().toStdString();
+    EXPECT_EQ(panel->selectedAnchor(),b);EXPECT_EQ(module.session().draft,before);
+    widget->findChild<QWidget*>("ird_joint_grouped_form")->findChild<QPushButton*>("ird_param_confirm_yes")->click();EXPECT_EQ(panel->selectedAnchor(),a);
+    std::cout<<"[gf-guard] "<<widget->findChild<QLabel*>("ird_joint_form_status")->text().toStdString()<<std::endl;
+    EXPECT_EQ(selection.selectedObjectIds(),std::vector<core::ObjectId>{a});
+    EXPECT_DOUBLE_EQ(module.session().draft.design.joints[1].origin.value().d()[0],0.43);
+}
+
+
+/** @brief GF-10：外部干净修订不能丢弃未确认的非法原串，重置后采用新锚继续一次编辑。 */
+TEST(ModelingUiModuleHostWiring, GroupedExternalRevisionPreservesUnconfirmedInput_MDL07_T30)
+{
+    IRD_TEST_INFO("MDL-07",{"AT-01"},std::nullopt);
+    ModelingUiModule module;module.seedTemplateSession();const auto branch=core::BranchId::generate();
+    module.bindSessionAnchor(branch,core::RevisionId::generate());
+    module.noteAppliedRevision(core::RevisionId::generate(),core::ObjectId::generate());
+    std::unique_ptr<QWidget> widget(module.createPanel());auto* panel=qobject_cast<ModelingPanelWidget*>(widget.get());
+    widget->resize(1100,850);widget->show();panel->focusObject(module.session().draft.design.joints[0].objectId);
+    auto document=module.buildDraftDocument();module.bindRevisionDraftReader([document](const core::BranchId& b,const core::RevisionId& r) mutable {
+        document.branchId=b;document.baseRevisionId=r;return std::optional<ui::DraftDocumentProjection>{document};});
+    auto* form=widget->findChild<QWidget*>("ird_joint_grouped_form");auto* edit=form->findChild<QLineEdit*>("ird_joint_field_origin-x");
+    edit->setText("bad");Q_EMIT edit->textEdited("bad");const auto revision=core::RevisionId::generate();
+    module.bindSessionAnchor(branch,revision);QApplication::processEvents();
+    EXPECT_EQ(edit->text(),"bad");EXPECT_FALSE(form->findChild<QPushButton*>("ird_param_apply")->isEnabled());
+    form->findChild<QPushButton*>("ird_param_cancel")->click();form=widget->findChild<QWidget*>("ird_joint_grouped_form");
+    edit=form->findChild<QLineEdit*>("ird_joint_field_origin-x");ASSERT_TRUE(edit->isEnabled());edit->setText("0.29");Q_EMIT edit->textEdited("0.29");
+    form->findChild<QPushButton*>("ird_param_apply")->click();form->findChild<QPushButton*>("ird_param_confirm_yes")->click();
+    EXPECT_DOUBLE_EQ(module.session().draft.design.joints[0].origin.value().d()[0],0.29);EXPECT_EQ(module.session().baseRevision,revision);
 }
