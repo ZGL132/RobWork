@@ -1,0 +1,10 @@
+RobWork/RobWork/src/rw/pathplanning/QSampler.hpp:114:        static QSampler::Ptr makeUniform (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning/QSampler.hpp:119:        static QSampler::Ptr makeUniform (const rw::models::Device& device);
+RobWork/RobWork/src/rw/pathplanning/QSampler.hpp:124:        static QSampler::Ptr makeUniform (rw::models::Device::CPtr device);
+RobWork/RobWork/src/rw/pathplanning/QSampler.hpp:153:        static QSampler::Ptr makeConstrained (QSampler::Ptr sampler,
+RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp:156:        virtual bool doInCollision (const rw::math::Q& q) const = 0;
+RobWork/RobWork/src/rw/math/MetricFactory.hpp:377:        inline static typename Metric< VectorType >::Ptr makeEuclidean ()
+RobWork/RobWork/src/rw/math/Math.hpp:242:        static void seed (unsigned seed);
+RobWork/RobWork/src/rw/math/Math.hpp:249:        static void seed ();
+RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp:108:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp:127:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,

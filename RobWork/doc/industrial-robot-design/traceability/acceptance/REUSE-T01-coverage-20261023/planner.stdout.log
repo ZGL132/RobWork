@@ -1,0 +1,29 @@
+6: *         （planPtpWithObstacleAvoidance——WP-16-T06 批）。
+22: *     种子化→该 family 不入选"——本实现经 rw::math::Math::seed 全局种子
+23: *     化 RRT 随机源，黄金算例验证同种子等价候选集合）、§15.0（错误二分/
+34: * §15.0；rw::math::Math::seed 为进程级全局随机源，种子化时点在每次 search
+36: * 确定性：同 (请求值, 种子) → 等价候选集合（Math::seed＋RRT 顺序执行＋
+58:#include <rw/pathplanning/QEdgeConstraint.hpp>
+61:#include <rwlibs/pathplanners/rrt/RRTPlanner.hpp>
+142:class PolicySessionQConstraint final : public rw::pathplanning::QConstraint {
+145:    PolicySessionQConstraint(
+161:    bool doInCollision(const rw::math::Q& q) const override
+211:    /// RRT 扩展步长（逐轴欧氏度量；rad|m——kTrjPlannerParamExtend）。
+360:SampledPath sampleStraightPath(const rw::math::Q& fromQ, const rw::math::Q& toQ,
+562: * @brief IPathPlannerAdapter 唯一产品实现（RRT-Connect family——词表
+568: *   policy 会话 → PolicySessionQConstraint（SingleState 适配）
+571: *     → QEdgeConstraint::make（直线插值离散检查，分辨率＝edge-resolution）
+574: *     → RRTPlanner::makeQToQPlanner（RRTConnect；度量＝逐轴欧氏；扩展步长
+617:        // 性经进程级 Math::seed 约束；uint64 种子截断为 unsigned 的映射是
+621:        rw::math::Math::seed(static_cast<unsigned>(request.seed));
+649:        rw::core::Ptr<PolicySessionQConstraint> policyConstraint =
+650:            rw::core::ownedPtr(new PolicySessionQConstraint(request.session, &request.cancel));
+661:        const rw::pathplanning::QEdgeConstraint::Ptr edge =
+662:            rw::pathplanning::QEdgeConstraint::make(mergedConstraint, metric,
+668:        // 返回空 Q，RRT 内部重试）。
+673:        // RRT-Connect 规划器（黄金算例锁定选型——词表注释）。
+675:            rwlibs::pathplanners::RRTPlanner::makeQToQPlanner(
+677:                rwlibs::pathplanners::RRTPlanner::RRTConnect);
+834:// §10.4 避障重规划编排（planPtpWithObstacleAvoidance）
+837:AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& request,
+959:    const SampledPath direct = sampleStraightPath(request.startQ, request.endQ,

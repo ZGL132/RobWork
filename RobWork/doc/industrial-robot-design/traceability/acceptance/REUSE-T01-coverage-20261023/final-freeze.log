@@ -1,0 +1,4 @@
+HEAD bb997f1cfb89c8d8eb24b457d2c82d4c0711af44
+git status --porcelain:
+
+PASS: 冻结提交匹配，独立 clone 无修改。

@@ -9643,6 +9643,26 @@
       "title": "基线b12e8503完整GitHub CI模型测试10/47目标失败，后续边界与出包跳过；不得把治理门禁绿解释为全产品CI绿",
       "owner": "CI/相关单元验收所有者",
       "resolution": "基线运行39724444980在治理前已失败；本轮记录事实并保留required package阻断合入，不放宽测试、不修改算法。需后续单独调查环境/产品原因。"
+    },
+    {
+      "id": "F-957",
+      "source": "traceability/reuse/REUSE-T01/runtime-boundary-audit.md / runtime-probe/red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "runtime S6将移动关节m制zeroOffset编码成旋转且缺少平移，阻断相关上游FK适配",
+      "owner": "runtime / REUSE-T02",
+      "resolution": "真实原编译器独立重建2项1 passed1 failed、exit1，三轴复现。T02先在runtime owner修复最薄模型映射并回归；业务不得额外补偿，不是RobWork缺算法。原失败与独立复现有效验收保留。"
+    },
+    {
+      "id": "F-958",
+      "source": "traceability/reuse/REUSE-T01/test-build-audit.md / probe-r10",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "testkit静态监听器传给GTest Append，与其接管并delete对象的公开所有权契约冲突",
+      "owner": "testkit / REUSE-T05",
+      "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。"
     }
   ]
 }

@@ -1,0 +1,181 @@
+[
+  {
+    "name": "up-planner-corrected",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "makeQToQPlanner|makeUniform|makeConstrained|makeEuclidean|static.*seed|virtual.*doInCollision",
+      "RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp",
+      "RobWork/RobWork/src/rw/pathplanning/QSampler.hpp",
+      "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+      "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "RobWork/RobWork/src/rw/math/Math.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "up-planner-corrected.stdout.log",
+    "stderr": "up-planner-corrected.stderr.log",
+    "lines": 10
+  },
+  {
+    "name": "up-optimization-corrected",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "Pareto|dominat|Latin.?Hyper|class.*Optimizer|double.*evaluate|virtual.*f\\(",
+      "RobWork/RobWork/src/sandbox/optimization",
+      "RobWork/RobWork/src/rwlibs/pathoptimization"
+    ],
+    "exitCode": 0,
+    "stdout": "up-optimization-corrected.stdout.log",
+    "stderr": "up-optimization-corrected.stderr.log",
+    "lines": 18
+  },
+  {
+    "name": "up-integrals",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "trapezoid|integrat|total energy|double.*energy|calcEnergy",
+      "RobWork/RobWork/src/rw/math",
+      "RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp",
+      "RobWork/RobWorkSim/src/rwsim/dynamics/RigidBody.cpp",
+      "RobWork/RobWorkSim/src/rwsim/rwphysics/BodyIntegrator.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "up-integrals.stdout.log",
+    "stderr": "up-integrals.stderr.log",
+    "lines": 9
+  },
+  {
+    "name": "up-xml-json",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "load \\(|save \\(|make \\(|read.*Property|write.*Property|json|xacro",
+      "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "RobWork/RobWork/src/rw/core/DOMElem.hpp",
+      "RobWork/RobWork/src/rw/loaders",
+      "RobWork/RobWork/src/rw/common/BINArchive.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "up-xml-json.stdout.log",
+    "stderr": "up-xml-json.stderr.log",
+    "lines": 211
+  },
+  {
+    "name": "up-test-build",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "ADD_RW_GTEST|add_rw_gtest|GTest|TestEnvironment|sdurw_pathplanners|sdurw_pathplanning|sdurw_core",
+      "RobWork/RobWork/gtest/CMakeLists.txt",
+      "RobWork/RobWork/gtest/TestEnvironment.hpp",
+      "RobWork/RobWork/gtest/TestEnvironment.cpp",
+      "RobWork/RobWork/src/rw/CMakeLists.txt",
+      "RobWork/RobWork/src/rwlibs/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "up-test-build.stdout.log",
+    "stderr": "up-test-build.stderr.log",
+    "lines": 53
+  },
+  {
+    "name": "tests-corrected",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "^TEST|^TEST_F|expectNearRel|makeCandidate|digestOf|existingNodeFor|inline|golden",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "tests-corrected.stdout.log",
+    "stderr": "tests-corrected.stderr.log",
+    "lines": 128
+  },
+  {
+    "name": "ui-workflow",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "^[A-Za-z_:<>].*::|WorkCellScene|setState|setWorkCell|addRender|remove|CloseSupervisor::|LifecycleService::|Comparison",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/HostController.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "ui-workflow.stdout.log",
+    "stderr": "ui-workflow.stderr.log",
+    "lines": 123
+  },
+  {
+    "name": "up-process",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "class ThreadPool|execute|ThreadPool \\(|CreateProcess|ProcessLauncher",
+      "RobWork/RobWork/src/rw/common/ThreadPool.hpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution"
+    ],
+    "exitCode": 0,
+    "stdout": "up-process.stdout.log",
+    "stderr": "up-process.stderr.log",
+    "lines": 56
+  },
+  {
+    "name": "bounds-geometry",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "class AABB|class BoundingSphere|calcTightAABB|make.*Sphere|worldTframe|baseTend",
+      "RobWork/RobWork/src/rw/geometry",
+      "RobWork/RobWork/src/rw/models/Device.hpp",
+      "RobWork/RobWork/src/rw/kinematics/Kinematics.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "bounds-geometry.stdout.log",
+    "stderr": "bounds-geometry.stderr.log",
+    "lines": 10
+  },
+  {
+    "name": "golden-search",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "^function|Math\\.|dominates|trapezoid|rneaReference",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs"
+    ],
+    "exitCode": 0,
+    "stdout": "golden-search.stdout.log",
+    "stderr": "golden-search.stderr.log",
+    "lines": 34
+  },
+  {
+    "name": "up-host-scene",
+    "command": [
+      "rg",
+      "--with-filename",
+      "-n",
+      "getWorkCell|setWorkCell|addRender|removeDrawable",
+      "RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "up-host-scene.stdout.log",
+    "stderr": "up-host-scene.stderr.log",
+    "lines": 9
+  }
+]

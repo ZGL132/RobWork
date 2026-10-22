@@ -1,0 +1,7 @@
+172:std::string escapeXmlText(std::string_view text)
+191:std::string escapeXmlAttribute(std::string_view text)
+540:            engine.out += escapeXmlText(replaced);
+842:        engine.out += escapeXmlAttribute(value);
+933:ExpandOutcome XacroExpandService::expand(const ValidatedXacroSource& source,
+1086:            const pugi::xml_parse_result parsed = engine.docs[i].load_buffer(
+1118:                engine.out += escapeXmlAttribute(attr.value());

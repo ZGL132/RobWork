@@ -1,0 +1,56 @@
+RobWork/RobWork/src/rw/common/ThreadPool.hpp:53:    class ThreadPool
+RobWork/RobWork/src/rw/common/ThreadPool.hpp:65:         * If number of threads is set to 0, the addWork function will be blocking (work is executed
+RobWork/RobWork/src/rw/common/ThreadPool.hpp:71:        ThreadPool (int threads = -1);
+RobWork/RobWork/src/rw/common/ThreadPool.hpp:74:        virtual ~ThreadPool ();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\worker\main.cpp:288:            // 句柄值十六进制文本（ProcessLauncher 的命令行约定）——句柄
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\CMakeLists.txt:88:# （§3.5：ChannelPair 命名管道对/JobScope 作业 RAII/ProcessLauncher 进程
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\CMakeLists.txt:130:    src/win32/ProcessLauncher.cpp)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\CMakeLists.txt:188:# 实现细节头（如 src/win32/ProcessLauncher.hpp，EX-T06 落地）只能放 src/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\test\BuildRedLineTest.cpp:322:        // win32/ProcessLauncher.hpp 等 EX-T06 落地时同此约束）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:409:            executeForceTerminate(it->second, cmd, nowTp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:412:            executePause(it->second);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:415:            executeResume(it->second);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:419:            executeCancel(it->second, cmd, nowTp);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:520:void TaskController::executeCancel(ManagedTask& entry, const ControlCommand& cmd,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:578:void TaskController::executeForceTerminate(ManagedTask& entry, const ControlCommand& cmd,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:615:void TaskController::executePause(ManagedTask& entry)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Controller.cpp:638:void TaskController::executeResume(ManagedTask& entry)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\test\ContractSuiteFacilities.hpp:94:/// 进程启动接缝（IProcessOps 故障面——src/win32/ProcessLauncher 生产窄接口）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\test\ContractSuiteFacilities.hpp:95:inline constexpr const char* kFaultProcessLauncherCreate = "execution/process-launcher/create";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\test\ContractSuiteFacilities.hpp:112:    return {kFaultProcessLauncherCreate, kFaultChannelSendFrame, kFaultChannelRecvFrame,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\include\sdurws\ird\execution\Controller.hpp:577:    void executeCancel(ManagedTask& entry, const ControlCommand& cmd,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\include\sdurws\ird\execution\Controller.hpp:579:    void executeForceTerminate(ManagedTask& entry, const ControlCommand& cmd,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\include\sdurws\ird\execution\Controller.hpp:583:    void executePause(ManagedTask& entry);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\include\sdurws\ird\execution\Controller.hpp:586:    void executeResume(ManagedTask& entry);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\Execution.cpp:39: *   - EX-T06：win32/ProcessLauncher/ChannelPair/JobScope＋worker/main＋
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\WorkerSupervisor.cpp:27:#include "win32/ProcessLauncher.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\WorkerSupervisor.cpp:297:    // 启动时序（见 ProcessLauncher.hpp：挂起→作业→Resume→关副本）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\WorkerSupervisor.cpp:307:            "CreateProcessW/channel setup failed, win32 error " + std::to_string(launched.lastError)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\WorkerSupervisor.cpp:627:    // R-3 观测面（头注）：通道副本在 ProcessLauncher 第 6 步即关闭——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ChannelPair.cpp:142:    // 副本只存在于"CreateProcessW 抓取继承面"的窗口内（RAII 幂等）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ChannelPair.hpp:22: *   **可继承副本**，副本句柄值经命令行传给 worker；CreateProcessW（
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ChannelPair.hpp:95:     * @brief 关闭主进程侧持有的可继承副本（ProcessLauncher 在
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ChannelPair.hpp:96:     *        CreateProcessW 成功后立即调用——§6.6"句柄在主进程侧于启动
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\JobScope.cpp:48:    // 前调用（CREATE_SUSPENDED→assign→Resume 的时序由 ProcessLauncher
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\JobScope.hpp:56: *   主进程纳入（须在 worker 首次可能派生子进程之前——ProcessLauncher 以
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\contract_test\WorkerProcessContractTest.cpp:24: *     ProcessLauncher 真实启动）——进程/管道/作业/退出码行为全部真实；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\contract_test\WorkerProcessContractTest.cpp:1112:    // （§6.6"句柄在主进程侧于启动后关闭继承副本（防泄漏）"——CreateProcessW
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:2: * @file   ProcessLauncher.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:3: * @brief  worker 进程启动器实现（契约见 ProcessLauncher.hpp；§6.6 进程
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:8:#include "ProcessLauncher.hpp"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:19:    // CreateProcessW 文档口径（§6.6 进程创建行）：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:21:    //     可能派生子进程之前（竞态消除，见 ProcessLauncher.hpp 时序）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:26:    //   - 命令行缓冲可变：文档允许 CreateProcessW 改写——传非 const 缓冲。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.cpp:30:    const BOOL ok = ::CreateProcessW(nullptr, mutableCmd.data(), nullptr, nullptr,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:2: * @file   ProcessLauncher.hpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:3: * @brief  worker 进程启动器——CreateProcessW（继承管道句柄、CREATE_NO_WINDOW、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:5: *         接缝（units/execution.md §3.5 win32/ProcessLauncher 行、§6.6 进程
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:9: *   - units/execution.md §6.6（进程创建行：CreateProcessW（子进程继承管道
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:13: *   - §3.5（win32/ProcessLauncher.{hpp,cpp}：CreateProcessW＋Job Object；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:22: *   2. CreateProcessW（CREATE_SUSPENDED | CREATE_NO_WINDOW，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:31: * R-3 不超诺声明：本类对 CreateProcessW 只承诺 Microsoft Learn 明文的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:68: *        包装 CreateProcessW；测试注入替身验证启动失败路径/时序断言）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:71: *   关闭仍由 ProcessLauncher 执行——注入替身不能绕过防泄漏与作业纪律
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:79:     * @brief 创建子进程（挂起启动——resume 由 ProcessLauncher 控制）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:82:     *                      CreateProcessW 的可变性语义：可就地改写）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution\src\win32\ProcessLauncher.hpp:94:/// 生产实现（CreateProcessW：CREATE_SUSPENDED | CREATE_NO_WINDOW）。

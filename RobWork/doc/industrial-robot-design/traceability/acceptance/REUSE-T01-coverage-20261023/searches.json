@@ -1,0 +1,175 @@
+[
+  {
+    "name": "planner",
+    "command": [
+      "rg",
+      "-n",
+      "planPtpWithObstacleAvoidance|plan\\(|doInCollision|makeQSampler|RRT|Math::seed|StopCriteria|QEdgeConstraint|sampleStraightPath|PolicySessionQConstraint",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "planner.stdout.log",
+    "stderr": "planner.stderr.log",
+    "lines": 29
+  },
+  {
+    "name": "opt-pareto",
+    "command": [
+      "rg",
+      "-n",
+      "dominates\\(|buildFront\\(|generateNextBatch\\(|computeStaticMetrics\\(",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Objective.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "opt-pareto.stdout.log",
+    "stderr": "opt-pareto.stderr.log",
+    "lines": 8
+  },
+  {
+    "name": "energy-envelope",
+    "command": [
+      "rg",
+      "-n",
+      "PowerEnergyCalculator::compute|trapezoid|dt|computeApproximateEnvelope|probeReachability|bisection|binary|atan|sqrt|hypot",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "energy-envelope.stdout.log",
+    "stderr": "energy-envelope.stderr.log",
+    "lines": 11
+  },
+  {
+    "name": "xacro",
+    "command": [
+      "rg",
+      "-n",
+      "escapeXmlText\\(|escapeXmlAttribute\\(|expandExpression|evaluateExpression|expandNode|eval\\(|lookup\\(|expand\\(|parse\\(|load_buffer|load_string",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "xacro.stdout.log",
+    "stderr": "xacro.stderr.log",
+    "lines": 7
+  },
+  {
+    "name": "protocol",
+    "command": [
+      "rg",
+      "-n",
+      "putU32|putU64|getU32|getU64|FrameAssembler::feed|FrameSequencer::accept|MessageReassembler::accept|fragmentMessage",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "protocol.stdout.log",
+    "stderr": "protocol.stderr.log",
+    "lines": 34
+  },
+  {
+    "name": "project-codec",
+    "command": [
+      "rg",
+      "-n",
+      "class Writer|class Reader|struct Writer|struct Reader|void u32|void f64|readU32|writeU32|encode|decode|canonical|Blob",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "project-codec.stdout.log",
+    "stderr": "project-codec.stderr.log",
+    "lines": 117
+  },
+  {
+    "name": "testkit",
+    "command": [
+      "rg",
+      "-n",
+      "parseValue\\(|skipWhitespace\\(|checkCloseWithin\\(|checkAllCloseWithin\\(|quoteWindowsArg\\(|buildEnvironmentBlock\\(|TestProcessRunner::start|CreateProcessW|posix_spawn|fork\\(|execv",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "testkit.stdout.log",
+    "stderr": "testkit.stderr.log",
+    "lines": 22
+  },
+  {
+    "name": "foundation",
+    "command": [
+      "rg",
+      "-n",
+      "^function\\(|^macro\\(|find_package\\(|find_library\\(|find_path\\(|target_link_libraries\\(|add_library\\(",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "foundation.stdout.log",
+    "stderr": "foundation.stderr.log",
+    "lines": 80
+  },
+  {
+    "name": "sample-tests",
+    "command": [
+      "rg",
+      "-n",
+      "^TEST|^TEST_F|reference|oracle|sqrt|eigen|rotation|CreateProcess|hypot|std::sin|std::cos",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/PowerEnergyTest.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp"
+    ],
+    "exitCode": 2,
+    "stdout": "sample-tests.stdout.log",
+    "stderr": "sample-tests.stderr.log",
+    "lines": 22
+  },
+  {
+    "name": "upstream-planner",
+    "command": [
+      "rg",
+      "-n",
+      "makeQToQPlanner|makeSBL|QConstraint|QSampler|makeNormalizedInfinity|PathLength|pathLength",
+      "RobWork/RobWork/src/rw/pathplanning",
+      "RobWork/RobWork/src/rwlibs/pathplanners",
+      "RobWork/RobWork/src/rw/trajectory/PathUtil.hpp"
+    ],
+    "exitCode": 2,
+    "stdout": "upstream-planner.stdout.log",
+    "stderr": "upstream-planner.stderr.log",
+    "lines": 311
+  },
+  {
+    "name": "upstream-math",
+    "command": [
+      "rg",
+      "-n",
+      "isNaN|isInf|close|Metric|normInf|dot\\(|ran\\(",
+      "RobWork/RobWork/src/rw/math/Math.hpp",
+      "RobWork/RobWork/src/rw/math/MetricUtil.hpp",
+      "RobWork/RobWork/src/rw/math/Q.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "upstream-math.stdout.log",
+    "stderr": "upstream-math.stderr.log",
+    "lines": 8
+  },
+  {
+    "name": "upstream-tools",
+    "command": [
+      "rg",
+      "-n",
+      "DOMParser|createParser|XMLParser|readXMLFile|evaluate|Expression|Evaluator|Pareto|dominat|Power|energy|integrat",
+      "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+      "RobWork/RobWork/src/rw/loaders",
+      "RobWork/RobWork/src/rwlibs/optimization",
+      "RobWork/RobWorkSim/src/rwsim/util"
+    ],
+    "exitCode": 2,
+    "stdout": "upstream-tools.stdout.log",
+    "stderr": "upstream-tools.stderr.log",
+    "lines": 92
+  }
+]

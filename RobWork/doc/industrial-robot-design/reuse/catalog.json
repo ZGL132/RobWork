@@ -2041,6 +2041,142 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "diagnostics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "drivetrain",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "execution",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "io",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "kinematics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "optimization",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "policy",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "project",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "reporting",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "requirements",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "selection",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "ui",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "workflow",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "operations": [
@@ -2048,7 +2184,7 @@
       ],
       "limits": {
         "semantics": "保留原生JSON/XML与真实退出码；不让测试设施进入产品链接或分发",
-        "lifetime": "每测试进程安装一次监听器；Qt是否需要由测试形态确定",
+        "lifetime": "每测试进程安装一次监听器；Qt是否需要由测试形态确定；原产品static监听器与公开Append接管所有权契约冲突，见probe-r10；本批不实施修复。",
         "determinism": "沿既有GTest过滤、计数、SKIP/失败口径，不新写报告器"
       },
       "tests": [],
@@ -2059,8 +2195,8 @@
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
       "resourceSearch": {
-        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
-        "conclusion": "已读取原gtest/CMake与两处相同产品入口，未跑上游完整测试"
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "已读上游main/环境/宏，扩审36main和20原宏；不运行上游全部测试。"
       }
     },
     {

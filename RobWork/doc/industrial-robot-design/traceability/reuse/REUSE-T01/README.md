@@ -66,3 +66,7 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第八批readHex4返工在冻结6d4c254548d2784aa25a2b87978e3d7fc0ab60af独立复验PASS；原件见 `traceability/acceptance/REUSE-T01-batch8-r2-20261022/`，原首轮FAIL保留，仅限登记返工。
 
 第九批首轮独立语义验收冻结dd27799为FAIL：B9-P2-01三处qualifiedSymbol作用域错误、B9-P2-02 findDevice遗漏完整返回类型；已分别修正为真实匿名/全局/测试局部域和997–1003行并重算摘要，待返工独立复验。原件在 `traceability/acceptance/REUSE-T01-batch9-r1-20261023/`。同冻结SHA移动offset反例经独立VS x64重建实跑确认1 passed、1 failed、exit1，反例真实性PASS而产品缺陷OPEN，见 `REUSE-T01-runtime-counterexample-20261023/`，不授予T01/T02整体通过。
+
+第十批新增56条测试/构建关系，累计295条（292 pending、3 proposal），closedFiles=0。36个main分7种初始化形态、20个同形ird_add_gtest宏及两项现有监听适配见 `test-build-audit.md` / `test-build-inventory.json`，不为最薄入口新增平台。新增1项GTest公开Append析构探测passed（failed/skipped/notRun=0），原25项本轮未重跑；实测契约揭示产品静态监听器所有权错配，登记F-958，尚未宣称已复现所有退出崩溃。F-957另登记真实移动偏置缺陷；两项保持open并分别作为T02/T05修复前置。无产品/上游/vcpkg修改，未全T01退出。
+
+B9返工独立验收PASS见 `../../acceptance/REUSE-T01-batch9-r2-20261023/`（冻结a717113，限原两项登记问题）。全覆盖定向审查NOT PASS见 `../../acceptance/REUSE-T01-coverage-20261023/coverage.md`（冻结bb997f1，16组遗漏是下限，后续批次逐项补齐）；该结论不撤销局部验收，也不批准T02准入。

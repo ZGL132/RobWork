@@ -1,0 +1,92 @@
+RobWork/RobWork/src/rw/core/DOMParser.hpp:41:    class DOMParser
+RobWork/RobWork/src/rw/core/DOMParser.hpp:45:        DOMParser (){};
+RobWork/RobWork/src/rw/core/DOMParser.hpp:49:        typedef rw::core::Ptr< DOMParser > Ptr;
+RobWork/RobWork/src/rw/core/DOMParser.hpp:52:        virtual ~DOMParser () {}
+RobWork/RobWork/src/rw/core/DOMParser.hpp:82:         * @note not all DOMParser implementations support schema validation
+RobWork/RobWork/src/rw/core/DOMParser.hpp:104:        static rw::core::Ptr< DOMParser > make ();
+RobWork/RobWork/src/rw/core/DOMParser.hpp:109:         * @extensionpoint{ rw::core::DOMParser::Factory,rw::core::DOMParser,rw.core.DOMParser }
+RobWork/RobWork/src/rw/core/DOMParser.hpp:110:         * \class DOMParser
+RobWork/RobWork/src/rw/core/DOMParser.hpp:114:         * @brief a factory for DOMParsers. This factory defines an
+RobWork/RobWork/src/rw/core/DOMParser.hpp:115:         * extension point for DOMParsers. Typically this is for parsing xml files,
+RobWork/RobWork/src/rw/core/DOMParser.hpp:117:         * can be a DOMParser.
+RobWork/RobWork/src/rw/core/DOMParser.hpp:119:        class Factory : public rw::core::ExtensionPoint< DOMParser >
+RobWork/RobWork/src/rw/core/DOMParser.hpp:124:                rw::core::ExtensionPoint< DOMParser > ("rw.core.DOMParser",
+RobWork/RobWork/src/rw/core/DOMParser.hpp:132:            static rw::core::Ptr< DOMParser > getDOMParser (const std::string& format);
+RobWork/RobWork/src/rw/core/DOMParser.hpp:139:            static bool hasDOMParser (const std::string& format);
+RobWork/RobWork/src/rw/loaders\CMakeLists.txt:44:        rwxml/XMLParserUtil.cpp
+RobWork/RobWork/src/rw/loaders\CMakeLists.txt:49:        rwxml/XMLParser.cpp
+RobWork/RobWork/src/rw/loaders\CMakeLists.txt:82:        rwxml/XMLParserUtil.hpp
+RobWork/RobWork/src/rw/loaders\CMakeLists.txt:87:        rwxml/XMLParser.hpp
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:127:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:142:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:129:                                       DOMParser::Ptr parser)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:148:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:156:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:24:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:330:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:343:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:18:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:79:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:80:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:88:    /* DOMParser::make() as of this writing returns the default XML parser */
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:89:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:96:                                                     DOMParser::Ptr parser)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:25:    class DOMParser;
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:98:         * @param parser [in] DOMParser to use
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:103:                           rw::core::Ptr< rw::core::DOMParser > parser);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:32:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:43:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:36:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:49:    // parser.setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:50:    parser.setValidationScheme (xercesc::XercesDOMParser::Val_Always);
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:65:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:74:xercesc::DOMDocument* XercesDocumentReader::readDocument (XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.cpp:87:    parser.setValidationScheme (xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:19:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:76:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:83:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:89:                                                        Ptr< DOMParser > parser)
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.hpp:28:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.hpp:263:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.hpp:279:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\xml\XercesUtils.hpp:298:        static xercesc::DOMDocument* readDocument (xercesc::XercesDOMParser& parser,
+RobWork/RobWork/src/rw/loaders\rwxml\XMLParser.cpp:18:#include "XMLParser.hpp"
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.hpp:25:    class DOMParser;
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.hpp:83:         * @param parser [in] DOMParser to use
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.hpp:88:                           rw::core::Ptr< rw::core::DOMParser > parser);
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:185:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:194:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\rwxml\XMLParserUtil.cpp:18:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src/rw/loaders\xml\XMLPathLoader.cpp:43:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XMLPathLoader.cpp:76:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLPathLoader.cpp:87:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:20:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:225:                                DOMParser::Ptr parser)
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:261:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:270:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:20:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:21:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:42:#include <rw/loaders/rwxml/XMLParserUtil.hpp>
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1241:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1253:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWParser.cpp:24:#include "XMLParser.hpp"
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWParser.hpp:21:#include <rw/loaders/rwxml/XMLParserUtil.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:24:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWPreParser.cpp:22:#include "XMLParser.hpp"
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWPreParser.cpp:23:#include "XMLParserUtil.hpp"
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:28:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:360:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:371:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.cpp:33:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.cpp:120:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.cpp:130:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectoryLoader.hpp:42:#include <xercesc/parsers/XercesDOMParser.hpp>
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectoryLoader.hpp:191:             xercesc::XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectoryLoader.hpp:202:             parser.setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectoryLoader.cpp:58:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectoryLoader.cpp:67:    XercesDOMParser parser;
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.cpp:47:#include <xercesc/parsers/XercesDOMParser.hpp>

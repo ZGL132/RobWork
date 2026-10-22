@@ -826,6 +826,8 @@ industrialrobot 测试目标分层登记：`*_test`/`*_contract_test`（计算�
 - 追溯登记：`IRD_TEST_INFO("KIN-02", {"AT-03"}, datasetRef)`——在测试内首行声明，写入当前 TestRecord；不修改 gtest 注册机制、不发明参数化引擎；
 - **独立性**：报告生成不依赖 reporting 单元（ReviewReport 是产品对象，测试报告不是；两者数据契约无共享，§2.2 第 8 条）。
 
+**REUSE-T01 审计补正（待修复）**：GTest公开 `TestEventListeners::Append` 接管并删除监听器，`Release` 才将所有权交回；当前 `RecordListener.hpp` 的静态对象/不接管注释与该契约冲突。公开API析构探测见 `../traceability/reuse/REUSE-T01/probe-r10/`（1项passed，不等于产品退出崩溃已重现）。后续在现有安装函数内最小修正所有权并同步消费端注释，保持每进程一次、参数/输出/退出码及Qt/子进程顺序，不建立通用启动/监听器平台。36入口与20构建宏的边界及复用方向见 `../traceability/reuse/REUSE-T01/test-build-audit.md`；薄GTest入口可保留，不为三行重复增加抽象。
+
 ### 7.4 与产品报告的边界复述
 
 `ird-test-report.json` 仅测试消费（CI/开发者）；不进入安装包（§3.6）；字段命名与 ReviewReport 体系无耦合。

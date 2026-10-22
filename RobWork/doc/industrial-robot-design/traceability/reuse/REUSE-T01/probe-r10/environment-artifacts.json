@@ -1,0 +1,36 @@
+{
+  "taskId": "REUSE-T01",
+  "reviewedParentCommit": "a7171137a77048e2f1102b80051fb66fce52daa9",
+  "scope": "只新增1项GTest公开Append所有权探测；既有25项本轮未运行",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/TestHarnessSuitabilityTest.cpp",
+      "sha256": "c85944731bf09943bf3dc1bb8ac3849e000f422035cb7cbb862b9b27b69e4ee5"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "sha256": "926ce151a3ab724c278f20f580660d6ce34bdac7051e77e45662bde968bdcd1c"
+    }
+  ],
+  "externalArtifacts": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/gtest/gtest.h",
+      "rawSha256": "c6f886e33c2e426d6f634112b12b0041aa0bad85b9f897be853b083c14aea169"
+    }
+  ],
+  "commands": [
+    "VS x64: cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "ird_reuse_audit_probe.exe --gtest_filter=ReuseTestHarnessAudit.* --gtest_output=xml:<probe-r10/gtest.xml> --ird_report=<probe-r10/ird-test-report.json>"
+  ],
+  "results": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "limits": "局部集合接管new监听器的公开API契约探测；未执行静态对象非法delete，不宣称已复现所有进程退出崩溃。原25项及历史报告未改。"
+}
