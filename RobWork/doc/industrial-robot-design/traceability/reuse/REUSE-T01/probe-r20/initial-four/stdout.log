@@ -1,0 +1,37 @@
+Note: Google Test filter = ReuseProjectBoundary.*
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from ReuseProjectBoundary
+[ RUN      ] ReuseProjectBoundary.HealthyStoreRemainsVerified
+[       OK ] ReuseProjectBoundary.HealthyStoreRemainsVerified (29 ms)
+[ RUN      ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(23): error: Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected (40 ms)
+[ RUN      ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(33): error: Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected (24 ms)
+[ RUN      ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(45): error: Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+
+[  FAILED  ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass (32 ms)
+[----------] 4 tests from ReuseProjectBoundary (127 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (135 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected
+[  FAILED  ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected
+[  FAILED  ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass
+
+ 3 FAILED TESTS

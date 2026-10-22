@@ -1,0 +1,15 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+sdurws::ird::core::allCloseWithin
+54: bool allCloseWithin(const rw::math::Q& a, const rw::math::Q& b, Tolerance t)
+55: {
+56:     if (a.size() != b.size()) {
+57:         throw CoreError("core/compare/length: Q 长度不等（" + std::to_string(a.size())
+58:                         + " vs " + std::to_string(b.size()) + "）");
+59:     }
+60:     for (std::size_t i = 0; i < a.size(); ++i) {
+61:         if (!closeWithin(a[i], b[i], t)) {
+62:             return false;
+63:         }
+64:     }
+65:     return true;
+66: }

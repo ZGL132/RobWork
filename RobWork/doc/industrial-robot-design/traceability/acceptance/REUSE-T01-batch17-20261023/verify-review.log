@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "reviewedCommit": "7eb991346be4eacaf15b0fdf5f914f0e4859875c",
+  "repositoryClean": true,
+  "jsonFilesParsed": 7,
+  "definitionsVerified": 39,
+  "gateCounts": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "tests": {
+    "total": 3,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 1
+  },
+  "F960": "OPEN",
+  "fullT01Pass": false,
+  "T02Admission": false
+}

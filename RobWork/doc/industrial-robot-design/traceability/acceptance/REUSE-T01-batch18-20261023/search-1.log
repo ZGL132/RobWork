@@ -1,0 +1,22 @@
+RobWork/RobWork/src\rwlibs\pathoptimization\clearance\ClearanceOptimizer.cpp:49:    _qConstraint = rw::pathplanning::QConstraint::makeBounds (device->getBounds ());
+RobWork/RobWork/src\rwlibs\pathplanners\z3\Z3Planner.cpp:323:                                   QConstraint::makeBounds (bounds),
+RobWork/RobWork/src\rwlibs\pathplanners\arw\ARWExpand.cpp:112:        if (Models::inBounds (xn, _bounds) &&
+RobWork/RobWork/src\rw\invkin\ClosedFormIKSolverUR.cpp:178:            if (Models::inBounds (adjustedQ, *_device))
+RobWork/RobWork/src\rw\invkin\JacobianIKSolver.cpp:72:        if (!_checkJointLimits || Models::inBounds (q, *_device, _checkJointLimitsTolerance))
+RobWork/RobWork/src\rw\invkin\ParallelIKSolver.cpp:325:    else if (Models::inBounds (_device->getFullQ (state), bounds)) {
+RobWork/RobWork/src\rw\pathplanning\QConstraint.hpp:93:        static QConstraint::Ptr makeBounds (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:153:            bool res = !Models::inBounds (q, _bounds);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:162:            return !Models::inBounds (q, _bounds);
+RobWork/RobWork/src\rw\pathplanning\QConstraint.cpp:236:QConstraint::Ptr QConstraint::makeBounds (const Device::QBox& bounds)
+RobWork/RobWork/src\rw\pathplanning\QIKSampler.cpp:70:                        if (Models::inBounds (q, *_device)) {
+RobWork/RobWork/src\rw\models\Models.hpp:89:        static bool inBounds (const rw::math::Q& q, const Device::QBox& bounds,
+RobWork/RobWork/src\rw\models\Models.hpp:96:        static bool inBounds (const rw::math::Q& q, const rw::models::Device& device,
+RobWork/RobWork/src\rw\models\Models.hpp:103:        static bool inBounds (const rw::math::Q& val, const rw::models::Joint& joint, double tolerance = 0);
+RobWork/RobWork/src\rw\models\Models.hpp:109:        static bool inBounds (const rw::kinematics::State& state, const rw::models::WorkCell& workcell,
+RobWork/RobWork/src\rw\models\Models.cpp:62:bool Models::inBounds (const Q& val, const Joint& joint, double tolerance)
+RobWork/RobWork/src\rw\models\Models.cpp:64:    return inBounds (val, joint.getBounds (), tolerance);
+RobWork/RobWork/src\rw\models\Models.cpp:71:bool Models::inBounds (const Q& q, const Device::QBox& bounds, double tolerance)
+RobWork/RobWork/src\rw\models\Models.cpp:87:bool Models::inBounds (const Q& q, const Device& device, double tolerance)
+RobWork/RobWork/src\rw\models\Models.cpp:89:    return inBounds (q, device.getBounds (), tolerance);
+RobWork/RobWork/src\rw\models\Models.cpp:92:bool Models::inBounds (const State& state, const WorkCell& workcell, double tolerance)
+RobWork/RobWork/src\rw\models\Models.cpp:101:            if (!inBounds (val, *joint, tolerance))

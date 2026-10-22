@@ -1565,6 +1565,18 @@
           "target": "sdurw_core",
           "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
           "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/IOUtil.cpp",
+          "sha256": "3c9919b0777fcf60d488eef7ef646d8f8bbf0e4f0bbb07348b1f49a27bf40d85",
+          "symbols": [
+            "readFile",
+            "getFilesInFolder",
+            "getFileSize"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
         }
       ],
       "build": {
@@ -1602,7 +1614,8 @@
       "limits": {
         "semantics": "通用读取/遍历原语；不等同不可变内容寻址发布、摘要复验、原子提交、资源预算与路径防护，避免为了复用扩充通用文件门面",
         "lifetime": "按各功能登记的owner/会话/宿主边界，不授予模型构造或共享State写权",
-        "determinism": "未运行本批适用性实验，不承诺等价"
+        "determinism": "未运行本批适用性实验，不承诺等价",
+        "windowsDurability": "IOUtil::readFile为ifstream/int长度/vector<char>与rw异常；非Win32宽路径持久写/同卷不覆盖rename/唯一HEAD提交协议；getFilesInFolder未保证项目闭包或排序。不为复用而丢失flush、原子性、失败分类或防覆盖。见batch20-search.json与project-transaction-audit.md"
       },
       "ownerUnit": "io",
       "examples": [],

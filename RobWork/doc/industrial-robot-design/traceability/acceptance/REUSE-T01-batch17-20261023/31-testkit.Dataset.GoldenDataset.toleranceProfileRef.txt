@@ -1,0 +1,6 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::GoldenDataset::toleranceProfileRef
+187:     std::pair<std::string, std::string> toleranceProfileRef() const noexcept
+188:     {
+189:         return {manifest_.toleranceProfileId, manifest_.toleranceProfileVersion};
+190:     }

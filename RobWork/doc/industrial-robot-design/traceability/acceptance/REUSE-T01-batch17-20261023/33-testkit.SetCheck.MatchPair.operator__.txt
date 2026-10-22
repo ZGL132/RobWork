@@ -1,0 +1,3 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::MatchPair::operator!=
+62:     bool operator!=(const MatchPair& o) const noexcept { return !(*this == o); }

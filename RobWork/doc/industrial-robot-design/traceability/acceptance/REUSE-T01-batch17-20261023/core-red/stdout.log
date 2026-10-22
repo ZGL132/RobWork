@@ -1,0 +1,19 @@
+Note: Google Test filter = ReuseAuditCoreBoundary.*
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ReuseAuditCoreBoundary
+[ RUN      ] ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B17-independent-7eb99134\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\MatchingSuitabilityTest.cpp(61): error: Value of: sdurws::ird::core::closeWithin( max, -max, sdurws::ird::core::Tolerance::make(0.5, max))
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance (0 ms)
+[----------] 1 test from ReuseAuditCoreBoundary (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance
+
+ 1 FAILED TEST

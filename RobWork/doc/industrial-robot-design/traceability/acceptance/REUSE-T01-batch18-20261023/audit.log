@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\audit.py", line 31, in <module>
+    write('original-evidence-checks.json',oldchecks);assert all(x['match'] for x in oldchecks)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

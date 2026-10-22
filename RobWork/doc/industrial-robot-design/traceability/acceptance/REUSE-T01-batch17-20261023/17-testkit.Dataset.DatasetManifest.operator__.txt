@@ -1,0 +1,25 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::DatasetManifest::operator==
+173: bool DatasetManifest::operator==(const DatasetManifest& o) const
+174: {
+175:     // 逐字段全等（向量/成对容器深比较）——测试一致性断言用。
+176:     return schemaVersion == o.schemaVersion && datasetId == o.datasetId
+177:         && version == o.version && kind == o.kind
+178:         && scenarioCategory == o.scenarioCategory
+179:         && coveredRequirements == o.coveredRequirements && coveredAt == o.coveredAt
+180:         && toleranceProfileId == o.toleranceProfileId
+181:         && toleranceProfileVersion == o.toleranceProfileVersion
+182:         && inputs == o.inputs && expected == o.expected
+183:         && parametersJson == o.parametersJson && units == o.units && frames == o.frames
+184:         && referenceSourcePresent == o.referenceSourcePresent
+185:         && referenceSource == o.referenceSource
+186:         && producerPresent == o.producerPresent && producer == o.producer
+187:         && edgeCasesPresent == o.edgeCasesPresent && edgeCases.sampleRefs == o.edgeCases.sampleRefs
+188:         && edgeCases.zeroValue == o.edgeCases.zeroValue
+189:         && edgeCases.nearZero == o.edgeCases.nearZero
+190:         && edgeCases.signCancellation == o.edgeCases.signCancellation
+191:         && integrity == o.integrity && generatorPresent == o.generatorPresent
+192:         && generatorScript == o.generatorScript
+193:         && generatorInvocation == o.generatorInvocation
+194:         && generatorCommitted == o.generatorCommitted && history == o.history;
+195: }

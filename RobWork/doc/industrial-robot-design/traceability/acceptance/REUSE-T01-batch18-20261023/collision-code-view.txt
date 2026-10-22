@@ -1,0 +1,477 @@
+37: #include <sdurws/ird/policy/CollisionEvaluator.hpp>
+39: #include <rw/models/WorkCell.hpp>
+40: #include <rw/proximity/ProximitySetup.hpp>
+41: #include <rw/proximity/ProximitySetupRule.hpp>
+43: #include <algorithm>
+44: #include <array>
+45: #include <cstdint>
+46: #include <map>
+47: #include <set>
+48: #include <stdexcept>
+49: #include <utility>
+51: namespace sdurws::ird::policy {
+59: std::string_view sceneObjectRoleToken(SceneObjectRole role) noexcept
+60: {
+64:     switch (role) {
+65:     case SceneObjectRole::RobotLink: return "RobotLink";
+66:     case SceneObjectRole::Tool: return "Tool";
+67:     case SceneObjectRole::Payload: return "Payload";
+68:     case SceneObjectRole::EnvironmentObject: return "EnvironmentObject";
+69:     case SceneObjectRole::Workpiece: return "Workpiece";
+70:     }
+72:     return {};
+73: }
+75: std::optional<SceneObjectRole> trySceneObjectRole(std::string_view token) noexcept
+76: {
+79:     for (const SceneObjectRole role :
+80:          {SceneObjectRole::RobotLink, SceneObjectRole::Tool, SceneObjectRole::Payload,
+81:           SceneObjectRole::EnvironmentObject, SceneObjectRole::Workpiece}) {
+82:         if (sceneObjectRoleToken(role) == token) {
+83:             return role;
+84:         }
+85:     }
+86:     return std::nullopt;
+87: }
+93: namespace detail {
+96: inline constexpr std::uint8_t kSessionIdentityForm = 1;
+100: inline constexpr std::array<std::uint8_t, 8> kSessionIdentityMagic
+101:     = {'I', 'R', 'D', 'S', 'E', 'S', 'S', '1'};
+109: inline std::pair<core::ObjectId, core::ObjectId>
+110: canonicalPair(const core::ObjectId& a, const core::ObjectId& b)
+111: {
+112:     if (a < b) {
+113:         return {a, b};
+114:     }
+115:     return {b, a};
+116: }
+133: std::optional<CollisionDomain> classifyDomainPair(SceneObjectRole a, SceneObjectRole b)
+134: {
+137:     if (static_cast<int>(b) < static_cast<int>(a)) {
+138:         std::swap(a, b);
+139:     }
+141:     switch (a) {
+142:     case SceneObjectRole::RobotLink:
+143:         switch (b) {
+144:         case SceneObjectRole::RobotLink:         return CollisionDomain::Self;        // 机器人非相邻/相邻连杆
+145:         case SceneObjectRole::Tool:              return CollisionDomain::Tool;        // 工具 vs 连杆（安装侧相邻/非相邻）
+146:         case SceneObjectRole::Payload:           return CollisionDomain::Tool;        // 负载 vs 连杆
+147:         case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 连杆 vs 环境对象
+148:         case SceneObjectRole::Workpiece:         return CollisionDomain::Environment; // 连杆 vs 工件（工件归环境侧）
+149:         }
+150:         break;
+151:     case SceneObjectRole::Tool:
+152:         switch (b) {
+153:         case SceneObjectRole::Tool:              return std::nullopt;                 // 工具×工具——矩阵未列
+154:         case SceneObjectRole::Payload:           return std::nullopt;                 // 工具×负载——矩阵未列
+155:         case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 机器人侧 vs 环境对象
+156:         case SceneObjectRole::Workpiece:         return CollisionDomain::Tool;        // 工具 vs 工件（Tool 域显式行）
+157:         }
+158:         break;
+159:     case SceneObjectRole::Payload:
+160:         switch (b) {
+161:         case SceneObjectRole::Payload:           return std::nullopt;                 // 负载×负载——矩阵未列
+162:         case SceneObjectRole::EnvironmentObject: return CollisionDomain::Environment; // 机器人侧 vs 环境对象
+163:         case SceneObjectRole::Workpiece:         return CollisionDomain::Tool;        // 负载 vs 工件
+164:         }
+165:         break;
+166:     case SceneObjectRole::EnvironmentObject:
+167:         switch (b) {
+168:         case SceneObjectRole::EnvironmentObject: return CollisionDomain::Scene;      // 环境 vs 环境（默认不检）
+169:         case SceneObjectRole::Workpiece:         return CollisionDomain::Scene;      // 环境 vs 工件（环境侧对象间）
+170:         }
+171:         break;
+172:     case SceneObjectRole::Workpiece:
+173:         break;   // (Workpiece, Workpiece)——环境侧对象间
+174:     }
+176:     if (a == SceneObjectRole::Workpiece && b == SceneObjectRole::Workpiece) {
+177:         return CollisionDomain::Scene;
+178:     }
+179:     return std::nullopt;
+180: }
+196: core::ContentIdentity computeSessionIdentity(const core::ContentIdentity& policyCid,
+197:                                              const core::ContentIdentity& sceneCid,
+198:                                              const core::ContentIdentity& nameMapCid,
+199:                                              const CollisionBackendDescriptor& backend)
+200: {
+203:     core::ContentDigester digester;
+204:     digester.update(kSessionIdentityMagic.data(), kSessionIdentityMagic.size());
+205:     digester.update(&kSessionIdentityForm, sizeof(kSessionIdentityForm));
+208:     digester.update(policyCid.bytes.data(), policyCid.bytes.size());
+209:     digester.update(sceneCid.bytes.data(), sceneCid.bytes.size());
+210:     digester.update(nameMapCid.bytes.data(), nameMapCid.bytes.size());
+213:     const std::string* backendParts[] = {&backend.backendId, &backend.backendVersion,
+214:                                          &backend.toleranceModel};
+215:     for (const std::string* part : backendParts) {
+216:         const std::array<std::uint8_t, 4> lenBigEndian{
+217:             static_cast<std::uint8_t>((part->size() >> 24) & 0xFFu),
+218:             static_cast<std::uint8_t>((part->size() >> 16) & 0xFFu),
+219:             static_cast<std::uint8_t>((part->size() >> 8) & 0xFFu),
+220:             static_cast<std::uint8_t>(part->size() & 0xFFu)};
+221:         digester.update(lenBigEndian.data(), lenBigEndian.size());
+222:         digester.update(part->data(), part->size());
+223:     }
+225:     core::ContentIdentity identity;
+226:     identity.bytes = digester.finalize();
+227:     return identity;
+228: }
+230: }  // namespace detail
+238: namespace detail {
+240: CollisionBackendDescriptor makeBuiltinBackendDescriptor(std::string backendVersion)
+241: {
+247:     CollisionBackendDescriptor descriptor;
+248:     descriptor.backendId = "rw.proximity.builtin-rw";
+249:     descriptor.backendVersion = std::move(backendVersion);
+250:     descriptor.toleranceModel =
+251:         "builtin-rw/bvtree;binary-collision+distance;numeric-resolution=backend-internal"
+252:         "(not-an-engineering-threshold;P-POL-5 frozen@WP-24-T01:ird/share/baseline.md)";
+253:     return descriptor;
+254: }
+256: }  // namespace detail
+262: std::size_t ResolvedCollisionScope::inScopePairCount() const noexcept
+263: {
+265:     std::size_t count = 0;
+266:     for (const ScopedCollisionPair& p : pairs) {
+267:         if (p.status == ScopePairStatus::Mandatory
+268:             || p.status == ScopePairStatus::InScopeDefault) {
+269:             ++count;
+270:         }
+271:     }
+272:     return count;
+273: }
+275: std::size_t ResolvedCollisionScope::excludedPairCount() const noexcept
+276: {
+277:     std::size_t count = 0;
+278:     for (const ScopedCollisionPair& p : pairs) {
+279:         if (p.status == ScopePairStatus::ExcludedByRule
+280:             || p.status == ScopePairStatus::ExcludedByAdjacencyDefault) {
+281:             ++count;
+282:         }
+283:     }
+284:     return count;
+285: }
+287: std::size_t ResolvedCollisionScope::inScopePairCount(CollisionDomain domain) const noexcept
+288: {
+289:     std::size_t count = 0;
+290:     for (const ScopedCollisionPair& p : pairs) {
+291:         if (p.domain == domain
+292:             && (p.status == ScopePairStatus::Mandatory
+293:                 || p.status == ScopePairStatus::InScopeDefault)) {
+294:             ++count;
+295:         }
+296:     }
+297:     return count;
+298: }
+304: namespace {
+308: using SceneObjectIndex = std::map<core::ObjectId, const SceneObjectEntry*>;
+311: using PairKey = std::pair<core::ObjectId, core::ObjectId>;
+324: void validateSceneAndPolicy(const EngineeringPolicySet& policy, const CollisionScene& scene,
+325:                             const IPolicyNameContext& names,
+326:                             const std::shared_ptr<rw::proximity::CollisionStrategy>& strategy,
+327:                             SceneObjectIndex& objectIndex)
+328: {
+332:     if (!policy.policyObject.isValid() || !policy.contentIdentity.isValid()
+333:         || policy.validationState != PolicyValidationState::Valid) {
+334:         throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+335:                           "会话构建：policy 非已发布对象（Valid 态＋双身份有效——§9.3 前置行）");
+336:     }
+338:     if (!strategy) {
+339:         throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+340:                           "会话构建：检测器后端实例为空（装配违约——§6.4 检测器两半）");
+341:     }
+345:     if (!scene.sceneContentIdentity.isValid()) {
+346:         throw PolicyError(PolicyErrorCode::SceneInvalid,
+347:                           "会话构建：sceneContentIdentity 非空核对失败（§6.1——"
+348:                           "编译产物内容身份缺失）");
+349:     }
+352:     if (!scene.workcell) {
+353:         throw PolicyError(PolicyErrorCode::SceneInvalid,
+354:                           "会话构建：workcell 编译产物缺失（空指针——§6.1 输入模型前提）");
+355:     }
+358:     objectIndex.clear();
+359:     for (const SceneObjectEntry& entry : scene.objects) {
+360:         if (!entry.objectId.isValid()) {
+361:             throw PolicyError(PolicyErrorCode::SceneInvalid,
+362:                               "会话构建：场景对象身份无效（全零保留值）: localName='"
+363:                                   + entry.localName + "'");
+364:         }
+365:         const auto inserted = objectIndex.emplace(entry.objectId, &entry);
+366:         if (!inserted.second) {
+367:             throw PolicyError(
+368:                 PolicyErrorCode::SceneInvalid,
+369:                 "会话构建：场景对象身份重复（§6.1 objectId 唯一）: localName='"
+370:                     + entry.localName + "' 与 '" + inserted.first->second->localName
+371:                     + "'（obj=" + entry.objectId.toCanonical() + "）");
+372:         }
+373:     }
+378:     if (!scene.primaryDevice.isValid()) {
+379:         throw PolicyError(PolicyErrorCode::SceneInvalid,
+380:                           "会话构建：primaryDevice 身份无效（全零保留值）");
+381:     }
+382:     const std::optional<std::string> deviceName = names.tryRuntimeName(scene.primaryDevice);
+383:     if (!deviceName.has_value()) {
+384:         throw PolicyError(PolicyErrorCode::NameUnresolved,
+385:                           "会话构建：primaryDevice 经名称上下文不可解析（§6.1——"
+386:                           "不猜测，ARC-04; obj=" + scene.primaryDevice.toCanonical() + "）");
+387:     }
+390:     if (scene.workcell->findDevice(*deviceName).isNull()) {
+391:         throw PolicyError(PolicyErrorCode::NameUnresolved,
+392:                           "会话构建：primaryDevice 解析名在 workcell 内无对应设备（§7.5 "
+393:                           "名称不可解析——场景 Frame↔对象 ID 断链）: name='" + *deviceName
+394:                               + "'");
+395:     }
+401:     const auto checkTarget = [&](const ScopeTarget& target, bool isMandatory,
+402:                                  std::size_t ruleIndex) {
+403:         switch (target.kind) {
+404:         case ScopeTargetKind::Object: {
+408:             if (objectIndex.find(target.object) == objectIndex.end()) {
+409:                 throw PolicyError(
+410:                     PolicyErrorCode::SceneInvalid,
+411:                     "会话构建：策略规则引用对象不在场景清单（§6.1 规则引用 ⊆ objects）: "
+412:                         + std::string{isMandatory ? "mandatoryPairs" : "excludedPairs"} + "["
+413:                         + std::to_string(ruleIndex) + "]（obj=" + target.object.toCanonical()
+414:                         + "）");
+415:             }
+416:             break;
+417:         }
+418:         case ScopeTargetKind::Role: {
+421:             if (!trySceneObjectRole(target.roleToken).has_value()) {
+422:                 throw PolicyError(PolicyErrorCode::SceneInvalid,
+423:                                   "会话构建：规则角色目标不在场景对象角色词表（防御复检）: '"
+424:                                       + target.roleToken + "'");
+425:             }
+426:             break;
+427:         }
+428:         case ScopeTargetKind::Group: {
+434:             std::string cause = "会话构建：Group 规则目标在会话内不可展开（组成员数据不在";
+435:             cause += "policy/scene/names 任一输入内——v1 schema 无组定义字段，";
+436:             cause += "policy.md v0.5 ⑥ 登记）：groupName='" + target.groupName + "'（";
+437:             cause += isMandatory ? "mandatoryPairs" : "excludedPairs";
+438:             cause += "[" + std::to_string(ruleIndex) + "]）——保守拒绝，不猜测（ARC-04）";
+439:             throw PolicyError(PolicyErrorCode::SceneInvalid, cause);
+440:         }
+441:         }
+442:     };
+443:     for (std::size_t i = 0; i < policy.collision.mandatoryPairs.size(); ++i) {
+444:         checkTarget(policy.collision.mandatoryPairs[i].first, true, i);
+445:         checkTarget(policy.collision.mandatoryPairs[i].second, true, i);
+446:     }
+447:     for (std::size_t i = 0; i < policy.collision.excludedPairs.size(); ++i) {
+448:         checkTarget(policy.collision.excludedPairs[i].first, false, i);
+449:         checkTarget(policy.collision.excludedPairs[i].second, false, i);
+450:     }
+451: }
+462: std::vector<core::ObjectId>
+463: expandRuleTarget(const ScopeTarget& target, const SceneObjectIndex& objectIndex)
+464: {
+465:     std::vector<core::ObjectId> expanded;
+466:     switch (target.kind) {
+467:     case ScopeTargetKind::Object:
+469:         expanded.push_back(target.object);
+470:         break;
+471:     case ScopeTargetKind::Role: {
+474:         const SceneObjectRole role = *trySceneObjectRole(target.roleToken);
+475:         for (const auto& [id, entry] : objectIndex) {
+476:             if (entry->role == role) {
+477:                 expanded.push_back(id);
+478:             }
+479:         }
+480:         break;
+481:     }
+482:     case ScopeTargetKind::Group:
+486:         throw PolicyError(PolicyErrorCode::PolicyObjectInvalid,
+487:                           "会话构建内部不变式破坏：Group 目标应已在场景校验期拒绝");
+488:     }
+489:     return expanded;
+490: }
+508: void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,
+509:                                   const SceneObjectIndex& objectIndex,
+510:                                   std::map<PairKey, std::size_t>& mandatoryExpanded,
+511:                                   std::map<PairKey, std::pair<std::size_t, std::string>>&
+512:                                       excludedExpanded)
+513: {
+515:     for (std::size_t i = 0; i < policy.collision.mandatoryPairs.size(); ++i) {
+516:         const PairRule& rule = policy.collision.mandatoryPairs[i];
+517:         const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+518:         const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+519:         for (const core::ObjectId& a : first) {
+520:             for (const core::ObjectId& b : second) {
+521:                 if (a == b) {
+522:                     continue;   // 自对无碰撞语义（同一对象不与自己检测）
+523:                 }
+524:                 mandatoryExpanded.emplace(detail::canonicalPair(a, b), i);
+525:             }
+526:         }
+527:     }
+529:     for (std::size_t i = 0; i < policy.collision.excludedPairs.size(); ++i) {
+530:         const PairRule& rule = policy.collision.excludedPairs[i];
+531:         const std::vector<core::ObjectId> first = expandRuleTarget(rule.first, objectIndex);
+532:         const std::vector<core::ObjectId> second = expandRuleTarget(rule.second, objectIndex);
+533:         for (const core::ObjectId& a : first) {
+534:             for (const core::ObjectId& b : second) {
+535:                 if (a == b) {
+536:                     continue;
+537:                 }
+538:                 excludedExpanded.emplace(detail::canonicalPair(a, b),
+539:                                          std::make_pair(i, rule.reason));
+540:             }
+541:         }
+542:     }
+546:     for (const auto& [pairKey, mandatoryIndex] : mandatoryExpanded) {
+547:         const auto excludedIt = excludedExpanded.find(pairKey);
+548:         if (excludedIt != excludedExpanded.end()) {
+549:             throw PolicyError(
+550:                 PolicyErrorCode::RuleConflict,
+551:                 "会话构建冲突复核（§7.2 两层防御第二层）: excludedPairs["
+552:                     + std::to_string(excludedIt->second.first) + "]（理由'"
+553:                     + excludedIt->second.second + "'）展开后覆盖 mandatoryPairs["
+554:                     + std::to_string(mandatoryIndex) + "]（理由'"
+555:                     + policy.collision.mandatoryPairs[mandatoryIndex].reason
+556:                     + "'）的对象对（objA=" + pairKey.first.toCanonical()
+557:                     + ", objB=" + pairKey.second.toCanonical() + "）——过滤不得隐藏必检");
+558:         }
+559:     }
+560: }
+562: }  // namespace
+568: CollisionEvaluationSession::CollisionEvaluationSession(
+569:     const EngineeringPolicySet& policy, const CollisionScene& scene,
+570:     const IPolicyNameContext& names, CollisionBackendDescriptor backend,
+571:     std::shared_ptr<rw::proximity::CollisionStrategy> strategy,
+572:     std::shared_ptr<std::mutex> backendQueryMutex)
+573:     : m_policy(policy)
+574:     , m_scene(scene)
+575:     , m_nameMapIdentity(names.nameMapContentIdentity())
+576:     , m_backend(std::move(backend))
+577:     , m_strategy(std::move(strategy))
+578:     , m_collisionEnabled(policy.collision.enabled)
+579:     , m_device()                  // 评估半区（POL-T07——buildEvaluationHalf 填充）
+580:     , m_distanceCapable(false)    // 默认无距离能力（探测后更新）
+581:     , m_backendQueryMutex(std::move(backendQueryMutex))
+582: {
+584:     SceneObjectIndex objectIndex;
+585:     validateSceneAndPolicy(m_policy, m_scene, names, m_strategy, objectIndex);
+590:     std::map<PairKey, std::size_t> mandatoryExpanded;
+591:     std::map<PairKey, std::pair<std::size_t, std::string>> excludedExpanded;
+592:     expandRulesAndCheckConflicts(m_policy, objectIndex, mandatoryExpanded, excludedExpanded);
+596:     std::set<PairKey> adjacentSet;
+597:     for (const auto& adj : m_scene.adjacentLinkPairs) {
+598:         adjacentSet.insert(detail::canonicalPair(adj.first, adj.second));
+599:     }
+602:     const std::set<CollisionDomain> enabledDomains(m_policy.collision.enabledDomains.begin(),
+603:                                                    m_policy.collision.enabledDomains.end());
+607:     std::vector<ScopedCollisionPair> expanded;
+608:     for (std::size_t i = 0; i < m_scene.objects.size(); ++i) {
+609:         for (std::size_t j = i + 1; j < m_scene.objects.size(); ++j) {
+610:             const SceneObjectEntry& entryA = m_scene.objects[i];
+611:             const SceneObjectEntry& entryB = m_scene.objects[j];
+614:             const std::optional<CollisionDomain> domain =
+615:                 detail::classifyDomainPair(entryA.role, entryB.role);
+616:             if (!domain.has_value()) {
+624:                 const PairKey droppedKey
+625:                     = detail::canonicalPair(entryA.objectId, entryB.objectId);
+626:                 if (mandatoryExpanded.find(droppedKey)
+627:                     != mandatoryExpanded.end()) {
+628:                     throw PolicyError(
+629:                         PolicyErrorCode::PolicyObjectInvalid,
+630:                         "policy/collision: mandatoryPairs 含矩阵未列组合（角色"
+631:                         "对不入任何评估域——必检对被作用域定义隐藏，保守拒绝"
+632:                         " F-808）");
+633:                 }
+634:                 continue;
+635:             }
+639:             if (!m_collisionEnabled || enabledDomains.find(*domain) == enabledDomains.end()) {
+640:                 continue;
+641:             }
+645:             const PairKey key = detail::canonicalPair(entryA.objectId, entryB.objectId);
+646:             ScopedCollisionPair pair;
+647:             pair.objectA = key.first;
+648:             pair.objectB = key.second;
+650:             if (key.first == entryA.objectId) {
+651:                 pair.roleA = entryA.role;
+652:                 pair.roleB = entryB.role;
+653:             }
+654:             else {
+655:                 pair.roleA = entryB.role;
+656:                 pair.roleB = entryA.role;
+657:             }
+658:             pair.domain = *domain;
+659:             const auto mandatoryIt = mandatoryExpanded.find(key);
+660:             const auto excludedIt = excludedExpanded.find(key);
+661:             if (mandatoryIt != mandatoryExpanded.end()) {
+664:                 pair.status = ScopePairStatus::Mandatory;
+665:                 pair.ruleIndex = mandatoryIt->second;
+666:             }
+667:             else if (excludedIt != excludedExpanded.end()) {
+670:                 pair.status = ScopePairStatus::ExcludedByRule;
+671:                 pair.ruleIndex = excludedIt->second.first;
+672:                 pair.filterReason = excludedIt->second.second;
+673:             }
+674:             else if (adjacentSet.find(key) != adjacentSet.end()
+675:                      && (*domain == CollisionDomain::Self
+676:                          || *domain == CollisionDomain::Tool)
+677:                      && m_policy.collision.excludeAdjacentLinksByDefault) {
+681:                 pair.status = ScopePairStatus::ExcludedByAdjacencyDefault;
+682:                 pair.ruleIndex = 0;
+683:                 pair.filterReason = "default.adjacent-links";
+684:             }
+685:             else if (*domain == CollisionDomain::Scene) {
+689:                 continue;
+690:             }
+691:             else {
+694:                 pair.status = ScopePairStatus::InScopeDefault;
+695:                 pair.ruleIndex = 0;
+696:             }
+697:             expanded.push_back(std::move(pair));
+698:         }
+699:     }
+702:     std::sort(expanded.begin(), expanded.end(),
+703:               [](const ScopedCollisionPair& l, const ScopedCollisionPair& r) {
+704:                   if (l.objectA != r.objectA) {
+705:                       return l.objectA < r.objectA;
+706:                   }
+707:                   return l.objectB < r.objectB;
+708:               });
+709:     m_scope.pairs = std::move(expanded);
+717:     m_proximitySetup = std::make_shared<const rw::proximity::ProximitySetup>(
+718:         buildPolicyProximitySetup(names));
+721:     m_sessionIdentity = detail::computeSessionIdentity(m_policy.contentIdentity,
+722:                                                        m_scene.sceneContentIdentity,
+723:                                                        m_nameMapIdentity, m_backend);
+728:     buildEvaluationHalf(names);
+729: }
+731: rw::proximity::ProximitySetup
+732: CollisionEvaluationSession::buildPolicyProximitySetup(const IPolicyNameContext& names) const
+733: {
+737:     rw::proximity::ProximitySetup setup;
+738:     setup.setUseExcludeStaticPairs(false);
+739:     setup.setUseIncludeAll(true);
+740:     for (const ScopedCollisionPair& pair : m_scope.pairs) {
+741:         const bool isExclude = pair.status == ScopePairStatus::ExcludedByRule
+742:                             || pair.status == ScopePairStatus::ExcludedByAdjacencyDefault;
+743:         const bool isInclude = pair.status == ScopePairStatus::Mandatory;
+744:         if (!isExclude && !isInclude) {
+745:             continue;   // 域默认必检对——无 RobWork 层规则（语义默认已含）
+746:         }
+751:         const std::optional<std::string> nameA = names.tryRuntimeName(pair.objectA);
+752:         if (!nameA.has_value()) {
+753:             throw PolicyError(PolicyErrorCode::NameUnresolved,
+754:                               "会话构建：作用域对端 A 经名称上下文不可解析（§7.5——"
+755:                               "不猜测，ARC-04; obj=" + pair.objectA.toCanonical() + "）");
+756:         }
+757:         const std::optional<std::string> nameB = names.tryRuntimeName(pair.objectB);
+758:         if (!nameB.has_value()) {
+759:             throw PolicyError(PolicyErrorCode::NameUnresolved,
+760:                               "会话构建：作用域对端 B 经名称上下文不可解析（§7.5——"
+761:                               "不猜测，ARC-04; obj=" + pair.objectB.toCanonical() + "）");
+762:         }
+765:         if (isExclude) {
+766:             setup.addProximitySetupRule(
+767:                 rw::proximity::ProximitySetupRule::makeExclude(*nameA, *nameB));
+768:         }
+769:         else {
+772:             setup.addProximitySetupRule(
+773:                 rw::proximity::ProximitySetupRule::makeInclude(*nameA, *nameB));
+774:         }
+775:     }
+776:     return setup;
+777: }
+779: }  // namespace sdurws::ird::policy

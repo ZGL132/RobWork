@@ -1,0 +1,1914 @@
+{
+  "reviewedCommit": "7eb991346be4eacaf15b0fdf5f914f0e4859875c",
+  "parent": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "addedCount": 39,
+  "core": 7,
+  "testkit": 32,
+  "definitions": [
+    {
+      "functionId": "core.Compare.closeWithin",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "closeWithin",
+        "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+        "startLine": 18,
+        "endLine": 33,
+        "sha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+      },
+      "sourceContextHash": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+      "firstLine": "bool closeWithin(double value, double reference, Tolerance t) noexcept",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp"
+      ],
+      "differences": "C4定向reference及非有限拒绝；极值中间溢出已真实误接受，见probe-r17/core-red，T05保持owner公式修数值边界，非新比较平台",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "01-core.Compare.closeWithin.txt"
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.vector",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "allCloseWithin",
+        "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+        "startLine": 35,
+        "endLine": 51,
+        "sha256": "031cee042adba57b99a0b3ff79666fb4c89e8d2a3e4c89e5aa94e066c1f738c0"
+      },
+      "sourceContextHash": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+      "firstLine": "bool allCloseWithin(const std::vector<double>& a, const std::vector<double>& b,",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp"
+      ],
+      "differences": "逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "02-core.Compare.allCloseWithin.vector.txt"
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.Q",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "allCloseWithin",
+        "qualifiedSymbol": "sdurws::ird::core::allCloseWithin",
+        "startLine": 54,
+        "endLine": 66,
+        "sha256": "12fc8e06989b20838bd6926dce52176fef7a7432b526f3fef7ae11d512823826"
+      },
+      "sourceContextHash": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+      "firstLine": "bool allCloseWithin(const rw::math::Q& a, const rw::math::Q& b, Tolerance t)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp"
+      ],
+      "differences": "逐元素复用closeWithin；形状错CoreError，不以求和抵消；Q仅条件编译供给",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "03-core.Compare.allCloseWithin.Q.txt"
+    },
+    {
+      "functionId": "core.Compare.runtimeAbsoluteTolerance",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "symbol": "runtimeAbsoluteTolerance",
+        "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
+        "startLine": 69,
+        "endLine": 85,
+        "sha256": "9608cac2c49bf41e713358750e88efaef289976d46a8f2197fb6fc8faf38d861"
+      },
+      "sourceContextHash": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+      "firstLine": "std::optional<double> runtimeAbsoluteTolerance(QuantityKind k) noexcept",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp"
+      ],
+      "differences": "C7量纲默认单点机械转写；未声明nullopt，不让上游precision重定义需求",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "04-core.Compare.runtimeAbsoluteTolerance.txt"
+    },
+    {
+      "functionId": "core.Tolerance.make",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "make",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+        "startLine": 57,
+        "endLine": 72,
+        "sha256": "25a6c19d307bda7f46cce6c18947fd36dafeb9a01b7c29ddba4098b5a33aeae6"
+      },
+      "sourceContextHash": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d",
+      "firstLine": "    static Tolerance make(double relative, double absolute)",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp"
+      ],
+      "differences": "合法非负有限工厂，公开聚合字段可绕工厂，调用契约需清楚",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "05-core.Tolerance.make.txt"
+    },
+    {
+      "functionId": "core.Tolerance.operator==",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
+        "startLine": 74,
+        "endLine": 77,
+        "sha256": "51b49f4d7161c3cc473f6bd8e95f58ac2176e1a4cd4f41e9a6e336710edccb34"
+      },
+      "sourceContextHash": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d",
+      "firstLine": "    bool operator==(const Tolerance& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp"
+      ],
+      "differences": "二分量精确值相等，不作容差比较",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "06-core.Tolerance.operator__.txt"
+    },
+    {
+      "functionId": "core.Tolerance.operator!=",
+      "ownerUnit": "core",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
+        "startLine": 78,
+        "endLine": 78,
+        "sha256": "859765a3e3a5e206a96b1080f11eabfaeb0daec333e5aa4d0b9fbfd8a68720b7"
+      },
+      "sourceContextHash": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d",
+      "firstLine": "    bool operator!=(const Tolerance& o) const noexcept { return !(*this == o); }",
+      "lastLine": "    bool operator!=(const Tolerance& o) const noexcept { return !(*this == o); }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp"
+      ],
+      "differences": "只委托精确==反转，不写另一比较逻辑",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "07-core.Tolerance.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.failField",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "failField",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::failField",
+        "startLine": 24,
+        "endLine": 28,
+        "sha256": "108e4bee27bd2f7fdc8470ed65ae58a901453499885bdc8144138e2d3c7125fa"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "[[noreturn]] void failField(const std::string& fieldPath, const std::string& reason)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "统一TestKitError DatasetInvalid机器详情，非用户诊断文案权威",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "08-testkit.Dataset.failField.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.requireStringArray",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "requireStringArray",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireStringArray",
+        "startLine": 47,
+        "endLine": 64,
+        "sha256": "52cebded2b44c45c21cc6df4b81df75646b009b169238f5ed2e53e3ba6da7892"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::vector<std::string> requireStringArray(const JsonValue& obj, const std::string& key,",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "JSON类型/个数/元素类型检查；minCount0缺失或非数组均返回空，勿称严格同必填",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "09-testkit.Dataset.requireStringArray.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.requireBool",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "requireBool",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireBool",
+        "startLine": 67,
+        "endLine": 74,
+        "sha256": "644098ffa4ded81a197e50624ac47b1bf92a2750119c46c72e5dfe9576400b60"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "bool requireBool(const JsonValue& obj, const std::string& key)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "须布尔而非字符串，类型保真依赖JsonLite",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "10-testkit.Dataset.requireBool.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.allCharsIn",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "allCharsIn",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::allCharsIn",
+        "startLine": 77,
+        "endLine": 82,
+        "sha256": "d5ad6280a714ccf7fb88587a0f31ade55a5f35e7b8a0e09e9b9c12212c2b8b1f"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "bool allCharsIn(std::string_view s, const std::string& allowed)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "std::all_of字符白名单，非自写正则引擎",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "11-testkit.Dataset.allCharsIn.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.readFileBytes",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "readFileBytes",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::readFileBytes",
+        "startLine": 85,
+        "endLine": 95,
+        "sha256": "4a83ca6b00dff198fd166c29f599f131e31aba9717bb53942f5b880c6425a874"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::string readFileBytes(const std::filesystem::path& p)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "std::ifstream/ostringstream整文件读，打开失败EnvUnavailable，后续read错误检查待核",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "12-testkit.Dataset.readFileBytes.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.sha256HexOf",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "sha256HexOf",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::sha256HexOf",
+        "startLine": 98,
+        "endLine": 111,
+        "sha256": "c4223ebf93dc5ce03bafb97b07c97c006e843e9ca74c067327527f95cea627b0"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::string sha256HexOf(const std::string& bytes)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "真实core ContentDigester；手写hex可查Boost hex_lower，不能称SHA核心已成熟复用",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "13-testkit.Dataset.sha256HexOf.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.toToken",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "toToken",
+        "qualifiedSymbol": "sdurws::ird::testkit::toToken",
+        "startLine": 116,
+        "endLine": 126,
+        "sha256": "b8f566b6f0cce8f0421fd5c3c7212c2833a10f37e043829090b93db8cb470bbd"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "const char* toToken(DatasetKind k) noexcept",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "五类枚举词表/未知unknown，归测试schema",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "14-testkit.Dataset.toToken.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.datasetKindFromToken",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "datasetKindFromToken",
+        "qualifiedSymbol": "sdurws::ird::testkit::datasetKindFromToken",
+        "startLine": 128,
+        "endLine": 136,
+        "sha256": "4f9bea4f18b152e8103b30dd2ecd12333bf496158fe0f874ddd67e8f9c904610"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::optional<DatasetKind> datasetKindFromToken(std::string_view token) noexcept",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "五token逆映射/未知nullopt，非通用枚举框架",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "15-testkit.Dataset.datasetKindFromToken.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.parseSemanticVersion",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "parseSemanticVersion",
+        "qualifiedSymbol": "sdurws::ird::testkit::parseSemanticVersion",
+        "startLine": 138,
+        "endLine": 171,
+        "sha256": "f81f2bb40a47447b32c43772d9459e23e973ccb1de7b7b2c26b9bf6564d9715a"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "void parseSemanticVersion(std::string_view v, std::string_view fieldPath,",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "仅M.m.p数字/分隔/尾随校验，std::stoi溢出错误转译待核",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "16-testkit.Dataset.parseSemanticVersion.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.DatasetManifest.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "DatasetManifest::operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::DatasetManifest::operator==",
+        "startLine": 173,
+        "endLine": 195,
+        "sha256": "ee72fb28ffaa161de3fdee237d25473d3b52b96359860c1752c1b13cdee08832"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "bool DatasetManifest::operator==(const DatasetManifest& o) const",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "逐字段深比较，包括来源/producer/edge/history；不新建序列化绕比较",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "17-testkit.Dataset.DatasetManifest.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.GoldenDataset.load",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "GoldenDataset::load",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::load",
+        "startLine": 197,
+        "endLine": 486,
+        "sha256": "faf2ac946a8a838984fd94e031b1d8fabee3db0d0e35c998e6e685178a77fdbd"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "GoldenDataset GoldenDataset::load(const DatasetRef& ref)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "解析/schema/单位/独立性/来源/完整性；inputs/expected覆盖有核，generatorCommitted覆盖仅注释未额外核，整数转换和路径边界待证",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "18-testkit.Dataset.GoldenDataset.load.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.GoldenDataset.resolveInput",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "GoldenDataset::resolveInput",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::resolveInput",
+        "startLine": 488,
+        "endLine": 496,
+        "sha256": "239c772e7cfd5527fb7a6bdbf19dc3153b5b5cd5a84c1377f6c7b4fbcee22cae"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::filesystem::path GoldenDataset::resolveInput(std::string_view relPath) const",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只许manifest inputs membership后join，不等价规范化真实沙箱",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "19-testkit.Dataset.GoldenDataset.resolveInput.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.GoldenDataset.resolveExpected",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "GoldenDataset::resolveExpected",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::resolveExpected",
+        "startLine": 498,
+        "endLine": 506,
+        "sha256": "53d0d6f26ca7298a752a4ebd0262353e9320bfc87c02be40011ccbef590a46d8"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::filesystem::path GoldenDataset::resolveExpected(std::string_view relPath) const",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只许manifest expected membership后join，不验证相对路径全安全",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "20-testkit.Dataset.GoldenDataset.resolveExpected.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.requireString.prefix",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "requireString",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireString",
+        "startLine": 31,
+        "endLine": 39,
+        "sha256": "a143afd14b5c8e2942442ed8346f38a406935c75b01bb07c84a545403bb13bc2"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::string requireString(const JsonValue& obj, const std::string& key,",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "必填字符串类型守卫；plain委托prefix空前缀，不复制解析器",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "21-testkit.Dataset.requireString.prefix.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.requireString.plain",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "symbol": "requireString",
+        "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::requireString",
+        "startLine": 41,
+        "endLine": 44,
+        "sha256": "44b1dd9735a6904bba9bdd4bd778652b46351af5c0f9e11421a69634e52cf7ad"
+      },
+      "sourceContextHash": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+      "firstLine": "std::string requireString(const JsonValue& obj, const std::string& key)",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "必填字符串类型守卫；plain委托prefix空前缀，不复制解析器",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "22-testkit.Dataset.requireString.plain.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.ReferenceSource.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::ReferenceSource::operator==",
+        "startLine": 67,
+        "endLine": 72,
+        "sha256": "04f9b402f9eac04a62dba3d2909a1f448a97c4b0419db89d9398da83d2d0b7e5"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator==(const ReferenceSource& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "23-testkit.Dataset.ReferenceSource.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.Producer.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::Producer::operator==",
+        "startLine": 85,
+        "endLine": 91,
+        "sha256": "45b77fbefd64a244bd2b593aef6938552f557116d427f4148818d5898e4c8490"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator==(const Producer& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "24-testkit.Dataset.Producer.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.Producer.operator!=",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::testkit::Producer::operator!=",
+        "startLine": 92,
+        "endLine": 92,
+        "sha256": "5531020bbb1538ea94b9380fb99a18b31f9348f0fecbe572f0d6436d29ab33b8"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator!=(const Producer& o) const noexcept { return !(*this == o); }",
+      "lastLine": "    bool operator!=(const Producer& o) const noexcept { return !(*this == o); }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "25-testkit.Dataset.Producer.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.IntegrityEntry.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::IntegrityEntry::operator==",
+        "startLine": 109,
+        "endLine": 112,
+        "sha256": "f9399df38ec10ddf08b6e878e5ec9cb2b47f5789ac131196aaf42b7e1bd9437d"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator==(const IntegrityEntry& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "26-testkit.Dataset.IntegrityEntry.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.HistoryEntry.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::HistoryEntry::operator==",
+        "startLine": 123,
+        "endLine": 127,
+        "sha256": "f78622ae176590e04c2556ce7348a0c982cadd302d4d50fec179890cc59b7a3b"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator==(const HistoryEntry& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "27-testkit.Dataset.HistoryEntry.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.HistoryEntry.operator!=",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::testkit::HistoryEntry::operator!=",
+        "startLine": 128,
+        "endLine": 128,
+        "sha256": "28105c0de58f5951594e93b5683443b765b5058e1ff8930d6bddf794a4d9b2e5"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator!=(const HistoryEntry& o) const noexcept { return !(*this == o); }",
+      "lastLine": "    bool operator!=(const HistoryEntry& o) const noexcept { return !(*this == o); }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "28-testkit.Dataset.HistoryEntry.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.DatasetManifest.operator!=",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::testkit::DatasetManifest::operator!=",
+        "startLine": 163,
+        "endLine": 163,
+        "sha256": "12a9ecb325925a49e9b460da8f7adc41b1f16a9edb9cc3f0d16d4b90e16f630d"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    bool operator!=(const DatasetManifest& o) const { return !(*this == o); }",
+      "lastLine": "    bool operator!=(const DatasetManifest& o) const { return !(*this == o); }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "29-testkit.Dataset.DatasetManifest.operator__.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.GoldenDataset.manifest",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "manifest",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::manifest",
+        "startLine": 179,
+        "endLine": 179,
+        "sha256": "14f9dd34e61d9e4066ddb2c727d028f2c600a9fcf0ba23525d64472f824724fa"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    const DatasetManifest& manifest() const noexcept { return manifest_; }",
+      "lastLine": "    const DatasetManifest& manifest() const noexcept { return manifest_; }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "不可变快照const引用访问，生命周期由GoldenDataset实例持有",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "30-testkit.Dataset.GoldenDataset.manifest.txt"
+    },
+    {
+      "functionId": "testkit.Dataset.GoldenDataset.toleranceProfileRef",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "symbol": "toleranceProfileRef",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::toleranceProfileRef",
+        "startLine": 187,
+        "endLine": 190,
+        "sha256": "4d28ab2d1ed59dc8053093cab54ff39946e333f7a103f1df0ee5b89d697637e8"
+      },
+      "sourceContextHash": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952",
+      "firstLine": "    std::pair<std::string, std::string> toleranceProfileRef() const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "返回已加载manifest中的id/version对，不自动加载或验证profile",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "31-testkit.Dataset.GoldenDataset.toleranceProfileRef.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.MatchPair.operator==",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "operator==",
+        "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator==",
+        "startLine": 58,
+        "endLine": 61,
+        "sha256": "033ad8974b6f77d360ae9fc9450e04b73ff7a8467c1fc5d78dab527c79bb8d18"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "    bool operator==(const MatchPair& o) const noexcept",
+      "lastLine": "    }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "expected/actual索引对精确比较/委托，非数值集合判断",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "32-testkit.SetCheck.MatchPair.operator__.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.MatchPair.operator!=",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "operator!=",
+        "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator!=",
+        "startLine": 62,
+        "endLine": 62,
+        "sha256": "7e8581b15c7c49e40d8858f184bea5700095377710fdde837f43562acd8046cf"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "    bool operator!=(const MatchPair& o) const noexcept { return !(*this == o); }",
+      "lastLine": "    bool operator!=(const MatchPair& o) const noexcept { return !(*this == o); }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "expected/actual索引对精确比较/委托，非数值集合判断",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "33-testkit.SetCheck.MatchPair.operator__.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.SetMatchTraits.identity",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "identity",
+        "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::identity",
+        "startLine": 91,
+        "endLine": 91,
+        "sha256": "7d6769af413c4c01c430dfd4894ee6ba3357777ca4661105f27a4c13abba7512"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "    static std::optional<std::string> identity(const T&) { return std::nullopt; }",
+      "lastLine": "    static std::optional<std::string> identity(const T&) { return std::nullopt; }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "缺省nullopt表示无身份，只是traits注入契约",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "34-testkit.SetCheck.SetMatchTraits.identity.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.SetMatchTraits.numerics",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "numerics",
+        "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::numerics",
+        "startLine": 93,
+        "endLine": 93,
+        "sha256": "5dc80d6994d2cf553159c8ba7cbe4dd299660011139ee2d436e461b976f3d42e"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "    static std::vector<NumericFieldView> numerics(const T&) { return {}; }",
+      "lastLine": "    static std::vector<NumericFieldView> numerics(const T&) { return {}; }",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "缺省空字段，不构成数值相容边，消费方需特化",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "35-testkit.SetCheck.SetMatchTraits.numerics.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.compatible",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "compatible",
+        "qualifiedSymbol": "sdurws::ird::testkit::detail::compatible",
+        "startLine": 99,
+        "endLine": 116,
+        "sha256": "b32f60f56f8df2f6d0a418992efe015a4dd488d4534fde39837525218c78cfe8"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "template <class T>",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "字段数/名同序且非空，全部经现有profile.resolve+core C4；无需第二容差公式",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "36-testkit.SetCheck.compatible.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.tryAugmentAt",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "tryAugmentAt",
+        "qualifiedSymbol": "sdurws::ird::testkit::detail::tryAugmentAt",
+        "startLine": 121,
+        "endLine": 151,
+        "sha256": "3c3276657ce8a95fff844a9234c7aedb2a03a5a0fb608503bf1e1bbb48efdb15"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "template <class EdgeFn>",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "自持Kuhn递归增广和回滚；既有Boost checked Edmonds候选2项实跑通过，供给/见证/内存性能与业务语义须核",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "37-testkit.SetCheck.tryAugmentAt.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.checkSetEquivalent",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "checkSetEquivalent",
+        "qualifiedSymbol": "sdurws::ird::testkit::checkSetEquivalent",
+        "startLine": 162,
+        "endLine": 392,
+        "sha256": "974b636b65ace170030789a4b5051fd31cd6988904fa6fd9b8a4d4962ff1279b"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "template <class T>",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "重复/身份优先后数值最大匹配，交错圈歧义与详情；不得用普通set或排序误替，不因测试工具而豁免成熟算法复用",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "38-testkit.SetCheck.checkSetEquivalent.txt"
+    },
+    {
+      "functionId": "testkit.SetCheck.checkStableOrder",
+      "ownerUnit": "testkit",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "symbol": "checkStableOrder",
+        "qualifiedSymbol": "sdurws::ird::testkit::checkStableOrder",
+        "startLine": 394,
+        "endLine": 435,
+        "sha256": "c2bf1998ded2016e7119d3ff93384802418c1f3afcf807d65f3e57ebacbfb9b1"
+      },
+      "sourceContextHash": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+      "firstLine": "template <class T>",
+      "lastLine": "}",
+      "decision": "pending",
+      "status": "pending",
+      "capabilityId": "NONE",
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "inputs": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp"
+      ],
+      "differences": "独立逐位身份/数值与首错位；长度不同和更早错位优先级待核，不能以集合等价替代",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant",
+      "evidence": "39-testkit.SetCheck.checkStableOrder.txt"
+    }
+  ],
+  "uniqueBindings": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp"
+  ],
+  "searchReplay": [
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "-i",
+        "bipart|hopcroft|matching|augment|closeWithin|isApprox|approxEqual|relative.*toler",
+        "RobWork/RobWork/src",
+        "RobWork/RobWorkSim/src",
+        "RobWork/RobWork/gtest",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.cpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 108,
+      "sameOutputAsFrozen": true,
+      "log": "search-1.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "equal|precision|operator==",
+        "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+        "RobWork/RobWork/src/rw/math/Q.hpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 19,
+      "sameOutputAsFrozen": true,
+      "log": "search-2.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "checked_edmonds_maximum_cardinality_matching|matching_size|matching\\(|edmonds|maximum_cardinality_matching_verifier",
+        "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/graph/max_cardinality_matching.hpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 37,
+      "sameOutputAsFrozen": true,
+      "log": "search-3.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "closeWithin|Tolerance::make|checkSetEquivalent|checkStableOrder|GoldenDataset::load|parseSemanticVersion",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 43,
+      "sameOutputAsFrozen": true,
+      "log": "search-4.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "sdurws_ird_core|IRD_CORE_HAS_RW_Q|sdurws_ird_testkit|SetCheckTest|DatasetTest|CompareTest",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 79,
+      "sameOutputAsFrozen": true,
+      "log": "search-5.log"
+    }
+  ],
+  "installedCandidateBindings": [
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\max_cardinality_matching.hpp",
+      "rawSha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\adjacency_list.hpp",
+      "rawSha256": "758292c5dabec222b3b21044ad3f22026297eece78d8b8a80306f4ec2e12512e",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "758292c5dabec222b3b21044ad3f22026297eece78d8b8a80306f4ec2e12512e",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+      "rawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_headers\\boost_headers-config.cmake",
+      "rawSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28",
+      "match": true
+    }
+  ],
+  "finding": {
+    "id": "F-960",
+    "source": "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md / probe-r17/core-red",
+    "severity": "major",
+    "status": "open",
+    "registeredAt": "2026-10-23",
+    "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
+    "owner": "core / REUSE-T05",
+    "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
+  },
+  "changedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/MatchingSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-definitions.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/candidates/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/core-red/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/vs.log"
+  ],
+  "checks": {
+    "all39DefinitionsBound": true,
+    "all39OwnFileInputsBound": true,
+    "allInputAndAuditEvidenceHashesMatch": true,
+    "originalArtifactHashesMatch": true,
+    "noProductOrUpstreamChange": true
+  }
+}

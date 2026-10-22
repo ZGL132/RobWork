@@ -9693,6 +9693,26 @@
       "title": "policy会话将合法REGEX前缀完整名传入上游模式API，产出的排除规则无法匹配原对象名",
       "owner": "policy / REUSE-T05",
       "resolution": "原policy CMake目标和原会话夹具真实编译，新2项1passed/1failed。runtime合法字符集允许REGEXarm，ProximitySetupRule把REGEX前缀后的字符串当正则；setup规则原名匹配false。仅证实公开setup输出错误，evaluate当前按scope直接逐对query，不声称已复现碰撞误判。T05用既有模式接口的最小字面适配，保留名称真值和上游API，先补原会话回归；不改上游或另建规则引擎。"
+    },
+    {
+      "id": "F-962",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "project恢复扫描未核清单字节摘要，错误HEAD摘要可经公开工厂成功打开",
+      "owner": "project / REUSE-T05",
+      "resolution": "原project目标/原TxEngine夹具新增6项2passed4failed，错误HEAD摘要、合法清单时间字节变化均scan true；公共ProjectStoreFactory::open也接受错误摘要并报告完整，健康正例通过。T05复用codec::contentVersionOf/core摘要补实算比较与原测试，不改上游或新建持久化核心。未跑全project/崩溃矩阵/并发。"
+    },
+    {
+      "id": "F-963",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "project事务错误映射硬编码70，真实SDK磁盘满112误归WriteRejected",
+      "owner": "project / REUSE-T05",
+      "resolution": "原IFileOps夹具注入ERROR_DISK_FULL，commit拒绝且旧字节保持，但实际WriteRejected而非DiskFull；原F2注入同错误数字70掩盖缺陷。ObjectStore/StoreClone同常量仅静态同族待核，未跑这些路径。T05复用同单元Archive已采用的SDK常量映射方式收口，先补原回归，不另设数字表。"
     }
   ]
 }

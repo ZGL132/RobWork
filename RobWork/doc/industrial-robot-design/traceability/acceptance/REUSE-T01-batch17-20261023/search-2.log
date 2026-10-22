@@ -1,0 +1,19 @@
+RobWork/RobWork/src/rw/math/Transform3D.hpp:273:         * Returns true only if all elements are equal.
+RobWork/RobWork/src/rw/math/Transform3D.hpp:276:         * @return True if equal.
+RobWork/RobWork/src/rw/math/Transform3D.hpp:278:        bool operator== (const Transform3D< T >& rhs) const
+RobWork/RobWork/src/rw/math/Transform3D.hpp:290:         * @return True if not equal.
+RobWork/RobWork/src/rw/math/Transform3D.hpp:295:         * @brief Compares the transformations with a given precision
+RobWork/RobWork/src/rw/math/Transform3D.hpp:297:         * Performs an element wise comparison. Two elements are considered equal if the difference
+RobWork/RobWork/src/rw/math/Transform3D.hpp:298:         * are less than \b precision.
+RobWork/RobWork/src/rw/math/Transform3D.hpp:301:         * @param precision [in] The precision to use for testing
+RobWork/RobWork/src/rw/math/Transform3D.hpp:302:         * @return True if all elements are less than \b precision apart.
+RobWork/RobWork/src/rw/math/Transform3D.hpp:304:        bool equal (const Transform3D< T >& t3d,
+RobWork/RobWork/src/rw/math/Transform3D.hpp:305:                    const T precision = std::numeric_limits< T >::epsilon ()) const
+RobWork/RobWork/src/rw/math/Transform3D.hpp:307:            if (!R ().equal (t3d.R (), precision))
+RobWork/RobWork/src/rw/math/Transform3D.hpp:310:                if (fabs (P ()[i] - t3d.P ()[i]) > precision)
+RobWork/RobWork/src/rw/math/Q.hpp:302:         * @brief Compares \b this and \b q2 for equality.
+RobWork/RobWork/src/rw/math/Q.hpp:304:         * \b this and \b q2 are considered equal if and only if they have equal
+RobWork/RobWork/src/rw/math/Q.hpp:307:         * @return True if this equals q2, false otherwise.
+RobWork/RobWork/src/rw/math/Q.hpp:309:        bool operator== (const Q& q2) const;
+RobWork/RobWork/src/rw/math/Q.hpp:312:         * @brief Inequality operator
+RobWork/RobWork/src/rw/math/Q.hpp:313:         * The inverse of operator==().

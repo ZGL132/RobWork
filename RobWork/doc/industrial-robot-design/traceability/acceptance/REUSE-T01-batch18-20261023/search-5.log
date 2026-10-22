@@ -1,0 +1,8 @@
+14: *   拼装点＝本文件 detail::joinScopeLocal()；任何其他文件出现该动作即 R-4
+41:bool isLegalNameChar(char c) noexcept
+94:std::string joinScopeLocal(const std::string& scopeToken, const std::string& localName)
+118:        legal.push_back(isLegalNameChar(c) ? c : kIllegalCharReplacement);
+326:            : joinScopeLocal(w.entry.scopeToken, w.entry.localName);
+340:                : joinScopeLocal(w.entry.scopeToken, w.entry.localName);
+381:                        : joinScopeLocal(w.entry.scopeToken, candidate);
+409:            : joinScopeLocal(w.entry.scopeToken, w.entry.localName);

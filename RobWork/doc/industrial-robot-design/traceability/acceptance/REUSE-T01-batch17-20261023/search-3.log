@@ -1,0 +1,37 @@
+42:typename graph_traits< Graph >::vertices_size_type matching_size(
+64:inline typename graph_traits< Graph >::vertices_size_type matching_size(
+67:    return matching_size(g, mate, get(vertex_index, g));
+71:bool is_a_matching(const Graph& g, MateMap mate, VertexIndexMap)
+89:inline bool is_a_matching(const Graph& g, MateMap mate)
+91:    return is_a_matching(g, mate, get(vertex_index, g));
+106:    inline bool augment_matching() { return false; }
+108:    template < typename PropertyMap > void get_current_matching(PropertyMap) {}
+112:class edmonds_augmenting_path_finder
+147:    edmonds_augmenting_path_finder(
+183:    bool augment_matching()
+355:    template < typename PropertyMap > void get_current_matching(PropertyMap pm)
+505:    static void find_matching(const Graph& g, MateMap mate)
+577:    static void find_matching(const Graph& g, MateMap mate)
+627:    static void find_matching(const Graph& g, MateMap mate)
+681:    inline static bool verify_matching(const Graph&, MateMap, VertexIndexMap)
+688:struct maximum_cardinality_matching_verifier
+726:    static bool verify_matching(const Graph& g, MateMap mate, VertexIndexMap vm)
+745:        if (!is_a_matching(g, mate, vm))
+750:        // is obviously non-maximum. Second, running edmonds' algorithm
+755:        edmonds_augmenting_path_finder< Graph, MateMap, VertexIndexMap >
+757:        if (augmentor.augment_matching())
+781:        if (2 * matching_size(g, mate, vm)
+793:bool matching(const Graph& g, MateMap mate, VertexIndexMap vm)
+796:    InitialMatchingFinder< Graph, MateMap >::find_matching(g, mate);
+803:        not_maximum_yet = augmentor.augment_matching();
+805:    augmentor.get_current_matching(mate);
+807:    return MatchingVerifier< Graph, MateMap, VertexIndexMap >::verify_matching(
+812:inline bool checked_edmonds_maximum_cardinality_matching(
+816:        edmonds_augmenting_path_finder, extra_greedy_matching,
+817:        maximum_cardinality_matching_verifier >(g, mate, vm);
+821:inline bool checked_edmonds_maximum_cardinality_matching(
+824:    return checked_edmonds_maximum_cardinality_matching(
+829:inline void edmonds_maximum_cardinality_matching(
+832:    matching< Graph, MateMap, VertexIndexMap, edmonds_augmenting_path_finder,
+837:inline void edmonds_maximum_cardinality_matching(const Graph& g, MateMap mate)
+839:    edmonds_maximum_cardinality_matching(g, mate, get(vertex_index, g));

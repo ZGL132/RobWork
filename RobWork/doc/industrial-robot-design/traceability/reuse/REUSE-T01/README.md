@@ -105,3 +105,5 @@ B17补core容差、testkit集合模板与数据装载39条关系，见`compare-s
 B16语义独立首验FAIL（B16-P2-01），原件见`../../acceptance/REUSE-T01-batch16-r1-20261023/`。返工为22条C++ helper补来源全文inputs，待冻结独立复验；保留原FAIL。生成器独立复跑见`../../acceptance/REUSE-T01-batch16-generators-20261023/`：29进程passed，91 JSON对照90一致/1不一致，F-959仍open，未跑C++消费者，不授全T01/T02。
 
 B18补策略解析、限位、作用域和后端构建46条关系，见`policy-boundary-audit.md`。原policy目标实跑新增2探测1passed/1failed，F-961登记open；全policy回归未跑，T01未退出。B16返工独验PASS仅关闭B16-P2-01，原件见`../../acceptance/REUSE-T01-batch16-r2-20261023/`。
+
+B20补project事务/Win32原语/恢复/查询/归档47条关系，见`project-transaction-audit.md`；原目标新增6项2passed/4failed，F-962公共打开摘要漏检与F-963磁盘满误归类保持open。无产品变更、全T01未退出。

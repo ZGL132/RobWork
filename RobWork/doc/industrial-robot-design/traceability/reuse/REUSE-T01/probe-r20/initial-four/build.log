@@ -1,0 +1,56 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt
+  Project.cpp
+  Codec.cpp
+  ObjectStore.cpp
+  RevisionIndex.cpp
+  TxEngine.cpp
+  ProjectStoreImpl.cpp
+  QueryPortImpl.cpp
+  CommandServiceImpl.cpp
+  ConfirmationFlow.cpp
+  DraftServiceImpl.cpp
+  UndoRedoServiceImpl.cpp
+  ArchiveServiceImpl.cpp
+  SolidifyServiceImpl.cpp
+  StoreClone.cpp
+  SaveAsServiceImpl.cpp
+  PackageServiceImpl.cpp
+  AtomicFile.cpp
+  StoreLock.cpp
+  PathCanonical.cpp
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5): warning C4297: “sdurws::ird::project::ProjectStore::handlerRegistry”: 假定函数不引发异常，但确实发生了 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-project\sdurws_ird_project.vcxproj]
+      C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\src\ProjectStoreImpl.cpp(794,5):
+      在函数上指定了 __declspec(nothrow)、throw()、noexcept(true)或 noexcept
+  
+  sdurws_ird_project.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-project\Release\sdurws_ird_project.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\ird-testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/CMakeLists.txt
+  ProjectBoundaryTest.cpp
+  TestMainReport.cpp
+  ird_project_boundary_audit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\Release\ird_project_boundary_audit.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b20-project\Release\gtest.dll done

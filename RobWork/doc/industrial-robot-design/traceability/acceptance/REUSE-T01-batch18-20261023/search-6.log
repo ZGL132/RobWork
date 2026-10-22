@@ -1,0 +1,64 @@
+12:#   1. 骨架期 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_policy 不变，
+14:#   2. 注册 gtest 测试目标 sdurws_ird_policy_test（红线扫描：零 Qt/依赖图仅
+30:# POL-T04 增量：解析器与校验器落地——新增 PolicyParsing.cpp（resolvePolicy
+48:add_library(sdurws_ird_policy STATIC
+53:    src/PolicyParsing.cpp
+57:target_compile_features(sdurws_ird_policy PUBLIC cxx_std_17)
+58:set_target_properties(sdurws_ird_policy PROPERTIES
+64:    target_compile_options(sdurws_ird_policy PUBLIC /utf-8)
+68:target_include_directories(sdurws_ird_policy PUBLIC
+72:# 判定＝TARGET sdurw_kinematics（框架库目标只在集成配置树存在——runtime RT-T01
+77:if(TARGET sdurw_kinematics)
+86:    target_sources(sdurws_ird_policy PRIVATE
+107:        src/JointLimits.cpp         # §7.4/§9.4 关节限位与行程阈值评估
+114:                                          # JointLimits.hpp→CollisionQuery.hpp
+131:    target_link_libraries(sdurws_ird_policy PUBLIC
+133:        sdurw_kinematics
+136:    set(IRL_BASELINE_LIBS "sdurw_math, sdurw_kinematics, sdurw_models, sdurw_proximity")
+139:target_link_libraries(sdurws_ird_policy PUBLIC sdurws_ird_core)
+142:    add_library(RWS::ird::policy ALIAS sdurws_ird_policy)
+145:# ---- 测试目标 sdurws_ird_policy_test（随 POL-T01 登记）----
+148:add_executable(sdurws_ird_policy_test
+155:    test/PolicyParsingTest.cpp # POL-T04：POL-PARSE-1~6 错误分类全量反例＋O-10 默认口径
+163:# POL-T06 增列（仅集成模式）：CollisionSessionTest.cpp 消费 rw 非模板类
+167:if(TARGET sdurw_kinematics)
+168:    target_sources(sdurws_ird_policy_test PRIVATE
+169:        test/CollisionSessionTest.cpp)  # POL-T06：POL-SCOPE-1/2 构建期（作用域
+172:    target_sources(sdurws_ird_policy_test PRIVATE
+173:        test/CollisionEvaluationTest.cpp)  # POL-T07：POL-EVAL-1~9/POL-EXC-1/
+177:    target_sources(sdurws_ird_policy_test PRIVATE
+178:        test/JointLimitsTest.cpp)          # POL-T08：POL-JNT-1/2（行程 4π 边界/
+183:                                           # 专属，与 src/JointLimits.cpp 同因）
+184:    target_sources(sdurws_ird_policy_test PRIVATE
+193:target_compile_features(sdurws_ird_policy_test PRIVATE cxx_std_17)
+194:set_target_properties(sdurws_ird_policy_test PROPERTIES
+199:    target_compile_options(sdurws_ird_policy_test PRIVATE /utf-8)
+202:target_link_libraries(sdurws_ird_policy_test PRIVATE
+203:    sdurws_ird_policy
+212:target_compile_definitions(sdurws_ird_policy_test PRIVATE
+216:add_custom_command(TARGET sdurws_ird_policy_test POST_BUILD
+218:            $<TARGET_RUNTIME_DLLS:sdurws_ird_policy_test>
+219:            $<TARGET_FILE_DIR:sdurws_ird_policy_test>
+222:# ---- 跨单元契约测试目标 sdurws_ird_policy_contract_test（随 POL-T11 登记）----
+241:add_executable(sdurws_ird_policy_contract_test
+252:if(TARGET sdurw_kinematics)
+253:    target_sources(sdurws_ird_policy_contract_test PRIVATE
+265:    target_sources(sdurws_ird_policy_contract_test PRIVATE
+276:    target_include_directories(sdurws_ird_policy_contract_test PRIVATE
+280:target_compile_features(sdurws_ird_policy_contract_test PRIVATE cxx_std_17)
+281:set_target_properties(sdurws_ird_policy_contract_test PROPERTIES
+286:    target_compile_options(sdurws_ird_policy_contract_test PRIVATE /utf-8)
+289:# 链接面（T-1 允许形态：同单元产品目标＋testkit＋gtest——sdurws_ird_policy_
+294:target_link_libraries(sdurws_ird_policy_contract_test PRIVATE
+295:    sdurws_ird_policy
+302:target_include_directories(sdurws_ird_policy_contract_test PRIVATE
+304:target_compile_definitions(sdurws_ird_policy_contract_test PRIVATE
+307:add_custom_command(TARGET sdurws_ird_policy_contract_test POST_BUILD
+309:            $<TARGET_RUNTIME_DLLS:sdurws_ird_policy_contract_test>
+310:            $<TARGET_FILE_DIR:sdurws_ird_policy_contract_test>
+313:ird_add_gtest(sdurws_ird_policy_contract_test)
+330:ird_add_gtest(sdurws_ird_policy_test)
+335:get_target_property(_ird_pol_link_libs sdurws_ird_policy LINK_LIBRARIES)
+336:get_target_property(_ird_pol_iface_libs sdurws_ird_policy INTERFACE_LINK_LIBRARIES)
+339:                                      AND NOT _lib STREQUAL "sdurws_ird_policy")
+341:            "policy 依赖红线：sdurws_ird_policy 仅可链接 core＋RobWork 基线，"

@@ -1,0 +1,11 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::datasetKindFromToken
+128: std::optional<DatasetKind> datasetKindFromToken(std::string_view token) noexcept
+129: {
+130:     if (token == "analytic-case")        { return DatasetKind::AnalyticCase; }
+131:     if (token == "reference-impl")       { return DatasetKind::ReferenceImpl; }
+132:     if (token == "contract-fixture")     { return DatasetKind::ContractFixture; }
+133:     if (token == "regression")           { return DatasetKind::Regression; }
+134:     if (token == "performance-baseline") { return DatasetKind::PerformanceBaseline; }
+135:     return std::nullopt;
+136: }

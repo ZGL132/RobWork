@@ -4275,6 +4275,3672 @@
         }
       ],
       "auditBoundary": "明确函数/成对编解码区段；无生产正向结项，未实跑本批C++/GUI/性能，不关闭库存"
+    },
+    {
+      "functionId": "project.TxEngine.osToStoreError",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "osToStoreError",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::osToStoreError",
+          "startLine": 44,
+          "endLine": 59,
+          "sha256": "3055b66bfb1e84f67a7c7444009ad398a6b28a6c97963063efb77446a9bcb7dc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "Win32写错误映射自持70而非SDK ERROR_DISK_FULL=112，真实注入误归WriteRejected，F-963；同单元Archive用SDK常量的既有方式应复用，不另设数字表",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.cvHex",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "cvHex",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::cvHex",
+          "startLine": 64,
+          "endLine": 72,
+          "sha256": "d4e94e2e16c3b12d3323e733b3670beea2ad2e9b9d1153d1760d61d9082e7af3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "真实core ContentVersion::toCanonical验证cv-与67长度后剥tag，不自建哈希；与ObjectStore相同职责需单源消歧",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.readAllBytes",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "readAllBytes",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::readAllBytes",
+          "startLine": 76,
+          "endLine": 90,
+          "sha256": "e64c64c3b0eff0bb31b99366d9e517ce4ed4b9a382ea2eb96276ca75121df8d2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "std filesystem存在性与ifstream整读，缺失/exists错误返回nullopt、打开失败AccessDenied；未检查读中途bad位。IOUtil候选长度/宽路径/异常差异不能忽略",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.verifyStagedFile",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "verifyStagedFile",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::verifyStagedFile",
+          "startLine": 103,
+          "endLine": 132,
+          "sha256": "33d226f14d2bdcb307a608016ee4ac27b049b2e7b6b5a68475c00f03fcfa87ca"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "读回size与codec::contentVersionOf→core摘要核对，未新建哈希内核；不能以JSON可解析替代摘要",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.emitReport",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "emitReport",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::emitReport",
+          "startLine": 135,
+          "endLine": 140,
+          "sha256": "1c11e11866b2f681a1cdde706948027fbe3b455893790616796d2332082e66de"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "可空IDiagnosticsSink既有出口，不自建诊断服务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "makeIgnoredUncommittedRecord",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeIgnoredUncommittedRecord",
+          "startLine": 147,
+          "endLine": 168,
+          "sha256": "2e83ed195537775533132ce5a0ba065d0014879acc5b68893a11700814444d2c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "稳定码直接字面+core DiagnosticRecord::make，中文context/cause/action仍需核diagnostics正式模板职责",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.makeStoreCorruptRecord",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "makeStoreCorruptRecord",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeStoreCorruptRecord",
+          "startLine": 174,
+          "endLine": 184,
+          "sha256": "b3691b1890f393a1905f6062967c9b448d688f776b84314da280f044a1770bd0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "同上，cause携路径detail；不得将文字视作业务专属而豁免稳定码/渲染权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.operator()",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "operator()",
+          "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::MetadataRefLess::operator()",
+          "startLine": 191,
+          "endLine": 198,
+          "sha256": "23197d28944a41a7ad2308140a4ced2acb3ccad922fe27823dfeb8e23c0fe276"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "元数据引用按OID/CV规范文本构成std容器严格弱序，无第二身份/摘要权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.TxEngine",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::TxEngine",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::TxEngine",
+          "startLine": 207,
+          "endLine": 228,
+          "sha256": "08440b970be7e8e6797ae85fee7beb525199a296c8f24c8ca387a760c5bda925"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "非owning fileOps/ObjectStore/RevisionIndex必需、bus/sink可空，构造不新建框架模型",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.stagingRoot",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::stagingRoot",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::stagingRoot",
+          "startLine": 230,
+          "endLine": 233,
+          "sha256": "f491ea8839532000346113b05907bfdb2205c89ffb5d2bf1295864c1e4512ebe"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "projectDir/.staging纯路径组合，非上游模型命名解析",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.objectsRoot",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::objectsRoot",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectsRoot",
+          "startLine": 235,
+          "endLine": 238,
+          "sha256": "35ed2594233b67ea1aeb334c858c19e39215e9afb742b450de52608161c3dd8a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "projectDir/objects纯路径组合，格式归project",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::revisionsRoot",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionsRoot",
+          "startLine": 240,
+          "endLine": 243,
+          "sha256": "74bf435deb15601214a614e6e529569197ce761fddf1b9d55b5d14e9a9e5efe1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "projectDir/revisions纯路径组合",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.revisionDir",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::revisionDir",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionDir",
+          "startLine": 245,
+          "endLine": 250,
+          "sha256": "74d0abaeef16c28719177e442aa9a16caaeab2b9d9d5db757899ab8dd7896743"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "RevisionId::toCanonical构目录，core身份事实唯一",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.objectFile",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::objectFile",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectFile",
+          "startLine": 252,
+          "endLine": 259,
+          "sha256": "4a46ec98e9c85501f43da2d82c18fc199175ad4477cb896c32ae2d905a090366"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "OID规范文本/CV hex编址，与ObjectStore重复薄路径派生需评估收口而不泛化文件门面",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.generateTxId",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::generateTxId",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::generateTxId",
+          "startLine": 261,
+          "endLine": 281,
+          "sha256": "08123319a65a8bcc81cc5408db501189295518abc63dc6d566c1f82d6ceb7134"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "std atomic单调+thread_local mt19937_64，两次各截32位组成16hex；不是确定性计算流，上游全局Random不等同并发隔离/残留防撞；不承诺绝无碰撞",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.commit",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::commit",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit",
+          "startLine": 287,
+          "endLine": 797,
+          "sha256": "35aabcc8d00c06d9285cf7ba6954a02fc528df462bdd65bb2d6d3696019a6670"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "七段编排复用原语/索引/对象库/core摘要与bus；注册→验证→注册metadata后才武装幻影守卫；第5段只比较重读HEAD字段未重读清单算摘要，需F962关联，不宣称已覆盖全部故障",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.publishOneObject",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::publishOneObject",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishOneObject",
+          "startLine": 799,
+          "endLine": 843,
+          "sha256": "0006f3285e84ca87dfada238e4fcd7434cd0b0979f7ea6f9805ffef423f7c079"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "原IFileOps只增rename与ObjectStore真实读校验共享判定，竞态有界2次，已发布不回滚；无第二CAS算法",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::publishEventWithRetry",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishEventWithRetry",
+          "startLine": 845,
+          "endLine": 865,
+          "sha256": "2673594666d7b54e61c26937da658cc16c24f0c1c0b76df3c07340e4b5e34acf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "总线FIFO调用两次有界重试，捕std异常报告D18；总线合同归core，不自建消息队列",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::scanForRecovery",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::scanForRecovery",
+          "startLine": 871,
+          "endLine": 1142,
+          "sha256": "6024b4b64be7211d647b8d1c611013edec82dcbf6ee59bee2e404ef39b5c616c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "tmp清理/未提交事务报告/局部索引闭包/对象校验/悬挂计数；清单仅parse未核HEAD摘要，F962真实反例；目录错误/残缺分类待回归",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.readHead",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::readHead",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::readHead",
+          "startLine": 1144,
+          "endLine": 1158,
+          "sha256": "8776cd4cfcac5d5c0b4179a9634e9a02d1df9f50517c9cb8c36bb1b26e3573fa"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "readAllBytes+唯一codec parse，缺失StoreCorrupt，版本语义透传；不会自行核清单摘要",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.TxEngine.reportDev",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "TxEngine::reportDev",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::reportDev",
+          "startLine": 1164,
+          "endLine": 1171,
+          "sha256": "640a31e31b3fe99f53cdd4866194b52100c4c89b0201be8ea1eca077537a3576"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "IDiagnosticsSink开发通道project/tx-engine，不另造稳定码",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "symbol": "~PhantomRegistrationGuard",
+          "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit::PhantomRegistrationGuard::~PhantomRegistrationGuard",
+          "startLine": 503,
+          "endLine": 508,
+          "sha256": "cb879faeffa285048174f10a41b676d3120eecaa0dc14b7b2f974244d59674c8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "commit局部RAII只在HEAD切换前失败摘本次索引登记；未处理武装前异常的行为不能由注释推断",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+          "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.handleToResult",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "handleToResult",
+          "qualifiedSymbol": "sdurws::ird::project::win32::handleToResult",
+          "startLine": 40,
+          "endLine": 56,
+          "sha256": "526edbeb87685f2133a02ecd24abea695643a383860e39df4163d07fd129181d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "真实句柄INVALID_HANDLE_VALUE失败置null、GetLastError；成功显式0",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.boolToResult",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "boolToResult",
+          "qualifiedSymbol": "sdurws::ird::project::win32::boolToResult",
+          "startLine": 59,
+          "endLine": 67,
+          "sha256": "eeab487bb23eabc51075787313d24f0a14c9d2d60ae4f80ef22dd7094bb973e1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "只失败读取GetLastError，成功错误码归0，薄返回值适配",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::openWriteThrough",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::openWriteThrough",
+          "startLine": 76,
+          "endLine": 91,
+          "sha256": "7b6549177a7bd2cefa298cb66a6984309c6fc2dd1170712c23a33bd3a8d93d7d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "CreateFileW宽路径/独占/CREATE_ALWAYS/WRITE_THROUGH；仅暂存，不能由普通IOUtil替代持久化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::writeChunk",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::writeChunk",
+          "startLine": 93,
+          "endLine": 123,
+          "sha256": "aa7d54c246a5827fb9b33fc47bd9b781691acdecca63e09b9fd4c15f46922ccc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "WriteFile同步DWORD长度，空块成功、短写失败；部分写时GetLastError残留风险需核，未实测",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::flush",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::flush",
+          "startLine": 125,
+          "endLine": 131,
+          "sha256": "61675f86a008761ecc5fdd8ba53f4a4ae5b76f25d88ae49c590aecd8b0255ada"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "直接FlushFileBuffers薄适配，调用失败透传",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::closeHandle",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::closeHandle",
+          "startLine": 133,
+          "endLine": 136,
+          "sha256": "13150d8037b51c112d9ceb4df2430dba3993fdff6eb6e40e821135ab19815dd6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "直接CloseHandle薄适配",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::publishNew",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::publishNew",
+          "startLine": 138,
+          "endLine": 146,
+          "sha256": "359461fb0ede4c76b4218600efdebe670bc436478b2e380fac8970c68b204fd3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "MoveFileExW无替换标志，目标在则拒绝；同卷由调用方保证",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::replaceExisting",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::replaceExisting",
+          "startLine": 148,
+          "endLine": 159,
+          "sha256": "542a1ed94e931e3541f3311c7fe3a0c866e888a93fd20c4596c6ed28cc0d6a28"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "MoveFileExW REPLACE_EXISTING|WRITE_THROUGH；不超诺同卷断电后必新值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::createDirectories",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::createDirectories",
+          "startLine": 161,
+          "endLine": 182,
+          "sha256": "8d8405b204a3e537bbc5e711ea66de31118cd8014c9343ffe4ee23b3c21e6df4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "std filesystem error_code薄适配，幂等建父目录，不自写遍历器",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "Win32FileOps::removeTree",
+          "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::removeTree",
+          "startLine": 184,
+          "endLine": 200,
+          "sha256": "1bf3d7a7af561c0f14a207a033f32dee1aec718b148e0c8ef7fd170c69c6de08"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "std filesystem remove_all，临时清理幂等，非项目GC",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "AtomicFile::writeThrough",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough",
+          "startLine": 226,
+          "endLine": 294,
+          "sha256": "d656394b7d99482f4bf972bf1ed0602734b57ae490618c564c76b59c9f8bea7f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "64KiB来源为既有头常量，开→分块写→flush→显式close；任一失败保留部分暂存，守卫不泄漏句柄",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "AtomicFile::publishNew",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::publishNew",
+          "startLine": 296,
+          "endLine": 303,
+          "sha256": "9e74836fa87776d176fc8b84de937ffb5335cb76b22e829d727cd3360f1a3690"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "委托唯一IFileOps::publishNew，业务共享判定归ObjectStore",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "AtomicFile::replaceFile",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::replaceFile",
+          "startLine": 305,
+          "endLine": 311,
+          "sha256": "86c4478dfd1057740bd116db5f903de1b87cb5eb4926fc2d2e31503ac5f1d0ca"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "委托IFileOps::replaceExisting，提交点由上层指定",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.AtomicFile.ctor.default",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "AtomicFile::AtomicFile",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+          "startLine": 207,
+          "endLine": 214,
+          "sha256": "37289d62f5c8b1a4d3eb5890586cbc49bb99302ac470a97185b57732dec2e79f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "生产构造引用函数级静态无状态Win32FileOps，非owning，C++11初始化线程安全",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.AtomicFile.ctor.injected",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "AtomicFile::AtomicFile",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+          "startLine": 216,
+          "endLine": 224,
+          "sha256": "063780cb253cfe351e8547e5b267347acc967fab5f642f8037d959e38146e905"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "注入构造拒null，由注入方保活，无第二文件后端",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.win32.AtomicFile.~HandleGuard",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "symbol": "~HandleGuard",
+          "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough::HandleGuard::~HandleGuard",
+          "startLine": 246,
+          "endLine": 251,
+          "sha256": "7991d73a0efd283814abfcbc6076510b6c7994bc324c142e702b94a122dcf2c3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "writeThrough提前返回时真实关句柄，正常close前dismiss；析构写closeResult不传播首次失败，保留主要错误",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+          "sha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+          "symbol": "CommandServiceImpl::submit",
+          "qualifiedSymbol": "sdurws::ird::project::CommandServiceImpl::submit",
+          "startLine": 169,
+          "endLine": 221,
+          "sha256": "0b4fd5b8104be7f2d89951ff1a84ce05d62e5214a494ed07b1fc11074a7ec006"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "命令槽串行，acquireInFlight在try前，随后S1/S2/executePlan；仅StoreError值化，其他异常透传；排队关闭并发未跑，不假设提交/算法归runtime",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+          "sha256": "9cbe83b9272fd24c40b950efc192dae99d229a663cf825f8ad42936ffae40054"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+          "symbol": "QueryPortImpl::branchTips",
+          "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchTips",
+          "startLine": 322,
+          "endLine": 345,
+          "sha256": "7a668dcabc3da7e3589adfd6e4f8ab9cbcb2c3e10a63be24e9ac5b620a28b2c3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "writer锁内权威metadata快照，锁外投影保留branches磁盘序，非WorkCell视图",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+          "sha256": "40cdd36f115de51730f22cf249ff6bd936cde2f1b00543e653636f1dc719cde9"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+          "symbol": "QueryPortImpl::branchHistory",
+          "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchHistory",
+          "startLine": 347,
+          "endLine": 394,
+          "sha256": "e3b54e863655e0253cb14db62c6a958c682108270fe6e5eb77de1b6278453940"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "从权威tip锁外沿不可变parent读，maxCount0空、unknown invalid_argument、悬挂StoreCorrupt；reserve(maxCount)资源上限/索引访问并发需原回归",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+          "sha256": "40cdd36f115de51730f22cf249ff6bd936cde2f1b00543e653636f1dc719cde9"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ArchiveServiceImpl.readSmallFile",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "symbol": "readSmallFile",
+          "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::readSmallFile",
+          "startLine": 70,
+          "endLine": 89,
+          "sha256": "5b9bc44a49afe2689049f69d06f2f62050cd2a622b32177a50262d91586d4dce"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-FILE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "std ifstream二进制整读，exists/open/bad返回nullopt，空文件合法，和其他读helper有重复但错误语义不同；IOUtil候选要核宽路径/int长度/异常",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ArchiveServiceImpl.mapOsError",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "symbol": "mapOsError",
+          "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::mapOsError",
+          "startLine": 103,
+          "endLine": 112,
+          "sha256": "da1756e15411897ebc4c80e938e6c6a0a0e01ca17faef3e8681be6f8dd784269"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "真实SDK ERROR_DISK_FULL/ACCESS_DENIED映射，可供错误数字表收口候选；当前无quota单列，需保留精确码语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "symbol": "ArchiveServiceImpl::finalize",
+          "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::finalize",
+          "startLine": 853,
+          "endLine": 1065,
+          "sha256": "9d364b4a1c6b6a5ae7074f1d7ebc11a8156243440180db58b64bc721d763979c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "task/manifest/写权→canonical摘要→writer锁内终局复核/幂等→文件size+core摘要→原子manifest→终结事件票据；writerGuard仍在作用域，锁外注释非锁序证明",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "symbol": "ArchiveServiceImpl::endSession",
+          "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::endSession",
+          "startLine": 455,
+          "endLine": 470,
+          "sha256": "173a438b768cde359221d64ecddba797f7b1e83e0d204fdac2af487c0d61068e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "sessions锁内置态摘登记并移动ticket，sessions锁外reset；调用者可能仍持writer锁，不宣称所有锁已释放",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "symbol": "ArchiveServiceImpl::publishResultArchived",
+          "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::publishResultArchived",
+          "startLine": 472,
+          "endLine": 500,
+          "sha256": "9dbf0fd9135572072720e5d0ea94fa4179123acb9f7d310407bd98124db0ac1c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "core事件payload只带TaskIdentity，无路径；既有bus两次重试，noexcept但事件make在try前需审异常保证",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+          "sha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+    },
+    {
+      "functionId": "project.ProjectStoreImpl.loadCommittedState",
+      "ownerUnit": "project",
+      "requirements": [
+        "CON-01",
+        "CON-05",
+        "PM-08",
+        "NFR-REL-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+          "symbol": "loadCommittedState",
+          "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::loadCommittedState",
+          "startLine": 519,
+          "endLine": 632,
+          "sha256": "c09cbc34f7f354f220cdd6fc81bb1d269ce5c5d8c32cd8e96b299ea2f6415c4d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_project"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+        "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+      },
+      "differences": "scan预检后真实装载修订/metadata，核projectId/schema/format；没有HEAD manifestDigest校验，公共open已复现漏检F962，非只静态调用推断",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+          "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+          "sha256": "25680199735ef090ca0c9f2f8e4e5c6ee2740fe85815829cfb3f8fff1f7c301d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+          "sha256": "3cf4f18291c2701f223bd36d81ce94c4e75ceaec0315122c701e96f99d7c7a0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+          "sha256": "d907754ecd7f095370cb125ca7dff8af988792293f7a39dcd86f1c1cd4032681"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+          "sha256": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+          "sha256": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+          "sha256": "1a19ba558d7d99c40ba10ce560bcf98631574634626deaa8d9ad24f46fd2ea07"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+          "sha256": "64f014a37129b471788d6c31640320f8a6ff699ce99c8321c66a431d8f71a4c8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+          "sha256": "96b22033f7fa61cfc3f6de54c0f797c0cb15ca080646a09222017ddc3e767286"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+          "sha256": "f8065bbfcd6f244052c7a9f88f3188c018618f4b38473944d3f64c03d71bd0b3"
+        }
+      ],
+      "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
     }
   ]
 }

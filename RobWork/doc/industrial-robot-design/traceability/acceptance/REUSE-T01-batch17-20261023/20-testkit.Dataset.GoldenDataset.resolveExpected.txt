@@ -1,0 +1,11 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::GoldenDataset::resolveExpected
+498: std::filesystem::path GoldenDataset::resolveExpected(std::string_view relPath) const
+499: {
+500:     const bool listed = std::any_of(manifest_.expected.begin(), manifest_.expected.end(),
+501:                                     [&](const std::string& s) { return s == relPath; });
+502:     if (!listed) {
+503:         failField("expected", "相对路径不在清单 expected 内: " + std::string{relPath});
+504:     }
+505:     return versionDir_ / std::filesystem::path{relPath};
+506: }

@@ -1,0 +1,97 @@
+[
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/ProximitySetup.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "COLLISION",
+    "path": "RobWork/RobWork/gtest/proximity/ProximitySetupRuleTest.cpp",
+    "match": true
+  },
+  {
+    "capability": "MODEL-BOUNDS",
+    "path": "RobWork/RobWork/src/rw/models/Models.hpp",
+    "match": true
+  },
+  {
+    "capability": "MODEL-BOUNDS",
+    "path": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "capability": "MODEL-BOUNDS",
+    "path": "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+    "match": true
+  },
+  {
+    "capability": "MODEL-BOUNDS",
+    "path": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+    "match": true
+  }
+]

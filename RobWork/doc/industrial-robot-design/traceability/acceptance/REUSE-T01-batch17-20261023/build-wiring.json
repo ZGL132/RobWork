@@ -1,0 +1,22 @@
+[
+  {
+    "rawSha256": "5ffab88624e4f85d562b66872f8f3371db19dc741a1892a2cc4a0135e515c7a2",
+    "path": "build/ird-core/sdurws_ird_core.vcxproj",
+    "copy": "generated-ird-core_sdurws_ird_core.vcxproj"
+  },
+  {
+    "rawSha256": "6e825743da62da5e7a36d294b8661ca9aa65c3c04c5dd17ab32d1d22b6b22406",
+    "path": "build/ird-testkit/sdurws_ird_testkit.vcxproj",
+    "copy": "generated-ird-testkit_sdurws_ird_testkit.vcxproj"
+  },
+  {
+    "rawSha256": "7839177433693ee4540690c341a47ce98777017440ac115eeda1766eacf4daf8",
+    "path": "build/ird_reuse_audit_probe.vcxproj",
+    "copy": "generated-ird_reuse_audit_probe.vcxproj"
+  },
+  {
+    "rawSha256": "3c90ec60e5a6bbb1c13d66e60ff493de8f50c8dcd3e0c15ee7466c96c4bb2d16",
+    "path": "build/CMakeCache.txt",
+    "copy": "generated-CMakeCache.txt"
+  }
+]

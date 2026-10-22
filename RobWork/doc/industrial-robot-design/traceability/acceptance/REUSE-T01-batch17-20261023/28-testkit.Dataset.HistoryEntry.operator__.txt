@@ -1,0 +1,3 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp
+sdurws::ird::testkit::HistoryEntry::operator!=
+128:     bool operator!=(const HistoryEntry& o) const noexcept { return !(*this == o); }

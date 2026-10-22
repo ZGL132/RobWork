@@ -1,0 +1,519 @@
+[
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "osToStoreError",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::osToStoreError",
+      "startLine": 44,
+      "endLine": 59,
+      "sha256": "3055b66bfb1e84f67a7c7444009ad398a6b28a6c97963063efb77446a9bcb7dc"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "cvHex",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::cvHex",
+      "startLine": 64,
+      "endLine": 72,
+      "sha256": "d4e94e2e16c3b12d3323e733b3670beea2ad2e9b9d1153d1760d61d9082e7af3"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "readAllBytes",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::readAllBytes",
+      "startLine": 76,
+      "endLine": 90,
+      "sha256": "e64c64c3b0eff0bb31b99366d9e517ce4ed4b9a382ea2eb96276ca75121df8d2"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "verifyStagedFile",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::verifyStagedFile",
+      "startLine": 103,
+      "endLine": 132,
+      "sha256": "33d226f14d2bdcb307a608016ee4ac27b049b2e7b6b5a68475c00f03fcfa87ca"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "emitReport",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::emitReport",
+      "startLine": 135,
+      "endLine": 140,
+      "sha256": "1c11e11866b2f681a1cdde706948027fbe3b455893790616796d2332082e66de"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "makeIgnoredUncommittedRecord",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeIgnoredUncommittedRecord",
+      "startLine": 147,
+      "endLine": 168,
+      "sha256": "2e83ed195537775533132ce5a0ba065d0014879acc5b68893a11700814444d2c"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "makeStoreCorruptRecord",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeStoreCorruptRecord",
+      "startLine": 174,
+      "endLine": 184,
+      "sha256": "b3691b1890f393a1905f6062967c9b448d688f776b84314da280f044a1770bd0"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "operator()",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::MetadataRefLess::operator()",
+      "startLine": 191,
+      "endLine": 198,
+      "sha256": "23197d28944a41a7ad2308140a4ced2acb3ccad922fe27823dfeb8e23c0fe276"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::TxEngine",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::TxEngine",
+      "startLine": 207,
+      "endLine": 228,
+      "sha256": "08440b970be7e8e6797ae85fee7beb525199a296c8f24c8ca387a760c5bda925"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::stagingRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::stagingRoot",
+      "startLine": 230,
+      "endLine": 233,
+      "sha256": "f491ea8839532000346113b05907bfdb2205c89ffb5d2bf1295864c1e4512ebe"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::objectsRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectsRoot",
+      "startLine": 235,
+      "endLine": 238,
+      "sha256": "35ed2594233b67ea1aeb334c858c19e39215e9afb742b450de52608161c3dd8a"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::revisionsRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionsRoot",
+      "startLine": 240,
+      "endLine": 243,
+      "sha256": "74bf435deb15601214a614e6e529569197ce761fddf1b9d55b5d14e9a9e5efe1"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::revisionDir",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionDir",
+      "startLine": 245,
+      "endLine": 250,
+      "sha256": "74d0abaeef16c28719177e442aa9a16caaeab2b9d9d5db757899ab8dd7896743"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::objectFile",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectFile",
+      "startLine": 252,
+      "endLine": 259,
+      "sha256": "4a46ec98e9c85501f43da2d82c18fc199175ad4477cb896c32ae2d905a090366"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::generateTxId",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::generateTxId",
+      "startLine": 261,
+      "endLine": 281,
+      "sha256": "08123319a65a8bcc81cc5408db501189295518abc63dc6d566c1f82d6ceb7134"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::commit",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit",
+      "startLine": 287,
+      "endLine": 797,
+      "sha256": "35aabcc8d00c06d9285cf7ba6954a02fc528df462bdd65bb2d6d3696019a6670"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::publishOneObject",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishOneObject",
+      "startLine": 799,
+      "endLine": 843,
+      "sha256": "0006f3285e84ca87dfada238e4fcd7434cd0b0979f7ea6f9805ffef423f7c079"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::publishEventWithRetry",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishEventWithRetry",
+      "startLine": 845,
+      "endLine": 865,
+      "sha256": "2673594666d7b54e61c26937da658cc16c24f0c1c0b76df3c07340e4b5e34acf"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::scanForRecovery",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::scanForRecovery",
+      "startLine": 871,
+      "endLine": 1142,
+      "sha256": "6024b4b64be7211d647b8d1c611013edec82dcbf6ee59bee2e404ef39b5c616c"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::readHead",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::readHead",
+      "startLine": 1144,
+      "endLine": 1158,
+      "sha256": "8776cd4cfcac5d5c0b4179a9634e9a02d1df9f50517c9cb8c36bb1b26e3573fa"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::reportDev",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::reportDev",
+      "startLine": 1164,
+      "endLine": 1171,
+      "sha256": "640a31e31b3fe99f53cdd4866194b52100c4c89b0201be8ea1eca077537a3576"
+    }
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "~PhantomRegistrationGuard",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit::PhantomRegistrationGuard::~PhantomRegistrationGuard",
+      "startLine": 503,
+      "endLine": 508,
+      "sha256": "cb879faeffa285048174f10a41b676d3120eecaa0dc14b7b2f974244d59674c8"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "handleToResult",
+      "qualifiedSymbol": "sdurws::ird::project::win32::handleToResult",
+      "startLine": 40,
+      "endLine": 56,
+      "sha256": "526edbeb87685f2133a02ecd24abea695643a383860e39df4163d07fd129181d"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "boolToResult",
+      "qualifiedSymbol": "sdurws::ird::project::win32::boolToResult",
+      "startLine": 59,
+      "endLine": 67,
+      "sha256": "eeab487bb23eabc51075787313d24f0a14c9d2d60ae4f80ef22dd7094bb973e1"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::openWriteThrough",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::openWriteThrough",
+      "startLine": 76,
+      "endLine": 91,
+      "sha256": "7b6549177a7bd2cefa298cb66a6984309c6fc2dd1170712c23a33bd3a8d93d7d"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::writeChunk",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::writeChunk",
+      "startLine": 93,
+      "endLine": 123,
+      "sha256": "aa7d54c246a5827fb9b33fc47bd9b781691acdecca63e09b9fd4c15f46922ccc"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::flush",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::flush",
+      "startLine": 125,
+      "endLine": 131,
+      "sha256": "61675f86a008761ecc5fdd8ba53f4a4ae5b76f25d88ae49c590aecd8b0255ada"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::closeHandle",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::closeHandle",
+      "startLine": 133,
+      "endLine": 136,
+      "sha256": "13150d8037b51c112d9ceb4df2430dba3993fdff6eb6e40e821135ab19815dd6"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::publishNew",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::publishNew",
+      "startLine": 138,
+      "endLine": 146,
+      "sha256": "359461fb0ede4c76b4218600efdebe670bc436478b2e380fac8970c68b204fd3"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::replaceExisting",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::replaceExisting",
+      "startLine": 148,
+      "endLine": 159,
+      "sha256": "542a1ed94e931e3541f3311c7fe3a0c866e888a93fd20c4596c6ed28cc0d6a28"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::createDirectories",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::createDirectories",
+      "startLine": 161,
+      "endLine": 182,
+      "sha256": "8d8405b204a3e537bbc5e711ea66de31118cd8014c9343ffe4ee23b3c21e6df4"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::removeTree",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::removeTree",
+      "startLine": 184,
+      "endLine": 200,
+      "sha256": "1bf3d7a7af561c0f14a207a033f32dee1aec718b148e0c8ef7fd170c69c6de08"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::writeThrough",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough",
+      "startLine": 226,
+      "endLine": 294,
+      "sha256": "d656394b7d99482f4bf972bf1ed0602734b57ae490618c564c76b59c9f8bea7f"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::publishNew",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::publishNew",
+      "startLine": 296,
+      "endLine": 303,
+      "sha256": "9e74836fa87776d176fc8b84de937ffb5335cb76b22e829d727cd3360f1a3690"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::replaceFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::replaceFile",
+      "startLine": 305,
+      "endLine": 311,
+      "sha256": "86c4478dfd1057740bd116db5f903de1b87cb5eb4926fc2d2e31503ac5f1d0ca"
+    }
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::AtomicFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+      "startLine": 207,
+      "endLine": 214,
+      "sha256": "37289d62f5c8b1a4d3eb5890586cbc49bb99302ac470a97185b57732dec2e79f"
+    }
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::AtomicFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+      "startLine": 216,
+      "endLine": 224,
+      "sha256": "063780cb253cfe351e8547e5b267347acc967fab5f642f8037d959e38146e905"
+    }
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "~HandleGuard",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough::HandleGuard::~HandleGuard",
+      "startLine": 246,
+      "endLine": 251,
+      "sha256": "7991d73a0efd283814abfcbc6076510b6c7994bc324c142e702b94a122dcf2c3"
+    }
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+      "symbol": "CommandServiceImpl::submit",
+      "qualifiedSymbol": "sdurws::ird::project::CommandServiceImpl::submit",
+      "startLine": 169,
+      "endLine": 221,
+      "sha256": "0b4fd5b8104be7f2d89951ff1a84ce05d62e5214a494ed07b1fc11074a7ec006"
+    }
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+      "symbol": "QueryPortImpl::branchTips",
+      "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchTips",
+      "startLine": 322,
+      "endLine": 345,
+      "sha256": "7a668dcabc3da7e3589adfd6e4f8ab9cbcb2c3e10a63be24e9ac5b620a28b2c3"
+    }
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+      "symbol": "QueryPortImpl::branchHistory",
+      "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchHistory",
+      "startLine": 347,
+      "endLine": 394,
+      "sha256": "e3b54e863655e0253cb14db62c6a958c682108270fe6e5eb77de1b6278453940"
+    }
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "readSmallFile",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::readSmallFile",
+      "startLine": 70,
+      "endLine": 89,
+      "sha256": "5b9bc44a49afe2689049f69d06f2f62050cd2a622b32177a50262d91586d4dce"
+    }
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "mapOsError",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::mapOsError",
+      "startLine": 103,
+      "endLine": 112,
+      "sha256": "da1756e15411897ebc4c80e938e6c6a0a0e01ca17faef3e8681be6f8dd784269"
+    }
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::finalize",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::finalize",
+      "startLine": 853,
+      "endLine": 1065,
+      "sha256": "9d364b4a1c6b6a5ae7074f1d7ebc11a8156243440180db58b64bc721d763979c"
+    }
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::endSession",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::endSession",
+      "startLine": 455,
+      "endLine": 470,
+      "sha256": "173a438b768cde359221d64ecddba797f7b1e83e0d204fdac2af487c0d61068e"
+    }
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::publishResultArchived",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::publishResultArchived",
+      "startLine": 472,
+      "endLine": 500,
+      "sha256": "9dbf0fd9135572072720e5d0ea94fa4179123acb9f7d310407bd98124db0ac1c"
+    }
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "symbol": "loadCommittedState",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::loadCommittedState",
+      "startLine": 519,
+      "endLine": 632,
+      "sha256": "c09cbc34f7f354f220cdd6fc81bb1d269ce5c5d8c32cd8e96b299ea2f6415c4d"
+    }
+  }
+]

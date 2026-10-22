@@ -1,0 +1,371 @@
+{
+  "schemaVersion": "ird-independent-review/1",
+  "taskId": "REUSE-T01",
+  "batch": "B17",
+  "reviewDate": "2026-10-23",
+  "reviewedCommit": "7eb991346be4eacaf15b0fdf5f914f0e4859875c",
+  "parentCommit": "435dbdb716b9eb86d0932a478eb086642206ac76",
+  "result": "PASS",
+  "resultScope": "仅B17局部审计登记/证据和原3项探测重现；产品与全T01不因此通过",
+  "blockingAuditFindings": [],
+  "knownOpenProductFindings": [
+    {
+      "id": "F-960",
+      "source": "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md / probe-r17/core-red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
+      "owner": "core / REUSE-T05",
+      "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
+    }
+  ],
+  "definitionsReviewed": 39,
+  "coreDefinitions": 7,
+  "testkitDefinitions": 32,
+  "allDefinitionsRemainPending": true,
+  "semanticChecks": [
+    {
+      "area": "core Compare.cpp/Compare.hpp（7定义）",
+      "result": "PASS scoped audit",
+      "evidence": "C4定向reference公式、非有限原始输入拒绝、vector/Q逐元素与长度失败、C7/nullopt、Tolerance工厂与精确值相等逐一核实。Q受__has_include门控；未宣称本次Q专用测试已跑。公开聚合字段可绕过工厂的事实已保留。"
+    },
+    {
+      "area": "SetCheck.hpp（8定义）",
+      "result": "PASS scoped audit",
+      "evidence": "默认traits/MatchPair、compatible调用profile.resolve和core::closeWithin、Kuhn递归与回滚、重复/身份/数值两阶段、交错圈歧义与独立顺序契约均已读。未照抄文件头过期歧义说明；没有把模板或测试辅助视为DTO。"
+    },
+    {
+      "area": "Dataset.cpp（15定义）",
+      "result": "PASS scoped audit",
+      "evidence": "字段守卫/词表/std::stoi/值深比较、load schema与来源/单位/完整性、resolve membership到filesystem join逐一核对。sha256HexOf实际调用既有core::ContentDigester，未伪称其自持SHA核心已完成成熟替换。"
+    },
+    {
+      "area": "Dataset.hpp（9定义）",
+      "result": "PASS scoped audit",
+      "evidence": "逐字段==/!=、manifest const引用与toleranceProfileRef值返回按实际值转发/所有权边界审查；未把这些访问器当作schema或容差档案装载证明。"
+    },
+    {
+      "area": "上游/既有依赖候选及供给",
+      "result": "PASS bounded evidence",
+      "evidence": "Transform3D::equal的绝对precision与Q精确==不能直接承担C4定向相对+绝对公式。既有Boost 1.92公开checked_edmonds_maximum_cardinality_matching/匹配验证器及matching_size读到真实实现，并由原审计目标Boost::headers消费；2个小图API试验证明有限适用，不代表生产接入。"
+    },
+    {
+      "area": "39条矩阵/定义/上下文",
+      "result": "PASS freshness and identity",
+      "evidence": "相对435dbdb716b9eb86d0932a478eb086642206ac76新增core7/testkit32；每条定义与矩阵sources完全一致，规范化区段摘要、全限定符号及自身全文件inputs有效。17个唯一绑定（含3个审计证据文件）全部摘要匹配。5组检索重跑输出一致，4个既有Boost安装候选原始摘要一致。"
+    }
+  ],
+  "staticBoundaries": [
+    {
+      "path": "testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "lines": "190–199 / 206–223",
+      "observation": "重复键push和阶段1线性查找/嵌套循环与“同键只报一次”“O(n)”注释存在待核边界。",
+      "classification": "静态源码事实/风险；本次未运行三次同键或性能场景，不新增已复现缺陷结论。"
+    },
+    {
+      "path": "testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "lines": "239–249 / 254–304 / 306–359",
+      "observation": "身份失败仍可进入数值阶段，但equivalent已false；歧义实际为交错圈闭包，matched由两阶段依次追加。",
+      "classification": "审计正确区别实现与旧注释；不把Boost删边探测等同已替换原歧义实现。"
+    },
+    {
+      "path": "testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+      "lines": "400–431",
+      "observation": "长度不同时firstDivergence先设较短长度，早于该位置的失配与契约优先级尚需验证。",
+      "classification": "静态待核，未执行产品顺序断言。"
+    },
+    {
+      "path": "testkit/src/Dataset.cpp",
+      "lines": "401–430 / 455–483",
+      "observation": "执行代码仅额外要求inputs/expected的integrity membership；未见generatorCommitted时覆盖generatorScript的额外守卫。",
+      "classification": "文档已如实限定，不把注释当已实现保证；本次未跑manifest故障用例。"
+    },
+    {
+      "path": "testkit/src/Dataset.cpp",
+      "lines": "138–171 / 367–376 / 410–414",
+      "observation": "std::stoi异常转译、double转seed/sizeBytes/threadCount的整数与范围边界尚待专项验证。",
+      "classification": "静态待核；未执行溢出/非整数数据集用例，不宣称已复现。"
+    },
+    {
+      "path": "testkit/src/Dataset.cpp",
+      "lines": "199–213 / 469–471 / 488–506",
+      "observation": "ref.version/清单路径在join前的边界与membership不构成规范化沙箱；打开失败之外的读错误也未完整验证。",
+      "classification": "静态待核；未运行路径穿越/IO故障，不据此宣布安全通过。"
+    }
+  ],
+  "metadataChecks": {
+    "all39DefinitionsBound": true,
+    "all39OwnFileInputsBound": true,
+    "allInputAndAuditEvidenceHashesMatch": true,
+    "originalArtifactHashesMatch": true,
+    "noProductOrUpstreamChange": true
+  },
+  "searchReplay": [
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "-i",
+        "bipart|hopcroft|matching|augment|closeWithin|isApprox|approxEqual|relative.*toler",
+        "RobWork/RobWork/src",
+        "RobWork/RobWorkSim/src",
+        "RobWork/RobWork/gtest",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.cpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 108,
+      "sameOutputAsFrozen": true,
+      "log": "search-1.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "equal|precision|operator==",
+        "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+        "RobWork/RobWork/src/rw/math/Q.hpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 19,
+      "sameOutputAsFrozen": true,
+      "log": "search-2.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "checked_edmonds_maximum_cardinality_matching|matching_size|matching\\(|edmonds|maximum_cardinality_matching_verifier",
+        "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/graph/max_cardinality_matching.hpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 37,
+      "sameOutputAsFrozen": true,
+      "log": "search-3.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "closeWithin|Tolerance::make|checkSetEquivalent|checkStableOrder|GoldenDataset::load|parseSemanticVersion",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 43,
+      "sameOutputAsFrozen": true,
+      "log": "search-4.log"
+    },
+    {
+      "arguments": [
+        "rg",
+        "-n",
+        "sdurws_ird_core|IRD_CORE_HAS_RW_Q|sdurws_ird_testkit|SetCheckTest|DatasetTest|CompareTest",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt"
+      ],
+      "originalExitCode": 0,
+      "exitCode": 0,
+      "error": null,
+      "lineCount": 79,
+      "sameOutputAsFrozen": true,
+      "log": "search-5.log"
+    }
+  ],
+  "installedCandidateBindings": [
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\max_cardinality_matching.hpp",
+      "rawSha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\graph\\adjacency_list.hpp",
+      "rawSha256": "758292c5dabec222b3b21044ad3f22026297eece78d8b8a80306f4ec2e12512e",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "758292c5dabec222b3b21044ad3f22026297eece78d8b8a80306f4ec2e12512e",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+      "rawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+      "match": true
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_headers\\boost_headers-config.cmake",
+      "rawSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28",
+      "origin": "既有同渠道vcpkg安装，只读；不是RobWork文件或新增生产依赖批准",
+      "observedRawSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28",
+      "match": true
+    }
+  ],
+  "verification": {
+    "configureExit": 0,
+    "buildExit": 0,
+    "visualStudio": {
+      "VSCMD_ARG_TGT_ARCH": "x64",
+      "VCINSTALLDIR": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\",
+      "VSCMD_ARG_HOST_ARCH": "x64",
+      "cmake": "D:\\software\\CMake\\bin\\cmake.exe",
+      "compiler": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\bin\\HostX64\\x64\\cl.exe"
+    },
+    "runEnvironment": {
+      "executable": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-B17-independent-7eb99134\\build\\Release\\ird_reuse_audit_probe.exe",
+      "VSCMD_ARG_TGT_ARCH": "x64",
+      "QT_QPA_PLATFORM": "windows",
+      "executableSha256": "8274705949faef6ca2693b4ee5833d225cad179b9b893ff6b1e1c531caf40b8f"
+    },
+    "tests": {
+      "result": "PASS",
+      "meaning": "证据一致性通过；不将core真实失败改写为产品通过",
+      "runs": [
+        {
+          "name": "candidates",
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0,
+          "notRun": 0,
+          "exitCode": 0,
+          "testIds": [
+            "ReuseAuditMatching.BoostMatchingDistinguishesAlternativeAfterRemovingEdge",
+            "ReuseAuditMatching.BoostMaximumMatchingAvoidsGreedyTrap"
+          ],
+          "matchesOriginalTestIdentityAndOutcomes": true,
+          "xmlAndNativeReportAgree": true,
+          "artifacts": [
+            {
+              "path": "candidates/gtest.xml",
+              "rawSha256": "e6bb15e2e18d63d8aa93d51331355e04b029de4ad15f5be6f39c985693607828"
+            },
+            {
+              "path": "candidates/ird-test-report.json",
+              "rawSha256": "a376e638e4544eae7f0b6c854846c5ce9498ad5fa7b94d1fd052df4b17f0e130"
+            },
+            {
+              "path": "candidates/stdout.log",
+              "rawSha256": "ceebeab2989df266f60bf40ca87b61c868e840000104124ff8aa0ab4d4fed3e1"
+            },
+            {
+              "path": "candidates/exit.txt",
+              "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+            }
+          ]
+        },
+        {
+          "name": "core-red",
+          "total": 1,
+          "passed": 0,
+          "failed": 1,
+          "skipped": 0,
+          "notRun": 0,
+          "exitCode": 1,
+          "testIds": [
+            "ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance"
+          ],
+          "matchesOriginalTestIdentityAndOutcomes": true,
+          "xmlAndNativeReportAgree": true,
+          "artifacts": [
+            {
+              "path": "core-red/gtest.xml",
+              "rawSha256": "1e496d924a86466bac193a2b688c9f23af0dbd5f54cc8e47b1ea88fa42cc5f47"
+            },
+            {
+              "path": "core-red/ird-test-report.json",
+              "rawSha256": "ab01da543089e518c51f29bd44d7ce16b94f234d36cb506a9cad3e729548cb7b"
+            },
+            {
+              "path": "core-red/stdout.log",
+              "rawSha256": "be5156bba5069479666c34a78406bfe592e1f04112c3a27ea8376f490fc355a9"
+            },
+            {
+              "path": "core-red/exit.txt",
+              "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+            }
+          ]
+        }
+      ],
+      "totals": {
+        "total": 3,
+        "notRun": 0,
+        "passed": 2,
+        "skipped": 0,
+        "failed": 1
+      },
+      "oldProbeTestsNotRun": 30
+    },
+    "gateExitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "gateCounts": {
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0
+    },
+    "validatorBindings": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "rawSha256": "4161db742d876d18b1d477c5ccd83bcc1598403f05cafd013a11527c8497ec89"
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "rawSha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+        "rawSha256": "25f27251fafa9cb40146243afc4916ea82b93cdf8708b6fa050c4b37d77f0e57"
+      },
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "rawSha256": "e9a46c913f6ed8afc84cb04caffb119411bf77aa967eade090fe7f16d2cf0462"
+      }
+    ],
+    "notRun": [
+      "旧30项审计探测",
+      "Compare/SetCheck/Dataset产品测试",
+      "性能与100000规模",
+      "完整集成构建",
+      "GUI",
+      "DeepEvidence"
+    ]
+  },
+  "repositoryClean": true,
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "fullT01Pass": false,
+  "coverageExitResult": "NOT PASS (原独立全覆盖结论保留，未在此复审全项目)",
+  "T02Admission": false,
+  "limitations": [
+    "本结论只接受B17的只读逐定义审计、证据新鲜度、有限候选探测与已注册反例事实，不接受产品算法正确性或迁移结项。39条均保持pending；没有新增grant、closure或核心保留/替换批准。",
+    "F-960仍OPEN：有限极值下数学差2M大于阈值1.5M，但原生产closeWithin返回true。独立运行保持真实failed；不能删用例、放宽容差或将其计为passed。",
+    "本次只重跑新增3项；旧30项、Compare/SetCheck/Dataset产品测试、性能/100000规模、完整集成目标、GUI及DeepEvidence均NOT RUN。依赖库随原审计目标编译，不等于其产品用例通过。",
+    "Boost候选只证明两项四顶点图API用例的行为；尚无原SetCheck生产入口接线/断开扰动/全部业务语义、见证、复杂度与内存验收，不能记作direct/adapter生产正向证据。",
+    "五组搜索的有限范围与原件一致；无命中不证明不存在其他候选。17绑定中上下文摘要防陈旧，不表示其他源文件全部语义已穷尽审查。",
+    "既有全项目覆盖NOT PASS原件不因B17补审改写；T01仍audit-in-progress，未授全T01完成或T02准入。未改仓库、矩阵、产品、上游或vcpkg，未提交、推送、合并或派代理。"
+  ],
+  "evidenceRoot": "C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-B17-independent-7eb99134",
+  "reportToolingNotes": [
+    "首次TEMP摘录命名将operator==/!=映射为同名，最终自查检出；现已加唯一序号重提取39份，保留verify-review.initial-fail.log和exit。源码/矩阵及测试未修改。"
+  ]
+}
