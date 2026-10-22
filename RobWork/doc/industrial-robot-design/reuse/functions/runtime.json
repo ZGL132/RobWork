@@ -1,0 +1,265 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "runtime",
+  "functions": [
+    {
+      "functionId": "runtime.multiplyRotation",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+          "symbol": "multiplyRotation",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::multiplyRotation",
+          "startLine": 69,
+          "endLine": 83,
+          "sha256": "b473fe95be82ee382afc9f41d8d5fc3d54042ee6d8dd24979888fada1ce5e11a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"multiplyRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写矩阵乘；值类型直接运算，避免把冒烟缺库当作新核心理由",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.rotateVector",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+          "symbol": "rotateVector",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotateVector",
+          "startLine": 86,
+          "endLine": 93,
+          "sha256": "422ef7b57659f485cc54ea21e855056305f1972a472e8b94656449a77e28f035"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotateVector|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写旋转向量乘；保留参考系语义，直接消费上游结果",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.rotationFromCustomEaa",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+          "symbol": "rotationFromCustomEaa",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotationFromCustomEaa",
+          "startLine": 207,
+          "endLine": 244,
+          "sha256": "52419c634d48f240848975cb373f1f12bc0591eaa65a2019dabbd8c1d999e39f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotationFromCustomEaa|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写Rodrigues；保留有限性拒绝，核rw EAA零/极小角边界",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.composeWorldBaseTcp",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+          "symbol": "composeWorldBaseTcp",
+          "qualifiedSymbol": "sdurws::ird::runtime::composeWorldBaseTcp",
+          "startLine": 477,
+          "endLine": 490,
+          "sha256": "4bc73c98e17f7ede536c0bedab4005759c284cc74cb26f9ad5fe00bb850d7e64"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"composeWorldBaseTcp|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "直接Transform3D乘法替换代数；runtime保持安装变换唯一权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.singularValuesOneSidedJacobi",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-21"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+          "symbol": "singularValuesOneSidedJacobi",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::singularValuesOneSidedJacobi",
+          "startLine": 279,
+          "endLine": 338,
+          "sha256": "0dc88e571a47a871c9f1232b702ad79a00504c0be5c29197a525f25a495ef5bf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-SVD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"singularValuesOneSidedJacobi|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写Jacobi；保留有限性/条件数/奇异阈值的产品语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.compileWorkCell",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+          "symbol": "compileWorkCell",
+          "qualifiedSymbol": "sdurws::ird::runtime::compileWorkCell",
+          "startLine": 592,
+          "endLine": 966,
+          "sha256": "e7ed9fdaadd4694be201e98754c62170d9d94b077a2da5de9588190864fb9f62"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"compileWorkCell|setQ|baseTframe|baseJframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "owner编译映射的来源与操作需完整审查；不是业务adapter构造权限",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "runtime.rotateTransposed",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
+          "symbol": "rotateTransposed",
+          "startLine": 97,
+          "endLine": 104,
+          "sha256": "1a9b37fe3f40237caef4295df9f8c50e709f8a3399dafbf0c56c4b8dd033bd83",
+          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotateTransposed"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rotateTransposed|inverse|operator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写转置旋转向量乘；复用inverse(Rotation3D)*Vector3D，保留world/base参考系与重力向量语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}

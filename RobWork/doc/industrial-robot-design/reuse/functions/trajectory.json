@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "trajectory",
+  "functions": [
+    {
+      "functionId": "trajectory.interpolateJointLinear",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Ptp.cpp",
+          "symbol": "interpolateJointLinear",
+          "qualifiedSymbol": "sdurws::ird::trajectory::interpolateJointLinear",
+          "startLine": 61,
+          "endLine": 82,
+          "sha256": "00398c0fb754f89fe73bd97838fb8e71a1d2710df11b005877c78a21507e8731"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "TRAJ-LINEAR",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"interpolateJointLinear|LinearInterpolator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Ptp.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写线性插值；复用LinearInterpolator<Q>并保留端点和零段业务处理",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}

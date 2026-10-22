@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "drivetrain",
+  "functions": [
+    {
+      "functionId": "drivetrain.singularValuesJacobi",
+      "ownerUnit": "drivetrain",
+      "requirements": [
+        "DYN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+          "symbol": "singularValuesJacobi",
+          "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::singularValuesJacobi",
+          "startLine": 193,
+          "endLine": 266,
+          "sha256": "b9783d30b75258cf7b059534ab0ae340182952be6c7a05809453298abfb1d8ac"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_drivetrain"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-SVD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"singularValuesJacobi|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "第三处手写Jacobi；复用上游svd，保留谱条件数阈值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+          "sha256": "ade3cf448495966736cfabd9d20823e1fd269c86d8810bfb60445115d584533a"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "drivetrain.invertSquareMatrix",
+      "ownerUnit": "drivetrain",
+      "requirements": [
+        "DYN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+          "symbol": "invertSquareMatrix",
+          "qualifiedSymbol": "sdurws::ird::drivetrain::(anonymous namespace)::invertSquareMatrix",
+          "startLine": 283,
+          "endLine": 351,
+          "sha256": "656a252cf232c09c614c85850f7011ea3bc4a45acbe3493321f04a6f881eac47"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_drivetrain"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-SVD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"invertSquareMatrix|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写Gauss-Jordan；复用LinearAlgebra::inverse/pseudoInverse但不能放行被业务拒绝的奇异矩阵",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+          "sha256": "ade3cf448495966736cfabd9d20823e1fd269c86d8810bfb60445115d584533a"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}

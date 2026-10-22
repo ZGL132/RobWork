@@ -103,11 +103,35 @@
           "sha256": "3084ff3b5c8856d3721df26e4406d11815851acd01b2703757333d2296b83c94",
           "targetFile": "RobWork/RobWork/src/rw/invkin/CMakeLists.txt",
           "targetSha256": "5a37689be67e9055010d4e52b28619921c67ec46703f3ac54a7a8f3e5bb50cb4"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+          "symbols": [
+            "Target",
+            "enabled",
+            "solve"
+          ],
+          "target": "sdurw_invkin",
+          "sha256": "2fda9476ef9aeec23a8b8129ae19d127e8bf936e231c14db91e9251010b03b07",
+          "targetFile": "RobWork/RobWork/src/rw/invkin/CMakeLists.txt",
+          "targetSha256": "5a37689be67e9055010d4e52b28619921c67ec46703f3ac54a7a8f3e5bb50cb4"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/ParallelDevice.hpp",
+          "symbols": [
+            "ParallelDevice",
+            "Legs"
+          ],
+          "target": "sdurw_models",
+          "sha256": "aee0b3bfc3f57bf1c9643916726af91b2cf15b79db8201375ee97f3955fdd181",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
         }
       ],
       "build": {
         "targets": [
-          "sdurw_invkin"
+          "sdurw_invkin",
+          "sdurw_models"
         ],
         "constraints": "双容差、约束、取消和统计须独立探测"
       },
@@ -122,7 +146,7 @@
         }
       ],
       "limits": {
-        "semantics": "双容差、约束、取消和统计须独立探测",
+        "semantics": "JacobianIKSolver 标量容差/solveLocal；ParallelIKSolver 支持坐标掩码，单leg实测位置解可行。自由roll、双容差、真实迭代统计与取消仍待审，不能只后过滤。",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
@@ -136,10 +160,20 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/invkin/ParallelIKSolverTest.cpp",
+          "sha256": "5c69ac89994dceefb81ffd4acb7e28ec656e62cbfd0714c0e3cc2abf67c079b1",
+          "symbols": [
+            "TEST(ParallelDevice, Robotiq)",
+            "enabled"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"solveLocal|setSolverType|DLS\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     },
     {
@@ -194,10 +228,21 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp",
+          "sha256": "654620c2c8b0bda94bcc2218cb81b1bf749860fcedb2a0766f67c1b3d876532b",
+          "symbols": [
+            "LinAlgeTest",
+            "pseudoInverse",
+            "inverse"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"svd|pseudoInverse\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     },
     {
@@ -256,7 +301,7 @@
       "tests": [],
       "resourceSearch": {
         "command": "rg -n \"solve|setGravity|setPayload\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     },
     {
@@ -312,10 +357,20 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWorkSim/gtest/simulator/PhysicsEngineTest.cpp",
+          "sha256": "53c9e3a7ceb5d8c2f2919e548a4cef4630065cacaab62c876cfd491e2759fc3d",
+          "symbols": [
+            "PhysicsEngineTest",
+            "EnginesInFactory"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"initPhysics|step|load\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     },
     {
@@ -483,7 +538,17 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp",
+          "sha256": "3fbd1a00ed62fd84f113d70504706fb3c83bb925c2824948d3ac9d0be3128952",
+          "symbols": [
+            "InterpolationSetup",
+            "isLinear"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"LinearInterpolator\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
@@ -507,6 +572,17 @@
           "sha256": "48ba3d8e33994f4795bde108264f992fff63c2105dceed4c630175d4f2d91f69",
           "targetFile": "RobWork/RobWork/src/rw/trajectory/CMakeLists.txt",
           "targetSha256": "5e91f0cc2da8cdcbc06b3dee71cab9ee178e393ca1aa6d0e98dcd71eab6db10e"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/trajectory/LloydHaywardBlend.hpp",
+          "symbols": [
+            "LloydHaywardBlend",
+            "ddx"
+          ],
+          "target": "sdurw_trajectory",
+          "sha256": "9735d371898f8246caab40cfb3ffd8ea9988526511cb279aa54f7e9cbe2a0dcb",
+          "targetFile": "RobWork/RobWork/src/rw/trajectory/CMakeLists.txt",
+          "targetSha256": "5e91f0cc2da8cdcbc06b3dee71cab9ee178e393ca1aa6d0e98dcd71eab6db10e"
         }
       ],
       "build": {
@@ -526,7 +602,7 @@
         }
       ],
       "limits": {
-        "semantics": "候选不等价五次/七次，必须先缺口提案",
+        "semantics": "LloydHaywardBlend含五次alpha和六次beta；静止端点探测通过，不等同任意端导数/七次。通用Polynomial另见MATH-POLYNOMIAL。",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
@@ -543,7 +619,7 @@
       "tests": [],
       "resourceSearch": {
         "command": "rg -n \"CubicSplineFactory\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     },
     {
@@ -601,6 +677,235 @@
       "resourceSearch": {
         "command": "rg -n \"inCollision\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
+    },
+    {
+      "id": "MATH-EIGEN",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|InertiaMatrix|Polynomial|evaluateDerivatives\" RobWork/RobWork/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读公共接口与调用实现，局部适用性探测不等同完整业务审计"
+      },
+      "boundary": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+          "symbols": [
+            "eigenDecompositionSymmetric"
+          ],
+          "target": "sdurw_math",
+          "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp",
+          "symbols": [
+            "calculatePrincipalInertia"
+          ],
+          "target": "sdurw_geometry",
+          "sha256": "388b9cd733a811fa2bf0fbd58c051f9659f66bb9054802f7a5c33befd3c9b5fd",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_geometry",
+          "sdurw_math"
+        ],
+        "constraints": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性"
+      },
+      "usages": [
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性",
+        "lifetime": "数学值运算；输入/输出由调用者持有，无模型结构写入",
+        "determinism": "已探测固定输入；跨平台位级一致性及业务边界仍须回归"
+      },
+      "ownerUnit": "modeling",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp",
+          "sha256": "654620c2c8b0bda94bcc2218cb81b1bf749860fcedb2a0766f67c1b3d876532b",
+          "symbols": [
+            "LinAlgeTest",
+            "eigenDecompositionSymmetric"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
+      }
+    },
+    {
+      "id": "MATH-INERTIA",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|InertiaMatrix|Polynomial|evaluateDerivatives\" RobWork/RobWork/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读公共接口与调用实现，局部适用性探测不等同完整业务审计"
+      },
+      "boundary": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
+          "symbols": [
+            "InertiaMatrix"
+          ],
+          "target": "sdurw_math",
+          "sha256": "dd10f64b32bb64cff25b48e1b66333cd8bd1815f3ffc5bab4d2335fbf4d3da16",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点"
+      },
+      "usages": [
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点",
+        "lifetime": "数学值运算；输入/输出由调用者持有，无模型结构写入",
+        "determinism": "已探测固定输入；跨平台位级一致性及业务边界仍须回归"
+      },
+      "ownerUnit": "modeling",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
+      }
+    },
+    {
+      "id": "MATH-POLYNOMIAL",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|InertiaMatrix|Polynomial|evaluateDerivatives\" RobWork/RobWork/src RobWork/RobWork/gtest",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "已读公共接口与调用实现，局部适用性探测不等同完整业务审计"
+      },
+      "boundary": "五/七次系数与时间尺度、任意端导数、jerk、Interpolator 薄封装边界；不降低原连续性",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Polynomial.hpp",
+          "symbols": [
+            "Polynomial",
+            "evaluateDerivatives"
+          ],
+          "target": "sdurw_math",
+          "sha256": "cc1e51fad738ddc12a15d3081a7e99c0da3471c98883b7526300836005a7f4d9",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/PolynomialND.hpp",
+          "symbols": [
+            "evaluateDerivatives"
+          ],
+          "target": "sdurw_math",
+          "sha256": "cfd670ab590704502ee7d6e53a06c887a4436a31baa2d07f3904e48bb1bc672a",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "五/七次系数与时间尺度、任意端导数、jerk、Interpolator 薄封装边界；不降低原连续性"
+      },
+      "usages": [
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "五/七次系数与时间尺度、任意端导数、jerk、Interpolator 薄封装边界；不降低原连续性",
+        "lifetime": "数学值运算；输入/输出由调用者持有，无模型结构写入",
+        "determinism": "已探测固定输入；跨平台位级一致性及业务边界仍须回归"
+      },
+      "ownerUnit": "trajectory",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/PolynomialTest.cpp",
+          "sha256": "5764b8c7632ffba84158909a2412282d13514b30960533c8d21c922b7fc9be69",
+          "symbols": [
+            "evaluateDerivatives",
+            "PolynomialSolver"
+          ],
+          "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
       }
     }
   ]

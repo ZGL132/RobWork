@@ -384,7 +384,15 @@
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-gate-fix-20261022/ps7/suffix-ps1.log",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-gate-fix-20261022/ps7/suffix-py.log",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-gate-fix-20261022/ps7/suffix-tpp.log",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-gate-fix-20261022/ps7/suffix-ts.log"
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-gate-fix-20261022/ps7/suffix-ts.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/configure.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/tests.log"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

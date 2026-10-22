@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "dynamics",
+  "functions": [
+    {
+      "functionId": "dynamics.buildRneaChain",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "symbol": "buildRneaChain",
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::buildRneaChain",
+          "startLine": 458,
+          "endLine": 620,
+          "sha256": "64bcc75c7cd6e560ea39ffc81748e72cd43cb1565187c1a63dc97d6249385cad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "DYN-RNE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"buildRneaChain|solve|setGravity|setPayload\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "自建链/固定段/惯量聚合；优先runtime DWC/RigidDevice事实，不在业务另建模型",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "dynamics.computeGeometry",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "symbol": "computeGeometry",
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::computeGeometry",
+          "startLine": 747,
+          "endLine": 800,
+          "sha256": "f6f8b22d4bb9136cfd9b4b3dc480012340f50a1574876269cabfaddbc97d7026"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"computeGeometry|setQ|baseTframe|baseJframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "重复几何链；通过同runtime模型State查上游关节位姿，dynamics不建第二真值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "dynamics.rneaTorques",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "symbol": "rneaTorques",
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::rneaTorques",
+          "startLine": 836,
+          "endLine": 916,
+          "sha256": "d60d7e4af72014854f14781cbb8a1f9b402a8ae28b9831ebbb89c2ec04a79d70"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "DYN-RNE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rneaTorques|solve|setGravity|setPayload\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写RNE递推；solve Wrench后按关节类型投影，核DOF+1与载荷摩擦唯一计入",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "dynamics.solveLinearSystem",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+          "symbol": "solveLinearSystem",
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::solveLinearSystem",
+          "startLine": 170,
+          "endLine": 225,
+          "sha256": "1feff68b360d9220ff9a0fd79727a55a3f44560e1a8a7836de519fa3ef5a81b5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "DYN-FD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"solveLinearSystem|initPhysics|step|load\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "自持质量阵消元属于待移除核心；不能仅换通用消元后宣称接入PhysicsEngine",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}

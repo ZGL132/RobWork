@@ -1,0 +1,228 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "modeling",
+  "functions": [
+    {
+      "functionId": "modeling.symmetricEigenvalues3x3",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "symmetricEigenvalues3x3",
+          "qualifiedSymbol": "sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3",
+          "startLine": 54,
+          "endLine": 91,
+          "sha256": "b63f8d4c4b961506d2edb5feccaa9e2af64db590adfd6a99837b5f3c7f49870b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-EIGEN",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"symmetricEigenvalues3x3|eigenDecompositionSymmetric\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "上游特征值/主惯量可复用；保留SPD和三角不等式判定；复核非对角、退化、尺度与位级确定性论据",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.accumulateRotatedInertia",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+          "symbol": "accumulateRotatedInertia",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateRotatedInertia",
+          "startLine": 92,
+          "endLine": 102,
+          "sha256": "d2359704f30855707f28b071177df2ce85fe8ecfb61a9227c40352b106d80dda"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-INERTIA",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"accumulateRotatedInertia|InertiaMatrix\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写R D R^T；改用Rotation3D/InertiaMatrix运算，保留段排序及kg·m²/参考系",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.accumulateParallelAxis",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+          "symbol": "accumulateParallelAxis",
+          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateParallelAxis",
+          "startLine": 106,
+          "endLine": 116,
+          "sha256": "add0d6c3fd8554ab1158b475fe2f49df6a7aae37980251cf2b7b94023b0faada"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-INERTIA",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"accumulateParallelAxis|InertiaMatrix\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手写平行轴组合；继续查GeometryUtil质量参数与Body API，未证明上游没有转换能力",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.couplingSingularValues",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-21"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+          "symbol": "couplingSingularValues",
+          "qualifiedSymbol": "sdurws::ird::modeling::couplingmath::couplingSingularValues",
+          "startLine": 111,
+          "endLine": 188,
+          "sha256": "eb0dc99dc842addaf2b6c578e5bd8f672ed350d188be6545a707d355c04a1966"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-SVD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"couplingSingularValues|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "删单侧Jacobi核心；保留耦合阈值与RowMatrix到Eigen薄转换",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.rpyToRotation",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+          "symbol": "rpyToRotation",
+          "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToRotation",
+          "startLine": 47,
+          "endLine": 64,
+          "sha256": "9ea39941a6da8120a12fb28ce24aeb1d7d419fabdae9d4362fcafce7bf7e04ab"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rpyToRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手推RzRyRx；复用RPY并核ZYX次序、rad与奇异姿态",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "modeling.rpyToEaa",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+          "symbol": "rpyToEaa",
+          "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToEaa",
+          "startLine": 74,
+          "endLine": 93,
+          "sha256": "9dbb7cdd4099b29d096829d6326fe5b3a8549b3565ddfd7c26d034239877d454"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"rpyToEaa|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "手推半角四元数转EAA；复用RPY/EAA/Quaternion并核主值符号及pi/极小角",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "kinematics",
+  "functions": [
+    {
+      "functionId": "kinematics.FkEvaluator.evaluate",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+          "symbol": "FkEvaluator::evaluate",
+          "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+          "startLine": 174,
+          "endLine": 445,
+          "sha256": "4dba5c09d19e55b4a708f6b46a795f9fe56af58062cd0f8abf40481d66db7611"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"FkEvaluator::evaluate|setQ|baseTframe|baseJframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "自建Eigen关节链及Jacobian；改用runtime受控Device/State，核q_auth偏置、TCP/参考点与固定段",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "kinematics.FkEvaluator.evaluate",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+          "symbol": "FkEvaluator::evaluate",
+          "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+          "startLine": 174,
+          "endLine": 445,
+          "sha256": "4dba5c09d19e55b4a708f6b46a795f9fe56af58062cd0f8abf40481d66db7611"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-SVD",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"FkEvaluator::evaluate|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "源码注称rw::math无SVD与公共LinearAlgebra::svd矛盾；指标保留，SVD优先复用",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "kinematics.IkSolver.solve",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "IkSolver::solve",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IkSolver::solve",
+          "startLine": 565,
+          "endLine": 1044,
+          "sha256": "304f416fada8ee3c5c6c979fd940c5cbe746729ae3d7cb98c68614bc2e182e93"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"IkSolver::solve|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "自持求解迭代；区分普通/位置/roll约束、取消和真实统计；单leg探测不等同生产迁移",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    },
+    {
+      "functionId": "kinematics.nearestToolRollTarget",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "nearestToolRollTarget",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::nearestToolRollTarget",
+          "startLine": 255,
+          "endLine": 280,
+          "sha256": "65d55db3c915719b573a8d78e539917a3fc048c412f25c852948992304b3ddee"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"nearestToolRollTarget|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "自由roll目标选择不能直接等同固定参考系EAA行掩码；保留反例与候选边界",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+    }
+  ]
+}
