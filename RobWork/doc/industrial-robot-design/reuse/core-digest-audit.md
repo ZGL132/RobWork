@@ -19,3 +19,7 @@ oracle.py另用Python hashlib冻结边界摘要，可供独立验收第三方核
 GAP-DIGEST-01仅是待批准提案。vcpkg有Boost.Hash2/OpenSSL port，但未检出当前安装的相应头/包；未安装、未联网拉取、未核其API，不称成熟候选已可链接。优先在同渠道验证跨平台成熟实现，保留ContentDigester/update/finalize及Digest256值契约，移除自持压缩/轮常量，而非新增通用crypto facade或双后端运行时。CNG当前仅作独立数值证据，不能单独满足跨平台及依赖红线。
 
 消费者canonical序列化归各owner，core不接管；诊断/evidence权威不变。大于ULONG/超长消息、故障注入、并发/跨平台/性能、全部消费者键兼容性尚未验，保持pending。FNV修正必须另行核既有约定与消费者兼容性，不借SHA提案暗中更换散列算法。
+
+## R2：公开hash跨文件依赖返工
+
+初版独验FAIL（B30-F01）：两个公开hash行未绑定Identity.cpp真实fnv1a128，旧B28独立行不能替代跨文件新鲜度链。R2在两行直接补该源码摘要，保持既有31行其余源段与依赖，并刷新变动审计文档/补充证据绑定。原37项原件和独验失败归档不重写；产品/probe/CMake相对090075171零变化，引用原独验真实13跑11passed2failed及14项CNG/hashlib证据，不冒称重新执行C++。原SHA2词边界转义偏多也保留，r2/search.json用正确边界实搜仍无命中；不改变未批准依赖/算法状态。

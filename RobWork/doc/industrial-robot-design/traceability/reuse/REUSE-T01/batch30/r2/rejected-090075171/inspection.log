@@ -1,0 +1,228 @@
+{
+  "matrix": {
+    "added": 30,
+    "changed_existing": [
+      "core.ContentDigester.compressBlock"
+    ],
+    "all_pending": true
+  },
+  "bindings": {
+    "count": 558,
+    "failures": []
+  },
+  "searchReruns": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "sha.?256|sha.?2\\b|openssl|bcrypt|cryptopp|crypto",
+        "RobWork/RobWork/src",
+        "RobWork/RobWorkSim/src",
+        "RobWork/RobWork/gtest",
+        "RobWork/RobWorkSim/gtest",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp",
+        "-g",
+        "CMakeLists.txt"
+      ],
+      "exit": 1,
+      "recordedExit": 1,
+      "lines": 0,
+      "recordedLines": 0
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "sha.?256|sha.?2\\b|openssl|bcrypt|cryptopp|crypto",
+        "RobWork/RobWork",
+        "RobWork/RobWorkSim",
+        "-g",
+        "!bin/**",
+        "-g",
+        "!libs/**",
+        "-g",
+        "!cmake/targets/**"
+      ],
+      "exit": 1,
+      "recordedExit": 1,
+      "lines": 0,
+      "recordedLines": 0
+    },
+    {
+      "args": [
+        "rg",
+        "--files",
+        "RobWork/RobWork",
+        "RobWork/RobWorkSim",
+        "-g",
+        "*SHA*",
+        "-g",
+        "*sha*",
+        "-g",
+        "*Digest*",
+        "-g",
+        "*digest*",
+        "-g",
+        "*Hash*",
+        "-g",
+        "*hash*"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "lines": 4,
+      "recordedLines": 4
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "toUInt|toInt|ranName",
+        "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+        "RobWork/RobWork/src/rw/core/StringUtil.hpp"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "lines": 10,
+      "recordedLines": 10
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "ContentDigester|std::hash<.*ContentVersion|std::hash<.*ContentIdentity",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "lines": 550,
+      "recordedLines": 550
+    },
+    {
+      "args": [
+        "rg",
+        "--files",
+        "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include",
+        "-g",
+        "*sha*",
+        "-g",
+        "*SHA*",
+        "-g",
+        "*fnv*",
+        "-g",
+        "*bcrypt*"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "lines": 93,
+      "recordedLines": 93
+    },
+    {
+      "args": [
+        "rg",
+        "--files",
+        "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share",
+        "-g",
+        "*hash2*",
+        "-g",
+        "*openssl*",
+        "-g",
+        "*crypto*"
+      ],
+      "exit": 1,
+      "recordedExit": 1,
+      "lines": 0,
+      "recordedLines": 0
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "BCryptHash\\(|BCryptCreateHash\\(|BCryptHashData\\(|BCryptDuplicateHash\\(|BCryptFinishHash\\(",
+        "D:/Windows Kits/10/Include/10.0.22621.0/shared/bcrypt.h"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "lines": 5,
+      "recordedLines": 5
+    }
+  ],
+  "searchReadBindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+      "ok": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/StringUtil.cpp",
+      "ok": true
+    },
+    {
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "ok": true
+    },
+    {
+      "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+      "ok": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "ok": true
+    }
+  ],
+  "externalCandidates": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/ports/boost-hash2/vcpkg.json",
+      "ok": true,
+      "bytes": 836
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/ports/boost-hash2/portfile.cmake",
+      "ok": true,
+      "bytes": 445
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/ports/openssl/vcpkg.json",
+      "ok": true,
+      "bytes": 963
+    },
+    {
+      "path": "D:/Windows Kits/10/Include/10.0.22621.0/shared/bcrypt.h",
+      "ok": true,
+      "bytes": 67772
+    }
+  ],
+  "fnvOracle": {
+    "hi": "8211cde9c1366483",
+    "lo": "5a5d3b9632df6a6d",
+    "fold": "d84cf67ff3e90eee"
+  },
+  "storedTests": {
+    "total": 13,
+    "passed": 11,
+    "failed": 2,
+    "skipped": 0,
+    "failedNames": [
+      "ContentVersionPublicFnv_CORE_T02",
+      "ContentIdentityPublicFnv_CORE_T02"
+    ],
+    "cngProperties": 14,
+    "cngHashlibMatch": true
+  },
+  "freshTests": {
+    "total": 13,
+    "passed": 11,
+    "failed": 2,
+    "skipped": 0,
+    "failedNames": [
+      "ContentVersionPublicFnv_CORE_T02",
+      "ContentIdentityPublicFnv_CORE_T02"
+    ],
+    "cngProperties": 14,
+    "cngHashlibMatch": true
+  }
+}
+raw manifest: 37 blob failures 0 checkout differences 9

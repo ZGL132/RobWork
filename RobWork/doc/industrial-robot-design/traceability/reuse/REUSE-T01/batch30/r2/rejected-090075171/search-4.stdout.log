@@ -1,0 +1,10 @@
+RobWork/RobWork/src/rw/core/StringUtil.hpp:150:        static std::pair< bool, int > toInt (const std::string& str);
+RobWork/RobWork/src/rw/core/StringUtil.hpp:156:        static std::pair< bool, unsigned int > toUInt (const std::string& str);
+RobWork/RobWork/src/rw/core/StringUtil.hpp:182:        toInts (const std::vector< std::string >& words);
+RobWork/RobWork/src/rw/core/StringUtil.hpp:189:        toUInts (const std::vector< std::string >& words);
+RobWork/RobWork/src/rw/core/StringUtil.hpp:222:        static std::string ranName (const std::string& prefix);
+RobWork/RobWork/src/rw/core/StringUtil.cpp:235:std::pair< bool, int > StringUtil::toInt (const std::string& str)
+RobWork/RobWork/src/rw/core/StringUtil.cpp:240:std::pair< bool, unsigned int > StringUtil::toUInt (const std::string& str)
+RobWork/RobWork/src/rw/core/StringUtil.cpp:261:std::pair< bool, std::vector< int > > StringUtil::toInts (const std::vector< std::string >& words)
+RobWork/RobWork/src/rw/core/StringUtil.cpp:267:StringUtil::toUInts (const std::vector< std::string >& words)
+RobWork/RobWork/src/rw/core/StringUtil.cpp:305:std::string StringUtil::ranName (const std::string& prefix)

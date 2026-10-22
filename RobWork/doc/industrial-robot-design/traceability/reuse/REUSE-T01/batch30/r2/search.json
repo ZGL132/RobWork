@@ -1,0 +1,41 @@
+{
+  "correction": "原SHA2词边界转义偏多；保留原记录，正确词边界重搜，仍无命中。补跨文件FNV定义/调用事实。",
+  "searches": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "sha.?256|sha.?2\\b|openssl|bcrypt|cryptopp|crypto",
+        "RobWork/RobWork",
+        "RobWork/RobWorkSim"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "BCryptHash\\(|BCryptCreateHash\\(|BCryptHashData\\(|BCryptDuplicateHash\\(|BCryptFinishHash\\(",
+        "D:/Windows Kits/10/Include/10.0.22621.0/shared/bcrypt.h"
+      ],
+      "exit": 0,
+      "stdout": "1343:BCryptCreateHash(\n1356:BCryptHashData(\n1366:BCryptFinishHash(\n1402:BCryptDuplicateHash(\n1419:BCryptHash(\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "fnv1a128",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp"
+      ],
+      "exit": 0,
+      "stdout": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:51:void fnv1a128(const std::uint8_t* data, std::size_t n,\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:146:        sdurws::ird::core::detail::fnv1a128(v.bytes.data(), v.bytes.size(), &hi, &lo);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:154:        sdurws::ird::core::detail::fnv1a128(c.bytes.data(), c.bytes.size(), &hi, &lo);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp:71:void fnv1a128(const std::uint8_t* data, std::size_t n,\n",
+      "stderr": ""
+    }
+  ]
+}

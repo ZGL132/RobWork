@@ -1,0 +1,21 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B30-r2",
+  "base": "933dc6016",
+  "reviewedOriginal": "0900751718849863af1190ece61c8ddb1f1cf547",
+  "fix": "两个公开hash行直接绑定Identity.cpp真实fnv实现摘要",
+  "sourceComparison": {
+    "base": "090075171",
+    "paths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/CMakeLists.txt",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/DigestSuitabilityTest.cpp"
+    ],
+    "changed": []
+  },
+  "cppRerun": "未重复：产品/探测/构建未变；原独验真实13跑11passed2failed0skipped，14CNG/hashlib一致",
+  "independentAcceptance": "pending",
+  "remote": "not executed"
+}

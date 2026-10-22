@@ -1,0 +1,68 @@
+namespace std {
+
+template <> struct hash<sdurws::ird::core::ContentVersion> {
+    std::size_t operator()(const sdurws::ird::core::ContentVersion& v) const noexcept {
+        std::uint64_t hi = 0, lo = 0;
+        sdurws::ird::core::detail::fnv1a128(v.bytes.data(), v.bytes.size(), &hi, &lo);
+        return static_cast<std::size_t>(hi ^ lo);
+    }
+};
+
+template <> struct hash<sdurws::ird::core::ContentIdentity> {
+    std::size_t operator()(const sdurws::ird::core::ContentIdentity& c) const noexcept {
+        std::uint64_t hi = 0, lo = 0;
+        sdurws::ird::core::detail::fnv1a128(c.bytes.data(), c.bytes.size(), &hi, &lo);
+        return static_cast<std::size_t>(hi ^ lo);
+    }
+};
+
+void fnv1a128(const std::uint8_t* data, std::size_t n,
+              std::uint64_t* outHi, std::uint64_t* outLo) noexcept
+{
+    // FNV-1a 128 偏移基＝0x6C62272E07BB0142_62B821756295C58D；素数＝2^88+2^8+0x3B。
+    // 状态 (hi,lo) 视作 128 位大端整数：迭代"异或字节→乘素数（模 2^128）"。
+    std::uint64_t hi = 0x6C62272E07BB0142ULL;
+    std::uint64_t lo = 0x62B821756295C58DULL;
+
+    // 累加一个 128 位项（无回绕加法）。
+    const auto add = [&](std::uint64_t th, std::uint64_t tl) {
+        const std::uint64_t nl = lo + tl;
+        const std::uint64_t c = (nl < lo) ? 1ULL : 0ULL;
+        hi = hi + th + c;
+        lo = nl;
+    };
+    // 累加 state << shift（shift∈[0,127]；≥64 时低字全零、高字＝lo 左移）。
+    const auto addShifted = [&](unsigned s) {
+        if (s == 0)        { add(hi, lo); return; }
+        if (s >= 64)       { add(lo << (s - 64), 0ULL); return; }
+        add((lo >> (64 - s)) | (hi << s), lo << s);
+    };
+    // 64×64→高 64 位（32 位分解，避免编译器扩展头文件）。
+    const auto mulHi64 = [](std::uint64_t a, std::uint64_t b) -> std::uint64_t {
+        const std::uint64_t al = a & 0xFFFFFFFFULL, ah = a >> 32;
+        const std::uint64_t bl = b & 0xFFFFFFFFULL, bh = b >> 32;
+        const std::uint64_t p00 = al * bl;
+        const std::uint64_t p01 = al * bh;
+        const std::uint64_t p10 = ah * bl;
+        const std::uint64_t p11 = ah * bh;
+        const std::uint64_t mid = (p00 >> 32) + (p01 & 0xFFFFFFFFULL) + (p10 & 0xFFFFFFFFULL);
+        return p11 + (p01 >> 32) + (p10 >> 32) + (mid >> 32);
+    };
+    // 累加 state * m（m<2^64；128 位截断：低＝lo*m，高＝mulHi(lo,m)＋lo 高字贡献 hi*m）。
+    const auto addMulSmall = [&](std::uint64_t m) {
+        const std::uint64_t tl = lo * m;
+        const std::uint64_t th = mulHi64(lo, m) + hi * m;
+        add(th, tl);
+    };
+
+    for (std::size_t i = 0; i < n; ++i) {
+        // 异或字节（进入 128 位状态最低字节＝lo 低 8 位）
+        lo ^= static_cast<std::uint64_t>(data[i]);
+        // 乘素数：p = 2^88 + 2^8 + 0x3B（三项分解累加，模 2^128）
+        addShifted(88);
+        addShifted(8);
+        addMulSmall(0x3BULL);
+    }
+    *outHi = hi;
+    *outLo = lo;
+}
