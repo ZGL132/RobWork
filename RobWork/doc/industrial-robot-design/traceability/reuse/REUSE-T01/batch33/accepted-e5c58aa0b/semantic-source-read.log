@@ -1,0 +1,4337 @@
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp
+/**
+ * @file   ParamSchema.cpp
+ * @brief  paramSchema 受限 JSON 数形的单一解析点实现。
+ *
+ * 设计依据：
+ *   - units/diagnostics.md §4.5（paramSchema 字段约束："非空且参数名合法"；
+ *     §9.2 工厂占位一致性校验）、§4.5 示例 ["pid","host"]（参数名词形锚点）
+ *   - 任务契约 tasks/foundation/DIAG-T04.json（≙WP-09-T04）：工厂校验占位
+ *     一致性需要按名提取参数清单——解析单点自 DIAG-T03 的 DiagCodes.cpp
+ *     内联实现迁入本文件（行为逐字保持，既有 DT-REG-5 用例为回归保护；
+ *     单元内私有共享，不跨单元暴露——R-2）
+ *
+ * 文法（冻结，见 src/ParamSchema.hpp 头注）：`[]` 或 `["name","name",...]`；
+ * 括号/逗号外侧允许空白；字符串内不允许转义/空白；参数名重复非法。
+ *
+ * 线程安全：纯函数（无共享状态）。
+ */
+
+#include "ParamSchema.hpp"
+
+#include <cctype>
+
+namespace sdurws::ird::diagnostics::detail {
+namespace {
+
+/// 参数名词形：^[a-z0-9]+(-[a-z0-9]+)*$（§4.5 示例 ["pid","host"]——小写
+/// kebab，与诊断码同族词形的小写变体）。
+bool isValidParamName(std::string_view name)
+{
+    if (name.empty() || !std::isalnum(static_cast<unsigned char>(name.front()))) {
+        return false;
+    }
+    bool prevDash = false;
+    for (const char ch : name) {
+        if (ch == '-') {
+            if (prevDash) {
+                return false;   // 连续连字符非法
+            }
+            prevDash = true;
+            continue;
+        }
+        if (!std::isalnum(static_cast<unsigned char>(ch))) {
+            return false;       // 仅允许小写字母/数字（isalnum 对大写也为真——补查）
+        }
+        if (std::isupper(static_cast<unsigned char>(ch))) {
+            return false;
+        }
+        prevDash = false;
+    }
+    return !prevDash;           // 尾连字符非法
+}
+
+}  // namespace
+
+bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* names,
+                         std::string* error)
+{
+    // 输出槽先归位（失败/成功两条路径都得到确定状态——调用方无需预清理）。
+    names->clear();
+    error->clear();
+
+    // ①空模式：paramSchema 为必填字段（"非空且参数名合法"——无参数也须显式
+    // 声明 "[]"；完全缺省＝违约，因实例占位一致性校验需要明确的模式边界）。
+    if (schema.empty()) {
+        *error = "paramSchema 为空（必填字段——无参数也须显式声明 \"[]\"）";
+        return false;
+    }
+
+    // ②受限 JSON 数形线性扫描（不引第三方 JSON 库——新增依赖须先登记；
+    // 手写扫描确定性且零依赖，与 DIAG-T03 登记的判定逐字一致）。
+    std::size_t i = 0;
+    const auto skipWs = [&i, &schema] {
+        while (i < schema.size() && (schema[i] == ' ' || schema[i] == '\t')) {
+            ++i;
+        }
+    };
+    skipWs();
+    if (i >= schema.size() || schema[i] != '[') {
+        *error = "paramSchema 须以 '[' 起始（受限 JSON 数组形）";
+        return false;
+    }
+    ++i;
+    skipWs();
+    if (i < schema.size() && schema[i] == ']') {
+        ++i;   // 空数组分支（显式"无参数"声明）
+    } else {
+        // 非空数组：逐项解析带引号参数名（词形/重复校验），项间以 ',' 分隔、
+        // 以 ']' 收束——首处违约即失败并指明。
+        while (true) {
+            skipWs();
+            if (i >= schema.size() || schema[i] != '"') {
+                *error = "paramSchema 参数项须为带引号的参数名";
+                return false;
+            }
+            ++i;
+            const std::size_t start = i;
+            while (i < schema.size() && schema[i] != '"') {
+                ++i;
+            }
+            if (i >= schema.size()) {
+                *error = "paramSchema 参数名字符串未闭合";
+                return false;
+            }
+            const std::string_view name{schema.data() + start, i - start};
+            if (!isValidParamName(name)) {
+                *error = "paramSchema 参数名词形非法（须 ^[a-z0-9]+(-[a-z0-9]+)*$）: "
+                         + std::string{name};
+                return false;
+            }
+            for (const auto& prior : *names) {
+                if (prior == name) {
+                    *error = "paramSchema 参数名重复: " + std::string{name};
+                    return false;
+                }
+            }
+            names->emplace_back(name);
+            ++i;   // 跳过闭引号
+            skipWs();
+            if (i < schema.size() && schema[i] == ',') {
+                ++i;
+                continue;   // 下一参数项
+            }
+            if (i < schema.size() && schema[i] == ']') {
+                ++i;
+                break;      // 数组结束
+            }
+            *error = "paramSchema 参数项后须为 ',' 或 ']'";
+            return false;
+        }
+    }
+    skipWs();
+    if (i != schema.size()) {
+        *error = "paramSchema 数组结束后存在多余字符";
+        return false;
+    }
+    return true;   // 合法——names＝声明序参数名清单，error 空
+}
+
+}  // namespace sdurws::ird::diagnostics::detail
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.hpp
+/**
+ * @file   ParamSchema.hpp
+ * @brief  私有实现头：paramSchema 受限 JSON 数形的单一解析点。
+ *
+ * 设计依据：
+ *   - units/diagnostics.md §4.5（CodeDescriptor.paramSchema："受限 JSON 形
+ *     schema token 列表"——注册期验证"paramSchema 非空且参数名合法"；§9.2
+ *     工厂"实例的 context/cause/comparison 须按模式填充（工厂校验占位一致）"
+ *     ——DiagContext.params 键集与 schema 参数名集的一致性校验）
+ *   - 任务契约 tasks/foundation/DIAG-T04.json（≙WP-09-T04）：工厂侧占位
+ *     一致性校验需要按名提取 schema 参数清单——DIAG-T03 的注册期验证
+ *     （DiagCodes.cpp validateParamSchema）与本任务的工厂校验共用同一文法
+ *     判定，避免同文法两实现漂移（NFR-MNT-04 精神；单元内私有共享，
+ *     不跨单元暴露——R-2：本头位于 src/，不入公共 include）
+ *
+ * 文法（与 DIAG-T03 登记一致，冻结）：接受且仅接受 `[]`（无参数的显式声明）
+ * 或 `["name","name",...]`；括号/逗号外侧允许空白；字符串内不允许转义/空白
+ * （参数名词形本身不含这些字符，出现即非法）；参数名重复非法。
+ */
+
+#ifndef SDURWS_IRD_DIAGNOSTICS_SRC_PARAMSCHEMA_HPP
+#define SDURWS_IRD_DIAGNOSTICS_SRC_PARAMSCHEMA_HPP
+
+#include <string>
+#include <string_view>
+#include <vector>
+
+namespace sdurws::ird::diagnostics::detail {
+
+/**
+ * @brief 解析 paramSchema 文本为有序参数名清单（解析单点——注册期验证与
+ *        工厂占位一致性校验共用）。
+ *
+ * @param schema [in] 模式文本（注册期已验证/待验证均可——本函数即判定原语）
+ * @param names  [out] 成功时的参数名清单（声明序——占位校验只比较集合，
+ *               序保留供诊断 detail 使用；失败时被清空）
+ * @param error  [out] 失败原因文本（detail 用，指明首个违约点；成功时清空）
+ * @return true＝文法合法（names/error 分别置为清单/空）；false＝非法
+ *         （names 置空、error 指明字段与原因）
+ *
+ * 纯函数；确定性（NFR-COR-02）；不抛异常（调用方处于验证链——异常轨留给
+ * 上层的 DiagnosticsError 组装）。
+ */
+bool tryParseParamSchema(const std::string& schema, std::vector<std::string>* names,
+                         std::string* error);
+
+}  // namespace sdurws::ird::diagnostics::detail
+
+#endif  // SDURWS_IRD_DIAGNOSTICS_SRC_PARAMSCHEMA_HPP
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/EntryDetail.hpp
+/**
+ * @file   EntryDetail.hpp
+ * @brief  私有实现头：条目组装共用原语——码小写形、五元组规范串、去重键
+ *         派生（§6.4）。
+ *
+ * 设计依据：
+ *   - units/diagnostics.md §4.2（dedupKey"构造时计算"——计算点＝工厂）、
+ *     §6.4（DedupKey = {code, subject, scopeKind, scopeId}；"不同作用对象
+ *     绝不合并"）、§4.5/P-DIAG-9（文案键冻结约定 diag.<code-lower>.*）
+ *   - 任务契约 tasks/foundation/DIAG-T04.json（≙WP-09-T04）：工厂（Factory.
+ *     cpp）创建条目时计算 dedupKey，目录投影（Catalog.cpp）导出安全摘要/
+ *     文案键投影——两侧共用同一派生与派生辅助，避免同逻辑两实现漂移
+ *     （单元内私有共享，不跨单元暴露——R-2：本头位于 src/，不入公共 include）
+ *
+ * 纯函数集合；线程安全（无共享状态）；确定性（NFR-COR-02）。
+ */
+
+#ifndef SDURWS_IRD_DIAGNOSTICS_SRC_ENTRYDETAIL_HPP
+#define SDURWS_IRD_DIAGNOSTICS_SRC_ENTRYDETAIL_HPP
+
+#include <string>
+#include <string_view>
+
+#include <sdurws/ird/core/DiagData.hpp>
+#include <sdurws/ird/core/Identity.hpp>
+#include <sdurws/ird/diagnostics/Catalog.hpp>
+
+namespace sdurws::ird::diagnostics::detail {
+
+/// 码小写形（文案键材料——P-DIAG-9 冻结约定 diag.<code-lower>.title/detail）。
+/// 注册边界拒绝偏离约定的键（Usage）——凡已注册码，按本函数派生必与其登记
+/// 键一致（投影侧派生的无漂移依据）。
+inline std::string codeLower(std::string_view code)
+{
+    std::string lower;
+    lower.reserve(code.size());
+    for (const char ch : code) {
+        // 码句法保证仅 A-Z/0-9/'-'——ASCII 位移无 locale 依赖面
+        lower.push_back(ch >= 'A' && ch <= 'Z' ? static_cast<char>(ch - 'A' + 'a') : ch);
+    }
+    return lower;
+}
+
+/// 五元组规范串（Task scopeId 材料——各字段既有规范文本按序拼接，'|' 分隔；
+/// 仅作会话态去重键材料，不持久化为身份）。
+inline std::string taskScopeId(const core::TaskIdentity& task)
+{
+    std::string id = task.project.toCanonical();
+    id += '|';
+    id += task.branch.toCanonical();
+    id += '|';
+    id += task.revision.toCanonical();
+    id += '|';
+    id += task.run.toCanonical();
+    id += '|';
+    id += task.attempt.toCanonical();
+    return id;
+}
+
+/**
+ * @brief 由上下文与条目字段派生去重键（§6.4——派生口径＝单元卡 v0.5 登记）：
+ *        context.task 存在→Task（scopeId＝五元组规范串）；否则 subject 存在→
+ *        Object（scopeId＝subject 规范串）；二者皆无→None（用户级条目受
+ *        subject 边界强制实际不可达，Dev 码不入目录）。
+ *
+ * 键含 subject ⇒ 不同作用对象绝不同键（DT-DUP-2 的键面保证）；键含任务
+ * 五元组 ⇒ 跨任务不合并（§6.4"跨任务不聚合"）。
+ */
+inline DedupKey deriveDedupKey(const core::DiagnosticRecord& record, const DiagContext& context)
+{
+    DedupKey key;
+    key.code = record.code;
+    if (context.task.has_value()) {
+        // 任务运行锚定优先：同任务内同码同对象的重复发现折叠计数；跨任务
+        // 天然不同键（§6.4"跨任务不聚合"的键面保证）。
+        key.scopeKind = ScopeKind::Task;
+        key.scopeId = taskScopeId(*context.task);
+    } else {
+        // 对象锚定：无任务上下文的条目按作用对象分键。
+        key.scopeKind = ScopeKind::Object;
+        key.scopeId = record.subject.has_value() ? record.subject->toCanonical()
+                                                 : std::string{};
+    }
+    key.subject = record.subject.has_value() ? *record.subject : core::ObjectId{};
+    return key;
+}
+
+}  // namespace sdurws::ird::diagnostics::detail
+
+#endif  // SDURWS_IRD_DIAGNOSTICS_SRC_ENTRYDETAIL_HPP
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp
+/**
+ * @file   DiagCodes.cpp
+ * @brief  稳定码注册表实现——词表 token、注册期验证、manifest 摘要与内置
+ *         码表全量收编（§4.6 88 码——阶段 A 收编 87 码＋F-618 收编
+ *         RT-BOUNDS-MAGNITUDE，2026-10-10）。
+ *
+ * 设计依据：
+ *   - units/diagnostics.md §4.3/§4.5/§4.5.1/§4.6/§9.1（见头注释）；
+ *   - 任务契约 tasks/foundation/DIAG-T03.json（≙WP-09-T03）；
+ *   - 实现先例：evidence/src/Evaluator.cpp（RegistrationManifest 的
+ *     canonical 编码摘要——"magic＋codec 版本＋逐条目规范编码"同模式）。
+ *
+ * ◆ §4.6 压缩串的机械展开规则（登记——单元卡 §4.6 同步注记，DTB §5.4）：
+ *   §4.6 各行的分类/严重为压缩记法（"×n"计数、"/"分段、括注与省略号），
+ *   本实现按以下规则逐码展开，全部消歧点逐码注释可复核：
+ *   R1 行内分类/严重串按码序逐位对齐（"×n"＝连续 n 码同值）；
+ *   R2 段长合计与码数不符（PRJ 行 9 对 10、POLICY 行 22 对 23、EX 行 14
+ *      对 18、EVI 严重行 6 对 7）＝压缩丢位：丢位码以 §4.3"典型来源码"
+ *      列点名锚点／§4.4 分类默认严重矩阵／收编卡语义登记为交叉依据补齐；
+ *   R3 严重列省略号（"Error…"）＝延续首值，行内显式标注（如"(Warning)"、
+ *      "(Info)"、备注"四个开发级标 Dev"）为逐码覆盖值；分类默认严重
+ *      （§4.4 矩阵）仅用于无任何显式登记的码；
+ *   R4 分类串中的非词表 token（POLICY/RPT 行尾"信息"、DIAG 行"可确认类
+ *      辅助"）落位：词表内唯一承载"非错误的有效结论"的
+ *      infeasibility-proof（§4.3 Info 行"有效结论/告知：默认值已填入"举例
+ *      ＋§4.4"结论呈现（RPT-05 评审记录）"锚点）与 confirmable（SA-15
+ *      确认流自省码）——不新增词表值（P-DIAG-3"不私裁"约束）。
+ *   上述展开只决定码元数据的 category/severity 登记值；**码值集合本身
+ *   （87＋1 码、拼写、前缀）与 §4.6 逐字一致，无任何重排**（dtb WP-09-T03
+ *   约束）。若所有者对个别消歧点另有裁决，返工面＝对应表行两列值＋
+ *   registryVersion 递增，码值不动。
+ *
+ * ◆ manifest 摘要 canonical 编码（CodeTableManifest.digest——非往返身份
+ *   投影，唯一消费方式＝摘要比对）：
+ *     "IRDDCM2"（7 字节 magic＋codec 版本位；1→2＝F-618 编码布局演进——
+ *       CodeDescriptor 字段表尾追加 level，字段序即编码序，按"只允许表尾
+ *       追加字段并升 codec 版本"纪律升位；无持久化摘要存量——摘要只在
+ *       主/worker 握手时同二进制比对）
+ *     之后逐条目（entries 已按 code 字典序）：
+ *       逐字符串字段（code/ownerUnit/categoryToken/severityToken/titleKey/
+ *         detailKey/paramSchema/retryKindToken/supersededBy?）＝
+ *         u32le(长度)＋原始字节；
+ *       u8 × 7＝confirmable/requiresComparison/userVisible/reportable/
+ *         historical/deprecated/hasSupersededBy（0/1）；
+ *       u32le＝registryVersion；
+ *       u8＝level（枚举声明序整数值——F-618 尾追加；0=Error/1=Warning）。
+ *   确定性：全部字段为编译期/注册期定值，编码无环境依赖——同表同摘要
+ *   （NFR-COR-02；DT-REG-1"两次计算相等"观测点）。
+ *
+ * 线程安全：见头文件各实体注释（注册期单线程；seal 后运行期只读无锁）。
+ */
+
+#include <sdurws/ird/diagnostics/DiagCodes.hpp>
+
+#include "ParamSchema.hpp"
+
+#include <array>
+#include <cctype>
+#include <stdexcept>
+#include <utility>
+
+namespace sdurws::ird::diagnostics {
+namespace {
+
+// ---------------------------------------------------------------------
+// 内部辅助：字符串/整型喂入摘要器（canonical 编码原语——见文件头编码表）。
+// ---------------------------------------------------------------------
+
+/// 追加 u32 小端 4 字节（编码表"u32le"项；小端为登记约定——跨平台一致）。
+void feedU32le(core::ContentDigester& digester, std::uint32_t value)
+{
+    const std::array<std::uint8_t, 4> bytes{
+        static_cast<std::uint8_t>(value & 0xFFu),
+        static_cast<std::uint8_t>((value >> 8) & 0xFFu),
+        static_cast<std::uint8_t>((value >> 16) & 0xFFu),
+        static_cast<std::uint8_t>((value >> 24) & 0xFFu)};
+    digester.update(bytes.data(), bytes.size());
+}
+
+/// 追加长度前缀字符串（编码表"u32le(len)＋原始字节"项；nullptr 安全）。
+void feedString(core::ContentDigester& digester, std::string_view text)
+{
+    feedU32le(digester, static_cast<std::uint32_t>(text.size()));
+    digester.update(text.data(), text.size());
+}
+
+/// 追加单字节布尔（编码表"u8"项；仅取 0/1——非 0 布尔一律归一为 1）。
+void feedBool(core::ContentDigester& digester, bool value)
+{
+    const std::uint8_t byte = value ? 1u : 0u;
+    digester.update(&byte, 1);
+}
+
+// ---------------------------------------------------------------------
+// 内部辅助：§4.5 前缀-所有权表（"首段＝单元短前缀……前缀即所有权声明"）。
+// ---------------------------------------------------------------------
+
+struct PrefixOwner {
+    std::string_view prefix;    ///< 码首段（§4.5 命名空间约定）
+    std::string_view ownerUnit; ///< 所有者单元 token
+};
+
+/// §4.5 原文 17 前缀（9 平台＋8 业务域；POLICY 按原文收编——policy 卡建议
+/// 用 POLICY-*，前缀归一为 POLICY；业务域码阶段 B 起随域卡注册，前缀表
+/// 阶段 A 即全量登记——注册机制在案，不预建任何域码条目）。
+constexpr std::array<PrefixOwner, 17> kPrefixOwners{{
+    {"PRJ", "project"},       {"RT", "runtime"},        {"POLICY", "policy"},
+    {"EVI", "evidence"},      {"EX", "execution"},      {"IO", "io"},
+    {"UI", "ui"},             {"RPT", "reporting"},     {"DIAG", "diagnostics"},
+    {"MDL", "modeling"},      {"REQ", "requirements"},  {"KIN", "kinematics"},
+    {"TRJ", "trajectory"},    {"DYN", "dynamics"},      {"SEL", "selection"},
+    {"OPT", "optimization"},  {"WF", "workflow"},
+}};
+
+/// 取码首段（句法合法前提下的第一段；找不到 '-' 即全串）。
+std::string_view firstSegment(std::string_view code)
+{
+    const auto dash = code.find('-');
+    return dash == std::string_view::npos ? code : code.substr(0, dash);
+}
+
+/// 查前缀表：命中返回期望 ownerUnit；未命中返回 nullptr（跨前缀/未知前缀
+/// 注册拒绝——CodeUnknown 的判定面，§9.1"CodeUnknown 前缀冲突"）。
+const std::string_view* expectedOwnerFor(std::string_view code)
+{
+    const std::string_view prefix = firstSegment(code);
+    for (const auto& entry : kPrefixOwners) {
+        if (entry.prefix == prefix) {
+            return &entry.ownerUnit;
+        }
+    }
+    return nullptr;
+}
+
+// ---------------------------------------------------------------------
+// 内部辅助：paramSchema 受限校验（§4.5"参数模式：受限 JSON 形 schema
+// token 列表"）。文法与解析自 DIAG-T04 起单点落于 src/ParamSchema.hpp/.cpp
+// （工厂占位一致性校验共用同一判定——防同文法两实现漂移，NFR-MNT-04 精神；
+// 行为与原内联实现逐字一致，既有 DT-REG-5 用例为回归保护）。
+// ---------------------------------------------------------------------
+
+/**
+ * @brief 校验 paramSchema 为受限 JSON 数组形（转调解析单点——失败原因文本
+ *        由 detail::tryParseParamSchema 产出，内容与历史实现一致）。
+ *
+ * 接受且仅接受：`[]`（无参数——合法声明）或 `["name","name",...]`
+ * （空白允许于括号/逗号外侧；字符串内不允许转义/空白——参数名词形本身
+ * 不含这些字符，存在即非法）。返回失败原因文本（detail 用），成功返回空。
+ */
+std::string validateParamSchema(const std::string& schema)
+{
+    std::vector<std::string> names;
+    std::string error;
+    if (!detail::tryParseParamSchema(schema, &names, &error)) {
+        return error;
+    }
+    return {};
+}
+
+// ---------------------------------------------------------------------
+// 内部辅助：分类→可重试性机械映射（§4.4 动作族的机器锚点——规则登记于
+// RetryKind 注释与单元卡 §4.6 展开注记；内置表逐码按此映射）。
+// ---------------------------------------------------------------------
+
+RetryKind categoryDefaultRetry(DiagnosticCategory category)
+{
+    switch (category) {
+    case DiagnosticCategory::InputInvalid:          return RetryKind::UserRetry;  // fix-input
+    case DiagnosticCategory::FormatOrVersion:       return RetryKind::UserRetry;  // open-upgrade-guide / choose-compatible
+    case DiagnosticCategory::PermissionOrLock:      return RetryKind::UserRetry;  // retry-readonly / contact-holder
+    case DiagnosticCategory::ResourceMissing:       return RetryKind::UserRetry;  // relink / reimport
+    case DiagnosticCategory::PolicyDenied:          return RetryKind::UserRetry;  // adjust-policy
+    case DiagnosticCategory::Confirmable:           return RetryKind::UserRetry;  // confirm-or-fix
+    case DiagnosticCategory::ExecutionFailed:       return RetryKind::UserRetry;  // retry-task / inspect-log
+    case DiagnosticCategory::Canceled:              return RetryKind::Never;      // none（无动作）
+    case DiagnosticCategory::Interrupted:           return RetryKind::UserRetry;  // rerun-interrupted
+    case DiagnosticCategory::Timeout:               return RetryKind::UserRetry;  // retry-task / inspect-worker
+    case DiagnosticCategory::DataInsufficient:      return RetryKind::UserRetry;  // supply-evidence
+    case DiagnosticCategory::EvidenceMissing:       return RetryKind::UserRetry;  // supply-evidence
+    case DiagnosticCategory::InfeasibilityProof:    return RetryKind::Never;      // review-proof（结论呈现）
+    case DiagnosticCategory::Internal:              return RetryKind::Never;      // report-bug
+    case DiagnosticCategory::SecurityOrRedaction:   return RetryKind::Never;      // inspect-resource / report-bug
+    }
+    return RetryKind::Never;   // 全枚举不可达；保守取 Never
+}
+
+// ---------------------------------------------------------------------
+// 内部辅助：内置表行规格与文案键派生（§4.5 命名约定 diag.<code-lower>.*）。
+// ---------------------------------------------------------------------
+
+/// 内置表行规格（§4.6 逐码登记值；ownerUnit/文案键/flags/retryable 经
+/// 机械规则派生——见 makeBuiltin）。
+struct BuiltinSpec {
+    const char* code;             ///< 码值原文（§4.6 收编清单——不重排）
+    DiagnosticCategory category;  ///< 分类登记值（逐码注释见下表）
+    DiagnosticSeverity severity;  ///< 严重登记值（逐码注释见下表）
+    const char* paramSchema;      ///< 参数模式（默认 "[]"；仅 §9.2 示例明示的
+                                  ///  PRJ-LOCK-HELD 登记 ["pid","host"]）
+};
+
+/// 文案键派生（P-DIAG-9 键体系冻结约定："diag."＋码小写＋".title"/".detail"；
+/// 键值分离——值归 ui/文案资源，本设施只登记键）。
+std::string derivedTextKey(std::string_view code, std::string_view suffix)
+{
+    std::string key{"diag."};
+    key.reserve(key.size() + code.size() + 1 + suffix.size());
+    for (const char ch : code) {
+        // 码句法保证仅 A-Z/0-9/'-'——tolower 无 locale 依赖面
+        key.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(ch))));
+    }
+    key.push_back('.');
+    key.append(suffix);
+    return key;
+}
+
+/// 由表行构造完整描述符（flags/registryVersion/retryable/文案键按 §4.5
+/// 机械规则派生——单点派生保证全表一致性；Dev 码 flags 强制 false）。
+/// F-618：level 由 severity 机械派生（呈现轴→阻断轴映射单点）——
+/// severity==Error ⇒ Error、其余（Warning/Info/Dev）⇒ Warning；注册期
+/// 验证对非内置登记强制同一映射（两轴一致，禁其他组合）。
+core::DiagnosticLevel levelFromSeverity(DiagnosticSeverity severity) noexcept
+{
+    return severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                 : core::DiagnosticLevel::Warning;
+}
+
+CodeDescriptor makeBuiltin(const BuiltinSpec& spec)
+{
+    CodeDescriptor d;
+    d.code = spec.code;
+    // 前缀→ownerUnit：内置表全部为平台前缀（§4.6 备注"IO-*/UI-* 码表随
+    // io/ui 卡注册"——阶段 A 不含；查表必命中，失配即装配表自身缺陷）。
+    const std::string_view* owner = expectedOwnerFor(spec.code);
+    d.ownerUnit = owner != nullptr ? std::string{*owner} : std::string{};
+    d.category = spec.category;
+    d.severity = spec.severity;
+    d.titleKey = derivedTextKey(spec.code, "title");
+    d.detailKey = derivedTextKey(spec.code, "detail");
+    d.paramSchema = spec.paramSchema;
+    d.confirmable = false;          // 阶段 A 内置表无可确认域码（§4.6 表尾行：
+    d.requiresComparison = false;   // "阶段 B 起注册……不预建"——dtb 原则）
+    d.retryable = categoryDefaultRetry(spec.category);
+    const bool dev = spec.severity == DiagnosticSeverity::Dev;
+    d.userVisible = !dev;           // §4.5"Dev 码=false"（注册期验证同规则）
+    d.reportable = !dev;
+    d.historical = !dev;
+    d.registryVersion = 1;          // 首次登记
+    d.deprecated = false;           // tombstone 只经 deprecate()／清单显式修订产生
+    d.level = levelFromSeverity(spec.severity);  // F-618 派生（单点——见上）
+    return d;
+}
+
+/// §4.6 内置表数据（行序＝§4.6 表行序，行内＝收编清单原文序；逐码注释为
+/// 分类/严重的登记依据——展开规则 R1~R4 见文件头）。
+const std::array<BuiltinSpec, 88>& builtinSpecs()
+{
+    static const std::array<BuiltinSpec, 88> kSpecs{{
+        // ---- PRJ（project §5.0 收编，10 项；分类串"权限/内部/权限/权限/
+        //      内部/版本/输入/执行/权限"9 项对 10 码——R2 补第 7 位）----
+        {"PRJ-LOCK-HELD", DiagnosticCategory::PermissionOrLock, DiagnosticSeverity::Warning,
+         "[\"pid\",\"host\"]"},   // ①权限/Warning；§4.3 权限类典型码；参数＝§9.2
+                                  // 调用示例明示（pid＋host）
+        {"PRJ-STORE-CORRUPT", DiagnosticCategory::Internal, DiagnosticSeverity::Error,
+         "[]"},                   // ②内部；严重 Error＝§4.4"个别如 store-corrupt
+                                  // 为 Error"明示；备注"定位文件"
+        {"PRJ-RECOVERY-IGNORED-UNCOMMITTED", DiagnosticCategory::PermissionOrLock,
+         DiagnosticSeverity::Info, "[]"},  // ③串逐位"权限"/Info；随 RecoveryReport（PM-08/15）
+        {"PRJ-RECOVERY-ORPHAN-DRAFT", DiagnosticCategory::PermissionOrLock,
+         DiagnosticSeverity::Info, "[]"},  // ④串逐位"权限"/Info；孤儿草稿报告（可恢复旧版）
+        {"PRJ-RECOVERY-DANGLING-OBJECTS", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},   // ⑤内部/Dev
+        {"PRJ-SCHEMA-FUTURE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"}, // ⑥版本；§4.3 格式/版本类典型码
+        {"PRJ-FORMAT-LEGACY", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"}, // ⑦串缺位补正（R2）：§4.3 格式/版本类
+                                           // 典型码点名——分类串压缩时漏一"版本"
+        {"PRJ-STALE-REVISION-REJECTED", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"}, // ⑧输入（过期修订拒绝——project §5.0 同义）
+        {"PRJ-ARCHIVE-CONFLICT", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"}, // ⑨执行（归档冲突）
+        {"PRJ-WRITE-AUTHORITY-LOST", DiagnosticCategory::PermissionOrLock,
+         DiagnosticSeverity::Error, "[]"}, // ⑩权限；§4.3 权限类典型码点名
+
+        // ---- RT（runtime §10.11 收编，14 项；分类串 14 项逐位对齐（R1）；
+        //      严重"Error…"＝延续 Error，显式标注两处）----
+        {"RT-INPUT-INVALID", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // ①输入；§4.3 输入非法典型码
+        {"RT-STRUCTURE-INVALID", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // ②输入
+        {"RT-UNIT-MISMATCH", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // ③输入
+        {"RT-RESOURCE-MISSING", DiagnosticCategory::ResourceMissing,
+         DiagnosticSeverity::Error, "[]"},        // ④资源；§4.3 资源缺失典型码
+        {"RT-RESOURCE-CHANGED", DiagnosticCategory::ResourceMissing,
+         DiagnosticSeverity::Error, "[]"},        // ⑤资源
+        {"RT-RESOURCE-BUDGET", DiagnosticCategory::SecurityOrRedaction,
+         DiagnosticSeverity::Error, "[]"},        // ⑥串"安全"（R1）；预算超限归安全类
+                                                  // （§4.3 安全类语义"预算超限"）——§4.3
+                                                  // 资源缺失行亦点名 BUDGET，矛盾按登记处
+                                                  // （§4.6 逐位）优先，登记注记
+        {"RT-WC-COMPILE-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // ⑦执行；§4.3 执行失败典型码
+        {"RT-DWC-COMPILE-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // ⑧执行
+        {"RT-NAME-CONFLICT", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Error, "[]"},        // ⑨内部；严重 Error＝串"Error…"
+                                                  // 延续显式登记（R3）优先于 internal
+                                                  // 默认 Dev——矛盾登记注记
+        {"RT-BASE-WORLD-INCONSISTENT", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Error, "[]"},        // ⑩内部/同上（串 Error 延续）
+        {"RT-CAPABILITY-MISSING", DiagnosticCategory::ResourceMissing,
+         DiagnosticSeverity::Warning, "[]"},      // ⑪资源(Warning)——串显式标注
+        {"RT-ROBWORK-ERROR", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // ⑫执行
+        {"RT-CACHE-INCOMPATIBLE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // ⑬版本；§4.3 格式/版本典型码
+        {"RT-CANCELLED", DiagnosticCategory::Canceled,
+         DiagnosticSeverity::Info, "[]"},         // ⑭取消(Info)——UX-03 正常取消非错误
+        {"RT-BOUNDS-MAGNITUDE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Warning, "[]"},      // ⑮F-618 收编（2026-10-10；表尾追加
+                                                  // ——audit-p2 随 F-593 以覆盖码面过渡
+                                                  // 引入的专用警告码正式注册）：S3 限位
+                                                  // 量级抽样警告（|q|>4π×10 rad 等 deg/mm
+                                                  // 误作 SI 的量级特征）——"给警告不阻断"
+                                                  // （runtime §4.4 抽样纪律），level 由
+                                                  // severity 派生＝Warning（不阻断）；
+                                                  // 无 RuntimeErrorCode 枚举对应（事件码
+                                                  // ——runtime §10.11 冻结关系不扩）
+
+        // ---- POLICY（policy §9.6 收编，23 项；串"版本×3/输入×8/版本×2/
+        //      数据不足/策略拒绝×4（…归执行失败）/资源/输入/策略拒绝/信息"
+        //      段合计 22 对 23——R2 补第 12 位）----
+        {"POLICY-SCHEMA-UNKNOWN-FIELD", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×3①（schema 层拒绝发布）
+        {"POLICY-SCHEMA-VERSION-FUTURE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×3②（PM-06 升级指引）
+        {"POLICY-SCHEMA-VERSION-UNKNOWN", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×3③
+        {"POLICY-THRESHOLD-NON-FINITE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8①；§4.3 输入非法典型码
+        {"POLICY-THRESHOLD-NON-POSITIVE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8②
+        {"POLICY-THRESHOLD-OUT-OF-RANGE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8③
+        {"POLICY-UNIT-MISMATCH", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8④
+        {"POLICY-RULE-DUPLICATE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8⑤
+        {"POLICY-RULE-CONFLICT", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8⑥
+        {"POLICY-RULE-CYCLE", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8⑦
+        {"POLICY-SCOPE-OBJECT-MISSING", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // 输入×8⑧（作用对象缺失＝输入闭包非法）
+        {"POLICY-APPLICABILITY-INVALID", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // ⑫串缺位补正（R2）：policy §5 校验表
+                                                  // "适用范围无效→拒绝发布"与输入/schema
+                                                  // 同段——语义归输入非法
+        {"POLICY-VERSION-INCOMPATIBLE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×2①（语义：版本不兼容）
+        {"POLICY-CONTENT-IDENTITY-MISMATCH", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×2②（CON-04 契约/身份不兼容）
+        {"POLICY-CLL-DETECTOR-UNAVAILABLE", DiagnosticCategory::DataInsufficient,
+         DiagnosticSeverity::Warning, "[]"},      // "数据不足"段；§4.3 点名（KIN-05 口径）
+        {"POLICY-CLL-SCENE-INVALID", DiagnosticCategory::PolicyDenied,
+         DiagnosticSeverity::Warning, "[]"},      // 策略拒绝×4①（§4.4 默认 Warning）
+        {"POLICY-CLL-NAME-UNRESOLVED", DiagnosticCategory::PolicyDenied,
+         DiagnosticSeverity::Warning, "[]"},      // 策略拒绝×4②
+        {"POLICY-CLL-CONTEXT-EXPIRED", DiagnosticCategory::PolicyDenied,
+         DiagnosticSeverity::Warning, "[]"},      // 策略拒绝×4③
+        {"POLICY-CLL-EVALUATION-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 串括注"CLL-EVALUATION-FAILED 归执行失败"
+        {"POLICY-CLL-GEOMETRY-MISSING", DiagnosticCategory::ResourceMissing,
+         DiagnosticSeverity::Error, "[]"},        // "资源"段；§4.3 资源缺失行点名
+        {"POLICY-JNT-TABLE-INVALID", DiagnosticCategory::PolicyDenied,
+         DiagnosticSeverity::Warning, "[]"},      // 策略拒绝×4④（跨段——§4.3 策略拒绝
+                                                  // 行点名；段计数吻合）
+        {"POLICY-ENGINEERING-RANGE-INVALID", DiagnosticCategory::InputInvalid,
+         DiagnosticSeverity::Error, "[]"},        // "输入"段（阈值越域同族——policy §5
+                                                  // 校验表同段）
+        {"POLICY-INFO-DEFAULT-APPLIED", DiagnosticCategory::InfeasibilityProof,
+         DiagnosticSeverity::Info, "[]"},         // 串尾"信息"（R4 落位）：§4.3 Info 行
+                                                  // 语义举例"默认值已填入"明示本码语义，
+                                                  // 词表内唯一"非错误的有效结论"类＝
+                                                  // infeasibility-proof（§4.4 结论呈现）；
+                                                  // "信息"非 15 值 token——登记注记
+
+        // ---- EVI（evidence §13 收编，7 项；分类串 7 项逐位对齐（R1）；
+        //      严重串 6 项对 7 码——R2/R3：末三码按标注＋默认矩阵补齐）----
+        {"EVI-SNAPSHOT-INCOMPLETE", DiagnosticCategory::DataInsufficient,
+         DiagnosticSeverity::Warning, "[]"},      // ①数据不足；§4.3 数据不足典型码
+        {"EVI-CASE-COVERAGE-MISSING", DiagnosticCategory::EvidenceMissing,
+         DiagnosticSeverity::Warning, "[]"},      // ②证据缺失；§4.3 证据缺失典型码
+        {"EVI-EVIDENCE-MISSING", DiagnosticCategory::EvidenceMissing,
+         DiagnosticSeverity::Warning, "[]"},      // ③证据缺失
+        {"EVI-PROOF-INVALID", DiagnosticCategory::EvidenceMissing,
+         DiagnosticSeverity::Warning, "[]"},      // ④证据缺失
+        {"EVI-ENVELOPE-ILLEGAL-COMBINATION", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ⑤内部(Dev)——不变量违反开发级
+        {"EVI-CACHE-INCOMPATIBLE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // ⑥版本；严重取 §4.4 format-or-version
+                                                  // 默认 Error（串"Dev/Dev"若覆盖此位则跨
+                                                  // 用户级/开发级分界——§4.5 禁令排除）；
+                                                  // §4.3 格式/版本典型码
+        {"EVI-EVALUATOR-DUPLICATE", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ⑦内部(Dev)——备注"装配期错误"（开发级）
+
+        // ---- EX（execution §3.4 收编，18 项；串"执行×5（含超时×2）/Dev×4
+        //      （协议/登记表）/版本×2/执行×2/中断"段合计 14 对 18——R2/R3
+        //      补位；备注"四个'开发级'标 Dev"与 execution 卡逐码点名吻合）----
+        {"EX-TASK-REJECTED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行；§4.3 执行失败典型码
+        {"EX-SNAPSHOT-STALE", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行（快照身份失效）
+        {"EX-STORE-READ-ONLY", DiagnosticCategory::PermissionOrLock,
+         DiagnosticSeverity::Warning, "[]"},      // §4.3 权限类典型码点名（PM-07 只读
+                                                  // 横幅）——压缩段丢位补正（R2），登记注记
+        {"EX-RESOURCE-INSUFFICIENT", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行（先节流后诊断——NFR-PERF-04）
+        {"EX-CAPABILITY-UNSUPPORTED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行（能力不支持显式反馈）
+        {"EX-WORKER-LAUNCH-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行（worker 启动失败）
+        {"EX-WORKER-CRASHED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行；§4.3 执行失败典型码
+        {"EX-WORKER-HUNG", DiagnosticCategory::Timeout,
+         DiagnosticSeverity::Error, "[]"},        // 超时×2①；§4.3 超时典型码（心跳失联）
+        {"EX-FORCE-TERMINATED", DiagnosticCategory::Timeout,
+         DiagnosticSeverity::Error, "[]"},        // 超时×2②；§4.3 超时典型码（强杀）
+        {"EX-CHANNEL-PROTOCOL-ERROR", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // Dev×4①（协议——execution 卡开发级点名）
+        {"EX-REGISTRY-UNKNOWN-RUN", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // Dev×4②（登记表）
+        {"EX-REGISTRY-MISMATCH", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // Dev×4③（登记表；§4.3 内部典型码）
+        {"EX-STALE-ATTEMPT", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // Dev×4④（陈旧尝试——execution 卡开发级）
+        {"EX-CHECKPOINT-CORRUPT", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×2①（"版本×2"段位＝CHECKPOINT 相邻对；
+                                                  // 完整性校验失败按登记段归格式/版本）
+        {"EX-CHECKPOINT-INCOMPATIBLE", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // 版本×2②（execution 卡"版本/身份/判定拒绝"）
+        {"EX-ARCHIVE-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行×2①（归档失败——透传 StoreError 细节）
+        {"EX-ARCHIVE-AUTHORITY-LOST", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // 执行×2②（迟到归档防御 A7）
+        {"EX-TASK-INTERRUPTED", DiagnosticCategory::Interrupted,
+         DiagnosticSeverity::Info, "[]"},         // "中断"段；§4.4 中断默认 Info（PM-08/15
+                                                  // 恢复呈现数据源——execution 卡点名）
+
+        // ---- RPT（reporting §3.5 收编，8 项；分类/严重串各 8 项逐位对齐
+        //      （R1）；reporting 卡逐码严重点名全部吻合）----
+        {"RPT-SOURCE-MISSING", DiagnosticCategory::EvidenceMissing,
+         DiagnosticSeverity::Error, "[]"},        // ①证据缺失/Error（章节缺正式结果）
+        {"RPT-SCOPE-INSUFFICIENT", DiagnosticCategory::DataInsufficient,
+         DiagnosticSeverity::Warning, "[]"},      // ②数据不足/Warning（C 级降级建议）
+        {"RPT-CONSISTENCY-MISMATCH", DiagnosticCategory::EvidenceMissing,
+         DiagnosticSeverity::Error, "[]"},        // ③证据缺失/Error（AT-22 反例）
+        {"RPT-ARCHIVE-CONFLICT", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // ④执行/Error（幂等判定失败）
+        {"RPT-EXPORT-FAILED", DiagnosticCategory::ExecutionFailed,
+         DiagnosticSeverity::Error, "[]"},        // ⑤执行/Error；reporting 卡"附可重试
+                                                  // 动作"与分类动作族 retry-task 映射一致
+        {"RPT-ROUNDTRIP-MISMATCH", DiagnosticCategory::FormatOrVersion,
+         DiagnosticSeverity::Error, "[]"},        // ⑥版本/Error（RPT-06 往返复算不一致）
+        {"RPT-CURRENTNESS-UNEVALUABLE", DiagnosticCategory::DataInsufficient,
+         DiagnosticSeverity::Warning, "[]"},      // ⑦数据不足/Warning（P-EV-4 呈现）
+        {"RPT-SECTION-NOT-APPLICABLE", DiagnosticCategory::InfeasibilityProof,
+         DiagnosticSeverity::Info, "[]"},         // ⑧串"信息"（R4 落位）；reporting 卡
+                                                  // "Info——不适用章节显式标记"；词表落位
+                                                  // 同 POLICY-INFO-DEFAULT-APPLIED——登记注记
+
+        // ---- DIAG（diagnostics 自用，7 项；分类串"安全/内部×3/内部/可确认
+        //      类辅助×2"7 项、严重串"Error/Dev×3/Dev/Error/Info"7 项——
+        //      逐位完美对齐（R1）；备注"红线的红线"）----
+        {"DIAG-REDACTION-FAILED", DiagnosticCategory::SecurityOrRedaction,
+         DiagnosticSeverity::Error, "[]"},        // ①安全/Error；§4.3 安全类典型码
+        {"DIAG-REGISTRY-DUPLICATE", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ②内部×3①/Dev（注册边界自省）
+        {"DIAG-REGISTRY-UNKNOWN-CODE", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ③内部×3②/Dev（DT-REG-4 兜底条目码）
+        {"DIAG-CATALOG-OVERFLOW", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ④内部×3③/Dev（目录容量自省）
+        {"DIAG-LOG-WRITE-FAILED", DiagnosticCategory::Internal,
+         DiagnosticSeverity::Dev, "[]"},          // ⑤"内部"段/Dev（日志写失败自省）
+        {"DIAG-FINDING-BINDING-INVALID", DiagnosticCategory::Confirmable,
+         DiagnosticSeverity::Error, "[]"},        // ⑥"可确认类辅助×2"①（R4：confirmable
+                                                  // ——SA-15 绑定复核流自省）/Error
+        {"DIAG-FINDING-EXPIRED", DiagnosticCategory::Confirmable,
+         DiagnosticSeverity::Info, "[]"},         // ⑦可确认类辅助②/Info（确认失效告知）
+    }};
+    return kSpecs;
+}
+
+}  // namespace
+
+// =====================================================================
+// 词表 token（§4.3 原文——switch 全枚举，同 token() 纪律）
+// =====================================================================
+
+std::string_view categoryToken(DiagnosticCategory category) noexcept
+{
+    switch (category) {
+    case DiagnosticCategory::InputInvalid:        return "input-invalid";
+    case DiagnosticCategory::FormatOrVersion:     return "format-or-version";
+    case DiagnosticCategory::PermissionOrLock:    return "permission-or-lock";
+    case DiagnosticCategory::ResourceMissing:     return "resource-missing";
+    case DiagnosticCategory::PolicyDenied:        return "policy-denied";
+    case DiagnosticCategory::Confirmable:         return "confirmable";
+    case DiagnosticCategory::ExecutionFailed:     return "execution-failed";
+    case DiagnosticCategory::Canceled:            return "canceled";
+    case DiagnosticCategory::Interrupted:         return "interrupted";
+    case DiagnosticCategory::Timeout:             return "timeout";
+    case DiagnosticCategory::DataInsufficient:    return "data-insufficient";
+    case DiagnosticCategory::EvidenceMissing:     return "evidence-missing";
+    case DiagnosticCategory::InfeasibilityProof:  return "infeasibility-proof";
+    case DiagnosticCategory::Internal:            return "internal";
+    case DiagnosticCategory::SecurityOrRedaction: return "security-or-redaction";
+    }
+    return "input-invalid";   // 全枚举不可达；保守取首值（编译器告警已拦截扩表遗漏）
+}
+
+std::string_view severityToken(DiagnosticSeverity severity) noexcept
+{
+    switch (severity) {
+    case DiagnosticSeverity::Error:   return "error";
+    case DiagnosticSeverity::Warning: return "warning";
+    case DiagnosticSeverity::Info:    return "info";
+    case DiagnosticSeverity::Dev:     return "dev";
+    }
+    return "error";
+}
+
+std::string_view retryKindToken(RetryKind kind) noexcept
+{
+    switch (kind) {
+    case RetryKind::Never:     return "never";
+    case RetryKind::UserRetry: return "user-retry";
+    case RetryKind::AutoRetry: return "auto-retry";
+    }
+    return "never";
+}
+
+// =====================================================================
+// CodeDescriptor 成员
+// =====================================================================
+
+bool CodeDescriptor::operator==(const CodeDescriptor& o) const
+{
+    return code == o.code
+        && ownerUnit == o.ownerUnit
+        && category == o.category
+        && severity == o.severity
+        && titleKey == o.titleKey
+        && detailKey == o.detailKey
+        && paramSchema == o.paramSchema
+        && confirmable == o.confirmable
+        && requiresComparison == o.requiresComparison
+        && retryable == o.retryable
+        && userVisible == o.userVisible
+        && reportable == o.reportable
+        && historical == o.historical
+        && registryVersion == o.registryVersion
+        && deprecated == o.deprecated
+        && supersededBy == o.supersededBy
+        && level == o.level;   // F-618 尾追加字段参与等值（manifest 条目稳定性核对面）
+}
+
+bool isValidDiagCodeSyntax(std::string_view code) noexcept
+{
+    // §4.5 句法原文：^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64。逐字符实现（不用
+    // std::regex——异常/分配路径与本判定的高频调用面不匹配，且 MSVC regex
+    // 行为差异是确定性风险）。
+    if (code.empty() || code.size() > 64) {
+        return false;
+    }
+    bool prevDash = true;   // 起始视同"刚出现分隔符"——首字符不许是 '-'
+    for (const char ch : code) {
+        const bool alnum = (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
+        if (ch == '-') {
+            if (prevDash) {
+                return false;   // 首字符/连续连字符
+            }
+            prevDash = true;
+            continue;
+        }
+        if (!alnum) {
+            return false;       // 小写/空白/标点（异常文本）一律非法——DT-REG-4 拦截面
+        }
+        prevDash = false;
+    }
+    return !prevDash;           // 尾连字符非法
+}
+
+// =====================================================================
+// StableCodeRegistry——注册期验证链与查询（§4.5 行为表/§9.1 契约）
+// =====================================================================
+
+void StableCodeRegistry::seal() noexcept
+{
+    m_sealed = true;
+}
+
+void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
+{
+    // 运行期（seal 后）调用＝装配期契约违约（§9.1"注册（装配期；运行期
+    // 调用抛 DiagnosticsError(Usage)）"——判据实现口径见类注释）。
+    if (m_sealed) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "运行期 registerCode（码 " + descriptor.code + "）——注册仅限装配期");
+    }
+
+    // ---- 注册期验证（§4.5"注册期验证"行；检查序固定如下，首错即停并
+    // 指明字段——detail 携带字段名，满足"任一失败即拒绝并指明字段"）----
+
+    // ①句法：^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64（异常文本/小写串在此拦截——
+    // DT-REG-4 的注册侧原语：字符串不经登记不可能成为码）。
+    if (!isValidDiagCodeSyntax(descriptor.code)) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 code 句法非法（^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）: "
+                               + descriptor.code);
+    }
+
+    // ②前缀-所有权一致：首段必须在 §4.5 前缀表内且与 ownerUnit 声明域一致
+    // （"前缀即所有权声明，跨前缀注册拒绝"——§9.1 将此场景归 CodeUnknown
+    // "前缀冲突"：该码不在其声称的所有权域内）。
+    const std::string_view* expectedOwner = expectedOwnerFor(descriptor.code);
+    if (expectedOwner == nullptr || *expectedOwner != descriptor.ownerUnit) {
+        throw DiagnosticsError(
+            DiagnosticsErrorCode::CodeUnknown,
+            "字段 ownerUnit 与码前缀所有权不符（码 " + descriptor.code + " 声明 ownerUnit="
+                + descriptor.ownerUnit + "）");
+    }
+
+    // ③paramSchema：必填＋受限 JSON 形＋参数名词形＋无重复（"非空且参数名
+    // 合法"——空数组 "[]" 是合法的显式"无参数"声明；完全缺省/空串＝违约，
+    // 因实例占位一致性校验（§9.2）需要明确的模式边界）。
+    if (const std::string schemaProblem = validateParamSchema(descriptor.paramSchema);
+        !schemaProblem.empty()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::ParamSchemaMismatch,
+                               "字段 paramSchema: " + schemaProblem);
+    }
+
+    // ④文案键（三步，检查序固定）：a) 非空（键体系为持久化契约——
+    // P-DIAG-9）；b) 跨码唯一（NFR-MNT-03 文案单一权威：一键多码使呈现端
+    // 无法分辨语义——重复定义＝DuplicateCode，同款注册边界拒绝）；c) 键形
+    // 命名约定（diag.<code-lower>.title/detail——P-DIAG-9 键体系冻结约定，
+    // 内置表经 derivedTextKey 单点派生全表合规；注册 API 的硬约束＝a/b，
+    // 键形偏离＝Usage 拒绝）。
+    if (descriptor.titleKey.empty() || descriptor.detailKey.empty()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 titleKey/detailKey 为空（键体系为持久化契约——P-DIAG-9）");
+    }
+    for (const std::string* key : {&descriptor.titleKey, &descriptor.detailKey}) {
+        if (m_textKeys.find(*key) != m_textKeys.end()) {
+            throw DiagnosticsError(DiagnosticsErrorCode::DuplicateCode,
+                                   "文案键重复（" + *key + "）——键随码表登记须注册期唯一");
+        }
+    }
+    if (descriptor.titleKey != derivedTextKey(descriptor.code, "title")
+        || descriptor.detailKey != derivedTextKey(descriptor.code, "detail")) {
+        throw DiagnosticsError(
+            DiagnosticsErrorCode::Usage,
+            "字段 titleKey/detailKey 偏离命名约定 diag.<code-lower>.title/detail（码 "
+                + descriptor.code + "）");
+    }
+
+    // ⑤确认不变量：confirmable ⇒ requiresComparison（SA-15"可确认必为
+    // 比较型"——core C-1 的注册表侧强化，§4.5 字段约束原文）。
+    if (descriptor.confirmable && !descriptor.requiresComparison) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：confirmable=true 要求 requiresComparison=true（SA-15）");
+    }
+
+    // ⑥Dev 码边界：userVisible/reportable/historical 强制 false（"瞬时开发
+    // 诊断不污染历史"——§4.5 字段约束原文；用户级/开发级分界）。
+    if (descriptor.severity == DiagnosticSeverity::Dev
+        && (descriptor.userVisible || descriptor.reportable || descriptor.historical)) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：Dev 码须 userVisible=reportable=historical=false（码 "
+                                   + descriptor.code + "）");
+    }
+
+    // ⑦迁移目标自引用（supersededBy==code＝无意义迁移——tombstone 语义面
+    // 自洽性校验；supersededBy 指向尚未注册的码允许：装配清单顺序自由，
+    // 迁移目标随清单其余码到位）。
+    if (descriptor.supersededBy.has_value() && *descriptor.supersededBy == descriptor.code) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 supersededBy 自引用（码 " + descriptor.code + "）");
+    }
+
+    // ⑧重复注册拒绝（NFR-MNT-03：重复定义注册边界拒绝——不覆盖、不静默；
+    // §4.5 版本冲突行：同 code 不同 registryVersion 的并发注册＝同一拒绝
+    // 面。码是唯一键，元数据演进只能走装配清单修订，不走覆盖写）。
+    if (m_codes.find(descriptor.code) != m_codes.end()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::DuplicateCode,
+                               "重复注册（码 " + descriptor.code + "）——不覆盖不静默（NFR-MNT-03）");
+    }
+
+    // ⑨级别-严重映射一致（F-618，2026-10-10 增列——追加于检查链尾，既有
+    // 检查序零变化）：severity 是映射唯一语义源，level 只允许机械派生值——
+    // severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning。禁止
+    // 其他组合（如 severity=Warning 配 level=Error）＝两轴漂移的注册期拦截
+    // ——阻断轴级别驱动 runtime 发布拒绝（runtime §4.3.5），错标会改变
+    // "警告不阻断"承诺，必须在装配边界拒绝。
+    const core::DiagnosticLevel expectedLevel =
+        descriptor.severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                         : core::DiagnosticLevel::Warning;
+    if (descriptor.level != expectedLevel) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：level 与 severity 映射不一致（码 "
+                                   + descriptor.code + "）——severity==Error ⇔ level==Error、"
+                                   "其余 severity ⇒ level==Warning（F-618）");
+    }
+
+    // 全部验证通过：登记（值拷贝入表——调用方此后修改 descriptor 与表无关）。
+    m_codes.emplace(descriptor.code, descriptor);
+    m_textKeys.emplace(descriptor.titleKey, descriptor.code);
+    m_textKeys.emplace(descriptor.detailKey, descriptor.code);
+}
+
+const CodeDescriptor* StableCodeRegistry::find(std::string_view code) const noexcept
+{
+    // 查询非抛（§9.1"未知码 find 返回 nullptr"）。透明比较器异构查找：
+    // 不构造临时 string——零分配即无 bad_alloc 抛出面，noexcept 真实成立。
+    // 非法句法串必然未注册（注册入口已拦截），查表未命中即 nullptr——
+    // DT-REG-4"异常文本作码"在此得到与句法非法一致的拒识结果。
+    const auto it = m_codes.find(code);
+    return it == m_codes.end() ? nullptr : &it->second;
+}
+
+std::vector<std::string> StableCodeRegistry::registeredCodes(std::string_view ownerUnit) const
+{
+    // std::map 迭代即字典序（确定性观测面——NFR-COR-02）；tombstone 保留
+    // （§4.5.1"删除禁止"——注册边界只增不删）。
+    std::vector<std::string> codes;
+    for (const auto& [code, descriptor] : m_codes) {
+        if (descriptor.ownerUnit == ownerUnit) {
+            codes.push_back(code);
+        }
+    }
+    return codes;
+}
+
+CodeTableManifest StableCodeRegistry::manifest() const
+{
+    // 纯函数（§9.1 契约表"副作用：无 I/O；manifest 摘要计算纯函数"）——
+    // 同表两次调用必得逐字节相等结果（DT-REG-1 观测点）。tombstone 参与
+    // 清单与摘要：废弃状态是跨进程握手的一致性面（两侧 tombstone 不一致
+    // ＝码表漂移，握手应拒绝）。
+    CodeTableManifest result;
+    result.entries.reserve(m_codes.size());
+    for (const auto& [code, descriptor] : m_codes) {
+        result.entries.push_back(descriptor);   // map 迭代序＝code 字典序（§9.1 后置）
+    }
+
+    // canonical 编码（规则见文件头"manifest 摘要 canonical 编码"）：
+    // magic 后逐条目按字段表序编码——字段序即 CodeDescriptor 声明序。
+    core::ContentDigester digester;
+    digester.update("IRDDCM2", 7);   // 家族版本位 1→2（F-618：字段表尾追加 level）
+    for (const CodeDescriptor& d : result.entries) {
+        feedString(digester, d.code);
+        feedString(digester, d.ownerUnit);
+        feedString(digester, categoryToken(d.category));
+        feedString(digester, severityToken(d.severity));
+        feedString(digester, d.titleKey);
+        feedString(digester, d.detailKey);
+        feedString(digester, d.paramSchema);
+        feedBool(digester, d.confirmable);
+        feedBool(digester, d.requiresComparison);
+        feedString(digester, retryKindToken(d.retryable));
+        feedBool(digester, d.userVisible);
+        feedBool(digester, d.reportable);
+        feedBool(digester, d.historical);
+        feedU32le(digester, d.registryVersion);
+        feedBool(digester, d.deprecated);
+        if (d.supersededBy.has_value()) {
+            feedBool(digester, true);
+            feedString(digester, *d.supersededBy);
+        } else {
+            feedBool(digester, false);
+        }
+        // 级别（F-618 尾追加——枚举声明序整数值单字节；与 RT-Codec 枚举编码
+        // 同纪律：值域封闭，无第三态可错）。
+        const std::uint8_t levelByte = static_cast<std::uint8_t>(d.level);
+        digester.update(&levelByte, 1);
+    }
+    result.digest.bytes = digester.finalize();
+    return result;
+}
+
+void StableCodeRegistry::deprecate(std::string_view code,
+                                   std::optional<std::string> supersededBy)
+{
+    // 运行期调用＝装配期契约违约（同 registerCode——§4.5.1"废弃：码元数据
+    // 置 deprecated=true（装配清单修订）"；tombstone 永存不删除）。
+    if (m_sealed) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "运行期 deprecate（码 " + std::string{code} + "）——废弃仅限装配期修订");
+    }
+
+    // 未注册码→CodeUnknown（无码可废；"未注册"自然覆盖句法非法串）。
+    const auto it = m_codes.find(std::string{code});
+    if (it == m_codes.end()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::CodeUnknown,
+                               "deprecate 未注册码（" + std::string{code} + "）");
+    }
+
+    // 自迁移拒绝（同注册期⑦——tombstone 语义面自洽）。
+    if (supersededBy.has_value() && *supersededBy == it->second.code) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "supersededBy 自引用（码 " + it->second.code + "）");
+    }
+
+    // 置位 tombstone：以"整值替换"承载（CodeDescriptor 构造后不可变——
+    // 不原地改写；装配期单线程约定下替换对后续 find 立即可见）。重复
+    // deprecate 合法（装配清单可再修订——以最后一次修订为准；已发布的
+    // tombstone 在真实流程中随清单版本固化，不回退）。
+    CodeDescriptor tombstone = it->second;
+    tombstone.deprecated = true;
+    if (supersededBy.has_value()) {
+        tombstone.supersededBy = *supersededBy;
+    }
+    it->second = std::move(tombstone);
+}
+
+// =====================================================================
+// 内置码表装配（§4.6——88 码全量收编：阶段 A 87 码＋F-618 RT-BOUNDS-MAGNITUDE）
+// =====================================================================
+
+std::vector<CodeDescriptor> builtinCodeDescriptors()
+{
+    std::vector<CodeDescriptor> table;
+    table.reserve(builtinSpecs().size());
+    for (const BuiltinSpec& spec : builtinSpecs()) {
+        table.push_back(makeBuiltin(spec));
+    }
+    return table;
+}
+
+void registerBuiltinCodes(IDiagnosticRegistry& registry)
+{
+    // 逐条注册：任何一条的注册期验证失败（含与既有登记的 DuplicateCode
+    // 冲突）即异常中止——内置表是装配清单权威，混入同码他义描述符属装配
+    // 错误，fail-fast 不静默跳过（NFR-MNT-03 边界拒绝；AGENTS.md"禁止吞错"）。
+    for (const CodeDescriptor& descriptor : builtinCodeDescriptors()) {
+        registry.registerCode(descriptor);
+    }
+}
+
+}  // namespace sdurws::ird::diagnostics
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Factory.cpp
+/**
+ * @file   Factory.cpp
+ * @brief  诊断工厂实现——create 校验链与条目组装、转译注册表与派发查找序、
+ *         阶段 A 锚定的转译清单。
+ *
+ * 设计依据（与 Factory.hpp 头注同源，此处只登记实现口径）：
+ *   - §9.2 create 检查序（固定、首错即停并指明字段——顺序登记见 create 函数
+ *     内逐段注释；"码已注册"先于"未废弃"，来源 token 合法性先于语义校验，
+ *     与 DIAG-T03 注册期验证链"结构校验先、权威校验后、键唯一最后"同风格）；
+ *   - §4.5 占位一致性：params 键集与 paramSchema 参数名集必须完全一致
+ *     （多键/少键/错名皆拒绝——"按模式填充"的机器语义）；
+ *   - §8.10 上下文必填规则（阶段 A 机械执行面）：execution 域码
+ *     （ownerUnit=="execution"）⇒ context.task 必填且五字段合法——评估/命令
+ *     路径的逐码清单未由卡给规范性枚举，不预判（单元卡 v0.5 登记）；
+ *   - §8.1 规则 2/§9.2 错误行：未登记类型→DIAG-REGISTRY-UNKNOWN-CODE 兜底
+ *     条目，不抛；消息截断 512 字节（与 §7.6 异常消息摘要口径一致）；
+ *   - §8.3 阶段 A 转译清单：std::exception → RT-ROBWORK-ERROR（目标码为
+ *     用户级 Error——rootless 转译按 subject 边界 SubjectMissing 拒绝，
+ *     调用方须提供根因条目）。
+ *
+ * 线程安全：entryId 原子分配；转译规则表 seal 后只读（std::map 并发读安全）；
+ * registry 按"运行期只读"消费（seal 后无写入——StableCodeRegistry 契约）。
+ */
+
+#include <sdurws/ird/diagnostics/Factory.hpp>
+
+#include <algorithm>
+#include <stdexcept>
+#include <utility>
+
+#include "EntryDetail.hpp"    // 去重键派生（私有单点——工厂为计算点 §4.2）
+#include "ParamSchema.hpp"    // paramSchema 解析单点（占位一致性校验用）
+
+#include <sdurws/ird/diagnostics/Redaction.hpp>  // IRedactionService（redactedContextSnapshot/异常消息脱敏接线——DIAG-T08）
+
+namespace sdurws::ird::diagnostics {
+namespace {
+
+/// 兜底条目的异常消息截断上限（§7.6 异常消息摘要口径 512 字节——"安全摘要"
+/// 的脱敏级整备随 DIAG-T08 接线，本任务先做确定性截断）。
+constexpr std::size_t kMaxTranslateMessageBytes = 512;
+
+/// 截断超限消息并附标注（§7.2"超出截断并标注"同风格——不静默丢弃尾部的
+/// 事实告知阅读者）。
+std::string truncateMessage(const std::string& message)
+{
+    if (message.size() <= kMaxTranslateMessageBytes) {
+        return message;
+    }
+    return message.substr(0, kMaxTranslateMessageBytes) + "…（已截断，≤"
+        + std::to_string(kMaxTranslateMessageBytes) + " 字节）";
+}
+
+}  // namespace
+
+// =====================================================================
+// DiagnosticsFactory——构造与 create 校验链
+// =====================================================================
+
+DiagnosticsFactory::DiagnosticsFactory(const IDiagnosticRegistry& registry,
+                                       const IClock& clock)
+    : m_registry(&registry)
+    , m_clock(&clock)
+{
+}
+
+DiagnosticsFactory::~DiagnosticsFactory() = default;
+
+void DiagnosticsFactory::attachRedactionService(
+    std::shared_ptr<const IRedactionService> service)
+{
+    // 快照切换（§14.4 v0.9）：下一次 create 起生效——create 并发安全契约在
+    // 接线后不降级（专用互斥只护 shared_ptr 读写，校验链不持锁）。
+    // nullptr＝解除挂接（回到 v0.4 置空语义——装配前合法降态）。
+    std::lock_guard<std::mutex> lock(m_redactionMtx);
+    m_redaction = std::move(service);
+}
+
+void DiagnosticsFactory::seal() noexcept
+{
+    m_sealed = true;
+}
+
+DiagnosticEntry DiagnosticsFactory::create(const core::DiagnosticRecord& record,
+                                           const DiagContext& context)
+{
+    // ---- 校验链（§9.2 前置；检查序固定——见 Factory.hpp 类注释，首错即停
+    // 并在 detail 中指明字段/码值）----
+
+    // ①码已注册（§4.5"工厂以未注册码构造 → code-unknown 拒绝"——诊断码不能
+    // 经异常文本临时生成的机制承载：未注册字符串在此全部被拦，DT-REG-3/4）。
+    const CodeDescriptor* descriptor = m_registry->find(record.code);
+    if (descriptor == nullptr) {
+        throw DiagnosticsError(DiagnosticsErrorCode::CodeUnknown,
+                               "码未注册（" + record.code + "）——工厂只接受已注册码");
+    }
+
+    // ②码未废弃（§4.5.1"工厂拒绝 deprecated 码 code-deprecated"——tombstone
+    // 只保留只读解析，不承载新实例构造；新语义＝新码）。
+    if (descriptor->deprecated) {
+        throw DiagnosticsError(DiagnosticsErrorCode::CodeDeprecated,
+                               "码已废弃（" + record.code + "）——废弃码只读映射不改写历史");
+    }
+
+    // ③context 来源 token 合法（§4.2 字段边界：sourceUnit ≤32、sourceInterface
+    // ≤64 且非空——调用方契约违约 fail-fast）。
+    if (context.sourceUnit.empty() || context.sourceUnit.size() > 32) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 context.sourceUnit 须为非空且 ≤32 字符 token");
+    }
+    if (context.sourceInterface.empty() || context.sourceInterface.size() > 64) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 context.sourceInterface 须为非空且 ≤64 字符 token");
+    }
+
+    // ④比较型三要素（core C-1 的注册表侧强化——码表 requiresComparison=true
+    // 的实例必须携带 comparison；ERR-01/UX-03 比较型校验含实际值/期望值/单位）。
+    if (descriptor->requiresComparison && !record.comparison.has_value()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::ComparisonMissing,
+                               "比较型码缺三要素（" + record.code + "）——core C-1 强化");
+    }
+
+    // ⑤subject 边界（core §4.8"稳定诊断项必须携带合法 subjectObjectId；瞬时
+    // 开发诊断可空"的边界强制——完整性强制归 diagnostics 边界，DT-DIAG-2）：
+    // 用户级码（severity != Dev）缺 subject → 拒绝；任一级携带非法（全零）
+    // subject 同样拒绝（"合法 subjectObjectId"——非法值不是绑定）。
+    const bool userLevel = descriptor->severity != DiagnosticSeverity::Dev;
+    if (record.subject.has_value() && !record.subject->isValid()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::SubjectMissing,
+                               "subject 为非法 ObjectId（全零保留值）——码 " + record.code);
+    }
+    if (userLevel && !record.subject.has_value()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::SubjectMissing,
+                               "用户级码缺 subject（" + record.code
+                                   + "）——ERR-01 稳定诊断项绑定对象（core §4.8 交接）");
+    }
+
+    // ⑥paramSchema 占位一致（§4.5"实例的 context/cause/comparison 须按模式
+    // 填充（工厂校验占位一致性）"——DiagContext.params 键集与 schema 参数名
+    // 集完全一致：多键/少键/错名皆拒绝）。
+    std::vector<std::string> schemaNames;
+    std::string schemaError;
+    if (!detail::tryParseParamSchema(descriptor->paramSchema, &schemaNames, &schemaError)) {
+        // 注册期已验证过 schema 文法——此处失败说明注册表被绕过装配，防御性
+        // 拒绝（不静默放行）。
+        throw DiagnosticsError(DiagnosticsErrorCode::ParamSchemaMismatch,
+                               "码 " + record.code + " 的 paramSchema 解析失败: " + schemaError);
+    }
+    if (schemaNames.size() != context.params.size()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::ParamSchemaMismatch,
+                               "参数占位数量与模式不符（码 " + record.code + "，模式 "
+                                   + std::to_string(schemaNames.size()) + " 项，实例 "
+                                   + std::to_string(context.params.size()) + " 项）");
+    }
+    for (const std::string& name : schemaNames) {
+        if (context.params.find(name) == context.params.end()) {
+            throw DiagnosticsError(DiagnosticsErrorCode::ParamSchemaMismatch,
+                                   "参数占位缺失 \"" + name + "\"（码 " + record.code + "）");
+        }
+    }
+
+    // ⑦来源码必填上下文（§8.10 锚定规则：execution 全路径产码必须携带五元组
+    // ——ownerUnit=="execution" 的码缺 context.task 即 ContextMissing；五元组
+    // 有效性校验（isValid）一并执行——残缺五元组等于没有锚定，TASK-03）。
+    if (descriptor->ownerUnit == "execution"
+        && !(context.task.has_value() && context.task->isValid())) {
+        throw DiagnosticsError(DiagnosticsErrorCode::ContextMissing,
+                               "execution 域码缺合法 task 五元组（" + record.code
+                                   + "）——§8.10 产码必带五元组");
+    }
+
+    // ---- 组装（§9.2 后置：不可变条目，分类/严重自码表，身份字段已赋）----
+
+    DiagnosticEntry entry;
+    entry.entryId = m_nextEntryId.fetch_add(1, std::memory_order_relaxed) + 1;  // 单调 ≥1
+    entry.record = record;                       // P-DIAG-1：core 契约原样内嵌（不扩充）
+    entry.category = descriptor->category;       // 分类来自码表——调用方不可覆盖（NFR-MNT-03）
+    entry.severity = descriptor->severity;       // 同上；不随实例变化（§4.3 传播规则）
+    entry.context = context;
+    // 码表版本标注（§4.5 registryVersion"进入诊断实例的 contractVersions 标注，
+    // 供报告侧检测文案/语义演进"——追加在调用方标注之后，不覆盖）。
+    entry.context.contractVersions.emplace_back("diag-code", descriptor->registryVersion);
+    entry.emittedAtUtc = m_clock->nowUtc();      // 注入时钟——测试可替换（确定性）
+    entry.dedupKey = detail::deriveDedupKey(record, context);   // §6.4（口径见 detail 头注）
+    entry.orderKey = std::make_tuple(
+        static_cast<std::uint64_t>(entry.emittedAtUtc.time_since_epoch().count()),
+        entry.entryId,
+        entry.record.code);                      // §6.4 稳定排序键 {时间戳计数, entryId, code}
+    // threadTag/workerId 阶段 A 置空：采集点随各单元产码路径登记；worker
+    // 标注随回传路径（§7.5，DIAG-T07）。
+    // redactedContextSnapshot（§4.2"构造时经 IRedactionService 产出"——
+    // DIAG-T08 接线，§14.4 v0.9 登记）：非空 params 组装 "k:v,k:v" 快览串
+    // （与 exportSafeSummary 的 params 段同形——单一呈现口径），经挂接的
+    // 脱敏服务按 Dev 档 NFR-SEC-07 全量规则产出（原文不保留——条目只存
+    // 脱敏后快览）；params 为空＝无可快览内容，保持 nullopt（不伪造空串
+    // ——core §4.8 字段口径）。未挂接＝nullopt（v0.4 置空语义——装配前
+    // 合法降态）。脱敏服务绝不抛出（§9.5）——create 校验链的异常面不变。
+    {
+        std::lock_guard<std::mutex> lock(m_redactionMtx);
+        if (m_redaction != nullptr && !entry.context.params.empty()) {
+            std::string kv;
+            bool firstParam = true;
+            for (const auto& [key, value] : entry.context.params) {
+                if (!firstParam) {
+                    kv += ',';
+                }
+                firstParam = false;
+                kv += key;
+                kv += ":";
+                kv += value;
+            }
+            entry.redactedContextSnapshot = m_redaction->redact(kv, LogTier::Dev);
+        }
+    }
+    return entry;
+}
+
+// =====================================================================
+// DiagnosticsFactory——转译注册表与派发
+// =====================================================================
+
+void DiagnosticsFactory::registerTranslation(std::type_index errType,
+                                             std::string_view targetCode)
+{
+    // 运行期调用＝装配期契约违约（§9.2"转换规则登记（装配期）"；"运行期"
+    // 判据＝seal() 装配原语——同 StableCodeRegistry 实现口径）。
+    if (m_sealed) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "运行期 registerTranslation——登记仅限装配期");
+    }
+
+    // 目标码必须已注册（未注册码的转译规则＝装配错误——转译产物经 create
+    // 产出，码面必须先在案；CodeUnknown 拒绝）。
+    if (m_registry->find(targetCode) == nullptr) {
+        throw DiagnosticsError(DiagnosticsErrorCode::CodeUnknown,
+                               "转译目标码未注册（" + std::string(targetCode) + "）");
+    }
+
+    // 同错误类型重复登记拒绝（§9.2"同错误类型重复登记→DuplicateCode"——
+    // 不覆盖不静默；一型一码的注册面语义）。
+    if (m_rules.find(errType) != m_rules.end()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::DuplicateCode,
+                               "错误类型重复登记（" + std::string(errType.name())
+                                   + "）——一型一码");
+    }
+
+    m_rules.emplace(errType,
+                    std::make_pair(std::string(errType.name()), std::string(targetCode)));
+}
+
+std::vector<std::pair<std::string, std::string>>
+DiagnosticsFactory::registeredTranslations() const
+{
+    // 审计清单（按类型名升序＝map 迭代序——确定性观测面，"映射就位"的证据）。
+    std::vector<std::pair<std::string, std::string>> result;
+    result.reserve(m_rules.size());
+    for (const auto& [type, rule] : m_rules) {
+        result.emplace_back(rule);
+    }
+    return result;
+}
+
+DiagnosticEntry DiagnosticsFactory::translateDispatch(const TranslationInput& input,
+                                                      const DiagContext& context,
+                                                      const DiagnosticEntry* root)
+{
+    // ---- 查找序（Factory.hpp 类注释：精确 → runtime_error → exception →
+    // 兜底；全静态类型判据——禁字符串匹配的机制面）----
+    // 异常消息脱敏整备（v0.4 口径④"脱敏随 DIAG-T08"落地，§14.4 v0.9 登记）：
+    // 挂接了脱敏服务时先过 NFR-SEC-07 全量规则（Dev 档——转译条目面向开发
+    // 诊断面，内部十六进制遮蔽不在此层），再走既有 512 字节截断（标注形态
+    // 不变——DT-REG-4 观测面零回归）；未挂接＝原截断语义。脱敏服务绝不抛出
+    // （§9.5）——转译路径"恒不抛"契约不变。
+    std::shared_ptr<const IRedactionService> redaction;
+    {
+        std::lock_guard<std::mutex> lock(m_redactionMtx);
+        redaction = m_redaction;
+    }
+    const auto safeMessage = [&redaction](const std::string& raw) {
+        if (redaction != nullptr) {
+            return truncateMessage(redaction->redact(raw, LogTier::Dev));
+        }
+        return truncateMessage(raw);
+    };
+    std::string targetCode;
+    bool matched = false;
+    if (const auto it = m_rules.find(input.type); it != m_rules.end()) {
+        targetCode = it->second.second;          // ①精确命中
+        matched = true;
+    } else if (input.isRuntimeError) {
+        if (const auto base = m_rules.find(typeid(std::runtime_error));
+            base != m_rules.end()) {
+            targetCode = base->second.second;    // ②runtime_error 体系兜底
+            matched = true;
+        }
+    }
+    if (!matched && input.isException) {
+        if (const auto base = m_rules.find(typeid(std::exception)); base != m_rules.end()) {
+            targetCode = base->second.second;    // ③std::exception 体系兜底（§8.3）
+            matched = true;
+        }
+    }
+
+    if (!matched) {
+        // ④未登记类型→DIAG-REGISTRY-UNKNOWN-CODE 兜底条目（§8.1 规则 2/§9.2
+        // "不抛"）：保留原始来源（类型名）与安全摘要（消息截断）；该码为
+        // 内置 Dev 级——subject 边界天然满足，本路径恒不抛。F-602：兜底
+        // 码 paramSchema 为空（零参数）——context.params 非空时 create 的
+        // 参数模式校验会以 ParamSchemaMismatch 抛出，把"恒不抛"的转译兜
+        // 底变成新失败点（转译通常发生在 catch 块内）。兜底条目不承载调
+        // 用方参数——清空后再产出。
+        core::DiagnosticRecord fallback = core::DiagnosticRecord::make(
+            "DIAG-REGISTRY-UNKNOWN-CODE",
+            /*subject=*/{}, /*localName=*/{}, /*runtimeName=*/{},
+            /*context=*/"未登记错误类型转译（类型 " + input.typeName + "）——保留原始来源",
+            /*cause=*/input.message.empty() ? std::string("（消息不可得——非 std::exception 体系）")
+                                            : safeMessage(input.message),
+            /*recommendedAction=*/"核对 ErrorCodeTranslator 装配清单（类型映射禁字符串匹配——§8.1）");
+        DiagContext fallbackContext = context;
+        fallbackContext.params.clear();
+        DiagnosticEntry entry = create(fallback, fallbackContext);
+        if (root != nullptr) {
+            entry.causedBy = root->entryId;      // 兜底条目同样不丢根因（§6.3）
+        }
+        return entry;
+    }
+
+    // ---- 已登记路径：经 create 全链产出（分类/严重/校验与直创条目同规则
+    // ——§8.1 规则 3"同一错误只有一个权威分类"）----
+    // 用户级目标码的 subject 来源：继承根因条目（root 非空——作用对象域
+    // 一致，§6.3"转换器不丢作用对象"）；root 空时由 create 按 subject 边界
+    // 以 SubjectMissing 拒绝（调用方须提供根因条目或换用 Dev 级目标码）。
+    std::optional<core::ObjectId> subject;
+    std::optional<std::string> localName;
+    std::optional<std::string> runtimeName;
+    if (root != nullptr) {
+        subject = root->record.subject;
+        localName = root->record.localName;
+        runtimeName = root->record.runtimeName;
+    }
+    core::DiagnosticRecord mapped = core::DiagnosticRecord::make(
+        targetCode, subject, localName, runtimeName,
+        /*context=*/"跨单元错误转译（类型 " + input.typeName + "，目标码 " + targetCode
+            + "）——原始来源已保留",
+        /*cause=*/input.message.empty() ? std::string("（消息不可得——非 std::exception 体系）")
+                                        : safeMessage(input.message),
+        /*recommendedAction=*/"按目标码处理动作族处置；开发级日志保留异常链（§8.1 规则 1）");
+    DiagnosticEntry entry = create(mapped, context);
+    if (root != nullptr) {
+        entry.causedBy = root->entryId;          // §6.3 不丢根因：causedBy 链接
+    }
+    return entry;
+}
+
+// =====================================================================
+// 阶段 A 转译清单（§8.3 锚定——RT 族映射）
+// =====================================================================
+
+void registerStageATranslations(IDiagnosticFactory& translator)
+{
+    // §8.3 原文："本文转换表登记 std::exception 体系→RT-ROBWORK-ERROR 的
+    // 兜底规则（§8.1 规则 2 的合法应用：类型匹配而非文本匹配）"。重复登记
+    // 由 registerTranslation 的 DuplicateCode 拒绝承载（清单与既有装配冲突
+    // 即抛，不静默跳过——Factory.hpp 注释）。
+    translator.registerTranslation(typeid(std::exception), "RT-ROBWORK-ERROR");
+}
+
+}  // namespace sdurws::ird::diagnostics
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+# =====================================================================
+# diagnostics 单元（诊断与日志设施）构建脚本
+#
+# 设计依据：
+#   - units/diagnostics.md §3.3（命名空间/目标/CMake 集成：骨架 INTERFACE →
+#     DIAG-T02 升级 STATIC；别名 RWS::ird::diagnostics；cxx_std_17；PUBLIC
+#     链 core；`_test`/`_contract_test` 随 DIAG-T02 登记）、§3.2（编译依赖仅
+#     core＋标准库——零 Qt 含 Core〔D-01〕、零 Eigen/rw::math 直接包含、零
+#     其他单元、ARCH §3.5 diagnostics→core 唯一出边）、§10 DT-BUILD 行
+#   - development-task-breakdown.md §5.1（双模式/目标命名）、§5.5（gtest 定稿：
+#     vcpkg 安装＋find_package(GTest CONFIG REQUIRED)）
+#   - 需求 NFR-MNT-01（计算内核零 Qt）、NFR-MNT-02（单元边界）；红线 R-1/R-2
+#
+# 本文件随 DIAG-T02（≙WP-09-T02，任务契约 tasks/foundation/DIAG-T02.json）落地：
+#   1. 骨架期 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_diagnostics
+#      不变，别名 RWS::ird::diagnostics 不变，公共 include 根不变）；
+#   2. 注册 gtest 测试目标 sdurws_ird_diagnostics_test（DT-BUILD 红线扫描）
+#      与跨单元契约目标 sdurws_ird_diagnostics_contract_test（落位期＝链接
+#      边界＋core 契约消费面的桩形态验证）；
+#   3. 首个翻译单元为锚点 Diagnostics.cpp（src/ 空起步——§11 DIAG-T02 行
+#      产物定义；注册表/目录/工厂/日志/脱敏等实现随 DIAG-T03+ 同名任务文件
+#      填充）；
+#   4. P-DIAG-8 处置（governance-log 登记）：契约测试以桩＋契约夹具验证，
+#      不私改 execution 侧链接——execution 链接启用（EX-T01 后按 P-EX-8）
+#      时补双库集成冒烟，另行登记。
+# =====================================================================
+
+# ---- gtest 接入（DTB §5.5 定稿，唯一机制）----
+# gtest 经 vcpkg 安装（gtest:x64-windows，经典模式）；REQUIRED＝找不到即配置
+# 失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/RW::gtest
+# （从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
+find_package(GTest CONFIG REQUIRED)
+
+# ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
+# src/Diagnostics.cpp＝落位期锚点翻译单元（§11 DIAG-T02 行"src/ 空起步"；
+# STATIC 库至少一个翻译单元纪律——core/src/Core.cpp、policy/src/Policy.cpp
+# 同先例）。DIAG-T03 落地 Errors.cpp（§9.0 错误类型）与 DiagCodes.cpp
+# （§4.5/§4.6/§9.1 注册表＋内置码表 87 码）——同名任务文件按 §11 行增列。
+# DIAG-T04 增列 Catalog.cpp（§4.2/§6/§9.7 目录＋信封＋sink）与 Factory.cpp
+# （§8/§9.2 工厂＋转译注册表）及私有实现头 ParamSchema（解析单点，诊断注册
+# 期验证共用）。DIAG-T05 增列 Confirmable.cpp（§5/§9.3 可确认诊断服务——
+# FindingId/绑定四元组/状态机/失效条件；公共头 Confirmable.hpp 同名落位）。
+# DIAG-T06 增列 Aggregation.cpp（§6.3~§6.5/§9.4 聚合器——CauseLink 链遍历/
+# 聚合规则/稳定排序；公共头 Aggregation.hpp 同名落位）。DIAG-T07 增列
+# Logging.cpp（§7.1~§7.5/§9.6 两级日志——管线/节流采样/轮转/WorkerLogBatch
+# 重放/ILogFileOps 接缝；公共头 Logging.hpp 同名落位）。DIAG-T08 增列
+# Redaction.cpp（§7.7/§9.5 脱敏——四路径策略/凭据模式/降级不放行；公共头
+# Redaction.hpp 同名落位）与 CrashReport.cpp（§7.6 崩溃诊断文件——脱敏写
+# 出/用户目录/磁盘不足降级；公共头 CrashReport.hpp 同名落位）。DIAG-T09 于
+# Catalog.cpp 内扩容（§6.2 目录清理策略——容量护栏/分级淘汰/DIAG-CATALOG-
+# OVERFLOW 溢出登记；公共头 Catalog.hpp 扩展 CatalogCapacityConfig 与目录
+# 容量面，无新增翻译单元）。
+add_library(sdurws_ird_diagnostics STATIC
+    src/Diagnostics.cpp
+    src/Errors.cpp
+    src/DiagCodes.cpp
+    src/ParamSchema.cpp
+    src/Catalog.cpp
+    src/Factory.cpp
+    src/Confirmable.cpp
+    src/Aggregation.cpp
+    src/Logging.cpp
+    src/Redaction.cpp
+    src/CrashReport.cpp)
+
+# C++17（单元卡 D-01／core.md D-01 同源）：逐目标显式设定，不设全局标准。
+# PUBLIC 传播：diagnostics 公共头将使用 std::optional/variant/filesystem 等
+# C++17 设施（§1.4），消费者编译 diagnostics 头也必须至少 C++17。
+target_compile_features(sdurws_ird_diagnostics PUBLIC cxx_std_17)
+set_target_properties(sdurws_ird_diagnostics PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+
+# 源码编码：本单元源文件全部为 UTF-8（无 BOM）且含中文注释（AGENTS.md §2
+# 注释规范）。MSVC 默认按系统代码页（GBK）解读无 BOM 源文件，会把 UTF-8
+# 中文误读成乱码 token（core 落位时曾出现 C2001"常量中有换行符"），必须
+# 显式 /utf-8。PUBLIC 传播：公共头同为 UTF-8，消费者编译含 diagnostics 头
+# 的翻译单元也需要。
+if(MSVC)
+    target_compile_options(sdurws_ird_diagnostics PUBLIC /utf-8)
+endif()
+
+# 公共头根：仅 diagnostics/include（内部含 sdurws/ird/diagnostics/）。
+# R-2 红线：私有实现头不得置于 include/——本目录是 diagnostics 唯一对外的
+# 头暴露位，实现细节头（若有）只能放 src/ 并以相对路径被实现文件包含。
+target_include_directories(sdurws_ird_diagnostics PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+# 编译依赖：仅 core（§3.2 唯一单元边，PUBLIC——诊断信封/服务公共头内嵌 core
+# 承载的 DiagnosticRecord/ConfirmableFinding 等契约类型，消费方必须随链到达）。
+# 零 rw 基线库直链（零 Eigen/rw::math 直接包含——§1.4，rw 类型仅经 core 头
+# 传递）、零 Qt（D-01）、零其他 industrialrobot 单元（ARCH §3.5 出边唯一）。
+# 用统一真名 sdurws_ird_core：集成与独立冒烟两种模式下都可解析（别名
+# RWS::ird::core 仅集成模式存在——core/evidence 落位时同款取舍）。
+target_link_libraries(sdurws_ird_diagnostics PUBLIC sdurws_ird_core)
+
+# 别名（集成模式）：供消费方单元以 RWS::ird::diagnostics 消费；冒烟模式无
+# 别名（与骨架期行为一致，DTB §5.1）。
+if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    add_library(RWS::ird::diagnostics ALIAS sdurws_ird_diagnostics)
+endif()
+
+# ---- 测试目标 sdurws_ird_diagnostics_test（随 DIAG-T02 登记，不预建于骨架）----
+# 首批用例＝DT-BUILD 红线扫描（units/diagnostics.md §10 DT-BUILD 行：零 Qt/
+# 零 Eigen·rw 直接包含/依赖图仅 core 边/无私有头出 include——运行期源码
+# 扫描，与文件末尾配置期守卫互为两道防线）。DT-REG-1~5 矩阵用例随
+# DIAG-T03 增列（StableCodeRegistryTest.cpp——§10）；DT-DIAG-1/2、DT-DUP-1/2、
+# DT-CAT-1/2 及转译器/sink 用例随 DIAG-T04 增列（CatalogFactoryTest.cpp）。
+# DT-CFM-1~5（服务端状态机全转移/绑定复核/失效路径/超时半区）随 DIAG-T05 增列
+# （ConfirmableTest.cpp——§10）；DT-CFM-6~10 的 project 桩联动半区入
+# _contract_test（ConfirmableProjectStubTest.cpp——P-DIAG-8 处置：桩验证不私改
+# 对端链接）。DT-AGG-1~5/DT-CHAIN-1（聚合视图/稳定排序/不升级反例/原因链
+# 遍历＋P-DIAG-1 钉住）随 DIAG-T06 增列（AggregationTest.cpp——§10）。
+# DT-LOG-1~5（两级分流/稳定序/写失败注入/禁用独立性/WorkerLogBatch 重放）
+# ＋节流采样/轮转/溢出/截断行为面＋P-DIAG-7/P-EX-8 处置钉住随 DIAG-T07 增列
+# （LoggingTest.cpp——§10；故障注入经 ILogFileOps 接缝自持替身，不链 testkit）。
+# DT-SEC-1~4（凭据零命中/路径四策略/脱敏失败降级/导出不泄敏）＋DT-LIFE-4 磁盘
+# 不足半区（崩溃文件写失败降级）＋AT-11 崩溃文件用例＋P-DIAG-1 处置钉住随
+# DIAG-T08 增列（RedactionTest.cpp——§10；故障注入经 applyRules 虚缝与
+# ILogFileOps 接缝自持替身，不链 testkit）。
+# DT-LIFE-1/2/3（容量护栏与分级淘汰/失败取消保留/归档失败报告＋关闭有界）
+# ＋P-DIAG-7 容量默认钉住随 DIAG-T09 增列（CatalogLifecycleTest.cpp——§10；
+# DT-LIFE-3"日志仍在/关闭时限"半区经真实 LoggingPipeline＋FileLogFileOps
+# 临时目录自持，不链 testkit）。
+# DT-COLLAB-1（命令/任务/运行关联——DiagQuery 的 revision/task 过滤轴）
+# ＋DT-AT 观测点映射组（AT-01/10/11/13/19/30/34 七个观测点的数据形状
+# 钉子——"本文只提供观测点，不代验 AT"）随 DIAG-T10 增列
+# （CollaborationQueryTest.cpp——§10 矩阵收口的最后两个缺口组）。
+enable_testing()
+
+add_executable(sdurws_ird_diagnostics_test
+    test/BuildRedLineTest.cpp
+    test/StableCodeRegistryTest.cpp
+    test/CatalogFactoryTest.cpp
+    test/CatalogLifecycleTest.cpp
+    test/ConfirmableTest.cpp
+    test/AggregationTest.cpp
+    test/LoggingTest.cpp
+    test/RedactionTest.cpp
+    test/CollaborationQueryTest.cpp)
+
+target_compile_features(sdurws_ird_diagnostics_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_diagnostics_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+# 测试源文件同为 UTF-8＋中文注释（/utf-8 说明见产品目标处；gtest 头为 ASCII
+# 不受影响）。diagnostics 的 PUBLIC /utf-8 经链接传播亦可覆盖，显式再设一次
+# 以自洽——测试目标应独立可读，不依赖被测目标的编译选项细节。
+if(MSVC)
+    target_compile_options(sdurws_ird_diagnostics_test PRIVATE /utf-8)
+endif()
+
+# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口；测试链接产品库
+# sdurws_ird_diagnostics 同时验证"公共头可被正常 include＋库可链接"。
+# 不链 sdurws_ird_testkit：DT-BUILD 红线用例以 gtest 原生断言承载（需求/AT
+# 追溯在用例名与 ird-test-report.json 的 trace 字段——evidence EV-T01 同款）；
+# testkit 谓词（checkDiagnosticRecord/checkComparativeFields）已随 DIAG-T10
+# 契约套件消费（DiagContractCheckTest），链接面登记于 _contract_test 目标处
+# （P-DIAG-8 处置：契约目标链 testkit 为 T-1 允许形态，产品目标不链）。
+target_link_libraries(sdurws_ird_diagnostics_test PRIVATE
+    sdurws_ird_diagnostics
+    GTest::gtest_main)
+
+# 源码树位置注入：DT-BUILD 用例在运行期扫描 diagnostics 源码核对红线
+# （§10 DT-BUILD）。经编译定义传 industrialrobot 根（evidence/runtime 同款
+# ——值内以单元名作子目录前缀，扫描面随单元自包含）。
+target_compile_definitions(sdurws_ird_diagnostics_test PRIVATE
+    IRD_DIAGNOSTICS_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# vcpkg 的 gtest:x64-windows 是动态库（gtest.dll/gtest_main.dll）：把测试
+# 可执行文件的运行期 DLL 拷到其输出目录，保证不经 PATH 配置即可直接运行
+# （留痕与验收都要直接执行该可执行文件）。TARGET_RUNTIME_DLLS 需 CMake ≥3.21，
+# 本仓库工具链为 VS2022 自带的更新版本，满足。
+add_custom_command(TARGET sdurws_ird_diagnostics_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_diagnostics_test>
+            $<TARGET_FILE_DIR:sdurws_ird_diagnostics_test>
+    COMMAND_EXPAND_LISTS)
+
+# ---- 跨单元契约测试目标 sdurws_ird_diagnostics_contract_test（随 DIAG-T02 登记）----
+# §10 测试目标分工：`_test`＝单元内行为；`_contract_test`＝跨单元契约面
+# （§3.3：与 core 值类型、与 testkit 谓词、与 project/execution sink 形态
+# 对齐）。落位期首批用例＝链接边界契约（PUBLIC 链 core 的传染性自证＋构建
+# 图仅 core 一条单元边）＋P-DIAG-8 处置的桩消费方形态验证（LinkageContract
+# Test.cpp 文件头有完整处置说明）；DT-CFM-6~10（UI 关闭/未确认提交/worker 禁令
+# /确认≠成功/确认留痕形状——project §6.7 桩联动）随 DIAG-T05 增列
+# （ConfirmableProjectStubTest.cpp）。DT-LIFE-5＋宿主留痕形状冻结（envelope
+# canonical/CommandRecord 绑定的对接桩——evidence/project 所有者形态；编码器
+# 定义在测试侧＝diagnostics 不提供宿主编码设施）随 DIAG-T09 增列
+# （CatalogHostTraceStubTest.cpp——P-DIAG-8 同款桩验证纪律）。
+# ScriptedDiagSource 基座＋替身边界机检（ScriptedDiagSourceTest——§11
+# DIAG-T10 行产物"按序列产出预设条目/finding/日志行"；ScriptedDoubleBoundary
+# 组＝EV-REG-3 同模式机检面：产品源码面零替身符号＋README/头文件边界声明
+# 锚点在案）与 testkit 契约谓词消费（DiagContractCheckTest——§10 头注
+# "与 testkit checkDiagnosticRecord/checkComparativeFields"承接；双面对账：
+# 工厂产出与 testkit 独立判定同判）随 DIAG-T10 增列。
+add_executable(sdurws_ird_diagnostics_contract_test
+    test/LinkageContractTest.cpp
+    test/ConfirmableProjectStubTest.cpp
+    test/CatalogHostTraceStubTest.cpp
+    test/ScriptedDiagSourceTest.cpp
+    test/DiagContractCheckTest.cpp)
+
+target_compile_features(sdurws_ird_diagnostics_contract_test PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_diagnostics_contract_test PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF)
+if(MSVC)
+    target_compile_options(sdurws_ird_diagnostics_contract_test PRIVATE /utf-8)
+endif()
+
+# 链接面（T-1 允许形态：同单元产品目标＋gtest）：注意**不显式链 core**——
+# LinkageContractTest 的 PublicCoreExposure 用例正是以"消费 TU 零显式 core
+# 链接"为前提，行为级证明 PUBLIC 链接接口的传染性（链 diagnostics 即获得
+# core 承载的诊断契约类型——未来 project/execution/io/ui/reporting 消费方
+# 的依赖形态）。
+target_link_libraries(sdurws_ird_diagnostics_contract_test PRIVATE
+    sdurws_ird_diagnostics
+    sdurws_ird_testkit
+    GTest::gtest_main)
+
+# ---- DIAG-T10：契约目标链接 testkit（P-DIAG-8 处置的链接面登记）----
+# §10 头注"`_contract_test` 面＝与 testkit checkDiagnosticRecord/
+# checkComparativeFields、ScriptedDiagSource 基座"的承接：契约套件消费
+# testkit 契约谓词（DiagContractCheckTest——testkit.md §10.2 diagnostics
+# 行交接"从 testkit 接收：ContractCheck（DiagnosticRecord）"）。
+# 红线两面（testkit.md §2.4）：本链接是 T-1 允许形态
+# `sdurws_ird_<unit>_contract_test → { 被测产品目标, sdurws_ird_testkit,
+# gtest }`——**产品目标 sdurws_ird_diagnostics 不链 testkit**（文件末尾
+# 配置期守卫＋LinkageContractTest 沿用面＋ScriptedDiagSourceTest 的
+# ScriptedDoubleBoundary 机检三面钉住）。落位前本目标只链产品库＋gtest
+# （DIAG-T02 起的既有形态）；本目标不显式链 core 的理由同上（传染性
+# 自证用例的前提不被破坏——testkit 自身 PUBLIC 链 core，经由边不改变
+# "零显式 core 链接"的断言面）。
+
+# 源码树位置注入（构建图边扫描用例输入——与 _test 目标同源）。
+target_compile_definitions(sdurws_ird_diagnostics_contract_test PRIVATE
+    IRD_DIAGNOSTICS_UNIT_ROOT="${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+add_custom_command(TARGET sdurws_ird_diagnostics_contract_test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_diagnostics_contract_test>
+            $<TARGET_FILE_DIR:sdurws_ird_diagnostics_contract_test>
+    COMMAND_EXPAND_LISTS)
+
+# ---- ird_add_gtest：add_test＋XML 报告目标（DTB §5.5，宏各单元自持）----
+# 框架原宏见 RobWork/RobWork/gtest/CMakeLists.txt：add_test ＋ <target>_report
+# （运行测试并落 gtest XML）。本宏按 DTB §5.5 在本单元 CMake 内定义（定义
+# 先于全部调用——CMake 顺序解析）；不做跨单元共享（diagnostics 不是构建
+# 工具设施提供方——NFR-MNT-04）。报告输出于构建树本目录 gtest_reports/
+# <target>.xml；任务留痕时拷贝入 doc/industrial-robot-design/traceability/
+# （AGENTS.md §4.2 验证留痕）。报告目标不进默认构建（EXCLUDE_FROM_ALL）：
+# 跑测试是显式动作，与框架"不随 ordinary build 执行测试"的约定一致。
+macro(ird_add_gtest target)
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    add_custom_target(
+        ${target}_report
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                ${CMAKE_CURRENT_BINARY_DIR}/gtest_reports
+        COMMAND $<TARGET_FILE:${target}>
+                --gtest_output=xml:${CMAKE_CURRENT_BINARY_DIR}/gtest_reports/${target}.xml
+        DEPENDS ${target}
+        COMMENT "ird: run ${target} and write gtest XML report")
+    set_target_properties(${target}_report PROPERTIES
+        EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+endmacro()
+
+ird_add_gtest(sdurws_ird_diagnostics_test)
+ird_add_gtest(sdurws_ird_diagnostics_contract_test)
+
+# ---- 依赖红线守卫（配置期断言，DT-BUILD 的 CMake 依赖图半区）----
+# diagnostics 唯一 industrialrobot 单元依赖＝core（ARCH §3.5 唯一出边）；
+# 零 Qt（R-3/NFR-MNT-01，比 L3 上限更严——D-01 明示含 Core 亦禁）；产品库
+# 本体零 gtest（D-06——断言宏只在消费方 _test 目标展开）。两面读取
+# （LINK_LIBRARIES 含 PRIVATE 边＋INTERFACE_LINK_LIBRARIES 含 PUBLIC 边）
+# 防漏。属性未设置时 get_target_property 返回 "<var>-NOTFOUND" 字面串，
+# 不匹配任何模式，不会误报。正式全仓门禁（依赖图白名单）归 ird_gates
+# （WP-01-T01），本守卫不替代它。
+get_target_property(_ird_diag_link_libs sdurws_ird_diagnostics LINK_LIBRARIES)
+get_target_property(_ird_diag_iface_libs sdurws_ird_diagnostics INTERFACE_LINK_LIBRARIES)
+foreach(_lib IN LISTS _ird_diag_link_libs _ird_diag_iface_libs)
+    if(_lib MATCHES "^sdurws_ird_" AND NOT _lib STREQUAL "sdurws_ird_core"
+                                       AND NOT _lib STREQUAL "sdurws_ird_diagnostics")
+        message(FATAL_ERROR
+            "diagnostics 依赖红线（R-1/R-2）：sdurws_ird_diagnostics 仅可链接 "
+            "core，发现单元目标 ${_lib}（units/diagnostics.md §3.2、ARCH §3.5）")
+    endif()
+    if(_lib MATCHES "^Qt[0-9]?::|^Qt::|Qt5::|Qt6::")
+        message(FATAL_ERROR
+            "diagnostics 依赖红线（R-3/NFR-MNT-01，D-01 零 Qt 含 Core）："
+            "发现 ${_lib}")
+    endif()
+    if(_lib MATCHES "^GTest::|^gtest$")
+        message(FATAL_ERROR
+            "diagnostics 依赖红线（D-06）：产品库本体不链接 gtest，发现 ${_lib}")
+    endif()
+endforeach()
+FILE: RobWork/RobWork/src/rw/core/DOMParser.hpp
+/********************************************************************************
+ * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#ifndef RW_CORE_DOMPARSER_HPP
+#define RW_CORE_DOMPARSER_HPP
+
+#if !defined(SWIG)
+#include <rw/core/DOMElem.hpp>
+#include <rw/core/ExtensionPoint.hpp>
+#include <rw/core/Ptr.hpp>
+
+#include <string>
+#include <vector>
+#endif
+
+namespace rw { namespace core {
+
+    /** @addtogroup core */
+    /*@{*/
+
+    /**
+     * @brief interface for parsing documents in a DOM fasion.
+     *
+     * The factory method in the DOM parser enables extensions to be added by the user through
+     * plugins.
+     */
+    class DOMParser
+    {
+      protected:
+        //! constructor
+        DOMParser (){};
+
+      public:
+        //! smart pointer type
+        typedef rw::core::Ptr< DOMParser > Ptr;
+
+        //! destructor
+        virtual ~DOMParser () {}
+
+        // loading and saving
+        /**
+         * @brief parse from file
+         * @param filename [in] name of file
+         */
+        virtual void load (const std::string& filename) = 0;
+
+        /**
+         * @brief parse from stream
+         * @param input [in] input stream
+         */
+        virtual void load (std::istream& input) = 0;
+
+        /**
+         * @brief save DOM structure to file
+         * @param filename [in] filename
+         */
+        virtual void save (const std::string& filename) = 0;
+
+        /**
+         * @brief save DOM structure to stream
+         * @param input
+         */
+        virtual void save (std::ostream& input) = 0;
+
+        /**
+         * @brief specify the schema file
+         *
+         * @note not all DOMParser implementations support schema validation
+         * @param filename
+         */
+        virtual void setSchema (const std::string& filename) { _schemaFile = filename; }
+
+        /**
+         * @brief get the top/root element in the DOM structure
+         * @return root element of dom structure
+         */
+        virtual DOMElem::Ptr getRootElement () = 0;
+
+        /**
+         * @brief Enable/disable debugging to the debug Log.
+         * @param debug [in] true to enable debug output.
+         */
+        virtual void setDebug (bool debug) = 0;
+
+        // extra stuff that can be added in top of document
+        /**
+         * @brief make an instance of the default DOM parser
+         * @return a DOM parser for xml files
+         */
+        static rw::core::Ptr< DOMParser > make ();
+
+#if !defined(SWIG)
+        /**
+         * @addtogroup extensionpoints
+         * @extensionpoint{ rw::core::DOMParser::Factory,rw::core::DOMParser,rw.core.DOMParser }
+         * \class DOMParser
+         */
+#endif
+        /**
+         * @brief a factory for DOMParsers. This factory defines an
+         * extension point for DOMParsers. Typically this is for parsing xml files,
+         * however, anything that parses from some stream or file into a DOM structure
+         * can be a DOMParser.
+         */
+        class Factory : public rw::core::ExtensionPoint< DOMParser >
+        {
+          public:
+            //! constructor
+            Factory () :
+                rw::core::ExtensionPoint< DOMParser > ("rw.core.DOMParser",
+                                                       "DOM capable parser of fstream and files"){};
+
+            /**
+             * @brief get a DOM parser for a specific file format
+             * @param format [in] the extension identifying the file format (without initial dot).
+             * @return a parser if found, false otherwise.
+             */
+            static rw::core::Ptr< DOMParser > getDOMParser (const std::string& format);
+
+            /**
+             * @brief check if the factory has a DOM parser for a specific format
+             * @param format [in] file ending like: xml, ini, txt...
+             * @return
+             */
+            static bool hasDOMParser (const std::string& format);
+
+            /**
+             * @brief get a list of supported formats
+             * @return
+             */
+            static std::vector< std::string > getSupportedFormats ();
+        };
+
+      protected:
+        //! @brief Filename of schema.
+        std::string _schemaFile;
+    };
+
+    /*@}*/
+}}    // namespace rw::core
+
+/**
+ * @brief Deprecated namespace since 16/4-2020 for this class
+ * @deprecated use rw::core not rw::common
+ */
+namespace rw { namespace common {
+    using namespace rw::core;
+}}    // namespace rw::common
+
+#endif
+FILE: RobWork/RobWork/src/rw/core/DOMParser.cpp
+#include "DOMParser.hpp"
+
+#include <rw/core/BoostXMLParser.hpp>
+#include <rw/core/StringUtil.hpp>
+#include <string>
+#include <vector>
+
+using namespace rw::core;
+
+rw::core::Ptr< DOMParser > DOMParser::make ()
+{
+    return rw::core::ownedPtr (new BoostXMLParser ());
+}
+
+rw::core::Ptr< DOMParser > DOMParser::Factory::getDOMParser (const std::string& format)
+{
+    using namespace rw::core;
+    DOMParser::Factory ep;
+    std::vector< Extension::Ptr > exts = ep.getExtensions ();
+    for (Extension::Ptr ext : exts) {
+        if (!ext->getProperties ().has (format))
+            continue;
+        // else try casting to DOMParser
+        DOMParser::Ptr loader = ext->getObject ().cast< DOMParser > ();
+        return loader;
+    }
+    if (StringUtil::toUpper (format) == "XML")
+        return rw::core::ownedPtr (new BoostXMLParser ());
+    RW_THROW ("No loader using that format exists...");
+    return NULL;
+}
+
+bool DOMParser::Factory::hasDOMParser (const std::string& format)
+{
+    using namespace rw::core;
+
+    if (StringUtil::toUpper (format) == "XML")
+        return true;
+
+    DOMParser::Factory ep;
+    std::vector< Extension::Descriptor > exts = ep.getExtensionDescriptors ();
+    for (Extension::Descriptor& ext : exts) {
+        if (!ext.getProperties ().has (format))
+            continue;
+        return true;
+    }
+    return false;
+}
+
+std::vector< std::string > DOMParser::Factory::getSupportedFormats() {
+    return std::vector<std::string>();
+}
+FILE: RobWork/RobWork/src/rw/core/StringUtil.hpp
+/********************************************************************************
+ * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#ifndef RW_CORE_STRINGUTIL_HPP
+#define RW_CORE_STRINGUTIL_HPP
+
+/**
+ * @file StringUtil.hpp
+ */
+
+#if !defined(SWIG)
+#include <string>
+#include <vector>
+#endif
+namespace rw { namespace core {
+
+    /** @addtogroup core */
+    /*@{*/
+
+    /**
+     * @brief Collection of string manipulation utilities
+     */
+    class StringUtil
+    {
+      public:
+        /**
+         * @brief True if the file name \b file is an absolute file name.
+         */
+        static bool isAbsoluteFileName (const std::string& file);
+
+        /**
+         * @brief Replace '\' with '/' everywhere in the file name \b file.
+         */
+        static std::string replaceBackslash (const std::string& file);
+
+        /**
+         * @brief Removes space, tab and new line from string
+         */
+        static std::string removeWhiteSpace (const std::string& str);
+
+        /**
+         * @brief The directory part of a path name.
+         *
+         * The function simply returns everything up to and including the last slash
+         * or backslash. If there is no such slash or backslash, the empty string is
+         * returned.
+         *
+         * @param path [in] The path name.
+         *
+         * @return The directory name for the path.
+         */
+        static std::string getDirectoryName (const std::string& path);
+
+        /**
+         * @brief The directory part of a path name relative to a root directory.
+         *
+         * The function returns everything up to and including the last slash
+         * or backslash. If there is no such slash or backslash, the empty string is
+         * returned.
+         *
+         * @param path [in] The path name.
+         *
+         * @param dir_name [in] The root directory name.
+         *
+         * @return The relative directory name for the path.
+         */
+        static std::string getRelativeDirectoryName (const std::string& path, std::string dir_name);
+
+        /**
+         * @brief Extract the file name (including extension) from a string containing full name
+         * including the directory.
+         *
+         * The function simply returns everything efter the last slash
+         * or backslash. If there is no such slash or backslash, the original string is returned
+         *
+         * @param pathAndFileName [in] The path and filename .
+         *
+         * @return The file name.
+         */
+        static std::string getFileName (const std::string& pathAndFileName);
+
+        /**
+         * @brief The extension of a file name.
+         *
+         * The extension is everything that follows the last '.'.
+         *
+         * The '.' is included in the extension returned, so that if that if the
+         * file has no extension, then the empty string can be returned.
+         *
+         * @param filename [in] The file name.
+         *
+         * @return The file name extension.
+         */
+        static std::string getFileExtension (const std::string& filename);
+
+        /**
+         * @brief The uppercase of a string.
+         *
+         * @param str [in] A string to uppercase.
+         *
+         * @return \b str converted to upper case.
+         */
+        static std::string toUpper (const std::string& str);
+
+        /**
+         * @brief The lowercase of a string.
+         *
+         * @param str [in] A string to lowercase.
+         *
+         * @return \b str converted to lower case.
+         */
+        static std::string toLower (const std::string& str);
+
+        /**
+         * @brief The string \b str enclosed in single-quotes.
+         *
+         * Use this for quoting of strings in user error messages.
+         */
+        static std::string quote (const std::string& str);
+
+        /**
+           @brief Split \b str into words at space borders.
+        */
+        static std::vector< std::string > words (const std::string& str);
+
+        /**
+           @brief Return (true, val) if \b str parses as a double with value \b
+           val and (false, 0) otherwise.
+        */
+        static std::pair< bool, double > toDouble (const std::string& str);
+
+        /**
+           @brief Return (true, val) if \b str parses as a int with value \b
+           val and (false, 0) otherwise.
+        */
+        static std::pair< bool, int > toInt (const std::string& str);
+
+        /**
+                   @brief Return (true, val) if \b str parses as a int with value \b
+                   val and (false, 0) otherwise.
+                */
+        static std::pair< bool, unsigned int > toUInt (const std::string& str);
+
+        /**
+           @brief Return (true, val) if \b str parses as a int with value \b
+           val and (false, 0) otherwise.
+        */
+        static std::pair< bool, long > toLong (const std::string& str);
+
+        /**
+           @brief Return (true, val) if \b str parses as a int with value \b
+           val and (false, 0) otherwise.
+        */
+        static std::pair< bool, unsigned long > toULong (const std::string& str);
+
+        /**
+           @brief Return (true, vals) if \b words parses as a sequence of doubles with values \b
+           vals and (false, []) otherwise.
+        */
+        static std::pair< bool, std::vector< double > >
+        toDoubles (const std::vector< std::string >& words);
+
+        /**
+           @brief Return (true, vals) if \b words parses as a sequence of ints
+           with values \b vals and (false, []) otherwise.
+        */
+        static std::pair< bool, std::vector< int > >
+        toInts (const std::vector< std::string >& words);
+
+        /**
+           @brief Return (true, vals) if \b words parses as a sequence of ints
+           with values \b vals and (false, []) otherwise.
+        */
+        static std::pair< bool, std::vector< unsigned int > >
+        toUInts (const std::vector< std::string >& words);
+
+        /**
+                   @brief Return (true, vals) if \b words parses as a sequence of ints
+                   with values \b vals and (false, []) otherwise.
+                */
+        static std::pair< bool, std::vector< long > >
+        toLongs (const std::vector< std::string >& words);
+
+        /**
+           @brief Return (true, vals) if \b words parses as a sequence of ints
+           with values \b vals and (false, []) otherwise.
+        */
+        static std::pair< bool, std::vector< unsigned long > >
+        toULongs (const std::vector< std::string >& words);
+
+        /**
+         * @brief Converts a string pattern with wild card characters * and ? into a regular
+         * expression
+         *
+         * The format of the regular expression matches std::regex.
+         *
+         * @param pattern [in] pattern with wild card characters
+         * @return patterns expressed as regular expression.
+         */
+        static std::string patternToRegEx (const std::string& pattern);
+
+        /**
+         * @brief creates a name based on a prefix and a random integer between
+         * 0xFF and 0xFFFFFF
+         * @param prefix
+         * @return
+         */
+        static std::string ranName (const std::string& prefix);
+    };
+
+    /**
+     * @brief Convenient definition of a pair of strings.
+     * @relatesalso rw::core::StringUtil
+     */
+    typedef std::pair< std::string, std::string > StringPair;
+
+    /**
+     * @brief Convenient definition of a list of string pairs.
+     * @relatesalso rw::core::StringUtil
+     */
+    typedef std::vector< StringPair > StringPairList;
+
+    /**@}*/
+
+}}    // namespace rw::core
+
+/**
+ * @brief Deprecated namespace since 16/4-2020 for this class
+ * @deprecated use rw::core not rw::common
+ */
+namespace rw { namespace common {
+    using namespace rw::core;
+}}    // namespace rw::common
+
+#endif    // end include guard
+FILE: RobWork/RobWork/src/rw/core/StringUtil.cpp
+/********************************************************************************
+ * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include "StringUtil.hpp"
+
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/uniform_real.hpp>
+#include <iostream>
+#include <limits>
+#include <sstream>
+
+using namespace rw::core;
+
+bool StringUtil::isAbsoluteFileName (const std::string& file)
+{
+    if (file.empty ())
+        return false;
+
+    // This is a really lame implementation of this check. Well, hopefully
+    // it works OK in practice.
+    return file[0] == '/' || file[0] == '\\' || (file.size () > 3 && file[1] == ':');
+}
+
+std::string StringUtil::replaceBackslash (const std::string& str)
+{
+    std::string newStr = str;
+    for (int i = 0; i < (int) str.length (); i++) {
+        if (str.at (i) == '\\')
+            newStr.at (i) = '/';
+    }
+    return newStr;
+}
+
+std::string StringUtil::getDirectoryName (const std::string& path)
+{
+    const std::string::size_type pos = path.find_last_of ("/\\");
+
+    if (pos != std::string::npos)
+        return path.substr (0, pos + 1);
+    else
+        return std::string ();
+}
+
+std::string StringUtil::getRelativeDirectoryName (const std::string& path, std::string dir_name)
+{
+    while (!dir_name.empty ()) {
+        if (dir_name.back () == '/' || dir_name.back () == '\\')
+            dir_name.pop_back ();
+        else
+            break;
+    }
+    std::string new_dir              = std::string ();
+    const std::string::size_type pos = dir_name.find_last_of ("/\\");
+    if (pos != std::string::npos)
+        new_dir = dir_name.substr (pos + 1, std::string::npos);
+
+    std::string key_path (new_dir);
+    std::string new_path                  = getDirectoryName (path);    // remove the filename
+    const std::string::size_type pos_path = new_path.find (key_path);
+    if (pos_path != std::string::npos) {
+        new_path = new_path.substr (pos_path + key_path.length () + 1);
+        while (!new_path.empty ()) {
+            if (new_path.front () == '/' || new_path.front () == '\\')
+                new_path = new_path.substr (1);
+            else
+                break;
+        }
+        return new_path;
+    }
+    else {
+        return std::string ();
+    }
+}
+
+std::string StringUtil::getFileName (const std::string& pathAndFilename)
+{
+    const std::string::size_type pos = pathAndFilename.find_last_of ("/\\");
+
+    if (pos != std::string::npos)
+        return pathAndFilename.substr (pos + 1, std::string::npos);
+    else
+        return pathAndFilename;
+}
+
+/**
+ * @brief Removes space, tab and new line from string
+ */
+std::string StringUtil::removeWhiteSpace (const std::string& str)
+{
+    char* buffer = new char[str.length () + 1];
+    int cnt      = 0;
+    for (size_t i = 0; i < str.length (); i++) {
+        const char& ch = str[i];
+        if (ch != ' ' && ch != '\t' && ch != '\n') {
+            buffer[cnt] = ch;
+            ++cnt;
+        }
+    }
+    buffer[cnt] = 0;
+    std::string result (buffer);
+    delete[] buffer;
+    return result;
+}
+
+std::string StringUtil::getFileExtension (const std::string& path)
+{
+    const std::string::size_type pos = path.find_last_of ("./\\");
+
+    if (pos == std::string::npos)
+        return "";
+    else {
+        const char x = path[pos];
+
+        // If we have a filename like foo.bar/values we don't have an extension.
+        if (x == '/' || x == '\\')
+            return "";
+        else
+            return path.substr (pos, path.size ());
+    }
+}
+
+std::string StringUtil::toUpper (const std::string& str)
+{
+    std::string result (str);
+    for (size_t i = 0; i < str.length (); i++)
+        result[i] = toupper (str[i]);
+
+    return result;
+}
+
+std::string StringUtil::toLower (const std::string& str)
+{
+    std::string result (str);
+    for (size_t i = 0; i < str.length (); i++)
+        result[i] = tolower (str[i]);
+
+    return result;
+}
+
+std::string StringUtil::quote (const std::string& str)
+{
+    const std::string q = "'";
+    return q + str + q;
+}
+
+std::vector< std::string > StringUtil::words (const std::string& str)
+{
+    typedef std::string::const_iterator I;
+    const I end = str.end ();
+
+    std::vector< std::string > result;
+
+    I wordBegin = str.begin ();
+    while (true) {
+        while (wordBegin != end && isspace (*wordBegin))
+            ++wordBegin;
+
+        I wordEnd = wordBegin;
+        while (wordEnd != end && !isspace (*wordEnd))
+            ++wordEnd;
+
+        if (wordBegin == end)
+            break;
+        else {
+            result.push_back (std::string (wordBegin, wordEnd));
+            wordBegin = wordEnd;
+        }
+    }
+
+    return result;
+}
+
+namespace {
+template< class X > inline std::pair< bool, X > toX (const std::string& str)
+{
+    using namespace std;
+    pair< bool, X > nothing (false, X ());
+
+    if (str == "nan" || str == "NaN")
+        return make_pair (true, std::numeric_limits< X >::quiet_NaN ());    //
+    if (str == "-inf" || str == "inf")
+        return make_pair (true, std::numeric_limits< X >::infinity ());    //
+    istringstream buf (str);
+    X x;
+    buf >> x;
+    if (!buf)
+        return nothing;
+
+    string rest;
+    buf >> rest;
+    if (buf)
+        return nothing;
+    else
+        return make_pair (true, x);
+}
+
+template< class X >
+inline std::pair< bool, std::vector< X > > toXs (const std::vector< std::string >& words)
+{
+    typedef std::vector< X > V;
+    std::pair< bool, V > nothing (false, V ());
+    V vals;
+    for (std::size_t i = 0; i < words.size (); i++) {
+        const std::string& str   = words[i];
+        std::pair< bool, X > okX = toX< X > (str);
+        if (okX.first)
+            vals.push_back (okX.second);
+        else
+            return nothing;
+    }
+    return make_pair (true, vals);
+}
+}    // namespace
+
+std::pair< bool, double > StringUtil::toDouble (const std::string& str)
+{
+    return toX< double > (str);
+}
+
+std::pair< bool, int > StringUtil::toInt (const std::string& str)
+{
+    return toX< int > (str);
+}
+
+std::pair< bool, unsigned int > StringUtil::toUInt (const std::string& str)
+{
+    return toX< unsigned int > (str);
+}
+
+std::pair< bool, long > StringUtil::toLong (const std::string& str)
+{
+    return toX< long > (str);
+}
+
+std::pair< bool, unsigned long > StringUtil::toULong (const std::string& str)
+{
+    return toX< unsigned long > (str);
+}
+
+std::pair< bool, std::vector< double > >
+StringUtil::toDoubles (const std::vector< std::string >& words)
+{
+    return toXs< double > (words);
+}
+
+std::pair< bool, std::vector< int > > StringUtil::toInts (const std::vector< std::string >& words)
+{
+    return toXs< int > (words);
+}
+
+std::pair< bool, std::vector< unsigned int > >
+StringUtil::toUInts (const std::vector< std::string >& words)
+{
+    return toXs< unsigned int > (words);
+}
+
+std::pair< bool, std::vector< long > > StringUtil::toLongs (const std::vector< std::string >& words)
+{
+    return toXs< long > (words);
+}
+
+std::pair< bool, std::vector< unsigned long > >
+StringUtil::toULongs (const std::vector< std::string >& words)
+{
+    return toXs< unsigned long > (words);
+}
+
+std::string StringUtil::patternToRegEx (const std::string& pattern)
+{
+    std::string reg = pattern;
+    boost::replace_all (reg, "\\", "\\\\");
+    boost::replace_all (reg, ".", "\\.");
+    boost::replace_all (reg, "?", ".");
+    boost::replace_all (reg, "*", ".*");
+    boost::replace_all (reg, "(", "\\(");
+    boost::replace_all (reg, ")", "\\)");
+    boost::replace_all (reg, "[", "\\[");
+    boost::replace_all (reg, "+", "\\+");
+    boost::replace_all (reg, "|", "\\|");
+    boost::replace_all (reg, "^", "\\^");
+    boost::replace_all (reg, "$", "\\$");
+    return reg;
+}
+
+namespace {
+boost::mt19937 generator;
+boost::uniform_real<> distributor;
+}    // namespace
+
+std::string StringUtil::ranName (const std::string& prefix)
+{
+    double ran = distributor (generator);
+    if (ran < 0) {
+        ran *= -1;
+    }
+    ran    = 0xFF + ran * (0xFFFFFF - 0xFF);
+    int ri = int (ran);
+    std::stringstream sstr;
+    sstr << prefix << "_" << ri;
+    return sstr.str ();
+}
+FILE: RobWork/RobWork/gtest/core/PluginTest.cpp
+/********************************************************************************
+ * Copyright 2016 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include <gtest/gtest.h>
+
+#include "../TestEnvironment.hpp"
+
+#include <rw/core/DOMParser.hpp>
+#include <rw/core/Plugin.hpp>
+
+using namespace rw::core;
+
+TEST(PluginTest, loadDirectPlugin)
+{
+    const DOMParser::Ptr parser = DOMParser::make();
+    parser->load(TestEnvironment::executableDir() + "test_plugin.rwplugin.xml");
+    const DOMElem::Ptr elem = parser->getRootElement()->getChild("plugin");
+    const DOMElem::Ptr runtime = elem->getChild("runtime");
+    const std::string libpath = runtime->getAttributeValue("library");
+
+    const rw::core::Ptr<Plugin> plugin = Plugin::load(libpath);
+
+    EXPECT_EQ("TestPlugin", plugin->getId());
+    EXPECT_EQ("Name of test plugin", plugin->getName());
+    EXPECT_EQ("1.2.3", plugin->getVersion());
+
+    const std::vector<std::string> ids = plugin->getExtensionPointIDs();
+    EXPECT_EQ(3u, ids.size());
+    if (ids.size() >= 3u) {
+        EXPECT_EQ("ExtensionId1", ids[0]);
+        EXPECT_EQ("ExtensionId2", ids[1]);
+        EXPECT_EQ("ExtensionId3", ids[2]);
+    }
+
+    const std::vector<Extension::Descriptor> extDesc =
+            plugin->getExtensionDescriptors();
+    EXPECT_EQ(3u, extDesc.size());
+    if (ids.size() >= 3u) {
+        EXPECT_EQ("ExtensionId1", extDesc[0].id);
+        EXPECT_EQ("ExtensionId2", extDesc[1].id);
+        EXPECT_EQ("ExtensionId3", extDesc[2].id);
+        EXPECT_EQ("", extDesc[0].name);
+        EXPECT_EQ("", extDesc[1].name);
+        EXPECT_EQ("", extDesc[2].name);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", extDesc[0].point);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", extDesc[1].point);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointB", extDesc[2].point);
+    }
+    EXPECT_TRUE(extDesc[0].props.has("TestProperty"));
+    EXPECT_EQ("prop",
+            extDesc[0].props.get("TestProperty", std::string("Not found!")));
+
+    Extension::Ptr ext1 = plugin->makeExtension("ExtensionId1");
+    Extension::Ptr ext2 = plugin->makeExtension("ExtensionId2");
+    Extension::Ptr ext3 = plugin->makeExtension("ExtensionId3");
+    EXPECT_FALSE(ext1.isNull());
+    EXPECT_FALSE(ext2.isNull());
+    EXPECT_FALSE(ext3.isNull());
+
+    EXPECT_EQ("ExtensionId1", ext1->getId());
+    EXPECT_EQ("ExtensionId2", ext2->getId());
+    EXPECT_EQ("ExtensionId3", ext3->getId());
+    EXPECT_EQ("", ext1->getName());
+    EXPECT_EQ("", ext2->getName());
+    EXPECT_EQ("", ext3->getName());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", ext1->getPoint());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", ext2->getPoint());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointB", ext3->getPoint());
+    EXPECT_TRUE(ext1->getProperties().has("TestProperty"));
+    EXPECT_EQ("prop",
+            ext1->getProperties().get("TestProperty",
+                    std::string("Not found!")));
+}
+
+TEST(PluginTest, loadLazyPlugin)
+{
+    std::string xmlpath = TestEnvironment::executableDir();
+    xmlpath += "test_plugin.rwplugin.xml";
+    const rw::core::Ptr<Plugin> plugin = Plugin::load(xmlpath);
+
+    EXPECT_EQ("TestLazyPlugin", plugin->getId());
+    EXPECT_EQ("Name of plugin for test.", plugin->getName());
+    EXPECT_EQ("1.0", plugin->getVersion());
+
+    const std::vector<std::string> ids = plugin->getExtensionPointIDs();
+    EXPECT_EQ(3u, ids.size());
+    if (ids.size() >= 3u) {
+        EXPECT_EQ("ExtensionId1", ids[0]);
+        EXPECT_EQ("ExtensionId2", ids[1]);
+        EXPECT_EQ("ExtensionId3", ids[2]);
+    }
+
+    const std::vector<Extension::Descriptor> extDesc =
+            plugin->getExtensionDescriptors();
+    EXPECT_EQ(3u, extDesc.size());
+    if (ids.size() >= 3u) {
+        EXPECT_EQ("ExtensionId1", extDesc[0].id);
+        EXPECT_EQ("ExtensionId2", extDesc[1].id);
+        EXPECT_EQ("ExtensionId3", extDesc[2].id);
+        EXPECT_EQ("Name of first extension.", extDesc[0].name);
+        EXPECT_EQ("Name of second extension.", extDesc[1].name);
+        EXPECT_EQ("Name of third extension.", extDesc[2].name);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", extDesc[0].point);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", extDesc[1].point);
+        EXPECT_EQ("sdurw_core-gtest.ExtensionPointB", extDesc[2].point);
+    }
+    EXPECT_TRUE(extDesc[0].props.has("TestProperty"));
+    EXPECT_EQ("prop",
+            extDesc[0].props.get("TestProperty", std::string("Not found!")));
+
+    Extension::Ptr ext1 = plugin->makeExtension("ExtensionId1");
+    Extension::Ptr ext2 = plugin->makeExtension("ExtensionId2");
+    Extension::Ptr ext3 = plugin->makeExtension("ExtensionId3");
+    EXPECT_FALSE(ext1.isNull());
+    EXPECT_FALSE(ext2.isNull());
+    EXPECT_FALSE(ext3.isNull());
+
+    EXPECT_EQ("ExtensionId1", ext1->getId());
+    EXPECT_EQ("ExtensionId2", ext2->getId());
+    EXPECT_EQ("ExtensionId3", ext3->getId());
+    EXPECT_EQ("", ext1->getName());
+    EXPECT_EQ("", ext2->getName());
+    EXPECT_EQ("", ext3->getName());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", ext1->getPoint());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointA", ext2->getPoint());
+    EXPECT_EQ("sdurw_core-gtest.ExtensionPointB", ext3->getPoint());
+    EXPECT_TRUE(ext1->getProperties().has("TestProperty"));
+    EXPECT_EQ("prop",
+            ext1->getProperties().get("TestProperty",
+                    std::string("Not found!")));
+}
+FILE: RobWork/RobWork/gtest/core/StringUtilTest.cpp
+/******************************************************************************
+ * Copyright 2020 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+#include <gtest/gtest.h>
+
+#include "../TestEnvironment.hpp"
+
+#include <rw/core/StringUtil.hpp>
+
+using rw::core::StringUtil;
+
+TEST(StringUtil, GetRelativeDirectoryNameTest_HardcodedPathTest) {
+    std::string wcPath = TestEnvironment::testfilesDir() + "workcells/simple_wc/SimpleWorkcell.wc.xml";
+    const std::string robotGeometryTestString = TestEnvironment::testfilesDir() + "workcells/simple_wc/PA10/Geometry/Rob-0";
+    const std::string hardcodedResult = "PA10/Geometry/";
+    const std::string result = StringUtil::getRelativeDirectoryName(robotGeometryTestString, StringUtil::getDirectoryName(wcPath));
+    EXPECT_EQ(hardcodedResult, result);
+}
+FILE: RobWork/RobWorkSim/example/tools/src/ConvertSimTask.cpp
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+#include <rw/math/Vector3D.hpp>
+#include <rw/math/Quaternion.hpp>
+#include <rwlibs/task/loader/TaskLoader.hpp>
+#include <rwlibs/task/loader/TaskSaver.hpp>
+#include <rwlibs/task/GraspTask.hpp>
+
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
+
+using namespace std;
+using namespace rw::core;
+using namespace rw::math;
+using namespace rwlibs::task;
+using namespace boost::property_tree;
+
+namespace {
+
+
+    struct compareElemStrings: public std::binary_function<std::string, std::string, bool> {
+
+        compareElemStrings(){};
+
+        bool operator()(const std::string& s1, const std::string& s2) const{
+            // first we extract the name without namespaces (xmlns)
+            std::string s1_tmp = s1;
+            std::string s2_tmp = s2;
+
+            size_t found = s1.find_last_of(':');
+            if(found!=std::string::npos){
+                s1_tmp = s1.substr(found+1);
+            }
+
+            found = s2.find_last_of(':');
+            if(found!=std::string::npos){
+                s2_tmp = s2.substr(found+1);
+            }
+            //std::cout << s1_tmp << "  " << s2_tmp << std::endl;
+            return std::less<std::string>()(s1_tmp,s2_tmp);
+        }
+
+    };
+
+}
+
+typedef boost::property_tree::basic_ptree<std::string, std::string, compareElemStrings> PTree;
+
+namespace {
+    typedef boost::property_tree::basic_ptree<std::string, std::string, compareElemStrings>::iterator CI;
+    typedef PTree::assoc_iterator OCI;
+
+
+    struct ParserState {
+    public:
+        ParserState(std::string file):
+            dwcfile(file),targetNr(0)
+        {
+        }
+
+        const std::string dwcfile, dir;
+        int targetNr;
+    };
+
+    bool isName(const std::string& elemName, const std::string& matchName){
+        // first we extract the name without namespaces (xmlns)
+        std::string elem = elemName;
+        size_t found = elemName.find_last_of(':');
+        if(found!=std::string::npos){
+            elem = elemName.substr(found+1);
+        }
+        return elem == matchName;
+    }
+
+    bool has_child(PTree& tree, const std::string& name){
+        for (CI p = tree.begin(); p != tree.end(); ++p) {
+            if(isName(p->first, name))
+                return true;
+        }
+        return false;
+    }
+
+    std::pair<bool, double> toDouble(const std::string& str)
+    {
+        std::pair<bool, double> nothing(false, 0);
+        istringstream buf(str);
+        double x;
+        buf >> x;
+        if (!buf) return nothing;
+        string rest;
+        buf >> rest;
+        if (buf) return nothing;
+        else return make_pair(true, x);
+    }
+
+    std::vector<double> readArray(PTree& tree){
+        istringstream buf(tree.get_value<string>());
+        std::vector<double> values;
+
+        std::string str;
+        while( buf >> str ){
+            const pair<bool, double> okNum = toDouble(str);
+            if (!okNum.first)
+                RW_THROW("Number expected. Got \"" << str << "\" ");
+            values.push_back(okNum.second);
+        }
+        return values;
+    }
+
+    Q readQ(PTree& tree){
+        //Log::debugLog()<< "ReadQ" << std::endl;
+        std::vector<double> arr = readArray(tree);
+        Q q(arr.size());
+        for(size_t i=0;i<q.size();i++){
+            q[i] = arr[i];
+        }
+        return q;
+    }
+
+    Vector3D<> readVector3D(PTree& tree){
+        //Log::debugLog()<< "ReadVector3D" << std::endl;
+        Q q = readQ(tree);
+        if(q.size()!=3)
+            RW_THROW("Unexpected sequence of values, must be length 3");
+        return Vector3D<>(q[0],q[1],q[2]);
+    }
+
+
+    rwlibs::task::CartesianTask::Ptr readGrasp(PTree& tree, ParserState& state){
+        rwlibs::task::CartesianTask::Ptr ctask = ownedPtr( new rwlibs::task::CartesianTask() );
+        std::vector<double> qualities;
+        CartesianTarget::Ptr target;
+        int status = GraspResult::UnInitialized;
+        //for (OCI p = tree.ordered_begin(); p != tree.not_found(); ++p) {
+        for (CI p = tree.begin(); p != tree.end(); ++p) {
+
+            //std::cout << p->first << "\n";
+            if ( isName(p->first, "gripper") ) {
+                string gripperType = p->second.get_child("<xmlattr>").get<std::string>("type");
+                Q params = readQ(p->second.get_child("params"));
+                ctask->getPropertyMap().set<std::string>("GripperName", gripperType);
+
+            } else if(isName(p->first, "pose") ){
+                // position
+                PTree& pos_tree = p->second.get_child("position");
+                std::string posdomain = pos_tree.get_child("<xmlattr>").get<std::string>("domain","R3");
+                Vector3D<> pos = readVector3D( pos_tree.get_child("euclidean") );
+                // orientation
+                //std::cout << "---------------------------" << std::endl;
+                PTree& rot_tree = p->second.get_child("orientation");
+                std::string rotdomain = pos_tree.get_child("<xmlattr>").get<std::string>("domain","SO3");
+                Rotation3D<> rot;
+                for (CI p1 = rot_tree.begin(); p1 != rot_tree.end(); ++p1) {
+                    if (isName(p1->first,"quaternion")) {
+                        std::vector<double> vals = readArray(p1->second);
+                        if(vals.size()!=4)
+                            RW_THROW("quaternion is wrongly dimensioned!");
+                        rot = Quaternion<>(vals[1], vals[2],vals[3], vals[0]).toRotation3D();
+                    } else if (isName(p1->first,"rotmatrix")) {
+                        std::vector<double> vals = readArray(p1->second);
+                        if(vals.size()!=9)
+                            RW_THROW("rotmatrix is wrongly dimensioned!");
+                        rot = Rotation3D<>(
+                                vals[0], vals[1], vals[2],
+                                vals[3], vals[4], vals[5],
+                                vals[6], vals[7], vals[8]);
+                    } else {
+                        //RW_THROW("Unknown element!" << p1->first);
+                    }
+                }
+
+                //ctask->getPropertyMap().set<std::string>("GripperName", gripperType);
+
+                target = ctask->addTargetByValue(Transform3D<>(pos/1000.0,rot));
+                state.targetNr--;
+
+            } else if(isName(p->first, "outcome")){
+                //string gripperType = p->second.get_child("<xmlattr>").get<std::string>("type");
+                if( has_child(p->second, "success") ){
+                    status = GraspResult::Success;
+                    if(has_child(p->second.get_child("success"),"<xmlattr>")){
+                        double squal = p->second.get_child("success").get_child("<xmlattr>").get<double>("quality",0.0);
+                        qualities.push_back(squal);
+                    } else {
+                        qualities.push_back(0.0);
+                    }
+                } else if(has_child(p->second,"failure") ){
+                    status = GraspResult::ObjectDropped;
+                    std::string cause = p->second.get_child("failure").get_child("<xmlattr>").get<std::string>("cause");
+                    if(cause=="POSE"){
+                        status = GraspResult::PoseEstimateFailure;
+                    } else if(cause=="PLAN"){
+                        status = GraspResult::InvKinFailure;
+                    } else if(cause=="SERVO"){
+                        status = GraspResult::CollisionInitially;
+                    } else if(cause=="GRASP"){
+                        status = GraspResult::ObjectMissed;
+                    } else if(cause=="LIFT"){
+                        status = GraspResult::ObjectDropped;
+                    }
+                } else {
+                    status = GraspResult::UnInitialized;
+                }
+                /*
+                element success {
+                  attribute quality { xsd:float {minInclusive="0" maxInclusive = "1.0"} }?
+                } |
+                element failure {
+                  attribute cause { ("POSE"|"PLAN"|"SERVO"|"GRASP"|"LIFT") }
+                  # POSE:  no correct object pose recovered
+                  # PLAN:  no collision-free inverse-kinematics solution
+                  # SERVO: error (collision, ...) during servoing
+                  # GRASP: error (collision, whatever) during grasping
+                  # LIFT:  error during lifting (object dropped, ...)
+                }
+                 */
+                // TODO: convert from UIBK to RW format
+            } else if(isName(p->first, "density")){
+                std::string densityStr = p->second.get_value<string>();
+                double qual = toDouble(densityStr).second;
+                qualities.push_back(qual);
+                qualities.push_back(state.targetNr);
+            } else if(isName(p->first, "<xmlattr>")){
+
+            } else {
+                RW_THROW("Unknown element!" << p->first);
+            }
+
+        }
+
+        Q qqual(qualities.size(), &qualities[0]);
+        target->getPropertyMap().set<Q>("QualityAfterLifting", qqual);
+        target->getPropertyMap().set<int>("TestStatus", (int)status);
+
+        return ctask;
+    }
+
+    rwlibs::task::CartesianTask::Ptr readGrasps(PTree& data, ParserState& state){
+        rwlibs::task::CartesianTask::Ptr grasptasks = ownedPtr( new rwlibs::task::CartesianTask() );
+
+        for (CI p = data.begin(); p != data.end(); ++p) {
+            if (isName(p->first, "grasp")) {
+                rwlibs::task::CartesianTask::Ptr gtask = readGrasp(p->second, state);
+                grasptasks->addTask(gtask);
+            } else if(p->first=="<xmlattr>") {
+            } else {
+                RW_THROW("Unknown element!" << p->first);
+            }
+        }
+
+        // get tasks from state
+
+        return grasptasks;
+    }
+
+}
+
+
+
+rwlibs::task::CartesianTask::Ptr  readGraspTask(const std::string& filename){
+    std::string file = IOUtil::getAbsoluteFileName(filename);
+
+    try {
+        ParserState state(file);
+
+        //state.dir = StringUtil::getDirectoryName(file);
+        rwlibs::task::CartesianTask::Ptr grasptask;
+
+        PTree tree;
+        read_xml(file, tree);
+
+        for (CI p = tree.begin(); p != tree.end(); ++p) {
+            //std::cout << p->first << "\n";
+            if ( isName(p->first, "grasps") ) {
+                grasptask = readGrasps(p->second, state);
+            }
+        }
+
+
+        //rw::loaders::XML::printTree(tree, std::cout);
+
+
+        return grasptask;
+
+    } catch (const ptree_error& e) {
+        // Convert from parse errors to RobWork errors.
+        RW_THROW(e.what());
+    }
+    return NULL;
+}
+
+
+void writeHeader(std::ostream& out){
+    out << "<?xml version=\"1.0\"?> \n"
+        << "<grasps xmlns=\"http://iis.uibk.ac.at/ns/grasping\">\n";
+
+}
+
+void writeGripper(std::ostream& out, std::string name, Q params ){
+    out << "<gripper type=\""<< name << "\">\n"
+           " <params>";
+    for(size_t i=0;i<params.size();i++) out << params[i] << " ";
+    out << " </params>\n"
+        << "</gripper>\n";
+}
+
+void writePose(std::ostream& out, const Transform3D<>& pose){
+    Quaternion<> quat(pose.R());
+    out << "<pose>\n"
+            << " <position domain=\"R3\">\n"
+            << "  <euclidean>" << pose.P()[0] << " " << pose.P()[1] << " " << pose.P()[2] << "</euclidean>\n"
+            << " </position>\n"
+            << " <orientation domain=\"SO3\">\n"
+            << "  <quaternion format=\"wxyz\">" << quat(3) << " " << quat(0) << " " << quat(1) << " "<< quat(2) << "</quaternion>\n"
+            << "  <rotmatrix>"
+            << pose.R()(0,0) << " " << pose.R()(0,1) << " " << pose.R()(0,2) << "   "
+            << pose.R()(1,0) << " " << pose.R()(1,1) << " " << pose.R()(1,2) << "   "
+            << pose.R()(2,0) << " " << pose.R()(2,1) << " " << pose.R()(2,2) << "   "
+            << "  </rotmatrix>\n"
+            << " </orientation>\n"
+            << "</pose>\n";
+}
+
+void writeRW(const std::string& taskFile, const std::string& outfile){
+    rwlibs::task::CartesianTask::Ptr task = readGraspTask(taskFile);
+    const TaskSaver::Ptr saver = TaskSaver::Factory::getTaskSaver("xml");
+    saver->save(task, outfile);
+}
+
+void writeUIBK(const std::string& taskFile, const std::string& outfile){
+	const TaskLoader::Ptr loader = TaskLoader::Factory::getTaskLoader("xml");
+    loader->load( taskFile );
+
+    rwlibs::task::CartesianTask::Ptr task = loader->getCartesianTask();
+    Transform3D<> wTe_n = task->getPropertyMap().get<Transform3D<> >("Nominal", Transform3D<>::identity());
+    //Unused: Transform3D<> wTe_home = task->getPropertyMap().get<Transform3D<> >("Home", Transform3D<>::identity());
+    //Unused: Vector3D<> approach = task->getPropertyMap().get<Vector3D<> >("Approach", Vector3D<>(0,0,0));
+    //Unused: Transform3D<> approachDef = Transform3D<>( approach, Rotation3D<>::identity());
+    Q openQ = task->getPropertyMap().get<Q>("OpenQ");
+    Q closeQ = task->getPropertyMap().get<Q>("CloseQ");
+
+    std::ofstream fstr(outfile.c_str());
+    writeHeader(fstr);
+
+    for( rwlibs::task::CartesianTarget::Ptr target : task->getTargets() ) {
+        Transform3D<> trans = wTe_n * target->get();
+        fstr << "<grasp>\n";
+        writeGripper(fstr, "Schunk Hand", Q::zero(2));
+        writePose(fstr, trans);
+        //writeOutcome(fstr, );
+        fstr << "</grasp>\n";
+    }
+
+}
+
+
+void writeLua(const std::string& tasksDir, const std::string& outfile){
+    std::ofstream fstr(outfile.c_str());
+    fstr << "-- set name of movable base frame \n"
+         << "base = findFrame(\"Base\") \n"
+         << "-- set name of tcp frame \n"
+         << "tcp = findFrame(\"TCP\") \n"
+         << "-- set the name of the sub directory where images should be put (the directory must exist)\n"
+         << "dir = \"./\"\n"
+         << "---------------------------------\n\n\n"
+         << "state = rwstudio:getState()\n"
+         << "pTw = rw.inverse( rw.worldTframe(base:getParent(state),state) )\n"
+         << "tcpTbase = rw.frameTframe(tcp, base, state)\n\n\n"
+
+         ;
+
+
+
+    std::vector<std::string> files = IOUtil::getFilesInFolder(tasksDir, false, true, "*.xml" );
+    // for each file we add the target to the lua script
+
+    for(const std::string& taskfile : files) {
+        int fcount = 0;
+        rwlibs::task::CartesianTask::Ptr task = readGraspTask(taskfile);
+        for(rwlibs::task::CartesianTask::Ptr subtask : task->getTasks()) {
+            for(rwlibs::task::CartesianTarget::Ptr target : subtask->getTargets()) {
+                Transform3D<> t3d = target->get();
+
+                std::string tfile = taskfile;
+                const std::string::size_type pos = taskfile.find_last_of("/\\");
+                if (pos != std::string::npos)
+                    tfile = taskfile.substr(pos + 1);
+
+
+                fstr << "wTbase = rw.Transform3D(rw."<< t3d.P() << ",rw." << t3d.R() << ") * tcpTbase\n"
+                     << "pTbase = pTw * wTbase\n"
+                     << "setTransform(base, pTbase )\n"
+                     << "rw.sleep(0.5)\n"
+                     << "filename = dir .. \"/" << tfile << "_" << fcount <<  ".png\"\n"
+                     << "rwstudio:saveViewGL(filename)\n\n"
+                     ;
+                fcount++;
+            }
+        }
+    }
+}
+
+void mergeRW(const std::string& tasksDir, const std::string& outfile){
+    std::vector<std::string> files = IOUtil::getFilesInFolder(tasksDir, false, true, "*.xml" );
+    RW_WARN("1");
+    if(files.size()==0)
+        return;
+    RW_WARN("1");
+    rwlibs::task::CartesianTask::Ptr mergedtask;
+    {
+        const TaskLoader::Ptr loader = TaskLoader::Factory::getTaskLoader("xml");
+        loader->load(files[0]);
+        mergedtask = loader->getCartesianTask();
+    }
+    for(std::size_t i=1;i<files.size();i++){
+        RW_WARN("1");
+        const std::string& taskfile = files[i];
+        RW_WARN("1"<<taskfile);
+        //Unused: int fcount = 0;
+        rwlibs::task::CartesianTask::Ptr task;
+        {
+            const TaskLoader::Ptr loader = TaskLoader::Factory::getTaskLoader("xml");
+            loader->load(taskfile);
+            task = loader->getCartesianTask();
+        }
+        RW_WARN("1");
+        //for(rwlibs::task::CartesianTask::Ptr subtask : task->getTasks()) {
+            RW_WARN("1");
+            if(task==NULL)
+                continue;
+            for(rwlibs::task::CartesianTarget::Ptr target : task->getTargets()) {
+                RW_WARN("1");
+                mergedtask->addTarget(target);
+                RW_WARN("1");
+            }
+        //}
+        RW_WARN("1");
+    }
+    RW_WARN("1");
+    const TaskSaver::Ptr saver = TaskSaver::Factory::getTaskSaver("xml");
+    saver->save(mergedtask, outfile);
+
+}
+
+int main(int argc, char** argv)
+{
+    string convtype="", taskFile = "", outfile = "";
+    if(argc<4){
+        std::cout << "Usage: \n"
+                  << "Convert from RW to UIBK format \n"
+                  << "    \"ConvertSimTask toUIBK taskFile outfile\" \n"
+                  << "Convert from UIBK to RW format \n"
+                  << "    \"ConvertSimTask toRW taskFile outfile\" \n"
+                  << "Convert from multiple UIBK files to Lua script\n"
+                  << "    \"ConvertSimTask toLua tasksDir outfile\n"
+                  << "Convert multiple rwTasks to one\n"
+                  << "    \"ConvertSimTask mergeRW tasksDir outfile\n"
+                  ;
+        return 0;
+    }
+
+    convtype = std::string(argv[1]);
+    taskFile = std::string(argv[2]);
+    outfile = std::string(argv[3]);
+
+    if(convtype=="toRW"){
+        writeRW(taskFile, outfile);
+    } else if(convtype=="toUIBK"){
+        writeUIBK(taskFile,outfile);
+    } else if(convtype=="toLua"){
+        writeLua(taskFile, outfile);
+    } else if(convtype=="mergeRW"){
+        mergeRW(taskFile, outfile);
+    } else {
+        RW_WARN("Unknown conversion!");
+    }
+    return (0);
+}
+FILE: RobWork/doc/topics/plugins.hpp.md
+RobWork Plugins  {#page_rw_plugins}
+====================
+
+[TOC]
+
+# Introduction # {#sec_rw_plugins_intro}
+
+RobWork is an extensible framework that allows addition of functionality through the use of plugins. Plugins can be dynamically loaded at runtime, and makes it possible to reduce the coupling and complexity. Furthermore, the framework provides the concept of lazily loaded plugins. Functionality in a lazy-loaded plugin will not be loaded before it is needed. To make the framework extensible, RobWork provides a bunch of \link rw::common::ExtensionPoint ExtensionPoints \endlink. Each extension point has a unique identifier, and by referring to the identifier, it is possible for \link rw::common::Extension Extension(s) \endlink to extend the extension point. A \link rw::common::Plugin Plugin \endlink can provide one or more extensions, and these do not need to be extensions for the same extension point. To keep track of all plugins and extensions, the \link rw::common::ExtensionRegistry ExtensionRegistry \endlink is used. On this page,  some of the existing extension points and extensions will be discussed to give a better understanding of how they can be used to produce better and more modular code. After that, there is more in-depth examples of how a user can write a plugin that provides one or more extensions, and how this plugin is actually loaded and used in a program.
+
+# Extension Points in the RobWork Framework # {#sec_rw_plugins_extensionpoints}
+We will here try to give an overview of extension points currently available in the RobWork framework. Notice that the \ref extensionpoints group should always contain a up-to-date comprehensive list of all the extension points.
+
+## Loaders ## {#sec_rw_plugins_extensionpoints_loaders}
+RobWork has various loaders, for XML files, images, geometry data and workcells. These are defined as extension points, such that the framework can be easily extended to support new formats and loaders.
+
+<table>
+<tr><th>Extension Point</th><th>Description</th><th>Known Extensions</th></tr>
+<tr><td>rw::common::DOMParser::Factory</td><td>Different parsers understanding the Document Object Model.</td><td>
+  <ul>
+    <li>rw::common::BoostXMLParser</li>
+  </ul>
+</td></tr>
+<tr><td>rw::loaders::ImageLoader::Factory</td><td>Loaders that are able to load an rw::sensor::Image</td><td>
+  <ul>
+    <li>rw::loaders::PGMLoader</li>
+    <li>rw::loaders::PPMLoader</li>
+    <li>rw::loaders::RGBLoader</li>
+  </ul>
+</td></tr>
+<tr><td>rw::loaders::Model3DLoader::Factory</td><td>Loaders that will load a rw::graphics::Model3D</td><td>
+  <ul>
+    <li>rw::loaders::Loader3DS</li>
+    <li>rw::loaders::LoaderAC3D</li>
+    <li>rw::loaders::LoaderAssimp</li>
+    <li>rw::loaders::LoaderOBJ</li>
+    <li>rw::loaders::LoaderTRI</li>
+  </ul>
+</td></tr>
+<tr><td>rw::loaders::WorkCellLoader::Factory</td><td>Loaders that will load a rw::models::WorkCell</td><td>
+  <ul>
+    <li>rw::loaders::ColladaLoader</li>
+    <li>rw::loaders::XMLRWLoader</li>
+  </ul>
+</td></tr>
+</table>
+
+## Proximity ## {#sec_rw_plugins_extensionpoints_proximity}
+It is possible to use different strategies for detecting collisions and calculating distance between geometries. Typically the Proximity Query Package (PQP) is used.
+RobWork allows other algorithms to be supported by the framework, as there are extension points defined for each of the different proximity strategy types.
+Notice that the ProximityStrategy is a superclass of CollisionStrategy, CollisionToleranceStrategy, DistanceStrategy and DistanceMultiStrategy.
+An extension to any of the four subtypes, should therefore also be available in the ProximityStrategy extension point.
+
+<table>
+<tr><th>Extension Point</th><th>Description</th><th>Known Extensions</th></tr>
+<tr><td>rw::proximity::ProximityStrategy::Factory</td><td>Proximity strategies.</td><td>
+  <ul>
+    <li>rw::proximity::ProximityStrategyRW</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyBullet</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyPQP</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyFCL</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyYaobi</li>
+  </ul>
+</td></tr>
+<tr><td>rw::proximity::CollisionStrategy::Factory</td><td>Proximity strategies that supports the rw::proximity::CollisionStrategy interface.</td><td>
+  <ul>
+    <li>rw::proximity::ProximityStrategyRW</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyBullet</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyPQP</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyFCL</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyYaobi</li>
+  </ul>
+</td></tr>
+<tr><td>rw::proximity::CollisionToleranceStrategy::Factory</td><td>Proximity strategies that supports the rw::proximity::CollisionToleranceStrategy interface.</td><td>
+  <ul>
+    <li>rwlibs::proximitystrategies::ProximityStrategyBullet</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyPQP</li>
+  </ul>
+</td></tr>
+<tr><td>rw::proximity::DistanceMultiStrategy::Factory</td><td>Proximity strategies that supports the rw::proximity::DistanceMultiStrategy interface.</td><td>
+  <ul>
+    <li>rwlibs::proximitystrategies::ProximityStrategyBullet</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyPQP</li>
+  </ul>
+</td></tr>
+<tr><td>rw::proximity::DistanceStrategy::Factory</td><td>Proximity strategies that supports the rw::proximity::DistanceStrategy interface.</td><td>
+  <ul>
+    <li>rwlibs::proximitystrategies::ProximityStrategyBullet</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyPQP</li>
+    <li>rwlibs::proximitystrategies::ProximityStrategyFCL</li>
+  </ul>
+</td></tr>
+</table>
+
+## Assembly Strategies ## {#sec_rw_plugins_extensionpoints_assembly}
+RobWork has a framework for defining assembly operations and the result of performing assembly operations.
+It is the intention that a library of different assembly strategies will be built with time. The framework can easily be extended with new user-specified control strategies using this extension point.
+
+| Extension Point                                    | Description                                                       |
+| :------------------------------------------------- | :---------------------------------------------------------------- |
+| rwlibs::assembly::AssemblyRegistry                 | Strategies for assembly rwlibs::assembly::AssemblyControlStrategy |
+
+## SWIG ## {#sec_rw_plugins_extensionpoints_swig}
+The script interface can be extended with custom LUA commands, using the extension point for LUA.
+
+| Extension Point                                    | Known Extensions                                                                                      |
+| :------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| rwlibs::swig::LuaState::Factory                    | RobWork, RobWorkStudio and RobWorkSim all extends this extension point with their own LUA interfaces. |
+
+## Dynamic Simulation and Physics Engines ## {#sec_rw_plugins_extensionpoints_simulation}
+RobWorkSim defines an extension point for physics engines. This way it is possible to add new engines for dynamic simulation in a modular way.
+Furthermore, a hierarchic logging structure is provided for debugging simulation engines. As different engines can have different data that is relevant to log, the logging structure is extensible. On top of the logging structure, there is also a graphical layer, that can be extended with specific Qt widgets for graphical visualisation of the log.
+The engine test framework also allows extension with new custom tests.
+
+<table>
+<tr><th>Extension Point</th><th>Description</th><th>Known Extensions</th></tr>
+<tr><td>rwsim::simulator::PhysicsEngine::Factory</td><td>Physics engines rwsim::simulator::PhysicsEngine.</td><td>
+  <ul>
+    <li>rwsim::simulator::ODESimulator</li>
+    <li>rwsim::simulator::RWSimulator</li>
+    <li>rwsimlibs::bullet::BtSimulator</li>
+    <li>rwsimlibs::rwpe::RWPEIsland</li>
+  </ul>
+</td></tr>
+<tr><td>rwsim::log::SimulatorLogEntry::Factory</td><td>Logging types for simulators rwsim::log::SimulatorLogEntry, making it possible for specific physics engines to add more specific log types.</td><td>
+  <ul>
+    <li>rwsim::log::LogCollisionResult</li>
+    <li>rwsim::log::LogConstraints</li>
+    <li>rwsim::log::LogContactSet</li>
+    <li>rwsim::log::LogContactVelocities</li>
+    <li>rwsim::log::LogEquationSystem</li>
+    <li>rwsim::log::LogForceTorque</li>
+    <li>rwsim::log::LogMessage</li>
+    <li>rwsim::log::LogPositions</li>
+    <li>rwsim::log::LogValues</li>
+    <li>rwsim::log::LogVelocities</li>
+  </ul>
+</td></tr>
+<tr><td>rwsimlibs::gui::SimulatorLogEntryWidget::Factory</td><td>rwsimlibs::gui::SimulatorLogEntryWidget::Dispatcher for a Qt Widget that is able to show a rwsim::log::SimulatorLogEntry graphically. Physics engines can make engine specific log types and graphical representation.</td><td>
+  <ul>
+    <li>rwsimlibs::gui::BodyMotionWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::CollisionResultWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::ConstraintWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::ContactSetWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::ContactVelocitiesWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::EquationSystemWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::ForceTorqueWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::LogMessageWidget::Dispatcher</li>
+    <li>rwsimlibs::gui::LogValuesWidget::Dispatcher</li>
+  </ul>
+</td></tr>
+<tr><td>rwsimlibs::test::EngineTest::Factory</td><td>Tests of physics engines rwsimlibs::test::EngineTest. Makes it possible to extend the test suite with new tests.</td><td>
+  <ul>
+    <li>rwsimlibs::test::CollisionTest</li>
+    <li>rwsimlibs::test::IntegratorTest</li>
+  </ul>
+</td></tr>
+</table>
+
+# Writing a Plugin - ImageLoader Example # {#sec_rw_plugins_plugin}
+Most plugins will have a very similar structure. In this example a plugin named MyPlugin is created, by implementing the rw::common::Plugin interface. The MyPlugin.hpp file will look as follows:
+\code{.cpp}
+#include <rw/common/Plugin.hpp>
+
+class MyPlugin: public rw::common::Plugin {
+public:
+	MyPlugin();
+	virtual ~MyPlugin() {};
+    std::vector<rw::common::Extension::Descriptor> getExtensionDescriptors();
+    rw::common::Ptr<rw::common::Extension> makeExtension(const std::string& id);
+};
+\endcode
+By default, RobWork has the ability to load images in PGM, PPM and RGB formats. If, for instance, a user needs support for JPG or JPEG formats, it is possible to implement the rw::loaders::ImageLoader interface with a specific loader for these formats. Assume that such an implementation, MyImageLoader, is already developed. Now, the user could just use this loader directly in its program. Instead, the loader should be provided in a plugin, as it will then be possible to use the loader in all programs based on the RobWork framework, such as RobWorkStudio. The implementation of the Plugin interface would then look similar to the following example:
+\code{.cpp}
+
+#include "MyPlugin.hpp"
+#include "MyImageLoader.hpp"
+
+using namespace rw::common;
+
+RW_ADD_PLUGIN(MyPlugin)
+
+MyPlugin::MyPlugin():
+	Plugin("MyPlugin", "My Lovely Plugin", "1.0")
+{
+}
+
+std::vector<Extension::Descriptor> MyPlugin::getExtensionDescriptors() {
+    std::vector<Extension::Descriptor> exts;
+	exts.push_back(Extension::Descriptor("MyImageLoaderUniqueID","rw.loaders.ImageLoader"));
+	exts.back().getProperties().set<std::string>("JPG", true);
+	exts.back().getProperties().set<std::string>("JPEG", true);
+    return exts;
+}
+
+Extension::Ptr MyPlugin::makeExtension(const std::string& id) {
+	static const MyImageLoader::Ptr loader = ownedPtr(new MyImageLoader());
+	if (id == "MyImageLoaderUniqueID") {
+		const Extension::Ptr extension = ownedPtr(new Extension("MyImageLoaderUniqueID","rw.loaders.ImageLoader", this, loader));
+		extension->getProperties().set<std::string>("JPG", true);
+		extension->getProperties().set<std::string>("JPEG", true);
+		return extension;
+	}
+	return NULL;
+}
+
+\endcode
+The RW_ADD_PLUGIN() macro will define a standard entry point in the compiled binary, and is required to make it possible to load the plugin again after creation.
+The constructor must call the parent Plugin constructor, with a unique id, a human-friendly name, and a version string.
+The Plugin will be responsible for providing a list of extension descriptors and a method for actually creating a specific extension from an extension id.
+The extension descriptor provides meta-information about the extensions in the plugin. The importance of the distinction between Extensions and ExtensionDescriptors, will become apparent for lazy-loading of plugins, where the meta-information can also be stored in a xml file.
+Each extension and extension descriptor has a unique id, and refers to the id of the extension point that it fits into. In this case the rw::loaders::ImageLoader::Factory extension point has the id %rw.loaders.ImageLoader.
+The id should be found in the documentation for the relevant extension point or on the \ref extensionpoints list.
+A concrete Extension takes two additional arguments compared to the extension descriptor, namely a pointer to the plugin itself, and a pointer to the object provided by the extension.
+In this case, the object provided by the extension is an instance of MyImageLoader. It is important to notice that a plugin will never be able to provide more than one instance per extension.
+Sometimes objects can contain state or information that makes it unreasonable to only have one instance of an object. In such cases, the extension point will typically expect the object to be a so-called "dispatcher" that is then used to construct multiple objects.
+Finally, notice that each extension has an attached PropertyMap with a list of properties. It is up to the individual extension point to define the properties necessary for the extension point. For a loader, this will typically be the names of the file extensions supported. For a proximity strategy, it will be the type of strategy, such as PQP, FCL or Bullet. 
+
+Compilation of the plugin will typically just require a couple of lines to be added to the CMakeLists.txt file:
+\code{.cmake}
+ADD_LIBRARY(MyPlugin.rwplugin MODULE MyPlugin.cpp)
+TARGET_LINK_LIBRARIES(MyPlugin.rwplugin ${MyImageLoader_Library} ${ROBWORK_LIBRARIES})
+\endcode
+Notice that the MyPlugin.cpp should never be included in other targets than the MyPlugin.rwplugin target.
+If a target has source files containing more than one RW_ADD_PLUGIN definition, compilation will fail.
+
+On Linux the plugin will have the name libMyPlugin.rwplugin.so. When this plugin is loaded dynamically, rw::loaders::ImageLoader::Factory will be able to provide a loader for the JPG and JPEG image formats. In fact, RobWorkStudio provides the rws::RWSImageLoaderPlugin that does exactly this for a wide range of image formats. The RWSImageLoaderPlugin basically uses Qt to load the images, and support the formats that Qt supports. This is an example of how the functionality of RobWork can be extended, without RobWork having to know about anything called Qt. Hence, dependencies are reduced, and code should be easier to maintain and modularize.
+
+# Loading Plugins # {#sec_rw_plugins_loading}
+There are different ways to actually load the plugins after creation. RobWork will look in various default directories where it will try to load all libraries with the correct rwplugin extension. If plugins lie in other directories, the user must point RobWork to these plugins. Currently, RobWork will automatically do the loading. <b>In the future this behaviour is likely to change</b>, so if program is written that depends on plugins being loaded, an explicit statement should be used to initialize the RobWork framework.
+
+Every program that needs to use plugins, should initialize RobWork in the main function using rw::RobWork::init() or rw::RobWork::init(int argc, const char *const * argv) :
+\code{.cpp}
+#include <rw/RobWork.hpp>
+
+using rw::RobWork;
+
+int main(int argc, char** argv) {
+    RobWork::init(argc,argv);
+    
+    ...
+    
+    return 0;
+}
+\endcode
+RobWork will automatically search for plugins using the first of the following rules that succeeds:
+-# If the RW_ROOT environment variable is set, RW_ROOT, RWS_ROOT, RWIM_ROOT and RWHW_ROOT is used to search the libs directory for each project.
+-# Else, if a configuration file exists with the name robwork-BUILD_TYPE-VERSION.cfg.xml (for instance robwork-release-0.7.0.cfg.xml), the directories specified in this file is used.
+ - First, the current working directory is used to look for the configuration file.
+ - Second, the home folder is searched, which is specific to the operating system.
+  - Windows: APPDATA/robwork/robwork-BUILD_TYPE-VERSION.cfg.xml
+  - Mac: HOME/Library/Preferences/com.robwork-BUILD_TYPE-VERSION.cfg.xml
+  - Linux: HOME/.config/robwork/robwork-BUILD_TYPE-VERSION.cfg.xml
+-# Finally, the directory where RobWork was built is searched for libs folder for each of the projects RobWork, RobWorkStudio, RobWorkSim and RobWorkHardware.
+Notice that If additional directories are given with the --rwplugin program option, RobWork will also search in these directories.
+
+Additionally, a plugin can be loaded directly in code with:
+\code{.cpp}
+ExtensionRegistry::Ptr reg = ExtensionRegistry::getInstance();
+Plugin::Ptr plugin = Plugin::load("/path/to/plugin.so");
+if (!plugin.isNull()) {
+	reg->registerExtensions(plugin);
+}
+\endcode
+
+## Direct and Lazy-loading of Plugins ## {#sec_rw_plugins_loading_lazy}
+When RobWork encounters finds files with the ending .rwplugin.so or .rwplugin.dll, it will try to load these plugins immediately. There can, potentially, be many plugins to load, which can take up unnecessary resources as they might not be needed by a specific application. For this reason, there is also the concept of lazy-loaded plugins. When RobWork encounters a file with the extension .rwplugin.xml, it will recognize this as a specification of a plugin that should only be loaded at the time where it is needed. To make a plugin lazy-loaded, create a file with a filename ending in .rwplugin.xml and give it a similar content as the following:
+\code{.xml}
+<?xml version="1.0" encoding="UTF-8" ?>
+<plugin id="MyPlugin" name="My Lovely Plugin" version="1.0"
+xmlns="http://www.robwork.dk/Plugin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.robwork.dk/Plugin file:///path/to/RobWork/xml-schemas/rwxml_plugin.xsd">
+        <runtime library="/path/to/libMyPlugin.rwplugin.so" />
+        <extension id="MyImageLoaderUniqueID" name="MyImageLoaderUniqueID" point="rw.loaders.ImageLoader" />
+</plugin>
+\endcode
+In this example, it is clear to see that the same meta-information is provided as in the extension descriptor discussed in \ref sec_rw_plugins_plugin .
+FILE: RobWork/doc/sphinx/manual/programming_conventions.rst
+***********************
+Programming Conventions
+***********************
+
+In the following different programming conventions are introduced.
+These apply mainly to C++ code. For details about other languages, see also the :ref:`interfaces` section.
+
+Namespaces
+==========
+
+The header files of RobWork are distributed across a number of
+directories each having its own namespace. The structure of namespaces 
+reflects the directory containing the code. For example
+
+.. code-block:: c++
+
+   // Include header files:
+   #include <rw/models/WorkCell.hpp>
+   #include <rw/kinematics/Frame.hpp>
+   using namespace rw::models; //Namespace for WorkCell included by #include<rw/models/WorkCell.hpp>
+   using namespace rw::kinematics; //Namespace for Frame included by #include <rw/kinematics/Frame.hpp>
+
+All classes related to the RobWorkStudio package are placed in a namespace rws. All classes related to RobWorkHardware are in the namespace rwhw;
+
+Libraries
+=========
+
+All classes of the *rw* directory are provided in a single library named *rw*.
+
+The subdirectories of the *rwlibs* directory each correspond to a
+different library. The subdirectory *rwlibs/xyz* corresponds to the
+library named *rw_xyz* and contains the objects in the namespace rwlibs::xyz. For example, suppose your program contains
+the following include statement:
+
+.. code-block:: c++
+
+   #include <rwlibs/pathplanners/rrt/RRTPlanner.hpp>
+
+To build this program, you should link with *rw_pathplanners*.
+
+C++ shared pointer conventions
+==============================
+
+The **RobWork** libraries make extensive use of non-copyable objects
+(such as object referred to by interface) shared by pointer between
+different algorithms. Ownership of objects is managed by the shared
+pointer type rw::common::Ptr. If an object needs access to a
+non-copyable object, the constructor of the object will conventionally
+take a rw::common::Ptr type as parameter.
+
+Classes that are commonly referred to by shared pointer define a
+shortcut for this pointer type. If the class is named *T*, the name
+of the pointer type will be *T::Ptr*, and the type of the pointer will
+be rw::common::Ptr<T>. Often there will also be a *T::CPtr* defined
+for pointers to constant objects that can not be modified.
+This will give the type rw::common::Ptr<const T>.
+
+Here are some examples of these such pointer types:
+
+- rw::math::QMetric::Ptr
+- rw::models::WorkCell::Ptr
+- rw::proximity::CollisionDetector::Ptr
+- rw::pathplanning::QSampler::Ptr
+- rw::pathplanning::QToQPlanner::Ptr
+
+Here are some examples of constructor functions for such objects:
+
+- rw::math::MetricFactory::makeEuclidean()
+- rw::proximity::CollisionDetector::make()
+- rw::pathplanning::QSampler::makeUniform()
+- rwlibs::pathplanners::RRTPlanner::makeQToQPlanner()
+
+The rw::common::Ptr type differs from standard shared pointer
+implementations by allowing the pointer to refer to a stack allocated
+object or another object for which an entity has already taken
+the full ownership. To make the use of such objects easy, a
+pointer to *T* can be implicitly converted to Ptr<T>, but the
+implicitly constructed rw::common::Ptr type *does not* take
+ownership of the object. If the rw::common::Ptr type should take
+ownership of the entity, you must explicitly call the
+rw::common::ownedPtr() function. This example illustrates the idiom:
+
+.. literalinclude:: ../../../RobWork/example/snippets/ex-owned-ptr.cpp
+   :language: c++
+   :linenos:
+
+In everyday programming, the construction of rw::common::Ptr types is
+managed by the constructor functions for the various objects. Only if
+you write your own extensions for interfaces in **RobWork** will you
+need to explicitly call rw::common::ownedPtr().
+
+Serialization
+=============
+
+There are two main structures for performing serialization in RobWork. 
+
+First, there is a XML DOM
+parser interface that lets you easily read and write XML data. This interface is 
+used throughout RobWork for reading and writing well defined data exchange formats. The XML DOM
+parser should not be used as a class serialization structure but rather in properly defined 
+loader and saver factories. The XML DOM parser is especially useful as an extension mechanism 
+for current parsing formats, eg. the user can write a plugin that plugs into an existing parsing 
+implementation such as the workcell format. 
+
+Secondly, there is 
+a generic serialization framework which enables serialization of classes. This framework enables 
+serialization to different archive types and can be used for serializing many different formats, including
+binary and user defined formats.  
+
+XML DOM parsing
+---------------
+
+The backend to the XML DOM parser is 
+pluginable and the full features such as validation is therefore depending on the backend. 
+Both boost property tree and xercess backends are supported.     
+
+Here is a small example on creating a DOM parser which parses from an input stream (instream)  
+
+.. code-block:: c++
+
+   DOMParser::Ptr parser = DOMParser::make();
+   parser->setSchema(schemaFileName);
+   parser->load(instream);
+   DOMElem::Ptr root = parser->getRootElement();
+
+The **root** class can now be used for parsing the xml data. Lets assume we have a xml file that looks like:
+
+.. code-block:: xml
+
+   <group someboolproperty="true" someintproperty="10">
+     <elem-string> </elem-string>
+     <elem-int> </elem-int>
+     <elem-double-list>0.1 0.2 0.1</elem-double-list> 
+   </group>
+
+.. code-block:: c++
+
+   DOMELem::Ptr gelem = root->getElement("group"); // throws an error if "group" is not there
+   bool boolprop = gelem->getAttributeValueAsBool("someboolproperty", true); // defaults to true
+   int intprop = element->getAttributeValueAsInt("someintproperty", 2); // defaults to 2
+   // iterate over all elements in group
+   for(DOMElem::Ptr child : gelem->getChildren()) {
+       if(child->isName("elem-string")) {
+           std::string str-value = child->getValue();
+       } else if (child->isName("elem-int")) {
+           int int-val = child->getValueAsInt();
+       } else if (child->isName("elem-double-list")) {
+           std::vector<double> double-val-list = child->getValueAsDoubleList(); // default seperator is space ' '			
+       }
+    }
+
+Generic serialization
+---------------------
+
+The generic serialization is not a centralized controlled serialization as the XML
+serialization described above. There are two main concepts to the generic
+serialization: Archive, Serializable
+
+An Archive is an instance that formats data that can be read or written to it from a 
+Serializable object/class. As such interfaces for both InputArchive and 
+OutputArchive exists. A serializable class is a class that either inherits from 
+the rw::common::Serializable (intrusive) or using an extrusive way that overwrites the functions
+
+.. code-block:: c++
+
+   void rw::common::serialization::write(const THE_CLASS&, OutputArchive& oar);
+   void rw::common::serialization::read(THE_CLASS&, InputArchive& iar);
+
+In any case save and load methods should be determined for the individual 
+serializable classes. In these methods read/write operations on the archive should
+be performed such as to store or restore the state of the class. The use of 
+an archive can be quite simple:
+
+.. code-block:: c++
+
+   INIArchive ar(std::cout);
+   ar.write(1, "length");
+   ar.write(1.120, "width");
+   ar.write(5.120, "height");
+   produce:
+   length : 1
+   width : 1,120
+   height : 5.120
+
+As can be seen an identifier can be associated to the value that is to be serialized. This 
+id makes type checking possible and should allways be used/defined. The archive interface 
+define serialization of primitives (int, float, double, string) and vectors of primitives.
+More complex types will need to implement their own serialization pieced together from 
+the primitives.
+
+Finally, the archive also defines a way to enter scopes. A scope is simply a grouping of 
+value-identifier pairs. 
+
+.. code-block:: c++
+
+   void write(const KDTreeQ<VALUE_TYPE>& out, OutputArchive& oarchive) {
+       oarchive.write(out._dim, "dim");
+       oarchive.write((int)out._nodes->size(), "nrNodes");
+       oarchive.write((boost::uint64_t)out._root, "rootId");
+       RW_ASSERT(out._nrOfNodes==out._nodes->size());
+       for(int i=0;i<out._nodes->size();i++) {
+           const TreeNode &node = (*out._nodes)[i];
+           oarchive.write((boost::uint64_t)&node, "id");
+           oarchive.write( node._axis, "axis");
+           oarchive.write( node._deleted, "del");
+           oarchive.write( node._left, "left");
+           oarchive.write( node._right, "right");
+           oarchive.write( node._kdnode->key, "Q");
+           oarchive.write( node._kdnode->value, "value");
+       }
+   }
+
+Archive types
+-------------
+
+There is currently:
+* an rw::common::INIArchive which prints in INI format
+* an rw::common::BINArchive which prints in binary compressed format 
+
+
+Threading
+=========
+
+When developing code that can run in parallel it is encouraged that the RobWork rw::common::ThreadPool concept is used.
+The ThreadPool provides a flexible way for the user to specify the number of threads that should be used in multi-threaded applications.
+By adding work to a ThreadPool instead of launching separate threads, the user has the ability to limit the resources used by the application.
+At the same time the application is able to efficiently utilize the given resources.
+
+The following example shows how a rw::common::ThreadPool can be created, and how work is added to the queue.
+The work added to the pool is handled in the order it is added. In this example a list of arguments can be given from commandline.
+The first argument is the number of threads to use (beside the main thread itself). Followed by that is an arbitrary number of image filenames.
+The example will then try to load the image files in parallel according to the number of threads given by the user. Note that zero threads
+is valid, as this would cause all work to be executed directly in the main thread. Work will in this case be executed directly in the addWork function.
+To avoid that the program ends before work has finished, the waitForEmptyQueue() function will block until there is no more work available.
+
+In the loadFile function the isStopping() method is checked. If the rw::common::ThreadPool is stopped before work has finished,
+the work added to the pool should check the isStopping() function at regular intervals to allow the application to shutdown gracefully.
+This is especially important in long running tasks.
+
+.. literalinclude:: ../../../RobWork/example/snippets/ex-threadpool.cpp
+   :language: c++
+   :linenos:
+
+When writing multi-threaded applications one often need to branch out into many parallel tasks, then wait for the tasks to finish and finally combine
+the results. Then one might need to branch out yet again into new parallel tasks based on the result. Also each parallel task might be able to
+parallize its work into even more subtasks. This can in principle happen in a hierachy where each subtask can have its own parallel subtasks and so forth.
+
+To facilitate easy programming of such types of tasks, the rw::common::ThreadTask can be used. The following shows the same example as before but
+instead implemented by the use of the rw::common::ThreadTask type.
+
+Consider the LoadTask class that inherits from rw::common::ThreadTask. The LoadTask class is constructed with a filename that should be loaded.
+In the run function the main work takes place - here the file is actually loaded, and the result can afterwards be retrieved with the getImage function.
+
+The MainTask class also inherits from rw::common::ThreadTask. This task is responsible for launching a LoadTask for each file given as input to the
+program. This class does not do much work in its run function. It only constructs all LoadTasks and add these as subtasks to the MainTask. The subtasks
+starts running as soon as they are added, and when each subtask finishes, the subTaskDone function is called. Here the result of the subtask is simply
+stored. If it was desired, new tasks could also be launched based on the achieved result. When there are no more subtasks running, the idle function is
+called. The idle function is the last chance to add new subtasks, otherwise the task will end and the done function will be called. When done is called
+the task is finished, and it is not possible to add more subtasks. If this task then has a parent task, the parent tasks subTaskDone will be executed.
+It is possible to change the behaviour of a rw::common::ThreadTask such that it does not finish after the idle function is called. By enabling the keep-alive
+option the task will stay in the idle state until the keep-alive is disabled or new subtasks are added. Be careful with this option. If the task does
+not end, the parents will not end either.
+
+The main function is almost as before. This time a MainTask is created that uses the ThreadPool to add its work to. When the execute function is called
+the work is added to the pool and execution starts. By using the waitUntilDone function the main loop will not end before the MainTask has finished.
+
+Note that multiple separate tasks and worker function can use the same pool at the same time.
+
+As the ThreadPool is able to run with zero threads (executing directly in the main thread), so is the ThreadTask. If zero threads are used, the complete
+task will be done at the time execute returns. It is however not recommended to use zero threads with the ThreadTask. Internally this will cause a
+large recursion depth, and will inevitably cause problems with the stack size at some point. 
+
+.. literalinclude:: ../../../RobWork/example/snippets/ex-threadtask.cpp
+   :language: c++
+   :linenos:
+FILE: RobWork/RobWork/src/rw/core/CMakeLists.txt
+set(SUBSYS_NAME sdurw_core)
+set(SUBSYS_DESC
+    "This is the core of the RobWork FrameWork, providing fonctinality for logging and plugins"
+)
+set(SUBSYS_DEPS)
+
+set(build TRUE)
+rw_subsys_option(
+    build ${SUBSYS_NAME} ${SUBSYS_DESC} ON
+    DEPENDS ${SUBSYS_DEPS}
+    ADD_DOC
+)
+
+if(build)
+    set(FILES_CPP
+        Extension.cpp
+        ExtensionPoint.cpp
+        ExtensionRegistry.cpp
+        Log.cpp
+        LogStreamWriter.cpp
+        Message.cpp
+        RobWork.cpp
+        Property.cpp
+        PropertyBase.cpp
+        PropertyMap.cpp
+        PropertyValue.cpp
+        PropertyValueBase.cpp
+        AnyPtr.cpp
+        PropertyType.cpp
+        Event.cpp
+        Exception.cpp
+        LogWriter.cpp
+        IOUtil.cpp
+        Plugin.cpp
+        StringUtil.cpp
+        DOMElem.cpp
+        DOMParser.cpp
+        DOMCorePropertyMapLoader.cpp
+        DOMCorePropertyMapSaver.cpp
+        DOMCoreBasisTypes.cpp
+        DOMPropertyMapFormat.cpp
+        BoostXMLParser.cpp
+        os.cpp
+    )
+
+    set(FILES_HPP
+        Extension.hpp
+        ExtensionPoint.hpp
+        ExtensionRegistry.hpp
+        Log.hpp
+        LogStreamWriter.hpp
+        Message.hpp
+        Ptr.hpp
+        RobWork.hpp
+        macros.hpp
+        math_fwd.hpp
+        os.hpp
+        PairIterator.hpp
+        Property.hpp
+        PropertyBase.hpp
+        PropertyMap.hpp
+        PropertyValue.hpp
+        PropertyValueBase.hpp
+        AnyPtr.hpp
+        PropertyType.hpp
+        Event.hpp
+        Exception.hpp
+        LogWriter.hpp
+        IOUtil.hpp
+        Plugin.hpp
+        StringUtil.hpp
+        DOMElem.hpp
+        DOMParser.hpp
+        DOMCorePropertyMapLoader.hpp
+        DOMCorePropertyMapSaver.hpp
+        DOMCoreBasisTypes.hpp
+        DOMPropertyMapFormat.hpp
+        BoostXMLParser.hpp
+    )
+
+    rw_add_library(${SUBSYS_NAME} ${FILES_CPP} ${FILES_HPP})
+    rw_add_includes(${SUBSYS_NAME} "rw/core" ${FILES_HPP})
+    rw_add_includes(${SUBSYS_NAME} "rw" ${CMAKE_CURRENT_SOURCE_DIR}/../core.hpp)
+    
+    target_link_libraries(${SUBSYS_NAME} PUBLIC ${Boost_LIBRARIES} PRIVATE ${CMAKE_DL_LIBS})
+
+    target_include_directories(${SUBSYS_NAME} PUBLIC ${Boost_INCLUDE_DIR})
+
+
+    target_include_directories(
+        ${SUBSYS_NAME} PUBLIC $<BUILD_INTERFACE:${RW_ROOT}/src>
+                              $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
+    )
+
+    
+
+endif()
+FILE: RobWork/RobWork/gtest/CMakeLists.txt
+include_directories(${GTEST_INCLUDE_DIRS})
+
+# ##################################################################################################
+# Standard Macro
+# ##################################################################################################
+
+macro(ADD_RW_GTEST target)
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    add_custom_target(
+        ${target}_report-makedir
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${target}>/gtest_reports
+        COMMENT "Creating directory gtest_reports if it does not exist."
+    )
+    add_custom_target(
+        ${target}_report
+        COMMAND $<TARGET_FILE:${target}>
+                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml
+        DEPENDS ${target} ${target}_report-makedir
+    )
+    set(REPORT_TARGETS ${REPORT_TARGETS} ${target}_report)
+    if(GTEST_SHARED_LIBS)
+        target_compile_definitions(${target} PRIVATE GTEST_LINKED_AS_SHARED_LIBRARY=1)
+        if(MSVC)
+            target_compile_options(${target} PRIVATE /wd4251 /wd4275)
+        endif()
+    endif()
+endmacro()
+
+# ##################################################################################################
+# RobWork main function for initialization (link with this if needed).
+# ##################################################################################################
+
+set(RWMAIN_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_core)
+
+set(RWMAIN_TEST_SRC TestEnvironment.cpp test-main.cpp)
+add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+
+# ##################################################################################################
+# Algorithms
+# ##################################################################################################
+
+if(TARGET sdurw_algorithms)
+    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)
+
+    set(ALGORITHMS_TEST_SRC algorithms/RANSACTest.cpp)
+    add_executable(sdurw_algorithms-gtest ${ALGORITHMS_TEST_SRC})
+    target_link_libraries(sdurw_algorithms-gtest ${ALGORITHMS_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_algorithms-gtest)
+endif()
+
+# ##################################################################################################
+# Calibration
+# ##################################################################################################
+
+if(TARGET sdurw_calibration)
+    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)
+
+    set(CALIBRATION_TEST_SRC calibration/CalibrationTest.cpp)
+    add_executable(sdurw_calibration-gtest ${CALIBRATION_TEST_SRC})
+    target_link_libraries(sdurw_calibration-gtest ${CALIBRATION_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_calibration-gtest)
+endif()
+
+# ##################################################################################################
+# Core
+# ##################################################################################################
+
+if(TARGET sdurw_core)
+    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+
+    set(CORE_TEST_SRC
+        core/AnyPtrTest.cpp
+        core/EventTest.cpp
+        core/PluginTest.cpp
+        core/PropertyMapTest.cpp
+        core/PropertyTest.cpp
+        core/PropertyTypeCoreTest.cpp
+        core/PropertyValueTest.cpp
+        core/PtrTest.cpp
+        core/PtrBoostTest.cpp
+        core/StringUtilTest.cpp
+    )
+
+    add_executable(sdurw_core-gtest ${CORE_TEST_SRC})
+    target_link_libraries(sdurw_core-gtest ${CORE_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_core-gtest)
+
+    # Create dummy plugins for testing
+    add_library(test_plugin.rwplugin MODULE core/TestPlugin.cpp)
+    target_link_libraries(test_plugin.rwplugin sdurw_core)
+    set_target_properties(
+        test_plugin.rwplugin PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    )
+
+    # Create XML file for lazy-loading of Test plugin
+    file(
+        GENERATE
+        OUTPUT "$<TARGET_FILE_DIR:test_plugin.rwplugin>/test_plugin.rwplugin.xml"
+        INPUT ${CMAKE_CURRENT_SOURCE_DIR}/core/test_plugin.rwplugin.xml.in
+    )
+endif()
+
+# ##################################################################################################
+# Common
+# ##################################################################################################
+if(TARGET sdurw_common AND TARGET sdurw_math)
+    set(COMMON_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_common sdurw_math)
+
+    set(COMMON_TEST_SRC
+        common/ThreadTest.cpp
+        common/StringUtilTest.cpp
+        common/SerializationTest.cpp
+        common/PropertyTest.cpp
+        common/IteratorTest.cpp
+        common/PairMapTest.cpp
+        common/ProgramOptionTest.cpp
+        common/TimerTest.cpp
+        common/LogTestSuite.cpp
+    )
+
+    add_executable(sdurw_common-gtest ${COMMON_TEST_SRC})
+    target_link_libraries(sdurw_common-gtest ${COMMON_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_common-gtest)
+endif()
+
+# ##################################################################################################
+# Geometry
+# ##################################################################################################
+
+if(TARGET sdurw_geometry AND TARGET sdurw_kinematics AND TARGET sdurw_loaders)
+    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+        sdurw_geometry sdurw_kinematics sdurw_loaders
+    )
+
+    set(GEOMETRY_TEST_SRC
+        geometry/DelaunayTest.cpp
+        geometry/BSphereTest.cpp
+        geometry/HyperSphereTest.cpp
+        geometry/ImplicitTorusTest.cpp
+        geometry/IndexedTriMeshTest.cpp
+        geometry/IntersectUtilTest.cpp
+        geometry/PlaneTest.cpp
+        geometry/PolygonTest.cpp
+        geometry/QHullTest.cpp
+        geometry/QuadraticCurveTest.cpp
+        geometry/TriangulateTest.cpp
+        geometry/GeometryTest.cpp
+        geometry/GeometryUtilTest.cpp
+        geometry/TriangleUtilTest.cpp
+    )
+    add_executable(sdurw_geometry-gtest ${GEOMETRY_TEST_SRC})
+    target_link_libraries(sdurw_geometry-gtest ${GEOMETRY_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_geometry-gtest)
+endif()
+
+# ##################################################################################################
+# Graphics
+# ##################################################################################################
+
+if(TARGET sdurw_graphics AND TARGET sdurw_models AND TARGET sdurw_loaders)
+    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+        sdurw_graphics sdurw_models sdurw_loaders
+    )
+
+    set(GRAPHICS_TEST_SRC graphics/SceneGraphTest.cpp graphics/WorkCellSceneTest.cpp
+                          graphics/GraphicsTest.cpp
+    )
+    add_executable(sdurw_graphics-gtest ${GRAPHICS_TEST_SRC})
+    target_link_libraries(sdurw_graphics-gtest ${GRAPHICS_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_graphics-gtest)
+endif()
+
+# ##################################################################################################
+# Inverse Kinematics
+# ##################################################################################################
+
+if(TARGET sdurw_invkin AND TARGET sdurw_models AND TARGET sdurw_loaders)
+    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+        sdurw_invkin sdurw_models sdurw_loaders)
+
+    set(INVKIN_TEST_SRC
+        invkin/ClosedFormIKSolverKukaIIWATest.cpp invkin/ParallelIKSolverTest.cpp
+        invkin/JacobianIKSolverTest.cpp invkin/ClosedFormIKSolverURTest.cpp invkin/InvKinTest.cpp
+    )
+    add_executable(sdurw_invkin-gtest ${INVKIN_TEST_SRC})
+    target_link_libraries(sdurw_invkin-gtest ${INVKIN_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_invkin-gtest)
+endif()
+
+# ##################################################################################################
+# Kinematics
+# ##################################################################################################
+
+if(TARGET sdurw_kinematics AND TARGET sdurw_models)
+    set(KINEMATICS_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_kinematics sdurw_models)
+
+    set(KINEMATICS_TEST_SRC kinematics/StaticFrameGroupsTest.cpp kinematics/KinematicsTest.cpp)
+    add_executable(sdurw_kinematics-gtest ${KINEMATICS_TEST_SRC})
+    target_link_libraries(sdurw_kinematics-gtest ${KINEMATICS_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_kinematics-gtest)
+endif()
+
+# ##################################################################################################
+# Loaders
+# ##################################################################################################
+
+if(TARGET sdurw_loaders AND TARGET sdurw_models)
+    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+        sdurw_proximitystrategies sdurw_loaders sdurw_models
+    )
+
+    set(LOADERS_TEST_SRC
+        loaders/DOMProximitySetupSaver.cpp loaders/DOMPropertyMap.cpp loaders/ImageLoaderTest.cpp
+        loaders/PathLoaderCSVTest.cpp loaders/TrajectoryLoaderTest.cpp
+    )
+    add_executable(sdurw_loaders-gtest ${LOADERS_TEST_SRC})
+    target_link_libraries(sdurw_loaders-gtest ${LOADERS_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_loaders-gtest)
+endif()
+
+# ##################################################################################################
+# Math
+# ##################################################################################################
+
+if(TARGET sdurw_math)
+    set(MATH_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_math)
+
+    set(MATH_TEST_SRC
+        math/EAATest.cpp
+        math/MetricFactoryTest.cpp
+        math/PolynomialTest.cpp
+        math/StatisticsTest.cpp
+        math/QuaternionTest.cpp
+        math/Vector3DTest.cpp
+        math/VectorNDTest.cpp
+        math/LinearAlgebraTest.cpp
+        math/MathSerializationTest.cpp
+        math/Pose6DTest.cpp
+        math/PropertyTypeMathTest.cpp
+        math/Rotation3DTest.cpp
+        math/RPYTest.cpp
+        math/Transform3DTest.cpp
+        math/UtilTest.cpp
+        math/Vector2DTest.cpp
+        math/VelocityScrew6DTest.cpp
+        math/Wrench6DTest.cpp
+    )
+
+    add_executable(sdurw_math-gtest ${MATH_TEST_SRC})
+    target_link_libraries(sdurw_math-gtest ${MATH_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_math-gtest)
+endif()
+
+# ##################################################################################################
+# Mathematica
+# ##################################################################################################
+
+if(TARGET sdurw_mathematica)
+    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)
+
+    set(MATHEMATICA_TEST_SRC mathematica/MathematicaTest.cpp)
+    add_executable(sdurw_mathematica-gtest ${MATHEMATICA_TEST_SRC})
+    target_link_libraries(sdurw_mathematica-gtest ${MATHEMATICA_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_mathematica-gtest)
+endif()
+
+# ##################################################################################################
+# Models
+# ##################################################################################################
+
+if(TARGET sdurw_models AND TARGET sdurw_loaders)
+    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)
+
+    set(MODELS_TEST_SRC
+        models/JointTest.cpp models/ParallelDeviceTest.cpp models/ParallelLegTest.cpp
+        models/WorkCellTest.cpp models/PrismaticJointTest.cpp models/SerialDeviceTest.cpp
+    )
+    add_executable(sdurw_models-gtest ${MODELS_TEST_SRC})
+    target_link_libraries(sdurw_models-gtest ${MODELS_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_models-gtest)
+endif()
+
+# ##################################################################################################
+# Opengl
+# ##################################################################################################
+
+if(TARGET sdurw_opengl)
+    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)
+
+    set(OPENGL_TEST_SRC opengl/DrawableTest.cpp)
+    add_executable(sdurw_opengl-gtest ${OPENGL_TEST_SRC})
+    target_link_libraries(sdurw_opengl-gtest ${OPENGL_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_opengl-gtest)
+endif()
+
+# ##################################################################################################
+# Pathoptimization
+# ##################################################################################################
+
+if(TARGET sdurw_pathoptimization)
+    set(PATHOPTIMIZATION_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_pathoptimization sdurw_pathoptimization)
+
+    set(PATHOPTIMIZATION_TEST_SRC pathoptimization/ClearanceOptimizerTest.cpp
+                                  pathoptimization/PathLengthOptimizerTest.cpp
+    )
+    add_executable(sdurw_pathoptimization-gtest ${PATHOPTIMIZATION_TEST_SRC})
+    target_link_libraries(sdurw_pathoptimization-gtest ${PATHOPTIMIZATION_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_pathoptimization-gtest)
+endif()
+
+# ##################################################################################################
+# Pathplanning
+# ##################################################################################################
+
+if(TARGET sdurw_pathplanners AND TARGET sdurw_loaders)
+    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+                                    sdurw_math sdurw_proximitystrategies sdurw_loaders
+    )
+
+    set(PATHPLANNING_TEST_SRC pathplanning/PathPlanningTest.cpp)
+
+    add_executable(sdurw_pathplanning-gtest ${PATHPLANNING_TEST_SRC})
+    target_link_libraries(sdurw_pathplanning-gtest ${PATHPLANNING_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_pathplanning-gtest)
+endif()
+# ##################################################################################################
+# Proximity
+# ##################################################################################################
+
+if(TARGET sdurw_proximitystrategies AND TARGET sdurw_models AND TARGET sdurw_loaders
+    AND TARGET sdurw_pathplanning)
+    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+        sdurw_proximitystrategies sdurw_models sdurw_loaders sdurw_pathplanning
+    )
+
+    set(PROXIMITY_TEST_SRC
+        proximity/BVTreeTest.cpp
+        proximity/CollisionStrategyTest.cpp
+        proximity/CollisionToleranceStrategyTest.cpp
+        proximity/DistanceMultiStrategyTest.cpp
+        proximity/DistanceStrategyTest.cpp
+        proximity/ProximityStrategyTest.cpp
+        proximity/DistanceCalculatorTest.cpp
+        proximity/ProximityModelTest.cpp
+        proximity/ProximityCalculatorTest.cpp
+        proximity/CollisionTest.cpp
+        proximity/DistanceTest.cpp
+        proximity/collisionStrategy.cpp
+        proximity/distanceStrategy.cpp
+        proximity/ProximitySetupRuleTest.cpp
+    )
+    add_executable(sdurw_proximity-gtest ${PROXIMITY_TEST_SRC})
+    target_link_libraries(sdurw_proximity-gtest ${PROXIMITY_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_proximity-gtest)
+endif()
+
+# ##################################################################################################
+# Sensor
+# ##################################################################################################
+
+if(TARGET sdurw_sensor)
+    set(SENSOR_TEST_SRC sensor/TactileArrayTest.cpp)
+    add_executable(sdurw_sensor-gtest ${SENSOR_TEST_SRC})
+    target_link_libraries(sdurw_sensor-gtest ${GTEST_BOTH_LIBRARIES} sdurw_sensor)
+    add_rw_gtest(sdurw_sensor-gtest)
+endif()
+
+# ##################################################################################################
+# Task
+# ##################################################################################################
+
+if(TARGET sdurw_task)
+    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)
+
+    set(TASK_TEST_SRC task/TaskLoaderTest.cpp task/TaskSaverTest.cpp task/GraspTaskTest.cpp)
+    add_executable(sdurw_task-gtest ${TASK_TEST_SRC})
+    target_link_libraries(sdurw_task-gtest ${TASK_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_task-gtest)
+endif()
+
+# ##################################################################################################
+# Trajectory
+# ##################################################################################################
+
+if(TARGET sdurw_trajectory AND TARGET sdurw_loaders AND TARGET sdurw_control)
+    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)
+    set(TRAJECTORY_TEST_SRC
+        trajectory/PathTest.cpp
+        trajectory/ParabolicBlendTest.cpp
+        trajectory/SyncVelocityRampTest.cpp
+        trajectory/trajectory.cpp
+        trajectory/TrajectoryFactoryTest.cpp
+        trajectory/CubicSplineTest.cpp
+        trajectory/LinearInterpolatorTest.cpp
+        trajectory/PropertyTypeTrajectoryTest.cpp
+    )
+    add_executable(sdurw_trajectory-gtest ${TRAJECTORY_TEST_SRC})
+    target_link_libraries(sdurw_trajectory-gtest ${QHULL_LIBRARIES} ${TRAJECTORY_TEST_LIBRARIES})
+    add_rw_gtest(sdurw_trajectory-gtest)
+endif()
+
+# ##################################################################################################
+# TestFiles
+# ##################################################################################################
+
+# setup the test file configuration
+set(TEST_RUN_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+if(MSVC)
+    set(TEST_RUN_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMAKE_BUILD_TYPE})
+endif()
+
+set(ROBWORK_TESTFILES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/testfiles)
+get_filename_component(ROBWORK_XMLSCHEMAS_DIR ../xml-schemas ABSOLUTE)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestSuiteConfig.xml.in
+               ${TEST_RUN_OUTPUT_DIR}/TestSuiteConfig.xml
+)
+
+# ##################################################################################################
+# Target for generation of all detailed reports
+# ##################################################################################################
+
+add_custom_target(
+    sdurw-gtest_reports
+    DEPENDS ${REPORT_TARGETS}
+    COMMENT "Running Google Tests to generate detailed reports."
+)
+
+# ##################################################################################################
+# Do not build these as part of an ordinary build
+# ##################################################################################################
+
+set_target_properties(
+    sdurw-gtest_reports ${REPORT_TARGETS} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD
+                                                     1
+)

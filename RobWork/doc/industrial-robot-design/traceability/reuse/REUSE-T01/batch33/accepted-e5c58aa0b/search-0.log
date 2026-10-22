@@ -1,0 +1,12 @@
+RobWork/RobWorkSim/src\rwsimlibs\plugins\EngineTestPlugin.hpp:67:                               "EngineTestPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.hpp:85:                           "GraspTableGeneratorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimPlugin.hpp:57:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "RWSimPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimulatorPlugin.hpp:54:                           "RWSimulatorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.hpp:48:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTaskPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimUtilityPlugin.hpp:49:                           "SimUtilityPlugin.json")
+RobWork/RobWork/src\rw\core\StringUtil.hpp:37:    class StringUtil
+RobWork/RobWork/src\rw\core\DOMCorePropertyMapSaver.hpp:26:    class DOMParser;
+RobWork/RobWork/src\rw\core\DOMParser.hpp:41:    class DOMParser
+RobWork/RobWork/src\rw\core\DOMParser.hpp:110:         * \class DOMParser
+RobWork/RobWork/src\rw\loaders\dom\DOMPropertyMapSaver.hpp:25:    class DOMParser;
+RobWork/RobWork/src\rw\loaders\dom\DOMProximitySetupSaver.hpp:25:    class DOMParser;
