@@ -1,0 +1,40 @@
+Exception calling "Parse" with "2" argument(s): "The DateTime represented by the string is not supported in calendar Sy
+stem.Globalization.GregorianCalendar."
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1:51 char:3
++   $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::I ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+    + FullyQualifiedErrorId : FormatException
+ 
+Cannot find an overload for "CompareTo" and the argument count: "1".
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1:52 char:10
++   return $left.CompareTo($right)
++          ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodException
+    + FullyQualifiedErrorId : MethodCountCouldNotFindBest
+ 
+Exception calling "Parse" with "2" argument(s): "The DateTime represented by the string is not supported in calendar Sy
+stem.Globalization.GregorianCalendar."
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1:51 char:3
++   $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::I ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodInvocationException
+    + FullyQualifiedErrorId : FormatException
+ 
+Cannot find an overload for "CompareTo" and the argument count: "1".
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1:52 char:10
++   return $left.CompareTo($right)
++          ~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], MethodException
+    + FullyQualifiedErrorId : MethodCountCouldNotFindBest
+ 
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1 : run.leaseExpir
+esAt must be >= run.startedAt
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-state.ps1 : heartbeat.upda
+tedAt ('2020-01-01T08:30:00+08:00') < run.startedAt ('2020-99-99T10:00:00+00:00')——状态被旧写入回退
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-state.ps1
+ 

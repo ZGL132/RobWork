@@ -1,0 +1,6 @@
+{
+  "finalTextToCRLFWithUTF8BOMSha256": "78ad8b1b1b644b044b440cc6057941df70759735902c121defa69a5a237237bf",
+  "historicalTestedRawSha256": "78ad8b1b1b644b044b440cc6057941df70759735902c121defa69a5a237237bf",
+  "same": true,
+  "note": "历史CRLF测试raw含UTF8 BOM；原最终LF raw由Git保留。正文相同。"
+}

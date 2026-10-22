@@ -17,6 +17,8 @@ if (-not $RepoRoot) {
 
 $lockScript = Join-Path $RepoRoot "RobWork/scripts/industrialrobot/pipeline-lock.ps1"
 $stateScript = Join-Path $RepoRoot "RobWork/scripts/industrialrobot/validate-state.ps1"
+# 原生状态校验必须在当前宿主对应的解释器执行，PS5.1不可悄悄借PS7通过。
+$script:statePowerShell = (Get-Process -Id $PID).Path
 $sourceState = Join-Path $RepoRoot "RobWork/doc/industrial-robot-design/traceability/pipeline/state.json"
 
 function Assert-Equal([object]$Expected, [object]$Actual, [string]$Message) {
@@ -89,7 +91,7 @@ function Invoke-StateValidation([string]$StatePath) {
   $oldPreference = $ErrorActionPreference
   try {
     $ErrorActionPreference = "Continue"
-    $output = @(& pwsh -NoProfile -File $script:stateScript -RepoRoot $script:stateRepo -StateFile $StatePath 2>&1)
+    $output = @(& $script:statePowerShell -NoProfile -File $script:stateScript -RepoRoot $script:stateRepo -StateFile $StatePath 2>&1)
     return [pscustomobject]@{ ExitCode = $LASTEXITCODE; Output = $output }
   }
   finally { $ErrorActionPreference = $oldPreference }
@@ -213,6 +215,34 @@ try {
   $state | ConvertTo-Json -Depth 12 | Set-Content $statePath -Encoding UTF8
   $latestAttempt = Invoke-StateValidation $statePath
   Assert-ExitCode 0 $latestAttempt.ExitCode "最近一轮整数 lastFailureRecord.attempt 必须通过"
+
+  # 状态计数/身份与时刻也是契约：原入口验证坏输入被拒，跨偏移按真实时刻判。
+  $healthyStateJson = $state | ConvertTo-Json -Depth 20
+  foreach ($case in @('fractional-count','string-count','fake-guid','offset-valid','offset-expired','bad-calendar')) {
+    $probe = $healthyStateJson | ConvertFrom-Json
+    $expected = 1
+    switch ($case) {
+      'fractional-count' { $probe.tickCount = 1.5 }
+      'string-count' { $probe.attempts.accept = '2' }
+      'fake-guid' { $probe.tickToken = '-' * 36 }
+      'offset-valid' {
+        $expected = 0
+        $probe.run.startedAt = '2020-01-01T10:00:00+02:00'
+        $probe.run.leaseExpiresAt = '2020-01-01T09:30:00+00:00'
+        $probe.heartbeat.updatedAt = '2020-01-01T09:00:00+00:00'
+      }
+      'offset-expired' {
+        $probe.run.startedAt = '2020-01-01T08:00:00+00:00'
+        $probe.run.leaseExpiresAt = '2020-01-01T09:00:00+02:00'
+        $probe.heartbeat.updatedAt = '2020-01-01T09:00:00+00:00'
+      }
+      'bad-calendar' { $probe.run.startedAt = '2020-99-99T10:00:00+00:00' }
+    }
+    $probe | ConvertTo-Json -Depth 20 | Set-Content $statePath -Encoding UTF8
+    $checked = Invoke-StateValidation $statePath
+    Assert-ExitCode $expected $checked.ExitCode "状态边界 $case"
+    Write-Output "state-boundary: $case expected=$expected actual=$($checked.ExitCode)"
+  }
 
   # branch 的任务段也必须与 currentTask 对齐，避免把别的任务的失败结论注入当前返工。
   $state.lastFailureRecord.branch = "acc/OTHER-T01/2"

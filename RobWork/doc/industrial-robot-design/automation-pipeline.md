@@ -59,6 +59,8 @@
 | `docRefs` | 必备键：pipeline、acceptance、contractCompilation、agents、dtbTaskRegistry、taskContracts |
 | `pausedReason` | **≤200 字事实陈述**——叙述性豁免/规则变体必须走 PIPE 增量修订（v1.3 状态纪律） |
 
+状态校验实现沿用 .NET：计数按 JSON 整数验证，不接受字符串/小数的隐式转换；`tickToken` 用 `Guid.TryParseExact(D)` 核对；ISO 租约与心跳按 `DateTimeOffset` 的绝对时刻比较，跨偏移也遵守上述单调性。原流水线回归在当前 PowerShell 解释器运行状态子进程，避免 PS5.1 借 PS7 自动日期转换掩盖差异。
+
 ### 0.3 阅读阶梯（各角色输入预算——防通读也防跳读，v1.2）
 
 | 角色 | 必读 | 按需下沉 | 禁止 |

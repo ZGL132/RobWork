@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\repo\RobWork\scripts\industrialrobot\verify-task-scope.ps1:76
+Line |
+  76 |  … not $sha) { throw "cannot resolve $Label commit: $Rev（检查 SHA/分支名是否存在于 …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | cannot resolve base commit: B23_NO_SUCH_COMMIT（检查 SHA/分支名是否存在于本仓库）

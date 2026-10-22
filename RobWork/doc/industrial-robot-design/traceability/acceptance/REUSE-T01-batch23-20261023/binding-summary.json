@@ -1,0 +1,16 @@
+{
+  "rows": 18,
+  "bindings": 126,
+  "bindingsFailed": 0,
+  "astDefinitions": 80,
+  "astEqual": true,
+  "manifestEntries": 91,
+  "manifestFailed": 0,
+  "originalFailed": 0,
+  "beforeRawHash": "35878035bec1a1eabbf507ad2aafc70b7948d6f1772fc1d9cde9019fa9d9a1e3",
+  "parentRawHash": "28da2cf7dbc230de3cfb97257500791875770e0c56cc8e59382af4f28a8cfb93",
+  "beforeCRLF": 151,
+  "parentCRLF": 0,
+  "beforeParentNormalizedEqual": true,
+  "afterRawHash": "a9bf73af7820bf69705b121f403d17f5cdea783a0014dbfc97adf29fb924d3fc"
+}

@@ -1,0 +1,7 @@
+missing: True actual=[<xml-missing>]
+malformed: True actual=[<xml-unparsable>]
+zero: True actual=[<xml-no-tests>]
+healthy: True actual=[]
+failure: True actual=[S.Failed]
+error: True actual=[S.Errored]
+all-skipped: True actual=[<xml-no-executed-tests>]

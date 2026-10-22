@@ -1,0 +1,562 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "function",
+    "symbol": "Resolve-Commit",
+    "startLine": 74,
+    "endLine": 78
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "function",
+    "symbol": "ConvertTo-ScopeRegex",
+    "startLine": 106,
+    "endLine": 117
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "function",
+    "symbol": "New-ScopeRule",
+    "startLine": 118,
+    "endLine": 122
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "function",
+    "symbol": "Find-ScopeHit",
+    "startLine": 129,
+    "endLine": 134
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $TaskFile)) { throw \"task file not found: $TaskFile\" }",
+    "startLine": 46,
+    "endLine": 46
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$scriptDir = $PSScriptRoot",
+    "startLine": 47,
+    "endLine": 47
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }",
+    "startLine": 48,
+    "endLine": 48
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir \"..\\..\\..\")).Path }",
+    "startLine": 49,
+    "endLine": 49
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path (Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"))) {",
+    "startLine": 50,
+    "endLine": 52
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$prevEnc = [Console]::OutputEncoding",
+    "startLine": 55,
+    "endLine": 55
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 56,
+    "endLine": 59
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $repoTop -or -not (Test-Path $repoTop)) { throw \"not a git repository: $RepoRoot\" }",
+    "startLine": 60,
+    "endLine": 60
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$repoTop = (Resolve-Path $repoTop).Path",
+    "startLine": 61,
+    "endLine": 61
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$task = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json",
+    "startLine": 64,
+    "endLine": 64
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $task.taskId) { throw \"invalid task file (missing taskId): $TaskFile\" }",
+    "startLine": 65,
+    "endLine": 65
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (\"$($task.status)\" -ne 'ready' -and \"$($task.status)\" -ne 'done') {",
+    "startLine": 66,
+    "endLine": 69
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$headSha = Resolve-Commit $Head 'head'",
+    "startLine": 79,
+    "endLine": 79
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $Base) {",
+    "startLine": 80,
+    "endLine": 92
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 96,
+    "endLine": 99
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$diffText = [string]::Join('', $diffRaw)",
+    "startLine": 100,
+    "endLine": 100
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$changed = @($diffText -split \"`0\" | Where-Object { $_ -ne '' } | ForEach-Object { $_.Replace('\\','/') })",
+    "startLine": 101,
+    "endLine": 101
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$allowedRules = @()",
+    "startLine": 123,
+    "endLine": 123
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($a in @($task.allowedFiles)) { if (\"$a\".Trim()) { $r = New-ScopeRule \"$a\"; if ($r) { $allowedRules += $r } } }",
+    "startLine": 124,
+    "endLine": 124
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$forbiddenRules = @()",
+    "startLine": 125,
+    "endLine": 125
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($f in @($task.forbiddenFiles)) { if (\"$f\".Trim()) { $r = New-ScopeRule \"$f\"; if ($r) { $forbiddenRules += $r } } }",
+    "startLine": 126,
+    "endLine": 126
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($allowedRules.Count -eq 0) { throw \"contract has empty allowedFiles: $($task.taskId)\" }",
+    "startLine": 127,
+    "endLine": 127
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "$violations = 0",
+    "startLine": 139,
+    "endLine": 139
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output (\"verify-task-scope: {0} base={1} head={2} changed={3} allowedRules={4} forbiddenRules={5}\" -f `",
+    "startLine": 140,
+    "endLine": 141
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($path in $changed) {",
+    "startLine": 142,
+    "endLine": 154
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($violations -gt 0) {",
+    "startLine": 155,
+    "endLine": 158
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"verify-task-scope: PASS $($task.taskId) —— $($changed.Count) 个路径全部在允许面内\"",
+    "startLine": 159,
+    "endLine": 159
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) {",
+    "startLine": 9,
+    "endLine": 15
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$docBase = Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"",
+    "startLine": 17,
+    "endLine": 17
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $docBase)) {",
+    "startLine": 18,
+    "endLine": 27
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $BatchFile) {",
+    "startLine": 28,
+    "endLine": 30
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $BatchFile)) {",
+    "startLine": 31,
+    "endLine": 33
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$batch = Get-Content $BatchFile -Raw -Encoding UTF8 | ConvertFrom-Json",
+    "startLine": 35,
+    "endLine": 35
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$errors = @()",
+    "startLine": 36,
+    "endLine": 36
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($batch.schemaVersion -ne \"ird-pipeline-batch/1\") {",
+    "startLine": 38,
+    "endLine": 40
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($batch.batchId -ne \"B1-HOST-INTEGRATION\") {",
+    "startLine": 41,
+    "endLine": 43
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($batch.status -notin @(\"planned\", \"ready\", \"running\", \"done\", \"blocked\")) {",
+    "startLine": 44,
+    "endLine": 46
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$stages = @($batch.stages)",
+    "startLine": 48,
+    "endLine": 48
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($stages.Count -ne 12) {",
+    "startLine": 51,
+    "endLine": 53
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$seenTasks = @{}",
+    "startLine": 55,
+    "endLine": 55
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$seenStageIds = @{}",
+    "startLine": 56,
+    "endLine": 56
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$previousTask = \"DOC-T14\"",
+    "startLine": 57,
+    "endLine": 57
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "for ($i = 0; $i -lt $stages.Count; $i++) {",
+    "startLine": 58,
+    "endLine": 94
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$gateMap = @{}",
+    "startLine": 96,
+    "endLine": 96
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($gate in @($batch.externalGates)) {",
+    "startLine": 97,
+    "endLine": 109
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($stage in $stages) {",
+    "startLine": 110,
+    "endLine": 116
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$wp24t08 = $stages | Where-Object { $_.taskId -eq \"WP-24-T08\" }",
+    "startLine": 120,
+    "endLine": 120
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $wp24t08 -or @($wp24t08.requiredExternalGates) -notcontains \"WP-24-T03-COMPLETE\") {",
+    "startLine": 121,
+    "endLine": 123
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($errors.Count -gt 0) {",
+    "startLine": 125,
+    "endLine": 128
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "$openGates = @($batch.externalGates | Where-Object { $_.status -eq \"open\" } | ForEach-Object { $_.gateId })",
+    "startLine": 130,
+    "endLine": 130
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"validate-b1-batch: PASS (stages=$($stages.Count), openGates=$($openGates.Count))\"",
+    "startLine": 131,
+    "endLine": 131
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($openGates.Count -gt 0) {",
+    "startLine": 132,
+    "endLine": 134
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "function",
+    "symbol": "Get-FailedTestNames",
+    "startLine": 47,
+    "endLine": 68
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$ErrorActionPreference = 'Stop'",
+    "startLine": 38,
+    "endLine": 38
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$scriptDir = $PSScriptRoot",
+    "startLine": 39,
+    "endLine": 39
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }",
+    "startLine": 40,
+    "endLine": 40
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$repoRoot = (Resolve-Path (Join-Path $scriptDir \"..\\..\\..\")).Path",
+    "startLine": 41,
+    "endLine": 41
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path (Join-Path $repoRoot \"RobWork/doc/industrial-robot-design\"))) {",
+    "startLine": 42,
+    "endLine": 44
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($SelfTest) {",
+    "startLine": 71,
+    "endLine": 103
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $TestExe) { throw \"缺少 -TestExe（测试可执行文件路径）\" }",
+    "startLine": 106,
+    "endLine": 106
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $TestExe)) { throw \"test executable not found: $TestExe\" }",
+    "startLine": 107,
+    "endLine": 107
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($Repeat -lt 1) { throw \"-Repeat 必须 >= 1\" }",
+    "startLine": 108,
+    "endLine": 108
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $OutDir) { $OutDir = Join-Path $repoRoot (\"traceability/builds/flake-probe/\" + (Get-Date -Format 'yyyyMMdd-HHmmss')) }",
+    "startLine": 109,
+    "endLine": 109
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "New-Item -ItemType Directory -Force -Path $OutDir | Out-Null",
+    "startLine": 110,
+    "endLine": 110
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$exeFull = (Resolve-Path $TestExe).Path",
+    "startLine": 111,
+    "endLine": 111
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$exeName = [IO.Path]::GetFileNameWithoutExtension($exeFull)",
+    "startLine": 112,
+    "endLine": 112
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output (\"run-flake-probe: {0} repeat={1} loadJobs={2} out={3}\" -f $exeName, $Repeat, $LoadJobs, $OutDir)",
+    "startLine": 114,
+    "endLine": 114
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$loadProcesses = @()",
+    "startLine": 117,
+    "endLine": 117
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 118,
+    "endLine": 159
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$summaryPath = Join-Path $OutDir 'summary.txt'",
+    "startLine": 162,
+    "endLine": 162
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$results | Format-Table -AutoSize | Out-String | Set-Content -LiteralPath $summaryPath -Encoding utf8",
+    "startLine": 163,
+    "endLine": 163
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "$failCount = @($results | Where-Object { $_.Failed -or $_.ExitCode -ne 0 }).Count",
+    "startLine": 164,
+    "endLine": 164
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "Add-Content -LiteralPath $summaryPath -Value (\"TOTAL={0} FAILED_RUNS={1}\" -f $Repeat, $failCount)",
+    "startLine": 165,
+    "endLine": 165
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"run-flake-probe: 汇总 $summaryPath（failed runs=$failCount/$Repeat）\"",
+    "startLine": 166,
+    "endLine": 166
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($anyFailure) {",
+    "startLine": 167,
+    "endLine": 170
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"run-flake-probe: PASS —— $Repeat/$Repeat 全绿（未复现；本结果只证明本次环境稳定，不证明无竞态）\"",
+    "startLine": 171,
+    "endLine": 171
+  }
+]

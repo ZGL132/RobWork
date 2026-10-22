@@ -1,0 +1,3 @@
+23:	::testing::InitGoogleTest(&argc, argv);
+24:    ::testing::AddGlobalTestEnvironment(TestEnvironment::make(argc,argv));
+25:	return RUN_ALL_TESTS();

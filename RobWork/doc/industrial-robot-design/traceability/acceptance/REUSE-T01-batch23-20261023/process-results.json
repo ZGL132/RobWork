@@ -1,0 +1,38 @@
+[
+  {
+    "version": "before",
+    "case": "zero",
+    "exitCode": 0,
+    "expected": 0,
+    "passed": true,
+    "exe": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b22-execution/Release/ird_execution_boundary_audit.exe",
+    "scriptSha256": "35878035BEC1A1EABBF507AD2AAFC70B7948D6F1772FC1D9CDE9019FA9D9A1E3"
+  },
+  {
+    "version": "before",
+    "case": "healthy",
+    "exitCode": 0,
+    "expected": 0,
+    "passed": true,
+    "exe": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b22-execution/Release/ird_execution_boundary_audit.exe",
+    "scriptSha256": "35878035BEC1A1EABBF507AD2AAFC70B7948D6F1772FC1D9CDE9019FA9D9A1E3"
+  },
+  {
+    "version": "after",
+    "case": "zero",
+    "exitCode": 1,
+    "expected": 1,
+    "passed": true,
+    "exe": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b22-execution/Release/ird_execution_boundary_audit.exe",
+    "scriptSha256": "A9BF73AF7820BF69705B121F403D17F5CDEA783A0014DBFC97ADF29FB924D3FC"
+  },
+  {
+    "version": "after",
+    "case": "healthy",
+    "exitCode": 0,
+    "expected": 0,
+    "passed": true,
+    "exe": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b22-execution/Release/ird_execution_boundary_audit.exe",
+    "scriptSha256": "A9BF73AF7820BF69705B121F403D17F5CDEA783A0014DBFC97ADF29FB924D3FC"
+  }
+]

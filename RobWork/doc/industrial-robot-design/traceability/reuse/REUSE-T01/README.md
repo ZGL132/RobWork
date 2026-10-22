@@ -121,3 +121,5 @@ B23补范围/批次/flake三脚本18关系；原探针零执行误绿已真实�
 B21冻结cff60ddd4局部独验通过，92件原样归档于traceability/acceptance/REUSE-T01-batch21-20261023；不授全T01/T02。
 
 B24补锁/原回归14关系，修真实worktree空token假成功及TK-T01 done夹具漂移；两Shell原回归PASS，独立20动作与3 Git准备符合预期，最初探索driverFailure如实保留。B22局部独验原件归档，F964仍open。非全T01/T02，无远程同步。
+
+B25补状态校验19关系并刷新B24相关14条pending输入；修整数/伪GUID/跨偏移误判，红PS7为4p3f、PS51为2p5f，绿各7p0f，原回归两宿主均PASS且原生状态子进程各自运行。B23局部PASS原样归档，非全schema/全T01/T02，无远程同步。

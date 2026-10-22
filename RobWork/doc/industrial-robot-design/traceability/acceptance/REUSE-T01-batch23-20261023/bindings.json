@@ -1,0 +1,812 @@
+[
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 46,
+    "end": 69,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.root-contract",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 74,
+    "end": 78,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 79,
+    "end": 101,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.base-and-diff",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 106,
+    "end": 117,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 118,
+    "end": 122,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 123,
+    "end": 127,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.rule-registration",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 129,
+    "end": 134,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "start": 139,
+    "end": 159,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.verify-task-scope.path-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "start": 9,
+    "end": 53,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.root-schema",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "start": 55,
+    "end": 94,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.stage-contracts",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "start": 96,
+    "end": 123,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.external-gates",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "start": 125,
+    "end": 134,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.validate-b1-batch.structural-verdict",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 38,
+    "end": 44,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.root",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 47,
+    "end": 68,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 71,
+    "end": 103,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.selftest",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 106,
+    "end": 114,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.arguments",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 117,
+    "end": 159,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.repeat-process",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "start": 162,
+    "end": 171,
+    "hashOK": true,
+    "literalOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWork/gtest/test-main.cpp",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-scope-flake-audit.md",
+    "hashOK": true
+  },
+  {
+    "id": "foundation-governance.run-flake-probe.summary",
+    "kind": "input-or-evidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
+    "hashOK": true
+  }
+]

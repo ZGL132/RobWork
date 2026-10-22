@@ -3730,11 +3730,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -3742,7 +3742,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -3762,6 +3762,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3801,11 +3805,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -3813,7 +3817,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -3833,6 +3837,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3872,11 +3880,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -3884,7 +3892,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -3904,6 +3912,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3943,11 +3955,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -3955,7 +3967,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -3975,6 +3987,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -3990,8 +4006,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Assert-Equal",
-          "startLine": 22,
-          "endLine": 24,
+          "startLine": 24,
+          "endLine": 26,
           "sha256": "f62a67bb6c2050bbc5f9343f189d7731f40883c5aede78faaa88e86ffa62200c",
           "qualifiedSymbol": "PowerShell::Assert-Equal"
         }
@@ -4014,11 +4030,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4026,7 +4042,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4046,6 +4062,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4061,8 +4081,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Assert-ExitCode",
-          "startLine": 26,
-          "endLine": 28,
+          "startLine": 28,
+          "endLine": 30,
           "sha256": "7f41572f86b80334539295550538ad511e477cc968144065f4d460ea18071433",
           "qualifiedSymbol": "PowerShell::Assert-ExitCode"
         }
@@ -4085,11 +4105,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4097,7 +4117,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4117,6 +4137,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4132,8 +4156,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Invoke-Lock",
-          "startLine": 30,
-          "endLine": 38,
+          "startLine": 32,
+          "endLine": 40,
           "sha256": "234aed4f2682d6bcbcafb8d3e9c20335e7b379b794354e6586e5ce484dd101a6",
           "qualifiedSymbol": "PowerShell::Invoke-Lock"
         }
@@ -4156,11 +4180,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4168,7 +4192,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4188,6 +4212,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4203,8 +4231,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Get-LockMutexName",
-          "startLine": 40,
-          "endLine": 50,
+          "startLine": 42,
+          "endLine": 52,
           "sha256": "b2d7bf079a72ce5a4dbaec705e5ef4dc9f9b0ca21ffc01b87da4cc967028eb3d",
           "qualifiedSymbol": "PowerShell::Get-LockMutexName"
         }
@@ -4227,11 +4255,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4239,7 +4267,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4259,6 +4287,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4274,8 +4306,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Assert-LockActionWaitsOnMutex",
-          "startLine": 52,
-          "endLine": 83,
+          "startLine": 54,
+          "endLine": 85,
           "sha256": "14e97c2f540f415ceae8eb97c7c26bd7c6957f5a2ed00e4dad84bf52d9106952",
           "qualifiedSymbol": "PowerShell::Assert-LockActionWaitsOnMutex"
         }
@@ -4298,11 +4330,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4310,7 +4342,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4330,6 +4362,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4345,9 +4381,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "Invoke-StateValidation",
-          "startLine": 85,
-          "endLine": 96,
-          "sha256": "bde00f7b32e13b4f68eed89843cb83b98fcb7d4130f7b013677fbfb4a4b4ceed",
+          "startLine": 87,
+          "endLine": 98,
+          "sha256": "a1c704ab4f8580c5bb856dacdbf5f4ede690d6056b0c55575886e3bf02941673",
           "qualifiedSymbol": "PowerShell::Invoke-StateValidation"
         }
       ],
@@ -4369,11 +4405,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4381,7 +4417,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4401,6 +4437,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4440,11 +4480,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4452,7 +4492,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4472,6 +4512,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4511,11 +4555,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4523,7 +4567,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4543,6 +4587,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4559,8 +4607,8 @@
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "$lockScript",
           "startLine": 11,
-          "endLine": 20,
-          "sha256": "a51bad26c5d31d29e888997d6eb3b1f099d0dfdb2be1f40537a49b8775ba8502",
+          "endLine": 22,
+          "sha256": "d659ca2cbae283d3636ba45d184ce0957101e37619a5f60ea615d22ed3d75330",
           "qualifiedSymbol": "PowerShell::root"
         }
       ],
@@ -4582,11 +4630,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4594,7 +4642,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4614,6 +4662,10 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
@@ -4629,9 +4681,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
           "symbol": "$tempRoot",
-          "startLine": 98,
-          "endLine": 240,
-          "sha256": "bc0df1570b4374aa39bbfb30671f2d090788338cfd858bfff89867d84e938a73",
+          "startLine": 100,
+          "endLine": 270,
+          "sha256": "823bf6a476f5b0cc8b1ed6ad34aae893ba3ab92c0c4eca594356b43f8927481d",
           "qualifiedSymbol": "PowerShell::regressions"
         }
       ],
@@ -4653,11 +4705,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
-          "sha256": "91b90dd15010c5bd5b309fee20fb819b1a2e2ab7bd587bde413eee563bf276f3"
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
-          "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83"
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
@@ -4665,7 +4717,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "2fda407651d19750847946a049efb37db0176f551c0a558075fba5e6ccd14ffe"
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
         }
       ],
       "execution": {
@@ -4685,9 +4737,1438 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
           "sha256": "0be985bee7fc93cb9b75aea1c44a0836a1b6ac3e7360faa57bf184f1d100e781"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
         }
       ],
       "auditBoundary": "两脚本14关系；真实worktree红绿、原回归及20动作；非全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.Convert-ToIso",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "Convert-ToIso",
+          "startLine": 42,
+          "endLine": 46,
+          "sha256": "a915866c4b94a128063a6eecee584259987a5e86fcc0c5914c36ae2f2f7e4be4",
+          "qualifiedSymbol": "PowerShell::Convert-ToIso"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=Convert-ToIso",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.Compare-Iso",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "Compare-Iso",
+          "startLine": 49,
+          "endLine": 53,
+          "sha256": "2598518eccef06970ff2a447201fe67cf246439d1bc688e172fdf54178d0f7cb",
+          "qualifiedSymbol": "PowerShell::Compare-Iso"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=Compare-Iso",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.Test-NonNegativeInteger",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "Test-NonNegativeInteger",
+          "startLine": 55,
+          "endLine": 57,
+          "sha256": "5093fdae8f647ed4bef7269d5a8046e97eb7c8ab29394ecd3c8ad95d6eabff97",
+          "qualifiedSymbol": "PowerShell::Test-NonNegativeInteger"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=Test-NonNegativeInteger",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.root",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$docBase",
+          "startLine": 25,
+          "endLine": 38,
+          "sha256": "c70636c9352ff57c0186791777638e110829591f86f22f21c72e451b970bcb44",
+          "qualifiedSymbol": "PowerShell::root"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=root",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.schema",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$knownPhases",
+          "startLine": 58,
+          "endLine": 65,
+          "sha256": "120b75b7961a25d6d542ed666f526a6545798e727e1be3a5afffbd73c49eb98f",
+          "qualifiedSymbol": "PowerShell::schema"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=schema",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.heartbeat",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$heartbeatAt",
+          "startLine": 67,
+          "endLine": 82,
+          "sha256": "2053c4f18a882949ff90af5e61e5eac60d7b4fbd5c1fcdca06857d6f8b44508c",
+          "qualifiedSymbol": "PowerShell::heartbeat"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=heartbeat",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.fencing-presence",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$hasTickTokenProp",
+          "startLine": 83,
+          "endLine": 95,
+          "sha256": "78272c5952e1085bd8154c1403f5a15e1643c92220acd76680f7a9c819eb58b5",
+          "qualifiedSymbol": "PowerShell::fencing-presence"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=fencing-presence",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.attempts",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$k",
+          "startLine": 97,
+          "endLine": 100,
+          "sha256": "41493e930e14949112c69afdfea2f331f7a3b82b88eb600218f7430984dfa8f3",
+          "qualifiedSymbol": "PowerShell::attempts"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=attempts",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.policy",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$policyBools",
+          "startLine": 102,
+          "endLine": 127,
+          "sha256": "afa6b5dedaa21aa60399fdec5e42cc9fa9631a548a91b138ebc770ef69f9b565",
+          "qualifiedSymbol": "PowerShell::policy"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=policy",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.contract-index",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$taskMap",
+          "startLine": 129,
+          "endLine": 136,
+          "sha256": "e08c36ffb07908c605b0b8094c88d43beb0c9713a70756bbc84ab8e6cfa59106",
+          "qualifiedSymbol": "PowerShell::contract-index"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=contract-index",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.queue",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$claimability",
+          "startLine": 138,
+          "endLine": 183,
+          "sha256": "ac8f92552de5813f6beaa9bcacf964a3eb20737870d272f357467bd5b0810406",
+          "qualifiedSymbol": "PowerShell::queue"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=queue",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.phase",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$needsTask",
+          "startLine": 185,
+          "endLine": 205,
+          "sha256": "1e1e435b24882d859afcd9406382e3b62eb8761d07d4b06ab6612932b323b191",
+          "qualifiedSymbol": "PowerShell::phase"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=phase",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.acceptance",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$s.acceptanceRecord",
+          "startLine": 207,
+          "endLine": 222,
+          "sha256": "e2dfd6cc9e7f03c27163a8aaa4b3d9463e647077c86da1c18fc786f9b1e5cf7f",
+          "qualifiedSymbol": "PowerShell::acceptance"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=acceptance",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.failure-record",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$failureAttempt",
+          "startLine": 224,
+          "endLine": 256,
+          "sha256": "60ac8bb52aaf35e32fe4e397923cbeb15aa635af7877bb5ad68e7bb993e2c2ef",
+          "qualifiedSymbol": "PowerShell::failure-record"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=failure-record",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.run",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$hasRun",
+          "startLine": 258,
+          "endLine": 282,
+          "sha256": "28c94950f2162ecd2a0411f4873dc7b90cb2a8102456a6d305cd43e40b6c55aa",
+          "qualifiedSymbol": "PowerShell::run"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=run",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.history",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$hi",
+          "startLine": 284,
+          "endLine": 292,
+          "sha256": "3134ab4d07429b8f1c6be8abe966fcd2e479f98c2e0383345e9396bcbaa5139a",
+          "qualifiedSymbol": "PowerShell::history"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=history",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.docRefs",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$b1Manifest",
+          "startLine": 294,
+          "endLine": 304,
+          "sha256": "9692278fe75da1b82004228f40eee1028c4210290b29043f9a2231c1dc47aff8",
+          "qualifiedSymbol": "PowerShell::docRefs"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=docRefs",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.narrative-limit",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$s.pausedReason",
+          "startLine": 306,
+          "endLine": 307,
+          "sha256": "74d8b22c8af9f84187aff26e2cd8c8eb31058d2af5e217e4816032aa2ebcb4d7",
+          "qualifiedSymbol": "PowerShell::narrative-limit"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=narrative-limit",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-state.verdict",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "symbol": "$headLine",
+          "startLine": 309,
+          "endLine": 317,
+          "sha256": "89a71401727868930d3f231ad547892447edbff93e69c04521d97c31838eab7a",
+          "qualifiedSymbol": "PowerShell::verdict"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch25/search.json",
+        "conclusion": "TimerUtil非日历；复用.NET类型/GUID/时间与原PS契约校验器，不建第二状态平台"
+      },
+      "differences": "见governance-state-audit.md；本语义段=verdict",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+          "sha256": "fc4afa662e81b018194a7680b7a45fdb3a4e8413ff232fca019d8b81513c9d2a"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+          "sha256": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+          "sha256": "70f0b338ed83b054974855b1160c3251f45470cc7196e37fe825b39c108d941c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-state.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-state.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+          "sha256": "f08e7e99f2f3460d15332b8cc6735379684852ad6f8b8ca5bf28a741b466c360"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+          "sha256": "a2697acb2a42e3d5725a4cc0eb30901a67ad4087d6d20202d725c616ecbed493"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+          "sha256": "0d6c6cafc0db32fdf0a9fe221a1e042861d5f5fcfdf980e620718220ecc964be"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+          "sha256": "3317114270f851e36e73a877dce745b5f79abbda1809360a434d99bf632ce0b9"
+        }
+      ],
+      "auditBoundary": "19关系/14实跑反例红绿；不授所有schema分支、真实锁所有权或全T01/T02"
     }
   ]
 }

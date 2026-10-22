@@ -1,0 +1,34 @@
+[
+  {
+    "Name": "QT_QPA_PLATFORM",
+    "Value": "windows"
+  },
+  {
+    "Name": "VCToolsInstallDir",
+    "Value": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\"
+  },
+  {
+    "Name": "VCToolsRedistDir",
+    "Value": "D:\\software\\Microsoft Visual Studio\\2022\\Community\\VC\\Redist\\MSVC\\14.42.34433\\"
+  },
+  {
+    "Name": "VCToolsVersion",
+    "Value": "14.42.34433"
+  },
+  {
+    "Name": "VSCMD_ARG_app_plat",
+    "Value": "Desktop"
+  },
+  {
+    "Name": "VSCMD_ARG_HOST_ARCH",
+    "Value": "x64"
+  },
+  {
+    "Name": "VSCMD_ARG_TGT_ARCH",
+    "Value": "x64"
+  },
+  {
+    "Name": "VSCMD_VER",
+    "Value": "17.12.0"
+  }
+]

@@ -1,0 +1,56 @@
+{
+  "executed": 5,
+  "passed": 5,
+  "failed": 0,
+  "skipped": 0,
+  "cases": [
+    {
+      "name": "disabled",
+      "expected": [
+        "<xml-no-executed-tests>"
+      ],
+      "actual": [
+        "<xml-no-executed-tests>"
+      ],
+      "passed": true
+    },
+    {
+      "name": "mixed-skip-healthy",
+      "expected": [],
+      "actual": [],
+      "passed": true
+    },
+    {
+      "name": "mixed-disabled-error",
+      "expected": [
+        "S.Error"
+      ],
+      "actual": [
+        "S.Error"
+      ],
+      "passed": true
+    },
+    {
+      "name": "multiple-failure-error",
+      "expected": [
+        "A.F",
+        "B.E"
+      ],
+      "actual": [
+        "A.F",
+        "B.E"
+      ],
+      "passed": true
+    },
+    {
+      "name": "all-skipped-two",
+      "expected": [
+        "<xml-no-executed-tests>"
+      ],
+      "actual": [
+        "<xml-no-executed-tests>"
+      ],
+      "passed": true
+    }
+  ]
+}

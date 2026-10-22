@@ -1,0 +1,398 @@
+[
+  {
+    "functionId": "foundation-governance.verify-task-scope.root-contract",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "$repoTop",
+        "qualifiedSymbol": "PowerShell::root-contract",
+        "startLine": 46,
+        "endLine": 69,
+        "sha256": "9cc3f77ac05ab3f4b5d868b9708e83785dd02219711e3c4c19f487105a1fce87"
+      }
+    ],
+    "reviewedMeaning": "显式根/Git顶与契约解析；planned/blocked警告只是范围参考",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.Resolve-Commit",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "Resolve-Commit",
+        "qualifiedSymbol": "PowerShell::Resolve-Commit",
+        "startLine": 74,
+        "endLine": 78,
+        "sha256": "3c9ffe6b08c88979ed1df7c684dddf6f5ffb5a21218822baacb660e94ff782a8"
+      }
+    ],
+    "reviewedMeaning": "Git原commit解析，非法SHA拒绝而非空diff假绿",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.base-and-diff",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "$headSha",
+        "qualifiedSymbol": "PowerShell::base-and-diff",
+        "startLine": 79,
+        "endLine": 101,
+        "sha256": "bd90792da7f9472f4fb2016ca437c538176c50893b2b5624e508f607cd92128c"
+      }
+    ],
+    "reviewedMeaning": "显式SHA或merge-base；Git NUL路径，不构造第二版本控制",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.ConvertTo-ScopeRegex",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "ConvertTo-ScopeRegex",
+        "qualifiedSymbol": "PowerShell::ConvertTo-ScopeRegex",
+        "startLine": 106,
+        "endLine": 117,
+        "sha256": "62070098f387dab9b1b754774d0acc69936dbcb792a638779e885018c8cb775c"
+      }
+    ],
+    "reviewedMeaning": "原白名单glob映射.NET正则；仅尾中文注记去除",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.New-ScopeRule",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "New-ScopeRule",
+        "qualifiedSymbol": "PowerShell::New-ScopeRule",
+        "startLine": 118,
+        "endLine": 122,
+        "sha256": "36f9ec35c73ff976d4484afec712380a38c28f016acce88b20382d42a95e95d3"
+      }
+    ],
+    "reviewedMeaning": "原规则DTO，无模型或上游对象构造",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.rule-registration",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "$allowedRules",
+        "qualifiedSymbol": "PowerShell::rule-registration",
+        "startLine": 123,
+        "endLine": 127,
+        "sha256": "7a7cc8e824a93a1093a6bea8d6ee66027f207efa8c0c9073aee62d2aaa80c28a"
+      }
+    ],
+    "reviewedMeaning": "沿原规则注册并拒空allowedFiles",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.Find-ScopeHit",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "Find-ScopeHit",
+        "qualifiedSymbol": "PowerShell::Find-ScopeHit",
+        "startLine": 129,
+        "endLine": 134,
+        "sha256": "f61b8ed45828f1eeee623be53538749ef03a0bdb539a5dc456773a92b6ac709b"
+      }
+    ],
+    "reviewedMeaning": "原.NET匹配，Windows大小写不敏感",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.verify-task-scope.path-verdict",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "symbol": "$violations",
+        "qualifiedSymbol": "PowerShell::path-verdict",
+        "startLine": 139,
+        "endLine": 159,
+        "sha256": "99e208e069cc6010034ecc508ba6f094f266ec45b5800ba1a3ebf2c87fcc7a8a"
+      }
+    ],
+    "reviewedMeaning": "forbidden优先allowed；只判路径，不授语义或阶段准入",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-b1-batch.root-schema",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+        "symbol": "$docBase",
+        "qualifiedSymbol": "PowerShell::root-schema",
+        "startLine": 9,
+        "endLine": 53,
+        "sha256": "6a52d8a67bf4f22532a00cd83a8bfee8cb7f114a0ad7fd73b737bb32c1f92ae4"
+      }
+    ],
+    "reviewedMeaning": "兼容仓库/源码根；原12阶段批次schema",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-b1-batch.stage-contracts",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+        "symbol": "$previousTask",
+        "qualifiedSymbol": "PowerShell::stage-contracts",
+        "startLine": 55,
+        "endLine": 94,
+        "sha256": "97df6e796eb401f767ef7a2ef3cb8a5d6aa35b41d97326fb48e124d577677ef7"
+      }
+    ],
+    "reviewedMeaning": "实际契约/branch/dependency及DOC-T14前置，不复制业务验收",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-b1-batch.external-gates",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+        "symbol": "$gateMap",
+        "qualifiedSymbol": "PowerShell::external-gates",
+        "startLine": 96,
+        "endLine": 123,
+        "sha256": "8c8b24eed60776614aee9bbcd44b4e3820121c2633637176ae78a6a9ca93ae65"
+      }
+    ],
+    "reviewedMeaning": "门引用及WP24T08必需前置存在性；不擅自满足外部门",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.validate-b1-batch.structural-verdict",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+        "symbol": "$openGates",
+        "qualifiedSymbol": "PowerShell::structural-verdict",
+        "startLine": 125,
+        "endLine": 134,
+        "sha256": "e98140480048421b535ce70a32f9d880752bed88f03197dac9cc007d1aa1c65d"
+      }
+    ],
+    "reviewedMeaning": "结构PASS允许openGates，非任务已可执行",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-b1-batch.ps1"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.root",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "$repoRoot",
+        "qualifiedSymbol": "PowerShell::root",
+        "startLine": 38,
+        "endLine": 44,
+        "sha256": "3308a754e455e1525d102dc5b80487f1c2cac4e0d49932d003d2d165cb4d85d8"
+      }
+    ],
+    "reviewedMeaning": "标准路径与环境自检，DLL由调用方提供",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.Get-FailedTestNames",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "Get-FailedTestNames",
+        "qualifiedSymbol": "PowerShell::Get-FailedTestNames",
+        "startLine": 47,
+        "endLine": 68,
+        "sha256": "b9d83ca8b069a586d36b0d2ab1528585358ac68afc2431bbfacda6df2586d2b2"
+      }
+    ],
+    "reviewedMeaning": "原XML解析器补零执行/error/全跳过拒绝；红绿反例已实跑",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.selftest",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "$SelfTest",
+        "qualifiedSymbol": "PowerShell::selftest",
+        "startLine": 71,
+        "endLine": 103,
+        "sha256": "c44cc53823349949420d6d603ab1fd7a55cc596d4639cf0ebbd1be403a983016"
+      }
+    ],
+    "reviewedMeaning": "沿原入口7项测试同一解析器，不另建测试框架",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.arguments",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "$exeFull",
+        "qualifiedSymbol": "PowerShell::arguments",
+        "startLine": 106,
+        "endLine": 114,
+        "sha256": "7aec5dc4145e38d319e76ab2e7446e67f1d2e5e1fe0bff10dbdc065f75b607d5"
+      }
+    ],
+    "reviewedMeaning": "原路径和次数校验，绝对测试进程入口",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.repeat-process",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "$loadProcesses",
+        "qualifiedSymbol": "PowerShell::repeat-process",
+        "startLine": 117,
+        "endLine": 159,
+        "sha256": "2eef2832c2bbec8cc47e0880d7ae386523c08a390c9a5e3a53d484cbe667e3f5"
+      }
+    ],
+    "reviewedMeaning": "真实Start-Process/XML/exit联合判据，原Start-Job/finally清理；本次未压测",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  },
+  {
+    "functionId": "foundation-governance.run-flake-probe.summary",
+    "source": [
+      {
+        "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+        "symbol": "$failCount",
+        "qualifiedSymbol": "PowerShell::summary",
+        "startLine": 162,
+        "endLine": 171,
+        "sha256": "ff61a9384cc905b1a7cf586150204cce65bbaddab7d1c0a2afe57526f7f2af78"
+      }
+    ],
+    "reviewedMeaning": "逐次输出与失败退出；未复现只证明本次，不证明无竞态",
+    "decision": "pending",
+    "targetsEmpty": true,
+    "execution": {
+      "kind": "governance-script",
+      "entry": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/run-flake-probe.ps1 -SelfTest"
+    },
+    "verdict": "符合当前原脚本真实语义；不代表上游等价证明或阶段授权"
+  }
+]
