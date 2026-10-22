@@ -1,0 +1,3 @@
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp', LF will be replaced by CRLF the next time Git touches it
+REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)
+
