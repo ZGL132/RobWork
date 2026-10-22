@@ -1,0 +1,63 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B29",
+  "baseline": "f2e65141259cd43ee5e63799514a733908440355",
+  "counts": {
+    "red-powershell": {
+      "expected": 21,
+      "executed": 7,
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 14,
+      "complete": false
+    },
+    "green-pwsh": {
+      "expected": 21,
+      "executed": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true
+    },
+    "green-powershell": {
+      "expected": 21,
+      "executed": 8,
+      "passed": 7,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 13,
+      "complete": false
+    },
+    "green-r2-pwsh": {
+      "expected": 21,
+      "executed": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true
+    },
+    "green-r2-powershell": {
+      "expected": 21,
+      "executed": 21,
+      "passed": 21,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "complete": true
+    }
+  },
+  "sourceDelta": "only UTF-8 BOM; original body bytes preserved",
+  "normalizedBodyUnchanged": true,
+  "independentAcceptance": "pending",
+  "productionChanges": false,
+  "remoteSync": "not executed per owner",
+  "notRun": [
+    "全T01其余功能",
+    "T02/算法替换",
+    "GUI/C++（本批无产品变更）",
+    "远程CI"
+  ]
+}

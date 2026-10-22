@@ -2312,7 +2312,7 @@
       ],
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -2324,7 +2324,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2369,6 +2369,14 @@
         {
           "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
           "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+          "sha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -2388,9 +2396,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
           "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
@@ -2405,13 +2421,13 @@
           "symbol": "Invoke-Probe",
           "startLine": 13,
           "endLine": 25,
-          "sha256": "2553e61d94090da6d66876ef80de1609ce27c24089eaf52e62b1b8a39f2f73b8",
+          "sha256": "8271391b4c6ceb2e8eb17f710653d462f264d856e7370af8c8262119630fbfda",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::Invoke-Probe"
         }
       ],
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -2423,7 +2439,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2468,6 +2484,14 @@
         {
           "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
           "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+          "sha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -2487,9 +2511,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
           "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
@@ -2503,15 +2535,15 @@
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "try {",
           "startLine": 27,
-          "endLine": 120,
-          "sha256": "3b7afb2f86fec15a423b03e56df6c31a74a5de22ec7bb9d46282bf9d88bbe1d5",
+          "endLine": 142,
+          "sha256": "d5a601e16aad6e2f9ffd1da564030917f162e97debc7237a689176f1e4240b4a",
           "semanticGroup": "fixtures-and-report",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
         }
       ],
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -2523,7 +2555,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "f9bbe0141b37d12c9ff2b8bacc78192462ef815a14c6a84b3a1e146534a6ba97"
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2568,6 +2600,14 @@
         {
           "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
           "sha256": "bfc67bb3453fe5abcd9df8d6c65b66486f088b86152202247246e0136ce92cea"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+          "sha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -2587,9 +2627,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/verification.json",
           "sha256": "0da5f989e90748a26bf1c1045278609085e6e3c9dfec82c6fae1347aa077b9ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02"
+      "auditBoundary": "原治理回归三段及9个context边界，原8例保留；双Shell各17通过。仅本批已测边界，不授全治理/T01/T02；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.verify-task-scope.root-contract",
@@ -3123,7 +3171,7 @@
       "semanticGroup": "root-schema",
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -3148,6 +3196,14 @@
         {
           "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
           "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -3163,9 +3219,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
           "sha256": "325ee5f89665ebd1233b1945a08c1926bb85ea282c7bfe8848ddf2b349fcf4b1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭"
+      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.validate-b1-batch.stage-contracts",
@@ -3187,7 +3251,7 @@
       "semanticGroup": "stage-contracts",
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -3212,6 +3276,14 @@
         {
           "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
           "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -3227,9 +3299,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
           "sha256": "325ee5f89665ebd1233b1945a08c1926bb85ea282c7bfe8848ddf2b349fcf4b1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭"
+      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.validate-b1-batch.external-gates",
@@ -3251,7 +3331,7 @@
       "semanticGroup": "external-gates",
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -3276,6 +3356,14 @@
         {
           "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
           "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -3291,9 +3379,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
           "sha256": "325ee5f89665ebd1233b1945a08c1926bb85ea282c7bfe8848ddf2b349fcf4b1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭"
+      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.validate-b1-batch.structural-verdict",
@@ -3315,7 +3411,7 @@
       "semanticGroup": "structural-verdict",
       "targets": [],
       "usageRole": "owner",
-      "permissionRef": "ARCH:3.6.4",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
       "decision": "pending",
       "status": "pending",
@@ -3340,6 +3436,14 @@
         {
           "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
           "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
+          "sha256": "50025a063007574b187490fc5d445b8e50487d7d4b3f482c67a0a7dc25a2ea74"
         }
       ],
       "execution": {
@@ -3355,9 +3459,17 @@
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch23/search.json",
           "sha256": "325ee5f89665ebd1233b1945a08c1926bb85ea282c7bfe8848ddf2b349fcf4b1"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/governance-b1-encoding-audit.md",
+          "sha256": "480c30cf863a04f673bb697f7c1fd515c76b3ef7f848ac93e84fd726dd5947f8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch29/verification.json",
+          "sha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
         }
       ],
-      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭"
+      "auditBoundary": "3脚本18关系；零执行红绿与5项治理探测，不授全T01/T02/最终关闭；B29仅编码/换行兼容：正文未改，双Shell原套件各21通过；未授全T01/T02"
     },
     {
       "functionId": "foundation-governance.run-flake-probe.root",

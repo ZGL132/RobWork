@@ -18,7 +18,7 @@ function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int
         $code = $LASTEXITCODE
     } finally { $ErrorActionPreference = $previous }
     [IO.File]::WriteAllText((Join-Path $OutputDir "$Name.log"), $output)
-    $pass = ($code -eq $Expected -and $output -match $Pattern)
+    $pass = ($code -eq $Expected -and $output -match $Pattern -and $output -notmatch 'ParserError|Unexpected token')
     $script:results += [pscustomobject]@{ name=$Name; passed=$pass; exitCode=$code; expectedExitCode=$Expected }
     if (-not $pass) { throw "$Name failed: exit=$code expected=$Expected; see $OutputDir" }
     Write-Output "PASS $Name"
@@ -61,6 +61,28 @@ try {
     # 测试输入失配，先在FRESHNESS处失败而根本没有测到索引/上下文包边界。
     $overlays += @(Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.ps1' | Where-Object { $_.Name -ne 'test-governance-lite.ps1' } | ForEach-Object { 'RobWork/scripts/industrialrobot/' + $_.Name })
     foreach ($path in $overlays) { Copy-Item -LiteralPath (Join-Path $RepoRoot $path) -Destination (Join-Path $testRoot $path) -Force }
+    # PS5.1 对无 BOM 的中文 UTF-8 脚本可能按本机 ANSI 解码；Git 的 LF/CRLF
+    # 检出不应决定门禁能否解析。只改变隔离副本换行，保留真实源文件的 BOM 状态，
+    # 避免测试自己添加 BOM 后掩盖源文件错误。正例和错误 schema 都核具名结果。
+    $b1Source = Join-Path $PSScriptRoot 'validate-b1-batch.ps1'
+    $b1Bytes = [IO.File]::ReadAllBytes($b1Source)
+    $b1HasBom = ($b1Bytes.Length -ge 3 -and $b1Bytes[0] -eq 239 -and $b1Bytes[1] -eq 187 -and $b1Bytes[2] -eq 191)
+    $b1Text = [IO.File]::ReadAllText($b1Source).Replace("`r`n", "`n")
+    $b1Manifest = Join-Path $testRoot 'RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json'
+    $badBatch = Get-Content -LiteralPath $b1Manifest -Raw -Encoding UTF8 | ConvertFrom-Json
+    $badBatch.schemaVersion = 'unsupported-batch-schema'
+    $badBatchPath = Join-Path $testRoot 'invalid-b1-batch.json'
+    $badBatch | ConvertTo-Json -Depth 30 | Set-Content -LiteralPath $badBatchPath -Encoding UTF8
+    # PS5.1 的原生 stderr 会按控制台宽度在单词中间换行；允许标记内部换行，
+    # 仍要求完整、具体的预期 schema 标记，且 Invoke-Probe 明确拒绝解析错误。
+    $b1SchemaPattern = ('ird-pipeline-batch/1'.ToCharArray() | ForEach-Object { [regex]::Escape([string]$_) }) -join '\s*'
+    foreach ($lineEnding in @('lf', 'crlf')) {
+        $b1Variant = Join-Path $testRoot ("validate-b1-$lineEnding.ps1")
+        $b1Content = if ($lineEnding -eq 'crlf') { $b1Text.Replace("`n", "`r`n") } else { $b1Text }
+        [IO.File]::WriteAllText($b1Variant, $b1Content, [Text.UTF8Encoding]::new($b1HasBom))
+        Invoke-Probe "b1-$lineEnding-valid" $b1Variant @('-RepoRoot',$testRoot,'-BatchFile',$b1Manifest) 0 'validate-b1-batch: PASS'
+        Invoke-Probe "b1-$lineEnding-invalid" $b1Variant @('-RepoRoot',$testRoot,'-BatchFile',$badBatchPath) 1 $b1SchemaPattern
+    }
     $index = Join-Path $testRoot 'RobWork/doc/industrial-robot-design/traceability/evidence-index.json'
     [IO.File]::WriteAllText($index, '{ invalid-index')
     $docs = Join-Path $testRoot 'RobWork/scripts/industrialrobot/validate-docs.ps1'
@@ -107,7 +129,7 @@ try {
     Invoke-Probe 'context-state-copy' $validator $selected 1 'PIPE authority red line'
 } finally {
     $passed = @($results | Where-Object { $_.passed }).Count
-    $report = [pscustomobject]@{ expected=17; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=(17-$results.Count); complete=($results.Count -eq 17 -and $passed -eq 17); cases=$results }
+    $report = [pscustomobject]@{ expected=21; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=(21-$results.Count); complete=($results.Count -eq 21 -and $passed -eq 21); cases=$results }
     $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $OutputDir 'governance-lite-report.json') -Encoding UTF8
     # Windows 删除前核对绝对路径属于本次唯一临时目录，绝不沿主树依赖 junction 清理。
     $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar

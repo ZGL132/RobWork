@@ -1,0 +1,6 @@
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-b1-batch.ps1 : schemaVersi
+on must be ird-pipeline-batch/1
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-b1-batch.ps1
+ 
+

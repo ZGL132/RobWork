@@ -1,0 +1,19 @@
+powershell.exe : At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-4624be4110574a6b94bb9a2f7aa313fc\validate-b1-lf.ps1:
+13 char:1
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:17 char
+:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (At C:\Users\zgl...f.ps1:13 char:1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
++ }
++ ~
+Unexpected token '}' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-4624be4110574a6b94bb9a2f7aa313fc\validate-b1-lf.ps1:47 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

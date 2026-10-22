@@ -1,0 +1,2 @@
+Write-Error: validate-context-pack: pack violates PIPE authority red line (state copy '"phase"\s*:'): LITE-T01.md
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
