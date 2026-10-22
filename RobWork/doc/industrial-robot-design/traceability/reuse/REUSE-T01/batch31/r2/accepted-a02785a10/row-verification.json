@@ -1,0 +1,461 @@
+[
+  {
+    "functionId": "core.convert",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Compare.closeWithin",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.vector",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Compare.allCloseWithin.Q",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Compare.runtimeAbsoluteTolerance",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Tolerance.make",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Tolerance.operator==",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.Tolerance.operator!=",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitRow",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.kUnitTable",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.fail",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.unitSymbolAt",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.unitKindAt",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.unitFactorAt",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.find",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.symbol",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.kind",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.siFactor",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.kindOf",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.siFactor",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.tryConvert",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.siUnit",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.equal",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.notEqual",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.UnitToken.isValid",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.fromSi",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.tryFromSi",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.tryParse",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.siValue",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.displayValueIn",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.equal",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.notEqual",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.isFinite",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.expectNearRel",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsConvert.KnownConversions_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsConvert.ModelingDerivativeDisplayUnits_UX05_T30",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsConvert.DimensionMismatch_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsFind.UnknownSymbol_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.UnitsRegistry.R1TableComplete_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.UnitsTest.QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.CompareFormula.C4Basic_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.ToleranceMake.Validation_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.CompareTest.AllCloseWithinQ.QOverloadSemantics_UT_UNIT",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.kInvalidIndex",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  },
+  {
+    "functionId": "core.audit-b31.Units.Quantity.instantiations",
+    "changedKeys": [
+      "search",
+      "inputs",
+      "auditEvidence"
+    ],
+    "errors": []
+  }
+]

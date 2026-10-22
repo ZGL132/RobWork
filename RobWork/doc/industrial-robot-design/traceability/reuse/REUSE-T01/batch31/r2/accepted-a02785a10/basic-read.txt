@@ -1,0 +1,47 @@
+161:    int main(int argc, char** argv) {
+162:    // main body, add your code here
+163:    }
+164: 
+165: The main use of the math package is homogenous transformations, rotations, vectors. However, before
+166: venturing into mathematical expressions we need to look at the different rotation representations. The
+167: most user friendly format is probably euler angles where RobWork use a fixed axis ZYX euler representation
+168: using the class “RPY” (Roll Pitch Yaw). The following snippet illustrates conversions between the rotation
+169: formats.
+170: 
+171: .. code-block:: c++
+172: 
+173:    RPY<> rpy(0, 0, 90*Deg2Rad); // 90 degree rotation around x-axis
+174:    Rotation3D<> rot = rpy.toRotation3D(); // create Rotation3D matrix
+175:    EAA<> eaa( rot ); // construct eaa form rotation3d
+176:    Quaternion<> quat( rot ); // construct quaternion from rotation3d
+177:    // there are streaming operators for all math types
+178:    Log::infoLog() << rpy << std::endl;
+179:    Log::infoLog() << rot << std::endl;
+180:    Log::infoLog() << eaa << std::endl;
+181:    Log::infoLog() << quat << std::endl;
+182: 
+183: Operators are used throughout the math package to enable intuitive math expressions and all so streaming
+184: as shown above. Now lets look at some of the most used functions in the math package.
+185: 
+186: .. code-block:: c++
+187: 
+188:    // rotate a vector (0,1,0) 90 degrees around x-axis
+189:    Log::infoLog() << rot*Vector3D<>(0,1,0) << std::endl;
+190:    // transform a vector
+191:    Transform3D<> t1( Vector3D<>(0,0,1), rot);
+192:    Log::infoLog() << t1*Vector3D<>(0,1,0) << std::endl;
+193:    // calculate the inverse rotation
+194:    Log::infoLog() << inverse( rot ) << std::endl;
+195:    // calculate the inverse transform
+196:    Log::infoLog() << inverse( t1 ) << std::endl;
+197:    // get the rotation and translation part of a transform
+198:    Log::infoLog() << t1.R() << t1.P() << std::endl;
+199: 
+200: Exercise 1 - Transformations
+201: ----------------------------
+202: Try to set up two transformations T1 and T2. Set T1 with a position (x; y; z) = (1; 1; 1) and rotation (r;
+203: p; y) = (90; 0; 0). Set T2 with a position (x; y; z) = (0; 0; 1) and rotation (r; p; y) = (0; 0; 0).
+204: 
+205: RobWork uses radians and not degrees. Take this into account.
+206: 
+207: Now calculate T1T2. What is the result? Construct a drawing of the frames (by hand)!

@@ -1,0 +1,179 @@
+{
+  "head": "a02785a10eada414533d9789eedac3f5af654a71",
+  "base": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "original": "933dc6016c078b7d674fea68af19c038e0388979",
+  "scopeCount": 58,
+  "passed": 30,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "frozenHead",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ancestor 52285db6f0d276742531ecb7e7bcf73db283e563",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ancestor 933dc6016c078b7d674fea68af19c038e0388979",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "product upstream probe CMake oracle unchanged",
+      "passed": true,
+      "detail": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+        "RobWork/RobWork/src",
+        "RobWork/RobWorkSim/src",
+        "vcpkg",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle.py",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt"
+      ]
+    },
+    {
+      "name": "all original B31 files preserved",
+      "passed": true,
+      "detail": 24
+    },
+    {
+      "name": "manifest entries RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/artifact-manifest.json",
+      "passed": true,
+      "detail": 23
+    },
+    {
+      "name": "no manifest self-reference RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/artifact-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest entries RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/rejected-933dc6016/safe-manifest.json",
+      "passed": true,
+      "detail": 45
+    },
+    {
+      "name": "no manifest self-reference RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/rejected-933dc6016/safe-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest entries RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/artifact-manifest.json",
+      "passed": true,
+      "detail": 54
+    },
+    {
+      "name": "no manifest self-reference RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/artifact-manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "eight real shared doc subdirectories",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "md rst patterns",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "no product doc scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "recorded doc search reproduced",
+      "passed": true,
+      "detail": {
+        "exit": 0,
+        "lines": 11
+      }
+    },
+    {
+      "name": "read normalized doc sha",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "basic.rst173 and205",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "51 refreshed rows",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "51 sources inputs evidence pending exact refresh",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "catalog only UTIL-UNITS resourceSearch refresh",
+      "passed": true,
+      "detail": [
+        {
+          "id": "UTIL-UNITS",
+          "keys": [
+            "resourceSearch"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "catalog read binding real doc kept out fake docs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "permissions unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "findings unchanged in r2",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "archived independent22 19p3f0s",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh gate task",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh gate docs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh gate reuse",
+      "passed": true,
+      "detail": "Initial snapshot preceded gate completion; rechecked final exit file."
+    },
+    {
+      "name": "fresh gate scope",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fresh gate commit-lint",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "clone status clean",
+      "passed": true,
+      "detail": null
+    }
+  ]
+}

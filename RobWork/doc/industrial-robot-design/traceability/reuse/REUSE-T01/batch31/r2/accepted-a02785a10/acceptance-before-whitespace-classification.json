@@ -1,0 +1,49 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B31-r2",
+  "verdict": "FAIL",
+  "reviewedCommit": "a02785a10eada414533d9789eedac3f5af654a71",
+  "base": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "reviewedOriginal": "933dc6016c078b7d674fea68af19c038e0388979",
+  "scopeCount": 58,
+  "independent": true,
+  "sharedTreeWrites": false,
+  "networkOperations": false,
+  "installation": false,
+  "checks": {
+    "passed": 30,
+    "failed": 0
+  },
+  "gates": {
+    "task": 0,
+    "docs": 0,
+    "reuse": 0,
+    "scope": 0,
+    "commit-lint": 0,
+    "diff-check-cr-at-eol": 2
+  },
+  "closedAcceptanceFinding": null,
+  "tests": {
+    "total": 22,
+    "passed": 19,
+    "failed": 3,
+    "skipped": 0,
+    "notRun": 0,
+    "failedNames": [
+      "ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05",
+      "ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05",
+      "ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05"
+    ],
+    "execution": "referenced original independent execution; no C++ rerun"
+  },
+  "cppRerun": false,
+  "findingF966": "open",
+  "catalogReview": "candidate",
+  "rawManifestCounts": [
+    23,
+    45,
+    54
+  ],
+  "scope": "B31-r2 local only; no full T01/T02 admission",
+  "auditHarnessNote": "Initial audit sampled reuse before completion and recorded one not-yet-present gate as false. Original snapshot/log preserved; final checks reread actual completed exit file."
+}

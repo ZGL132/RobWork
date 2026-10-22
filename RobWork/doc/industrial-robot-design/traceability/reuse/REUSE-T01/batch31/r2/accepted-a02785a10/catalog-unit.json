@@ -1,0 +1,103 @@
+{
+  "id": "UTIL-UNITS",
+  "ownerUnit": "core",
+  "search": {
+    "command": "batch31/search.json",
+    "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+    "conclusion": "原源码/实现/目标及实际13共同token/差异探测；非生产接线，仍candidate"
+  },
+  "upstream": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/Constants.hpp",
+      "sha256": "920a097a5f52cce68e6dbe411c5ae3b5ffd95efd9b0910d3d96510e0f60a863a",
+      "symbols": [
+        "Pi",
+        "Deg2Rad",
+        "Rad2Deg"
+      ],
+      "target": "sdurw_math",
+      "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp",
+      "sha256": "db87f34cbb04e841b978a91f765b5eb1fae7407da5c931f56af71f8781e9eccc",
+      "symbols": [
+        "getUnit"
+      ],
+      "target": "sdurw_loaders",
+      "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+      "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp",
+      "sha256": "695d611cd79492a7fe8276508cb4ca55890a3975bc522624320c80f01376e428",
+      "symbols": [
+        "UnitMap",
+        "getUnit"
+      ],
+      "target": "sdurw_loaders",
+      "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+      "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.hpp",
+      "sha256": "55582de072e56c3fc3d0668aa3e11b9adf4b2e7b7653421c94a4566bd68170eb",
+      "symbols": [
+        "getUnit"
+      ],
+      "target": "sdurw_core",
+      "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.cpp",
+      "sha256": "9c476c7ea206e996d7f3a21ade0e39ce2041cb4ac8bd0634fcf49ca6275f9da5",
+      "symbols": [
+        "UnitMap",
+        "DOMCoreBasisTypes::getUnit"
+      ],
+      "target": "sdurw_core",
+      "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+      "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+    }
+  ],
+  "boundary": "Constants角度因子可直接复用；比例查询同时存在DOMCoreBasisTypes（sdurw_core）与DOMBasisTypes（sdurw_loaders），不能误称只有重型loader。两者无产品14量纲、完整21token及错误双轨；core目前只允许math，候选不授DOM依赖权。",
+  "build": {
+    "targets": [
+      "sdurw_loaders",
+      "sdurw_math",
+      "sdurw_core"
+    ],
+    "constraints": "沿原导出目标；Constants仅math，DOMCore较loader小但不因此扩大core允许依赖"
+  },
+  "usages": [
+    {
+      "consumerUnit": "core",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "operations": [
+        "value"
+      ]
+    }
+  ],
+  "operations": [
+    "value"
+  ],
+  "limits": {
+    "semantics": "Constants角度因子可直接复用；比例查询同时存在DOMCoreBasisTypes（sdurw_core）与DOMBasisTypes（sdurw_loaders），不能误称只有重型loader。两者无产品14量纲、完整21token及错误双轨；core目前只允许math，候选不授DOM依赖权。",
+    "lifetime": "纯值/统计，不授予模型结构操作权",
+    "determinism": "产品单位token/统计缺口/确定性顺序权威不能被候选改变"
+  },
+  "tests": [],
+  "docs": [],
+  "examples": [],
+  "review": {
+    "status": "candidate",
+    "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+  },
+  "resourceSearch": {
+    "command": "batch31/search.json + batch31/r2/search.json",
+    "conclusion": "原公共头/实现/测试/示例/构建定向检索，加真实共享RobWork/doc的md/rst检索及basic.rst阅读；candidate，不宣称完整产品契约或全套上游测试通过。共享doc路径以r2/search.read摘要绑定，未伪造catalog docs路径。"
+  }
+}
