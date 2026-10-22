@@ -176,11 +176,13 @@ TEST(ReuseAudit, BulletDynamicDeviceInsertionIsNotImplemented) {
 // GAP-IK：Euler分量约束与参考系EAA分量约束不是同一个误差空间。
 TEST(ReuseAudit, EulerMaskCannotBeSubstitutedByEaaRows) {
     using namespace rw::math;
-    const auto actual = RPY<>(0.6, 0.4, 0.7).toRotation3D();
-    const auto desired = RPY<>(1.2, 0.4, 0.7).toRotation3D();
+    // RobWork RPY 参数顺序是 yaw/pitch/roll，产品字段顺序是 roll/pitch/yaw。
+    // 仅 roll 改变；固定 yaw/pitch 时，空间 EAA 的 y/z 仍出现非零分量。
+    const auto actual = RPY<>(0.7, 0.4, 0.6).toRotation3D();
+    const auto desired = RPY<>(0.7, 0.4, 1.2).toRotation3D();
     const RPY<> actualAngles(actual), desiredAngles(desired);
-    EXPECT_NEAR(0.0, desiredAngles[1] - actualAngles[1], 1e-12);
-    EXPECT_NEAR(0.0, desiredAngles[2] - actualAngles[2], 1e-12);
+    EXPECT_NEAR(0.0, desiredAngles[0] - actualAngles[0], 1e-12); // yaw 固定。
+    EXPECT_NEAR(0.0, desiredAngles[1] - actualAngles[1], 1e-12); // pitch 固定。
     const EAA<> spatialError = actual * EAA<>(inverse(actual) * desired);
     EXPECT_GT(std::hypot(spatialError[1], spatialError[2]), 0.2);
 }
@@ -201,7 +203,8 @@ TEST(ReuseAudit, JacobianSolverHalfTurnNeedsIndependentValidation) {
     State state = structure.getDefaultState();
     const auto device = rw::core::ownedPtr(new SerialDevice(base, tcp, "view", state));
     rw::invkin::JacobianIKSolver solver(device, state);
-    const Transform3D<> target(RPY<>(rw::math::Pi, 0, 0).toRotation3D());
+    // 夹具只有绕 Z 的关节；绕 X 半周不可达，不能把 RPY 首参误当 roll。
+    const Transform3D<> target(RPY<>(0, 0, rw::math::Pi).toRotation3D());
     const bool reportedConverged = solver.solveLocal(target, 1e-6, state, 2);
     EXPECT_TRUE(reportedConverged); // 实测上游差异，不允许生产沿用其成功判定。
     const EAA<> actualResidual(inverse(device->baseTend(state).R()) * target.R());

@@ -86,7 +86,7 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp",
           "symbol": "rotationFromCustomEaa",
-          "qualifiedSymbol": "sdurws::ird::runtime::(anonymous namespace)::rotationFromCustomEaa",
+          "qualifiedSymbol": "sdurws::ird::runtime::rotationFromCustomEaa",
           "startLine": 207,
           "endLine": 244,
           "sha256": "52419c634d48f240848975cb373f1f12bc0591eaa65a2019dabbd8c1d999e39f"

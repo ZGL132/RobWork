@@ -392,7 +392,11 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/configure.log",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/gtest.xml",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/ird-test-report.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/tests.log"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe/tests.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/tests.log"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
