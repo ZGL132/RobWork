@@ -1,0 +1,15 @@
+powershell.exe : C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\clone\RobWork\scripts\industrialrobot\val
+idate-context-pac
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\clone\RobWork\scripts\industrialrobot\test-governance-l
+ite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\zgl18\...ate-context-pac:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+k.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/tasks/foundation/
+LITE-T01.json (LITE-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1

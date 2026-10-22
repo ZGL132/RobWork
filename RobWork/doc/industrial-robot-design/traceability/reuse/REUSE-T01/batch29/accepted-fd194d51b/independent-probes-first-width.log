@@ -1,0 +1,14 @@
+
+name                                   passed exitCode
+----                                   ------ --------
+ps51-no-bom-lf-red                       True        1
+pwsh-lf-valid                            True        0
+pwsh-lf-invalid                          True        1
+pwsh-crlf-valid                          True        0
+pwsh-crlf-invalid                        True        1
+powershell-lf-valid                      True        0
+powershell-lf-invalid                   False        1
+powershell-crlf-valid                    True        0
+powershell-crlf-invalid                 False        1
+ps51-live-invoke-probe-parser-rejected   True        0
+

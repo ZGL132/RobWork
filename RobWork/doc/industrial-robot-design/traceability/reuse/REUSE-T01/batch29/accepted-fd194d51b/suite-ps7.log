@@ -1,0 +1,22 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+PASS b1-lf-valid
+PASS b1-lf-invalid
+PASS b1-crlf-valid
+PASS b1-crlf-invalid
+PASS default-ignores-optional-index
+PASS deep-rejects-invalid-index
+PASS context-all-no-dir
+PASS context-selected-no-dir
+PASS context-build
+PASS context-fresh
+PASS context-missing-LITE-T01.json
+PASS context-missing-README.md
+PASS context-missing-AGENTS.md
+PASS context-changed-design
+PASS context-state-copy
+governance-lite: PASS (21 passed, 0 failed, 0 skipped)

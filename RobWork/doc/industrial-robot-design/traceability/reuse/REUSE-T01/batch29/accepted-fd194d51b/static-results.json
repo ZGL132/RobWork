@@ -1,0 +1,96 @@
+[
+  {
+    "name": "scope-count-and-no-production",
+    "passed": true,
+    "detail": 101
+  },
+  {
+    "name": "only-three-byte-bom",
+    "passed": true,
+    "detail": {
+      "baseBytes": 5352,
+      "headBytes": 5355
+    }
+  },
+  {
+    "name": "95-raw-evidence-blobs-and-checkout",
+    "passed": true,
+    "detail": {
+      "bad": [],
+      "count": 95
+    }
+  },
+  {
+    "name": "original-before-snapshots-retained",
+    "passed": true,
+    "detail": {
+      "b1BaseCR": 0,
+      "testBeforeRaw": "a95bd06c486aecc79d14ae2bd2003c6bb2f103113c1c14679c98cb91fa37443d",
+      "b1BeforeRaw": "19607466fa66809fe90b93bc4d606c9fb46cfa344a48f72d6005686fa0f5d063",
+      "b1BeforeCR": 134,
+      "testBeforeCR": 120,
+      "b1BaseRaw": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9",
+      "testBaseRaw": "a95bd06c486aecc79d14ae2bd2003c6bb2f103113c1c14679c98cb91fa37443d",
+      "testBaseCR": 120
+    }
+  },
+  {
+    "name": "historical-real-counts-preserved",
+    "passed": true,
+    "detail": {
+      "green-r2-powershell": {
+        "passed": 21,
+        "notRun": 0,
+        "executed": 21,
+        "skipped": 0,
+        "failed": 0
+      },
+      "red-powershell": {
+        "passed": 6,
+        "notRun": 14,
+        "executed": 7,
+        "skipped": 0,
+        "failed": 1
+      },
+      "green-powershell": {
+        "passed": 7,
+        "notRun": 13,
+        "executed": 8,
+        "skipped": 0,
+        "failed": 1
+      },
+      "green-pwsh": {
+        "passed": 21,
+        "notRun": 0,
+        "executed": 21,
+        "skipped": 0,
+        "failed": 0
+      },
+      "green-r2-pwsh": {
+        "passed": 21,
+        "notRun": 0,
+        "executed": 21,
+        "skipped": 0,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "name": "seven-existing-matrix-rows-bindings-and-regions",
+    "passed": true,
+    "detail": {
+      "regionBad": [],
+      "removed": [],
+      "changed": [
+        "foundation-governance.test-governance-lite.environment",
+        "foundation-governance.test-governance-lite.Invoke-Probe",
+        "foundation-governance.test-governance-lite.fixtures-and-report",
+        "foundation-governance.validate-b1-batch.root-schema",
+        "foundation-governance.validate-b1-batch.stage-contracts",
+        "foundation-governance.validate-b1-batch.external-gates",
+        "foundation-governance.validate-b1-batch.structural-verdict"
+      ],
+      "bindingBad": []
+    }
+  }
+]
