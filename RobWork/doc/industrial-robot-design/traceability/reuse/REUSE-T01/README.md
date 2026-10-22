@@ -109,3 +109,7 @@ B18补策略解析、限位、作用域和后端构建46条关系，见`policy-b
 B20补project事务/Win32原语/恢复/查询/归档47条关系，见`project-transaction-audit.md`；原目标新增6项2passed/4failed，F-962公共打开摘要漏检与F-963磁盘满误归类保持open。无产品变更、全T01未退出。
 
 B19为19个治理脚本的后续逐功能审计补最小待审格式，未登记/关闭这些脚本。旧helper新增8夹具红跑8failed，最终当前152夹具PS7与PS5.1各152passed、0failed/skipped/notRun，见`governance-script-format-audit.md`和`batch19/verification.json`；独立验收待冻结。原样归档B17/B18局部PASS，不授全T01/T02。
+
+B21审4治理脚本14条pending，修原lite夹具漏带catalog的gtest检出面；PS7/PS5.1红跑各6p1f/1未执行，修后各8p0f/0skip；分支负例两入口exit1。其余脚本和全T01未完成，见governance-entry-audit.md。
+
+2026-10-23按所有者新指示持续本地执行，不同步远程；B19/B20局部验收原件分别归档于acceptance/REUSE-T01-batch19-20261023与batch20-20261023；两者均不授全T01/T02。

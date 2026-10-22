@@ -1,0 +1,89 @@
+[
+  {
+    "command": [
+      "rg",
+      "-n",
+      "atomic|fsync|FlushFileBuffers|MoveFileEx|write_through|rename|transaction",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "readFile|getFilesInFolder|getFileSize",
+      "RobWork/RobWork/src/rw/core/IOUtil.hpp",
+      "RobWork/RobWork/src/rw/core/IOUtil.cpp",
+      "RobWork/RobWork/src/rw/common/IOUtil.hpp"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "manifestDigest|headIntegrityVerified|scanForRecovery|loadCommittedState",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "ERROR_DISK_FULL|kDiskFull|kQuotaExceeded",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+      "-g",
+      "*.cpp"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "sdurws_ird_project|AtomicFile|TxEngine|target_link_libraries",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "rg",
+      "-n",
+      "acquireInFlight|finishClose|writerGuard|endSession|inFlight.reset|branchTips|branchHistory",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "sortedLinesMatch": true,
+    "stderr": ""
+  }
+]

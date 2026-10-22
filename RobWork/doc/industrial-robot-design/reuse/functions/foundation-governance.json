@@ -1510,6 +1510,1038 @@
       ],
       "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
       "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
+    },
+    {
+      "functionId": "foundation-governance.commit-lint.root-and-encoding",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "symbol": "[Console]::OutputEncoding",
+          "startLine": 18,
+          "endLine": 29,
+          "sha256": "d4f08d3f708091be7e585c2d0851df7cd2fd61a113365963f9cb735d3a17ade9",
+          "semanticGroup": "root-and-encoding",
+          "qualifiedSymbol": "PowerShell::commit-lint.ps1::root-and-encoding"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "UTF8原生命令输出与显式根/脚本路径回退；Git根唯一，不新建仓库/路径解析平台",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.commit-lint.Test-CommitMessage",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "symbol": "Test-CommitMessage",
+          "startLine": 36,
+          "endLine": 57,
+          "sha256": "cf5c6abfa89561cf03878d5e5675610e99873b5d570922cf9611fc9feff6f844",
+          "qualifiedSymbol": "PowerShell::commit-lint.ps1::Test-CommitMessage"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "合法前缀、空/泛化/80字符标题；Merge豁免，正文真实性仍人工，AllowWip仅兼容参数",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.commit-lint.input-and-range",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "symbol": "$commits = @()",
+          "startLine": 60,
+          "endLine": 77,
+          "sha256": "d4e69cbefccd340cc23d85628bd4ccab6becfd3ce50bb793656a9d42c83d8039",
+          "semanticGroup": "input-and-range",
+          "qualifiedSymbol": "PowerShell::commit-lint.ps1::input-and-range"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "Message预检或真实git log/show范围；空范围显式无对象，不声称验证历史全部提交",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.commit-lint.aggregate-exit",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "symbol": "$failed = 0",
+          "startLine": 80,
+          "endLine": 95,
+          "sha256": "60e486ea7d49048ee8ba4723e169e6b88d599d6e18a97f15de834095cf2cf151",
+          "semanticGroup": "aggregate-exit",
+          "qualifiedSymbol": "PowerShell::commit-lint.ps1::aggregate-exit"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "逐提交调用唯一Test-CommitMessage，错误累计并exit1；不是PR语义或复用正确性审查",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-task.root",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "symbol": "$TaskFile",
+          "startLine": 19,
+          "endLine": 29,
+          "sha256": "91c1cbe7d2384451edc827ce1af76b32ea5e4289012e474046ee03875b5f9f77",
+          "semanticGroup": "root",
+          "qualifiedSymbol": "PowerShell::validate-task.ps1::root"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "真实契约存在性、三段根解析、设计树自检，标准文件工具而非机器人模型加载",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-task.Test-AnchorExists",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "symbol": "Test-AnchorExists",
+          "startLine": 33,
+          "endLine": 42,
+          "sha256": "42fe55bf6ef9114310c1f57ede2271f997c6c603b75d0e4c63293c70adb57275",
+          "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorExists"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "项目编号标题前缀/数字边界正则，非通用Markdown解析器；不等同语义引用证明",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-task.Test-AnchorRequired",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "symbol": "Test-AnchorRequired",
+          "startLine": 46,
+          "endLine": 52,
+          "sha256": "6f9a46e85f970d33a73040ba72fab8e6ab19e9398889be5201336f01e4e6dc61",
+          "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorRequired"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "四权威文档和units要求章节；过程证据可整文件引用，不复制上游文档系统",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-task.index-and-contract",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "symbol": "$allTaskIds = @{}",
+          "startLine": 55,
+          "endLine": 121,
+          "sha256": "af8521878ef2757d580b3a04232ae2b824bdbb3a6feb5d7568da5e48523738cc",
+          "semanticGroup": "index-and-contract",
+          "qualifiedSymbol": "PowerShell::validate-task.ps1::index-and-contract"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "索引既有任务、结构/ready字段/前置存在/锚点/跨单元陷阱/分支句法；未证明前置已完成或任务语义可执行",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.validate-task.reuse-gate",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "symbol": "validate-reuse.ps1",
+          "startLine": 123,
+          "endLine": 129,
+          "sha256": "622874cfef5542d29243f176890bf00e7118d8b4fe415cddff15cf2f03f9dffd",
+          "semanticGroup": "reuse-gate",
+          "qualifiedSymbol": "PowerShell::validate-task.ps1::reuse-gate"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "已有reuse或ready/done REUSE契约转交原validate-reuse，非第二复用门禁实现",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.verify-task.preflight-and-dryrun",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+          "symbol": "validate-task.ps1",
+          "startLine": 18,
+          "endLine": 39,
+          "sha256": "f88c22078f1534c6cbe1fac5efdd84361aab1713b9bf58c7a47345079f356bfc",
+          "semanticGroup": "preflight-and-dryrun",
+          "qualifiedSymbol": "PowerShell::verify-task.ps1::preflight-and-dryrun"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "调用原validate-task和validate-reuse，DryRun也预检、仅打印verify不执行；不能当三命令真实通过",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+          "sha256": "e3ccb7ba5ccaaa7b7d9c8a21e344f9706e8a7ed0c9f41e3fa9c07380d3434aeb"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.verify-task.execute-and-count",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+          "symbol": "foreach ($cmd in @($t.verify))",
+          "startLine": 47,
+          "endLine": 69,
+          "sha256": "710fdb57856f8270c396f782b271c16caf65700c7ac12aa39f5f66bf110f01c1",
+          "semanticGroup": "execute-and-count",
+          "qualifiedSymbol": "PowerShell::verify-task.ps1::execute-and-count"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "逐verify Push/Pop根、Invoke-Expression、退出码拒绝；Parse/CommandNotFound只标manual，PASS仅机器部分。结构化机器条目与散文识别边界仍待后续全量治理审查",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+          "sha256": "e3ccb7ba5ccaaa7b7d9c8a21e344f9706e8a7ed0c9f41e3fa9c07380d3434aeb"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/verify-task.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-governance-lite.environment",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "$ErrorActionPreference",
+          "startLine": 4,
+          "endLine": 10,
+          "sha256": "ed1cba4b060fb677bdaf8ae69dc9bb1eab94ab2d6173da1279efaee38264655b",
+          "semanticGroup": "environment",
+          "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::environment"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "用当前PS进程路径、独立GUID临时根及标准IO；不引第二测试/构建平台",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-governance-lite.Invoke-Probe",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "Invoke-Probe",
+          "startLine": 13,
+          "endLine": 25,
+          "sha256": "2553e61d94090da6d66876ef80de1609ce27c24089eaf52e62b1b8a39f2f73b8",
+          "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::Invoke-Probe"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "真实子进程退出码+具名输出双判据，失败先记录再throw，不能零执行假通过",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
+    },
+    {
+      "functionId": "foundation-governance.test-governance-lite.fixtures-and-report",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "try {",
+          "startLine": 27,
+          "endLine": 76,
+          "sha256": "989ea8604c6aecaef49826b4f5094690171a2ed5d78ff050207e68809ea537c8",
+          "semanticGroup": "fixtures-and-report",
+          "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "原8例/原共享对象稀疏clone/overlay/坏索引；finally完整性计数及受限Temp清理。仅补catalog已绑定两套gtest检出面，不放宽验证规则；红绿实跑分列",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "c705ef0c04c410cdd6c08b18de94d66e3916151306dc7cd81c07b5b0c80dad0b"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/test-main.cpp",
+          "sha256": "cec160411ce301c0e7af4f0642f904205aa1965d7f7891c76af9cf910b0d094f"
+        },
+        {
+          "path": "RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "sha256": "8b61c7097e807b844c6f9534512fe5e881ca4df6e1da8fd225dd1f1229ec1718"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+          "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+        },
+        {
+          "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch21/search.json",
+          "sha256": "eb5b32773ea4aff43d25d03dccc32f2a3edac04bca5613d3728e13d36cb8899a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-entry-audit.md",
+          "sha256": "95f43fc285f788e7de155d204b590b459100c1d8a76d46bee4d1c187ac6f9d0f"
+        }
+      ],
+      "auditBoundary": "只审14关系/4脚本与lite夹具修补，19脚本尚未全审，未授迁移/关闭/T01/T02"
     }
   ]
 }

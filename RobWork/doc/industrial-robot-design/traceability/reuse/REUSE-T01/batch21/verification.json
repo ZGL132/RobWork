@@ -1,0 +1,37 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B21",
+  "scope": "四治理入口14关系，非全治理/全T01",
+  "formatAcceptance": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+  "parentCommit": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+  "lite": {
+    "redEach": {
+      "expected": 8,
+      "executed": 7,
+      "passed": 6,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 1,
+      "exitCode": 1
+    },
+    "greenEach": {
+      "expected": 8,
+      "executed": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0
+    }
+  },
+  "beforeScriptRawSha256": "d922652abaadcbe49c0796e017149dc2371e9297c53ea2656bdf89e371920537",
+  "currentScriptRawSha256": "1a1bcc25d8bf65d73f319eaabcf8a7a369d27123499a0662059cf782252d2d77",
+  "notRun": [
+    "无关C++",
+    "GUI",
+    "性能",
+    "全19治理脚本",
+    "T01退出",
+    "T02"
+  ]
+}

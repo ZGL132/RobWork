@@ -1,0 +1,71 @@
+[
+  {
+    "label": "independent",
+    "summary": {
+      "total": 6,
+      "passed": 2,
+      "failed": 4,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xmlTests": 6,
+    "xmlFailures": 4,
+    "actualCounts": {
+      "passed": 2,
+      "failed": 4
+    },
+    "testcasesMatch": true,
+    "allOnlyFilteredNewTests": true,
+    "nativeSummaryMatch": true,
+    "runExit": 1
+  },
+  {
+    "label": "original-final",
+    "summary": {
+      "total": 6,
+      "passed": 2,
+      "failed": 4,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xmlTests": 6,
+    "xmlFailures": 4,
+    "actualCounts": {
+      "passed": 2,
+      "failed": 4
+    },
+    "testcasesMatch": true,
+    "allOnlyFilteredNewTests": true,
+    "nativeSummaryMatch": true,
+    "runExit": 1
+  },
+  {
+    "label": "original-initial",
+    "summary": {
+      "total": 4,
+      "passed": 1,
+      "failed": 3,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xmlTests": 4,
+    "xmlFailures": 3,
+    "actualCounts": {
+      "passed": 1,
+      "failed": 3
+    },
+    "testcasesMatch": true,
+    "allOnlyFilteredNewTests": true,
+    "nativeSummaryMatch": true,
+    "runExit": 1
+  }
+]

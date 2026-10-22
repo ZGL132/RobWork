@@ -1,0 +1,55 @@
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:53 char:107
++ ... ';conclusion='闅旂闂ㄧ鏍锋湰锛涗笉鏄敓浜ч€傜敤鎬ц瘉鎹?};differences='鍙傝€冪郴/纭畾鎬у緟瀹?;
++                                                           ~~~~~~~~~~~~~~
+Unexpected token '鍙傝€冪郴/纭畾鎬у緟瀹?' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:53 char:107
++ ... fixture';conclusion='闅旂闂ㄧ鏍锋湰锛涗笉鏄敓浜ч€傜敤鎬ц瘉鎹?};differences='鍙傝€冪郴/纭 ...
++                                                                  ~
+The hash literal was incomplete.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:53 char:106
++ ...  fixture';conclusion='闅旂闂ㄧ鏍锋湰锛涗笉鏄敓浜ч€傜敤鎬ц瘉鎹?};differences='鍙傝€冪郴/纭 ...
++                                                                  ~
+The hash literal was incomplete.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:57 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:69 char:22
++ ... ifferences='鏃燙Make缂栬瘧target';inputs=@([pscustomobject]@{path=$path;sh ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unexpected token '鏃燙Make缂栬瘧target';inputs=@([pscustomobject]@{path=$path;sha256=(Hash $text)});
+        execution=[pscustomobject]@{kind='governance-script';entry=$path;command=('pwsh' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:69 char:22
++         differences='鏃燙Make缂栬瘧target';inputs=@([pscustomobject]@{path ...
++                      ~
+The hash literal was incomplete.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:69 char:21
++         differences='鏃燙Make缂栬瘧target';inputs=@([pscustomobject]@{path ...
++                     ~
+The hash literal was incomplete.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:61 char:23
++ function ScriptMatrix {
++                       ~
+Missing closing '}' in statement block or type definition.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:112 char:137
++ ... +'probe-review.txt');sha256=(Hash '闅旂缁撴瀯澶瑰叿锛氱┖鍑芥暟鎴栧€艰浇浣擄紝鏃犳牳蹇冪畻娉?)})
++                                                                       ~
+Unexpected token ')' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\b19-independent-3c2930bc9a304051b44f1fa739caf1fa\repo\RobWork\scripts\industrialro
+bot\.b19-independent-focused.ps1:112 char:138
++ ... +'probe-review.txt');sha256=(Hash '闅旂缁撴瀯澶瑰叿锛氱┖鍑芥暟鎴栧€艰浇浣擄紝鏃犳牳蹇冪畻娉?)})
++                                                                        ~
+Unexpected token '}' in expression or statement.
+Not all parse errors were reported.  Correct the reported errors and try again.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

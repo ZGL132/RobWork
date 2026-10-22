@@ -1,0 +1,22 @@
+<testsuite name="reuse-governance" tests="20" failures="0" skipped="0">
+  <testcase name="script-audit-no-fake-target" />
+  <testcase name="script-audit-sourced-helper" />
+  <testcase name="script-audit-require-real-entry-binding" />
+  <testcase name="script-audit-reject-cmake-target" />
+  <testcase name="script-audit-reject-product-escape" />
+  <testcase name="script-audit-reject-other-directory" />
+  <testcase name="script-audit-reject-fake-migration" />
+  <testcase name="script-audit-require-own-context" />
+  <testcase name="script-audit-stale-context" />
+  <testcase name="script-audit-reject-production-disguise" />
+  <testcase name="independent-owner-required" />
+  <testcase name="independent-capability-none-required" />
+  <testcase name="independent-closed-rejected" />
+  <testcase name="independent-audited-rejected" />
+  <testcase name="independent-business-rejected" />
+  <testcase name="independent-kind-rejected" />
+  <testcase name="independent-proposal-positive" />
+  <testcase name="independent-final-pending-rejected" />
+  <testcase name="independent-frozen-positive" />
+  <testcase name="independent-frozen-ignores-dirty" />
+</testsuite>

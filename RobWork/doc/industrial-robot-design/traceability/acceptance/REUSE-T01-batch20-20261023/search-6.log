@@ -1,0 +1,26 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp:181:    std::shared_ptr<void> inFlight = m_host.acquireInFlight();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp:282:    //      payload)（封闭集无"未知分支"稳定码——§5.2 branchHistory 先例
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp:21: *   3. branchHistory 的"未知分支抛"：StoreErrorCode 封闭集无 unknown-
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp:109:    // 锁序第一步：lifecycle 锁内读状态位（与 finishClose 的置位互斥——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp:322:std::vector<BranchTip> QueryPortImpl::branchTips() const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp:347:std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:328: *        进程内注册表的保护。生命周期注销（finishClose）与登记
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:371:    /// 上下文成功构造后调用——所有权已随上下文的 finishClose/析构注销
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:871:    finishClose(true);  // pending==0：同步走完收尾（锁外副作用＋回调）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:892:std::shared_ptr<void> ProjectStoreImpl::acquireInFlight()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:912:            finishClose(true);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:917:void ProjectStoreImpl::finishClose(bool invokeObservers)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:955:    finishClose(false);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1005:    const std::lock_guard<std::mutex> writerGuard(m_writerMutex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp:1168:    // finishClose/析构接管注销）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:247:    // 析构时点宿主已完成 finishClose（~ProjectStoreImpl 函数体先于成员
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:264:        state->inFlight.reset();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:455:void ArchiveServiceImpl::endSession(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:605:    auto inFlight = m_host.acquireInFlight();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:614:    const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:740:    const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:886:    const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:940:            endSession(state, true);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:1062:    state->inFlight.reset();  // 锁外释放（§9.7——排空归零的触发点之一）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:1106:        std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp:1107:        endSession(state, false);

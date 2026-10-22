@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "367CA6304B47481B8136A21021BD4EDE4604296E468D68D90BA1277B2B0713BF",
+  "helperSha256": "60DD850A9A4E7FE736C4952E5790B68CF7FF70749E04971C0933EF2A050180A3",
+  "driverSha256": "8FB2DBFDAA51C419AA7085953DE85B0F2D15A7879672DF867C9DE45D22AFEC3E",
+  "expected": 20,
+  "executed": 20,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 20,
+  "skipped": 0,
+  "failed": 0,
+  "complete": true,
+  "tests": [
+    {
+      "name": "script-audit-no-fake-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=724 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "script-audit-sourced-helper",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=724 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "script-audit-require-real-entry-binding",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-cmake-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-product-escape",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : source/entry/context must bind exact governance scripts\r\n"
+    },
+    {
+      "name": "script-audit-reject-other-directory",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-fake-migration",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-require-own-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-stale-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/scripts/industrialrobot/commit-lint.ps1\r\n"
+    },
+    {
+      "name": "script-audit-reject-production-disguise",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-owner-required",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-capability-none-required",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-closed-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-audited-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-business-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-kind-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "independent-proposal-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=724 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "independent-final-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function core.ContentDigester.compressBlock\r\n"
+    },
+    {
+      "name": "independent-frozen-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=724 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "independent-frozen-ignores-dirty",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=724 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    }
+  ]
+}
