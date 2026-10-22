@@ -1,0 +1,47 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-runtime-probe\ird-core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  CanonicalModel.cpp
+  Codec.cpp
+  NameMap.cpp
+  BaseWorldTransform.cpp
+  CollisionSession.cpp
+  WorkCellCompiler.cpp
+  DynamicWorkCellCompiler.cpp
+  Snapshot.cpp
+  HostPresentationView.cpp
+  CacheKey.cpp
+  CompilerImpl.cpp
+  sdurws_ird_runtime.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-runtime-probe\ird-runtime\Release\sdurws_ird_runtime.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-runtime-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/CMakeLists.txt
+  RuntimeOffsetAuditTest.cpp
+  TestMainReport.cpp
+  ird_runtime_audit_probe.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-runtime-probe\Release\ird_runtime_audit_probe.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t01-runtime-probe\Release\gtest.dll done

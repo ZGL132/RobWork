@@ -44,6 +44,29 @@
           "sha256": "d331f07323c5cbc2f89426302e7532f0d0e05a136550161be9aa1c22df57c041",
           "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
           "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+          "sha256": "5ebe466fc5e8c0d431a3d5ae08463d738c88f2d2d2e66d6c4a1f2e7d3e61450e",
+          "symbols": [
+            "findFrame",
+            "findDevice",
+            "getDefaultState"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+          "sha256": "428118721de2c8927de1703e04cd64a54f55f00abf17491af006cef5df67db23",
+          "symbols": [
+            "PrismaticJoint",
+            "getTransform"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
         }
       ],
       "build": {
@@ -76,10 +99,19 @@
           "operations": [
             "query"
           ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "query",
+            "construct"
+          ]
         }
       ],
       "limits": {
-        "semantics": "q_auth offset、TCP、参考系与固定段",
+        "semantics": "q_auth offset、TCP、参考系与固定段；Prismatic非零offset当前产品编译错误，见runtime-probe/red，非上游缺陷；修复后重验。",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
@@ -87,7 +119,8 @@
       "examples": [],
       "docs": [],
       "operations": [
-        "query"
+        "query",
+        "construct"
       ],
       "review": {
         "status": "candidate",

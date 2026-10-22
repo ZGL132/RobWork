@@ -1,0 +1,47 @@
+{
+  "taskId": "REUSE-T01",
+  "reviewedParentCommit": "6d4c254548d2784aa25a2b87978e3d7fc0ab60af",
+  "scope": "真实runtime S6编译器偏置审计；两项1通过1失败，失败是既有产品映射缺陷，不是上游能力缺失",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/CMakeLists.txt",
+      "sha256": "0cef1b239d5218107262958f8b416012094442dd1903e22f3fc815bd506bf117"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/RuntimeOffsetAuditTest.cpp",
+      "sha256": "153970dfa00e35e10f6ac657743cfdbadf6362f3ff842361374cfd0dc2fb28d4"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "sha256": "c9084f8e2dcbcef65ee3ea3897f89ab0976bf83014a93b95bbcfe263035d3c64"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
+      "sha256": "8308aefe2d78ad609ce3c251963f0ee5c3fbf5dd45a040b467d64662cbfb1e48"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+      "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+    }
+  ],
+  "commands": [
+    "cmake -S RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/ -B .cache/t01-runtime-probe -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_PREFIX_PATH=\"D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows;D:/software/Qt/6.11.1/msvc2022_64\" -DRobWork_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake -DRWSIM_TARGETS_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkSim/cmake/targets",
+    "VS x64: cmake --build .cache/t01-runtime-probe --config Release --target ird_runtime_audit_probe",
+    "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t01-runtime-probe\\Release\\ird_runtime_audit_probe.exe --gtest_filter=RuntimeOffsetAudit.* --gtest_output=xml:<runtime-probe/red/gtest.xml> --ird_report=<runtime-probe/red/ird-test-report.json>"
+  ],
+  "results": {
+    "total": 2,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "limits": "沿用产品原runtime/core/testkit CMake及源码、原夹具与GTest报告；导出目标别名只适配构建名称。测试不接入产品，未修映射，不复制数值算法。既有全量runtime测试本轮未运行。"
+}

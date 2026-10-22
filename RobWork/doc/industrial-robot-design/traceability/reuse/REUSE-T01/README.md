@@ -60,3 +60,7 @@ SPD新探测区分整体尺度与跨轴混合尺度：上游谱解在diag(denorm
 第八批新增20条关系，累计220条（217 pending、3 proposal），closedFiles=0。细分testkit/IO的JSON递归解析、序列化、Unicode编码与CSV流式解码，另将已用std::errc的两处错误映射登记为NONE候选，不建诊断平台。真实检索及11个安装头/CONFIG原始摘要见 `batch8-search.json`；上游默认XML/字符串工具限制不证明全部插件或同渠道库都无能力。已安装Boost1.92.0的公开Endian及PropertyTree由现有探测目标构建，新3项实跑全部passed，failed/skipped/notRun=0，见 `probe-r8/`。原19项和r7三项本轮未运行，不称25项全跑；没有产品依赖/算法、上游或vcpkg修改。testkit/IO单元卡补正旧自持解析理由，保持profile、位置/预算/取消/身份权威差异，成熟同渠道候选仍须适用性与供给确认，不批准新核。
 
 第八批首轮独立语义验收冻结bb997f1为FAIL（B8-P2-01）：readHex4误绑定调用分支644–649；已返工为真正定义723–747并重算摘要，其余19条独立实读无同类问题，待冻结返工复验。原FAIL原件保留在 `traceability/acceptance/REUSE-T01-batch8-r1-20261022/`。同冻结SHA新增3项依赖API独立重建实跑PASS（3 passed，failed/skipped/notRun=0），见 `REUSE-T01-dependency-r8-20261022/`。7af7e86门禁补正亦已独立双运行时各142 passed及8项边界探测PASS，见 `REUSE-T01-gtest-target-20261022/`；这些结论均不构成全T01退出。原始验收日志保留末尾空白，不为diff清洗历史。
+
+第九批新增19条runtime/运动学/UI视图与调用链关系，累计239条（236 pending、3 proposal），closedFiles=0。真实边界、五个测试替身和T02最小接口方向见 `runtime-boundary-audit.md`；不把model/worldToBase值冻结当成WC构造许可。新增runtime-probe沿用产品原runtime CMake、原夹具、GTest/testkit，VS x64配置/构建exit0；2项真实执行1 passed、1 failed，skipped/notRun=0：旋转控制组正确，移动offset=0.25m误编码旋转且缺平移，三坐标轴均检出。原FAIL见 `runtime-probe/red/`，未改产品/上游/vcpkg或放宽规范。该发现阻断相关T02适配验收，待按阶段修复runtime owner映射；不是上游能力缺失。全T01仍未退出。
+
+第八批readHex4返工在冻结6d4c254548d2784aa25a2b87978e3d7fc0ab60af独立复验PASS；原件见 `traceability/acceptance/REUSE-T01-batch8-r2-20261022/`，原首轮FAIL保留，仅限登记返工。

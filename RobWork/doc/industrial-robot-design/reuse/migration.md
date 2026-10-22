@@ -155,6 +155,7 @@ A 文档/约束/门禁经独立冻结 SHA 验收后，B 审计与适配能力探
 
 - [ ] 先核现有 IRuntimeModelView::workCell/tryDynamicWorkCell/makeState/nameResolver、Device/Body/TCP 映射是否足够；够用直接消费，不为全库建 facade，不把全部算法搬进 runtime。
 - [ ] 为真实缺口选择最小公共视图/工厂调整；不直接给旧虚表插槽并宣称 ABI 无影响。逐一列消费者、契约版本和迁移办法；不得借此开放裸可变模型句柄。
+- [ ] 先修runtime现有移动关节offset映射：T01真实编译器审计确认0.25 m偏置被编码为旋转且缺平移（[证据](../traceability/reuse/REUSE-T01/runtime-boundary-audit.md)）；原规范反例先在runtime原测试落位，不允许kinematics第二次补偿。此为T02相关适配验收前置，不是已完成或新核心批准。
 - [ ] runtime 统一 q_auth/offset→q_rw、ObjectId/名称/关节/TCP 和 WC/DWC 对齐。业务拿快照保活的受控视图，State 与求解器/引擎会话任务私有；主进程/worker 按同一规则物化。
 - [ ] 数学函数优先直接 rw::math 调用，仅在真实单位/坐标/错误边界留薄函数，不增通用数学接口。上游导出目标/现有 find_package 为唯一构建来源。
 - [ ] 先写接口与生命周期回归，再改适配；验收多任务 State 不串扰、快照关闭/保活、缺设备/TCP/DWC、物化身份一致、异常转译及真实装配。宿主呈现只能用既有例外，不能新增计算构造链。

@@ -1,0 +1,62 @@
+{
+  "functionId": "io.Json.Parser.readHex4",
+  "ownerUnit": "io",
+  "requirements": [
+    "IO-T04"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+      "symbol": "readHex4",
+      "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
+      "startLine": 723,
+      "endLine": 747,
+      "sha256": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_io"
+  ],
+  "usageRole": "adapter",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-TEXT",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
+    "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
+  },
+  "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+      "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+    }
+  ],
+  "auditEvidence": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch8-search.json",
+      "sha256": "1b050dcd590cc8c2e8c03522987ad2a53d3906d43eb5b9154d3b07b8c5975583"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
+      "sha256": "b9b3188b05fa74ce660031c4315f2c9ff5bbab74f2f1ca7c46dce8fb1c588dba"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/environment-artifacts.json",
+      "sha256": "af51127d81e9dd0690fbe411f497087c3aa28a590698c42148310048902c17ae"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/gtest.xml",
+      "sha256": "ad6dd8795e835addcf9a385ee5b6f4d635dbc68627bb14a9cb14534bf5556ec2"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/ird-test-report.json",
+      "sha256": "c8dc19b710e09a27a3290cefaaf2ef8d13945b999a61ddaa4b5f1d725d9c81f8"
+    }
+  ],
+  "designRefs": [
+    "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
+  ],
+  "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+}

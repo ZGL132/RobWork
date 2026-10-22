@@ -1,0 +1,12 @@
+{
+  "startLine": 723,
+  "endLine": 747,
+  "actualSha": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100",
+  "registeredSha": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100",
+  "hashMatches": true,
+  "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
+  "decision": "pending",
+  "status": "pending",
+  "first": "    bool readHex4(std::uint32_t* out, IoError* err)",
+  "last": "    }"
+}
