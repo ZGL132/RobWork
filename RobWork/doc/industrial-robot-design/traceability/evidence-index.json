@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-21T18:12:35+08:00",
+  "generatedAt": "2026-10-22T12:34:38+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,29 +10,29 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 15924,
-    "totalBytes": 867478334,
+    "totalFiles": 15970,
+    "totalBytes": 868362005,
     "byKind": {
-      "pipeline-artifact": 2,
-      "benchmark": 8,
-      "governance-record": 40,
-      "acceptance-record": 516,
-      "log": 1,
       "json-data": 7,
+      "governance-record": 40,
       "gtest-report": 335,
+      "build-log": 15018,
+      "markdown-doc": 41,
+      "benchmark": 8,
+      "acceptance-record": 517,
+      "pipeline-artifact": 2,
       "manual-acceptance": 1,
-      "build-log": 14973,
-      "markdown-doc": 41
+      "log": 1
     },
     "byLifecycle": {
+      "current": 28,
       "historical": 565,
-      "unverified": 15332,
-      "superseded": 0,
-      "current": 27
+      "unverified": 15377,
+      "superseded": 0
     },
-    "associated": 597,
-    "unassociated": 15327,
-    "shaComputed": 15904,
+    "associated": 598,
+    "unassociated": 15372,
+    "shaComputed": 15950,
     "shaSkippedLarge": 20,
     "duplicateGroupsTotal": 926,
     "duplicateGroupsListed": 100
@@ -5698,6 +5698,16 @@
       "lifecycle": "historical"
     },
     {
+      "path": "acceptance/WP-17-T11-20261022.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-17-T11"
+      ],
+      "bytes": 9124,
+      "sha256": "a05101b77a5c0fe650c93a7a90e201a0f93627902359e37bb0bce491828d6af2",
+      "lifecycle": "current"
+    },
+    {
       "path": "acceptance/wp-18-t02-20261006.md",
       "kind": "acceptance-record",
       "taskIds": [
@@ -7638,6 +7648,182 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "builds/acc-wp17t11-attempt1/acc-contract-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25116,
+      "sha256": "6c517a228fa642c578687ecd0f047c38e6e0d524ac0555e277f1cd22b9e24676",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-contract.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5972,
+      "sha256": "db6ce812c47793b2a1de89b24a3d7df8f539bfb9840381a52b2fb65ca5f3bbcd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-contract.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12552,
+      "sha256": "187a788d88dc4416c68c657fc449e857c74074e8d6d360468d6f15ae0a8f1717",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-gui-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9933,
+      "sha256": "e45d4fb4a1c5dc91e889ef67ed75de7af2c3d832495f9cbf9fce4cfe7cc1d488",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-gui.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1945,
+      "sha256": "0ec64392c94c4ddd9c539d6cb1def901d9aca6237cb8c051eb03396f815805fb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-gui.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4362,
+      "sha256": "2949a808ebf485acdcf7c2c4687c6f30c884899e3622c62e30416aa64496e043",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-inject1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2877,
+      "sha256": "a3083334e07526fa796883c1bf06d5153cf599fd50773030daef537d7f81214f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-inject1.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5770,
+      "sha256": "bab3e258b1cba1b481d287d0004766efd80705014b79839687e194b153b98a2e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-inject2.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1156,
+      "sha256": "27b0cb91cd67bca13e3ec6362ece8d11e15c7cd50cb7fc6b2a8182aae07ba6d4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-inject2.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1306,
+      "sha256": "af66a1757d15f1fbadf27e6d30a9ee35e672b125761c049fd3ece650ab99150d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-restore1.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 541,
+      "sha256": "de43b13c43dc4d650939df63670a9ceca69893afeafaa6ac081b528b7a6d5e94",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-restore2.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 516,
+      "sha256": "40015d4dbfd0da41131470a2d1dd72645af2175fb2c5cb0012dde9c875381f42",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-unit-report.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 94486,
+      "sha256": "68e28789bc3ed03b9c31ec7d20fb49b6d8b345073c0c14d376c2001c5d48d315",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-unit.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18493,
+      "sha256": "daae6d19626c4da96cbc25f5c083e900329e5c6fd769b20750f3ef59de6569dc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/acc-unit.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 41619,
+      "sha256": "3845b5df84a3b79f1edec5b3ecbe9d9471300b8d0edbc2da02f06a176d8dd0ad",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/build-integrated.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 242249,
+      "sha256": "cc3ac9c348d82c96a805a764782337f3398e9b6fb1799ed9b1eec01d38f3b401",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/build-smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 86795,
+      "sha256": "3c3d150983e4af170779fb4696dc27d484414919f91ce384612185b4f85656bc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/configure-smoke.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2045,
+      "sha256": "1f2df82c366e04c580b6bf1b9c069098329bd65c47b67f19a22fc2d9bbcff704",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/configure.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12296,
+      "sha256": "59771e56945fac6b412dfef49c4cef371e3c2e70d83fc2ad04f8fe21ea027f7f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/inject1-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6212,
+      "sha256": "64507d37a9199932e88bcedfcf4c0843ec81711f8983efc1a3675db88c766bc3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/inject2-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 6248,
+      "sha256": "5fce6e5114beae34e1e0310151d43000dc4ea030fc0eb2f09e28059b56cec0fe",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/acc-wp17t11-attempt1/restore-build.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12420,
+      "sha256": "b78309c9efa89d9d1be7c2fa5fd5985f122fe5840f6e89967e0ee550c7379f3d",
+      "lifecycle": "unverified"
+    },
+    {
       "path": "builds/asm-panel/execution-log.md",
       "kind": "build-log",
       "taskIds": [],
@@ -8883,6 +9069,190 @@
       "taskIds": [],
       "bytes": 585,
       "sha256": "462eabcd1e5adb9a5001efd6aed8f3447206f8ba7ad701b2915433c80c08eab6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-contract-final.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 25114,
+      "sha256": "d6a56bfb1bb4ceb11c08af57689b8906d9e7ab32a1f7259c9843f69e0c0b1220",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-contract-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5969,
+      "sha256": "dd9e7b2080ebd2514aad59f6ca41b3e93da6b56f91cba41f8ebaaba8bb18dad3",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-contract-final.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 12174,
+      "sha256": "47d7fb9015cf3415952ed5788a91f4788defa3e3ddd30834b1bfd954427accaf",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gates-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1903,
+      "sha256": "d5f992b1f73e630b39e87b310b7c7b1a14344eebc54c62b0238d92f43851db13",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-behavior-red.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 5466,
+      "sha256": "e717d5f08a594d2a3d032744950bc8c15c426b3d6d47520efc146009238f03ab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-behavior-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4570,
+      "sha256": "a6fbef6beec01481d2f4528f687e0f6ee7fb331cbc690b86e3c5ae68a4d3770c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-behavior-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9239,
+      "sha256": "d5e9a36cb3af710e0dab11cf93062bb2dd52714c4d1217405b77e29158f398dc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-final.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 9942,
+      "sha256": "aeae29c4551839eacdaf6444424f670d1390759dd150ea6a6083c05c51e355b4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1954,
+      "sha256": "dd3bccb1bf5f34b46510b93081bfa236827e32e09817d208f16545a9b178fd4e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-gui-final.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 4217,
+      "sha256": "57bb933079ab5cc699f541a8f33fa542ab799acb56e38026289bbf4d197249f2",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-integrated-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 32161,
+      "sha256": "b9ecb0a58d5c12744fe414c4bc1b5e85260980fa3ff491de281be8eebe3fc338",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-model-red.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1095,
+      "sha256": "1be8ef76ce7a4f12c366b0aaa31f787db47d40c6f7830de4eee98cb523f9f89c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-model-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 2632,
+      "sha256": "33dcd0606f1427a6d701b4cce53bef47640e90c489fba7b4fb02aa2026d86d2c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-reload-red.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1109,
+      "sha256": "b0b1b4cdfd9d5a09e85bab7431d85860bad7985d85c111afd049b63792d46bd4",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-reload-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1230,
+      "sha256": "89ab8d4c6bb424e2f8e71d53cf355371d605ac00175c7abe81cfa0c5f13d3b21",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-reload-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1993,
+      "sha256": "3c4d49534c906bb7cdb075976254ee700fc1694c5dae95f02719d91779209d48",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-single-red.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1107,
+      "sha256": "5f68297901d53ff592b1d2dc9746ad333c21fee8fa3bbac54b5e963a99a40765",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-single-red.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 904,
+      "sha256": "89de7fd59e0f7f334ee0c5756501e99209401811fff3f5b220fb70a7f1a3c391",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-single-red.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1270,
+      "sha256": "a8e080642b534a43e491d296763f45c2f4d6b1a2d0b6032d35ad041cd336a365",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-unit-final.json",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 94484,
+      "sha256": "dfabd8d8e38bfed75f4d5c8a3ff5e3ea95fae42a7f92d18bab8f149cef96cf9f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-unit-final.log",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 18488,
+      "sha256": "bd6db64272890f3ad376fa59a6f1c9bd9fb6afeb43a64a2313e5d87d65b24aac",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/dynamics-unit-final.xml",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 40223,
+      "sha256": "a46d13d86ae533d0333425ad9b9c97fa2130a5bcde3dce5f2cf7e5bb8fbebe46",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "builds/dynamics-fixes-20261022-wp17-t11/REPORT.md",
+      "kind": "build-log",
+      "taskIds": [],
+      "bytes": 1762,
+      "sha256": "45fa6ec61d3cb6d9ef8dd1885ca453e9a89014202cca4ef45c6ef61f69870ad6",
       "lifecycle": "unverified"
     },
     {
@@ -126409,7 +126779,7 @@
       "path": "findings.json",
       "kind": "json-data",
       "taskIds": [],
-      "bytes": 1270638,
+      "bytes": 1271270,
       "sha256": null,
       "lifecycle": "unverified"
     },

@@ -4,7 +4,7 @@
   "unit": "dynamics",
   "masterWp": "WP-G",
   "title": "修复动力学峰值与回放交互并建立真实窗口回归",
-  "status": "ready",
+  "status": "done",
   "dependsOn": [
     "WP-17-T09",
     "WP-17-T10"
