@@ -1010,7 +1010,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1057,7 +1057,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1104,7 +1104,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1151,7 +1151,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1198,7 +1198,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1245,7 +1245,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1292,7 +1292,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1339,7 +1339,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1386,7 +1386,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1433,7 +1433,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1488,7 +1488,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1543,7 +1543,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1598,7 +1598,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1653,7 +1653,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1708,7 +1708,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1763,7 +1763,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1818,7 +1818,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1865,7 +1865,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1912,7 +1912,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -1959,7 +1959,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2006,7 +2006,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2061,7 +2061,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2116,7 +2116,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2171,7 +2171,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2226,7 +2226,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2281,7 +2281,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2336,7 +2336,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -2383,7 +2383,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"

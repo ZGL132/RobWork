@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B12",
+  "reviewedCommit": "d38e4472ec403d9d9f1b7201a0f8e2b4b83f7a0c",
+  "comparisonBase": "a3cb564810b3eae8515ba11bfed9c37756d808f4",
+  "verdict": "FAIL",
+  "scope": "仅B12新增34关系、UTIL-THREAD扩展、说明、检索与本提交归档保真；不授全T01 PASS。",
+  "findings": [
+    {
+      "id": "B12-P2-01",
+      "priority": 2,
+      "topic": "监督器getter组混淆当前运行态与历史观测位",
+      "files": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+          "line": 23
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json",
+          "line": 523
+        }
+      ],
+      "evidence": "CloseSupervisor.hpp:161-162明确running为start后、stop/自然退出前；CloseSupervisor.cpp:76置true，92/129/165/176清false。后三个观测位只置true且start不清零。",
+      "impact": "本批生命周期语义审计将可复位过程态登记成保留历史事实，不能以全部历史位的描述验收该getter组。",
+      "requestedCorrection": "说明与workflow.CloseSupervisor.running.differences均改为：running只读当前运行态；storeClosedObserved/abandonDiagObserved/gaveUp只读保留历史观测位；四者acquire读取且不构成第二状态权威。同步该说明被引用的auditEvidence摘要。无需产品代码修改。"
+    }
+  ],
+  "observations": [
+    {
+      "topic": "定义与作用域",
+      "result": "PASS",
+      "detail": "34条完整源码区段、构造initializer list和析构均核对；int64重载独立；ProcessRunner三个辅助函数确在全局anonymous namespace，quoteWindowsArg在testkit::detail；游标3定义和getter4定义均为明确组，不将其伪算单一定义。"
+    },
+    {
+      "topic": "摘要与targets",
+      "result": "PASS",
+      "detail": "34处源码区段及inputs/auditEvidence共172项规范化摘要全部相符；testkit三个TU注册于sdurws_ird_testkit，CloseSupervisor注册于sdurws_ird_workflow，公共include根由后者传播。"
+    },
+    {
+      "topic": "候选API",
+      "result": "PASS",
+      "detail": "UTIL-THREAD保持candidate；5项现有/新增上游引用和CMake摘要全匹配，新增ThreadTask/Timer/TimerUtil符号真实存在于sdurw_common。ThreadTask为线程父子任务而非OS进程/Job树；TimerUtil Windows clock、其他gettimeofday，不等于可注入steady_clock deadline。不得用sleep替代成功事件。"
+    },
+    {
+      "topic": "JsonLite与Check",
+      "result": "PASS",
+      "detail": "JsonLite游标、BOM/空/尾随/深度/字面量及强类型deepEquals边界成立；PropertyTree差异沿B8，未批准新解析器。Check委托core::closeWithin，字符串/整数精确比较；sourceTag丢弃、字符串详情缺失及int64失败payload转double风险被如实保留，未宣称比较使用double。"
+    },
+    {
+      "topic": "进程工具",
+      "result": "PASS",
+      "detail": "启动挂起→Job绑定→恢复、零句柄继承；四态缓存、非Exited exitCode=0协议，析构/Impl回收及EventWatch事件优先deadline语义成立。UTF8 flags、环境键大小写和start异常窗口仅静态待核，说明明确无复现，未冒称已复现缺陷。execution私有CLI/管道不能直接跨层引用，未批准新公共进程平台。"
+    },
+    {
+      "topic": "关闭监督",
+      "result": "FAIL",
+      "detail": "借持store/scheduler/DevLog；正阈值、start幂等、stop join、闭合优先、一次Dev日志、阈值宽限和无scheduler tick均可定位。生产宿主接线仍pending。getter状态含义错误单列B12-P2-01。"
+    },
+    {
+      "topic": "搜索重放",
+      "result": "PASS",
+      "detail": "6条原参数全部独立执行exit0，排序后命中集合及stderr一致。原process查询fork片段双转义，补查正确转义仍仅2条Doxyfile popen注释；不以此宣告无上游能力，候选排除依据为实际线程/时钟API和业务协议。"
+    },
+    {
+      "topic": "历史归档",
+      "result": "PASS",
+      "detail": "B10-r2 22文件(19字节一致/3仅换行)、B11 47(44/3)、Planning API 28(25/3)，逐文件对原TEMP比较均无缺漏/内容失配。B10-r2仍只关闭B10-P2-01；B11仅33条审计PASS；Planning API冻结a3cb、仅4项API通过(4 passed/0 failed/skipped/notRun)、保留首次编译失败原日志和生产限制，无扩大范围。"
+    }
+  ],
+  "checks": {
+    "newRelations": 34,
+    "pendingRelations": 34,
+    "sourceDefinitions": 34,
+    "normalizedBindings": 172,
+    "failedBindings": 0,
+    "catalogReferences": 5,
+    "newCatalogReferences": 3,
+    "replayedSearches": 6,
+    "searchMismatches": 0,
+    "archiveFiles": 97,
+    "archiveRawMatches": 88,
+    "archiveNewlineOnly": 9,
+    "archiveContentMismatches": 0
+  },
+  "gates": {
+    "exitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "治理结构/文档/任务；不是算法合规"
+  },
+  "scopedDiffCheckExit": 0,
+  "checkoutClean": true,
+  "productUpstreamDiffEmpty": true,
+  "notRun": [
+    "C++构建/产品测试",
+    "GUI",
+    "数值/性能验收",
+    "API探测重新执行",
+    "DeepEvidence",
+    "全T01退出"
+  ],
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-20261023-004134-313235924"
+}

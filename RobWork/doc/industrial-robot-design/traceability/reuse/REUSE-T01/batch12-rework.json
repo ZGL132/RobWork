@@ -1,0 +1,21 @@
+{
+  "taskId": "REUSE-T01",
+  "finding": "B12-P2-01",
+  "reviewedCommit": "d38e4472ec40",
+  "change": "修正当前运行态与三个历史观测位的区别，并更新34关系的说明摘要；产品未改，原FAIL保留。补查fork正则正确转义，不覆盖原搜索。",
+  "search": {
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "CreateProcess|JobObject|fork\\s*\\(|popen|spawn|processrunner|QProcess",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/gtest"
+    ],
+    "exitCode": 0,
+    "stdout": "RobWork/RobWorkSim/src\\sandbox\\grippers\\GraspPlugin\\Doxyfile.in:565:# popen()) the command <command> <input-file>, where <command> is the value of\nRobWork/RobWorkSim/src\\sandbox\\grippers\\GraspPlugin\\Doxyfile.in:735:# by executing (via popen()) the command <filter> <input-file>, where <filter>\n",
+    "stderr": ""
+  }
+}

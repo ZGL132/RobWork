@@ -267,7 +267,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -322,7 +322,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -377,7 +377,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -432,7 +432,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -487,7 +487,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
@@ -520,7 +520,7 @@
         "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
         "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
       },
-      "differences": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp，原子acquire只读历史位，不产生第二状态权威",
+      "differences": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp：running为当前运行态，start置true、stop/自然退出清false；其余三个保留历史观测事实，原子acquire只读，不产生第二状态权威",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
@@ -534,7 +534,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "9f477d2d9046b121960a24efe82acb60f5485ce67aa91c28d3988733107e9e41"
+          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
         }
       ],
       "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"

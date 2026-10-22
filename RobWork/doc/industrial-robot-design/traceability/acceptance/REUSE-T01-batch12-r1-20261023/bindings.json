@@ -1,0 +1,1340 @@
+[
+  {
+    "functionId": "testkit.JsonLite.Parser",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "Parser",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::Parser",
+      "startLine": 40,
+      "endLine": 43,
+      "sha256": "4f8a0e6e996c2519ddc0e4e6b9cc5dc0f9221d908c40a2fd7d7bc5547283bb4c"
+    },
+    "computed": "4f8a0e6e996c2519ddc0e4e6b9cc5dc0f9221d908c40a2fd7d7bc5547283bb4c",
+    "match": true,
+    "first": "    explicit Parser(std::string_view text)",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.run",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "run",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::run",
+      "startLine": 45,
+      "endLine": 63,
+      "sha256": "56c7811842d02924c49048c679a293672767403a25b5856893fe3625eed7b082"
+    },
+    "computed": "56c7811842d02924c49048c679a293672767403a25b5856893fe3625eed7b082",
+    "match": true,
+    "first": "    JsonValue run()",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.run",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.skipWs",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "skipWs",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::skipWs",
+      "startLine": 78,
+      "endLine": 92,
+      "sha256": "da35978a99ffcfd4e6c4b7c857c20ffae5325ce88ef3250049dcb11fcbf97edb"
+    },
+    "computed": "da35978a99ffcfd4e6c4b7c857c20ffae5325ce88ef3250049dcb11fcbf97edb",
+    "match": true,
+    "first": "    void skipWs()",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.skipWs",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.skipWs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.skipWs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expect",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "expect",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::expect",
+      "startLine": 95,
+      "endLine": 101,
+      "sha256": "d752c22f715169254137534cb5263005ec72f96eb172ed0d5210e9312f62aaee"
+    },
+    "computed": "d752c22f715169254137534cb5263005ec72f96eb172ed0d5210e9312f62aaee",
+    "match": true,
+    "first": "    void expect(char c, const char* what)",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.expect",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expect",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expect",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.fail",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "fail",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::fail",
+      "startLine": 104,
+      "endLine": 110,
+      "sha256": "0bd9be7eb41279d8d0d0791e596afc1a222ebd2584787d15159a9cf891f2c560"
+    },
+    "computed": "0bd9be7eb41279d8d0d0791e596afc1a222ebd2584787d15159a9cf891f2c560",
+    "match": true,
+    "first": "    [[noreturn]] void fail(std::string reason) const",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.fail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.fail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.fail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.parseValue",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "parseValue",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseValue",
+      "startLine": 113,
+      "endLine": 150,
+      "sha256": "3224293c9fbe3af8a63c967d7805d4cc0daf874eb284a8eb37be83651bb73f50"
+    },
+    "computed": "3224293c9fbe3af8a63c967d7805d4cc0daf874eb284a8eb37be83651bb73f50",
+    "match": true,
+    "first": "    JsonValue parseValue(std::size_t depth)",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.parseValue",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.parseValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.parseValue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expectLiteral",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "expectLiteral",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::expectLiteral",
+      "startLine": 153,
+      "endLine": 161,
+      "sha256": "5525d5d89c7cc82e013393f4d760ecffa1225e242cf9e3e18c247c5f6f7780b2"
+    },
+    "computed": "5525d5d89c7cc82e013393f4d760ecffa1225e242cf9e3e18c247c5f6f7780b2",
+    "match": true,
+    "first": "    void expectLiteral(const char* lit)",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.expectLiteral",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expectLiteral",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.expectLiteral",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.eof",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "eof",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::eof",
+      "startLine": 67,
+      "endLine": 74,
+      "sha256": "84743209217549c1f9607c907a739aeb32c4df6ea57cdc7a7b5e2f8092a2efa1"
+    },
+    "computed": "84743209217549c1f9607c907a739aeb32c4df6ea57cdc7a7b5e2f8092a2efa1",
+    "match": true,
+    "first": "    bool eof() const noexcept { return pos_ >= text_.size(); }",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.JsonLite.eof",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.eof",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.eof",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.find",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "JsonValue::find",
+      "qualifiedSymbol": "sdurws::ird::testkit::JsonValue::find",
+      "startLine": 505,
+      "endLine": 512,
+      "sha256": "5a59911cf064c61815016c8db5127b69881a4bb1d965ca3db8ec410e348b1f97"
+    },
+    "computed": "5a59911cf064c61815016c8db5127b69881a4bb1d965ca3db8ec410e348b1f97",
+    "match": true,
+    "first": "const JsonValue* JsonValue::find(std::string_view key) const noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.find",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.find",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.find",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+      "symbol": "JsonValue::deepEquals",
+      "qualifiedSymbol": "sdurws::ird::testkit::JsonValue::deepEquals",
+      "startLine": 514,
+      "endLine": 543,
+      "sha256": "e09acb37b68b50a2f6082323e60f8f44dab0c46cc5137219a4eb542f2e7b2318"
+    },
+    "computed": "e09acb37b68b50a2f6082323e60f8f44dab0c46cc5137219a4eb542f2e7b2318",
+    "match": true,
+    "first": "bool JsonValue::deepEquals(const JsonValue& o) const",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "nonFinite",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::nonFinite",
+      "startLine": 20,
+      "endLine": 23,
+      "sha256": "9bab9139ed3ad128825938e0ea8523f01200f7bebdf60a404c2040299e7dc6b3"
+    },
+    "computed": "9bab9139ed3ad128825938e0ea8523f01200f7bebdf60a404c2040299e7dc6b3",
+    "match": true,
+    "first": "bool nonFinite(double v) noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "makeDetail",
+      "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::makeDetail",
+      "startLine": 28,
+      "endLine": 40,
+      "sha256": "3f9c2d566a6efe060b6080fffed59484235988a045b1ad0c77ea885c2d69d144"
+    },
+    "computed": "3f9c2d566a6efe060b6080fffed59484235988a045b1ad0c77ea885c2d69d144",
+    "match": true,
+    "first": "CompareDetail makeDetail(std::string fieldPath, bool hasElement, std::size_t index,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "checkCloseWithin",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkCloseWithin",
+      "startLine": 44,
+      "endLine": 58,
+      "sha256": "ab380d99c33863bbef3cc1d6441aa9bd4f53b9f8afdab01150b933fceb9c7675"
+    },
+    "computed": "ab380d99c33863bbef3cc1d6441aa9bd4f53b9f8afdab01150b933fceb9c7675",
+    "match": true,
+    "first": "CheckResult checkCloseWithin(std::string_view fieldPath, double actualSi,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "checkAllCloseWithin",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkAllCloseWithin",
+      "startLine": 60,
+      "endLine": 99,
+      "sha256": "c5ed453952ca4a48efcfa86bf82bd1f407898c2d688b91a105782f064015111f"
+    },
+    "computed": "c5ed453952ca4a48efcfa86bf82bd1f407898c2d688b91a105782f064015111f",
+    "match": true,
+    "first": "CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "checkAtMost",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkAtMost",
+      "startLine": 101,
+      "endLine": 123,
+      "sha256": "2a4361141b98036e58adf27f3321f4bec03bb219dd4255e98c1fd42875de19f8"
+    },
+    "computed": "2a4361141b98036e58adf27f3321f4bec03bb219dd4255e98c1fd42875de19f8",
+    "match": true,
+    "first": "CheckResult checkAtMost(std::string_view fieldPath, double actualSi, double boundSi,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "checkIdentical",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkIdentical",
+      "startLine": 125,
+      "endLine": 137,
+      "sha256": "8e51279f73f9763e2c26371d693262913fbd5ce4d1323344513697db692362e5"
+    },
+    "computed": "8e51279f73f9763e2c26371d693262913fbd5ce4d1323344513697db692362e5",
+    "match": true,
+    "first": "CheckResult checkIdentical(std::string_view fieldPath, std::string_view actual,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+      "symbol": "checkIdentical",
+      "qualifiedSymbol": "sdurws::ird::testkit::checkIdentical",
+      "startLine": 139,
+      "endLine": 151,
+      "sha256": "36b751e70946fde3a91adae60b5fbd83c7e1908f846586c6c022581dbb6c5359"
+    },
+    "computed": "36b751e70946fde3a91adae60b5fbd83c7e1908f846586c6c022581dbb6c5359",
+    "match": true,
+    "first": "CheckResult checkIdentical(std::string_view fieldPath, std::int64_t actual,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/CheckTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.toWin32Wait",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "toWin32Wait",
+      "qualifiedSymbol": "(anonymous namespace)::toWin32Wait",
+      "startLine": 141,
+      "endLine": 151,
+      "sha256": "9b446205b918ba3f2fa13600e42367000b03d39664766c86aa9bd79d543bed24"
+    },
+    "computed": "9b446205b918ba3f2fa13600e42367000b03d39664766c86aa9bd79d543bed24",
+    "match": true,
+    "first": "DWORD toWin32Wait(std::chrono::milliseconds ms) noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.toWin32Wait",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.toWin32Wait",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.toWin32Wait",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.utf8ToWide",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "utf8ToWide",
+      "qualifiedSymbol": "(anonymous namespace)::utf8ToWide",
+      "startLine": 165,
+      "endLine": 181,
+      "sha256": "b336d0d31d82166d537dcbdecb49eeb6e19175d69389a005bfa869da2fa5a400"
+    },
+    "computed": "b336d0d31d82166d537dcbdecb49eeb6e19175d69389a005bfa869da2fa5a400",
+    "match": true,
+    "first": "std::wstring utf8ToWide(const std::string& s)",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.utf8ToWide",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.utf8ToWide",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.utf8ToWide",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "buildEnvironmentBlock",
+      "qualifiedSymbol": "(anonymous namespace)::buildEnvironmentBlock",
+      "startLine": 199,
+      "endLine": 237,
+      "sha256": "b4b8c09cf11485ca5114e0f4fe3ec241efb749f846c6eac5f1629a955db094de"
+    },
+    "computed": "b4b8c09cf11485ca5114e0f4fe3ec241efb749f846c6eac5f1629a955db094de",
+    "match": true,
+    "first": "std::wstring buildEnvironmentBlock(const std::map<std::string, std::string>& overrides)",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "quoteWindowsArg",
+      "qualifiedSymbol": "sdurws::ird::testkit::detail::quoteWindowsArg",
+      "startLine": 65,
+      "endLine": 101,
+      "sha256": "054c8aa77c3a5ac654e37184b9522d9cf0c8c13da341139154ec4a3e63efc87c"
+    },
+    "computed": "054c8aa77c3a5ac654e37184b9522d9cf0c8c13da341139154ec4a3e63efc87c",
+    "match": true,
+    "first": "std::wstring quoteWindowsArg(const std::wstring& arg)",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "TestProcessRunner::start",
+      "qualifiedSymbol": "sdurws::ird::testkit::TestProcessRunner::start",
+      "startLine": 310,
+      "endLine": 424,
+      "sha256": "76f217b46cc6fd949bf48f555b5af46a6bad036efb7c63dfad95c2cf01b70c4a"
+    },
+    "computed": "76f217b46cc6fd949bf48f555b5af46a6bad036efb7c63dfad95c2cf01b70c4a",
+    "match": true,
+    "first": "void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path workingDir)",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "TestProcessRunner::outcome",
+      "qualifiedSymbol": "sdurws::ird::testkit::TestProcessRunner::outcome",
+      "startLine": 443,
+      "endLine": 531,
+      "sha256": "ed52090f9492617aa816d3f62d783644313cbad01ea66c03da06c67f37d12291"
+    },
+    "computed": "ed52090f9492617aa816d3f62d783644313cbad01ea66c03da06c67f37d12291",
+    "match": true,
+    "first": "ProcessOutcome TestProcessRunner::outcome()",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "TestProcessRunner::kill",
+      "qualifiedSymbol": "sdurws::ird::testkit::TestProcessRunner::kill",
+      "startLine": 543,
+      "endLine": 562,
+      "sha256": "ae8f7e72359e3fbc63357b30062264b1f85d475bcc69affa9afa5b0e98755204"
+    },
+    "computed": "ae8f7e72359e3fbc63357b30062264b1f85d475bcc69affa9afa5b0e98755204",
+    "match": true,
+    "first": "void TestProcessRunner::kill()",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "TestProcessRunner::~TestProcessRunner",
+      "qualifiedSymbol": "sdurws::ird::testkit::TestProcessRunner::~TestProcessRunner",
+      "startLine": 571,
+      "endLine": 585,
+      "sha256": "ac743a5f84defd398e39a4428b09e89447b1983fa183c9a2cb5e7820ebc65747"
+    },
+    "computed": "ac743a5f84defd398e39a4428b09e89447b1983fa183c9a2cb5e7820ebc65747",
+    "match": true,
+    "first": "TestProcessRunner::~TestProcessRunner()",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "EventWatch::awaitFile",
+      "qualifiedSymbol": "sdurws::ird::testkit::EventWatch::awaitFile",
+      "startLine": 606,
+      "endLine": 620,
+      "sha256": "0cfb857400a3126a9a80f91a317e05a4a225138212418e17f097af6531568775"
+    },
+    "computed": "0cfb857400a3126a9a80f91a317e05a4a225138212418e17f097af6531568775",
+    "match": true,
+    "first": "bool EventWatch::awaitFile(const std::filesystem::path& marker,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "EventWatch::awaitLineInFile",
+      "qualifiedSymbol": "sdurws::ird::testkit::EventWatch::awaitLineInFile",
+      "startLine": 639,
+      "endLine": 666,
+      "sha256": "dacc5afc381abc15b2bd0df2b12377c3b91b88c31f58d521a5c6d3e576ee63ae"
+    },
+    "computed": "dacc5afc381abc15b2bd0df2b12377c3b91b88c31f58d521a5c6d3e576ee63ae",
+    "match": true,
+    "first": "bool EventWatch::awaitLineInFile(const std::filesystem::path& log,",
+    "last": "}"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.DestructorImpl",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+      "symbol": "~Impl",
+      "qualifiedSymbol": "sdurws::ird::testkit::TestProcessRunner::Impl::~Impl",
+      "startLine": 275,
+      "endLine": 287,
+      "sha256": "847aaad38013892a5b9ec93b78a694f2cba6915d700868f8222e4f0a6f938887"
+    },
+    "computed": "847aaad38013892a5b9ec93b78a694f2cba6915d700868f8222e4f0a6f938887",
+    "match": true,
+    "first": "    ~Impl()",
+    "last": "    }"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.DestructorImpl",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.DestructorImpl",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "testkit.ProcessRunner.DestructorImpl",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "symbol": "StoreCloseSupervisor::StoreCloseSupervisor",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor",
+      "startLine": 25,
+      "endLine": 47,
+      "sha256": "5626af94092754c9ef9b03cb62619d3628bbf56cc4990e99095823dbb045a370"
+    },
+    "computed": "5626af94092754c9ef9b03cb62619d3628bbf56cc4990e99095823dbb045a370",
+    "match": true,
+    "first": "StoreCloseSupervisor::StoreCloseSupervisor(project::ProjectStore& store,",
+    "last": "}"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "symbol": "StoreCloseSupervisor::~StoreCloseSupervisor",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor",
+      "startLine": 49,
+      "endLine": 53,
+      "sha256": "b044fcb94f252a77a2cb20eaf3e39e3a0a797ed6d27fd15f2480ebff325150a0"
+    },
+    "computed": "b044fcb94f252a77a2cb20eaf3e39e3a0a797ed6d27fd15f2480ebff325150a0",
+    "match": true,
+    "first": "StoreCloseSupervisor::~StoreCloseSupervisor()",
+    "last": "}"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "symbol": "StoreCloseSupervisor::start",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::start",
+      "startLine": 55,
+      "endLine": 78,
+      "sha256": "cf788862ad4cb5b920a36d0c3b7bd88055e1d91016ab10af5898ab58fd50b2a3"
+    },
+    "computed": "cf788862ad4cb5b920a36d0c3b7bd88055e1d91016ab10af5898ab58fd50b2a3",
+    "match": true,
+    "first": "void StoreCloseSupervisor::start()",
+    "last": "}"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "symbol": "StoreCloseSupervisor::stop",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::stop",
+      "startLine": 80,
+      "endLine": 93,
+      "sha256": "6af8b742020cd244ecbbc15132bb1d177078f2c8a8931ba660b7ed4ed55f6adf"
+    },
+    "computed": "6af8b742020cd244ecbbc15132bb1d177078f2c8a8931ba660b7ed4ed55f6adf",
+    "match": true,
+    "first": "void StoreCloseSupervisor::stop() noexcept",
+    "last": "}"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+      "symbol": "StoreCloseSupervisor::superviseLoop",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop",
+      "startLine": 95,
+      "endLine": 177,
+      "sha256": "8711ae8088d734793063958a445e07c28e561e4c9e48fa2fa7854185381aa3e5"
+    },
+    "computed": "8711ae8088d734793063958a445e07c28e561e4c9e48fa2fa7854185381aa3e5",
+    "match": true,
+    "first": "void StoreCloseSupervisor::superviseLoop()",
+    "last": "}"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp",
+      "symbol": "running",
+      "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::running",
+      "startLine": 162,
+      "endLine": 178,
+      "sha256": "de02a644d98652a8ded74b07874b0916a5a473106d104cc2e9c0ea67d7b4c4cb"
+    },
+    "computed": "de02a644d98652a8ded74b07874b0916a5a473106d104cc2e9c0ea67d7b4c4cb",
+    "match": true,
+    "first": "    bool running() const noexcept { return m_running.load(std::memory_order_acquire); }",
+    "last": "    bool gaveUp() const noexcept { return m_gaveUp.load(std::memory_order_acquire); }"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+    "match": true
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+    "match": true
+  }
+]

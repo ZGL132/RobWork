@@ -1,0 +1,110 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\tools\prochelper\main.cpp:21: *   touch-after <ms> <file>        睡眠后创建标记文件（EventWatch 命中/树终止
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\tools\prochelper\main.cpp:138:        // 标记文件内容为单行标识：EventWatch.awaitFile 只探测存在性，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\CheckTest.cpp:10: *     （委托 core::closeWithin 用例＋CompareDetail 机器可读＋反例矩阵＋宏行为）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\CheckTest.cpp:35:/** 委托 core 公式：closeWithin 单点包转（CR-06——公式唯一实现点在 core）。 */
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\CheckTest.cpp:68:    const auto result = checkAllCloseWithin("fk[*].tcp.position", bad, ref, t, "appendixD#4");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\CheckTest.cpp:82:    const auto result = checkAllCloseWithin("fk[*].tcp.position", a, b, t, "appendixD#4");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\CheckTest.cpp:93:    const auto result = checkAllCloseWithin("fk[*]", empty, empty, core::Tolerance::make(0, 0),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:737:// L5 关闭监督器（StoreCloseSupervisor——模型半区；兜底链路在契约测试）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:759:    StoreCloseSupervisor::Config bad;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:761:    EXPECT_THROW(StoreCloseSupervisor(*store, scheduler, bad), WorkflowError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:762:    StoreCloseSupervisor::Config badGrace;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:764:    EXPECT_THROW(StoreCloseSupervisor(*store, scheduler, badGrace), WorkflowError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:768:        StoreCloseSupervisor idle(*store, scheduler);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:777:        StoreCloseSupervisor::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:780:        StoreCloseSupervisor supervisor(*store, scheduler, config);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:816:    StoreCloseSupervisor::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\test\HostAdapterTest.cpp:819:    StoreCloseSupervisor supervisor(*store, scheduler, config);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\FaultTest.cpp:172:    static_assert(std::is_class_v<sdurws::ird::testkit::EventWatch>,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\FaultTest.cpp:173:                  "EventWatch 声明缺失");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:14: *   强杀，并提供 EventWatch 作为跨进程同步的唯一正确性判据（§6.5 同步纪律：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:26: * 单一测试线程串行调用；EventWatch 无状态，可并发（见头文件注释）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:65:std::wstring quoteWindowsArg(const std::wstring& arg)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:115:// EventWatch 有界轮询的单次间隔，取 5 ms：子进程启动＋文件落盘的量级在数十
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:183:// quoteWindowsArg 已上移至 sdurws::ird::testkit::detail（本文件顶部——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:346:    std::wstring cmdLine = detail::quoteWindowsArg(spec.executable.wstring());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:349:        cmdLine += detail::quoteWindowsArg(utf8ToWide(rawArg));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:588:// EventWatch 成员（无状态——两方法均可并发调用）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:592: * @brief 有界等待标记文件出现（§6.5 EventWatch 冻结签名）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:606:bool EventWatch::awaitFile(const std::filesystem::path& marker,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:623: * @brief 有界等待日志文件出现含 needle 的行（§6.5 EventWatch 冻结签名）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:639:bool EventWatch::awaitLineInFile(const std::filesystem::path& log,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\ProcessRunner.cpp:645:                           "EventWatch::awaitLineInFile：needle 为空串——空串在任何"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:4: *         终止）＋EventWatch 命中与超时双路径＋契约 fail-fast＋行为验证。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:16: *     - EventWatch deadline 语义 → EventWatchPath 五用例；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:151:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:177:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:246:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:260:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:277:// EventWatch 双路径（acceptance 2 第二句：命中与超时＋deadline 语义）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:281:TEST(EventWatchPath, AwaitFileHitsWhenMarkerAppears)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:289:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:296:TEST(EventWatchPath, AwaitFileTimesOutAtDeadline)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:302:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:315:TEST(EventWatchPath, AwaitLineHitsWhenNeedleLineArrivesLate)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:325:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:332:TEST(EventWatchPath, AwaitLineTimesOutWithoutNeedle)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:342:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:354:TEST(EventWatchPath, AwaitLineTreatsMissingFileAsTimeout)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:359:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:371:TEST(EventWatchPath, ZeroDeadlineChecksCurrentStateOnly)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:380:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:392:TEST(EventWatchPath, EmptyNeedleThrowsUsage)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:395:    EventWatch watch;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:417:    EXPECT_EQ(detail::quoteWindowsArg(L"a\\\"b"), L"\"a\\\\\\\"b\"");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:421:    EXPECT_EQ(detail::quoteWindowsArg(L"C:\\dir\\file"), L"C:\\dir\\file");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:423:    EXPECT_EQ(detail::quoteWindowsArg(L"C:\\dir a\\"), L"\"C:\\dir a\\\\\"");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:425:    EXPECT_EQ(detail::quoteWindowsArg(L"hello world"), L"\"hello world\"");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\test\ProcessRunnerTest.cpp:435:    EXPECT_EQ(detail::quoteWindowsArg(L""), L"\"\"");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\src\Compare.cpp:18:bool closeWithin(double value, double reference, Tolerance t) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\src\Compare.cpp:46:        if (!closeWithin(a[i], b[i], t)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\src\Compare.cpp:61:        if (!closeWithin(a[i], b[i], t)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\Check.cpp:3: * @brief  数值断言实现——包转 core::closeWithin（唯一公式）＋失败详情组织。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\Check.cpp:50:    // 委托 core::closeWithin（唯一公式实现点——CR-06 diff 通过后的合法消费；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\Check.cpp:52:    if (!core::closeWithin(actualSi, referenceSi, tolerance)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\Check.cpp:60:CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\src\Check.cpp:74:        if (!core::closeWithin(actualSi[i], referenceSi[i], tolerance)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\contract_test\HostAssemblyContractTest.cpp:667:    StoreCloseSupervisor::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\contract_test\HostAssemblyContractTest.cpp:671:    StoreCloseSupervisor supervisor(*created.store, exeScheduler, config, &devLog);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\Check.hpp:3: * @brief  数值断言与比较详情——CheckResult/checkCloseWithin/checkAllCloseWithin/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\Check.hpp:58: * @brief 单点容差匹配（C4 公式包转——委托 core::closeWithin，唯一公式实现点）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\Check.hpp:79:CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:3: * @brief  L5 关闭控制器（StoreCloseSupervisor）——存储上下文关闭等待
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:81:class StoreCloseSupervisor final {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:131:    StoreCloseSupervisor(project::ProjectStore& store,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:138:    ~StoreCloseSupervisor();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:140:    StoreCloseSupervisor(const StoreCloseSupervisor&) = delete;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:141:    StoreCloseSupervisor& operator=(const StoreCloseSupervisor&) = delete;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\include\sdurws\ird\workflow\CloseSupervisor.hpp:182:    void superviseLoop();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:3: * @brief  L5 关闭控制器（StoreCloseSupervisor）的实现翻译单元（头文件为
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:25:StoreCloseSupervisor::StoreCloseSupervisor(project::ProjectStore& store,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:49:StoreCloseSupervisor::~StoreCloseSupervisor()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:55:void StoreCloseSupervisor::start()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:69:    // superviseLoop 收尾，acquire 读到 false 与线程的 release 清位配对）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:77:    m_thread = std::thread([this] { superviseLoop(); });
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:80:void StoreCloseSupervisor::stop() noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow\src\CloseSupervisor.cpp:95:void StoreCloseSupervisor::superviseLoop()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\include\sdurws\ird\core\Compare.hpp:12: * 核心公式（附录 D C4）：closeWithin ⇔ |value−reference| ≤ relative·|reference| + absolute。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\include\sdurws\ird\core\Compare.hpp:87:bool closeWithin(double value, double reference, Tolerance t) noexcept;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:33:    EXPECT_TRUE(closeWithin(1.01, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:35:    EXPECT_FALSE(closeWithin(1.02, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:37:    EXPECT_TRUE(closeWithin(0.0009, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:44:    EXPECT_TRUE(closeWithin(0.0, 0.0, t));        // 精确零
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:45:    EXPECT_TRUE(closeWithin(0.0009, 0.0, t));     // |0.0009| ≤ abs(0.001)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:46:    EXPECT_FALSE(closeWithin(0.002, 0.0, t));     // 超 absolute
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:48:    EXPECT_TRUE(closeWithin(-0.0009, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:49:    EXPECT_FALSE(closeWithin(-0.002, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:56:    EXPECT_FALSE(closeWithin(qnan, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:57:    EXPECT_FALSE(closeWithin(1.0, qnan, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:58:    EXPECT_FALSE(closeWithin(inf, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:59:    EXPECT_FALSE(closeWithin(1.0, -inf, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core\test\CompareTest.cpp:60:    EXPECT_FALSE(closeWithin(qnan, qnan, t));     // NaN 对 NaN 也是 false（非有限）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\gtest\AssertMacros.hpp:56:    IRD_CHECK_REPORT_(checkAllCloseWithin(                                             \
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\ProcessRunner.hpp:23: *   - 同步纪律：正确性判据只来自可观察事件（EventWatch 有界等待），禁止固定 sleep；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\ProcessRunner.hpp:67:class EventWatch {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\ProcessRunner.hpp:69:    EventWatch() = default;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\ProcessRunner.hpp:147:std::wstring quoteWindowsArg(const std::wstring& arg);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\ToleranceProfile.hpp:18: * 职责分界：数值基础（C4 公式）＝core closeWithin；本单元＝档案装载与
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\SetCheck.hpp:110:        if (!core::closeWithin(actualFields[i].valueSi, expectedFields[i].valueSi,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\SetCheck.hpp:231:                if (!core::closeWithin(af[k].valueSi, ef[k].valueSi, tol)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit\include\sdurws\ird\testkit\SetCheck.hpp:421:                if (!core::closeWithin(af[k].valueSi, ef[k].valueSi, tol)) {
