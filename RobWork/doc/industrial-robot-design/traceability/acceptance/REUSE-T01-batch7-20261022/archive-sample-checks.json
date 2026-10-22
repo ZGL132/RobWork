@@ -1,0 +1,82 @@
+[
+  {
+    "batch": "batch5-r2",
+    "name": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch5-r2-42f16819\\acceptance.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch5-r2-20261022\\acceptance.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch5-r2",
+    "name": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch5-r2-42f16819\\acceptance.md",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch5-r2-20261022\\acceptance.md",
+    "normalizedContentEqual": true,
+    "byteEqual": false
+  },
+  {
+    "batch": "batch5-r2",
+    "name": "fixed-row.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch5-r2-42f16819\\fixed-row.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch5-r2-20261022\\fixed-row.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch5-r2",
+    "name": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch5-r2-42f16819\\task.log",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch5-r2-20261022\\task.log",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch5-r2",
+    "name": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch5-r2-42f16819\\reuse.log",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch5-r2-20261022\\reuse.log",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch6",
+    "name": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-batch6-8e9af0e8e712437ab6dbb96200ac9fc6\\acceptance.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch6-20261022\\acceptance.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch6",
+    "name": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-batch6-8e9af0e8e712437ab6dbb96200ac9fc6\\acceptance.md",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch6-20261022\\acceptance.md",
+    "normalizedContentEqual": true,
+    "byteEqual": false
+  },
+  {
+    "batch": "batch6",
+    "name": "hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-batch6-8e9af0e8e712437ab6dbb96200ac9fc6\\hash-checks.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch6-20261022\\hash-checks.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch6",
+    "name": "new-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-batch6-8e9af0e8e712437ab6dbb96200ac9fc6\\new-rows.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch6-20261022\\new-rows.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  },
+  {
+    "batch": "batch6",
+    "name": "search-replay.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-batch6-8e9af0e8e712437ab6dbb96200ac9fc6\\search-replay.json",
+    "tracked": "RobWork\\doc\\industrial-robot-design\\traceability\\acceptance\\REUSE-T01-batch6-20261022\\search-replay.json",
+    "normalizedContentEqual": true,
+    "byteEqual": true
+  }
+]

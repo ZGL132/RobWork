@@ -1,0 +1,1020 @@
+[
+  {
+    "functionId": "core.TestMainReport.main",
+    "ownerUnit": "core",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 18,
+        "endLine": 23,
+        "sha256": "82585c0df15b3c5fe9c0bc4795b66a8ddb28ff577d1c5065d33631f2349671ad"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_core_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "初始化GTest并安装既有testkit监听器，两个无Qt入口同形态。可复用现有测试构建入口而不复制main；上游sdurw-gtest-main带RobWork全局初始化与TestSuiteConfig，不可盲链且不能有双main。不是新报告算法/生产工具库",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+        "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
+    "designRefs": [
+      "AGENTS.md §4 验证留痕",
+      "units/testkit.md §7.2/§7.3"
+    ]
+  },
+  {
+    "functionId": "evidence.Snapshot.appendU16",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "appendU16",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU16",
+        "startLine": 97,
+        "endLine": 101,
+        "sha256": "a3c708cb73beded61559c893b86581fea8ebc057ada6b0f22d73b4d9a30886df"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.appendU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "appendU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+        "startLine": 104,
+        "endLine": 110,
+        "sha256": "ad63da30ad3142203673fecfdaa38d513e2c02b31d874a30e5d38720be8a83f2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.appendU64",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "appendU64",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU64",
+        "startLine": 113,
+        "endLine": 118,
+        "sha256": "4bb06976b65bf8ebdfc187349777c56ddf3b5acdb36abd345be6f0583a5e6241"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.appendLengthString",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "appendLengthString",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthString",
+        "startLine": 130,
+        "endLine": 143,
+        "sha256": "85767123d5716cd93e9c0de7d4d9c0ebe694908440ab9b09ef7f8443550cd2f4"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.appendLengthBytes",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "appendLengthBytes",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthBytes",
+        "startLine": 148,
+        "endLine": 157,
+        "sha256": "d2ad682408885938c53f3d9b041dcf6e35be5e3a4bc4befdefb215efb6def6ce"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.Reader.readU16",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "readU16",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU16",
+        "startLine": 187,
+        "endLine": 194,
+        "sha256": "644e56be004d14bc7169b3e175e3fb4fae7fc94028a58b2e12b344751447f4c8"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.Reader.readU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "readU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU32",
+        "startLine": 196,
+        "endLine": 205,
+        "sha256": "9a02f5a1b1fbee659080c1d5031398c203206e381e9234b4854d7df7b94f1f4c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.Reader.readU64",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "readU64",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU64",
+        "startLine": 207,
+        "endLine": 216,
+        "sha256": "30ff7348d1325d071eee908c4e052bafa9162dfe5f98bf3e17b6c6a525ce94b0"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.Reader.readLengthString",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "readLengthString",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthString",
+        "startLine": 227,
+        "endLine": 238,
+        "sha256": "1d4a95332250bfa2a63909160bdc7f7cbbb6d1f15212d470685d2b82eaa85f3f"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Snapshot.Reader.readLengthBytes",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+        "symbol": "readLengthBytes",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthBytes",
+        "startLine": 241,
+        "endLine": 250,
+        "sha256": "1541021a4c432fdfa5fa021038ce30bf901cf2d7b7d592b50940b2f8fdf0b303"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.appendU16",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "appendU16",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU16",
+        "startLine": 122,
+        "endLine": 126,
+        "sha256": "a3c708cb73beded61559c893b86581fea8ebc057ada6b0f22d73b4d9a30886df"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.appendU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "appendU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+        "startLine": 129,
+        "endLine": 135,
+        "sha256": "ad63da30ad3142203673fecfdaa38d513e2c02b31d874a30e5d38720be8a83f2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.appendU64",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "appendU64",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU64",
+        "startLine": 138,
+        "endLine": 143,
+        "sha256": "4bb06976b65bf8ebdfc187349777c56ddf3b5acdb36abd345be6f0583a5e6241"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.appendLengthString",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "appendLengthString",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthString",
+        "startLine": 167,
+        "endLine": 180,
+        "sha256": "d9db469dd595cb19527734725f2beaa957a83bc9e6e2ef188ef1d840fb0a0824"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.appendLengthBytes",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "appendLengthBytes",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthBytes",
+        "startLine": 185,
+        "endLine": 195,
+        "sha256": "bc6ad8fd0bea1b074de8cc13b03ea3cbe3de3ac701377b2432d04cae48696297"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "evidence拥有快照/切片编码及身份权威；低层大端写原语与其他域重叠。字符串u16长度/65535上限/禁NUL、字节块u32长度保留，不以BINArchive格式化长度替代或移动证据判定权",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.Reader.readU16",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "readU16",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU16",
+        "startLine": 225,
+        "endLine": 232,
+        "sha256": "644e56be004d14bc7169b3e175e3fb4fae7fc94028a58b2e12b344751447f4c8"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.Reader.readU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "readU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU32",
+        "startLine": 234,
+        "endLine": 243,
+        "sha256": "9a02f5a1b1fbee659080c1d5031398c203206e381e9234b4854d7df7b94f1f4c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.Reader.readU64",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "readU64",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU64",
+        "startLine": 245,
+        "endLine": 254,
+        "sha256": "30ff7348d1325d071eee908c4e052bafa9162dfe5f98bf3e17b6c6a525ce94b0"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.Reader.readLengthString",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "readLengthString",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthString",
+        "startLine": 281,
+        "endLine": 292,
+        "sha256": "b38bf8c90d23a9834bef92d74d4a7f9b01c24fcb0c1ac729422738335e72bd17"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Slice.Reader.readLengthBytes",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-01",
+      "CON-05",
+      "NFR-COR-03"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+        "symbol": "readLengthBytes",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthBytes",
+        "startLine": 295,
+        "endLine": 303,
+        "sha256": "dd4672d935c8d7988009aa33fe939393e0f132910b7edd17508994973162a92d"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "显式大端/读前剩余字节预算；SnapshotIncomplete与SliceIncomplete各属自己的错误语义。保留借持输入/偏移定位/尾随字节拒绝；不因共享低层而合并快照和切片契约",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Evidence.appendU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-05",
+      "CON-06",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+        "symbol": "appendU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+        "startLine": 51,
+        "endLine": 57,
+        "sha256": "a9fefafb88c4c19a9de4f9ecd9b585da299fd2fbbb67104955acd66090d12142"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Evidence.appendLenStr",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-05",
+      "CON-06",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+        "symbol": "appendLenStr",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLenStr",
+        "startLine": 60,
+        "endLine": 64,
+        "sha256": "760579bb5a72f39d150555239559254044f1bb7fada474c986d70bd72bfdee69"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Evaluator.appendU32",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-05",
+      "CON-06",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+        "symbol": "appendU32",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+        "startLine": 64,
+        "endLine": 70,
+        "sha256": "7f7f722180dfb93adfa4ab6cf7befe6980f8a7f80db9c588d6a1edec1fb6b0db"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.Evaluator.appendLenStr",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "CON-05",
+      "CON-06",
+      "NFR-COR-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+        "symbol": "appendLenStr",
+        "qualifiedSymbol": "sdurws::ird::evidence::(anonymous namespace)::appendLenStr",
+        "startLine": 73,
+        "endLine": 77,
+        "sha256": "3d427713b02f76fa1e9dc82d53a09c89d3ef698395d02ed9ac75ed99cab10d37"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence"
+    ],
+    "usageRole": "owner",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "UTIL-BINARCHIVE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"appendU16|appendU32|appendU64|appendLen|readU16|readU32|readU64|readLength|struct Reader\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "Profile/注册清单自己的规范顺序与摘要域由evidence拥有；固定大端u32及字符串拼装与Snapshot/Slice重复，基础原语可复用但不能把各magic、版本与排序混成统一身份",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失"
+  },
+  {
+    "functionId": "evidence.TestMainReport.main",
+    "ownerUnit": "evidence",
+    "requirements": [
+      "NFR-COR-01"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "symbol": "main",
+        "qualifiedSymbol": "::main",
+        "startLine": 23,
+        "endLine": 32,
+        "sha256": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_evidence_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "TEST-HARNESS",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+      "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
+    },
+    "differences": "初始化GTest并安装既有testkit监听器，两个无Qt入口同形态。可复用现有测试构建入口而不复制main；上游sdurw-gtest-main带RobWork全局初始化与TestSuiteConfig，不可盲链且不能有双main。不是新报告算法/生产工具库",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+        "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
+      }
+    ],
+    "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
+    "designRefs": [
+      "AGENTS.md §4 验证留痕",
+      "units/testkit.md §7.2/§7.3"
+    ]
+  }
+]

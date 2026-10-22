@@ -232,7 +232,7 @@ industrialrobot/tools/testdata/ # 清单 lint / 完整性校验工具（TK-T03 �
 
 **范围**：对象/数组/字符串（UTF-8，标准转义）/数字（IEEE double 可精确解析区间）/`true`/`false`/`null`。**拒绝**：重复键、`NaN`/`Infinity` 字面、尾随内容、注释、BOM。错误消息含行/列。
 
-**为何自带而不复用/引入**：(a) io 的 JSON 读写器是产品单元且未产出——依赖 io 违反 T-2；(b) vcpkg installed 实测无独立 JSON 库，引入新第三方依赖超出"不擅自增加"边界；(c) RobWork 侧无共享 JSON 头可借。**边界声明**：JsonLite 是测试工具，不构成产品持久化格式的第二个实现点（NFR-MNT-03 不受影响——单位/身份/比较的权威仍在 core/io），其输出只入 `testdata/` 与测试报告。若 development-task-breakdown 未来统一测试侧 JSON 机制，本文按增量修订对齐（登记于 §12.2）。
+**复用边界（REUSE-T01 审计补正）**：testkit 不得反向依赖 io 产品单元（T-2），测试 JSON 与产品 profile 的区别也不豁免底层解析/Unicode/序列化工具的复用审查。既有自持解析器是待迁移事实，不是因测试侧或未安装独立 JSON 包而获准的新核心。已审上游默认 DOM 工厂为 XML；同渠道已安装 Boost.PropertyTree 的公开 JSON DOM 丢失标量类型及空容器区别，并接受重复键/BOM，不能直接代替本节契约。具体源区段、候选和实测见 `reuse/functions/testkit.json` 与 `traceability/reuse/REUSE-T01/probe-r8/`；该限制不证明所有成熟候选均不可用。后续优先评估同一 vcpkg 渠道的成熟公开 API，保持本节值模型、拒绝规则、错误定位和报告语义，只做实际必要的 profile 薄适配；供给或新实现仍须 H1/H6 批准，禁止另建通用 DOM/解析平台。单位、身份及比较权威仍在 core/io，当前接口与数据格式不因本次审计改变。
 
 ```cpp
 // JsonLite.hpp（节选）

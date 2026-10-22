@@ -2029,6 +2029,98 @@
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
         "conclusion": "已读取原gtest/CMake与两处相同产品入口，未跑上游完整测试"
       }
+    },
+    {
+      "id": "UTIL-TEXT",
+      "ownerUnit": "io",
+      "search": {
+        "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
+        "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "conclusion": "默认DOM工厂只提供XML，插件扩展仍须核实际供给；StringUtil字符串工具不含严格UTF-8预检"
+      },
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/core/DOMParser.hpp",
+          "sha256": "7d458d0d9498f3a3719b9127be95618d7c584cb9b0ba848278b9dd6909ccee69",
+          "symbols": [
+            "DOMParser",
+            "load",
+            "getDOMParser"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/DOMParser.cpp",
+          "sha256": "fe5ac95ce2ba2376e148af30df6c91d049fc15bb1d972f0299367f9af9eef17c",
+          "symbols": [
+            "BoostXMLParser",
+            "hasDOMParser",
+            "XML"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/StringUtil.hpp",
+          "sha256": "f15c1a2fd2f05aed7d019decb06d76f26b7100ab6e9a905f113d0472f1e8d0db",
+          "symbols": [
+            "StringUtil",
+            "toUpper",
+            "toLower",
+            "quote"
+          ],
+          "target": "sdurw_core",
+          "targetFile": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "targetSha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        }
+      ],
+      "boundary": "先查上游默认DOM与字符串工具，再查同渠道已安装Boost.PropertyTree；不把XML或普通string操作冒充带类型JSON/严格Unicode",
+      "build": {
+        "targets": [
+          "sdurw_core"
+        ],
+        "constraints": "沿原sdurw_core；不新增JSON插件或把testkit链接到io生产库"
+      },
+      "usages": [
+        {
+          "consumerUnit": "io",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "testkit",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "limits": {
+        "semantics": "默认DOM为XML；StringUtil无完整UTF-8合法性/代理区/超长编码契约。已安装ptree公开DOM丢标量类型，源码读到的detail回调不视为稳定公共API",
+        "lifetime": "解析游标/预算/取消属于每请求私有；不转移profile/诊断/身份owner",
+        "determinism": "JSON键序/数值格式、CSV流式和BOM策略按各原契约分别保留"
+      },
+      "tests": [],
+      "docs": [],
+      "examples": [],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "resourceSearch": {
+        "command": "rg -n \"json_parser|boost/json|nlohmann|rapidjson|utf8|SHA256|sha256\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest --glob \"*.hpp\" --glob \"*.cpp\" --glob CMakeLists.txt",
+        "conclusion": "列明上游源码与gtest范围无JSON/UTF8同名命中；只代表该命令范围，不宣称库或插件生态绝无能力"
+      }
     }
   ]
 }
