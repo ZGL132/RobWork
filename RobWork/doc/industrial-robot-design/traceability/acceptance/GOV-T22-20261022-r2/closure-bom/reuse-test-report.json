@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "8E16164E8D6DD3332F552BEBE5ED3B082589BE107E4AAAD2C7F66A1A64AD1CDD",
+  "helperSha256": "C17D5E62E7F4D153F6D37C0162CC4D2DFF2604452EB389F1F06D7CCD7A6B5D4A",
+  "driverSha256": "3D73D9742938150593FDAE716ED873EDC3E8B4992F284FB4B5EB7BC3B70C31C0",
+  "expected": 2,
+  "executed": 2,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 1,
+  "skipped": 0,
+  "failed": 1,
+  "complete": true,
+  "tests": [
+    {
+      "name": "independent-closure-no-bom-control",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=1 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "independent-closure-bom-same-accepted-bytes",
+      "passed": false,
+      "exitCode": 1,
+      "expected": "PASS",
+      "output": "REUSE-CLOSURE : RobWork/doc/industrial-robot-design/reuse/fixture-suitability.txt : accepted version mismatch\r\n"
+    }
+  ],
+  "reviewedCommit": "4281543becc1a64f83087e2a752826480f8d2ce4",
+  "independentProbeSha256": "E857A376FD599C3209CFB4EE6F55C2CC351FB4CC98430738D998E4E37C3A2287",
+  "frozenFixtureDriverSha256": "9B44E52BCAD97BF635C5FAB2BDC80BAB707287D5A0D0B22204875D8C3084654D"
+}

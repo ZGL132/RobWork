@@ -1,0 +1,7 @@
+independent-closure-no-bom-control : True (exit=0 expected=PASS)
+independent-closure-bom-same-accepted-bytes : False (exit=1 expected=PASS)
+Exception: C:\Users\zgl18\.codex\worktrees\accept-reuse-gov-t22-r2\RobWork\.cache\GOV-T22-r2\closure-bom\generated-closure-driver.ps1:242
+Line |
+ 242 |  … tedTests) { throw "reuse tests failed/incomplete: failed=$failed exec …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | reuse tests failed/incomplete: failed=1 executed=2 expected=2 driver=
