@@ -49,11 +49,11 @@ evidence 的 EvaluationOutput/aggregateVerdict/ResultEnvelope 与 diagnostics �
 
 ## 7. 库存结项协议
 
-本轮库存是不可变历史事实，不能通过更改classification洗白。RequireMigrationComplete当前必须拒绝存量债务；REUSE-T06须按独立批准的契约增加逐文件/逐功能关闭证据（迁移提交、上游调用测试、独立验收），之后再启用最终零债务判定；不得简单清空库存或改基点。
+库存是不可变历史事实，不能通过更改classification洗白。GOV-T22 实现的 RequireMigrationComplete 读取逐文件/逐功能关闭记录，而非永久锁死历史债务计数；无有效关闭记录仍须拒绝。格式与独立验收绑定见 audit-contract §7.1，最终使用仍须 REUSE-T06 冻结验收；不得简单清空库存或改基点。
 
 后续语义结项须关联 functions/<unit>.json 的真实生产链、旧内核删除提交、有效正向证据与独立验收，不限于 16 个已知重复文件。catalog 的 candidate/reviewed/verified 是能力证据状态，不替代功能适用性和架构权限。完整补强契约见 audit-contract.md §3～§7。
 
-现有 GOV-T21 pass 不自动验收本次补强；按 migration.md §11 先完成权限/矩阵/正向证据门禁及独立验收，再放行 REUSE-T02。文档通过仅表示规则已登记，新增机器检查尚未实现；禁止直接推进适配层或算法替换。
+现有 GOV-T21 pass 不自动验收本次补强；按 migration.md §11 先完成权限/矩阵/正向证据门禁及独立验收，再放行 REUSE-T02。GOV-T22 正在验证补强实现，尚未独立验收；文档通过和格式夹具通过均不构成生产迁移通过，禁止提前推进适配层或算法替换。后续执行契约须增加 reuseGateAcceptance，引用 GOV-T22 的真实验收 Git 对象/冻结 SHA。
 
 ## 8. 验收返工GOV-T21/1
 

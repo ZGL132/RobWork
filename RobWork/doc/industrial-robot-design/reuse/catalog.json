@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "ird-reuse/1",
+  "schemaVersion": "ird-reuse/2",
   "baselineCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
   "units": [
     "core",
@@ -45,7 +45,43 @@
           "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
           "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_models"
+        ],
+        "constraints": "q_auth offset、TCP、参考系与固定段"
+      },
+      "usages": [
+        {
+          "consumerUnit": "kinematics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "q_auth offset、TCP、参考系与固定段",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "runtime",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "query"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "KIN-IK",
@@ -68,7 +104,43 @@
           "targetFile": "RobWork/RobWork/src/rw/invkin/CMakeLists.txt",
           "targetSha256": "5a37689be67e9055010d4e52b28619921c67ec46703f3ac54a7a8f3e5bb50cb4"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_invkin"
+        ],
+        "constraints": "双容差、约束、取消和统计须独立探测"
+      },
+      "usages": [
+        {
+          "consumerUnit": "kinematics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "双容差、约束、取消和统计须独立探测",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "kinematics",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "query"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"solveLocal|setSolverType|DLS\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "MATH-SVD",
@@ -90,7 +162,43 @@
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "显式阈值、病态判定和矩阵维度"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "显式阈值、病态判定和矩阵维度",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "core",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"svd|pseudoInverse\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "DYN-RNE",
@@ -113,7 +221,43 @@
           "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
           "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurwsim"
+        ],
+        "constraints": "SerialDevice、Body坐标、DOF+1、移动关节力投影"
+      },
+      "usages": [
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "SerialDevice、Body坐标、DOF+1、移动关节力投影",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "dynamics",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "query"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"solve|setGravity|setPayload\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "DYN-FD",
@@ -136,7 +280,43 @@
           "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
           "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurwsim"
+        ],
+        "constraints": "真实场景、后端、初态/力/步长/确定性"
+      },
+      "usages": [
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "真实场景、后端、初态/力/步长/确定性",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "dynamics",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "query"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"initPhysics|step|load\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "MATH-ROT",
@@ -157,7 +337,43 @@
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "轴角、参考系、零角/π"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "轴角、参考系、零角/π",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "core",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"toRotation3D\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "TRAJ-SLERP",
@@ -178,7 +394,43 @@
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "端点、最短弧、异常"
+      },
+      "usages": [
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "端点、最短弧、异常",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "trajectory",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"slerp\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "TRAJ-LINEAR",
@@ -199,7 +451,43 @@
           "targetFile": "RobWork/RobWork/src/rw/trajectory/CMakeLists.txt",
           "targetSha256": "5e91f0cc2da8cdcbc06b3dee71cab9ee178e393ca1aa6d0e98dcd71eab6db10e"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_trajectory"
+        ],
+        "constraints": "单位、时间范围、零时长"
+      },
+      "usages": [
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "单位、时间范围、零时长",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "trajectory",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"LinearInterpolator\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "TRAJ-HIGH",
@@ -220,7 +508,43 @@
           "targetFile": "RobWork/RobWork/src/rw/trajectory/CMakeLists.txt",
           "targetSha256": "5e91f0cc2da8cdcbc06b3dee71cab9ee178e393ca1aa6d0e98dcd71eab6db10e"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_trajectory"
+        ],
+        "constraints": "候选不等价五次/七次，必须先缺口提案"
+      },
+      "usages": [
+        {
+          "consumerUnit": "trajectory",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "候选不等价五次/七次，必须先缺口提案",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "trajectory",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"CubicSplineFactory\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     },
     {
       "id": "COLLISION",
@@ -241,7 +565,43 @@
           "targetFile": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
           "targetSha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
         }
-      ]
+      ],
+      "build": {
+        "targets": [
+          "sdurw_proximity"
+        ],
+        "constraints": "policy策略唯一，State独占"
+      },
+      "usages": [
+        {
+          "consumerUnit": "policy",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "policy策略唯一，State独占",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+      },
+      "ownerUnit": "policy",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "query"
+      ],
+      "review": {
+        "status": "candidate",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "rg -n \"inCollision\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+      }
     }
   ]
 }

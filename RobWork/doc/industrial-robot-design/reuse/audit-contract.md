@@ -2,7 +2,7 @@
 
 本文件承接所有者批准的最终方案，定义审计数据与待实现门禁；不承载第二份架构权威。权限以 [ARCHITECTURE §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19) 为准，执行顺序见 [policy](policy.md)，阶段见 [migration §11](migration.md#11-最终方案补充阶段门2026-10-22)。
 
-**实施状态**：本轮仅落地文档。现有 `validate-reuse.ps1` 仍检查文件库存、凭证、摘要、已知指纹及原阶段门；本文的新字段、IRD-GATE-AD、逐功能覆盖、生产正向证据和语义结项尚未实现，不得以现有 PASS 宣称已强制。补强门禁经独立验收前，不进入 REUSE-T02 适配实现或算法替换。
+**实施状态（GOV-T22）**：补强实现位于既有 `validate-reuse.ps1` 及其私有 `reuse-contract.ps1`，由原 `ird_gates`/CI 调用；正在验证，尚未独立验收。下文格式的结构、摘要、权限申报及结果一致性可机器核查；真实来源、完整调用链和语义仍须独立审查。catalog 全部保持 candidate，未新增真实生产 migrated/closed 记录。补强独立验收通过前，不进入 REUSE-T02 适配实现或算法替换。
 
 ## 1. 权威与唯一数据源
 
@@ -76,9 +76,9 @@
 
 证据新鲜度同时绑定产品区段、上游能力、相关依赖/配置及测试摘要；任一相关项变化，受影响证据过期并重新验证。普通局部编辑不强制跑全量 mutation 实验，未受影响证据可引用。无法进行可判别实验时记录原因与替代检验，由独立验收确认，不可自行豁免。
 
-## 7. 门禁实施与对抗验收矩阵（待实现）
+## 7. 门禁实施与对抗验收矩阵
 
-以下为后续补强的验收规则名，**不是当前已注册检查项**。入口沿用 validate-reuse / ird_gates / 既有 CI；PR 引用实际日志，不新增第二套 lint 或 CI 平台。
+入口沿用 validate-reuse / ird_gates / 既有 CI；`REUSE-AD` 对应 IRD-GATE-AD，其他具名诊断见脚本。下表通过条件同时包含机器部分与独立语义部分，不把正则匹配或格式正例等同完整架构/生产验收。PR 引用实际日志，不新增第二套 lint 或 CI 平台。
 
 | 规则 | 通过条件 | 必须检出的负例 |
 | --- | --- | --- |
@@ -91,6 +91,19 @@
 | 语义结项 | 基线不变，关闭记录证明旧核心已移除且独立验收通过 | 清库存/改基点洗白；pending/debt/audit-required 或静默 legacy fallback |
 
 自测扩展现有 `test-reuse-governance.ps1`，在隔离夹具中真实证明允许/拒绝与测试变红；按现有 PS7/PS5.1 支持面验证，JUnit/JSON 分列 passed/skipped/failed/notRun。补强验收绑定冻结 SHA，独立会话确认；旧 GOV-T21 pass 不自动覆盖新增门禁。
+
+### 7.1 实施格式与机器检查范围
+
+- `catalog.json` schema 为 `ird-reuse/2`；旧 ID、上游绑定和基点保留，禁止回退旧 schema 静默跳过新字段。reviewed/verified 必须绑定复核证据，且复核版本中的上游源码/目标与现版本一致；candidate 空资源数组表示尚未复核，不表示不存在资源。
+- `permissions.json` 使用 `ird-reuse-permissions/1`。`grants[]` 每项含 id、source `{path,sha256}`、targets、categories、operations、origin、lifetime、permissionRef、usageRole、build `{path,sha256}`；宿主再含 exceptionId。origin 区分 runtime-owner/runtime-borrow/task-private/host-presentation/value。模型操作、State 写权限与文件/目标匹配分别检查；四组 HOST-* 文件为封闭清单，不能用来源标签绕过。
+- `functions/<unit>.json` 使用 `ird-reuse-functions/1`，顶层为 unit/functions；行字段见 §4。sources 每区段含 path/symbol/startLine/endLine/sha256；inputs 为相关源码、测试、CMake/配置的摘要绑定。targets 必须在绑定的 CMake 中有真实声明；动态 CMake 的实际编译归属仍需构建接线核查。矩阵可记录 pending/proposal 审计存量，但变动生产文件必须由已解决的 migrated/closed 功能完整覆盖，business-specific 也要 nonOverlapEvidence。新模板、脚本和 CMake 同受覆盖；仅 GOV-T21/T22 精确登记的根 CMake/门禁文件允许治理 bootstrap，不豁免目录。
+- direct/adapter 的 migrated/closed 行含 production `{entry,upstream,consumer,target}` 与 evidence `{path,sha256}`。证据 JSON 使用 `ird-reuse-production/1`，含 functionId/target/bindings，以及 normal/disconnected/oracle/upstreamComparison；每次运行含 command/exitCode/xml/log，文件均绑定摘要。XML 必须有真实 testcase 节点且计数一致，无必需用例跳过或运行错误；正常/oracle/上游对照成功，断开实验非零且有失败断言。disconnected 另含 mutation `{source,originalSha256,description}` 与 mutatedSource 绑定，变异必须作用于登记生产源码并改变内容。
+- `closures.json` 使用 `ird-reuse-closures/1`，files 每项含 path/baselineBlob/currentSha256/functionKeys/migrationCommit/acceptance。acceptance 为 `{commit,path,reviewedCommit}` 的 Git 对象引用，必须 REUSE-* pass 且祖先匹配。当前文件完整关联 closed 功能；已删路径 currentSha256 为 deleted，替代功能通过 `replaces[]` 明确引用旧基线路径。源码、输入、生产证据及其报告依赖须与被验版本相同；功能记录仅允许验收后的 migrated→closed 状态推进，不允许更换边界后沿用旧 pass。基线之外的新产品源码使用 baselineBlob=absent，并核对它确实不在基线且当前存在；不能仅填 closed 跳过独立结项。固定库存不改分类，最终模式对基线及当前新增源码逐项检查语义关闭。
+- GOV-T22 仅有精确治理范围 bootstrap；其他进入 ready/done 的新任务必须同时引用原 governanceAcceptance 与新增 reuseGateAcceptance（GOV-T22 的真实冻结 pass），不能自填布尔值放行。
+
+源码权限扫描支持受限头、显式类型、常见构造/工厂/加载/模型修改及 State 写路径，并区分大小写。别名、间接工厂、跨任务共享、句柄逃逸、条件编译和实际结果消费无法靠该扫描完备证明，必须逐功能记录并独立核查；既有依赖/零 Qt 门禁继续承担链接边界。格式夹具内合成的 XML、断开描述和验收记录只测试校验器，不是产品实验或真实批准。摘要防过期，不提供报告身份认证。
+
+`-Head` 冻结校验数据；验收还须使用该 SHA 的脚本执行，报告记录 validator/helper/driver 摘要。CI 的 PS7/PS5.1 自测使用独立输出目录，避免互相覆盖。未执行的远程 CI/保护设置或产品数值测试须明确保留为未执行。
 
 ## 8. 控制复杂度与收口
 
