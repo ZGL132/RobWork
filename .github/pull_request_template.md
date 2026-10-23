@@ -18,6 +18,7 @@
 
 ## 验证与审查
 
+- [ ] 复用迁移按 reuse/policy.md §1.1 附实施前设计判断（文件/符号、保留/删除/适配/职责归属）与准确性/架构/简洁性/运行效果证据；说明必要保留项及性能变化，不以调用上游或复用数量替代验收
 - [ ] validate-reuse、validate-task、ird_gates通过；未把存量债务标为合规
 - [ ] 单元/集成/回归/独立oracle/上游直接调用：日志、XML、JSON
 - [ ] passed / skipped / failed 分列，未执行项及原因

@@ -1,5 +1,61 @@
 # REUSE-T01 首批公共 API 探测
 
+## 当前接手入口（2026-10-23 08:18，UTC+08:00 快照）
+
+本节是导航与可重算快照，不是第二份功能台账或验收结论。以下历史记录保留当时语境，其中“零产品变更”“下一批”等描述不代表当前实施状态。
+
+- **正确现场**：`C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork`，任务分支 `reuse-t01`；读取时 HEAD 为 `c27349a80d6116151e2b9625c3196c77a4398fff`，工作树有未提交修改。默认目录 `D:/10_Source_Repos/21_robot/RobWork` 不保证处于此分支或包含这些成果。接手先核对 `git status --short`、`git branch --show-current`、`git rev-parse HEAD`，保留全部在途修改；已有会话实施时不要并发改同一范围。
+- **最新执行方向**：[migration §12.11](../../../reuse/migration.md#1211-所有者批准的能力交付调整2026-10-23)。全项目继续覆盖筛查，按能力及真实依赖准入、替换、独验；不再扩展无关诊断小批次，不以批次数或矩阵条数衡量完成率。
+- **复用取舍（后续所有任务适用）**：[policy §1.2](../../../reuse/policy.md#12-复用范围与投入优先级)。所有相关功能都须有复用判断，不要求接入上游所有能力；优先收口已实施能力包及高价值重复核心，正确已有适配保留，通用工具按真实适用性和整体收益安排。业务契约与独立oracle不能被机械替换，新核心/扩展仍须单独批准。
+- **当前交付**：[REUSE-T07 契约](../../../tasks/REUSE-T07.json)，快照状态为 `ready`，只授权精确范围实施。`modeling/src/CouplingMath.hpp` 复用 `rw::math::LinearAlgebra::svd`，删除自写 Jacobi，保持接口、数值缩放、阈值和诊断。现场已有 CouplingMath、CMake、测试及迁移文档等未提交工作；完成度以现场和真实报告为准，不视为已通过验收。
+- **成果与阻断入口**：上游来源查 [catalog](../../../reuse/catalog.json)，产品位置、差异与状态查 [逐功能矩阵](../../../reuse/functions/)，缺口及批准边界查 [扩展提案](../../../reuse/extensions/required-proposals.md)。治理阶段验收引用、allowedFiles、verify、acceptance 均以当前任务契约为准；局部审计 PASS、API 探测 PASS 均不能代替完整能力独验或全 T01 退出。
+
+### 统计快照与重算口径
+
+以下数值由当次 `catalog.json` 与 `functions/*.json` 读取计算，输入是上述 HEAD 的本地工作树，不代表未来现场；接手后重算。字段语义见 [audit-contract §4](../../../reuse/audit-contract.md#4-逐功能矩阵格式)。
+
+| 统计项 | 快照数量 | 计算口径 |
+| --- | ---: | --- |
+| 上游能力候选类别 | 35 | catalog 的 capabilities 条目数 |
+| 已登记产品功能 | 1,104 | 所有矩阵行的 functionId 去重 |
+| 功能—能力关系 | 1,105 | 所有矩阵 functions 行数；同一功能可关联多个能力 |
+| 已关联上游候选 | 547 | capabilityId 不为 NONE 的关系数 |
+| 暂未关联上游能力 | 558 | capabilityId 为 NONE 的关系数 |
+| 决策状态 | 1,102 pending；3 proposal | 按 decision 分组；不是生产迁移或验收通过数量 |
+
+547 条含待验证及对照后不适用候选，不能称为 547 个可替换算法；NONE 不证明上游缺能力，也不等于已批准业务专属实现。数据异常先处理，不用统计结果证明门禁通过。
+
+在正确工作树根目录执行以下只读命令重算，不另维护人工数字台账：
+
+```powershell
+$reuseRoot = 'RobWork/doc/industrial-robot-design/reuse'
+$catalog = Get-Content "$reuseRoot/catalog.json" -Raw -Encoding UTF8 -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop
+$rows = @(Get-ChildItem "$reuseRoot/functions" -Filter '*.json' -ErrorAction Stop | ForEach-Object {
+    (Get-Content $_.FullName -Raw -Encoding UTF8 -ErrorAction Stop | ConvertFrom-Json -ErrorAction Stop).functions
+})
+[pscustomobject]@{
+    Capabilities = @($catalog.capabilities).Count
+    UniqueFunctions = @($rows.functionId | Sort-Object -Unique).Count
+    Relations = $rows.Count
+    Linked = @($rows | Where-Object capabilityId -ne 'NONE').Count
+    NONE = @($rows | Where-Object capabilityId -eq 'NONE').Count
+}
+$rows | Group-Object decision | Select-Object Name, Count
+```
+
+### 下一步与关闭条件
+
+每个能力包（含当前 REUSE-T07）须执行 [policy §1.1](../../../reuse/policy.md#11-能力包的设计与验收必经项)：先明确保留/删除/适配/职责归属，再按准确性、架构、简洁性和运行效果独验；上游调用不是完成标准。
+
+1. 核对现场与 REUSE-T07，定向读取 MATH-SVD、modeling 相关矩阵及证据，不从头重审全部历史；若已有实施会话，先由所有者安排接替，避免覆盖在途工作。
+2. 按契约完成上游 SVD 生产接线、删除 Jacobi，以及真实调用/返回值消费、上游对照、独立 oracle 和断开实验；执行受影响集成构建、必要独立冒烟、回归与门禁，保存实际命令和报告。
+3. 同步相关功能凭证与迁移说明；完整能力包冻结后由所有者另开的独立会话验收。未独验不得关闭债务、标记已验收或放行依赖；实施者不自签、不派子智能体。
+4. 后续顺序依 migration §12.11：旋转/位姿 → runtime 移动 offset 与映射 → FK/Jacobian → 高阶轨迹 → 满足契约的 IK → RNE → 有现成后端证据的 FD；按真实依赖推进。GAP 或能力不足只阻断相关项，扩展/新核心/新依赖仍需单独批准。
+
+保持 H1—H6 和 SA-19；不合入 `redesign-main`，不触碰 `main`，不执行 push/fetch/pull。最终进度以独验通过的替换能力、已删除重复核心、生产消费证据及剩余阻断为准；历史记录只按需追查。
+
+## 历史探测与批次记录
+
 本目录是只读审计实验，不是生产后端。上游基点沿用 catalog 的 `b12e8503cc1c2a1acc040f506842a02e126b9515`；文件规范化摘要见 catalog，实验源码/构建文件由本次提交冻结。产品源码、上游源码和 vcpkg 均无修改。`reuse/functions/` 中首批记录为 pending，不代表文件或单元已全面审计。
 
 `probe/` 保留首轮真实 configure/build/tests 日志、gtest XML 与既有 testkit 生成的 `ird-test-report.json`，不改写历史证据。首轮10项均运行通过，但独立验收发现 RPY 参数顺序解释错误，因此不能以首轮通过证明 Euler 掩码及不可达半周反例。修正后的重跑在 `probe-r2/`：passed=10，failed=0，skipped=0，notRun=0。既有上游完整测试集、生产迁移、性能验收及远程 CI 未执行。限制用例预期当前上游的错误/未实现行为，不能当成该功能正常或 DYN-05 已通过。
