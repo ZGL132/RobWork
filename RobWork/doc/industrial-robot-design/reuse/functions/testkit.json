@@ -34,7 +34,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
@@ -89,7 +89,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
@@ -144,7 +144,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -206,7 +206,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -268,7 +268,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -330,7 +330,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -392,7 +392,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -454,7 +454,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -516,7 +516,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -578,7 +578,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -640,7 +640,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -702,7 +702,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -764,7 +764,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -802,8 +802,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
           "symbol": "ird_add_gtest",
           "qualifiedSymbol": "ird_add_gtest",
-          "startLine": 161,
-          "endLine": 181,
+          "startLine": 178,
+          "endLine": 198,
           "sha256": "544ba78078410a6896bfec83211c6236dff4bf3639299124347e3dc72744a794"
         }
       ],
@@ -823,7 +823,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -886,7 +886,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -949,7 +949,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1012,7 +1012,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1067,7 +1067,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1122,7 +1122,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1157,8 +1157,8 @@
           "symbol": "add_library(sdurws_ird_testkit STATIC",
           "qualifiedSymbol": "sdurws_ird_testkit",
           "startLine": 28,
-          "endLine": 98,
-          "sha256": "35cc46ed05c0f700c7e9ad3bd95d3bbd5718ae6c7e75ac3fc574eb71bd9a12d5"
+          "endLine": 115,
+          "sha256": "6f4187ff3317b5aa47724aae7b8072f70455cf6bbd6bb0de8dd5048efa08fc1d"
         }
       ],
       "targets": [
@@ -1177,7 +1177,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1211,8 +1211,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
           "symbol": "add_executable(sdurws_ird_testkit_test",
           "qualifiedSymbol": "sdurws_ird_testkit_test",
-          "startLine": 99,
-          "endLine": 160,
+          "startLine": 116,
+          "endLine": 177,
           "sha256": "32e8cc38817d2af3688f315f7a8b152cedb529a44d1220c78f6000d7623703d1"
         }
       ],
@@ -1232,7 +1232,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1266,8 +1266,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
           "symbol": "add_executable(sdurws_ird_testdata_lint tools/testdata/main.cpp)",
           "qualifiedSymbol": "sdurws_ird_testdata_lint",
-          "startLine": 182,
-          "endLine": 215,
+          "startLine": 199,
+          "endLine": 232,
           "sha256": "13094f26d435596e7e7ac679bcbd5db848224738a4ebcd67c20898b41bffe8ed"
         }
       ],
@@ -1287,7 +1287,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1321,8 +1321,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
           "symbol": "add_executable(sdurws_ird_testkit_lsnchild tools/lsnchild/main.cpp)",
           "qualifiedSymbol": "sdurws_ird_testkit_lsnchild",
-          "startLine": 216,
-          "endLine": 246,
+          "startLine": 233,
+          "endLine": 264,
           "sha256": "6577b1ce2f89dd2f7e5e55bb70247dbb5e662846c1e6a347fead350cf139df7a"
         }
       ],
@@ -1342,7 +1342,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1376,9 +1376,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
           "symbol": "find_package(Qt6 COMPONENTS Core REQUIRED)",
           "qualifiedSymbol": "sdurws_ird_testkit_qt",
-          "startLine": 247,
-          "endLine": 334,
-          "sha256": "315b0f594f546da297145f785503b266754b432f41691eecbac753317cbf511e"
+          "startLine": 265,
+          "endLine": 350,
+          "sha256": "82f83ecde48270219d7b2bff9f6aad79ad1af5d88f530d48b4023324e50c08c1"
         }
       ],
       "targets": [
@@ -1397,7 +1397,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1452,7 +1452,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1507,7 +1507,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1562,7 +1562,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1617,7 +1617,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1672,7 +1672,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1727,7 +1727,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1782,7 +1782,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1837,7 +1837,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1892,7 +1892,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -1947,7 +1947,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2002,7 +2002,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2057,7 +2057,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2112,7 +2112,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2167,7 +2167,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2222,7 +2222,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2277,7 +2277,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2332,7 +2332,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2355,6 +2355,887 @@
       },
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
+    {
+      "functionId": "testkit.SetCheck.fileHeader",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "SetCheck.hpp",
+          "qualifiedSymbol": "sdurws::ird::testkit",
+          "startLine": 1,
+          "endLine": 63,
+          "sha256": "7f60af014b3d92df6b76bdafe0adaae335f39834e66545ef1a518b12636b51a9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝文件头/守卫/包含/类型视图",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit 测试设施（§5.4 集合断言），test-only，不扩展产品权限；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheck.resultStructs",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "SetCheckResult",
+          "qualifiedSymbol": "sdurws::ird::testkit",
+          "startLine": 69,
+          "endLine": 100,
+          "sha256": "307f5049977ef193df4164f1a97aee328eef7cf7bd082a31691251a6f47f0a96"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝结果结构/Traits 模板",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit 测试设施（§5.4 集合断言），test-only，不扩展产品权限；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheck.detailOpen",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "namespace detail",
+          "qualifiedSymbol": "sdurws::ird::testkit::detail",
+          "startLine": 101,
+          "endLine": 104,
+          "sha256": "067f8d295ea85acd217694ccbcce1fd916cd6235fd28ac63b2a8df76c324cc61"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝detail 命名空间开",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit 测试设施（§5.4 集合断言），test-only，不扩展产品权限；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheck.matchSeamDoc",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "内部接缝",
+          "qualifiedSymbol": "sdurws::ird::testkit::detail",
+          "startLine": 123,
+          "endLine": 133,
+          "sha256": "db85deea613efa8d437f9dc3e6a21e5e32c3394642818aa7d9c788d5c7f1aaaa"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼æ¥ç¼å½æ°å¥çº¦ææ¡£",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit æµè¯è®¾æ½ï¼Â§5.4 éåæ­è¨ï¼ï¼test-onlyï¼ä¸æ©å±äº§åæéï¼å®å®¡éæ¬æ¹ç»è®°ï¼ç¬ç«éªæ¶å¾ææèå®æï¼éclosed"
+    },
+    {
+      "functionId": "testkit.SetCheck.seamClose",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "集合等价断言",
+          "qualifiedSymbol": "sdurws::ird::testkit",
+          "startLine": 137,
+          "endLine": 146,
+          "sha256": "a66da8e4e9b29c94f0ec0b0a36b1a5a204e92a0154d8d773e133e70a8cc3ddad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼detail é­/æ­è¨å¥å£ææ¡£",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit æµè¯è®¾æ½ï¼Â§5.4 éåæ­è¨ï¼ï¼test-onlyï¼ä¸æ©å±äº§åæéï¼å®å®¡éæ¬æ¹ç»è®°ï¼ç¬ç«éªæ¶å¾ææèå®æï¼éclosed"
+    },
+    {
+      "functionId": "testkit.SetCheck.namespaceClose",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "sdurws::ird::testkit",
+          "qualifiedSymbol": "sdurws::ird::testkit",
+          "startLine": 424,
+          "endLine": 427,
+          "sha256": "66114ea1b69ada1b9c1ba854225f864c97259976f259a992865f8ba402c478d2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝命名空间闭/包含守卫尾",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "testkit 测试设施（§5.4 集合断言），test-only，不扩展产品权限；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheck.maximumBipartiteMatching",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+          "symbol": "maximumBipartiteMatching",
+          "qualifiedSymbol": "sdurws::ird::testkit::detail::maximumBipartiteMatching",
+          "startLine": 134,
+          "endLine": 136,
+          "sha256": "b97ff334ef50011fd08e1788805a8e3b014d2e4a49d5adf171fce5a1f186da08"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp",
+          "symbol": "maximumBipartiteMatching",
+          "qualifiedSymbol": "sdurws::ird::testkit::detail::maximumBipartiteMatching",
+          "startLine": 1,
+          "endLine": 88,
+          "sha256": "4cf7805326505306b4d0bf554571c9c92b808a3e27e7109297b58c9d583ff8e4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "Boost checked Edmonds＋matching_size 薄适配（probe-r17 候选生产接入）；物化 |E| 边、业务语义留模板层；自验/计数互检失败 Usage fail-fast（声明段＋实现 TU 双源登记）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "最大匹配内核＝vcpkg 已装 Boost 1.92 公开 API 薄适配（catalog 上游词表不覆盖第三方渠道——复用来源经 DTB §4.5 LIB 登记＋testkit.md §3.1 依赖契约修订承载），业务语义零涉及；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.fileHeader",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "SetCheckTest.cpp",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 1,
+          "endLine": 65,
+          "sha256": "d108ba66d2bb07459cd67bef25324e00da413a0dbab40d3197b505e6a9866765"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝测试文件头/夹具/Traits 特化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.equivalenceAndDuplicates",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetEquivalent, OrderIndependentEquivalent_UT_SET)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 66,
+          "endLine": 113,
+          "sha256": "7851fcd363fc7917296d9c6bfb022f6247c4a0d1c766fac76cd941b9c81436fa"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝等价/身份值失配/重复身份用例",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.numericMatching",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetNumeric, NumericOnlyMatching_UT_SET)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 114,
+          "endLine": 143,
+          "sha256": "df6435e99ce2cf89877536ab8a357d4a397e6bdb3a87741adfad3ae8b5a8812c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝纯数值匹配/位滑用例",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.orderAndGuard",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(StableOrder, SameOrderAndFirstDivergence_UT_ORD)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 144,
+          "endLine": 183,
+          "sha256": "b9c35817e70f019797a2007f96dd47f8a93a6ee2ff3f57cd4197b67c023b432e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝稳定顺序/规模护栏用例",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.ambiguityF594AndHelpers",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetNumeric, AmbiguityProbeRequiresAlternativePartner_F594)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 184,
+          "endLine": 282,
+          "sha256": "01404f5ffed94ad65b76f05c70944b867d6c18896ffac150e0cee54de36aa400"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝F-594 双向歧义用例与确定性随机辅助",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.exhaustiveBruteForce",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetMatchCore, ExhaustiveBruteForceAgreement_UT_SET)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 283,
+          "endLine": 350,
+          "sha256": "e1ac586d1399882aaf214ff10113f9ffa3d2db145b60cb6fde287372b20b3bd9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝内核穷举 oracle（3×3 全边集＋伪随机 240 例，独立精确对照）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only，oracle 独立于被测内核）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.gridFamilyOracle",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetMatchCore, GridFamilyTemplateSemantics_UT_SET)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 351,
+          "endLine": 410,
+          "sha256": "b5da8d6a2cfb32dbf5ea8fc94076c8e66abb6557b3dfbe7d2466ce488ce7579f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝生产入口网格族 oracle（15625 组含真歧义形态）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only，oracle 独立于被测内核）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+    {
+      "functionId": "testkit.SetCheckTest.greedyTrapAndDeterminism",
+      "ownerUnit": "testkit",
+      "requirements": [
+        "NFR-COR-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "symbol": "TEST(SetNumeric, GreedyTrapAugmented_UT_SET)",
+          "qualifiedSymbol": "sdurws::ird::ird",
+          "startLine": 411,
+          "endLine": 445,
+          "sha256": "5afc1ac3edffa5acaff3f6c8062b9217b5afdcb87236f859a83f9e05b900611e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
+        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+      },
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝贪婪陷阱与多解见证确定性用例",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
+          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
+          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
+        }
+      ],
+      "auditBoundary": "SetCheck 产品用例登记（test-only）；实审随本批登记，独立验收待所有者安排，非closed"
+    },
+
     {
       "functionId": "testkit.JsonLite.Parser",
       "ownerUnit": "testkit",
@@ -2387,7 +3268,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2438,7 +3319,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2485,7 +3366,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2532,7 +3413,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2579,7 +3460,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2626,7 +3507,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2673,7 +3554,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2720,7 +3601,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2767,7 +3648,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2814,7 +3695,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -2861,7 +3742,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -2916,7 +3797,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -2971,7 +3852,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -3026,7 +3907,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -3081,7 +3962,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -3136,7 +4017,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -3191,7 +4072,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -3246,7 +4127,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -3293,7 +4174,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -3340,7 +4221,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -3387,7 +4268,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -3434,7 +4315,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3489,7 +4370,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3544,7 +4425,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3599,7 +4480,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3654,7 +4535,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3709,7 +4590,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/win32/ProcessLauncher.cpp",
@@ -3764,7 +4645,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         }
       ],
       "auditEvidence": [
@@ -3812,7 +4693,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -3832,7 +4713,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -3900,7 +4781,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -3920,7 +4801,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -3988,7 +4869,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4008,7 +4889,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4076,7 +4957,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4096,7 +4977,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4164,7 +5045,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4184,7 +5065,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4252,7 +5133,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4272,7 +5153,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4340,7 +5221,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4360,7 +5241,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4428,7 +5309,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4448,7 +5329,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4516,7 +5397,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4536,7 +5417,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4604,7 +5485,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4624,7 +5505,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4692,7 +5573,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4712,7 +5593,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4780,7 +5661,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4800,7 +5681,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4868,7 +5749,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4888,7 +5769,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -4956,7 +5837,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -4976,7 +5857,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5044,7 +5925,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
@@ -5064,7 +5945,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5132,7 +6013,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5148,7 +6029,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5216,7 +6097,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5232,7 +6113,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5300,7 +6181,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5316,7 +6197,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5384,7 +6265,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5400,7 +6281,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5468,7 +6349,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5484,7 +6365,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5552,7 +6433,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5568,7 +6449,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5636,7 +6517,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5652,7 +6533,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5720,7 +6601,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5736,7 +6617,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5804,7 +6685,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
@@ -5820,7 +6701,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
@@ -5867,8 +6748,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "operator==",
           "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator==",
-          "startLine": 58,
-          "endLine": 61,
+          "startLine": 64,
+          "endLine": 67,
           "sha256": "033ad8974b6f77d360ae9fc9450e04b73ff7a8467c1fc5d78dab527c79bb8d18"
         }
       ],
@@ -5878,8 +6759,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -5888,15 +6769,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -5937,6 +6818,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -5951,8 +6836,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "operator!=",
           "qualifiedSymbol": "sdurws::ird::testkit::MatchPair::operator!=",
-          "startLine": 62,
-          "endLine": 62,
+          "startLine": 68,
+          "endLine": 68,
           "sha256": "7e8581b15c7c49e40d8858f184bea5700095377710fdde837f43562acd8046cf"
         }
       ],
@@ -5962,8 +6847,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -5972,15 +6857,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6021,6 +6906,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -6035,8 +6924,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "identity",
           "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::identity",
-          "startLine": 91,
-          "endLine": 91,
+          "startLine": 97,
+          "endLine": 97,
           "sha256": "7d6769af413c4c01c430dfd4894ee6ba3357777ca4661105f27a4c13abba7512"
         }
       ],
@@ -6046,8 +6935,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -6056,15 +6945,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6105,6 +6994,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -6119,8 +7012,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "numerics",
           "qualifiedSymbol": "sdurws::ird::testkit::SetMatchTraits<T>::numerics",
-          "startLine": 93,
-          "endLine": 93,
+          "startLine": 99,
+          "endLine": 99,
           "sha256": "5dc80d6994d2cf553159c8ba7cbe4dd299660011139ee2d436e461b976f3d42e"
         }
       ],
@@ -6130,8 +7023,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -6140,15 +7033,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6189,6 +7082,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -6203,8 +7100,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "compatible",
           "qualifiedSymbol": "sdurws::ird::testkit::detail::compatible",
-          "startLine": 99,
-          "endLine": 116,
+          "startLine": 105,
+          "endLine": 122,
           "sha256": "b32f60f56f8df2f6d0a418992efe015a4dd488d4534fde39837525218c78cfe8"
         }
       ],
@@ -6214,8 +7111,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -6224,15 +7121,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6273,90 +7170,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
-    },
-    {
-      "functionId": "testkit.SetCheck.tryAugmentAt",
-      "ownerUnit": "testkit",
-      "requirements": [
-        "NFR-COR-02",
-        "NFR-COR-03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "symbol": "tryAugmentAt",
-          "qualifiedSymbol": "sdurws::ird::testkit::detail::tryAugmentAt",
-          "startLine": 121,
-          "endLine": 151,
-          "sha256": "3c3276657ce8a95fff844a9234c7aedb2a03a5a0fb608503bf1e1bbb48efdb15"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_testkit"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
-        "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
       },
-      "differences": "自持Kuhn递归增广和回滚；既有Boost checked Edmonds候选2项实跑通过，供给/见证/内存性能与业务语义须核",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Dataset.hpp",
-          "sha256": "fea1d497db0d39afba3338597c315c6a27bf42ebe05f019517bf11c73652b952"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/ToleranceProfile.hpp",
-          "sha256": "72b4af5ead32c604d4f5815b2e556fe46613907f7e2db4fe8a16ef7dd252e6ca"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/Check.hpp",
-          "sha256": "9784ea2749ea438749b5e3278ae1ec03ab13753f1254c7fda473d84f6d997fc3"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/JsonLite.hpp",
-          "sha256": "86c74bb4078a882bca5d17859c0e865e07e869b6616d257350d458799b0ede50"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/TestPaths.hpp",
-          "sha256": "c1e82c405ee0c9deb6ea9b26101fe661984d5bbe58440967f4c0088fbc369cc3"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch17-search.json",
-          "sha256": "ff1c91c17bfc9d687b8bc519abcb1cc1fe34c06358a3d26712147289c90e4345"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
-          "sha256": "1ebe24418dfcdf74bcca3d88b103556a8b00f74743305c46ff715f4052f2a4ac"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r17/environment-artifacts.json",
-          "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
-        }
-      ],
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -6371,9 +7188,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "checkSetEquivalent",
           "qualifiedSymbol": "sdurws::ird::testkit::checkSetEquivalent",
-          "startLine": 162,
-          "endLine": 392,
-          "sha256": "974b636b65ace170030789a4b5051fd31cd6988904fa6fd9b8a4d4962ff1279b"
+          "startLine": 147,
+          "endLine": 380,
+          "sha256": "1fc53e6b29d9c19a22e851579bfd81734785345f0e23d2e517e56c52fc947092"
         }
       ],
       "targets": [
@@ -6382,8 +7199,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -6392,15 +7209,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6441,6 +7258,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     },
     {
@@ -6455,8 +7276,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
           "symbol": "checkStableOrder",
           "qualifiedSymbol": "sdurws::ird::testkit::checkStableOrder",
-          "startLine": 394,
-          "endLine": 435,
+          "startLine": 382,
+          "endLine": 423,
           "sha256": "c2bf1998ded2016e7119d3ff93384802418c1f3afcf807d65f3e57ebacbfb9b1"
         }
       ],
@@ -6466,8 +7287,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
@@ -6476,15 +7297,15 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
-          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+          "sha256": "ae5437431b5ed33fd49447f9da01500283d50cf76b053dbe93eae88230edf73b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-          "sha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f"
+          "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-          "sha256": "f5fde51c00004f560ad3328fbef86d4422efc736eca62bc654ee17dc04162d11"
+          "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
@@ -6525,6 +7346,10 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/setcheck-run-release/gtest.xml",
+        "sha256": "c6c7ee0c193fe82d303bc2950aba530529cfbee0ec1fafece0953c4533062bda"
+      },
       "auditBoundary": "列明Compare/SetCheck/Dataset定义；2个候选API通过+原core数值反例失败，Dataset/SetCheck产品用例及性能未跑；不授T02或grant"
     }
   ]

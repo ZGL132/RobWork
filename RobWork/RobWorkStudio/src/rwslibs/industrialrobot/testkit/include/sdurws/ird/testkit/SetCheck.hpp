@@ -19,11 +19,17 @@
  *   规模护栏：单次断言元素数 >100,000 抛 TestKitError(Usage)。
  *
  * 歧义（§5.4.4）：多个完美匹配不判失败，报告 ambiguousMatch=true；确定性探测
- * （按 expected 索引序逐配对移除后尝试再增广）。
+ * （按 expected 索引序逐配对交错圈判定）。
  *
- * 实现取舍（报告 notes 同步）：最大匹配用 Kuhn 增广路径（同 Hopcroft–Karp 的
- * 最大匹配结果；复杂度 O(E·V)——测试规模与稀疏相容边下可行，实现简练性优先；
- * §5.4.2 命名 Hopcroft–Karp 为复杂度期望，非算法强制）。
+ * 实现取舍（报告 notes 同步）：阶段 2 最大匹配核心＝Boost.Graph
+ * checked_edmonds_maximum_cardinality_matching 薄适配（库内部自验最大性；
+ * matching_size 作计数正交源），经 detail::maximumBipartiteMatching 内部接缝
+ * 承接（实现于 src/SetCheckMatch.cpp——Boost 头编译期使用收敛于该 TU，
+ * 本公共模板头零 Boost；相容边按索引物化后调用）。物化求值 O(nL·nR) 与
+ * 原谓词按需扫描同阶，新增 |E| 边存储（不承诺内存/复杂度收益——§5.4.2
+ * 复杂度为期望口径）；§5.4.2 命名 Hopcroft–Karp 为复杂度期望，非算法强制，
+ * 与原 Kuhn 增广结果同为最大基数匹配。业务规则（身份优先/C4 相容/歧义/
+ * 诊断）全部留在本模板层。
  *
  * 线程安全：纯函数（profile 只读）；无共享状态。
  */
@@ -115,40 +121,19 @@ bool compatible(const T& expectedElem, const T& actualElem,
     return true;
 }
 
-/// 增广路径搜索（Kuhn：从左点 li 出发找可增广链——递归回退原配对）。
-/// edge：相容边谓词（左点位置, 右点位置）→ bool；matchR/matchL：反向/正向配对表
-/// （SIZE_MAX 哨兵＝未匹配）；visited：右点访问位图。
-template <class EdgeFn>
-bool tryAugmentAt(std::size_t li, const EdgeFn& edge, std::size_t nR,
-                  std::vector<std::size_t>& matchR, std::vector<std::size_t>& matchL,
-                  std::vector<bool>& visited)
-{
-    constexpr std::size_t kNil = static_cast<std::size_t>(-1);
-    for (std::size_t ri = 0; ri < nR; ++ri) {
-        if (visited[ri] || matchR[ri] != kNil) { continue; }
-        if (!edge(li, ri)) { continue; }
-        visited[ri] = true;
-        matchL[li] = ri;
-        matchR[ri] = li;
-        return true;
-    }
-    for (std::size_t ri = 0; ri < nR; ++ri) {
-        if (visited[ri] || !edge(li, ri)) { continue; }
-        visited[ri] = true;
-        const auto prevL = matchR[ri];
-        matchR[ri] = li;
-        matchL[prevL] = kNil;
-        if (tryAugmentAt(prevL, edge, nR, matchR, matchL, visited)) {
-            matchL[li] = ri;
-            return true;
-        }
-        // 回滚：恢复原配对与本点未匹配态。
-        matchR[ri] = prevL;
-        matchL[prevL] = ri;
-        matchL[li] = kNil;
-    }
-    return false;
-}
+/// 最大二分图匹配内部接缝（实现于 src/SetCheckMatch.cpp——Boost.Graph
+/// checked Edmonds 薄适配；Boost 头只在该 TU 编译期使用，不出本公共头）。
+/// 仅承接"给定边集求一个最大基数匹配"的算法核心；身份优先/C4 相容边构造/
+/// 歧义/诊断等业务语义全在模板层，双方以纯索引类型交接。
+///
+/// @param nLeft [in] 左点数（expected 剩余元素数）；nRight [in] 右点数
+/// @param edges [in] 相容边表（左点索引, 右点索引），两侧均 0 基
+/// @return matchL：每个左点的配对右点索引；未匹配＝SIZE_MAX 哨兵
+/// @throws TestKitError(Usage) 库侧最大性自验或计数互检失败（fail-fast——
+///         内核不变量破坏不得静默产出）
+std::vector<std::size_t> maximumBipartiteMatching(
+    std::size_t nLeft, std::size_t nRight,
+    const std::vector<std::pair<std::size_t, std::size_t>>& edges);
 
 }  // namespace detail
 
@@ -263,20 +248,23 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
 
     const std::size_t nL = expectedFreeIdx.size();
     const std::size_t nR = actualFreeIdx.size();
-    // 最大匹配（Kuhn 增广路径；SIZE_MAX 哨兵＝未匹配）。
-    std::vector<std::size_t> matchL(nL, static_cast<std::size_t>(-1));
-    std::vector<std::size_t> matchR(nR, static_cast<std::size_t>(-1));
+    // 相容边物化（求值 O(nL·nR)——与原谓词按需扫描同阶）；相容性语义留在模板层，
+    // 算法核心移交内部接缝（detail::maximumBipartiteMatching，Boost 薄适配）。
     const auto edge = [&](std::size_t li, std::size_t ri) {
         return detail::compatible(expected[expectedFreeIdx[li]],
                                   actual[actualFreeIdx[ri]], profile, traits);
     };
-    const auto tryAugment = [&](std::size_t li, std::vector<bool>& visited) {
-        return detail::tryAugmentAt(li, edge, nR, matchR, matchL, visited);
-    };
+    std::vector<std::pair<std::size_t, std::size_t>> edges;
     for (std::size_t li = 0; li < nL; ++li) {
-        if (matchL[li] != static_cast<std::size_t>(-1)) { continue; }
-        std::vector<bool> visited(nR, false);
-        (void)tryAugment(li, visited);
+        for (std::size_t ri = 0; ri < nR; ++ri) {
+            if (edge(li, ri)) { edges.emplace_back(li, ri); }
+        }
+    }
+    const auto matchL = detail::maximumBipartiteMatching(nL, nR, edges);
+    // 反推 matchR（缺失/多余推导与 F-594 交错圈歧义检测沿用原表形态）。
+    std::vector<std::size_t> matchR(nR, static_cast<std::size_t>(-1));
+    for (std::size_t li = 0; li < nL; ++li) {
+        if (matchL[li] != static_cast<std::size_t>(-1)) { matchR[matchL[li]] = li; }
     }
     for (std::size_t li = 0; li < nL; ++li) {
         if (matchL[li] == static_cast<std::size_t>(-1)) {

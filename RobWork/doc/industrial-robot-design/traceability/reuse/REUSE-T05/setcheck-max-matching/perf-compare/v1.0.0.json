@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "ird-tolerance-profile/1",
+  "profileId": "perf-compare",
+  "version": "1.0.0",
+  "basis": "REUSE-T20 perf-compare probe 受控密度档位（P(|U1-U2|<=t)=2t-t^2：fine~2%/medium~10%/coarse~36%）；measurement-only 非黄金数据；source 借用 engineering-policy-default 词表类别承载探针本地容差",
+  "entries": [
+    {
+      "fieldPath": "probe.tolerance.fine",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.01 },
+      "source": "engineering-policy-default",
+      "allowedMax": { "relative": 0.0, "absolute": 0.01 }
+    },
+    {
+      "fieldPath": "probe.tolerance.medium",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.05 },
+      "source": "engineering-policy-default",
+      "allowedMax": { "relative": 0.0, "absolute": 0.05 }
+    },
+    {
+      "fieldPath": "probe.tolerance.coarse",
+      "quantityKind": "dimensionless",
+      "unit": "1",
+      "tolerance": { "relative": 0.0, "absolute": 0.2 },
+      "source": "engineering-policy-default",
+      "allowedMax": { "relative": 0.0, "absolute": 0.2 }
+    }
+  ]
+}

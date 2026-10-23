@@ -1,0 +1,93 @@
+=== 裁剪说明（原始文件 405,977 行/15.7MB，sha256 84da91086db5935dbfe5503132f631ec14a1dba8d9b1b1d5b6e105b597372460）===
+=== 内容：GridFamily 用例 15625 组模式在断开扰动下逐组失败，失败流重复占 99.9% 体量。 ===
+=== 本文件保留：开头 40 行（运行环境与首批失败形态）＋全部 FAILED/OK 汇总行＋结尾 15 行（总清单）。逐组失败流省略——复现路径见 README §8.1（断开补丁＋重建＋运行）。 ===
+=== ===== 以下为原始日志逐字节摘录 ===== ===
+[==========] Running 119 tests from 57 test suites.
+[----------] Global test environment set-up.
+[----------] 7 tests from TestPaths
+[ RUN      ] TestPaths.EnvVarOverridesDefault_NFR_COR_01
+[       OK ] TestPaths.EnvVarOverridesDefault_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01
+[       OK ] TestPaths.DefaultFallbackWhenRootExists_NFR_COR_01 (3 ms)
+[ RUN      ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01
+[       OK ] TestPaths.EnvUnsetAndDefaultMissing_Throws_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01
+[       OK ] TestPaths.EmptyEnvTreatedAsUnset_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01
+[       OK ] TestPaths.DefaultFallback_Adaptive_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01
+[       OK ] TestPaths.DatasetAndToleranceDirLayout_NFR_COR_01 (0 ms)
+[ RUN      ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01
+[       OK ] TestPaths.ErrorCarriesKindTokenAndDetail_NFR_COR_01 (0 ms)
+[----------] 7 tests from TestPaths (5 ms total)
+
+[----------] 2 tests from JsonRoundtrip
+[ RUN      ] JsonRoundtrip.CanonicalTextRestored_UT_JSON
+[       OK ] JsonRoundtrip.CanonicalTextRestored_UT_JSON (0 ms)
+[ RUN      ] JsonRoundtrip.InsertionOrderStable_UT_JSON
+[       OK ] JsonRoundtrip.InsertionOrderStable_UT_JSON (0 ms)
+[----------] 2 tests from JsonRoundtrip (0 ms total)
+
+[----------] 1 test from JsonAccess
+[ RUN      ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON
+[       OK ] JsonAccess.KindDiscriminatorsAndFind_UT_JSON (0 ms)
+[----------] 1 test from JsonAccess (0 ms total)
+
+[----------] 2 tests from JsonRejections
+[ RUN      ] JsonRejections.RejectionMatrix_UT_JSON
+[       OK ] JsonRejections.RejectionMatrix_UT_JSON (0 ms)
+[ RUN      ] JsonRejections.GrammarViolations_UT_JSON
+[       OK ] JsonRejections.GrammarViolations_UT_JSON (0 ms)
+[----------] 2 tests from JsonRejections (0 ms total)
+
+[----------] 1 test from JsonErrorLocation
+[ RUN      ] JsonErrorLocation.LineColumnPrecision_UT_JSON
+=== ……（中段逐组失败流省略）…… ===
+[==========] Running 119 tests from 57 test suites.
+[  FAILED  ] SetNumeric.NumericOnlyMatching_UT_SET (0 ms)
+[  FAILED  ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET (0 ms)
+[  FAILED  ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594 (0 ms)
+[  FAILED  ] SetNumeric.TrueAmbiguityStillDetected_F594 (0 ms)
+[  FAILED  ] SetNumeric.GreedyTrapAugmented_UT_SET (0 ms)
+[  FAILED  ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET (0 ms)
+[  FAILED  ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET (10 ms)
+[  FAILED  ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET (1098 ms)
+[==========] Running 1 test from 1 test suite.
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+[==========] Running 1 test from 1 test suite.
+[  FAILED  ] LsnChild.Fails (0 ms)
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.Fails
+[==========] Running 1 test from 1 test suite.
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[==========] 119 tests from 57 test suites ran. (21595 ms total)
+[  PASSED  ] 111 tests.
+[  FAILED  ] 8 tests, listed below:
+[  FAILED  ] SetNumeric.NumericOnlyMatching_UT_SET
+[  FAILED  ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET
+[  FAILED  ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594
+[  FAILED  ] SetNumeric.TrueAmbiguityStillDetected_F594
+[  FAILED  ] SetNumeric.GreedyTrapAugmented_UT_SET
+[  FAILED  ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET
+[  FAILED  ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET
+[  FAILED  ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET
+=== …… ===
+
+[----------] Global test environment tear-down
+[==========] 119 tests from 57 test suites ran. (21595 ms total)
+[  PASSED  ] 111 tests.
+[  FAILED  ] 8 tests, listed below:
+[  FAILED  ] SetNumeric.NumericOnlyMatching_UT_SET
+[  FAILED  ] SetNumeric.PairwiseSlipperyCaseStillMatches_UT_SET
+[  FAILED  ] SetNumeric.AmbiguityProbeRequiresAlternativePartner_F594
+[  FAILED  ] SetNumeric.TrueAmbiguityStillDetected_F594
+[  FAILED  ] SetNumeric.GreedyTrapAugmented_UT_SET
+[  FAILED  ] SetNumeric.MultiSolutionWitnessDeterministic_UT_SET
+[  FAILED  ] SetMatchCore.ExhaustiveBruteForceAgreement_UT_SET
+[  FAILED  ] SetMatchCore.GridFamilyTemplateSemantics_UT_SET
+
+ 8 FAILED TESTS

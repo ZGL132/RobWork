@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T20",
+  "unit": "testkit",
+  "masterWp": "WP-A",
+  "title": "SetCheck 最大匹配内核复用Boost薄适配",
+  "status": "ready",
+  "branch": "codex/reuse-testkit-setcheck",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/testkit.md#5.4",
+    "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md",
+    "traceability/reuse/REUSE-T01/probe-r17",
+    "traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T20.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/**",
+    "RobWork/doc/industrial-robot-design/units/testkit.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "等价结论/缺失多余计数与替换前逐 case 一致，多解配对见证确定性保持，消费者只断言等价/计数",
+    "ird_gates转绿；F-594双向回归随套件通过",
+    "独立验收由所有者另开独立会话执行；整体准入由所有者裁决"
+  ],
+  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned；编号由协调批登记，不用REUSE-T18）。复用来源：上游RobWork/RobWorkSim零命中（审计B17），vcpkg已装Boost 1.92薄适配（header-only，testkit.md §3.1依赖契约修订＋IRD_THIRDPARTY_ALLOWED_TARGETS/DTB §4.5登记随本批）；catalog上游词表不覆盖第三方渠道，复用凭证由本契约/清单/DTB登记承载。范围仅SetCheck匹配内核一项，不代表testkit整体迁移完成。独验未开始不自签；不push。编号映射：本包原登记REUSE-T19（354b9bebf协调批）；因A包FK/Jacobian已冻结占用REUSE-T19（8babc8d70复核归档），本包以修正提交改号REUSE-T20——git mv保留文件历史，原登记内容见git历史不改写。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T20.json"
+  },
+  "outputs": [
+    "SetCheck匹配内核Boost薄适配、oracle回归、治理登记与待独验交接"
+  ]
+}

@@ -431,7 +431,11 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
     "libzip::zip"
     "expat::expat"
     "pugixml::pugixml"
-    "Eigen3::Eigen")
+    "Eigen3::Eigen"
+    # Boost::headers：SetCheck 阶段 2 最大匹配内核（REUSE-T19——header-only
+    # 接口目标，零运行库/DLL；src/SetCheckMatch.cpp 单 TU 收敛，公共模板头
+    # 与消费者编译面零 Boost；依赖契约修订＝units/testkit.md §3.1 同批登记）
+    "Boost::headers")
 
 # ---------------------------------------------------------------------
 # IRD_TOOL_TARGET_EDGES —— 开发/演示工具目标的允许链接边（ird_gates 形态
