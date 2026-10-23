@@ -16,3 +16,12 @@
   （diagnostics.json 360 处）、REUSE-T01/runtime-boundary-audit.md
   （kinematics/runtime/ui.json 5+4+6 处）——仅上述三文件本轮内容变化后的
   摘要刷新，未改其他绑定（policy §1.3）。
+
+## 2026-10-23 晚（智能体A设计轮）追加
+
+- `batch-docs-t13-t15-t16-r2.log`：三实现任务批次重跑 PASS（本轮改动的
+  runtime-boundary-audit.md 绑定摘要已在 kinematics/runtime/ui.json 刷新后）。
+- `reuse-t17-planned-gate.log`：REUSE-T17 草案（planned）单跑 validate-task，
+  唯一阻断＝REUSE-TASK-STATE "execution needs ready/done contract"——
+  阶段纪律按设计生效：planned 草案被挡在执行门禁外，无其他 schema 报错；
+  所有者确认接口形态、契约转 ready 后同门禁复检放行。
