@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "ird-independent-withdrawal-acceptance/1",
+  "taskId": "REUSE-T10",
+  "reviewedCommit": "54f0beda6fa6142c707b154d4d0d6ad5d5743169",
+  "verdict": "pass",
+  "scope": "仅验收上游EAA补丁撤销、原库恢复及所有者授权的局部表示转换1e-6容差登记；不是产品迁移验收或债务关闭",
+  "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "checks": {
+    "sourceAndUpstreamTestExactlyRestored": {
+      "EAA.cpp": "802c7debc448bd1148d623f58a34a5b19ee22088",
+      "EAATest.cpp": "5b0273eafafe53fcbe238a140b7054c93fc2faea",
+      "result": "冻结树与基线blob相同；全部上游src/gtest相对基线无差异"
+    },
+    "withdrawal": "0004有效patch、upstream-patches.json、CheckApprovedUpstreamPatches及其资产/源码许可已删除；src/gtest严格只读仍在；历史补丁和独验FAIL保留并标superseded",
+    "requirementBoundary": "附录D第13项仅矩阵→EAA、EAA→矩阵及相关往返的逐元素绝对误差1e-6；第4/5项FK/编译链/DH、有限性/矩阵合法性/预设和错误语义未放宽；产品具体采用待完整适配包",
+    "reservedScopes": "未修改或重验drivetrain、trajectory Smooth/TimeParam/多项式代码及其专属矩阵"
+  },
+  "independentExecution": {
+    "name": "原库误差网格",
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "samplesPerEntry": 3156,
+    "matrixToVectorMaxElementError": 1.0734242583231835e-9,
+    "vectorToMatrixMaxElementError": 9.9999899999983327e-7,
+    "roundTripMaxElementError": 9.4406087628578315e-7,
+    "logs": ".cache/t10-independent-withdrawal/envelope.log",
+    "xml": ".cache/t10-independent-withdrawal/envelope.xml",
+    "exitCode": 0,
+    "execution": "VS2022 x64环境；单个绝对路径exe；原库DLL raw SHA256与restoration.json一致：1e0d7bdfbc9a93f6ee0d11bdf72208e00ae1edd91287a8fe791c289f4b38f90f；实际构建源Envelope.cpp与冻结blob相同"
+  },
+  "existingEvidenceInspected": {
+    "directory": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/original-envelope/",
+    "upstreamRestored": {"passed":12,"failed":0,"skipped":0},
+    "modelingRestored": {"passed":474,"failed":0,"skipped":0},
+    "modelingContractRestored": {"passed":17,"failed":0,"skipped":0},
+    "runtimeRestored": {"passed":301,"failed":0,"skipped":1},
+    "governance": {"passed":152,"failed":0,"skipped":0},
+    "method": "核对已提交XML/log及exit原件，未重复运行上述整套"
+  },
+  "sharedDocsEvidence": {
+    "log": ".cache/t08a/docs-withdrawal.log",
+    "exitFile": ".cache/t08a/docs-withdrawal.exit.txt",
+    "exitCode": 0,
+    "result": "validate-docs PASS；所含当前validate-reuse PASS governance only（非算法合规、非深证据审计）"
+  },
+  "limits": "固定网格不是全输入证明；原库双向量/FK语义仍须后续能力包核查；原补丁独验FAIL未改判；本结论不关闭迁移债务或放行未验产品适配",
+  "remoteOperations": "none"
+}
