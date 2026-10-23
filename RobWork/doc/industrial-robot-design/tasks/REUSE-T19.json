@@ -26,7 +26,7 @@
   "traceability/reuse/REUSE-T01/runtime-boundary-audit.md"
  ],
  "verify": [
-  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json"
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json"
  ],
  "allowedFiles": [
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
