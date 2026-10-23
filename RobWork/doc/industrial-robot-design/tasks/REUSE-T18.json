@@ -39,6 +39,8 @@
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
   "RobWork/doc/industrial-robot-design/units/kinematics.md",
+  "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+  "RobWork/doc/industrial-robot-design/reuse/kinematics-fk-migration.md",
   "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
   "RobWork/doc/industrial-robot-design/reuse/permissions.json",
   "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T18.json",
