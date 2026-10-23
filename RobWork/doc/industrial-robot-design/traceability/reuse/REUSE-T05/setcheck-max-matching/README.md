@@ -2,6 +2,7 @@
 
 - 分支 `codex/reuse-testkit-setcheck`（基线 `691cbd42e`＝redesign-main 顶端，F-958 已合入；旧分支 codex/reuse-testkit-listener 与 build-int-lsn 保留）
 - 任务编号：**由协调者统一登记**（指令明确不复用 REUSE-T18——该编号已用于 F-958 收口，见 tasks/REUSE-T18.json）
+- **编号映射（第二轮撞号处置）**：本包原登记 REUSE-T19（354b9bebf 协调批）；A 包 FK/Jacobian 随后以 8babc8d70 冻结占用 REUSE-T19（复核归档 0a6b1cde0），按"保留原始记录、追加映射、不改写历史"机制本包以修正提交改号 **REUSE-T20**（T20 在两分支均空闲）——本记录内 T20 字样均指本包。
 - 状态四态：实施完成 ✅／定向与消费者回归通过 ✅／**治理门禁通过 ✅（PASS 实际边界见 §8.4——governance-only，非算法合规）**／**独立验收未完成 ❌**（所有者另开会话，不自签）
 
 ## 1. 复用来源（上游检索与 Boost 候选分开陈述）
@@ -67,7 +68,7 @@
 ## 6. 未完成事项
 
 1. ~~ird_gates 未转绿~~ **已转绿**（§7 协调落地：复跑 exit 0）。
-2. ~~任务编号、testkit.md §3.1/§9 修订、functions/inventory 刷新~~ **已完成**（§7 协调落地：REUSE-T19 登记）。
+2. ~~任务编号、testkit.md §3.1/§9 修订、functions/inventory 刷新~~ **已完成**（§7 协调落地：REUSE-T20 登记）。
 3. **§8.3 复用登记修正（adapter 表达＋正向证据绑定）待协调落地**（本轮新识别，见 §8）。
 4. **§8.2.4 稠密退化最小适配提案待裁决**（本轮新识别，未实施）。
 5. 独立验收未开始（所有者另开会话；本记录不构成自签）。
@@ -75,7 +76,7 @@
 
 ## 7. 协调落地（2026-10-23，共享治理唯一修改者）
 
-**任务登记**：精确能力子任务 **REUSE-T19**（`tasks/REUSE-T19.json` ready＋`reuse/changes/REUSE-T19.json` 5 文件凭证——§5 四产品文件＋白名单）。§5 原拟 4 文件未含白名单：本批 `IRD_THIRDPARTY_ALLOWED_TARGETS` 增列 `Boost::headers`（＋注释 4 行）即白名单产品面改动，须凭证（ird_gates 首跑 LIB 命中的登记本体）。catalog/permissions 确认无真实变化未改。
+**任务登记**：精确能力子任务 **REUSE-T20**（`tasks/REUSE-T20.json` ready＋`reuse/changes/REUSE-T20.json` 5 文件凭证——§5 四产品文件＋白名单）。§5 原拟 4 文件未含白名单：本批 `IRD_THIRDPARTY_ALLOWED_TARGETS` 增列 `Boost::headers`（＋注释 4 行）即白名单产品面改动，须凭证（ird_gates 首跑 LIB 命中的登记本体）。catalog/permissions 确认无真实变化未改。
 
 **依赖契约**：testkit.md §3.1 行按 §5 建议修订（header-only 编译期使用例外）＋§9 v1.7 版本行；DTB §4.5 增 LIB 行（Eigen3 先例；ird-gates-setcheck.log 首跑恰 1 项 IRD-GATE-LIB 命中留证）。
 
@@ -85,7 +86,7 @@
 
 **门禁终态**：`cmake --build build-int-lsn --config Release --target ird_gates` 复跑 **exit 0**——红线 11 类零命中（首跑 IRD-GATE-LIB 消解）＋validate-reuse 全量 PASS（inventory=1401、changed=69），日志 `ird-gates-setcheck-run2-final.log`。既有定向/消费者回归证据（§4 表）按增量口径原样引用（本批治理登记零产品代码变化）。F-958 套件与消费者面未重跑。
 
-## 8. 补正轮（REUSE-T19 收口，2026-10-24，受检提交 354b9bebf）
+## 8. 补正轮（REUSE-T20 收口，2026-10-24，受检提交 354b9bebf）
 
 ### 8.1 生产正向证据——§6 断开/扰动实验（本轮补齐）
 
@@ -155,12 +156,12 @@
 - `functions/testkit.json` 的 `testkit.SetCheck.maximumBipartiteMatching` 与 `testkit.SetCheck.checkSetEquivalent` 两行：
   - decision **保持 business-specific/NONE**（现行 schema 下唯一合法值——非绕过：§8.1 正向证据已绑定）；`differences` 按本记录 §8.3(初版) 文本更新（生产入口链＋"产品面唯一匹配实现＝本接缝，旧 Kuhn 已于 38290e2bd 删除"的结构性不重叠依据＋"已安装第三方在现行 catalog schema 无 adapter 表达位——表达缺口已登记（§8.3.4）"）；
   - **`nonOverlapEvidence`（现仅 gtest XML，按指令不能单独充当不重叠证明）替换/扩充为 `positiveEvidence`**：断开实验 console-trimmed（`82159d10…`）＋还原复跑（`9316bc21…`）＋规模对照 run-old/run-new（`b654ef90…`/`69876b0c…`）；gtest XML 移入 auditEvidence 作测试摘要。两字段均非机检字段，纯内容修正可先行。
-- `changes/REUSE-T19.json`：SetCheck.hpp/SetCheckMatch.cpp **mode 维持 business**（8.3.2④——mode=adapter 现行被阻断），boundary 文本订正为准确表述："本文件＝Boost checked Edmonds 薄适配 TU（真实复用关系见 functions 两行 differences＋positiveEvidence；mode=business 为 schema 表达缺口下的过渡登记，见 §8.3.4 债务）"；SetCheck.hpp 的 boundary 同步补"阶段 2 重写＋跨实现见证可不同"。
+- `changes/REUSE-T20.json`：SetCheck.hpp/SetCheckMatch.cpp **mode 维持 business**（8.3.2④——mode=adapter 现行被阻断），boundary 文本订正为准确表述："本文件＝Boost checked Edmonds 薄适配 TU（真实复用关系见 functions 两行 differences＋positiveEvidence；mode=business 为 schema 表达缺口下的过渡登记，见 §8.3.4 债务）"；SetCheck.hpp 的 boundary 同步补"阶段 2 重写＋跨实现见证可不同"。
 - 29 处 coverage 行与其余凭证：维持现登记（纯测试/构建样板/治理面，按实际职责）。
 
 #### 8.3.4 提交协调者/所有者裁决的最小兼容方案（二选一，均不动本包代码）
 
-- **方案一（无 schema 变更，登记面收口）**：接受"已安装第三方经 LIB 词表治理、catalog 不建条目"的既定边界（Eigen3 先例）；真实复用关系由 §8.3.3 的 differences＋positiveEvidence＋boundary 承载；在 findings.json 登记一条表达缺口债务："已安装第三方成熟算法在现行 catalog schema 无 adapter 表达位（CheckCatalogV2 资源域/溯源机制所限）——testkit SetCheck 匹配内核（REUSE-T19）为首个实例；暂以 business-specific＋全量正向证据登记"。**本包推荐此方案**：与既有治理先例零冲突、机检零改动。
+- **方案一（无 schema 变更，登记面收口）**：接受"已安装第三方经 LIB 词表治理、catalog 不建条目"的既定边界（Eigen3 先例）；真实复用关系由 §8.3.3 的 differences＋positiveEvidence＋boundary 承载；在 findings.json 登记一条表达缺口债务："已安装第三方成熟算法在现行 catalog schema 无 adapter 表达位（CheckCatalogV2 资源域/溯源机制所限）——testkit SetCheck 匹配内核（REUSE-T20）为首个实例；暂以 business-specific＋全量正向证据登记"。**本包推荐此方案**：与既有治理先例零冲突、机检零改动。
 - **方案二（schema 扩展，GOV 批次实施）**：CheckCatalogV2 增设已安装第三方资源类——`upstream[].path` 允许 `vcpkg/installed/<triplet>/…`、以文件系统 sha256 绑定（CheckBinding 同型）替代 git show 溯源、`review.version` 语义改为钉 vcpkg 基线（主仓 vcpkg 目录的引入记录或 _git 基线），并同步校验器正负夹具。该改动属治理门禁扩展，须所有者批准与独立验收，本包不实施、仅提交设计要点。
 
 #### 8.3.5 债务与证据新鲜度
@@ -174,7 +175,7 @@
 
 ### 8.5 补正轮最终 SHA 与未完成
 
-- 最终 SHA：本轮唯一提交（父＝354b9bebf，提交时回填 git log；本记录内不自引用 SHA）；本轮改动＝本记录＋`adapter-evidence/`＋`perf-compare/` 证据目录；产品源码/构建脚本零变化。
+- 补正轮提交链（父＝354b9bebf，详见 git log；本记录不自引用 SHA）：a2a80a48b（断开实验＋对照＋片段）→ 41a8e4d5d（§8.3 经校验器修订）→ d62ab49c2（REUSE-T20 改号）。产品源码/构建脚本自 38290e2bd 起零变化。
 - 未完成：①§8.3 登记修正待协调落地——**范围经本轮核实修订**：可先行的是 functions 两行 differences/positiveEvidence 与 changes boundary 文本（§8.3.3）；decision/mode 升级 adapter 被 schema 表达缺口阻断（§8.3.2），按 §8.3.4 方案一/二由所有者裁决；落地后一次 validate-reuse 确认；②§8.2.4 稠密适配提案待裁决；③**独立验收未完成**——由所有者另开独立会话执行（建议范围：断开实验复现、对照复核、oracle/F-594 回归、登记与 audit-contract §4/§6 一致性核对）；实施者不自签。
 
 ### 8.6 主线同步预案（按"每包一个短分支"固定流程，A 合入后执行）

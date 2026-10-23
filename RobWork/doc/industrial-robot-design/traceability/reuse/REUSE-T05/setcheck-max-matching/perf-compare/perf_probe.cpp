@@ -2,7 +2,7 @@
  * @file   perf_probe.cpp
  * @brief  SetCheck 阶段 2 匹配操作——基线（Kuhn，691cbd42e 快照）与新实现
  *         （Boost checked Edmonds 经 detail::maximumBipartiteMatching）的
- *         受控规模对照探针（REUSE-T19 补正轮；measurement-only，非产品代码）。
+ *         受控规模对照探针（REUSE-T20 补正轮；measurement-only，非产品代码）。
  *
  * 边界与公平性：
  *   - 两侧使用同一生产相容边语义：detail::compatible（SetCheck.hpp 模板，

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-reuse-change/1",
-  "taskId": "REUSE-T19",
-  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json",
+  "taskId": "REUSE-T20",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json",
   "files": [
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",

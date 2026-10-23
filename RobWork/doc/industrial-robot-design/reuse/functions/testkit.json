@@ -2384,7 +2384,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝文件头/守卫/包含/类型视图",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝文件头/守卫/包含/类型视图",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2440,7 +2440,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝结果结构/Traits 模板",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝结果结构/Traits 模板",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2496,7 +2496,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝detail 命名空间开",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝detail 命名空间开",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2552,7 +2552,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼æ¥ç¼å½æ°å¥çº¦ææ¡£",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼æ¥ç¼å½æ°å¥çº¦ææ¡£",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2608,7 +2608,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼detail é­/æ­è¨å¥å£ææ¡£",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记ï¼æ¬æ®µï¼detail é­/æ­è¨å¥å£ææ¡£",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2664,7 +2664,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝命名空间闭/包含守卫尾",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝命名空间闭/包含守卫尾",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2784,7 +2784,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝测试文件头/夹具/Traits 特化",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝测试文件头/夹具/Traits 特化",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2844,7 +2844,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝等价/身份值失配/重复身份用例",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝等价/身份值失配/重复身份用例",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2904,7 +2904,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝纯数值匹配/位滑用例",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝纯数值匹配/位滑用例",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -2964,7 +2964,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝稳定顺序/规模护栏用例",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝稳定顺序/规模护栏用例",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -3024,7 +3024,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝F-594 双向歧义用例与确定性随机辅助",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝F-594 双向歧义用例与确定性随机辅助",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -3084,7 +3084,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝内核穷举 oracle（3×3 全边集＋伪随机 240 例，独立精确对照）",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝内核穷举 oracle（3×3 全边集＋伪随机 240 例，独立精确对照）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -3144,7 +3144,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝生产入口网格族 oracle（15625 组含真歧义形态）",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝生产入口网格族 oracle（15625 组含真歧义形态）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -3204,7 +3204,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "REUSE-T19：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝贪婪陷阱与多解见证确定性用例",
+      "differences": "REUSE-T20：阶段 2 匹配内核复用 Boost.Graph checked Edmonds 薄适配（src/SetCheckMatch.cpp 单 TU，公共头零 Boost）；业务语义（身份优先/C4 相容/F-594 歧义/缺失多余/护栏）零变化，多解配对见证确定性保持；本段＝整文件语义分段登记；本段＝贪婪陷阱与多解见证确定性用例",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",

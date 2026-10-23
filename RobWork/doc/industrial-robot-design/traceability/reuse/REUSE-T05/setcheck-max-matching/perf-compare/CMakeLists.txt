@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 project(setcheck_perf_probe LANGUAGES CXX)
-# REUSE-T19 补正轮性能对照探针（measurement-only）：最小产品源集直接编译
+# REUSE-T20 补正轮性能对照探针（measurement-only）：最小产品源集直接编译
 # （SetCheckMatch/ToleranceProfile/JsonLite/Dataset/Compare——零产品库链接、
 # 零上游 RobWork、零 vcpkg 工具链；Boost 仅头文件路径）。基线 Kuhn 为
 # 691cbd42e 逐字快照（probe TU 内，标注 measurement-only，非产品 fallback）。
