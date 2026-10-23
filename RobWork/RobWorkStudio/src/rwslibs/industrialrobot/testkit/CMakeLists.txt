@@ -31,6 +31,17 @@
 # vendor。vcpkg 的 gtest:x64-windows 为动态库（运行期 DLL 拷贝见下方）。
 find_package(GTest CONFIG REQUIRED)
 
+# ---- Boost.Graph 接入（SetCheck 阶段 2 最大匹配内核复用；header-only）----
+# 复用来源：同一 vcpkg 渠道已装 Boost 1.92（boost-headers/boost-graph），
+# checked_edmonds_maximum_cardinality_matching＋matching_size 经
+# src/SetCheckMatch.cpp 单 TU 编译期消费（Boost 头不出该 TU——公共模板头
+# 与消费者编译面零 Boost）。Boost::headers 为接口目标（零链接库、零运行时
+# DLL），PRIVATE 限于 testkit 本体。候选证据：REUSE-T01 审计 B17＋
+# probe-r17/candidates 两项公开 API 探测；依赖契约修订（testkit.md §3.1
+# "不引入第三方运行库"→header-only 编译期使用例外）与 ird_gates 第三方
+# 词表登记随治理批次。
+find_package(Boost CONFIG REQUIRED)
+
 # ---- 数据根变量落位（testkit.md §3.6/§4.6）----
 # 编译期默认＝industrialrobot/testdata（正斜杠绝对路径）。CACHE PATH：
 # 集成/冒烟两模式与外部覆写（-DSDURWS_IRD_TESTDATA_DIR=...）共用同一变量；
@@ -53,7 +64,8 @@ add_library(sdurws_ird_testkit STATIC
     src/ContractCheck.cpp
     src/Fixture.cpp
     src/Report.cpp
-    src/ProcessRunner.cpp)   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
+    src/ProcessRunner.cpp   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
+    src/SetCheckMatch.cpp)  # 最大二分图匹配内核——Boost.Graph 薄适配单 TU（Boost 头不出本 TU）
 
 # C++17（testkit.md §1.4：显式 cxx_std_17，与 core D-01 同口径；不用 C++20）。
 # PUBLIC 传播：testkit 公共头使用 std::filesystem/std::optional 等 C++17
@@ -84,6 +96,11 @@ target_include_directories(sdurws_ird_testkit PUBLIC
 # add_subdirectory(core) 在两种模式下都执行，真名恒可解析——与 core 测试
 # 目标的链接写法一致）。
 target_link_libraries(sdurws_ird_testkit PUBLIC sdurws_ird_core)
+
+# Boost::headers（header-only 接口目标）：SetCheckMatch.cpp 的编译期使用面。
+# PRIVATE——Boost 头不出 src/SetCheckMatch.cpp，消费者编译/链接面零 Boost；
+# 第三方词表登记随治理批次（ird_gates IRD_THIRDPARTY_ALLOWED_TARGETS）。
+target_link_libraries(sdurws_ird_testkit PRIVATE Boost::headers)
 
 # 别名（集成模式）：供各单元 _test 目标以 RWS::ird::testkit 消费；冒烟
 # 模式无别名（与骨架期行为一致，DTB §5.1）。
