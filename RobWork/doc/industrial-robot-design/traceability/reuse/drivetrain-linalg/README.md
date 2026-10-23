@@ -27,3 +27,15 @@
 
 - AGENTS.md 绑定 STALE（foundation-governance.json 多条目 declared 30446e56 vs 实际 8593beb5）：合并 reuse-t01 带入的主会话在途变更，属他单元矩阵，本包不越界修改；主会话整合时随其 AGENTS.md 更新闭环。
 - 证据文件名 t11-* 已更名 linalg-*；`.cache/t11-smoke` 构建目录名沿用（仅本会话本地产物）。
+
+## 2026-10-23 集成会话补全（REUSE-COVERAGE 阻断清除）
+
+原目录仅含正常运行留证；REUSE-T12 收口时功能行未结项（pending），导致基线
+validate-reuse 报 REUSE-COVERAGE（drivetrain/CMakeLists.txt）。本次补全：
+`disconnected/`（两处真实变异：svd 结果丢弃→解析谱断言失败；求逆返回值
+1e300 扰动→DataInsufficient 命中窗口消费断言；均 1/1/1 门禁计数一致形态，
+源码恢复后 SHA 一致、复跑全绿 42+15）、`normal/`（当前树全新复跑）、
+`production-singularValues.json`/`production-invertSquareMatrix.json`
+（ird-reuse-production/1 四面报告），drivetrain.json 两 adapter 行结项为
+adapter/migrated，新增 MappingCore.hpp/MappingR2GoldenTest.cpp 两行
+business-specific/migrated（NONE 能力，业务面登记）。待独立验收。
