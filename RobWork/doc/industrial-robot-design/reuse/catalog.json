@@ -230,7 +230,7 @@
       "search": {
         "command": "rg -n \"svd|pseudoInverse\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "已读公共接口；适配等价性仍须REUSE-T01验证"
+        "conclusion": "REUSE-T07核实svd与CouplingMath有限方阵契约：生产正向/断开/独立oracle/上游对照及原上游测试已执行；不代表其他候选已迁移"
       },
       "boundary": "显式阈值、病态判定和矩阵维度",
       "upstream": [
@@ -242,6 +242,16 @@
           ],
           "target": "sdurw_math",
           "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+          "symbols": [
+            "LinearAlgebra::svd"
+          ],
+          "target": "sdurw_math",
+          "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4",
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
@@ -260,12 +270,20 @@
           "operations": [
             "value"
           ]
+        },
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "value"
+          ]
         }
       ],
       "limits": {
-        "semantics": "显式阈值、病态判定和矩阵维度",
-        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
-        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+        "semantics": "本验证范围：耦合有限方阵、零/秩亏/病态、阈值邻界及极端尺度；业务阈值在消费方；其他调用者仍逐功能确认",
+        "lifetime": "仅调用栈私有数学值，不构造模型/State/宿主对象",
+        "determinism": "当前固定VS2022 x64 Release相同输入复现；不承诺跨工具链/版本逐位一致"
       },
       "ownerUnit": "core",
       "examples": [],
@@ -274,8 +292,12 @@
         "value"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/reuse/coupling-svd-migration.md",
+          "sha256": "91b3bbbbfa099aa5470c2b2c54fcb2f67442cbf92a3cf9f374cd91291fdef73d"
+        }
       },
       "tests": [
         {

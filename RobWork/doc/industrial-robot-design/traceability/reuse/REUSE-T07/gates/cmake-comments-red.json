@@ -1,0 +1,65 @@
+{
+  "executed": 8,
+  "passed": 5,
+  "failed": 3,
+  "skipped": 0,
+  "helperSha256": "60DD850A9A4E7FE736C4952E5790B68CF7FF70749E04971C0933EF2A050180A3",
+  "cases": [
+    {
+      "name": "real-modeling-cmake",
+      "expectedReject": false,
+      "rejected": true,
+      "passed": false,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cmake-line-comment",
+      "expectedReject": false,
+      "rejected": true,
+      "passed": false,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cmake-inline-comment",
+      "expectedReject": false,
+      "rejected": true,
+      "passed": false,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/helper.cmake : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cpp-line-comment",
+      "expectedReject": false,
+      "rejected": false,
+      "passed": true,
+      "message": ""
+    },
+    {
+      "name": "cpp-model-include-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cpp-state-write-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cmake-uncommented-type-still-rejected",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    },
+    {
+      "name": "cpp-preprocessor-not-a-comment",
+      "expectedReject": true,
+      "rejected": true,
+      "passed": true,
+      "message": "REUSE-AD: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/sample.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)"
+    }
+  ]
+}

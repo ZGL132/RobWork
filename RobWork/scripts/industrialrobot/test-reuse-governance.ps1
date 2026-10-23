@@ -10,6 +10,11 @@ $OutputDir = [IO.Path]::GetFullPath($OutputDir)
 $sandbox = Join-Path ([IO.Path]::GetTempPath()) ('ird-reuse-'+[guid]::NewGuid().ToString('N'))
 $ps = (Get-Process -Id $PID).Path
 $validatorSource = Join-Path $PSScriptRoot 'validate-reuse.ps1'
+# 规则夹具以已独验的补强治理树为固定输入，实际门禁代码仍取本次工作树。
+# REUSE-T07 暴露：叠加全项目在途矩阵却不物化其源/设计/日志依赖，会让所有
+# 用例提前报 MISSING。规则自测不承担当前产品适用性检查；后者由 validate-reuse
+# 和 ird_gates 对真实工作树/冻结提交执行，不能用本夹具结果代替。
+$fixtureCommit = 'e6f06e5b9451357b10001a4677b10b4ad9e454a6'
 $validator = Join-Path $sandbox '.reuse-validator.ps1'
 $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
@@ -221,19 +226,13 @@ try {
     & git -C $sandbox sparse-checkout init --cone
     # 上游测试入口也是复用对象；精确检出两套既有 gtest 根，避免隔离夹具漏文件而误报合法目标。
     & git -C $sandbox sparse-checkout set 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWork/gtest' 'RobWork/RobWorkSim/gtest' $product ($design+'reuse') ($design+'tasks') ($design+'traceability/acceptance')
-    & git -C $sandbox checkout --quiet --detach HEAD
+    & git -C $sandbox checkout --quiet --detach $fixtureCommit
     if ($LASTEXITCODE) { throw 'fixture checkout failed' }
     Copy-Item -LiteralPath $validatorSource -Destination $validator
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'reuse-contract.ps1') -Destination (Join-Path $sandbox 'reuse-contract.ps1')
     $copiedValidatorSha256=(Get-FileHash -LiteralPath $validator -Algorithm SHA256).Hash
     $copiedHelperSha256=(Get-FileHash -LiteralPath (Join-Path $sandbox 'reuse-contract.ps1') -Algorithm SHA256).Hash
-    # 工作树治理输入复制进夹具；冻结提交/CI下也执行相同测试。
-    foreach ($relative in @('reuse','tasks')) {
-        $from=Join-Path $RepoRoot ($design+$relative); $to=Join-Path $sandbox ($design+$relative)
-        [IO.Directory]::CreateDirectory($to)|Out-Null
-        Copy-Item -Path (Join-Path $from '*') -Destination $to -Recurse -Force
-    }
-    Copy-Item -LiteralPath (Join-Path $RepoRoot ($product+'CMakeLists.txt')) -Destination (Join-Path $sandbox ($product+'CMakeLists.txt')) -Force
+    # 不叠加调用方在途数据；全部正反例在下方逐例修改固定夹具并恢复。
     $script:fixtureReviewedCommit=(& git -C $sandbox rev-parse HEAD).Trim()
     PutJson ($design+'traceability/acceptance/GOV-T22-fixture.json') ([pscustomobject]@{taskId='GOV-T22';verdict='pass';reviewedCommit=$script:fixtureReviewedCommit;scope='test fixture only'})
     & git -C $sandbox add -- ($design+'traceability/acceptance/GOV-T22-fixture.json')
@@ -456,7 +455,7 @@ try {
 } finally {
     $failed=@($script:results | Where-Object { -not $_.passed }).Count
     $notRun = [Math]::Max(0,$expectedTests-$script:results.Count)
-    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';validatorSha256=$copiedValidatorSha256;helperSha256=$copiedHelperSha256;driverSha256=$driverSha256;expected=$expectedTests;executed=$script:results.Count;notRun=$notRun;driverFailure=$driverFailure;passed=($script:results.Count-$failed);skipped=0;failed=$failed;complete=($notRun -eq 0 -and -not $driverFailure);tests=$script:results}
+    $report=[ordered]@{schemaVersion='ird-reuse-tests/1';fixtureCommit=$fixtureCommit;validatorSha256=$copiedValidatorSha256;helperSha256=$copiedHelperSha256;driverSha256=$driverSha256;expected=$expectedTests;executed=$script:results.Count;notRun=$notRun;driverFailure=$driverFailure;passed=($script:results.Count-$failed);skipped=0;failed=$failed;complete=($notRun -eq 0 -and -not $driverFailure);tests=$script:results}
     $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $OutputDir 'reuse-test-report.json') -Encoding UTF8
     $xml=[xml]'<testsuite name="reuse-governance"/>'
     $xml.DocumentElement.SetAttribute('tests',"$($script:results.Count)"); $xml.DocumentElement.SetAttribute('failures',"$failed"); $xml.DocumentElement.SetAttribute('skipped','0')
