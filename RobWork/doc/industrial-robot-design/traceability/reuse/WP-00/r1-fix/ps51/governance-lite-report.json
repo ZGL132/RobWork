@@ -1,0 +1,84 @@
+﻿{
+    "suite":  "serial-mainline",
+    "expected":  12,
+    "executed":  12,
+    "passed":  12,
+    "failed":  0,
+    "skipped":  0,
+    "notRun":  0,
+    "complete":  true,
+    "cases":  [
+                  {
+                      "name":  "serial-mainline",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "serial-task-branch",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "serial-main-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-unknown-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-base-required",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-explicit-scope",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "serial-forbidden-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-outside-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-legacy-mainline-base-required",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-legacy-explicit-scope",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "serial-detached-mainline-base-required",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "serial-task-implicit-scope",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  }
+              ]
+}

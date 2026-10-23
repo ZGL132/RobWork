@@ -15,7 +15,7 @@
     "reuse/policy.md"
   ],
   "verify": [
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly -OutputDir RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/ps7",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly -OutputDir RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/r1-fix/ps7",
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T23.json"
   ],
   "allowedFiles": [
@@ -34,6 +34,10 @@
     "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
     "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
     "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T23-20261024-r2/**",
     "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T23.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T25.json"
@@ -50,10 +54,10 @@
   "interUnit": false,
   "acceptance": [
     "根/分区入口可定位唯一有效计划，旧A/B和任务分支/强制远程流程不冲突",
-    "主线分支通过，main/未知分支拒绝，缺少显式Base拒绝，显式范围正反例有效",
+    "主线分支通过，main/未知分支拒绝；实际主线使用旧契约或隐式基点等于Head均拒绝缺Base；显式范围正反例与任务分支兼容性有效",
     "文档及近期契约检查真实通过，产品构建NOT RUN（不适用），独验不自签"
   ],
-  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。实施与独验分开；本任务不批准新核心、上游扩展或权限放宽。 本包起始SHA=58962b338505fc9f69b6a9f1a50e2d55712efffc；本轮准入修正规则需独立会话审查，未取得前仅记实施自查。 实施与自查已完成：PS7/PS5.1各8通过，validate-docs-r6及planned-task通过；独验NOT RUN，status保留ready，不自签done。",
+  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。实施与独验分开；不批准新核心、上游扩展或权限放宽。本包起始SHA=58962b338505fc9f69b6a9f1a50e2d55712efffc。首轮独验FAIL：traceability/acceptance/GOV-T23-20261024-r1.json，问题GOV-T23-R1-01。本轮从4d0f1ab024f093b65d9839d090b124da721aa69f返工，仅修实际主线/隐式空范围Base保护并补回归；证据见traceability/reuse/WP-00/r1-fix/。所有者仅批准本次独验子智能体及本问题复验，未解除常规子智能体禁令。status保留ready，待独立复验，不自签done；allowedFiles仅补本任务确切验收证据输出，不扩大生产/权限范围。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",

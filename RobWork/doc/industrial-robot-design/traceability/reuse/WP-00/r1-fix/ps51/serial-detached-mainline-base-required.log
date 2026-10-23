@@ -1,0 +1,14 @@
+powershell.exe : scope with empty implicit range requires explicit -Base <start SHA>
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:19 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (scope with empt...ase <start SHA>:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-b5a74bd4c0944f48b9d0346f15b120fc\RobWork\scripts\industrialrobot\veri
+fy-task-scope.ps1:99 char:32
++ ... $headSha) { throw 'scope with empty implicit range requires explicit  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (scope with empt...ase <start SHA>:String) [], RuntimeException
+    + FullyQualifiedErrorId : scope with empty implicit range requires explicit -Base <start SHA>
+ 

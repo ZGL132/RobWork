@@ -9,7 +9,7 @@ if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ird-gov-lite-' + [guid]::NewGuid().ToString('N'))
 $psExe = (Get-Process -Id $PID).Path
 $results = @()
-$expectedTests = if ($SerialMainlineOnly) { 8 } elseif ($ValidationBatchOnly) { 23 } else { 21 }
+$expectedTests = if ($SerialMainlineOnly) { 12 } elseif ($ValidationBatchOnly) { 23 } else { 21 }
 
 # 每例检查真实子进程退出码及具名输出，避免“命令没执行”也被当成负例通过。
 function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int]$Expected, [string]$Pattern) {
@@ -159,6 +159,9 @@ function Test-SerialMainline {
     if ($LASTEXITCODE) { throw 'serial fixture git add failed' }
     & git -C $testRoot -c user.name=fixture -c user.email=fixture@example.invalid commit --quiet -m initial
     if ($LASTEXITCODE) { throw 'serial fixture initial commit failed' }
+    # GOV-T23-R1-01：必须建立真实主线现场，不能只用契约字段模拟检出分支。
+    & git -C $testRoot branch -M redesign-main
+    if ($LASTEXITCODE) { throw 'serial fixture mainline setup failed' }
     $start = (& git -C $testRoot rev-parse HEAD).Trim()
     [IO.File]::WriteAllText((Join-Path $testRoot 'fixture.txt'),'after')
     & git -C $testRoot add fixture.txt
@@ -176,6 +179,21 @@ function Test-SerialMainline {
     $contract.forbiddenFiles=@('forbidden.txt'); $contract.allowedFiles=@('other.txt')
     $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
     Invoke-Probe 'serial-outside-rejected' $scope ($common+@('-Base',$start)) 1 '\[out-of-scope\]'
+    # 历史契约保留 codex 分支用于溯源；在实际主线上仍必须显式给出本包基点。
+    $contract.branch='codex/fixture'; $contract.allowedFiles=@('fixture.txt')
+    $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+    Invoke-Probe 'serial-legacy-mainline-base-required' $scope $common 1 'requires explicit -Base'
+    Invoke-Probe 'serial-legacy-explicit-scope' $scope ($common+@('-Base',$start)) 0 'changed=1[\s\S]*verify-task-scope: PASS'
+    # 冻结 SHA 的 detached 验收也不能用主线与自身比较，冒充零改动通过。
+    & git -C $testRoot checkout --quiet --detach $finish
+    if ($LASTEXITCODE) { throw 'serial fixture detached setup failed' }
+    Invoke-Probe 'serial-detached-mainline-base-required' $scope $common 1 'requires explicit -Base'
+    # 真正从主线分出的任务分支仍兼容既有 merge-base 行为，防止修复误禁旧入口。
+    & git -C $testRoot checkout --quiet -b codex/fixture $finish
+    if ($LASTEXITCODE) { throw 'serial fixture task branch setup failed' }
+    & git -C $testRoot branch --force redesign-main $start
+    if ($LASTEXITCODE) { throw 'serial fixture branch point setup failed' }
+    Invoke-Probe 'serial-task-implicit-scope' $scope $common 0 'changed=1[\s\S]*verify-task-scope: PASS'
 }
 
 try {

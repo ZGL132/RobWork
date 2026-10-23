@@ -1,0 +1,7 @@
+changed bindings checked=130 passed=130 failed=0; new migrated=0
+
+functionId                                                beforeStatus afterStatus beforeDecision afterDecision
+----------                                                ------------ ----------- -------------- -------------
+foundation-governance.serial-mainline.Test-SerialMainline              pending                    pending
+
+
