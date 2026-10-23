@@ -200,3 +200,17 @@
 - **继承 A 集成门禁阻断，非整体 PASS**：主线 `ird_gates` 已实际 FAIL，`IRD-GATE-LIB` 报 `${_ird_kin_rw_math}`、`${_ird_kin_rw_kinematics}`、`${_ird_kin_rw_models}` 三项未知依赖（静态扫描按变量字面值检查）。本分支 kinematics/CMakeLists.txt 与扫描器同主线内容一致，B 的既有 Boost 词表变化不解决该问题；按根 AGENTS §4 对已知相同失败不重复执行，B 本轮 `ird_gates` 为 NOT RUN，直接引用 [A 实际失败原件](../../REUSE-T19/integration-20261024/a-build.log)，不得沿用 §8.4 的历史绿灯表示同步后准入。该阻断归 A 返工，未扩白名单、未跳过门禁。
 - 文档、T20 契约及全量复用机检以 `validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json` 执行，实际结果与退出码保留于 `sync-20261024/b-docs.log`；机检不代表算法合规，不另重复其包含的检查。
 - **B 未合入主线，仍待补正和独验**：真实第三方复用关系登记缺口、稠密场景最高 220× 退化处置、最终版本独立验收均未完成；并须等待 A 上述门禁阻断修正及必要复核。满足条件后重新核对最新主线与最终交付 SHA，由所有者决定 B 是否合入。A/B 分支、工作树和构建缓存保留，本轮不新增能力包、不自动派发验收会话。
+
+### 8.8 2026-10-24 所有者授权集成 A/B 全部修改（当前主线状态）
+
+所有者追加指令原话：“现在需要主分支集成所有AB的修改”。协调者据此执行 B 的本地合入；本轮主线明确为 `redesign-main`，冻结的 `main` 不变。本节替代 §8.7 中“B 未合入主线”的当时状态，原始受检证据与历史结论保留。
+
+- 合入前主线 `08a57d562c4b5d07869e6ee6281ddee75209276e` 干净，A＝`0a6b1cde0d22a5de35079cee02558f98812ca903` 干净且已在主线；B＝`3106cca349707585d84b3ca4e3b6ec037b585bbb`，领先主线 7、落后 0，已跟踪文件干净，仅保留未跟踪构建目录 `build-int-lsn/`。三者与上轮交付一致，无新增遗漏提交。
+- 在主工作树执行 `git merge --no-ff codex/reuse-testkit-setcheck`，无冲突。合并 SHA＝`60bcddf1cbc676a40836ca0a574fc62053a569bc`；第一父＝上述主线，第二父＝上述 B 交付；合并树与 B 交付树均为 `894d4cb4b89416aad55426965621570efcd01532`。A/B 两分支均为合并提交的祖先，各自未包含提交数均为 0；相对 A 的产品增量仅为 B 的 testkit 四文件及依赖词表，A 的产品改动未丢失或覆盖。未 rebase/squash/cherry-pick，未操作远程。
+- 本轮本地合入依据为上述所有者追加指令，不将“改号通过”或 governance-only PASS 作为整体准入依据；不将本地集成解释为第三方复用登记缺口已经补正、稠密性能退化已获接受、独立验收已经完成或 T13 债务已经关闭。T18/T19/T20 固定编号、原始映射、各项待办及 GOV 阶段门继续保留。
+- 主工作树现有 `build` 集成缓存确认 `RWS_BUILD_INDUSTRIALROBOT=ON`；VS2022 x64 下执行 `cmake --build build --config Release --target sdurws_ird_testkit_test sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test`，三个受影响目标完成构建，exit 0。未手工重新配置全库，仅 CMake 自动更新原构建文件。日志：[main-build.log](integration-20261024/main-build.log)。
+- 主线 testkit 全套回归以绝对路径运行 `sdurws_ird_testkit_test.exe`，passed=119、skipped=0、failed=0，exit 0；包含 SetCheck oracle/F-594/确定性与监听器所有权回归。VS2022 x64，`QT_QPA_PLATFORM=windows`，单进程运行；本程序不创建 QApplication，不冒称 GUI 点验。原始日志/XML/per-exe 报告：[main-testkit.log](integration-20261024/main-testkit.log)、[main-testkit.xml](integration-20261024/main-testkit.xml)、[main-testkit-report.json](integration-20261024/main-testkit-report.json)。
+- 合并树与 B 交付树完整一致，产品源码、测试、CMake、依赖和数据输入未变；kinematics 的 291 passed/1 skipped/0 failed 与契约 57 passed/0 skipped/0 failed 直接引用 §8.7 的 sync-20261024 原件，其余未受影响消费者及 Debug testkit 继续引用既有效证据，不重跑全库。
+- `ird_gates` 的三项 `${_ird_kin_rw_*}` 变量识别阻断未修正；对应 kinematics/CMakeLists.txt 和扫描器相对 `08a57d562` 无变化，B 依赖词表未为这些变量增加豁免。本轮门禁目标 NOT RUN，按根 AGENTS §4 引用 [A 实际失败原件](../../REUSE-T19/integration-20261024/a-build.log)，不重复相同失败，不宣称门禁 PASS。登记缺口、稠密性能处置和最终独验仍按原记录补正，不新增能力包、不自动派发验收。
+- 本次记录及 A/B 契约使用 `validate-docs.ps1 -TaskFile` 数组选择 T17/T19/T20，一次完成文档、三契约及全量复用机检；实际结果与退出码保留于 `integration-20261024/main-docs.log`。机检仍不代表算法合规或独立验收。
+- 当前结论：**A/B 全部已有提交已在本地 redesign-main 集成，遗留门禁/登记/性能/独验事项未关闭**。A/B 任务分支、全部工作树和构建目录完整保留；不推送远程、不删除或清理现场。
