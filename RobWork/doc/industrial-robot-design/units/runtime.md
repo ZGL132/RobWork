@@ -1629,3 +1629,7 @@ T30正式工厂增量：SnapshotFactory::create的S6透传现有CompileRequest.r
 ## GOV-T21 迁移约束与旧规则勘误
 
 DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列入迁移债务；复用已有模型编译/关节映射，State 线程私有，不在业务域重新建链。
+
+### REUSE-T10：原版EAA适用边界（2026-10-23）
+
+所有者撤销上游EAA补丁，原库不变。旋转表示转换对照限值唯一取REQUIREMENTS附录D第13项（矩阵→EAA、EAA→矩阵及相关往返统一1e-6，所有者明确数值裁决，均为最大元素绝对误差）；FK/编译链仍按附录D第4项1e-9 m/rad，矩阵合法性与Custom预设语义不随表示容差改变。原EAA双向量构造的近反平行/极轴约定也须按实际编译链审查，不能把表示转换限值用于放过关节轴映射误差。当前仅完成原库恢复和误差测量，不宣称runtime旋转/offset已经迁移。

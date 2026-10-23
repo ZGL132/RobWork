@@ -39,9 +39,9 @@ template< class T > Vector3D< T > angleAxis (const Rotation3D< T >& R)
     else if (cos_theta < -1)
         cos_theta = -1;
 
-    // The skew part retains the sine at small angles where the trace rounds to one.
+    // ... because otherwise this often yields NaN:
+    const T angle = acos (cos_theta);
     const V axis (R (2, 1) - R (1, 2), R (0, 2) - R (2, 0), R (1, 0) - R (0, 1));
-    const T angle = atan2 (axis.norm2 () / 2, cos_theta);
 
     if (fabs (angle) < eps) {    // Is angle close to 0 degree
         return 0.5 * axis;
@@ -101,15 +101,17 @@ template< class T >
 EAA< T >::EAA (const rw::math::Vector3D< T >& v1, const rw::math::Vector3D< T >& v2) :
     _eaa (0, 0, 0)
 {
-    const Vector3D< T > perpendicular = rw::math::cross (v1, v2);
-    const T sine = perpendicular.norm2 ();
+    const T epsilon = (T) 1e-15;
     T dval          = rw::math::dot (v1, v2);
-    if (sine == 0 && dval >= 0) {
-        // Only an exactly parallel pair has no rotation axis.
+    if (fabs (dval - 1) < epsilon) {
+        // if the projection is close to 1 then the angle between the vectors are almost 0
+        // and we cannot reliably determine the perpendicular axis. A good approximation is
+        // therefore just to set the EAA equal to 0.
         _eaa = Vector3D< T > (0, 0, 0);
     }
-    else if (sine == 0 && dval < 0) {
-        // Keep the existing deterministic axis for an exactly antiparallel pair.
+    else if (fabs (dval + 1) < epsilon) {
+        // if the projection is close to -1 then the angle between the vectors are almost
+        // 180 and we choose a rotation axis perpendicular to the vector
         int idx = 0;
         if (fabs (v1 (0)) > fabs (v1 (1)))
             idx = 1;
@@ -120,8 +122,8 @@ EAA< T >::EAA (const rw::math::Vector3D< T >& v1, const rw::math::Vector3D< T >&
         _eaa     = normalize (rw::math::cross (v1, v3)) * (T) Pi;
     }
     else {
-        const T angle = atan2 (sine, dval);
-        _eaa = (perpendicular / sine) * angle;
+        T cosangle = acos (dval);
+        _eaa       = normalize (rw::math::cross (v1, v2)) * cosangle;
     }
 }
 
@@ -132,9 +134,7 @@ template< class T > const Rotation3D< T > EAA< T >::toRotation3D () const
     T sa    = sin (theta);
     T va    = 1 - ca;
 
-    // axis() retains its legacy small-angle convention; matrix conversion must not
-    // discard a nonzero rotation merely because its angle is below that threshold.
-    const Vector3D< T > k = theta == 0 ? Vector3D< T > (0, 0, 0) : _eaa / theta;
+    Vector3D< T > k = axis ();
     T kx            = k[0];
     T ky            = k[1];
     T kz            = k[2];

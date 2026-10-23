@@ -1,0 +1,34 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+Note: Google Test filter = EAA.GeneralAntiparallelVectorPrecision_REUSE_T10
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from EAA
+[ RUN      ] EAA.GeneralAntiparallelVectorPrecision_REUSE_T10
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(504): error: The difference between (value.toRotation3D () * a - b).normInf () and 0. is 1.4142135623730949, which exceeds 1e-12, where
+(value.toRotation3D () * a - b).normInf () evaluates to 1.4142135623730949,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+epsilon=0
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(504): error: The difference between (value.toRotation3D () * a - b).normInf () and 0. is 2.1327409066962399e-05, which exceeds 1e-12, where
+(value.toRotation3D () * a - b).normInf () evaluates to 2.1327409066962399e-05,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+epsilon=9.9999999999999998e-13
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(504): error: The difference between (value.toRotation3D () * a - b).normInf () and 0. is 1.4216960941837442e-12, which exceeds 1e-12, where
+(value.toRotation3D () * a - b).normInf () evaluates to 1.4216960941837442e-12,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+epsilon=1.0000000000000001e-05
+
+[  FAILED  ] EAA.GeneralAntiparallelVectorPrecision_REUSE_T10 (0 ms)
+[----------] 1 test from EAA (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] EAA.GeneralAntiparallelVectorPrecision_REUSE_T10
+
+ 1 FAILED TEST

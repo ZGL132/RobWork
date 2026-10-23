@@ -174,13 +174,12 @@ try {
     }
     # 指纹仅止增，不冒充语义查重。即使声明为 business，也不能增加已知自持核心标志。
     $fingerprint = '\b(JacobiSVD|rneaTorques|constrainedDampedLeastSquaresStep|dampedLeastSquaresStep|solveLinearSystem|rotationFromCustomEaa|rk4-fixed|struct\s+Vec3|struct\s+Mat3)\b'
-    $approvedPatches = CheckApprovedUpstreamPatches
     $count = 0
     foreach ($p in @($changed | Sort-Object -Unique)) {
         if (-not (IsProduct $p)) {
             # 未知后缀/无后缀的新产品文件不能默认放行；先登记发现规则与复用契约。
             # 基线非代码资产仍由既有文档/数据校验负责，不扩大为算法合规声明。
-            if ($p.StartsWith($product) -and -not $allBaselineProduct.ContainsKey($p) -and -not $approvedPatches.assets.ContainsKey($p)) { Fail 'UNDECLARED' "new product file type requires governance registration: $p" }
+            if ($p.StartsWith($product) -and -not $allBaselineProduct.ContainsKey($p)) { Fail 'UNDECLARED' "new product file type requires governance registration: $p" }
             continue
         }
         $count++
@@ -201,8 +200,7 @@ try {
     # 框架源码只读；最小扩展也必须另走 SA-02，不可借本轮治理许可直改。
     $upstreamDiff = @(GitLines @('diff','--name-only',$baseline,$tip,'--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest'))
     if (-not $Head) { $upstreamDiff += @(GitLines @('diff','--name-only','HEAD','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')); $upstreamDiff += @(GitLines @('ls-files','--others','--exclude-standard','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')) }
-    $unapprovedUpstream = @($upstreamDiff | Sort-Object -Unique | Where-Object { -not $approvedPatches.files.ContainsKey($_) })
-    if ($unapprovedUpstream.Count) { Fail 'UPSTREAM-READONLY' ($unapprovedUpstream -join ',') }
+    if ($upstreamDiff.Count) { Fail 'UPSTREAM-READONLY' ($upstreamDiff -join ',') }
     # 新任务进入 ready/done 需阶段门；历史契约仅保留历史，不自动重新授权执行。
     $taskPaths = @(GitLines @('diff','--name-only',$baseline,$tip,'--',($design+'tasks/')))
     if (-not $Head) {

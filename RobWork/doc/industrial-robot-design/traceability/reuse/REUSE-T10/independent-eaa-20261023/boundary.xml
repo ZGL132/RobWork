@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-23T09:44:52.148" name="AllTests">
+  <testsuite name="IndependentEAA" tests="3" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:44:52.148">
+    <testcase name="LegacyAxisBoundary" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp" line="7" status="run" result="completed" time="0." timestamp="2026-10-23T09:44:52.148" classname="IndependentEAA" />
+    <testcase name="SignedSmallAngleAnalyticAxes" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-23T09:44:52.148" classname="IndependentEAA" />
+    <testcase name="AntiparallelAndNearlyAntiparallel" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-23T09:44:52.148" classname="IndependentEAA">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28&#x0A;The difference between (actual-b).normInf() and 0. is 1.4142135623730949, which exceeds 1e-12, where&#x0A;(actual-b).normInf() evaluates to 1.4142135623730949,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28
+The difference between (actual-b).normInf() and 0. is 1.4142135623730949, which exceeds 1e-12, where
+(actual-b).normInf() evaluates to 1.4142135623730949,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28&#x0A;The difference between (actual-b).normInf() and 0. is 2.1327409066962399e-05, which exceeds 1e-12, where&#x0A;(actual-b).normInf() evaluates to 2.1327409066962399e-05,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28
+The difference between (actual-b).normInf() and 0. is 2.1327409066962399e-05, which exceeds 1e-12, where
+(actual-b).normInf() evaluates to 2.1327409066962399e-05,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28&#x0A;The difference between (actual-b).normInf() and 0. is 1.4216960941837442e-12, which exceeds 1e-12, where&#x0A;(actual-b).normInf() evaluates to 1.4216960941837442e-12,&#x0A;0. evaluates to 0, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-probe\Boundary.cpp:28
+The difference between (actual-b).normInf() and 0. is 1.4216960941837442e-12, which exceeds 1e-12, where
+(actual-b).normInf() evaluates to 1.4216960941837442e-12,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

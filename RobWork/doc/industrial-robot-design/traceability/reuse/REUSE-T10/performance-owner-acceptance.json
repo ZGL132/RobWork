@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "ird-owner-performance-acceptance/1",
+  "taskId": "REUSE-T10",
+  "date": "2026-10-23",
+  "source": "本会话所有者对异步问题的明确回复",
+  "question": "EAA 补丁微基准首次测得每次转换约 0.027→0.043 微秒，准确性回归通过；现有需求未规定此操作的性能预算。性能验收采用哪种标准？",
+  "ownerQuote": "明确接受此项微基准开销",
+  "verdict": "accepted",
+  "scope": "仅GAP-EAA-01方案A原EAA补丁所列同机微基准开销；不延伸到SVD/其他能力或全应用性能达标",
+  "beforeMicroseconds": 0.027129,
+  "afterMicroseconds": 0.043428,
+  "measurements": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/benchmark-before.json",
+      "sha256": "24ef28c6b370a37c01ad88db72f802f8f3a355ffccd3d5474e02746ca0b4ed05"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/benchmark-after.json",
+      "sha256": "9ef0661ba378440302fcd00149113c70b9e4a1bb95ca10b02f9ac0ecffd66707"
+    }
+  ],
+  "limitations": [
+    "原始采样波动与测量条件保留",
+    "不更改历史implementation.json中当时未接受的记录",
+    "独立验收及冻结门禁仍须完成；本记录不自授独立验收PASS"
+  ]
+}

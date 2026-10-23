@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-independent-eaa-review/1",
+  "taskId": "REUSE-T10",
+  "reviewedImplementation": "e453006ea6fd33f2b325a63d0c88d3db88110748",
+  "reviewedInputRepair": "a467cc731f875bda94dbb4c05276431cb9979e5a",
+  "verdict": "fail",
+  "findings": [
+    {"priority":"P1","file":"RobWork/RobWork/src/rw/math/EAA.cpp","line":107,"endLine":124,"title":"反平行cross舍入残差被归一化为错误旋转轴","parallelVectorErrorBefore":1.6653345369377348e-16,"parallelVectorErrorAfter":1.4142135623730949,"nearAntiparallelErrorBefore":7.8093087552133511e-13,"nearAntiparallelErrorAfter":2.1327409066962399e-5,"evidence":["Boundary.cpp","boundary.log","boundary.xml","Diagnostic.cpp","diagnostic-before.log","diagnostic-patched.log"]}
+  ],
+  "tests": {
+    "upstream":{"passed":16,"failed":0,"skipped":0},
+    "packageConsumer":{"passed":16,"failed":0,"skipped":0},
+    "modeling":{"passed":474,"failed":0,"skipped":0},
+    "modelingContract":{"passed":17,"failed":0,"skipped":0},
+    "runtime":{"passed":301,"failed":0,"skipped":1},
+    "patchPS7":{"passed":13,"failed":0,"skipped":0},
+    "patchPS51":{"passed":13,"failed":0,"skipped":0},
+    "independentBoundary":{"passed":2,"failed":1,"skipped":0}
+  },
+  "checks":{"patchReverseExit":0,"frozenPatchHelperExit":0,"originalFrozenValidatorExit":1,"inputRepairFrozenValidator":"RUNNING; session 98179, .cache/t10-independent/validate-reuse-repaired.log"},
+  "dimensions":{"accuracy":"FAIL","architecture":"No additional blocker found; API/ABI shape and axis threshold preserved","simplicity":"No additional blocker found","performance":"Historical implementation NOT ACCEPTED; parent reports later explicit owner acceptance, authorization recorded separately; cannot cover accuracy failure"},
+  "debtClosure":"NOT AUTHORIZED",
+  "dependencyRelease":"BLOCKED",
+  "remoteOperations":"NONE"
+}

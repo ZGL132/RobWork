@@ -1,3 +1,5 @@
+> 当前状态：所有者已撤销本补丁；EAA.cpp/EAATest.cpp恢复上游原状，0004及其专用许可通路撤销。以下实施/测量/批准为历史记录，不再有效授权。最新指令见withdrawal-owner-decision.json。TestApprovedPatches仅能在历史SHA重放，不是当前verify入口。
+
 # REUSE-T10：已批准的上游 EAA 最小精度修正
 
 所有者于2026-10-23在本会话明确批准GAP-EAA-01方案A；原文和精确范围见approval.json。
@@ -61,3 +63,10 @@ EIGEN_DONT_ALIGN_STATICALLY=1与上游RobWorkSetup.cmake一致；测试同时设
 原失败/批准/审查证据保留，不改inventory历史分类，closures为空。
 
 最终实施验证：PS7完整治理152通过、0失败/跳过；精确patch回归PS7/PS5.1各13通过。validate-docs/validate-task/集成ird_gates均通过；DeepEvidence未跑。独立CONFIG包消费者从本工作树RobWork_DIR导出目标链接本工作树补丁制品，上游16项全部通过；未使用D盘旧math库冒充补丁验证。
+
+## 后续所有者性能接受（2026-10-23）
+
+所有者在看到0.027→0.043微秒的测量后明确回复“明确接受此项微基准开销”。
+精确范围和原始测量绑定见performance-owner-acceptance.json。该接受仅限本EAA补丁，
+不延伸到SVD或全业务链，也不覆盖独立验收/冻结检查。前文和implementation.json
+保留当时“性能接受未完成”的历史事实，不覆盖原始测量。

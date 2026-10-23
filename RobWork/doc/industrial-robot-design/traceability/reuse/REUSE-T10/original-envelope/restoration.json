@@ -1,0 +1,23 @@
+{
+  "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "baselineBlob": "802c7debc448bd1148d623f58a34a5b19ee22088",
+      "currentBlob": "802c7debc448bd1148d623f58a34a5b19ee22088"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+      "baselineBlob": "5b0273eafafe53fcbe238a140b7054c93fc2faea",
+      "currentBlob": "5b0273eafafe53fcbe238a140b7054c93fc2faea"
+    }
+  ],
+  "mathDll": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t07-integrated\\RobWork\\bin\\Release\\sdurw_math.dll",
+  "mathDllRawSha256": "1e0d7bdfbc9a93f6ee0d11bdf72208e00ae1edd91287a8fe791c289f4b38f90f",
+  "activeEaaPatch": false,
+  "livePatchPermissionHelper": false,
+  "reservedScopes": [
+    "drivetrain and its matrix",
+    "trajectory Smooth/TimeParam and polynomial matrix"
+  ]
+}

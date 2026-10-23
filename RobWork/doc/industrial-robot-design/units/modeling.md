@@ -1787,3 +1787,7 @@ T30完整分组表单设计续接：所有者确认第5批高亮人工通过后�
 ## GOV-T21 迁移约束与旧规则勘误
 
 CouplingMath.hpp、CanonicalBridge/DhConvert/RpyMath 为待迁移/审计；SVD/旋转优先用 rw::math，DH 拟合不因仅找到 DHParameterSet 元数据就认定已有完整能力。
+
+### REUSE-T10：原版EAA转换容差决议（2026-10-23）
+
+按所有者撤销上游补丁并适当放宽阈值的指令，后续MDL-22欧拉→EAA适配采用REQUIREMENTS附录D第13项：矩阵→EAA、EAA→矩阵及相关往返的等价旋转矩阵元素绝对误差统一1e-6（所有者明确数值裁决）。参数顺序仍为业务roll/pitch/yaw→上游yaw/pitch/roll，单位rad，runtime是唯一矩阵/模型权威。不改普通RPY正向/预设精确矩阵、矩阵合法性或非法输入原子拒绝；仍须核完整真实生产链和非零自定义姿态语义。这里登记验收口径，尚未宣称产品旋转迁移完成。

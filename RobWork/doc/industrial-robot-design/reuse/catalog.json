@@ -520,7 +520,7 @@
         },
         {
           "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
-          "sha256": "ac784c12ba1b7f89217f0e11cc0dfb07da69e4f53ed9c144bdad194786d62181",
+          "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47",
           "symbols": [
             "angleAxis"
           ],
@@ -614,7 +614,7 @@
         },
         {
           "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
-          "sha256": "54bded081711a24d3c4ae79bfdf93a5f9735669d60cf8891d7d2c20a86f51f7e",
+          "sha256": "c9d36f112087abddbeeee9aadd18858bdc69d4ac8353273ff4a752c533a8d852",
           "symbols": [
             "EAA"
           ]

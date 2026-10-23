@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-23T10:02:40.151" name="AllTests">
+  <testsuite name="EaaOriginal" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T10:02:40.151">
+    <testcase name="MatrixToVectorEnvelope_MDL22_AT37" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\eaa-original-envelope\Envelope.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-23T10:02:40.151" classname="EaaOriginal" />
+    <testcase name="VectorAndRoundTripEnvelope_MDL22_AT37" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\eaa-original-envelope\Envelope.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-23T10:02:40.151" classname="EaaOriginal" />
+  </testsuite>
+</testsuites>
