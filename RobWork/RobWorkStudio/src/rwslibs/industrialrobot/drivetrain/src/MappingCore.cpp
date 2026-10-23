@@ -29,7 +29,7 @@
  *
  * 确定性（NFR-COR-02）：全部计算为封闭代数运算（无随机、无隐藏状态、
  *   无时钟/随机源）；R2 数值核的分解与求逆复用上游
- *   rw::math::LinearAlgebra::svd（Eigen JacobiSVD——同输入同结果）与
+ *   rw::math::LinearAlgebra::svd（Eigen SVD——同输入同结果）与
  *   ::inverse（Eigen LU），自写迭代核已删（上游线性代数复用）；同一输入必得位
  *   等输出。映射本身不存在算法截断误差（卡 §6.2"映射误差"行）——黄金
  *   算例对照容差仅为浮点求值路径差异留（附录 D 第 9 项标量相对 1×10⁻⁹）。
@@ -173,7 +173,7 @@ inline constexpr double kDtSingularSigmaRatio = 1e-12;
  *      （CouplingMath::couplingSingularValues）同族，业务阈值各自单元
  *      单点承载，不复制其封装。
  *   2. 容器：行主序 RowMatrix → Eigen::MatrixXd 逐元素复制；分解、收敛
- *      与排序能力全部归属上游（Eigen JacobiSVD，奇异值降序输出），
+ *      与排序能力全部归属上游（Eigen SVD，奇异值降序输出），
  *      本单元不实现旋转迭代。U/V 仅为上游接口要求的输出参数，不消费。
  *
  * @param a [in] 输入方阵（rows==cols 且 wellFormed——调用方保证；

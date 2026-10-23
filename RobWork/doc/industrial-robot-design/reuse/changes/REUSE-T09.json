@@ -1,0 +1,41 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T09",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+ "files": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+   "sha256": "a6f6b1ce4bd2a88434c8994566c535129930a6ab75c2a81343a2c9ca77bbd313",
+   "mode": "adapter",
+   "capabilities": [
+    "MATH-SVD"
+   ],
+   "boundary": "R2数值核分解/求逆改上游LinearAlgebra薄适配；自写Jacobi/Gauss-Jordan删除；业务阈值与校验顺序不变",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/linalg-drivetrain-test.xml"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/MappingCore.hpp",
+   "sha256": "6a22756cee6c290ebd28daa864b3924ce774a71be6753404147cb2fcc5675a42",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "类注释确定性口径同步（上游引用）；无接口/实现变化",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/build/linalg-smoke-rebuild.log"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+   "sha256": "921878baeef1ad88743a3d44d549e854f76a2531d465cdf8c81a72bd6507141a",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "PRIVATE sdurw_math链接落位（modeling REUSE-T07同款）与目标注册；无数值核心",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/build/linalg-smoke-rebuild.log"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
+   "sha256": "512135a4cb1102147dec52ec895593e070a5d6e77751bb14d5da8a81eeef69d2",
+   "mode": "business",
+   "capabilities": [],
+   "boundary": "新增DtMappingR2Linalg组（解析逆/谱/阈值邻界/尺度）与路径提法同步；不改黄金期望",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/linalg-drivetrain-test.xml"
+  }
+ ]
+}

@@ -1001,7 +1001,7 @@ TEST(DtMappingR2Linalg, InverseAnalyticOracle_WindowConsumers)
 /**
  * 上游线性代数复用（准确性）：奇异值谱解析对照——正交相似变换不变奇异值。
  * C＝R(π/6)·diag(3,1)·R(π/6)ᵀ（对称阵，解析 σ＝{3,1}、κ＝3）；经
- * validate 的 conditionNumber 字段直接对照解析谱（上游 JacobiSVD 降序
+ * validate 的 conditionNumber 字段直接对照解析谱（上游 SVD 降序
  * 契约与比值判据的数值能力实证）。展开：cosθ＝√3/2、sinθ＝1/2 →
  * C＝[[2.5, √3/2],[√3/2, 1.5]]。
  */
