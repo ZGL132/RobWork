@@ -1,0 +1,6 @@
+verify-task: RepoRoot=C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\lean-verification
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\lean-verification\RobWork\scripts\industrialrobot\validate-task.ps1:69
+Line |
+  69 |  …  -notmatch '^WP-[A-I]$') { throw "invalid masterWp: $($t.masterWp)" }
+     |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid masterWp: bad

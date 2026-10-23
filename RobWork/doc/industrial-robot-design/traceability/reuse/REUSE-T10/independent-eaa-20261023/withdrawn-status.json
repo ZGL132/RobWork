@@ -1,0 +1,6 @@
+{
+  "status": "superseded-by-owner-withdrawal",
+  "originalVerdict": "fail",
+  "frozenValidator": "terminated on owner withdrawal; no final PASS",
+  "taskId": "REUSE-T10"
+}

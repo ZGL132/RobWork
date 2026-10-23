@@ -15,6 +15,8 @@ param(
   [string]$RepoRoot = "",
   [switch]$DryRun
 )
+# 前置校验失败必须终止执行器，不能继续执行契约中的业务命令。
+$ErrorActionPreference = 'Stop'
 if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
 
 # 仓库根解析（与 validate-task.ps1 同一套逻辑，保持两个脚本行为一致）
@@ -29,9 +31,12 @@ Write-Output "verify-task: RepoRoot=$RepoRoot"
 & (Join-Path $scriptDir "validate-task.ps1") -TaskFile $TaskFile -RepoRoot $RepoRoot
 
 $t = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json
-# 新执行（包括旧契约重新执行）必须补齐复用证据与阶段门，DryRun 也不能绕过。
-& (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
-if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
+# validate-task 已对这些契约执行复用门禁；同次前置只查一次。
+# 旧契约/尚未编译的占位仍须补查，DryRun 同样不能绕过 H1—H6。
+if (-not ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done')))) {
+  & (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+  if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
+}
 if ($DryRun) {
   foreach ($cmd in @($t.verify)) { Write-Output "[dryrun] $cmd" }
   Write-Output "verify-task: DRYRUN PASS $($t.taskId)"

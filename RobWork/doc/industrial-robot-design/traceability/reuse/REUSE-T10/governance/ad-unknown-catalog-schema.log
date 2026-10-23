@@ -1,0 +1,1 @@
+REUSE-BASELINE : fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)

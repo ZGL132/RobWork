@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.16)
+project(EaaPackageConsumer LANGUAGES CXX)
+find_package(RobWork CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
+# 原上游源直接编译；消费者只使用真实CONFIG导出，不重建数学/测试平台。
+add_executable(eaa_package_test "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWork/gtest/math/EAATest.cpp" "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWork/gtest/math/RPYTest.cpp" "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWork/gtest/math/QuaternionTest.cpp")
+set_target_properties(eaa_package_test PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+target_compile_options(eaa_package_test PRIVATE /utf-8)
+target_compile_definitions(eaa_package_test PRIVATE EIGEN_DONT_ALIGN_STATICALLY=1)
+target_link_libraries(eaa_package_test PRIVATE RW::sdurw_math GTest::gtest_main)

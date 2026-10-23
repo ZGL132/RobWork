@@ -198,8 +198,8 @@ try {
     })
     CheckFunctions $grants $functionalChanges
     # 框架源码只读；最小扩展也必须另走 SA-02，不可借本轮治理许可直改。
-    $upstreamDiff = @(GitLines @('diff','--name-only',$baseline,$tip,'--','RobWork/RobWork/src','RobWork/RobWorkSim/src'))
-    if (-not $Head) { $upstreamDiff += @(GitLines @('diff','--name-only','HEAD','--','RobWork/RobWork/src','RobWork/RobWorkSim/src')); $upstreamDiff += @(GitLines @('ls-files','--others','--exclude-standard','--','RobWork/RobWork/src','RobWork/RobWorkSim/src')) }
+    $upstreamDiff = @(GitLines @('diff','--name-only',$baseline,$tip,'--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest'))
+    if (-not $Head) { $upstreamDiff += @(GitLines @('diff','--name-only','HEAD','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')); $upstreamDiff += @(GitLines @('ls-files','--others','--exclude-standard','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')) }
     if ($upstreamDiff.Count) { Fail 'UPSTREAM-READONLY' ($upstreamDiff -join ',') }
     # 新任务进入 ready/done 需阶段门；历史契约仅保留历史，不自动重新授权执行。
     $taskPaths = @(GitLines @('diff','--name-only',$baseline,$tip,'--',($design+'tasks/')))

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "ird-owner-decision/1",
+  "taskId": "REUSE-T10",
+  "date": "2026-10-23",
+  "ownerQuote": "撤销EAA的修改补丁，保持原状，改为适当放大误差阈值",
+  "effect": "supersedes earlier scheme A and its performance acceptance; current EAA source and upstream tests restored to baseline",
+  "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+  "status": "withdrawn",
+  "scope": "只改变EAA适配误差政策；其他功能/物理容差不自动放宽",
+  "independentVerdict": "FAIL preserved; no closure or merge",
+  "next": "测量原EAA在业务输入的误差包络，给旋转表示转换设独立容差，不更改上游/整体FK容差",
+  "thresholdOwnerQuote": "可以改为1e-6，不要因为这个卡住，加快进度",
+  "rotationConversionAbsoluteElementTolerance": 1e-06
+}

@@ -1,0 +1,33 @@
+{
+  "baseCommit": "eae9d213e94c2366f657847f5b66ef2167abd37c",
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "ac784c12ba1b7f89217f0e11cc0dfb07da69e4f53ed9c144bdad194786d62181"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+      "sha256": "54bded081711a24d3c4ae79bfdf93a5f9735669d60cf8891d7d2c20a86f51f7e"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/RPYTest.cpp",
+      "sha256": "8ac267dae4b501bd7ed269e6203e3122be075d556c5f43416768bdec04b08082"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/QuaternionTest.cpp",
+      "sha256": "821387b2c2fa5a6c7046d6c7debaa424a0847cc74a89af005b364223c64784cd"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/cmake/RobWorkSetup.cmake",
+      "sha256": "bceecd55722eada2f93e06e2b6494edce6030e3c97b847b14f84f5771345e822"
+    }
+  ]
+}

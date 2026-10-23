@@ -449,7 +449,7 @@
       "search": {
         "command": "rg -n \"toRotation3D\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "已读公共接口；适配等价性仍须REUSE-T01验证"
+        "conclusion": "REUSE-T08核实RPY正向；EAA近零及Quaternion::ln缺口见GAP-EAA-01；仅候选适用性审查，非生产迁移批准。"
       },
       "boundary": "轴角、参考系、零角/π",
       "upstream": [
@@ -507,6 +507,46 @@
           "target": "sdurw_math",
           "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
           "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+          "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2",
+          "symbols": [
+            "toRotation3D"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+          "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47",
+          "symbols": [
+            "angleAxis"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+          "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63",
+          "symbols": [
+            "Quaternion"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+          "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15",
+          "symbols": [
+            "ln"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
         }
       ],
       "build": {
@@ -550,8 +590,8 @@
         }
       ],
       "limits": {
-        "semantics": "RPY(yaw,pitch,roll)与产品roll/pitch/yaw字段必须换序；EAA主值/pi分支、SO(3)判定容差、单位m/rad和参考系须分别回归。纯值运算不新增模型构造权",
-        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
+        "semantics": "RPY(yaw,pitch,roll)需换序；EAA在原1e-12微小角验等下不直接适用，GAP-EAA-01未批准；不得丢失有效小角。",
+        "lifetime": "纯值，无WorkCell/State所有权；Quaternion导出对象须匹配上游EIGEN_DONT_ALIGN_STATICALLY编译约定，不能套用无对齐证据。",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
       "ownerUnit": "core",
@@ -564,10 +604,32 @@
         "status": "candidate",
         "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
       },
-      "tests": [],
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/RPYTest.cpp",
+          "sha256": "8ac267dae4b501bd7ed269e6203e3122be075d556c5f43416768bdec04b08082",
+          "symbols": [
+            "RPYTest"
+          ]
+        },
+        {
+          "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+          "sha256": "c9d36f112087abddbeeee9aadd18858bdc69d4ac8353273ff4a752c533a8d852",
+          "symbols": [
+            "EAA"
+          ]
+        },
+        {
+          "path": "RobWork/RobWork/gtest/math/QuaternionTest.cpp",
+          "sha256": "821387b2c2fa5a6c7046d6c7debaa424a0847cc74a89af005b364223c64784cd",
+          "symbols": [
+            "Quaternion"
+          ]
+        }
+      ],
       "resourceSearch": {
         "command": "rg -n \"toRotation3D\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
+        "conclusion": "已读原RPY/EAA/Quaternion实现及测试，原RPYTest直接编译运行；EAA/Quaternion测试仅检索未执行，不夸大适用性。"
       }
     },
     {

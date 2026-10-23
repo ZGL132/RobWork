@@ -1,0 +1,18 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build/CMakeFiles/generate.stamp is out-of-date.
+  the file 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a/CMakeLists.txt'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- Configuring done (0.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a/CMakeLists.txt
+  EAATest.cpp
+  RPYTest.cpp
+  QuaternionTest.cpp
+  正在生成代码...
+  eaa_precision_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\Release\eaa_precision_test.exe
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a/CMakeLists.txt

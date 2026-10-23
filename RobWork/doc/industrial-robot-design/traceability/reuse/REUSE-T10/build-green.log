@@ -1,0 +1,39 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build/CMakeFiles/generate.stamp is out-of-date.
+  the file 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a/CMakeLists.txt'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- Configuring done (0.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a-build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t08a/CMakeLists.txt
+  Benchmark.cpp
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a\Benchmark.cpp(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\MathFunctions.h(811,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\arch\Default\Half.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\arch\Default\BFloat16.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\arch\Default\GenericPacketMathFunctions.h(1335,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\arch\Default\GenericPacketMathFunctions.h(1941,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\Core\SkewSymmetricMatrix3.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\eigen3\Eigen\src\IterativeLinearSolvers\BiCGSTAB.h(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  (编译源文件“../t08a/Benchmark.cpp”)
+  
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a\Benchmark.cpp(12,29): error C2065: “EAA”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a\Benchmark.cpp(12,33): error C2059: 语法错误:“>” [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a\Benchmark.cpp(14,33): error C2065: “EAA”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a\Benchmark.cpp(14,37): error C2059: 语法错误:“>” [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\eaa_benchmark.vcxproj]
+  eaa_precision_test.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t08a-build\Release\eaa_precision_test.exe

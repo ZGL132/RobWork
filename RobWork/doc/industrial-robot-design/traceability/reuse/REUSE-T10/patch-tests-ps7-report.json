@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "ird-gate-test/1",
+  "failed": 0,
+  "skipped": 0,
+  "validatorSha256": "C291C86760BC8353549D78ACA1750E027A5A41A2870B9692DE4B3A6F416039A1",
+  "helperSha256": "6B77DFF078CC201B6661B57DA295D85E69136FD1D86776410C58C0506E5D0E93",
+  "passed": 13,
+  "notRun": 0,
+  "fixture": "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t10-patch-tests-ps7\\fixture-72e103a0b5f84763bfa7948718ab8772",
+  "tests": [
+    {
+      "actualRejection": false,
+      "name": "exact approval and real diff",
+      "detail": "",
+      "passed": true,
+      "expectedRejection": false
+    },
+    {
+      "actualRejection": true,
+      "name": "stale source",
+      "detail": "REUSE-PATCH : baseline/current binding",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "stale patch",
+      "detail": "REUSE-PATCH : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-test.patch",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "rehashed forged patch",
+      "detail": "REUSE-PATCH : patch differs from exact approved baseline diff",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "wrong baseline",
+      "detail": "REUSE-PATCH : baseline/current binding",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "missing registration",
+      "detail": "REUSE-PATCH : SA-02 registration missing",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "empty owner quote",
+      "detail": "REUSE-PATCH : missing ownerQuote",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "wrong approval scope",
+      "detail": "REUSE-PATCH : exact upstream file/single owner",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "stale proposal",
+      "detail": "REUSE-PATCH : proposal.md",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": true,
+      "name": "duplicate record",
+      "detail": "REUSE-PATCH : patch path/duplicate",
+      "passed": true,
+      "expectedRejection": true
+    },
+    {
+      "actualRejection": false,
+      "name": "unregistered file receives no grant",
+      "detail": "",
+      "passed": true,
+      "expectedRejection": false
+    },
+    {
+      "actualRejection": false,
+      "name": "missing registry grants nothing",
+      "detail": "",
+      "passed": true,
+      "expectedRejection": false
+    },
+    {
+      "name": "frozen Head ignores current worktree",
+      "detail": "",
+      "passed": true
+    }
+  ]
+}

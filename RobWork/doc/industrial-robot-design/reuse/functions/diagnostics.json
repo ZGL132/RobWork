@@ -1552,11 +1552,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -1718,11 +1718,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -1884,11 +1884,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2050,11 +2050,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2216,11 +2216,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2382,11 +2382,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2548,11 +2548,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2714,11 +2714,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -2880,11 +2880,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3046,11 +3046,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3212,11 +3212,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3378,11 +3378,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3544,11 +3544,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3710,11 +3710,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -3876,11 +3876,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4042,11 +4042,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4208,11 +4208,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4374,11 +4374,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4540,11 +4540,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4706,11 +4706,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -4872,11 +4872,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5038,11 +5038,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5204,11 +5204,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5370,11 +5370,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5536,11 +5536,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5702,11 +5702,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -5868,11 +5868,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -6034,11 +6034,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {
@@ -6200,11 +6200,11 @@
           "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.hpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
           "sha256": "503475bba7248e73ea17903594c268a98817a4c812731550703b8c01ef3dffd6"
         },
         {
-          "path": "RobWork/RobWork/src/rw/common/BinArchive.cpp",
+          "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
           "sha256": "4e647c5f30ab451fc3676c02b8f12d649332b3037883e61d0adad206d893d733"
         },
         {

@@ -1814,7 +1814,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -1885,7 +1885,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -1956,7 +1956,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2028,7 +2028,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2100,7 +2100,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2136,8 +2136,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
           "symbol": "validate-task.ps1",
           "startLine": 18,
-          "endLine": 39,
-          "sha256": "f88c22078f1534c6cbe1fac5efdd84361aab1713b9bf58c7a47345079f356bfc",
+          "endLine": 44,
+          "sha256": "58171974e3ff46846a6b44c5b9539cd8c1ea2b3ec3b4b1c8a465196887e2d7c9",
           "semanticGroup": "preflight-and-dryrun",
           "qualifiedSymbol": "PowerShell::verify-task.ps1::preflight-and-dryrun"
         }
@@ -2152,11 +2152,11 @@
         "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
         "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
       },
-      "differences": "调用原validate-task和validate-reuse，DryRun也预检、仅打印verify不执行；不能当三命令真实通过",
+      "differences": "validate-task负责已编译复用契约门禁；旧契约补查，同次前置不重复；DryRun也预检。前置失败终止，不冒充真实产品通过。",
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
-          "sha256": "e3ccb7ba5ccaaa7b7d9c8a21e344f9706e8a7ed0c9f41e3fa9c07380d3434aeb"
+          "sha256": "911c8021604d31b8f2607596a8f3cfa1276cab4c81e3d75f9ab9f71db4f15fe3"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2184,7 +2184,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2219,8 +2219,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
           "symbol": "foreach ($cmd in @($t.verify))",
-          "startLine": 47,
-          "endLine": 69,
+          "startLine": 52,
+          "endLine": 74,
           "sha256": "710fdb57856f8270c396f782b271c16caf65700c7ac12aa39f5f66bf110f01c1",
           "semanticGroup": "execute-and-count",
           "qualifiedSymbol": "PowerShell::verify-task.ps1::execute-and-count"
@@ -2240,7 +2240,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
-          "sha256": "e3ccb7ba5ccaaa7b7d9c8a21e344f9706e8a7ed0c9f41e3fa9c07380d3434aeb"
+          "sha256": "911c8021604d31b8f2607596a8f3cfa1276cab4c81e3d75f9ab9f71db4f15fe3"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2268,7 +2268,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2352,7 +2352,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2467,7 +2467,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2583,7 +2583,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",

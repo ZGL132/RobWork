@@ -1,0 +1,13 @@
+True : exact approval and real diff : 
+True : stale source : REUSE-PATCH : baseline/current binding
+True : stale patch : REUSE-PATCH : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-test.patch
+True : rehashed forged patch : REUSE-PATCH : patch differs from exact approved baseline diff
+True : wrong baseline : REUSE-PATCH : baseline/current binding
+True : missing registration : REUSE-PATCH : SA-02 registration missing
+True : empty owner quote : REUSE-PATCH : missing ownerQuote
+True : wrong approval scope : REUSE-PATCH : exact upstream file/single owner
+True : stale proposal : REUSE-PATCH : proposal.md
+True : duplicate record : REUSE-PATCH : patch path/duplicate
+True : unregistered file receives no grant : 
+True : missing registry grants nothing : 
+13 passed; 0 failed; 0 skipped; 0 notRun

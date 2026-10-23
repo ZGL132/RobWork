@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "ird-capability-implementation/1",
+  "taskId": "REUSE-T10",
+  "independentAcceptance": "NOT RUN",
+  "performanceAcceptance": "NOT ACCEPTED",
+  "tests": {
+    "upstream": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "packageConsumer": {
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0
+    },
+    "modeling": {
+      "passed": 474,
+      "failed": 0,
+      "skipped": 0
+    },
+    "modelingContract": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    "runtime": {
+      "passed": 301,
+      "failed": 0,
+      "skipped": 1
+    },
+    "governancePS7": {
+      "passed": 152,
+      "failed": 0,
+      "skipped": 0
+    },
+    "patchPS7": {
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    },
+    "patchPS51": {
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "bindings": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "rawSha256": "4abf82947b1faffe15d18cfbe5606fdb1d7072d504d15d894d4d5ee2aff355ab"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+      "rawSha256": "aad42b38af6cf797782e74965e9961e631a11f12c896ab388426e9eeb2163903"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "rawSha256": "c291c86760bc8353549d78aca1750e027a5a41a2870b9692de4b3a6f416039a1"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "rawSha256": "6b77dff078cc201b6661b57da295d85e69136fd1d86776410c58c0506e5d0e93"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch",
+      "rawSha256": "0fb681a1d310778cae1461f4adb6243c7697d03ba1be8aaf3274f3a57d88d5a6"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+CMake is re-running because C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t10-independent/boundary-build/CMakeFiles/generate.stamp is out-of-date.
+  the file 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t10-independent/boundary-probe/CMakeLists.txt'
+  is newer than 'C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t10-independent/boundary-build/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  CMakeLists.txt:3 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (5.4s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t10-independent/boundary-build
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t10-independent/boundary-probe/CMakeLists.txt
+  Diagnostic.cpp
+  eaa_diagnostic.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t10-independent\boundary-build\Release\eaa_diagnostic.exe
