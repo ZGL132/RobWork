@@ -164,3 +164,15 @@ build_smoke_*/
 # 验收/冒烟临时构建树（平台服务域补全批 a1cbc55b 误入库后清理——防复发登记）
 build-acc-*/
 build-smoke-*/
+
+# 会话/验收现场产物（2026-10-23 集成基线清理登记）：机器生成可复现、无已提交
+# 摘要绑定引用——运行验证输出、智能体会话数据、审计原始运行轮、旧验收现场、
+# 分析草稿图。原位文件已清理；审计核查脚本/报告层保留于 audit/ 根层（findings
+# 源标签指针），不入库、不再显示。
+/.cache/
+/.zcode/
+/.zcodeignore
+/.acc-t19/
+/audit/
+/dynamics-peak-window.png
+/dynamics-single-sample-window.png
