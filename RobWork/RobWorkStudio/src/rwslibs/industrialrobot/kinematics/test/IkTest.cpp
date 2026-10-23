@@ -337,12 +337,15 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
 
     const rt::CanonicalModel model = coaxialChainModel();
     TestView view(model);
+#if IRD_HAVE_RUNTIME_COMPILE  // REUSE-T18：FK 复验经真实编译产物（冒烟树不编译）
     const kin::FkEvaluator fk;
+#endif
     kin::TcpRef tcp;
     tcp.toolObject = model.tools().front().objectId;
     tcp.tcpKey = model.tools().front().localName;
     constexpr double kPi = 3.14159265358979323846;
 
+#if IRD_HAVE_RUNTIME_COMPILE
     // 已知解解析验证（反例数据的前提 sanity）：q*=(π/2,0,…,0) 的 TCP
     // 位置＝(0,1,0)（六轴同轴全 z、TCP 偏置 x+1 m——Rz(π/2)·(1,0,0)）。
     {
@@ -352,6 +355,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         expectGoldenNear(m.get().tcpInBase.P()[1], 1.0, "已知解 TCP y");
         expectGoldenNear(m.get().tcpInBase.P()[2], 0.0, "已知解 TCP z");
     }
+#endif
 
     // 公共请求面（审查反例参数：目标 (0,1,0)、零初值、迭代上限 256）。
     auto baseRequest = [&](kin::IkTaskSpace space) {
@@ -397,6 +401,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         EXPECT_GT(s.orientationResidual, 1e-6)
             << "姿态残差如实记录且量级大——证明姿态确未被约束（若参与"
                "判据则上收紧敛必失败）";
+#if IRD_HAVE_RUNTIME_COMPILE
         // 独立 FK 复验（审查正面证据法——解 q 经 FkEvaluator 独立复算，
         // TCP 位置 ≈ (0,1,0)）。
         const auto m = fk.evaluate(view, tcp, s.q);
@@ -404,6 +409,7 @@ TEST(KinIk, PositionOnlyTaskIndependentDimension_KIN_P2)
         EXPECT_NEAR(m.get().tcpInBase.P()[0], 0.0, 1e-6);
         EXPECT_NEAR(m.get().tcpInBase.P()[1], 1.0, 1e-6);
         EXPECT_NEAR(m.get().tcpInBase.P()[2], 0.0, 1e-6);
+#endif
         // 硬过滤照常工作（②限位用真实区间——解在 [-π,π] 内）。
         for (std::size_t i = 0; i < s.q.size(); ++i) {
             EXPECT_GE(s.q[i], -kPi);

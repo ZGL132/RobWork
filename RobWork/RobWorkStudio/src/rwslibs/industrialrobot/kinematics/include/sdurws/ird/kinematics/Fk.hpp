@@ -15,9 +15,14 @@
  *     关节裕量；统一尺度规则）、NFR-COR-01（确定性）、NFR-COR-03（非法
  *     输入拒绝不钳制）、附录 D 第 4/9 项（FK 等价 1×10⁻⁹ m/rad；解析算例
  *     标量相对 1×10⁻⁹——本单元解析黄金 UT 的容差出处）
- *   - 治理登记 O-40（DTB §4.2）：Jacobian SVD 经 vcpkg 经典模式引入
- *     Eigen（已装 eigen3 5.0.1）——**PRIVATE 仅计算库**（rw::math 无 SVD）；
- *     本头公共面零 Eigen 类型（Eigen 只出现在 src/Fk.cpp 实现内）。
+ *   - 治理登记 O-40（DTB §4.2）：Eigen 为 kinematics PRIVATE 依赖（Ik.cpp
+ *     直用；本单元 FK 侧自 REUSE-T18 起经上游 rw::math::LinearAlgebra::svd
+ *     间接消费——公共面零 Eigen 类型不变）。
+ *   - REUSE-T18（tasks/REUSE-T18.json）：FK/Jacobian 计算核改为消费上游
+ *     rw::models::Device::setQ/baseTframe/baseJframe（经 T17 锚能力入口
+ *     runtimeModelView() 到已编译 WorkCell，任务私有 State），奇异值经
+ *     rw::math::LinearAlgebra::svd——本单元不再持有第二套链式 FK/几何
+ *     雅可比/SVD 实现（H2 禁平行实现）。
  *   - 任务契约 tasks/foundation/WP-15-T03.json acceptance 1/2/3/5
  *
  * 背景说明（D-KIN-2 统一尺度规则——为什么是"基础雅可比"）：KIN-01 要求
@@ -25,9 +30,13 @@
  * 其定义为：Jacobian＝基础雅可比（几何雅可比，平移行单位 m、转动行无量纲，
  * **不做关节加权归一**）；可操作度 w＝√det(J·Jᵀ)；条件数＝σmax/σmin
  * （奇异→+∞，以 isFinite 标记承载，**不静默截断**）。规则随黄金数据集
- * 锁定（T13），修改走设计变更（P-KIN-1 处置口径）。
+ * 锁定（T13），修改走设计变更（P-KIN-1 处置口径）。上游 baseJframe 的行
+ * 义（0-2 线速度、3-5 角速度）与列序（设备活动关节＝可动链序）经源码
+ * 核对与黄金/独立参考用例锁定，与卡面契约逐行一致。
  *
- * 线程安全：FkEvaluator 无状态可重入（§3.4 纯函数服务——并发安全）。
+ * 线程安全：FkEvaluator 无状态可重入（§3.4 纯函数服务——并发安全）；可
+ * 变工作区只有 evaluate 内部的任务私有 State（锚 makeState 每线程拷贝，
+ * setQ 只写私有拷贝——§9.2 并发规则）。
  * 确定性：同 (snapshot, q, tcp) → 同字节输出（含浮点布局——§5.2 确定性
  * 行；实现内浮点运算定序固定、无并行归约、无环境依赖）。
  */
@@ -156,11 +165,16 @@ std::vector<std::uint8_t> encodePoseMetricsCanonical(const PoseMetrics& m);
  *
  * 契约（§9.2 行内联原文的展开）：
  *   - @pre view 为请求绑定 RuntimeSnapshot 的只读模型视图（跨 snapshot
- *     使用＝调用方契约违约——fail-fast 轨，不构成本接口返回值）；
- *     q 维度＝设备自由度且全部分量有限。
+ *     使用＝调用方契约违约——fail-fast 轨，不构成本接口返回值；REUSE-T18
+ *     起运行期守卫：runtimeModelView()==nullptr 的纯数值视图按 NoDevice
+ *     值面拒绝——无编译产物即无设备可用）；q 维度＝设备自由度且全部分量
+ *     有限。
  *   - @post 输出经黄金解析算例容差（附录 D 第 4/9 项）；不修改 view。
  *   - @错误 KinematicsError{IllegalQ, NoDevice, NoTcp, FrameUnresolved}
- *     （值面返回——§9.1 非异常出口；错误语义与解析规则随实现注释）。
+ *     （值面返回——§9.1 非异常出口；错误语义与解析规则随实现注释。T18
+ *     NoDevice 语义面：视图未绑定编译产物锚／设备名未命中编译产物／设备
+ *     自由度与规范链不符——均为"无可用设备"的结构化素材，FK 失败≠工程
+ *     不可行）。
  *   - @取消 不可取消（可预测 <1 s 内联计算——§9.2 原文；超界场景转批量
  *     评估器，属 T05+ 批量通道）。
  *   - @所有权 值语义产出；view 由调用方持有（本接口不接管、不存储引用）。
@@ -208,16 +222,21 @@ public:
  * @brief IFkEvaluator 的无状态实现（纯函数服务——§3.4 总约定）。
  *
  * 生命周期：无成员状态，可静态/栈构造共享使用（§9.4"无状态建议共享"）。
- * 实现要点（详见 src/Fk.cpp 逐步注释）：
+ * 实现要点（详见 src/Fk.cpp 逐步注释；REUSE-T18 上游消费版）：
  *   1. 输入校验（fail-fast 值面）：q 维度/有限性 → IllegalQ；
  *   2. TCP 解析：工具索引解析 → NoTcp/FrameUnresolved（KinTypes 规则）；
- *   3. 链式 FK：T_base_flange＝∏(origin_i·M_i(q_i))（Eigen 组件化计算，
- *      零 rw 外联符号——冒烟模式可链接；O-40）；
- *   4. TCP 位姿：tcpInBase＝T_base_flange·tcpOffset；
- *      tcpInWorld＝runtime::composeWorldBaseTcp(view.worldToBase(),
- *      tcpInBase)（基座—世界唯一组合点——M-11/AT-37）；
- *   5. 几何雅可比（基础雅可比，D-KIN-2）＋ Eigen JacobiSVD 奇异值；
- *   6. 条件数/可操作度/关节裕量（规则见 PoseMetrics 字段注）。
+ *   3. 锚与设备：runtimeModelView() → 编译产物 WC → deviceName 查设备
+ *      （缺失/自由度不符 → NoDevice）；任务私有 State 经 makeState 取得；
+ *   4. 权威 q 映射：q_rw＝q_auth−zeroOffset（src/JointMapping.hpp——上游
+ *      关节已承载偏置，两映射相消）→ Device::setQ 写私有 State；
+ *   5. TCP 位姿：默认 TCP＝编译产物 TCP 帧（Device::baseTframe——含偏置
+ *      的上游帧树 FK）；命名 TCP＝T_base_flange·T_flange_tcp（一次消费侧
+ *      复合，KIN-14 选择语义）；tcpInWorld＝
+ *      runtime::composeWorldBaseTcp(view.worldToBase(), tcpInBase)
+ *      （基座—世界唯一组合点——M-11/AT-37）；
+ *   6. 雅可比：Device::baseJframe（行 0-2 线速度/3-5 角速度、列＝可动链
+ *      序）；命名 TCP 加参考点移轴；奇异值经 rw::math::LinearAlgebra::svd；
+ *   7. 条件数/可操作度/关节裕量（规则见 PoseMetrics 字段注）。
  */
 class FkEvaluator final : public IFkEvaluator {
 public:

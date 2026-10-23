@@ -1,208 +1,258 @@
 {
-  "schemaVersion": "ird-reuse-permissions/1",
-  "authority": "ARCH:3.6",
-  "modelOwner": "runtime",
-  "hostExceptions": [
-    {
-      "id": "HOST-RENDER",
-      "files": [
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp"
-      ],
-      "target": "sdurws_ird_ui_plugin",
-      "permissionRef": "ARCH:3.6.2"
-    },
-    {
-      "id": "HOST-PRESENT",
-      "files": [
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp"
-      ],
-      "target": "sdurws_ird_ui_plugin",
-      "permissionRef": "ARCH:3.6.2"
-    },
-    {
-      "id": "HOST-COMPILE",
-      "files": [
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp"
-      ],
-      "target": "sdurws_ird_ui_plugin",
-      "permissionRef": "ARCH:3.6.2"
-    },
-    {
-      "id": "HOST-GATEWAY",
-      "files": [
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
-        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp"
-      ],
-      "target": "sdurws_ird_ui_plugin",
-      "permissionRef": "ARCH:3.6.2"
-    }
-  ],
-  "grants": [
-    {
-      "id": "REUSE-T13-WorkCellCompiler.cpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
-        "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
-      },
-      "targets": [
-        "sdurws_ird_runtime"
-      ],
-      "categories": [
-        "model",
-        "state",
-        "loader"
-      ],
-      "operations": [
-        "query",
-        "borrow",
-        "write-state",
-        "construct-model",
-        "mutate-model"
-      ],
-      "origin": "runtime-owner",
-      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "owner",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-      }
-    },
-    {
-      "id": "REUSE-T13-WorkCellCompilerTest.cpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
-        "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773"
-      },
-      "targets": [
-        "sdurws_ird_runtime_test"
-      ],
-      "categories": [
-        "model",
-        "state"
-      ],
-      "operations": [
-        "query",
-        "borrow",
-        "write-state",
-        "construct-model",
-        "mutate-model"
-      ],
-      "origin": "runtime-owner",
-      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "owner",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-      }
-    },
-    {
-      "id": "REUSE-T13-WorkCellGeometryTest.cpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
-        "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
-      },
-      "targets": [
-        "sdurws_ird_runtime_test"
-      ],
-      "categories": [
-        "model",
-        "state"
-      ],
-      "operations": [
-        "query",
-        "borrow",
-        "write-state"
-      ],
-      "origin": "runtime-owner",
-      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "owner",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-      }
-    },
-    {
-      "id": "REUSE-T13-SnapshotTest.cpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
-        "sha256": "a8227a8891061a2ca263745af6164ee126bbf91cba25d42311b11b6eac47de1f"
-      },
-      "targets": [
-        "sdurws_ird_runtime_test"
-      ],
-      "categories": [
-        "model",
-        "state"
-      ],
-      "operations": [
-        "query",
-        "borrow",
-        "write-state"
-      ],
-      "origin": "runtime-owner",
-      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "owner",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-      }
-    },
-    {
-      "id": "REUSE-T17-KinFkFixture.hpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-        "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
-      },
-      "targets": [
-        "sdurws_ird_kinematics_test",
-        "sdurws_ird_kinematics_gui_test"
-      ],
-      "categories": [
-        "state"
-      ],
-      "operations": [
-        "query"
-      ],
-      "origin": "runtime-borrow",
-      "lifetime": "REUSE-T17锚能力测试替身（TestAnchor值面）：State类型仅作为IRuntimeModelView::makeState覆盖签名出现，替身实现显式抛错不产出State；仅测试目标，不授予生产权限、不授予模型构造/写入。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "adapter",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
-      }
-    },
-    {
-      "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
-      "source": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
-      },
-      "targets": [
-        "sdurws_ird_ui_test"
-      ],
-      "categories": [
-        "model",
-        "state"
-      ],
-      "operations": [
-        "write-state"
-      ],
-      "origin": "task-private",
-      "lifetime": "REUSE-T17锚语义executor级用例：write-state仅及任务私有State（device->setQ于makeState副本，证明跨任务State隔离）；模型消费经runtime编译快照受控视图；仅测试目标，无生产权限。",
-      "permissionRef": "ARCH:3.6.1",
-      "usageRole": "adapter",
-      "build": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
-      }
-    }
-  ]
+ "schemaVersion": "ird-reuse-permissions/1",
+ "authority": "ARCH:3.6",
+ "modelOwner": "runtime",
+ "hostExceptions": [
+  {
+   "id": "HOST-RENDER",
+   "files": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp"
+   ],
+   "target": "sdurws_ird_ui_plugin",
+   "permissionRef": "ARCH:3.6.2"
+  },
+  {
+   "id": "HOST-PRESENT",
+   "files": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp"
+   ],
+   "target": "sdurws_ird_ui_plugin",
+   "permissionRef": "ARCH:3.6.2"
+  },
+  {
+   "id": "HOST-COMPILE",
+   "files": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp"
+   ],
+   "target": "sdurws_ird_ui_plugin",
+   "permissionRef": "ARCH:3.6.2"
+  },
+  {
+   "id": "HOST-GATEWAY",
+   "files": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp"
+   ],
+   "target": "sdurws_ird_ui_plugin",
+   "permissionRef": "ARCH:3.6.2"
+  }
+ ],
+ "grants": [
+  {
+   "id": "REUSE-T13-WorkCellCompiler.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
+   },
+   "targets": [
+    "sdurws_ird_runtime"
+   ],
+   "categories": [
+    "model",
+    "state",
+    "loader"
+   ],
+   "operations": [
+    "query",
+    "borrow",
+    "write-state",
+    "construct-model",
+    "mutate-model"
+   ],
+   "origin": "runtime-owner",
+   "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "owner",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+   }
+  },
+  {
+   "id": "REUSE-T13-WorkCellCompilerTest.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+    "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773"
+   },
+   "targets": [
+    "sdurws_ird_runtime_test"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "query",
+    "borrow",
+    "write-state",
+    "construct-model",
+    "mutate-model"
+   ],
+   "origin": "runtime-owner",
+   "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "owner",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+   }
+  },
+  {
+   "id": "REUSE-T13-WorkCellGeometryTest.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+    "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+   },
+   "targets": [
+    "sdurws_ird_runtime_test"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "query",
+    "borrow",
+    "write-state"
+   ],
+   "origin": "runtime-owner",
+   "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "owner",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+   }
+  },
+  {
+   "id": "REUSE-T13-SnapshotTest.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+    "sha256": "a8227a8891061a2ca263745af6164ee126bbf91cba25d42311b11b6eac47de1f"
+   },
+   "targets": [
+    "sdurws_ird_runtime_test"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "query",
+    "borrow",
+    "write-state"
+   ],
+   "origin": "runtime-owner",
+   "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "owner",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+   }
+  },
+  {
+   "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+   },
+   "targets": [
+    "sdurws_ird_ui_test"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "write-state"
+   ],
+   "origin": "task-private",
+   "lifetime": "REUSE-T17锚语义executor级用例：write-state仅及任务私有State（device->setQ于makeState副本，证明跨任务State隔离）；模型消费经runtime编译快照受控视图；仅测试目标，无生产权限。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "adapter",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+   }
+  },
+  {
+   "id": "REUSE-T17-KinFkFixture.hpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+   },
+   "targets": [
+    "sdurws_ird_kinematics_test",
+    "sdurws_ird_kinematics_gui_test"
+   ],
+   "categories": [
+    "state"
+   ],
+   "operations": [
+    "query"
+   ],
+   "origin": "runtime-borrow",
+   "lifetime": "REUSE-T17锚能力测试替身＋REUSE-T18真实编译锚（TestAnchor值面保留冒烟态；集成态经RuntimeSnapshotFactory真实编译——WC构造在runtime owner产品路径内，替身只注入CanonicalModel与调用工厂）：State类型仅作为IRuntimeModelView::makeState覆盖签名出现；仅测试目标，不授予生产权限、不授予模型构造/写入。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "adapter",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+   }
+  },
+  {
+   "id": "REUSE-T18-Fk.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+    "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
+   },
+   "targets": [
+    "sdurws_ird_kinematics"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "write-state"
+   ],
+   "origin": "task-private",
+   "lifetime": "REUSE-T18 FK上游消费：write-state仅及每次evaluate经锚makeState()取得的任务私有State副本（Device::setQ写入，不触快照共享结构）；模型消费经runtimeModelView受控视图（findDevice/findFrame只读查询＋baseTframe/baseJframe值面返回）；无WC构造、无DWC、无发布面。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "adapter",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+   }
+  },
+  {
+   "id": "REUSE-T18-FkTest.cpp",
+   "source": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+    "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
+   },
+   "targets": [
+    "sdurws_ird_kinematics_test"
+   ],
+   "categories": [
+    "model",
+    "state"
+   ],
+   "operations": [
+    "write-state"
+   ],
+   "origin": "task-private",
+   "lifetime": "REUSE-T18上游直接对照用例：write-state仅及测试内makeState任务私有State副本（直接Device::setQ与评估器路径同语义对照）；模型消费经真实编译快照受控视图；仅测试目标，无生产权限。",
+   "permissionRef": "ARCH:3.6.1",
+   "usageRole": "adapter",
+   "build": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+   }
+  }
+ ]
 }

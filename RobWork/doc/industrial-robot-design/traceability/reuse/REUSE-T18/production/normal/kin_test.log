@@ -1,0 +1,49 @@
+Note: Google Test filter = KinFk.*
+[==========] Running 20 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 20 tests from KinFk
+[ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1
+[       OK ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1
+[       OK ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1
+[       OK ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2
+[       OK ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2
+[       OK ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.NoTcpTwoBranches_WP15T03_ACC3
+[       OK ] KinFk.NoTcpTwoBranches_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3
+[       OK ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.MarginNormalization_WP15T03_ACC1
+[       OK ] KinFk.MarginNormalization_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.MarginZeroSpanDefensiveDocumentedUnreachable_WP15T20
+[       OK ] KinFk.MarginZeroSpanDefensiveDocumentedUnreachable_WP15T20 (0 ms)
+[ RUN      ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3
+[       OK ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.DeterministicByteOutput_WP15T03_ACC1
+[       OK ] KinFk.DeterministicByteOutput_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15
+[       OK ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15 (0 ms)
+[ RUN      ] KinFk.AnchorlessViewRejectedAsNoDevice_REUSE_T18
+[       OK ] KinFk.AnchorlessViewRejectedAsNoDevice_REUSE_T18 (0 ms)
+[ RUN      ] KinFk.CrossViewIsolationRealSnapshots_REUSE_T18
+[       OK ] KinFk.CrossViewIsolationRealSnapshots_REUSE_T18 (0 ms)
+[ RUN      ] KinFk.UpstreamDirectDeviceComparison_REUSE_T18
+[       OK ] KinFk.UpstreamDirectDeviceComparison_REUSE_T18 (0 ms)
+[----------] 20 tests from KinFk (3 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 1 test suite ran. (3 ms total)
+[  PASSED  ] 20 tests.

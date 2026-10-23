@@ -1116,6 +1116,7 @@ WorkspaceSamplingQuery makeJointGridQuery(std::uint64_t seed = 42U)
 
 }  // namespace
 
+#if IRD_HAVE_RUNTIME_COMPILE  // REUSE-T18：关节模式三用例经真实 FK 生产路径（冒烟树不编入）
 /// 关节网格→FK 点云的解析算例对照（KIN-09 权威语义钉）：3×3 全网格
 /// 的每点坐标与独立解析 FK 全等；采样模式标注 joint-grid；回写出口
 /// 返回采样构型本身。
@@ -1343,3 +1344,5 @@ TEST(KinWorkspace, JointSpaceQueryValidationAndFkErrorFace_KIN_P5)
         }
     }
 }
+
+#endif  // IRD_HAVE_RUNTIME_COMPILE（KIN-P5 关节模式——真实编译产物路径）

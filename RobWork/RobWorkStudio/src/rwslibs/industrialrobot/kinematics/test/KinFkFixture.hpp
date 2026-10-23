@@ -42,7 +42,9 @@
 #include <array>
 #include <cmath>
 #include <cstdint>
+#include <memory>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -338,13 +340,79 @@ inline rt::CanonicalModel marginModel()
 // IKinRuntimeView 的最小实现，模型值持有、T_world_base 可设。
 // =====================================================================
 
+#if IRD_HAVE_RUNTIME_COMPILE  // 集成模式专属——冒烟树无 runtime 编译产物（Snapshot.cpp 不编）
+/**
+ * @brief REUSE-T18 真实编译锚（仅集成模式——IRD_HAVE_RUNTIME_COMPILE）。
+ *
+ * 测试模型 → RuntimeSnapshot 的**真实编译**路径：IRuntimeModelView 替身
+ * 只注入 CanonicalModel（S1–S5 的"测试替身注入点"——Compiler.hpp 接口
+ * 契约原文），S6–S10（真实 WorkCell/DWC 编译、S8 映射交叉校验、S10 发布）
+ * 全部经产品 RuntimeSnapshotFactory 执行。FK 消费的 WC/Device/TCP 帧/Name
+ * 映射全部来自同一编译产物——替身不伪造任何编译能力（REUSE-T18 测试面
+ * 契约：值锚不能证明生产接线）。
+ *
+ * 确定性：RuntimeSnapshotFactory 同输入同身份（NFR-COR-02）——同视图多
+ * 次 evaluate 共享同一快照（懒编译缓存，多次调用同源）。
+ */
+class FixtureModelCompiler final : public rt::ICanonicalModelCompiler {
+public:
+    explicit FixtureModelCompiler(const rt::CanonicalModel& model) : m_model(model) {}
+
+    /// 整体事务入口：夹具只走工厂分段编排路径（不可达即 fail-fast）。
+    rt::CompileOutcome compile(const rt::CompileRequest& request) override
+    {
+        return rt::RuntimeSnapshotFactory().create(request, *this);
+    }
+
+    /// S1–S5 分段入口（测试替身注入点——返回夹具预构模型，不复制）。
+    rt::Expected<rt::CanonicalModel, rt::RuntimeError>
+    buildCanonicalModel(const rt::CompileRequest&) override
+    {
+        return rt::Expected<rt::CanonicalModel, rt::RuntimeError>::ok(m_model);
+    }
+
+    std::uint32_t contractVersion() const noexcept override { return 1U; }
+    std::string implementationVersion() const noexcept override
+    {
+        return "kin-fixture-t18";
+    }
+
+private:
+    const rt::CanonicalModel& m_model;  ///< 引用宿主视图的模型（替身不复制）
+};
+
+/// 编译夹具模型为真实快照（S6–S10 全产品路径；失败＝夹具/编译链缺陷，
+/// 抛出 fail-fast——测试不允许静默降级）。
+inline std::shared_ptr<const rt::RuntimeSnapshot>
+compileRealSnapshot(const rt::CanonicalModel& model)
+{
+    rt::CompileRequest request;
+    request.project = model.header().project;
+    request.revision = model.header().revision;
+    FixtureModelCompiler compiler(model);
+    rt::CompileOutcome outcome =
+        rt::RuntimeSnapshotFactory().create(request, compiler);
+    if (outcome.status != rt::CompileStatus::Published || !outcome.snapshot) {
+        std::string detail = "夹具真实编译失败：";
+        for (const auto& d : outcome.diagnostics) {
+            detail += d.code + ":" + d.cause + "; ";  // DiagCode＝string 别名
+        }
+        throw std::runtime_error(detail);
+    }
+    return outcome.snapshot;
+}
+
+#endif  // IRD_HAVE_RUNTIME_COMPILE
+
 /**
  * @brief REUSE-T17 测试锚——IRuntimeModelView 的值面替身。
  *
  * 仅承载值面（model/worldToBase）与锚身份（多次取用同源）；workCell/
- * makeState/nameResolver 等编译产物依赖成员按替身契约显式抛错（当前
- * 评估器不消费；Device/State FK 替换包落地时由真实编译快照承载，替身
- * 不伪造编译能力）。测试专用——不进入生产目标，不授予模型构造权限。
+ * makeState/nameResolver 等编译产物依赖成员按替身契约显式抛错（消费即
+ * 测试缺陷）。REUSE-T18 起 FK 生产路径改经真实编译锚（上方
+ * compileRealSnapshot，仅集成模式）——本替身保留为冒烟模式的 TestView
+ * 锚（冒烟树无 runtime 编译产物，FK 用例不编入冒烟目标）。
+ * 测试专用——不进入生产目标，不授予模型构造权限。
  */
 class TestAnchor final : public rt::IRuntimeModelView {
 public:
@@ -437,20 +505,29 @@ public:
     rw::math::Transform3D<double> worldToBase() const override { return m_worldToBase; }
 
     // REUSE-T17 锚能力替身：懒构造缓存，多次调用同源（同一模型值的稳定
-    // 锚视图）——提交面冻结语义的测试驱动入口。
+    // 锚视图）——提交面冻结语义的测试驱动入口。REUSE-T18：集成模式下为
+    // 真实编译快照（S6–S10 产品路径——值锚不能证明生产接线）；冒烟模式
+    // 无 runtime 编译产物，保持 T17 值锚（FK 用例不编入冒烟目标）。
     std::shared_ptr<const rt::IRuntimeModelView> runtimeModelView() const override
     {
+#if IRD_HAVE_RUNTIME_COMPILE
+        if (!m_anchor) {
+            m_anchor = compileRealSnapshot(m_model);
+        }
+        return m_anchor;
+#else
         if (!m_anchor) {
             m_anchor = std::make_shared<TestAnchor>(m_model, m_worldToBase);
         }
         return m_anchor;
+#endif
     }
 
 private:
     rt::CanonicalModel m_model;                   ///< 值持有（替身自有副本）
     rw::math::Transform3D<double> m_worldToBase;  ///< 取自模型 world 块（§4.2 唯一来源）
     mutable std::shared_ptr<const rt::IRuntimeModelView>
-        m_anchor;  ///< 锚缓存（REUSE-T17——懒构造，同源复用）
+        m_anchor;  ///< 锚缓存（T17 懒构造/T18 真实编译——同源复用）
 };
 
 /// evidence 上下文替身（§11 测试设施口径——只验证契约形状）。
