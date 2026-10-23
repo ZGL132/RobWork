@@ -208,7 +208,7 @@
       "status": "pending",
       "search": {
         "command": "rg -n \"rpyToRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+        "conclusion": "已核RPY.cpp的yaw/pitch/roll顺序，原RPYTest真实通过；正向可直接换序，但同文件EAA提案未确认，完整文件迁移暂不实施。"
       },
       "differences": "手推RzRyRx；复用RPY并核ZYX次序、rad与奇异姿态",
       "inputs": [
@@ -241,20 +241,24 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-ROT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "proposal",
+      "status": "proposal",
       "search": {
         "command": "rg -n \"rpyToEaa|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+        "conclusion": "REUSE-T08只读探测：EAA矩阵回构在原微小角1e-12容差失败；正确ABI下Quaternion::ln在零/极小角非有限；提交GAP-EAA-01，未获批准、不修改生产。"
       },
-      "differences": "手推半角四元数转EAA；复用RPY/EAA/Quaternion并核主值符号及pi/极小角",
+      "differences": "近零精度、pi主值及Quaternion静态对齐ABI需确认；不新写本地核心，不放宽容差。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
         }
       ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+        "sha256": "4fba31a299f0b7143c4974bafd0343caec8ff3a5207fa65af71154ed348b0973"
+      }
     },
     {
       "functionId": "modeling.rotVec",
