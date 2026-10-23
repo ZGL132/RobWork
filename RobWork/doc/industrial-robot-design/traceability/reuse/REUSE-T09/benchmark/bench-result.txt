@@ -1,0 +1,19 @@
+scenario: 20 spans x 100 samples x 6 joints x 20 iterations
+compiler: MSVC /O2 /DNDEBUG /std:c++17
+
+== quintic ==
+determinism(old rerun bit-equal): yes
+determinism(new rerun bit-equal): yes
+old-vs-new checksum rel-drift: 9.888e-16
+old-hand      :    1.351 ms  allocs/scene=0
+upstream-eval :    1.590 ms  allocs/scene=0  (vs old +17.7%)
+evalderivs    :   10.203 ms  allocs/scene=244800  (vs new +541.7%)
+
+== septic ==
+determinism(old rerun bit-equal): yes
+determinism(new rerun bit-equal): yes
+old-vs-new checksum rel-drift: 9.910e-16
+old-hand      :    1.480 ms  allocs/scene=0
+upstream-eval :    1.987 ms  allocs/scene=0  (vs old +34.3%)
+evalderivs    :   11.717 ms  allocs/scene=244800  (vs new +489.6%)
+

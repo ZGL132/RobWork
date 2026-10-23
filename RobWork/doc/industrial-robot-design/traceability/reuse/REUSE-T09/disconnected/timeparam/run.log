@@ -1,0 +1,21 @@
+Note: Google Test filter = TimeParamSepticTest.C3KnotContinuityWithDwell
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from TimeParamSepticTest
+[ RUN      ] TimeParamSepticTest.C3KnotContinuityWithDwell
+C:\Users\zgl18\.codex\worktrees\reuse-trajectory-poly\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\trajectory\test\TimeParamTest.cpp(1266): error: Expected equality of these values:
+  result.status
+    Which is: 1-byte object <02>
+  trj::TimeParamStatus::Ok
+    Which is: 1-byte object <00>
+
+[  FAILED  ] TimeParamSepticTest.C3KnotContinuityWithDwell (0 ms)
+[----------] 1 test from TimeParamSepticTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TimeParamSepticTest.C3KnotContinuityWithDwell
+
+ 1 FAILED TEST
