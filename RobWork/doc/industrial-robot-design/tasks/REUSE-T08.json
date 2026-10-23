@@ -1,0 +1,62 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T08",
+  "unit": "modeling",
+  "masterWp": "WP-A",
+  "title": "旋转位姿上游适用性及EAA最小扩展提案",
+  "status": "planned",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-22",
+    "NFR-COR-02",
+    "ARC-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md",
+    "reuse/extensions/GAP-EAA-01.md",
+    "units/modeling.md#5.2",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T08.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T08/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "核实RPY次序、原上游测试和近零/pi/万向锁适用性，保留准确性及ABI失败原件",
+    "GAP-EAA-01经所有者确认前不修改产品/上游、不放宽原容差、不关闭债务",
+    "不以候选探针冒充生产正向/断开/独立验收；继续无依赖能力"
+  ],
+  "note": "migration §12.11授权旋转能力审查；本次发现需确认的GAP-EAA-01，保持planned。无算法扩展/依赖/ABI或权限批准，无产品变更；不操作远程。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "真实适用性/环境反例",
+    "待确认最小扩展提案"
+  ]
+}

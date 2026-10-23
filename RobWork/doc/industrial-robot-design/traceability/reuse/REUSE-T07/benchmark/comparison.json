@@ -1,0 +1,24 @@
+{
+  "baseline": {
+    "medianMicroseconds": 0.09174,
+    "minMicroseconds": 0.08872,
+    "maxMicroseconds": 0.09655,
+    "checksum": 280400,
+    "calls": 70100
+  },
+  "migrated": {
+    "medianMicroseconds": 0.42767,
+    "minMicroseconds": 0.35797,
+    "maxMicroseconds": 0.56139,
+    "checksum": 280400,
+    "calls": 70100
+  },
+  "ratio": 4.661761499890996,
+  "baselineCommit": "c27349a80d6116151e2b9625c3196c77a4398fff",
+  "baselineHeader": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+  "migratedHeader": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+    "sha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9"
+  },
+  "scope": "同机VS2022 x64 Release，3x3有限矩阵；非整产品交互延迟，无新硬性时限"
+}

@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.16)
+project(CouplingSvdBenchmark LANGUAGES CXX)
+# 仅测量冻结旧版与当前真实头文件；复用上游导出目标，不复制算法到产品。
+find_package(RobWork CONFIG REQUIRED)
+foreach(subject IN ITEMS baseline migrated)
+    add_executable(coupling_svd_${subject} CouplingBenchmark.cpp)
+    set_target_properties(coupling_svd_${subject} PROPERTIES CXX_STANDARD 17 CXX_STANDARD_REQUIRED ON)
+    target_compile_options(coupling_svd_${subject} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
+    target_link_libraries(coupling_svd_${subject} PRIVATE RW::sdurw_math)
+    target_compile_definitions(coupling_svd_${subject} PRIVATE IRD_COUPLING_HEADER="${${subject}_HEADER}")
+endforeach()

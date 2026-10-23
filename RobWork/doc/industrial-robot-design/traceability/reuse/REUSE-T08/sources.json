@@ -1,0 +1,67 @@
+{
+  "implementationBase": "8e4a08ac82498ded085fc4173b17e67044614327",
+  "kind": "suitability-only-not-production-proof",
+  "sources": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    },
+    {
+      "path": "RobWork/RobWork/cmake/RobWorkSetup.cmake",
+      "sha256": "bceecd55722eada2f93e06e2b6494edce6030e3c97b847b14f84f5771345e822"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/RPYTest.cpp",
+      "sha256": "8ac267dae4b501bd7ed269e6203e3122be075d556c5f43416768bdec04b08082"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+      "sha256": "c9d36f112087abddbeeee9aadd18858bdc69d4ac8353273ff4a752c533a8d852"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/QuaternionTest.cpp",
+      "sha256": "821387b2c2fa5a6c7046d6c7debaa424a0847cc74a89af005b364223c64784cd"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "sha256": "5443f5462528a872af5fa1da0ce0022850fc6975f42112176c59433d0894e374"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+      "sha256": "0453fc0fb5d2a31c1714d8972662de2b1a8d9f82d6dacc2111dab980ae0d3845"
+    }
+  ],
+  "finalProbe": {
+    "exitCode": 1,
+    "outcome": "candidate rejected at existing tolerance; not a product regression failure"
+  },
+  "upstreamTest": {
+    "executed": 1,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "independentAcceptance": "NOT RUN",
+  "extensionApproval": "NOT APPROVED",
+  "productChanges": 0
+}

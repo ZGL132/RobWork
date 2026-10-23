@@ -1483,7 +1483,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
-          "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json",
@@ -1818,7 +1818,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -1889,7 +1889,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -1960,7 +1960,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -2032,7 +2032,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -2104,7 +2104,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -2188,7 +2188,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -2272,7 +2272,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         }
       ],
       "execution": {
@@ -2356,7 +2356,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
@@ -2471,7 +2471,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
@@ -2587,7 +2587,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
@@ -7387,7 +7387,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7470,7 +7470,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7553,7 +7553,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7636,7 +7636,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7719,7 +7719,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7802,7 +7802,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7885,7 +7885,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7968,7 +7968,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8051,7 +8051,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8134,7 +8134,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8217,7 +8217,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8300,7 +8300,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8383,7 +8383,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8470,7 +8470,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8549,7 +8549,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8632,7 +8632,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8715,7 +8715,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8798,7 +8798,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8881,7 +8881,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8964,7 +8964,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9047,7 +9047,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9130,7 +9130,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9213,7 +9213,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9296,7 +9296,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "8593beb5f1cfceb23c9b10350161afd21404e43d383a6e877094cfafcaf787c1"
+          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",

@@ -107,6 +107,11 @@ function CheckPermissions {
 }
 function CheckSourcePermission([string]$path, [string]$text, $grants, [switch]$AuditOnly) {
     # 注释不产生 include 权限；宏/别名无法静态解析时必须由功能记录给出完整来源。
+    # REUSE-T07：CMake 的说明使用 #，不能把注释中的模型名误当对象操作并要求
+    # 伪造模型 grant。仅对实际 CMake 后缀处理；C++ 的 #include 仍完整参与分类。
+    if ($path -match '(^|/)CMakeLists\.txt$|\.cmake$') {
+        $text = [regex]::Replace($text, '(?m)#[^\r\n]*', ' ')
+    }
     $code = [regex]::Replace($text,'(?s)/\*.*?\*/|(?m)//[^\r\n]*',' ')
     $categories = @()
     foreach ($pair in @(@('model','rw/models/'),@('state','rw/kinematics/'),@('solver','rw/(invkin|trajectory|pathplanning)/'),@('collision','rw/proximity/'),@('simulation','rwsim/'),@('loader','rw/loaders/'),@('graphics','(rw/graphics|rwlibs/opengl)/'),@('host','rws/'))) {

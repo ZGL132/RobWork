@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "modeling.couplingSingularValues",
+  "target": "sdurws_ird_modeling",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+      "sha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
+      "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/Parts.hpp",
+      "sha256": "2d4778b4d880d6f987f89eb9b75682eaa7c9494398ae187b2c9b25c58c77e074"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CouplingReuseTest.cpp",
+      "sha256": "6339880973113d8c4308ea048f18d9b4ad1bbe9841bfc53272e6a08fb24092fe"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PartsTest.cpp",
+      "sha256": "e3f3ae8aa47f8e1171042c9fa2603675af10441bb19977a0debe93bb13a9f0fe"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ReadinessTest.cpp",
+      "sha256": "578e20ed1ce7f77a52491f91df4239153f86dd4f9cef4fdab7cc89c433167dc4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp",
+      "sha256": "654620c2c8b0bda94bcc2218cb81b1bf749860fcedb2a0766f67c1b3d876532b"
+    },
+    {
+      "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+    }
+  ],
+  "normal": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t07-integrated/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe\" --gtest_output=xml:.cache/t07-verified-normal/gtest.xml --ird_report=.cache/t07-verified-normal/ird-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/gtest.xml",
+      "sha256": "e90bf5bbbfda3e943f45db336d9ac2602b08d9ad08b06e58ecea37fff471c755"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/run.log",
+      "sha256": "9dea38acf9bfdd84d783341c9898208a28c48722f6ba71dd000c2480ae9b90fe"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t07-integrated/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe\" --gtest_filter=CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07 --gtest_output=xml:.cache/t07-disconnected/gtest.xml --ird_report=.cache/t07-disconnected/ird-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/disconnected/gtest.xml",
+      "sha256": "87847590fc5a31cc3d6cb72384c4fb4254cd2720b4b7f0559bb9086faf4d433c"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/disconnected/run.log",
+      "sha256": "8fa1540e1bb2dddf4fd3d3f1b9f742b4aadb2e65a3c68aa4080c51f97114da08"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+      "originalSha256": "f04c14eeae79b0d567e17e80d8b09021428b5c71412355e387af00c1b15194c9",
+      "description": "在真实LinearAlgebra::svd调用后将sigma改为全1，丢弃结果；实际重建产品库及原测试目标，公共checkCouplingMatrix的κ=3断言变为1而失败；随后恢复源码并更新时间戳重编译"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/disconnected/CouplingMath.hpp",
+      "sha256": "391abfe6db8f512d92da5073b57b6bef4eb442cbadaa3afd99467fc20ca84845"
+    }
+  },
+  "oracle": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t07-integrated/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe\" --gtest_output=xml:.cache/t07-verified-normal/gtest.xml --ird_report=.cache/t07-verified-normal/ird-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/gtest.xml",
+      "sha256": "e90bf5bbbfda3e943f45db336d9ac2602b08d9ad08b06e58ecea37fff471c755"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/run.log",
+      "sha256": "9dea38acf9bfdd84d783341c9898208a28c48722f6ba71dd000c2480ae9b90fe"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "CouplingReuse.IndependentSpectrumAndExtremeScale_REUSE_T07",
+      "CouplingReuse.RankAndConditionBoundariesThroughProduction_REUSE_T07",
+      "MdlParts.CouplingSingularValues_IndependentReference_WP13T23"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "& \"C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t07-integrated/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe\" --gtest_output=xml:.cache/t07-verified-normal/gtest.xml --ird_report=.cache/t07-verified-normal/ird-test-report.json",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/gtest.xml",
+      "sha256": "e90bf5bbbfda3e943f45db336d9ac2602b08d9ad08b06e58ecea37fff471c755"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/normal/run.log",
+      "sha256": "9dea38acf9bfdd84d783341c9898208a28c48722f6ba71dd000c2480ae9b90fe"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "CouplingReuse.UpstreamComparisonAndReconstruction_REUSE_T07",
+      "LinAlgeTest.LinearAlgebraTest"
+    ]
+  },
+  "note": "正常/oracle/上游对照来自同一最终完整执行，原件只保存一次。不是三次独立运行；真实断开另编另跑。独验未执行。"
+}

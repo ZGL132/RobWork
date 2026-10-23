@@ -819,6 +819,13 @@ DH 权威 ──(展开，无损，允许)──> 显式权威        显式权�
 | 消费边界 | runtime：编译进 CanonicalModel；drivetrain：虚功映射与工作点（DYN-04/SEL-05）；dynamics：关节侧 RNEA＋驱动端映射入口；selection：反射惯量/惯量比校核——四消费者经各自端口读同一对象，modeling 不代替任何一方计算 |
 | 变更传播 | 耦合/传动比变更→新修订→依赖声明含传动键的切片失效（限位校验经映射的域自行声明） |
 
+REUSE-T07 数值来源：`src/CouplingMath.hpp` 仅作行主序/尺度/容器适配，直接调用
+`rw::math::LinearAlgebra::svd`（`sdurw_math`）；原 Jacobi 扫描核和迭代常量删除，
+不保留旧算法回退。`Parts.cpp::checkCouplingMatrix` 及编辑/就绪调用链继续负责
+结构、有限性、窗口、奇异/病态阈值和稳定诊断。纯值运算不取得模型所有权。
+历史版本记录中的“各自实现/header-only”只描述当时实现，不能作为继续重复算法的许可。
+当前实现、验证与独验边界见 [耦合 SVD 迁移](../reuse/coupling-svd-migration.md)。
+
 ### 8.2 模型就绪校验（分层、状态机、结果流向）
 
 **分层检查表**（`IModelReadinessChecker::check`，纯函数；顺序即短路优先级——高层依赖低层通过）：
