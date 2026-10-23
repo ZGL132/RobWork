@@ -1,0 +1,17 @@
+Note: Google Test filter = DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DtMappingR2Linalg
+[ RUN      ] DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers
+unknown file: error: C++ exception with description "DT-INERTIA-NOT-POSITIVE-DEFINITE：R2 关节侧反射惯量矩阵 Cholesky 正定性判定失败（§9.3——J_ref＝(C⁻¹)ᵀ·diag(J_rotor)·C⁻¹ 在 J_rotor≻0、C 可逆前提下应恒正定；到达此处＝极端舍入或实现缺陷）" thrown in the test body.
+
+[  FAILED  ] DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers (0 ms)
+[----------] 1 test from DtMappingR2Linalg (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DtMappingR2Linalg.InverseAnalyticOracle_WindowConsumers
+
+ 1 FAILED TEST
