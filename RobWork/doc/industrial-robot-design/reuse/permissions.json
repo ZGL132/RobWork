@@ -40,5 +40,119 @@
       "permissionRef": "ARCH:3.6.2"
     }
   ],
-  "grants": []
+  "grants": [
+    {
+      "id": "REUSE-T13-WorkCellCompiler.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+        "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
+      },
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "loader"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    },
+    {
+      "id": "REUSE-T13-WorkCellCompilerTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+        "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    },
+    {
+      "id": "REUSE-T13-WorkCellGeometryTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+        "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    },
+    {
+      "id": "REUSE-T13-SnapshotTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/SnapshotTest.cpp",
+        "sha256": "a8227a8891061a2ca263745af6164ee126bbf91cba25d42311b11b6eac47de1f"
+      },
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "categories": [
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "borrow",
+        "write-state"
+      ],
+      "origin": "runtime-owner",
+      "lifetime": "ARCH 3.6.1既有runtime模型owner；单编译/测试调用期独占，发布后受控只读；无跨单元/跨进程所有权扩展。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      }
+    }
+  ]
 }

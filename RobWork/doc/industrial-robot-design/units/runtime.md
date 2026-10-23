@@ -1626,6 +1626,18 @@ CanonicalBridge遵循路径不入Description身份而清空sourcePathHint；Work
 
 T30正式工厂增量：SnapshotFactory::create的S6透传现有CompileRequest.resources，解决下层编译网格正确而正式快照丢网格；provider同步借用仅活至create返回。worker物化原无资源供给的边界另记，不宣称本批覆盖。
 
+## REUSE-T13：S6 关节量纲与既有上游能力收口
+
+本段是当前实施说明，替代 v0.8 中对所有关节统一套用旋转偏置及近极 snap 的旧选型；v0.8 保留为历史。实施自查及限定见 `../traceability/reuse/REUSE-T13/README.md`、`../traceability/reuse/REUSE-T13/suitability.md`；尚未独验，不构成全 runtime 迁移完成。
+
+- 关节编译先取 `T_aligned = origin * R_align`，在实际入 WC 的 `PrismaticJoint` / `RevoluteJoint` 上直接 `getTransform(offset)` 并 `setFixedTransform`。offset 对移动关节为 m，对旋转/连续关节为 rad；`q_auth=offset+q_rw`、bounds 减 offset、默认 q_rw=0 均不变。Fixed 不消费 offset。禁止下游再次补偿；连杆系/TCP 是权威物理位姿。
+- `R_align` 复用 `Transform3D::makeLookAt(0,-axis,up).R()`，遵循其 −Z 视向与右手约定；精确 ±Z 仍为 I/Rx(pi)，不作近极 snap。一般轴的内部关节帧滚转由不平行 up 确定，与旧最短弧表示可不同；子连杆同矩阵的逆补偿保证物理 FK 等价。借持 Joint Frame 的消费者不能假定其完整基底等于连杆系；本包没有改变名称/轴/原点契约，也不以一般 Frame 逐元素旧值不变作为验收结论。
+- 资源读取/摘要/安全预算仍经原 provider；STL 直接用 `STLFile::load`，OBJ 用 `LoaderOBJ::load` 后直接 `Model3D::toGeometryData`，删除逐对象/逐三角复制。产品消费 `GeometryData/TriMesh` 的 SI 三角几何，不能固定强转 Plain；材质/纹理不属于本次既有几何通道。资源帧、facet、恒等局部位姿和图元代理回退不变。
+- §5.5 的无隐藏状态指模型内容、身份及产物不依赖环境。已落地的路径型 mesh 加载接缝会访问临时文件及加载器 locale：每次调用独占目录，路径不入身份；仅删除本调用文件和空目录。Windows 加载窗口启用 UCRT 线程 locale 并在正常/异常后恢复调用前 locale 与模式，避免上游进程环境副作用。当前正式平台是 Windows x64（REQUIREMENTS §2、NFR-DEP-01）；非 Windows mesh 并发未验证，不能外推可重入验收，也不降低 Windows 契约。
+- 编译器实现版本为 `ird-runtime-canonical-compiler/1.1`，契约版本仍1。既有 CacheKey / Snapshot 身份公式已经编码实现版本；同模型/选项的旧 /1.0 产物判为 `compiler-changed`、不可复用。不新增缓存、模型副本或对外接口。
+
+模型 owner、WorkCell/Frame/Device 生命周期仍严格归 runtime（ARCH §3.6 / SA-19）；业务通过原受控视图/任务私有 State/序列化快照使用，不跨进程传模型指针。core、diagnostics、evidence 和 policy 的既有权威不迁入本编译器。
+
 ## GOV-T21 迁移约束与旧规则勘误
 
 DescriptionValidator.cpp 自持 SVD 与 BaseWorldTransform 自持轴角计算列入迁移债务；复用已有模型编译/关节映射，State 线程私有，不在业务域重新建链。

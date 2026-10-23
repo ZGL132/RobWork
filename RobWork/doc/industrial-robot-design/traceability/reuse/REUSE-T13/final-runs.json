@@ -1,0 +1,12 @@
+{
+  "disconnected": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.*:WorkCellGeometryTest.*:WorkCellConstViewTest.* --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected-report.json",
+    "exitCode": 1,
+    "seconds": 0.3010911999735981
+  },
+  "normal": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "seconds": 0.8042226999532431
+  }
+}

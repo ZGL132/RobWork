@@ -34,6 +34,7 @@
 #include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // installationPresetRotation（§6.2 冻结矩阵对照）
 #include <sdurws/ird/runtime/CanonicalModel.hpp>
 #include <sdurws/ird/runtime/Compiler.hpp>
+#include <sdurws/ird/runtime/CacheKey.hpp>
 #include <sdurws/ird/runtime/Description.hpp>
 #include <sdurws/ird/runtime/Errors.hpp>
 #include <sdurws/ird/runtime/Resource.hpp>
@@ -456,6 +457,19 @@ TEST(CompilerTest, CompilesTenStageChainAndPublishes_RT_T11_ACC3)
     const RuntimeSnapshot& snap = *out.snapshot;
     // 来源定位（S1 锚定 → §9.1 快照身份域）与请求一致。
     EXPECT_EQ(snap.revision(), req.revision);
+    // REUSE-T13/§9.4：真实发布链必须携带新实现版本，旧WC缓存不能复用。
+    EXPECT_EQ(compiler.implementationVersion(), "ird-runtime-canonical-compiler/1.1");
+    EXPECT_EQ(snap.compilerVersion(), compiler.implementationVersion());
+    // 同模型/选项不升级版本会沿原公式得到同一旧WC键；仅变实现版本，
+    // 必须由既有判定器拒绝旧产物，无需另建缓存或修改公共契约版本。
+    const auto oldKey = RuntimeCompileCacheKeyBuilder(compiler.contractVersion(),
+        "ird-runtime-canonical-compiler/1.0").buildKey(snap.model(), req.options);
+    const auto newKey = RuntimeCompileCacheKeyBuilder(compiler.contractVersion(),
+        compiler.implementationVersion()).buildKey(snap.model(), req.options);
+    EXPECT_FALSE(newKey.workCellKey == oldKey.workCellKey);
+    const auto compatibility = judgeCompileCacheCompatibility(newKey, oldKey);
+    EXPECT_EQ(compatibility.verdict, CompileCacheCompatibility::Verdict::Incompatible);
+    EXPECT_EQ(compatibility.reasons, std::vector<std::string>{"compiler-changed"});
     EXPECT_EQ(snap.project(), h.project);
     EXPECT_EQ(snap.branch(), h.branch);
     // 模型身份＝模型内容身份（装配取值口径的端到端一致——CR-05 前提）。

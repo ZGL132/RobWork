@@ -176,7 +176,7 @@ private:
  *
  * 版本面：contractVersion()=1（编译器契约版本——进快照身份/缓存键/evidence
  * 复现块；契约面变化＝全体键变化，升版走设计变更评审）；
- * implementationVersion()="ird-runtime-canonical-compiler/1.0"（实现内部
+ * implementationVersion()="ird-runtime-canonical-compiler/1.1"（实现内部
  * 演进标识——"契约或实现变化＝新键"的实现侧分量）。
  *
  * 线程安全：无成员（全部状态在调用栈上的 CompileTransaction）——多线程

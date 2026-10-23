@@ -1,0 +1,25 @@
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC §2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Error at D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:830 (set):
+  Syntax error in cmake code at
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:830
+
+  when parsing string
+
+    QUIET;COMPONENTS;filesystem;serialization;system;thread;program_options;date_time;CONFIG;HINTS;C:\local
+
+  Invalid character escape '\l'.
+Call Stack (most recent call first):
+  D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:108 (find_package)
+  D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake:939 (_find_package)
+  modeling/CMakeLists.txt:383 (find_package)
+
+
+-- Configuring incomplete, errors occurred!

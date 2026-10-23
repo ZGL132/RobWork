@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.005" timestamp="2026-10-23T14:47:35.259" name="AllTests">
+  <testsuite name="WorkCellCompilerTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T14:47:38.660">
+    <testcase name="RepeatCompileStructuralEquality_RT_EQ" file="D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp" line="435" status="run" result="completed" time="0." timestamp="2026-10-23T14:47:38.660" classname="WorkCellCompilerTest" />
+  </testsuite>
+  <testsuite name="WorkCellGeometryTest" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.005" timestamp="2026-10-23T14:47:38.660">
+    <testcase name="ResourceMeshStlAttachedEndToEnd_RT_GEO_7" file="D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellGeometryTest.cpp" line="785" status="run" result="completed" time="0.005" timestamp="2026-10-23T14:47:38.660" classname="WorkCellGeometryTest" />
+  </testsuite>
+</testsuites>

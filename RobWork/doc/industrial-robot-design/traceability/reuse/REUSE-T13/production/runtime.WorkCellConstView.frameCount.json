@@ -1,0 +1,151 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "runtime.WorkCellConstView.frameCount",
+  "target": "sdurws_ird_runtime",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "sha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
+      "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellCompilerTest.cpp",
+      "sha256": "043d7bb5d4ed45fc1fda26ca80cc3a0b1df6b4cf225d6a3e924f6b01ddfbe773"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/WorkCellGeometryTest.cpp",
+      "sha256": "f9474ce8ed40ec16a1eeb24d7122921087779d51bf1ba347dcf678cac382034b"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+      "sha256": "5ebe466fc5e8c0d431a3d5ae08463d738c88f2d2d2e66d6c4a1f2e7d3e61450e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+      "sha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/WorkCell.cpp",
+      "sha256": "6a8e0e836bc6d2087bbe0c31bc126eaab553b3dadf860da896c6797e1d7cff27"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/SerialDevice.hpp",
+      "sha256": "7e1f6948a560bc702220a43c03c648b65aceedae4a18230b8b50cfe0107689a3"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/SerialDevice.cpp",
+      "sha256": "d2d77cf775663f28cb14544dae9c7a57d2bb7146b686d8cf63dc5c4c4df450cc"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/Joint.hpp",
+      "sha256": "23e9da4fd706ff7dbc43cabcd78a544196d0c70ebbd999dd908113509015abed"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+      "sha256": "428118721de2c8927de1703e04cd64a54f55f00abf17491af006cef5df67db23"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.cpp",
+      "sha256": "89b77f9823a1a2a90b758faeae5e6366b11ea49df9953807dbe0090689a9dace"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/RevoluteJoint.hpp",
+      "sha256": "1fd99537f7550820e13aa7658bdf1fee6ca76f9407706b73a19d62d53772cffc"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/models/RevoluteJoint.cpp",
+      "sha256": "58f2cb22c88cf928b05811a156de89c4d028dbc185c245d690c010d5e1c9029e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/kinematics/FixedFrame.hpp",
+      "sha256": "871f6bbe810ed20e07d150221608ab9c9bd27f6971eeec655ee69122a8c8b4e0"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/kinematics/CMakeLists.txt",
+      "sha256": "68d4b6ca96e0f2d40883b1fdf641797685bd8caeaf5d70a09d9067440396fd4c"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/kinematics/FixedFrame.cpp",
+      "sha256": "7f59f7ca26d53c4e911b2424d1baa7bf07c9b68747f546deaddaf62701389393"
+    }
+  ],
+  "normal": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml",
+      "sha256": "0818ee738ec1b56308da03465e4bc9f35de24ca109b55e139098f13d3a096520"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.log",
+      "sha256": "e47cb99e5642763d7feb470fb4863a44b96f0a3b7b8687b2b4592756df43100f"
+    }
+  },
+  "disconnected": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=WorkCellCompilerTest.*:WorkCellGeometryTest.*:WorkCellConstViewTest.* --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\disconnected-report.json",
+    "exitCode": 1,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/disconnected.xml",
+      "sha256": "e3318ae16fc4971081d2a4977f074d2ee65c54d00e01a0049f07bca17686b75d"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/disconnected.log",
+      "sha256": "47aa1cfcda05bdc8b26451290150a864fec4da5c6998e20a1dc14d4fa08ab3f0"
+    },
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+      "originalSha256": "7c1eac9687c7442d8bf8c80026b4e5e1ca486126fa471ab89864a155e0696046",
+      "description": "真实WorkCellCompiler.cpp聚合断开：getTransform偏置归零、丢弃makeLookAt/几何/网格/查询结果并扰动默认State；32项13条真实断言失败，其他19项仍通过。非逐helper隔离。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/disconnected-source.txt",
+      "sha256": "fc127a3e16caae9459357b461ee82236aacc533d269f144d6ab235b46b5c34f0"
+    }
+  },
+  "oracle": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml",
+      "sha256": "0818ee738ec1b56308da03465e4bc9f35de24ca109b55e139098f13d3a096520"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.log",
+      "sha256": "e47cb99e5642763d7feb470fb4863a44b96f0a3b7b8687b2b4592756df43100f"
+    }
+  },
+  "upstreamComparison": {
+    "command": "D:\\10_Source_Repos\\21_robot\\reuse-foundation\\.cache\\integrated\\RobWorkStudio\\bin\\Release\\sdurws_ird_runtime_test.exe --gtest_filter=-ContractSuite.ChildProcessWorker_RT_ID_1 --gtest_output=xml:D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime.xml --ird_report=D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T13\\runtime-report.json",
+    "exitCode": 0,
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.xml",
+      "sha256": "0818ee738ec1b56308da03465e4bc9f35de24ca109b55e139098f13d3a096520"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/runtime.log",
+      "sha256": "e47cb99e5642763d7feb470fb4863a44b96f0a3b7b8687b2b4592756df43100f"
+    }
+  },
+  "scope": "同次正常执行中包含具体独立FK/几何解析oracle及原生Prismatic/WorkCell查询对照；聚合断开非逐函数隔离实验。见suitability.md及testCases，不外推上游套件全通过。",
+  "testCases": {
+    "oracle": [
+      "PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1",
+      "RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1",
+      "FkEquivalence_RT_EQ_1",
+      "ResourceMeshObjAttachedEndToEnd_RT_GEO_7",
+      "DerivedDimensionsAreSiTruth_RT_GEO_2"
+    ],
+    "upstreamComparison": [
+      "PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1",
+      "ViewQueries_RT_T07",
+      "PrimitivesAttachedPerMappedFrame_RT_GEO_1"
+    ]
+  }
+}

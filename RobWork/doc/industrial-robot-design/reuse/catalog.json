@@ -111,7 +111,7 @@
         }
       ],
       "limits": {
-        "semantics": "q_auth offset、TCP、参考系与固定段；Prismatic非零offset当前产品编译错误，见runtime-probe/red，非上游缺陷；修复后重验。",
+        "semantics": "q_auth offset、TCP、参考系与固定段；REUSE-T13已修正当前生产编译的Prismatic非零offset并完成自查，独验未完成；本条完整FK适用性仍candidate，未关闭全项目债务。",
         "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
         "determinism": "按需求与功能探测，未验证不得宣称确定性"
       },
@@ -3287,6 +3287,573 @@
       "resourceSearch": {
         "command": "rg -n EventTest RobWork/RobWork/gtest/CMakeLists.txt",
         "conclusion": "原上游源及构建已核对；本批用原probe编译原用例，不声称全上游target运行"
+      }
+    },
+    {
+      "id": "RUNTIME-WC-MODEL",
+      "search": {
+        "command": "rg -n \"WorkCell|addFrame|addDevice|getDefaultState|findFrame|findDevice|getFrames|WorkCell::WorkCell|SerialDevice|SerialDevice::SerialDevice|setBounds|setMaxVelocity|setMaxAcceleration|getTransform|setFixedTransform|FixedFrame|FixedFrame::FixedFrame\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "baseline": "a045120547704d4a40752728632334f56e0b9f5c",
+        "conclusion": "定向审读公共入口、实现、目标与测试；适用范围及失败原件见REUSE-T13/suitability.md"
+      },
+      "boundary": "CanonicalModel到WorkCell的唯一构造链、offset量纲、显式bounds、受控视图；不代表全项目FK已迁移。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+          "sha256": "5ebe466fc5e8c0d431a3d5ae08463d738c88f2d2d2e66d6c4a1f2e7d3e61450e",
+          "symbols": [
+            "WorkCell",
+            "addFrame",
+            "addDevice",
+            "getDefaultState",
+            "findFrame",
+            "findDevice",
+            "getFrames"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/WorkCell.cpp",
+          "sha256": "6a8e0e836bc6d2087bbe0c31bc126eaab553b3dadf860da896c6797e1d7cff27",
+          "symbols": [
+            "WorkCell::WorkCell",
+            "getDefaultState",
+            "addFrame"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/SerialDevice.hpp",
+          "sha256": "7e1f6948a560bc702220a43c03c648b65aceedae4a18230b8b50cfe0107689a3",
+          "symbols": [
+            "SerialDevice"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/SerialDevice.cpp",
+          "sha256": "d2d77cf775663f28cb14544dae9c7a57d2bb7146b686d8cf63dc5c4c4df450cc",
+          "symbols": [
+            "SerialDevice::SerialDevice"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/Joint.hpp",
+          "sha256": "23e9da4fd706ff7dbc43cabcd78a544196d0c70ebbd999dd908113509015abed",
+          "symbols": [
+            "setBounds",
+            "setMaxVelocity",
+            "setMaxAcceleration"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+          "sha256": "428118721de2c8927de1703e04cd64a54f55f00abf17491af006cef5df67db23",
+          "symbols": [
+            "getTransform",
+            "setFixedTransform"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.cpp",
+          "sha256": "89b77f9823a1a2a90b758faeae5e6366b11ea49df9953807dbe0090689a9dace",
+          "symbols": [
+            "getTransform",
+            "setFixedTransform"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/RevoluteJoint.hpp",
+          "sha256": "1fd99537f7550820e13aa7658bdf1fee6ca76f9407706b73a19d62d53772cffc",
+          "symbols": [
+            "getTransform",
+            "setFixedTransform"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/RevoluteJoint.cpp",
+          "sha256": "58f2cb22c88cf928b05811a156de89c4d028dbc185c245d690c010d5e1c9029e",
+          "symbols": [
+            "getTransform",
+            "setFixedTransform"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/kinematics/FixedFrame.hpp",
+          "sha256": "871f6bbe810ed20e07d150221608ab9c9bd27f6971eeec655ee69122a8c8b4e0",
+          "symbols": [
+            "FixedFrame"
+          ],
+          "target": "sdurw_kinematics",
+          "targetFile": "RobWork/RobWork/src/rw/kinematics/CMakeLists.txt",
+          "targetSha256": "68d4b6ca96e0f2d40883b1fdf641797685bd8caeaf5d70a09d9067440396fd4c"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/kinematics/FixedFrame.cpp",
+          "sha256": "7f59f7ca26d53c4e911b2424d1baa7bf07c9b68747f546deaddaf62701389393",
+          "symbols": [
+            "FixedFrame::FixedFrame"
+          ],
+          "target": "sdurw_kinematics",
+          "targetFile": "RobWork/RobWork/src/rw/kinematics/CMakeLists.txt",
+          "targetSha256": "68d4b6ca96e0f2d40883b1fdf641797685bd8caeaf5d70a09d9067440396fd4c"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_models",
+          "sdurw_kinematics"
+        ],
+        "constraints": "沿既有runtime目标及sdurw PUBLIC依赖；不改上游、vcpkg或产品CMake。集成模式真实链接；独立冒烟原条件编列不变。"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "construct",
+            "query",
+            "mutate",
+            "publish"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "CanonicalModel到WorkCell的唯一构造链、offset量纲、显式bounds、受控视图；不代表全项目FK已迁移。",
+        "lifetime": "runtime唯一模型owner；每次编译独占，发布后仅受控只读视图及任务私有State；不跨进程借持。",
+        "determinism": "相同有效输入的模型/名称/物理结果确定；临时路径不入身份。一般轴内部滚转选取变化明确登记，不承诺旧关节Frame逐元素等同。"
+      },
+      "ownerUnit": "runtime",
+      "examples": [
+        {
+          "path": "RobWork/RobWork/example/tutorial/WorkCellAndDevices.cpp",
+          "sha256": "fd6a5d4f3dcdb1118c3404b23cab4f99c76d13eba005b379efe75235da19b31c",
+          "symbols": []
+        }
+      ],
+      "docs": [],
+      "operations": [
+        "construct",
+        "query",
+        "mutate",
+        "publish"
+      ],
+      "review": {
+        "status": "verified",
+        "version": "a045120547704d4a40752728632334f56e0b9f5c",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
+          "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
+        }
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/models/JointTest.cpp",
+          "sha256": "dfe5fb699ab8a959ecf359cc4d63f9048cf864875579cedda6d5efb5fc2dcdec",
+          "symbols": []
+        },
+        {
+          "path": "RobWork/RobWork/gtest/models/PrismaticJointTest.cpp",
+          "sha256": "779ed6fbb9584d8b6bf7bdcd46557139147a1d57d815933a65338f46cf197522",
+          "symbols": []
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"WorkCell|addFrame|addDevice|getDefaultState|findFrame|findDevice|getFrames|WorkCell::WorkCell|SerialDevice|SerialDevice::SerialDevice|setBounds|setMaxVelocity|setMaxAcceleration|getTransform|setFixedTransform|FixedFrame|FixedFrame::FixedFrame\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "复用Joint/PrismaticJoint/Transform3D原测试和已有测试报告入口；Model3D原构造测试9项中1项待归因FAIL，未冒称全套通过。产品独立oracle及实际生产输入限定本能力。"
+      }
+    },
+    {
+      "id": "RUNTIME-AXIS-ALIGN",
+      "search": {
+        "command": "rg -n \"makeLookAt|inverse|cross|normalize\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "baseline": "a045120547704d4a40752728632334f56e0b9f5c",
+        "conclusion": "定向审读公共入口、实现、目标与测试；适用范围及失败原件见REUSE-T13/suitability.md"
+      },
+      "boundary": "局部Z到已校验单位轴的右手正交坐标适配；上游-Z视向反向传参。精确±Z保留旧形态，一般轴仅内部滚转变化、子连杆逆补偿。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+          "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027",
+          "symbols": [
+            "makeLookAt"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+          "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2",
+          "symbols": [
+            "inverse"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+          "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb",
+          "symbols": [
+            "cross",
+            "normalize"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "沿既有runtime目标及sdurw PUBLIC依赖；不改上游、vcpkg或产品CMake。集成模式真实链接；独立冒烟原条件编列不变。"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "局部Z到已校验单位轴的右手正交坐标适配；上游-Z视向反向传参。精确±Z保留旧形态，一般轴仅内部滚转变化、子连杆逆补偿。",
+        "lifetime": "runtime唯一模型owner；每次编译独占，发布后仅受控只读视图及任务私有State；不跨进程借持。",
+        "determinism": "相同有效输入的模型/名称/物理结果确定；临时路径不入身份。一般轴内部滚转选取变化明确登记，不承诺旧关节Frame逐元素等同。"
+      },
+      "ownerUnit": "runtime",
+      "examples": [
+        {
+          "path": "RobWork/RobWork/example/simplegui/src/SimpleGLViewer.cpp",
+          "sha256": "0903b6d2939c5d8b5a7df2777576c74b85ce578e23ef44e1da17276d5470f2f5",
+          "symbols": [
+            "makeLookAt"
+          ]
+        }
+      ],
+      "docs": [],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "verified",
+        "version": "a045120547704d4a40752728632334f56e0b9f5c",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
+          "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
+        }
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/math/Transform3DTest.cpp",
+          "sha256": "b5ba071b9090f8d34f014820599f1f2fa9e661115448276efc0d2884afbd86cc",
+          "symbols": []
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"makeLookAt|inverse|cross|normalize\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "复用Joint/PrismaticJoint/Transform3D原测试和已有测试报告入口；Model3D原构造测试9项中1项待归因FAIL，未冒称全套通过。产品独立oracle及实际生产输入限定本能力。"
+      }
+    },
+    {
+      "id": "RUNTIME-MESH-LOAD",
+      "search": {
+        "command": "rg -n \"load|setlocale|toGeometryData|copyData|getTriangle\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "baseline": "a045120547704d4a40752728632334f56e0b9f5c",
+        "conclusion": "定向审读公共入口、实现、目标与测试；适用范围及失败原件见REUSE-T13/suitability.md"
+      },
+      "boundary": "已校验字节的路径适配、STL/OBJ真实加载及OBJ多g对象三角几何转换；不自写加载/逐三角合并核心。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/model3d/STLFile.hpp",
+          "sha256": "eda7cea0e2ba9397a30aab89214ee65d105768510bf7709163044fdb984b5967",
+          "symbols": [
+            "load"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/model3d/STLFile.cpp",
+          "sha256": "475809dac58e940566dcf3b3e57d7fa44e4fc40d0d601c472bad94d87182273e",
+          "symbols": [
+            "load",
+            "setlocale"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.hpp",
+          "sha256": "5d87eb9e38290cda8015caea9cb5039610d7fb9310ce8380e6f6316efee350b3",
+          "symbols": [
+            "load"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/loaders/model3d/LoaderOBJ.cpp",
+          "sha256": "910fbc1982667b167fa0c725bb2e45602ebed105ccdfd9c3b6e86f3fc0913f1a",
+          "symbols": [
+            "load",
+            "setlocale"
+          ],
+          "target": "sdurw_loaders",
+          "targetFile": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+          "targetSha256": "5a418de349f190697a84a00ae42e595a2dd872baa76eb537e9c7a56053ffeaf6"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Model3D.hpp",
+          "sha256": "573aa1cfc71bc235bc7c0bbd937bcb29a0400943a131bf0c775da1007835308a",
+          "symbols": [
+            "toGeometryData"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Model3D.cpp",
+          "sha256": "9db0d034f986777372b58d12482a137a8f0bcd34757a834e981663f122f810a9",
+          "symbols": [
+            "toGeometryData",
+            "copyData"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/TriMesh.hpp",
+          "sha256": "636a9a530f6b6d2ccbaa94b215e2f108c6e78eb049e34ee8d6e73a44b7628827",
+          "symbols": [
+            "getTriangle"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_loaders",
+          "sdurw_geometry"
+        ],
+        "constraints": "沿既有runtime目标及sdurw PUBLIC依赖；不改上游、vcpkg或产品CMake。集成模式真实链接；独立冒烟原条件编列不变。"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "load",
+            "query"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "本包仅Windows/UCRT线程locale下的生产STL及OBJ；LoaderOBJ对象单位变换，多g对象面/绕序/数量/面积经独立解析期望验证。材质/纹理原通道已丢弃；未覆盖任意手工Model3D层级、大网格索引阈值、非Windows并发。Model3D原mask测试FAIL待归因，不能外推上游套件全过。",
+        "lifetime": "runtime唯一模型owner；每次编译独占，发布后仅受控只读视图及任务私有State；不跨进程借持。",
+        "determinism": "相同有效输入的模型/名称/物理结果确定；临时路径不入身份。一般轴内部滚转选取变化明确登记，不承诺旧关节Frame逐元素等同。"
+      },
+      "ownerUnit": "runtime",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "load",
+        "query"
+      ],
+      "review": {
+        "status": "verified",
+        "version": "a045120547704d4a40752728632334f56e0b9f5c",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
+          "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
+        }
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/geometry/Model3DTest.cpp",
+          "sha256": "43805db18220908ecb857608d6c9ee20c846824764c528341e50ed45b5a0d978",
+          "symbols": []
+        },
+        {
+          "path": "RobWork/RobWork/gtest/geometry/GeometryUtilTest.cpp",
+          "sha256": "075c23025109e644aeaca7025403090a60a0edb5dd531458ac6344169857e8db",
+          "symbols": [
+            "toGeometryData"
+          ]
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"load|setlocale|toGeometryData|copyData|getTriangle\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "复用Joint/PrismaticJoint/Transform3D原测试和已有测试报告入口；Model3D原构造测试9项中1项待归因FAIL，未冒称全套通过。产品独立oracle及实际生产输入限定本能力。"
+      }
+    },
+    {
+      "id": "RUNTIME-GEOMETRY-CARRIER",
+      "search": {
+        "command": "rg -n \"Geometry|setTransform|setFrame|Geometry::Geometry|Box|Cylinder|RigidObject|RigidObject::RigidObject|add\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "baseline": "a045120547704d4a40752728632334f56e0b9f5c",
+        "conclusion": "定向审读公共入口、实现、目标与测试；适用范围及失败原件见REUSE-T13/suitability.md"
+      },
+      "boundary": "已有Geometry/RigidObject载体挂原帧，scale=1；尺寸/名字是产品代理规则，非物性或碰撞保真算法。",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Geometry.hpp",
+          "sha256": "7d9ebc97679feb598985dc89f24db99eaa472da3e462a8dd45383c9fc7fe9b88",
+          "symbols": [
+            "Geometry",
+            "setTransform",
+            "setFrame"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Geometry.cpp",
+          "sha256": "8cf842faef3897e8509096a8e9de34e959aa77aa16f02378aa9cc902d953335c",
+          "symbols": [
+            "Geometry::Geometry"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Box.hpp",
+          "sha256": "456a7e7cbb00cf52a94bd7839a93144a2933e6e51c2561d1c18c361661c0093d",
+          "symbols": [
+            "Box"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/Cylinder.hpp",
+          "sha256": "763881984753081149e8c670796d7174959579ab4a2798479766fd4d1dd9d527",
+          "symbols": [
+            "Cylinder"
+          ],
+          "target": "sdurw_geometry",
+          "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
+          "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/RigidObject.hpp",
+          "sha256": "819a5ee372f64e88bfb7c5422756d7fff015964ddf3b8a832e4742daa3c4eff5",
+          "symbols": [
+            "RigidObject"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/RigidObject.cpp",
+          "sha256": "a3ba470c990ed443c6d811dacf3519178319797b2a05a11dd0b7ba758eef4e88",
+          "symbols": [
+            "RigidObject::RigidObject"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+          "sha256": "5ebe466fc5e8c0d431a3d5ae08463d738c88f2d2d2e66d6c4a1f2e7d3e61450e",
+          "symbols": [
+            "add"
+          ],
+          "target": "sdurw_models",
+          "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+          "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_geometry",
+          "sdurw_models"
+        ],
+        "constraints": "沿既有runtime目标及sdurw PUBLIC依赖；不改上游、vcpkg或产品CMake。集成模式真实链接；独立冒烟原条件编列不变。"
+      },
+      "usages": [
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "construct",
+            "mutate"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "已有Geometry/RigidObject载体挂原帧，scale=1；尺寸/名字是产品代理规则，非物性或碰撞保真算法。",
+        "lifetime": "runtime唯一模型owner；每次编译独占，发布后仅受控只读视图及任务私有State；不跨进程借持。",
+        "determinism": "相同有效输入的模型/名称/物理结果确定；临时路径不入身份。一般轴内部滚转选取变化明确登记，不承诺旧关节Frame逐元素等同。"
+      },
+      "ownerUnit": "runtime",
+      "examples": [],
+      "docs": [],
+      "operations": [
+        "construct",
+        "mutate"
+      ],
+      "review": {
+        "status": "verified",
+        "version": "a045120547704d4a40752728632334f56e0b9f5c",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/suitability.md",
+          "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
+        }
+      },
+      "tests": [
+        {
+          "path": "RobWork/RobWork/gtest/geometry/GeometryUtilTest.cpp",
+          "sha256": "075c23025109e644aeaca7025403090a60a0edb5dd531458ac6344169857e8db",
+          "symbols": []
+        }
+      ],
+      "resourceSearch": {
+        "command": "rg -n \"Geometry|setTransform|setFrame|Geometry::Geometry|Box|Cylinder|RigidObject|RigidObject::RigidObject|add\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",
+        "conclusion": "复用Joint/PrismaticJoint/Transform3D原测试和已有测试报告入口；Model3D原构造测试9项中1项待归因FAIL，未冒称全套通过。产品独立oracle及实际生产输入限定本能力。"
       }
     }
   ]

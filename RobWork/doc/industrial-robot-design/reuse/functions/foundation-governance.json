@@ -1798,7 +1798,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1869,7 +1869,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1940,7 +1940,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1992,8 +1992,8 @@
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "$allTaskIds = @{}",
           "startLine": 55,
-          "endLine": 121,
-          "sha256": "af8521878ef2757d580b3a04232ae2b824bdbb3a6feb5d7568da5e48523738cc",
+          "endLine": 122,
+          "sha256": "38ba502cd06ed52ef358184248689fd913c87da404cdc3333288a1ced5cdf84a",
           "semanticGroup": "index-and-contract",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::index-and-contract"
         }
@@ -2012,7 +2012,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2063,8 +2063,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "validate-reuse.ps1",
-          "startLine": 123,
-          "endLine": 129,
+          "startLine": 124,
+          "endLine": 130,
           "sha256": "622874cfef5542d29243f176890bf00e7118d8b4fe415cddff15cf2f03f9dffd",
           "semanticGroup": "reuse-gate",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::reuse-gate"
@@ -2084,7 +2084,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2172,7 +2172,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2256,7 +2256,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2340,7 +2340,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2455,7 +2455,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2571,7 +2571,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -5052,7 +5052,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5131,7 +5131,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5210,7 +5210,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5289,7 +5289,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5368,7 +5368,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5447,7 +5447,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5526,7 +5526,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5605,7 +5605,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5684,7 +5684,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5763,7 +5763,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5842,7 +5842,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5921,7 +5921,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6000,7 +6000,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6079,7 +6079,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6158,7 +6158,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6237,7 +6237,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6316,7 +6316,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6395,7 +6395,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6474,7 +6474,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "d1ed35fde297ebf0409b1bbf821c1813b175bfcb47bfda602b6b49a87d1c40e9"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",

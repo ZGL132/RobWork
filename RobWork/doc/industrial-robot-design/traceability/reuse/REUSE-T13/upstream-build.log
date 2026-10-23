@@ -1,0 +1,10 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/upstream/CMakeLists.txt
+  JointTest.cpp
+  PrismaticJointTest.cpp
+  Transform3DTest.cpp
+  Model3DTest.cpp
+  TestMainReport.cpp
+LINK : fatal error LNK1181: 无法打开输入文件“D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\testkit\Release\sdurws_ird_testkit.lib” [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\upstream\upstream_test.vcxproj]

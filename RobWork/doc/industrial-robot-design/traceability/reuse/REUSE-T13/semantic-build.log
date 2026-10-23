@@ -1,0 +1,149 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Auto build dll exports
+  yaobi.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\libs\Release\yaobi.lib
+  pqp.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\libs\Release\pqp.lib
+  sdurw_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_core.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_plugin.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_plugin.dll
+  sdurw_common.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_common.dll
+  Auto build dll exports
+  sdurw_math.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_math.dll
+  Automatic MOC for target sdurws_ird_core
+  Auto build dll exports
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_core.lib
+  sdurw_kinematics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_kinematics.dll
+  Automatic MOC for target sdurws_ird_testkit
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_testkit.lib
+  Auto build dll exports
+  sdurw_geometry.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_geometry.dll
+  Auto build dll exports
+  sdurw_sensor.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_sensor.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_graspplanning.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_graspplanning.dll
+  sdurw_models.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_models.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_control.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_control.dll
+  sdurw_graphics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_graphics.dll
+  sdurw_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_trajectory.dll
+  sdurw_proximity.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_proximity.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_simulation.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_simulation.dll
+  sdurw_invkin.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_invkin.dll
+  sdurw_loaders.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_loaders.dll
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_algorithms.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_algorithms.dll
+  sdurw_pathplanning.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_pathplanning.dll
+  sdurw_opengl.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_opengl.dll
+  sdurw_proximitystrategies.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_proximitystrategies.dll
+  sdurw_task.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_task.dll
+  Auto build dll exports
+  Auto build dll exports
+  sdurw_pathplanners.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_pathplanners.dll
+  sdurw_assembly.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWork\bin\Release\sdurw_assembly.dll
+  Automatic MOC and UIC for target sdurwsim
+  Auto build dll exports
+  sdurwsim.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkSim\bin\Release\sdurwsim.dll
+  Automatic MOC for target sdurws_ird_runtime
+  WorkCellCompiler.cpp
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\libs\Release\sdurws_ird_runtime.lib
+  Automatic MOC for target sdurws_ird_runtime_test
+  CompilerTest.cpp
+  WorkCellCompilerTest.cpp
+  WorkCellGeometryTest.cpp
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,47): error C2664: “rw::math::Transform3D<double> rw::kinematics::Frame::getTransform(const rw::kinematics::State &) const”: 无法将参数 1 从“double”转换为“const rw::kinematics::State &” [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+      原因如下: 无法从“double”转换为“const rw::kinematics::State”
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+      “rw::kinematics::State::State”: 没有重载函数可以转换所有参数类型
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWork\src\rw\kinematics\State.hpp(331,5):
+          可能是“rw::kinematics::State::State(const rw::kinematics::State &)”
+              D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+              “rw::kinematics::State::State(const rw::kinematics::State &)”: 无法将参数 1 从“double”转换为“const rw::kinematics::State &”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+                  原因如下: 无法从“double”转换为“const rw::kinematics::State”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,60):
+          尝试匹配参数列表“(double)”时
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWork\src\rw\kinematics\Frame.hpp(103,33):
+      参见“rw::kinematics::Frame::getTransform”的声明
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(805,47):
+      尝试匹配参数列表“(double)”时
+  
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(804,28): error C2737: “alignment”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(806,52): error C3536: “alignment”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(806,52): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(806,67): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(806,82): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(807,52): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(807,67): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(807,82): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(808,52): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(808,67): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\WorkCellCompilerTest.cpp(808,82): error C2064: 项不会计算为接受 2 个参数的函数 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(466,61): error C2039: "canonicalModel": 不是 "sdurws::ird::runtime::RuntimeSnapshot" 的成员 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\include\sdurws\ird\runtime\Snapshot.hpp(350,7):
+      参见“sdurws::ird::runtime::RuntimeSnapshot”的声明
+  
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(465,16): error C2737: “oldKey”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(468,57): error C2039: "canonicalModel": 不是 "sdurws::ird::runtime::RuntimeSnapshot" 的成员 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\include\sdurws\ird\runtime\Snapshot.hpp(350,7):
+      参见“sdurws::ird::runtime::RuntimeSnapshot”的声明
+  
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(467,16): error C2737: “newKey”: 必须初始化 const 对象 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5): error C3536: “newKey”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5): error C3536: “oldKey”: 初始化之前无法使用 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5): error C2512: “testing::AssertionResult”: 没有合适的默认构造函数可用 [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5):
+      “testing::AssertionResult::AssertionResult”: 没有合适的默认构造函数可用
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(172,3):
+          可能是“testing::AssertionResult::AssertionResult(const T &)”
+          D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest-assertion-result.h(165,3):
+          或    “testing::AssertionResult::AssertionResult(T &&)”
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5):
+          尝试匹配参数列表“()”时
+  
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5): error C2440: “初始化”: 无法从“bool”转换为“testing::AssertionResult” [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(469,5):
+      class“testing::AssertionResult”的构造函数声明为“explicit”
+  
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,32): error C2664: “sdurws::ird::runtime::CompileCacheCompatibility sdurws::ird::runtime::judgeCompileCacheCompatibility(const sdurws::ird::runtime::CompileCacheKey &,const sdurws::ird::runtime::CompileCacheKey &)”: 无法将参数 1 从“int”转换为“const sdurws::ird::runtime::CompileCacheKey &” [D:\10_Source_Repos\21_robot\reuse-foundation\.cache\integrated\RobWorkStudio\src\rwslibs\industrialrobot\runtime\sdurws_ird_runtime_test.vcxproj]
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+      原因如下: 无法从“int”转换为“const sdurws::ird::runtime::CompileCacheKey”
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+      “sdurws::ird::runtime::CompileCacheKey::CompileCacheKey”: 没有重载函数可以转换所有参数类型
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\include\sdurws\ird\runtime\CacheKey.hpp(141,1):
+          可能是“sdurws::ird::runtime::CompileCacheKey::CompileCacheKey(sdurws::ird::runtime::CompileCacheKey &&)”
+              D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+              “sdurws::ird::runtime::CompileCacheKey::CompileCacheKey(sdurws::ird::runtime::CompileCacheKey &&)”: 无法将参数 1 从“int”转换为“sdurws::ird::runtime::CompileCacheKey &&”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+                  原因如下: 无法从“int”转换为“sdurws::ird::runtime::CompileCacheKey”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\include\sdurws\ird\runtime\CacheKey.hpp(141,1):
+          或    “sdurws::ird::runtime::CompileCacheKey::CompileCacheKey(const sdurws::ird::runtime::CompileCacheKey &)”
+              D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+              “sdurws::ird::runtime::CompileCacheKey::CompileCacheKey(const sdurws::ird::runtime::CompileCacheKey &)”: 无法将参数 1 从“int”转换为“const sdurws::ird::runtime::CompileCacheKey &”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+                  原因如下: 无法从“int”转换为“const sdurws::ird::runtime::CompileCacheKey”
+                  D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+                  转换要求第二个用户定义的转换运算符或构造函数
+          D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,63):
+          尝试匹配参数列表“(int)”时
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\include\sdurws\ird\runtime\CacheKey.hpp(345,27):
+      参见“sdurws::ird::runtime::judgeCompileCacheCompatibility”的声明
+      D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\CompilerTest.cpp(470,32):
+      尝试匹配参数列表“(int, int)”时
+  
