@@ -130,6 +130,7 @@ endif()
 enable_testing()
 
 add_executable(sdurws_ird_diagnostics_test
+    test/TestMainReport.cpp
     test/BuildRedLineTest.cpp
     test/StableCodeRegistryTest.cpp
     test/CatalogFactoryTest.cpp
@@ -152,16 +153,17 @@ if(MSVC)
     target_compile_options(sdurws_ird_diagnostics_test PRIVATE /utf-8)
 endif()
 
-# 测试 main 自持（DTB §5.5）：GTest::gtest_main 提供入口；测试链接产品库
+# 测试 main 复用既有 testkit 报告监听器（REUSE-T16：XML/原生JSON并存）；测试链接产品库
 # sdurws_ird_diagnostics 同时验证"公共头可被正常 include＋库可链接"。
-# 不链 sdurws_ird_testkit：DT-BUILD 红线用例以 gtest 原生断言承载（需求/AT
+# 仅测试目标链接 sdurws_ird_testkit，产品目标不链：DT-BUILD 以 gtest 原生断言承载（需求/AT
 # 追溯在用例名与 ird-test-report.json 的 trace 字段——evidence EV-T01 同款）；
 # testkit 谓词（checkDiagnosticRecord/checkComparativeFields）已随 DIAG-T10
 # 契约套件消费（DiagContractCheckTest），链接面登记于 _contract_test 目标处
 # （P-DIAG-8 处置：契约目标链 testkit 为 T-1 允许形态，产品目标不链）。
 target_link_libraries(sdurws_ird_diagnostics_test PRIVATE
     sdurws_ird_diagnostics
-    GTest::gtest_main)
+    sdurws_ird_testkit
+    GTest::gtest)
 
 # 源码树位置注入：DT-BUILD 用例在运行期扫描 diagnostics 源码核对红线
 # （§10 DT-BUILD）。经编译定义传 industrialrobot 根（evidence/runtime 同款
@@ -197,6 +199,7 @@ add_custom_command(TARGET sdurws_ird_diagnostics_test POST_BUILD
 # "与 testkit checkDiagnosticRecord/checkComparativeFields"承接；双面对账：
 # 工厂产出与 testkit 独立判定同判）随 DIAG-T10 增列。
 add_executable(sdurws_ird_diagnostics_contract_test
+    test/TestMainReport.cpp
     test/LinkageContractTest.cpp
     test/ConfirmableProjectStubTest.cpp
     test/CatalogHostTraceStubTest.cpp
@@ -220,7 +223,7 @@ endif()
 target_link_libraries(sdurws_ird_diagnostics_contract_test PRIVATE
     sdurws_ird_diagnostics
     sdurws_ird_testkit
-    GTest::gtest_main)
+    GTest::gtest)
 
 # ---- DIAG-T10：契约目标链接 testkit（P-DIAG-8 处置的链接面登记）----
 # §10 头注"`_contract_test` 面＝与 testkit checkDiagnosticRecord/

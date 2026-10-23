@@ -1339,3 +1339,9 @@ public:
 | 是否越权修改需求、架构或其他单元机制 | ✔ 未修改任何上游文件；接口统一（sink）与 FindingId 收编均以待裁决登记（P-DIAG-5/4）；README 指向修正属本文产物自身的结构对齐 | §14.3、§14.4 |
 | 未参与开发者可直接实现 | ✔ 每数据类型字段表（§4.2/§5.2）、每接口签名/前置/错误/线程/生命周期/合法非法（§9）、验证矩阵含观测点（§10）、任务卡（§11） | 全文 |
 | 上游输入版本如实登记 | ✔ §1.2 磁盘实测表（含 DETAILED-DESIGN/breakdown 已存在的更新状态，未虚构） | §1.2 |
+
+### REUSE-T16：既有文件轮转的保留边界（2026-10-23）
+
+所有者已批准 GAP-DIAG-RETENTION-01 方案 A。FileLogFileOps 仍使用原 std::filesystem 与同实例互斥；keep 含活动文件，keep=1 不生成 .1，降低 keep 时只清理本日志规范正整数后缀普通文件。目录/符号链接不作世代删除或覆盖；失败沿原 bool/管线 guardOpsBool 轨，不新增日志框架。原逐行 fopen("ab")/fclose 与幂等 flush 不变，不承诺 fsync 或跨进程并发。
+
+本次测试目标复用既有 testkit 原生报告监听器，不引入 XML 转换器；diagnostics 产品仍只依赖 core 与标准库。_test 与 _contract_test 均使用 test/TestMainReport.cpp；这是测试报告设施依赖，不是产品反向依赖。原B35及新真实文件结果见 traceability/reuse/REUSE-T16/README.md，独验尚未完成。队列/格式/两Tier/稳定码/脱敏/worker值载荷由既有实现唯一承载，未迁移其职责或新增模型持有权。

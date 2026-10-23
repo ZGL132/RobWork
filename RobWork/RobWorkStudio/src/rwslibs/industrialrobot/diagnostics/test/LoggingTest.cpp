@@ -377,6 +377,90 @@ LogRecord makeDevRecord(LogLevel level, std::string channel, std::string message
     return r;
 }
 
+/** GAP-DIAG-RETENTION-01：keep=1 经真实异步管线后只保留新活动文件。 */
+TEST(DiagRetention, KeepOnePipeline_DT_LOG_ROTATE)
+{
+    TempDirGuard dir; FileLogFileOps ops; SystemClock clock;
+    LoggingPipeline logger(clock,ops); LogSinkConfig cfg;
+    cfg.directory=dir.path(); cfg.userEnabled=false; cfg.rotateFiles=1; cfg.rotateMaxBytes=1;
+    logger.configure(cfg);
+    logger.logDev("retention/test",LogLevel::Info,"first");
+    logger.logDev("retention/test",LogLevel::Info,"second");
+    ASSERT_TRUE(logger.flush(kLogDefaultFlushDeadline));
+    const auto file=dir.path()/cfg.devFileName;
+    EXPECT_NE(readTextFile(file).find("second"),std::string::npos);
+    EXPECT_FALSE(fs::exists(fs::path(file.string()+".1")));
+}
+
+/** 缩小/扩大保留数及缺代必须保留世代字节顺序，不以mock计数冒充真实文件。 */
+TEST(DiagRetention, ShrinkExpandAndMissingGeneration_DT_LOG_ROTATE)
+{
+    TempDirGuard dir; FileLogFileOps ops; const auto file=dir.path()/"retention.log";
+    for(int i=0;i<5;++i) {
+        ASSERT_TRUE(ops.appendLine(file,"old-"+std::to_string(i)));
+        ASSERT_TRUE(ops.rotateFile(file,5));
+    }
+    ASSERT_TRUE(fs::exists(fs::path(file.string()+".4")));
+    ASSERT_TRUE(ops.appendLine(file,"before-shrink"));
+    ASSERT_TRUE(ops.rotateFile(file,2));
+    EXPECT_EQ(readTextFile(fs::path(file.string()+".1")),"before-shrink\n");
+    for(int i=2;i<=4;++i) EXPECT_FALSE(fs::exists(fs::path(file.string()+"."+std::to_string(i))));
+    ASSERT_TRUE(ops.appendLine(file,"after-shrink"));
+    ASSERT_TRUE(ops.rotateFile(file,5));
+    EXPECT_EQ(readTextFile(fs::path(file.string()+".2")),"before-shrink\n");
+    EXPECT_EQ(readTextFile(fs::path(file.string()+".1")),"after-shrink\n");
+    // 活动文件缺失时也要清掉超上限的代；缺代不制造空文件。
+    ASSERT_TRUE(ops.rotateFile(file,1));
+    EXPECT_FALSE(fs::exists(file));
+    EXPECT_FALSE(fs::exists(fs::path(file.string()+".1")));
+    EXPECT_FALSE(fs::exists(fs::path(file.string()+".2")));
+    ASSERT_TRUE(ops.appendLine(file,"fresh"));
+    EXPECT_EQ(readTextFile(file),"fresh\n");
+}
+
+/** 清理只限本日志的规范正整数普通文件；长后缀也不能溢出或波及邻居。 */
+TEST(DiagRetention, ProtectUnrelatedPaths_DT_LOG_ROTATE)
+{
+    TempDirGuard dir; FileLogFileOps ops; const auto file=dir.path()/"retain.log";
+    const std::vector<std::string> protectedNames={"retain.log.0","retain.log.01","retain.log.-1",
+        "retain.log.2.tmp","retain.logx.2","other.log.2","retain.log.extra"};
+    // Windows 会把尾随点路径归一为活动文件本身，不能把它当作独立邻居夹具。
+    for(const auto& name:protectedNames) ASSERT_TRUE(ops.appendLine(dir.path()/name,"protected"));
+    ASSERT_TRUE(fs::create_directory(dir.path()/"retain.log.8"));
+    ASSERT_TRUE(ops.appendLine(dir.path()/"retain.log.8"/"child","protected"));
+    ASSERT_TRUE(ops.appendLine(dir.path()/"retain.log.999999999999999999999999999999","obsolete"));
+    ASSERT_TRUE(ops.appendLine(file,"active"));
+    ASSERT_TRUE(ops.rotateFile(file,1));
+    EXPECT_FALSE(fs::exists(file));
+    EXPECT_FALSE(fs::exists(dir.path()/"retain.log.999999999999999999999999999999"));
+    for(const auto& name:protectedNames) EXPECT_EQ(readTextFile(dir.path()/name),"protected\n");
+    EXPECT_EQ(readTextFile(dir.path()/"retain.log.8"/"child"),"protected\n");
+}
+
+/** 非普通文件占据目标或源时可观测失败，不能把空目录当作日志删除。 */
+TEST(DiagRetention, RefuseDirectoryCollision_DT_LOG_ROTATE)
+{
+    TempDirGuard dir; FileLogFileOps ops; const auto file=dir.path()/"retain.log";
+    ASSERT_TRUE(ops.appendLine(file,"active"));
+    ASSERT_TRUE(fs::create_directory(dir.path()/"retain.log.1"));
+    EXPECT_FALSE(ops.rotateFile(file,2));
+    EXPECT_TRUE(fs::is_directory(dir.path()/"retain.log.1"));
+    EXPECT_EQ(readTextFile(file),"active\n");
+    EXPECT_FALSE(ops.rotateFile(dir.path()/"retain.log.1",1));
+    EXPECT_TRUE(fs::is_directory(dir.path()/"retain.log.1"));
+}
+
+/** 不存在的活动文件仍沿原接缝工作；不修改进程cwd。 */
+TEST(DiagRetention, AbsentActiveFile_DT_LOG_ROTATE)
+{
+    TempDirGuard dir; FileLogFileOps ops; const auto file=dir.path()/"retain.log";
+    ASSERT_TRUE(ops.appendLine(dir.path()/"retain.log.1","older"));
+    ASSERT_TRUE(ops.rotateFile(file,3));
+    EXPECT_FALSE(fs::exists(file));
+    EXPECT_EQ(readTextFile(dir.path()/"retain.log.2"),"older\n");
+    EXPECT_TRUE(ops.rotateFile(dir.path()/"absent"/"retain.log",1));
+}
+
 }  // namespace
 
 // =====================================================================

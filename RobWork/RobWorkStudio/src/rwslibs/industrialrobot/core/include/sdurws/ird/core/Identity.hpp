@@ -60,8 +60,8 @@ bool tryParseId128(std::string_view tag, std::string_view text,
 /// parse 使用同一字节序，保证 parse(format(x))==x 往返）。
 std::string formatId128(std::string_view tag, const std::array<std::uint8_t, 16>& bytes);
 
-/// FNV-1a 128 位哈希（§4.1：std::hash 规定算法）——以两个 64 位半字模拟
-/// 128 位状态（模 2^128 乘法经移位加法实现，FNV-128 素数＝2^88+2^8+0x3B）。
+/// FNV-1a 128 位哈希（§4.1：std::hash 规定算法）——实现私有使用固定精度
+/// 模 2^128 算术（FNV-128 素数＝2^88+2^8+0x3B）；公共边界仍为两个 uint64。
 /// 仅为哈希表散列用，非密码学承诺；同字节同哈希、平台无关（uint64 定宽）。
 void fnv1a128(const std::uint8_t* data, std::size_t n,
               std::uint64_t* outHi, std::uint64_t* outLo) noexcept;

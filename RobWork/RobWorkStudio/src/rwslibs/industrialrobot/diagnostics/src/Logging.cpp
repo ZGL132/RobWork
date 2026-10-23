@@ -329,7 +329,7 @@ std::uint64_t guardOpsSize(Fn&& fn) noexcept
 }  // namespace
 
 // =====================================================================
-// FileLogFileOps——产品默认文件实现（句柄表＋互斥）
+// FileLogFileOps——产品默认文件实现（逐行打开/关闭＋同实例互斥）
 // =====================================================================
 
 struct FileLogFileOps::Impl {
@@ -382,26 +382,73 @@ bool FileLogFileOps::flushFile(const std::filesystem::path& file)
 
 bool FileLogFileOps::rotateFile(const std::filesystem::path& file, std::uint32_t keepFiles)
 {
-    // 世代移位：活动→.1，.1→.2，…，超出 keepFiles-1 的最老档删除
-    // （§7.8"轮转覆盖"生命周期——旧档不可达即消亡，无归档语义）。
+    // GAP-DIAG-RETENTION-01：keep 包含活动文件；降低配置时也要清除旧高代。
+    // 沿原 filesystem/互斥接缝，不递归、不追随符号链接，不清理其他日志。
     std::lock_guard<std::mutex> lock(m_impl->mtx);
     const std::uint32_t keep = std::max<std::uint32_t>(1u, keepFiles);
     std::error_code ec;
+    const auto parent = file.has_parent_path() ? file.parent_path() : std::filesystem::path(".");
+    if (!std::filesystem::exists(parent, ec)) { return !ec; }
+    const auto prefix = file.filename().native() + std::filesystem::path(".").native();
+    const auto firstDiscarded = std::filesystem::path(std::to_string(keep)).native();
+    std::filesystem::directory_iterator it(parent, ec), end;
+    if (ec) { return false; }
+    for (; it != end; it.increment(ec)) {
+        if (ec) { return false; }
+        const auto name = it->path().filename().native();
+        if (name.compare(0, prefix.size(), prefix) != 0) { continue; }
+        const auto suffix = name.substr(prefix.size());
+        // 仅规范正整数：不把 .01、.0、.1.tmp 或相似文件名当成本日志旧代。
+        // 按十进制长度/字典序比较，避免外部超长后缀转整数时溢出。
+        if (suffix.empty() || suffix.front() == '0'
+            || !std::all_of(suffix.begin(), suffix.end(), [](auto c) { return c >= '0' && c <= '9'; })) {
+            continue;
+        }
+        const bool discarded = suffix.size() > firstDiscarded.size()
+            || (suffix.size() == firstDiscarded.size() && suffix >= firstDiscarded);
+        if (discarded) {
+            const auto status = it->symlink_status(ec);
+            if (ec) { return false; }
+            if (!std::filesystem::is_regular_file(status)) { continue; }
+            std::filesystem::remove(it->path(), ec);
+            if (ec) { return false; }
+        }
+    }
+    if (ec) { return false; }
+    /**
+     * @brief 仅删除普通日志文件；拒绝目录/链接，避免误删其他对象。
+     * @param path [in] 本次轮转的活动文件或目标世代路径，不递归。
+     * @return 已删除或原本不存在时为 true；类型/文件系统错误为 false。
+     * 文件系统错误写入本次调用的 ec，沿原 bool 错误轨返回。
+     */
+    const auto removeRegular = [&ec](const std::filesystem::path& path) {
+        const auto status = std::filesystem::symlink_status(path, ec);
+        if (status.type() == std::filesystem::file_type::not_found) { ec.clear(); return true; }
+        if (ec || !std::filesystem::is_regular_file(status)) { return false; }
+        std::filesystem::remove(path, ec);
+        return !ec;
+    };
+    // 仅保留活动文件时丢弃旧内容，下一次原 appendLine 会重新创建活动文件。
+    if (keep == 1u) { return removeRegular(file); }
     // 自高位向低位移位，避免覆盖：先把 .（keep-2）挪到 .（keep-1），……最后活动→.1。
     for (std::uint32_t i = keep - 1u; i >= 2u; --i) {
         std::filesystem::path older = file;
         older += "." + std::to_string(i - 1u);
         std::filesystem::path newer = file;
         newer += "." + std::to_string(i);
-        if (!std::filesystem::exists(older, ec)) { continue; }  // 无该世代档＝跳过
-        std::filesystem::remove(newer, ec);                     // 目标位残留先清（best-effort）
+        const auto status = std::filesystem::symlink_status(older, ec);
+        if (status.type() == std::filesystem::file_type::not_found) { ec.clear(); continue; }
+        if (ec || !std::filesystem::is_regular_file(status) || !removeRegular(newer)) { return false; }
         std::filesystem::rename(older, newer, ec);
         if (ec) { return false; }
     }
     std::filesystem::path first = file;
     first += ".1";
-    if (std::filesystem::exists(file, ec)) {
-        std::filesystem::remove(first, ec);
+    const auto active = std::filesystem::symlink_status(file, ec);
+    if (active.type() == std::filesystem::file_type::not_found) { return true; }
+    if (ec || !std::filesystem::is_regular_file(active)) { return false; }
+    {
+        if (!removeRegular(first)) { return false; }
         std::filesystem::rename(file, first, ec);
         if (ec) { return false; }
     }

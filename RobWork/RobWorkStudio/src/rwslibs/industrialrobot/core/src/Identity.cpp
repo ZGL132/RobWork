@@ -16,6 +16,7 @@
 #include <sdurws/ird/core/Errors.hpp>
 
 #include <algorithm>
+#include <boost/multiprecision/cpp_int.hpp>
 #include <random>
 #include <stdexcept>
 
@@ -66,57 +67,26 @@ std::string formatId128(std::string_view tag, const std::array<std::uint8_t, 16>
 }
 
 // ---------------------------------------------------------------------
-// FNV-1a 128 位哈希（§4.1 std::hash 规定算法；两 64 位半字模拟 128 位状态）
+// FNV-1a 128 位哈希（§4.1 冻结协议；GAP-CORE-FNV-01 候选 A 已批准）
 // ---------------------------------------------------------------------
 void fnv1a128(const std::uint8_t* data, std::size_t n,
               std::uint64_t* outHi, std::uint64_t* outLo) noexcept
 {
-    // FNV-1a 128 偏移基＝0x6C62272E07BB0142_62B821756295C58D；素数＝2^88+2^8+0x3B。
-    // 状态 (hi,lo) 视作 128 位大端整数：迭代"异或字节→乘素数（模 2^128）"。
-    std::uint64_t hi = 0x6C62272E07BB0142ULL;
-    std::uint64_t lo = 0x62B821756295C58DULL;
-
-    // 累加一个 128 位项（无回绕加法）。
-    const auto add = [&](std::uint64_t th, std::uint64_t tl) {
-        const std::uint64_t nl = lo + tl;
-        const std::uint64_t c = (nl < lo) ? 1ULL : 0ULL;
-        hi = hi + th + c;
-        lo = nl;
-    };
-    // 累加 state << shift（shift∈[0,127]；≥64 时低字全零、高字＝lo 左移）。
-    const auto addShifted = [&](unsigned s) {
-        if (s == 0)        { add(hi, lo); return; }
-        if (s >= 64)       { add(lo << (s - 64), 0ULL); return; }
-        add((lo >> (64 - s)) | (hi << s), lo << s);
-    };
-    // 64×64→高 64 位（32 位分解，避免编译器扩展头文件）。
-    const auto mulHi64 = [](std::uint64_t a, std::uint64_t b) -> std::uint64_t {
-        const std::uint64_t al = a & 0xFFFFFFFFULL, ah = a >> 32;
-        const std::uint64_t bl = b & 0xFFFFFFFFULL, bh = b >> 32;
-        const std::uint64_t p00 = al * bl;
-        const std::uint64_t p01 = al * bh;
-        const std::uint64_t p10 = ah * bl;
-        const std::uint64_t p11 = ah * bh;
-        const std::uint64_t mid = (p00 >> 32) + (p01 & 0xFFFFFFFFULL) + (p10 & 0xFFFFFFFFULL);
-        return p11 + (p01 >> 32) + (p10 >> 32) + (mid >> 32);
-    };
-    // 累加 state * m（m<2^64；128 位截断：低＝lo*m，高＝mulHi(lo,m)＋lo 高字贡献 hi*m）。
-    const auto addMulSmall = [&](std::uint64_t m) {
-        const std::uint64_t tl = lo * m;
-        const std::uint64_t th = mulHi64(lo, m) + hi * m;
-        add(th, tl);
-    };
-
+    // 仅保留产品的逐字节协议；模 2^128 算术由已安装 Boost 固定精度类型承担。
+    // uint128_t 为 unsigned/unchecked/void-allocator 后端，不分配堆内存；
+    // 运算无共享状态。不得换成可增长 cpp_int 或 checked 版本破坏 noexcept。
+    using boost::multiprecision::uint128_t;
+    uint128_t state = (uint128_t(0x6C62272E07BB0142ULL) << 64)
+                   | 0x62B821756295C58DULL;
+    const uint128_t prime = (uint128_t(1) << 88) | (uint128_t(1) << 8) | 0x3B;
     for (std::size_t i = 0; i < n; ++i) {
-        // 异或字节（进入 128 位状态最低字节＝lo 低 8 位）
-        lo ^= static_cast<std::uint64_t>(data[i]);
-        // 乘素数：p = 2^88 + 2^8 + 0x3B（三项分解累加，模 2^128）
-        addShifted(88);
-        addShifted(8);
-        addMulSmall(0x3BULL);
+        // FNV-1a 必须先异或、再以同一个原状态乘固定素数；不能原地分项累加。
+        state ^= data[i];
+        state *= prime;
     }
-    *outHi = hi;
-    *outLo = lo;
+    // 返回和公共 hash 的折叠顺序不变；此数值只用于进程内分桶，非持久化身份。
+    *outHi = static_cast<std::uint64_t>(state >> 64);
+    *outLo = static_cast<std::uint64_t>(state);
 }
 
 // ---------------------------------------------------------------------

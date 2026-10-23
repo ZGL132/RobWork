@@ -1,0 +1,81 @@
+CMake is re-running because D:/10_Source_Repos/21_robot/reuse-foundation/.cache/smoke/core/CMakeFiles/generate.stamp is out-of-date.
+  the file 'D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt'
+  is newer than 'D:/10_Source_Repos/21_robot/reuse-foundation/.cache/smoke/core/CMakeFiles/generate.stamp.depend'
+  result='-1'
+-- Selecting Windows SDK version 10.0.22621.0 to target Windows 10.0.26200.
+-- industrialrobot: standalone smoke mode（独立冒烟，不代表集成构建）
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_ui_plugin not registered (framework-hosted plugin target, integrated tree only; ui.md §13 UI-T16)
+-- industrialrobot.ui: standalone smoke mode——sdurws_ird_studio not registered (framework-hosted product target, integrated tree only; WP-24-T08 / B1-SPEC §2.1)
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  modeling/CMakeLists.txt:383 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- RobWork has not been compiled with a Version Number
+-- RobWork: Found a RobWork build tree
+CMake Warning (dev) at D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake/RobWorkConfig.cmake:129 (find_package):
+  Policy CMP0144 is not set: find_package uses upper-case <PACKAGENAME>_ROOT
+  variables.  Run "cmake --help-policy CMP0144" for policy details.  Use the
+  cmake_policy command to set the policy and suppress this warning.
+
+  CMake variable QHULL_ROOT is set to:
+
+    D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/..
+
+  For compatibility, find_package is ignoring the variable, but code in a
+  .cmake module might still use it.
+Call Stack (most recent call first):
+  drivetrain/CMakeLists.txt:129 (find_package)
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Configuring done (13.1s)
+-- Generating done (6.3s)
+-- Build files have been written to: D:/10_Source_Repos/21_robot/reuse-foundation/.cache/smoke
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\core\Release\sdurws_ird_core_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_diagnostics_test.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\diagnostics\Release\sdurws_ird_diagnostics_test.exe
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\core\Release\sdurws_ird_core.lib
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_diagnostics_contract_test.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\diagnostics\Release\sdurws_ird_diagnostics_contract_test.exe
