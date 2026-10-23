@@ -129,57 +129,43 @@
 
 探针运行暴露两处与本包产品代码无关的工具链事实：①含 7 层 `..` 的 include 路径串超 MAX_PATH，cmd/cl 拒绝解析（C1083）——CMakeLists 以 `get_filename_component(... ABSOLUTE)` 归一化后构建成功；②ToleranceProfile::load 的目录名/文件名/量纲 token/来源类别校验（profileId 须等于所在目录名、文件名须 `v<版本>.json`、quantityKind 用 kindTokenOf 词表、source 四类别白名单）——探针本地档案按契约改为 `v1.0.0.json`＋`dimensionless`＋`engineering-policy-default`。
 
-### 8.3 复用登记修正（交协调唯一修改者；本包未直接编辑共享文件）
+### 8.3 复用登记修正（交协调唯一修改者；本包未直接编辑共享文件；**本轮经校验器核实后修订**）
 
-机检依据（reuse-contract.ps1 CheckFunctions）：`capabilityId=NONE` 时 decision 只允许 business-specific/pending/proposal（`NONE cannot claim upstream reuse`）；changes manifest mode=adapter 必须 capabilities 非空且存在于 catalog。**当前登记把真实 Boost 适配记为 business-specific/NONE**（maximumBipartiteMatching 与 checkSetEquivalent 两行、changes 的 SetCheck.hpp/SetCheckMatch.cpp 两文件）——按 audit-contract §4（决策词表/实现定位须含"生产入口、跨层调用和结果消费端"）与 §6（正向证据）应表达为 adapter＋能力绑定。**最小兼容方案＝catalog 增一条能力**（ird-reuse/2 兼容升级，§3 明文"以兼容升级扩充同一 catalog.json，不新建并行能力库"——非另建台账），随后三处绑定：
+#### 8.3.1 机检事实链（reuse-contract.ps1 原文依据）
 
-**(a) catalog.json 增条目（建议片段）**
+- `CheckFunctions`：`capabilityId -eq 'NONE'` 时 decision 只允许 business-specific/pending/proposal（`NONE cannot claim upstream reuse`）；capabilityId ≠ NONE 时必须存在于 catalog。
+- manifest 检查：mode=adapter/direct/extension/new-core 必须 capabilities 非空且每个 ID 存在于 catalog；governance 仅限 CMakeLists/.cmake。
+- `CheckCatalogV2`：能力条目必填 `ownerUnit/usages/operations/resourceSearch/build/limits/review`；upstream 的 target 集必须与 build.targets 完全一致；tests/examples/docs 资源路径必须匹配 `^RobWork/(RobWork|RobWorkSim)/` 且逐符号实读；review.status ≠ candidate 时按 `review.version`（40 位 SHA）对每个 upstream 路径执行 `git show <sha>:<path>` 并与当前盘上内容做摘要比对（SUITABILITY）。
 
-```json
-{
-  "id": "MATCH-BIPARTITE-MAX",
-  "ownerUnit": "testkit",
-  "search": {
-    "command": "rg -n \"bipartite|maximum_cardinality|max_cardinality|hopcroft|augmenting path\" RobWork/RobWork/src RobWork/RobWorkSim/src；vcpkg installed boost/graph/max_cardinality_matching.hpp 公开契约阅读；probe-r17/candidates 两项公开 API 探测",
-    "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-    "conclusion": "上游 RobWork/RobWorkSim 无公共二分图最大匹配 API（审计 B17 一致）；同渠道已装 Boost 1.92 Boost.Graph checked_edmonds_maximum_cardinality_matching＋matching_size 为选定上游，REUSE-T19 完成生产接入、断开实验与规模对照"
-  },
-  "upstream": [
-    {
-      "path": "vcpkg/installed/x64-windows/include/boost/graph/max_cardinality_matching.hpp",
-      "sha256": "09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f",
-      "symbols": ["checked_edmonds_maximum_cardinality_matching", "matching_size"],
-      "target": "Boost::headers",
-      "targetFile": "vcpkg/installed/x64-windows/share/boost_headers/boost_headers-config.cmake",
-      "targetSha256": "b1c7e2bab822670e6a760de56b0c0bb3ff2604520141149ff2aeec9860656e28"
-    }
-  ],
-  "build": {
-    "targets": ["Boost::headers"],
-    "constraints": "header-only 接口目标，零运行库/DLL；Boost 头收敛于 testkit/src/SetCheckMatch.cpp 单 TU（公共模板头与消费者编译面零 Boost）"
-  },
-  "boundary": "最大基数二分图匹配内核：只承接『给定边表求一个最大基数匹配』；身份优先/C4 相容边构造/歧义检测/缺失多余与诊断归 testkit SetCheck 模板层。多解配对见证由库实现决定——同版本确定性，跨实现/跨版本可不同（契约不钉配对索引）",
-  "usages": [
-    { "consumerUnit": "testkit", "usageRole": "adapter", "permissionRef": "ARCH:3.6.1", "operations": ["value"] }
-  ],
-  "review": { "stage": "reviewed", "evidence": "traceability/reuse/REUSE-T05/setcheck-max-matching/README.md", "reviewedVersion": "<协调落地批次 SHA>" }
-}
-```
+#### 8.3.2 已证实的 schema 表达缺口（**撤回本记录初版 catalog 片段**）
 
-**(b) functions/testkit.json 修正（两行）**
+本记录初版曾建议"catalog 增条目 MATCH-BIPARTITE-MAX"。经逐条核对校验器后**撤回**——该片段会命中 CATALOG-V2 至少四处失败，且根因是结构性的，不是片段写法问题：
 
-- `testkit.SetCheck.maximumBipartiteMatching`：`decision` "business-specific"→**"adapter"**；`capabilityId` "NONE"→**"MATCH-BIPARTITE-MAX"**；`differences` 追加"生产入口链：checkSetEquivalent 阶段 2 物化相容边→本接缝（Boost 公开 API）→返回 matchL 被 matched/missing/extra/歧义探测消费；产品面唯一匹配实现＝本接缝（旧 Kuhn 已于 38290e2bd 删除）——不重叠的结构性依据"；**`nonOverlapEvidence`（现仅 gtest XML，按指令不能单独充当不重叠证明）替换为 `positiveEvidence` 数组**：断开实验 console-trimmed.log（`82159d10…`）＋还原复跑 console.log（`9316bc21…`）＋规模对照 run-old/run-new（`b654ef90…`/`69876b0c…`）；gtest XML 移入 auditEvidence 作测试摘要。
-- `testkit.SetCheck.checkSetEquivalent`：**保持 business-specific/NONE**（阶段 0/1、歧义、最近对详情为纯业务规则——按实际职责登记，不要求全改 adapter）；`differences` 更新为："重复/身份优先/交错圈歧义与最近对详情为本功能业务语义；阶段 2 相容边物化后经 detail::maximumBipartiteMatching（adapter 行）承接 Boost 公开 API，matchL 返回值驱动 matched/missing/extra 与歧义探测；不得用普通 set 或排序误替"；`positiveEvidence` 增断开实验两项（业务断言随接缝断开失败＝返回值消费证明）。
-- 其余 coverage 行（SetCheckTest 九段、CMakeLists 七段、foundation-governance 白名单行）：**维持现登记不动**（纯测试/构建样板/治理面，按实际职责）。
+1. **资源路径域排斥库外文件**：upstream/tests/docs 路径限 `^RobWork/(RobWork|RobWorkSim)/`——Boost 头位于 `vcpkg/installed/`，不在域内。
+2. **review.version 溯源机制依赖本仓 git 对象**：`git show <sha>:vcpkg/...` 不可能成立——`vcpkg/installed` 不被 git 跟踪（`git ls-files vcpkg` = 0；本工作树甚至无该目录，构建直引主仓绝对路径），无 git 对象可钉。
+3. **先例一致**：catalog 现存 39 条能力全部绑定 git 可验证的上游资源、零空 upstream；Eigen3::Eigen/libzip::zip/expat/pugixml 四个既有第三方白名单目标**均无 catalog 条目**——已安装第三方的既定治理模式＝仅 ird_gates `IRD_THIRDPARTY_ALLOWED_TARGETS`＋DTB §4.5（本包已随 354b9bebf 完成）。
+4. 由此，manifest 层 `SetCheckMatch.cpp` 的 mode 在无 catalog 能力时**只有 business 是合法值**（adapter 被 CAPABILITY 链阻断；governance 被 MODE 检查阻断）。
 
-**(c) changes/REUSE-T19.json 修正（两文件）**
+**结论：现有 schema 结构性地无法把"已安装第三方成熟算法"表达为 adapter 能力**。按补正指令（"若现有 schema 确实无法表达…提交最小兼容方案；不得自行放宽门禁、另建能力台账或将表达缺口视为合规豁免"），处理如下。
 
-- `SetCheck.hpp`：mode "business"→**"adapter"**＋`capabilities` ["MATCH-BIPARTITE-MAX"]；boundary 修正为："阶段 0/1、compatible、F-594 交错圈、缺失/多余推导循环、护栏、checkStableOrder 未修改（哈希复核）；阶段 2 为重写——物化＋接缝调用＋matchR 反推；多解见证同版本确定性保持（跨实现见证可不同，契约允许）"。
-- `src/SetCheckMatch.cpp`：mode "business"→**"adapter"**＋`capabilities` ["MATCH-BIPARTITE-MAX"]（本 TU 即 Boost 适配本体）。
-- SetCheckTest.cpp（business）、CMakeLists.txt/白名单（governance）：维持。
-- machine-check 前提：catalog 条目（a）先行落地，否则 mode=adapter 触发 CAPABILITY 失败；落地后复跑一次 validate-reuse 确认（本包不重复运行）。
+#### 8.3.3 现行 schema 内可落地的登记修正（建议协调者采用）
 
-**(d) 无需变更**：permissions.json（权限面无变化）；inventory（产品基线分类固定）；tasks/REUSE-T19.json（allowedFiles 已覆盖全部涉及文件）；testkit.md §3.1/§9（§7 已修订到位）。
+真实复用关系（生产入口 → Boost 公开 API → 返回值消费）在**不被门禁约束的字段**中完整表达：
+
+- `functions/testkit.json` 的 `testkit.SetCheck.maximumBipartiteMatching` 与 `testkit.SetCheck.checkSetEquivalent` 两行：
+  - decision **保持 business-specific/NONE**（现行 schema 下唯一合法值——非绕过：§8.1 正向证据已绑定）；`differences` 按本记录 §8.3(初版) 文本更新（生产入口链＋"产品面唯一匹配实现＝本接缝，旧 Kuhn 已于 38290e2bd 删除"的结构性不重叠依据＋"已安装第三方在现行 catalog schema 无 adapter 表达位——表达缺口已登记（§8.3.4）"）；
+  - **`nonOverlapEvidence`（现仅 gtest XML，按指令不能单独充当不重叠证明）替换/扩充为 `positiveEvidence`**：断开实验 console-trimmed（`82159d10…`）＋还原复跑（`9316bc21…`）＋规模对照 run-old/run-new（`b654ef90…`/`69876b0c…`）；gtest XML 移入 auditEvidence 作测试摘要。两字段均非机检字段，纯内容修正可先行。
+- `changes/REUSE-T19.json`：SetCheck.hpp/SetCheckMatch.cpp **mode 维持 business**（8.3.2④——mode=adapter 现行被阻断），boundary 文本订正为准确表述："本文件＝Boost checked Edmonds 薄适配 TU（真实复用关系见 functions 两行 differences＋positiveEvidence；mode=business 为 schema 表达缺口下的过渡登记，见 §8.3.4 债务）"；SetCheck.hpp 的 boundary 同步补"阶段 2 重写＋跨实现见证可不同"。
+- 29 处 coverage 行与其余凭证：维持现登记（纯测试/构建样板/治理面，按实际职责）。
+
+#### 8.3.4 提交协调者/所有者裁决的最小兼容方案（二选一，均不动本包代码）
+
+- **方案一（无 schema 变更，登记面收口）**：接受"已安装第三方经 LIB 词表治理、catalog 不建条目"的既定边界（Eigen3 先例）；真实复用关系由 §8.3.3 的 differences＋positiveEvidence＋boundary 承载；在 findings.json 登记一条表达缺口债务："已安装第三方成熟算法在现行 catalog schema 无 adapter 表达位（CheckCatalogV2 资源域/溯源机制所限）——testkit SetCheck 匹配内核（REUSE-T19）为首个实例；暂以 business-specific＋全量正向证据登记"。**本包推荐此方案**：与既有治理先例零冲突、机检零改动。
+- **方案二（schema 扩展，GOV 批次实施）**：CheckCatalogV2 增设已安装第三方资源类——`upstream[].path` 允许 `vcpkg/installed/<triplet>/…`、以文件系统 sha256 绑定（CheckBinding 同型）替代 git show 溯源、`review.version` 语义改为钉 vcpkg 基线（主仓 vcpkg 目录的引入记录或 _git 基线），并同步校验器正负夹具。该改动属治理门禁扩展，须所有者批准与独立验收，本包不实施、仅提交设计要点。
+
+#### 8.3.5 债务与证据新鲜度
+
+无论裁决结果，§8.1 断开实验与 §8.2 对照（绑定 354b9bebf 树）保持有效；§8.3.3 字段修正落地后不需要重跑任何测试（纯登记内容）；若最终采用方案二，届时把两行 decision 升级为 adapter＋能力绑定即可，正向证据原样沿用。
 
 ### 8.4 门禁结果与 PASS 实际边界
 
@@ -189,4 +175,13 @@
 ### 8.5 补正轮最终 SHA 与未完成
 
 - 最终 SHA：本轮唯一提交（父＝354b9bebf，提交时回填 git log；本记录内不自引用 SHA）；本轮改动＝本记录＋`adapter-evidence/`＋`perf-compare/` 证据目录；产品源码/构建脚本零变化。
-- 未完成：①§8.3 登记修正待协调落地（落地后一次 validate-reuse 确认）；②§8.2.4 稠密适配提案待裁决；③**独立验收未完成**——由所有者另开独立会话执行（建议范围：断开实验复现、对照复核、oracle/F-594 回归、登记与 audit-contract §4/§6 一致性核对）；实施者不自签。
+- 未完成：①§8.3 登记修正待协调落地——**范围经本轮核实修订**：可先行的是 functions 两行 differences/positiveEvidence 与 changes boundary 文本（§8.3.3）；decision/mode 升级 adapter 被 schema 表达缺口阻断（§8.3.2），按 §8.3.4 方案一/二由所有者裁决；落地后一次 validate-reuse 确认；②§8.2.4 稠密适配提案待裁决；③**独立验收未完成**——由所有者另开独立会话执行（建议范围：断开实验复现、对照复核、oracle/F-594 回归、登记与 audit-contract §4/§6 一致性核对）；实施者不自签。
+
+### 8.6 主线同步预案（按"每包一个短分支"固定流程，A 合入后执行）
+
+协调者治理方案确认：A（codex/reuse-foundation，FK/Jacobian 迁移）合入后，B 在最终交付前同步一次最新 redesign-main。预判影响面（A 涉及 kinematics/runtime/ui 矩阵；B 的已验消费者面＝dynamics/selection/optimization/optimization_contract/kinematics/trajectory/policy）：
+
+- **交集＝kinematics**：同步后至少重建并重跑 `sdurws_ird_kinematics_test`（SetCheck 消费者＋A 变更单元的双侧重叠面）。
+- 若 A 的合入触及 testkit 本体或其依赖（core）：追加 testkit 套件（Release/Debug）重跑；未触及则引用既有 119/119 证据（输入不变原则）。
+- 同步动作：本分支一次 merge redesign-main（不自改共享治理文件；冲突仅限本记录/证据文件时自决，共享文件冲突交协调者）；合并后跑一次 ird_gates。
+- B 不抢先合入：同步与验证完成后交协调者串行合入 redesign-main。
