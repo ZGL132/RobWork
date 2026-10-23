@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0." timestamp="2026-10-23T10:23:59.861" name="AllTests">
+  <testsuite name="MdlTemplate" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T10:23:59.861">
+    <testcase name="CreateEditChain_OriginEditField_UI_T53" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp" line="636" status="run" result="completed" time="0." timestamp="2026-10-23T10:23:59.861" classname="MdlTemplate">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:660&#x0A;Expected equality of these values:&#x0A;  origin.value().r()(2, 0)&#x0A;    Which is: 0&#x0A;  -std::sin(kPitch)&#x0A;    Which is: -0.19866933079506122&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:660
+Expected equality of these values:
+  origin.value().r()(2, 0)
+    Which is: 0
+  -std::sin(kPitch)
+    Which is: -0.19866933079506122
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:667&#x0A;The difference between rollBack and kRoll is 0.10000000000000001, which exceeds 1e-12, where&#x0A;rollBack evaluates to 0,&#x0A;kRoll evaluates to 0.10000000000000001, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:667
+The difference between rollBack and kRoll is 0.10000000000000001, which exceeds 1e-12, where
+rollBack evaluates to 0,
+kRoll evaluates to 0.10000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:668&#x0A;The difference between pitchBack and kPitch is 0.20000000000000001, which exceeds 1e-12, where&#x0A;pitchBack evaluates to -0,&#x0A;kPitch evaluates to 0.20000000000000001, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:668
+The difference between pitchBack and kPitch is 0.20000000000000001, which exceeds 1e-12, where
+pitchBack evaluates to -0,
+kPitch evaluates to 0.20000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:669&#x0A;The difference between yawBack and kYaw is 0.29999999999999999, which exceeds 1e-12, where&#x0A;yawBack evaluates to 0,&#x0A;kYaw evaluates to 0.29999999999999999, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp:669
+The difference between yawBack and kYaw is 0.29999999999999999, which exceeds 1e-12, where
+yawBack evaluates to 0,
+kYaw evaluates to 0.29999999999999999, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="MdlBasePlacementEdit" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T10:23:59.862">
+    <testcase name="EulerCompilesAndCodecRoundTrips_MDL22_AT37" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp" line="848" status="run" result="completed" time="0." timestamp="2026-10-23T10:23:59.862" classname="MdlBasePlacementEdit">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp:857&#x0A;Value of: error.has_value()&#x0A;  Actual: true&#x0A;Expected: false&#x0A;basePlacement：preset=custom 而 EAA 旋转为恒等（preset≠ground 而 R=I——I-MDL-7 映射层拒绝，runtime InputInvalid 同口径）&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\BasePlacementEditTest.cpp:857
+Value of: error.has_value()
+  Actual: true
+Expected: false
+basePlacement：preset=custom 而 EAA 旋转为恒等（preset≠ground 而 R=I——I-MDL-7 映射层拒绝，runtime InputInvalid 同口径）
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T11",
+  "unit": "modeling",
+  "masterWp": "WP-A",
+  "title": "RPY及EAA直接复用上游并删除modeling重复旋转核",
+  "status": "ready",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-11",
+    "MDL-22",
+    "ARC-02",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/policy.md",
+    "units/modeling.md#4.3",
+    "ARCHITECTURE.md#3.6",
+    "traceability/reuse/REUSE-T11/README.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/TestFailureCounting.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T11.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T11.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/**",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T11-20261023.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "保留roll/pitch/yaw的rad及ZYX业务契约；直接RPY(yaw,pitch,roll)及EAA(matrix)，删除逐元素矩阵和半角四元数核，不增模型/状态/缓存/通用包装",
+    "按policy §1.1以业务编辑及导入入口检验准确性、架构、简洁性、确定性、错误语义和运行效果；普通正向精度不放宽，EAA表示转换仅采用所有者已批准1e-6",
+    "复用现有上游12例及原库误差网格；完成受影响业务回归和真实生产结果断开，不重复无关全库重配/治理夹具/冻结深查",
+    "冻结能力包一次独验；不自签关闭，不操作远程，不碰drivetrain或trajectory专属范围"
+  ],
+  "note": "按已批准T05-A及用户2026-10-23原库局部1e-6决议执行；适配只做参数顺序，数学值类型无owner权限变更。现有math链接已由T07接通，不为此重改CMake。ready不是迁移独验完成。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T11.json"
+  },
+  "outputs": [
+    "删除两段重复旋转核心的薄适配",
+    "真实业务回归/独立oracle/生产结果消费证据",
+    "冻结包待独验"
+  ]
+}

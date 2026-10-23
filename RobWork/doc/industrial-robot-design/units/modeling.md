@@ -1791,3 +1791,7 @@ CouplingMath.hpp、CanonicalBridge/DhConvert/RpyMath 为待迁移/审计；SVD/�
 ### REUSE-T10：原版EAA转换容差决议（2026-10-23）
 
 按所有者撤销上游补丁并适当放宽阈值的指令，后续MDL-22欧拉→EAA适配采用REQUIREMENTS附录D第13项：矩阵→EAA、EAA→矩阵及相关往返的等价旋转矩阵元素绝对误差统一1e-6（所有者明确数值裁决）。参数顺序仍为业务roll/pitch/yaw→上游yaw/pitch/roll，单位rad，runtime是唯一矩阵/模型权威。不改普通RPY正向/预设精确矩阵、矩阵合法性或非法输入原子拒绝；仍须核完整真实生产链和非零自定义姿态语义。这里登记验收口径，尚未宣称产品旋转迁移完成。
+
+### REUSE-T11：RPY/EAA薄适配（2026-10-23）
+
+`src/RpyMath.hpp` 的两处私有兼容入口直接连接 `RPY(yaw,pitch,roll).toRotation3D()` 与 `EAA(rotation).toVector3D()`，删除自写矩阵展开和半角四元数核。仅保留字段换序；URDF/Origin/基座编辑、诊断、Custom 身份、原子拒绝和 runtime 唯一模型/矩阵权威不变。仅 EulerCompilesAndCodecRoundTrips 的表示往返断言按批准值1e-6，其余阈值不变。范围、准确性/真实消费/清理/运行证据见 `traceability/reuse/REUSE-T11/README.md`；实施与独立验收状态以实际记录为准，不把适配实施视为全文件债务关闭。

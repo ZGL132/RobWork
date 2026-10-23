@@ -1818,7 +1818,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -1889,7 +1889,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -1960,7 +1960,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -2032,7 +2032,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -2104,7 +2104,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -2188,7 +2188,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -2272,7 +2272,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         }
       ],
       "execution": {
@@ -2356,7 +2356,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
@@ -2471,7 +2471,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
@@ -2587,7 +2587,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
-          "sha256": "517225b9ff497316dd1125ca803b7a23ba5ba4b1590b891fca8529dddc48f62e"
+          "sha256": "246c1aed632082f12c2ebe54419477480f65617c07fae1ecf2a420f23c6cf3c4"
         },
         {
           "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",

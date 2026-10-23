@@ -184,7 +184,7 @@ function CheckProductionEvidence($row, $sources) {
         foreach ($suite in $suites) { $tests += [int]$suite.tests; $errors += [int]$suite.errors; $failures += [int]$suite.failures; $skips += [int]$suite.skipped; $skips += [int]$suite.disabled }
         # 同时核对真实 testcase 节点，拒绝只有 tests=1 的空壳报告；摘要只能防过期，不能证明报告作者身份。
         $cases=@($xml.SelectNodes('//testcase'))
-        if ($cases.Count -ne $tests -or @($xml.SelectNodes('//testcase/failure')).Count -ne $failures -or
+        if ($cases.Count -ne $tests -or @($xml.SelectNodes('//testcase[failure]')).Count -ne $failures -or
             @($xml.SelectNodes('//testcase/error')).Count -or @($xml.SelectNodes('//testcase/skipped')).Count) { Fail 'POSITIVE' "$kind : XML counts/assertions inconsistent" }
         if ($tests -lt 1 -or $skips -or $errors) { Fail 'POSITIVE' "$kind : incomplete/non-test failure" }
         if ($kind -eq 'disconnected') {

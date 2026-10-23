@@ -192,10 +192,23 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
           "symbol": "rpyToRotation",
-          "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToRotation",
-          "startLine": 47,
-          "endLine": 64,
-          "sha256": "9ea39941a6da8120a12fb28ce24aeb1d7d419fabdae9d4362fcafce7bf7e04ab"
+          "startLine": 1,
+          "endLine": 33,
+          "sha256": "b1427827555263a87e5c66a71ecec6923744cd360a4d9638028e57628795e09c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+          "symbol": "editJointFieldImpl",
+          "startLine": 174,
+          "endLine": 370,
+          "sha256": "fbd099de6948ea18e6110087ef98a2dc58d9feaa91f60e3e234f216589ca7bfc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+          "symbol": "applyJointFieldEdit",
+          "startLine": 705,
+          "endLine": 747,
+          "sha256": "127a99ac520eef37d477308b2eaeebc04a685e9ebe131b3bef88c658691fa122"
         }
       ],
       "targets": [
@@ -204,20 +217,50 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-ROT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"rpyToRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已核RPY.cpp的yaw/pitch/roll顺序，原RPYTest真实通过；正向可直接换序，但同文件EAA提案未确认，完整文件迁移暂不实施。"
+        "conclusion": "原库适用性见T10；T11真实业务474+契约17、独立1140输入和生产结果丢弃反例完成。上游EAA零/pi处理直接复用，Quaternion::ln不适用。"
       },
-      "differences": "手推RzRyRx；复用RPY并核ZYX次序、rad与奇异姿态",
+      "differences": "只做产品roll/pitch/yaw到上游yaw/pitch/roll换序；删除自写矩阵/四元数核，无owner/State/缓存；EAA表示误差按批准1e-6，其余业务/错误/预设契约不变。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "sha256": "9666bc8628fefc5644423c7cbd4f7924066194c4a033aecffa414ca05bde840a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TemplateTest.cpp",
+          "sha256": "d2fb1285c8c981bd54c14650eda7d752d95c73be06f31617987413491d51cf99"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/Probe.cpp",
+          "sha256": "aa582b896c5e0e77f8b4dc6b855f60d61a9fbf72c6a860aeee2af214a4332aa9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/CMakeLists.txt",
+          "sha256": "068bd33635cf3192592cb841ffd896b2f9092abf1ae726326099df6a99903796"
         }
       ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+      "auditBoundary": "本旋转转换与真实Template入口；不声明Template/Import其他功能已审完，不自签独验或关闭。",
+      "production": {
+        "entry": "applyJointFieldEdit",
+        "upstream": "toRotation3D",
+        "consumer": "applyJointFieldEdit",
+        "target": "sdurws_ird_modeling"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/rpyToRotation-production.json",
+        "sha256": "e61063eb40910014f84306825a3f99038e13398095270b395d0ec398502cbb82"
+      }
     },
     {
       "functionId": "modeling.rpyToEaa",
@@ -229,10 +272,16 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
           "symbol": "rpyToEaa",
-          "qualifiedSymbol": "sdurws::ird::modeling::rpymath::rpyToEaa",
-          "startLine": 74,
-          "endLine": 93,
-          "sha256": "9dbb7cdd4099b29d096829d6326fe5b3a8549b3565ddfd7c26d034239877d454"
+          "startLine": 34,
+          "endLine": 49,
+          "sha256": "e7c836171ad0a7a26140205465ceec31af1fa191d1942bb85f70be253e7439b1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+          "symbol": "applyBasePlacementEdit",
+          "startLine": 939,
+          "endLine": 1091,
+          "sha256": "3bb60c99396cf723570d2d30458b5abf3557f8f151267b3c5451c694569170ad"
         }
       ],
       "targets": [
@@ -241,23 +290,49 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-ROT",
-      "decision": "proposal",
-      "status": "proposal",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"rpyToEaa|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "REUSE-T08只读探测：EAA矩阵回构在原微小角1e-12容差失败；正确ABI下Quaternion::ln在零/极小角非有限；提交GAP-EAA-01，未获批准、不修改生产。"
+        "conclusion": "原库适用性见T10；T11真实业务474+契约17、独立1140输入和生产结果丢弃反例完成。上游EAA零/pi处理直接复用，Quaternion::ln不适用。"
       },
-      "differences": "近零精度、pi主值及Quaternion静态对齐ABI需确认；不新写本地核心，不放宽容差。",
+      "differences": "只做产品roll/pitch/yaw到上游yaw/pitch/roll换序；删除自写矩阵/四元数核，无owner/State/缓存；EAA表示误差按批准1e-6，其余业务/错误/预设契约不变。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "sha256": "9666bc8628fefc5644423c7cbd4f7924066194c4a033aecffa414ca05bde840a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TemplateTest.cpp",
+          "sha256": "d2fb1285c8c981bd54c14650eda7d752d95c73be06f31617987413491d51cf99"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/Probe.cpp",
+          "sha256": "aa582b896c5e0e77f8b4dc6b855f60d61a9fbf72c6a860aeee2af214a4332aa9"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/probe/CMakeLists.txt",
+          "sha256": "068bd33635cf3192592cb841ffd896b2f9092abf1ae726326099df6a99903796"
         }
       ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
-      "proposal": {
-        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
-        "sha256": "1789d833743059a0ddfa740da39dfd1fa977f43f2ab7e07ee40b67f8a293a2c6"
+      "auditBoundary": "本旋转转换与真实Template入口；不声明Template/Import其他功能已审完，不自签独验或关闭。",
+      "production": {
+        "entry": "applyBasePlacementEdit",
+        "upstream": "EAA",
+        "consumer": "applyBasePlacementEdit",
+        "target": "sdurws_ird_modeling"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/rpyToEaa-production.json",
+        "sha256": "c981d687a99763284858fda913a9196546300a3b81a790a798663ef1ddb72ddb"
       }
     },
     {
@@ -2938,6 +3013,846 @@
         "sha256": "91b3bbbbfa099aa5470c2b2c54fcb2f67442cbf92a3cf9f374cd91291fdef73d"
       },
       "auditBoundary": "本文件项目构建/验收接线整体；不授权任何新生产核心"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.makeSixAxisDraft",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "makeSixAxisDraft",
+          "startLine": 1,
+          "endLine": 92,
+          "sha256": "efeafe2033ce40bc7a27baa66e4735543df2a70450da1050035eabfff42c39ea"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.makePrismaticJoint",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "makePrismaticJoint",
+          "startLine": 93,
+          "endLine": 108,
+          "sha256": "9796ddbc52c5530618ceb1f5fa4b99ab94843e67f6fd992f5aad96e894cb7317"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.makePrismaticDesign",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "makePrismaticDesign",
+          "startLine": 109,
+          "endLine": 118,
+          "sha256": "1797a92155eb50d2056f5a8850afb48caa3380ba14dd3c4586ecf54836c4657f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.replaceSlot",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "replaceSlot",
+          "startLine": 119,
+          "endLine": 130,
+          "sha256": "93bb3bda171aa3f997f9eda295c4739ec6b490b791490923793a1a811b009336"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.decodeRootWrite",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "decodeRootWrite",
+          "startLine": 131,
+          "endLine": 151,
+          "sha256": "662449b1f961794afeced388c71bd4f960b7c9800f0a12b8b112aee372b52b71"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.toRuntimeBase",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "toRuntimeBase",
+          "startLine": 152,
+          "endLine": 166,
+          "sha256": "216d7721f61cb4e7d6b5f28449780d1f32e07f8d1cca3ed7b82e9aa4bcf9cb9b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.expectRotationEquals",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "expectRotationEquals",
+          "startLine": 167,
+          "endLine": 185,
+          "sha256": "e3145c2d6b799a637bee7e62f4e047fb3d0be0b81aa414b3dc5d1eb2a3be6127"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.importDigest",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "importDigest",
+          "startLine": 186,
+          "endLine": 195,
+          "sha256": "b686181bfa8fea9f20b0de0687d49816ddab33825c0d5ee5e9a0b062c59e8812"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.makeImportSource",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "makeImportSource",
+          "startLine": 196,
+          "endLine": 219,
+          "sha256": "eacc774040cd86cc12822eb57174190187730dbf5681024d212b5e5e18e357ab"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.makeTwoAxisChainUrdf",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "makeTwoAxisChainUrdf",
+          "startLine": 220,
+          "endLine": 248,
+          "sha256": "cf9423a66e7c666d984f6024199036106f18209fb89d84c1d54f77397db0dd59"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.ApplyThreePresetsAndPosition_WP13T11_ACC1_V13",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "ApplyThreePresetsAndPosition_WP13T11_ACC1_V13",
+          "startLine": 249,
+          "endLine": 303,
+          "sha256": "a68dd1151f6ef983594053e84b20cca8a9214aefdd0b1fbd690a70ea564c9613"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.ApplyCustomEaaEdit_WP13T11_ACC1_V13",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "ApplyCustomEaaEdit_WP13T11_ACC1_V13",
+          "startLine": 304,
+          "endLine": 343,
+          "sha256": "f1064b8015a3d239f8ec04ff2ac8ac25a0f3aedd6dac7c3a885c8e5d6abe765c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.PresetTokenVocabularyIsRuntimeEnum_WP13T11_ACC1",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "PresetTokenVocabularyIsRuntimeEnum_WP13T11_ACC1",
+          "startLine": 344,
+          "endLine": 376,
+          "sha256": "82249aa526057ed1965e83ea9b934101b96e65a2e621de2a65d217d72d761aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.AtomicPersistenceViaApplyRobotDesign_WP13T11_ACC1_V13",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "AtomicPersistenceViaApplyRobotDesign_WP13T11_ACC1_V13",
+          "startLine": 377,
+          "endLine": 475,
+          "sha256": "f4bdfa2bf15a92188f794eeea8b7a9ccea533fa7a58fb9b1be73df3de0ff941c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.DefaultGroundTemplatePath_WP13T11_ACC2_V15_04",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "DefaultGroundTemplatePath_WP13T11_ACC2_V15_04",
+          "startLine": 476,
+          "endLine": 516,
+          "sha256": "87b623b3f11ec2dd2389a2b14d13244ffa2927d5a887dcc73e36a97459dbad37"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.DefaultGroundImportPath_WP13T11_ACC2_V15_04",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "DefaultGroundImportPath_WP13T11_ACC2_V15_04",
+          "startLine": 517,
+          "endLine": 557,
+          "sha256": "61833a9f1a79c0589868ce88a7e5d119f79d2cfe4797d5cade642cdadb575b49"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.IMdl7IllegalCombinationsRejected_WP13T11_ACC2",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "IMdl7IllegalCombinationsRejected_WP13T11_ACC2",
+          "startLine": 558,
+          "endLine": 690,
+          "sha256": "977d900363f8583a938de93eed5ec040ff010addbf44d79e3affaecde6c947d3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.Prt4PresetAxisSingleAuthority_WP13T11_ACC3",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "Prt4PresetAxisSingleAuthority_WP13T11_ACC3",
+          "startLine": 691,
+          "endLine": 787,
+          "sha256": "edda3ec59d47278aaa31ee19129bfd97d814026b8cdafb7cca76b9eebee3f997"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.SingleFieldCompileIntoRWorldBase_WP13T11_ACC4",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "SingleFieldCompileIntoRWorldBase_WP13T11_ACC4",
+          "startLine": 788,
+          "endLine": 847,
+          "sha256": "99ab112251ee97e004d3eeb07f86ba4005a8e6446e7d759b78724251c04fba54"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.EulerCompilesAndCodecRoundTrips_MDL22_AT37",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "EulerCompilesAndCodecRoundTrips_MDL22_AT37",
+          "startLine": 848,
+          "endLine": 873,
+          "sha256": "c4b5703348d3ffb8b9f1bdbba25de8c05291196f3c47eedfe9fffb8497a90583"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "functionId": "modeling.basePlacementAcceptance.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-22"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+          "symbol": "EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37",
+          "startLine": 874,
+          "endLine": 889,
+          "sha256": "4683446cb89f797d6ef04355598eb3c8838995803a24fb681d632a4a34cc65c0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"RPY|EAA|TEST\" RobWork/RobWork/gtest/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/BasePlacementEditTest.cpp",
+        "conclusion": "上游数学测试不含产品命令/来源/Custom身份契约；沿既有GTest/testkit/runtime公共接口，独立矩阵oracle只在测试。"
+      },
+      "differences": "产品基座编辑/原子持久化/来源/单一矩阵权威验收及fixture；不实现生产旋转或摘要核，只有局部表示对照阈值变更。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+        "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+      },
+      "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
     }
   ]
 }

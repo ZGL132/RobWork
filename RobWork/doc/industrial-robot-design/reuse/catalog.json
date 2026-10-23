@@ -449,14 +449,16 @@
       "search": {
         "command": "rg -n \"toRotation3D\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "REUSE-T08核实RPY正向；EAA近零及Quaternion::ln缺口见GAP-EAA-01；仅候选适用性审查，非生产迁移批准。"
+        "conclusion": "已复用原上游12测试/原库3156输入每入口网格；REUSE-T11核产品换序、主值及真实消费，适用范围限RPY正向与EAA表示转换，非所有旋转接口授权。"
       },
-      "boundary": "轴角、参考系、零角/π",
+      "boundary": "纯数学值转换；rad、ZYX，产品roll/pitch/yaw换序；EAA按批准局部1e-6矩阵元素误差，不放宽FK或矩阵合法性。",
       "upstream": [
         {
           "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
           "symbols": [
-            "toRotation3D"
+            "toRotation3D",
+            "EAA",
+            "toVector3D"
           ],
           "target": "sdurw_math",
           "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad",
@@ -553,7 +555,7 @@
         "targets": [
           "sdurw_math"
         ],
-        "constraints": "轴角、参考系、零角/π"
+        "constraints": "已用modeling现有sdurw_math链接；CONFIG消费匹配EIGEN_DONT_ALIGN_STATICALLY=1，不新增依赖。"
       },
       "usages": [
         {
@@ -590,9 +592,9 @@
         }
       ],
       "limits": {
-        "semantics": "RPY(yaw,pitch,roll)需换序；EAA在原1e-12微小角验等下不直接适用，GAP-EAA-01未批准；不得丢失有效小角。",
-        "lifetime": "纯值，无WorkCell/State所有权；Quaternion导出对象须匹配上游EIGEN_DONT_ALIGN_STATICALLY编译约定，不能套用无对齐证据。",
-        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+        "semantics": "RPY(yaw,pitch,roll)换序；EAA原库零/pi分支，表示转换局部1e-6；不据此批准双向量FK或Quaternion::ln，后者零角非有限反例仍有效。",
+        "lifetime": "纯值，不持有模型/State，无新owner/缓存；上游源码只读。",
+        "determinism": "同构建/相同输入重复值验证通过，不承诺跨libm/平台位级一致。"
       },
       "ownerUnit": "core",
       "examples": [],
@@ -601,8 +603,12 @@
         "value"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/README.md",
+          "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
+        }
       },
       "tests": [
         {
@@ -629,7 +635,7 @@
       ],
       "resourceSearch": {
         "command": "rg -n \"toRotation3D\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已读原RPY/EAA/Quaternion实现及测试，原RPYTest直接编译运行；EAA/Quaternion测试仅检索未执行，不夸大适用性。"
+        "conclusion": "REUSE-T08已检索并阅读源码/原测试；REUSE-T10原上游12项通过与独立网格原件可复用；T11以真实业务、独立oracle和CONFIG探针验证本包适用性。"
       }
     },
     {
