@@ -1,0 +1,90 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T19",
+ "unit": "kinematics",
+ "masterWp": "WP-A",
+ "title": "FK/Jacobian 上游复用——经 T17 锚消费已编译模型并删除 kinematics 重复计算核",
+ "status": "ready",
+ "branch": "codex/reuse-foundation",
+ "dependsOn": [
+  "GOV-T21",
+  "GOV-T22",
+  "REUSE-T17"
+ ],
+ "requirements": [
+  "KIN-01",
+  "NFR-COR-01",
+  "NFR-COR-03"
+ ],
+ "designRefs": [
+  "ARCHITECTURE.md#3.6",
+  "units/kinematics.md#5.1",
+  "units/kinematics.md#5.2",
+  "units/runtime.md#8.3",
+  "reuse/policy.md#1.1",
+  "reuse/audit-contract.md#6",
+  "traceability/reuse/REUSE-T01/runtime-boundary-audit.md"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json"
+ ],
+ "allowedFiles": [
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+  "RobWork/doc/industrial-robot-design/units/kinematics.md",
+  "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+  "RobWork/doc/industrial-robot-design/reuse/kinematics-fk-migration.md",
+  "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+  "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T19.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/**",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**"
+ ],
+ "acceptance": [
+  "FkEvaluator::evaluate 经 runtimeModelView() 锚消费已编译 WorkCell：Device::setQ（任务私有 State）＋baseTframe/baseJframe 上游结果直出——手写链式 FK/几何雅可比/Eigen JacobiSVD 直调全删（H2），手算 TCP 复合仅存命名偏置一次（KIN-14 消费侧语义）",
+  "q_rw＝q_auth−zeroOffset 映射（src/JointMapping.hpp 纯函数）与上游关节烘焙偏置相消；同几何双模型容差内同结果（权威 q 契约不变，跨模型字节级断言随实现载体变化改为容差断言——T03 语义保留）",
+  "TCP 三态解析（NoTcp 两分/A-15 实际键优先/localName 别名）与 4 错误码面不变；新增锚缺失/设备未命中→NoDevice 值面（§9.2 @pre 运行期承载）；Jacobi 行义（0-2 线/3-5 角）与上游 Jacobian::addPosition/addRotation 源码核对一致",
+  "奇异值经 rw::math::LinearAlgebra::svd（JacobiSVD 降序）——'rw::math 无 SVD'旧登记作废；条件数/可操作度/关节裕量/canonical 编码 IRDPM01 逐字节保留",
+  "dof=0 全固定链经上游 0-DOF 设备承载：空雅可比/空奇异值/条件数+∞ 退化面不变",
+  "测试夹具集成模式经 RuntimeSnapshotFactory 真实编译（S1–S5 替身注入点＋S6–S10 产品路径）；FK 用例/黄金 FK/关节模式用例经 IRD_HAVE_RUNTIME_COMPILE 门控不编入冒烟树（CollisionPortTest 同款 gating）",
+  "生产正向证据四面齐全（ird-reuse-production/1）：normal 291/291、oracle 独立 4×4 参考、upstreamComparison 与直接 Device 调用逐位一致、disconnected 变异断开 setQ 映射后 7 用例失败（exit 1）",
+  "两模式构建：集成 291 全绿＋契约 57/57；冒烟按 REUSE-T07/T12 导出包机制登记（本机 RobWork 导出包解析环境回归已登记，未在本包扩权修复）"
+ ],
+ "note": "所有者本轮指令（智能体A接续已独验的REUSE-T17）授权本包实施；复用基础包REUSE-T13独立验收仍无PASS记录——本包状态＝实施完成待独验（不解除合入门，不据此关闭债务）。REUSE-T17锚接口只消费不改。停用口径：不用'调用了Device'当完成——完成＝计算准确＋单一模型权威＋结构更简＋真实业务路径生效＋无旧核兜底。 编号映射：REUSE-T19（编号映射：本包实施期登记为 REUSE-T18，因主线同号〔F-958 testkit 监听器收口〕冲突，经协调流程改登记为 REUSE-T19；原验收受检 SHA 20522f776/434500c43 与用例标识保留不变） 代码与用例内的 REUSE_T18 实施期标识按受检 SHA 约定保留（原始验收记录与受检提交 20522f776/434500c43 不变）。",
+ "interUnit": false,
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T19.json"
+ },
+ "outputs": [
+  "FK/Jacobian 上游消费核（setQ/baseTframe/baseJframe/LinearAlgebra::svd）与手写链/雅可比/SVD 直调删除后的单一模型权威面",
+  "真实编译快照测试夹具（S1–S5 注入点＋S6–S10 产品路径）与三新增用例（锚缺失/跨视图隔离/上游直接对照）",
+  "生产正向证据四面（normal/oracle/upstreamComparison/disconnected）与矩阵/凭证/单元卡同步；实施待独验（T13 独验前置在所有者安排）"
+ ],
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ }
+}

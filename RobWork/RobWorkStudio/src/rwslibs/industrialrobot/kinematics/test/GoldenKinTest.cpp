@@ -354,6 +354,7 @@ std::vector<double> qOf(const tk::JsonValue& sol) { return numVec(sol, "q"); }
 
 }  // namespace
 
+#if IRD_HAVE_RUNTIME_COMPILE  // REUSE-T18：FK 黄金对照经真实编译产物（冒烟树无 runtime 编译器——不编入）
 // =====================================================================
 // 1) kin-fk-analytic——V-01 FK 解析对照与正反变换（AT-03 FK 对照组）
 // =====================================================================
@@ -555,6 +556,8 @@ TEST_F(KinGoldenFk, ACC5_RepeatEvaluateCanonicalBitwise_WP15T13_ACC5)
         ASSERT_EQ(bytesA[i], bytesB[i]) << "canonical 输出第 " << i << " 字节不一致";
     }
 }
+
+#endif  // IRD_HAVE_RUNTIME_COMPILE（kin-ik-dedup 起为值面 IK 黄金——两模式）
 
 // =====================================================================
 // 2) kin-ik-dedup——V-04 去重/稳定排序黄金（AT-03 去重反例）

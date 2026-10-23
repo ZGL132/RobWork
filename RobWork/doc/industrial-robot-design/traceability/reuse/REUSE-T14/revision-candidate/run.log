@@ -1,0 +1,4 @@
+cases=29072 branchHits=10708 branchFixed=2524 overflowMismatch=0 invarianceViolation=0 normalOracleDiff=74 sentinel=0 maxIter=5
+VERDICT: PASS
+cases=29072 branchHits=10708 branchFixed=2524 overflowMismatch=0 invarianceViolation=0 normalOracleDiff=74 sentinel=0 maxIter=5
+VERDICT: PASS

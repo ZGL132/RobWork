@@ -242,9 +242,42 @@ target_link_libraries(sdurws_ird_kinematics PUBLIC
     sdurws_ird_execution)
 
 # Eigen（O-40）：PRIVATE 仅本计算库消费——公共头零 Eigen 类型（Fk.hpp/
-# KinTypes.hpp/Evaluators.hpp 契约面纯 rw::math/标准库），消费面收敛在
-# src/Fk.cpp 的 SVD 计算点；不向下游传播（静态库 PRIVATE 不进接口面）。
+# KinTypes.hpp/Evaluators.hpp 契约面纯 rw::math/标准库），消费面＝src/Ik.cpp
+# 直用＋src/Fk.cpp 经上游 LinearAlgebra::svd 间接（REUSE-T18 起奇异值实现
+# 点移交上游——"rw::math 无 SVD"旧登记已过时）；不向下游传播（静态库
+# PRIVATE 不进接口面）。
 target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
+
+# ---- 上游 FK/Jacobian 消费（REUSE-T18）----
+# src/Fk.cpp 经 T17 锚能力入口（runtimeModelView→已编译 WorkCell＋任务私有
+# State）消费上游真实计算：rw::models::Device::setQ/baseTframe/baseJframe、
+# rw::math::LinearAlgebra::svd——直接 API 复用（H1），不持第二套链式 FK/
+# 几何雅可比/SVD 实现（H2 禁平行实现）。集成模式复用现有框架目标；独立
+# 冒烟经 RobWork 导出包（RW:: 目标）消费同一上游——REUSE-T07/T12 先例，
+# 绝不源码复制/备用算法。★ 禁止建立名为 sdurw_kinematics 的冒烟别名：
+# runtime/kinematics/policy 等单元以"TARGET sdurw_kinematics"作集成模式
+# 判定，该目标名必须只在集成配置树存在（下列探测对单元配置序鲁棒——
+# drivetrain 先行的 sdurw_math 别名与导出包并存均正确解析）。
+if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+    find_package(RobWork CONFIG REQUIRED)
+endif()
+if(TARGET sdurw_math)
+    set(_ird_kin_rw_math sdurw_math)
+else()
+    set(_ird_kin_rw_math RW::sdurw_math)
+endif()
+if(TARGET sdurw_kinematics)
+    set(_ird_kin_rw_kinematics sdurw_kinematics)
+else()
+    set(_ird_kin_rw_kinematics RW::sdurw_kinematics)
+endif()
+if(TARGET sdurw_models)
+    set(_ird_kin_rw_models sdurw_models)
+else()
+    set(_ird_kin_rw_models RW::sdurw_models)
+endif()
+target_link_libraries(sdurws_ird_kinematics PRIVATE
+    ${_ird_kin_rw_math} ${_ird_kin_rw_kinematics} ${_ird_kin_rw_models})
 
 # ---- Qt6 接入（WP-15-T12——插件目标的 Qt 载体面，R-3 唯一例外面）----
 # 仅插件目标与 harness 消费 Qt（卡 §3.2"_plugin 落位（Widgets，AUTOMOC，
@@ -396,12 +429,14 @@ enable_testing()
 
 add_executable(sdurws_ird_kinematics_test
     test/TestMainReport.cpp
-    test/GoldenKinTest.cpp  # T13：黄金数据集契约套件（四套黄金＋V-01~V-21 载体）
+    test/GoldenKinTest.cpp  # T13：黄金数据集契约套件（四套黄金＋V-01~V-21 载体；
+                            #   REUSE-T18：FK 黄金套件经 IRD_HAVE_RUNTIME_COMPILE
+                            #   门控——消费真实编译产物，冒烟树不编入）
     test/ErrorsTest.cpp
     test/DiagCodesTest.cpp
     test/BuildRedLineTest.cpp
-    test/FkTest.cpp
-    test/IkTest.cpp
+    test/IkTest.cpp         # REUSE-T18：IK 核心值面用例两模式保留；FK 独立复验
+                            #   块经 IRD_HAVE_RUNTIME_COMPILE 门控
     test/TaskPointsBatchTest.cpp
     test/ReproBenchmarkTest.cpp   # WP-23-T09：确定性复现基准（B-08 抽样——批量 1/8 线程等价）
     test/RegionCoverageTest.cpp
@@ -412,22 +447,33 @@ add_executable(sdurws_ird_kinematics_test
     test/AnalysisConfigTest.cpp
     test/RenderTest.cpp
     test/WorkspaceTest.cpp    # T14：工作空间探索式采样用例（AT-25——确定性/
-                              # 取消进度检查点/点云着色投影图例导出/回写/R2 边界）
+                              # 取消进度检查点/点云着色投影图例导出/回写/R2 边界；
+                              # REUSE-T18：关节模式用例经 IRD_HAVE_RUNTIME_COMPILE
+                              # 门控——产品路径消费真实编译产物）
     test/EnvelopeTest.cpp     # T15：近似外包络用例（KIN-10/AT-26——契约
                               # acceptance 1~4 逐条具名自证）
     test/PoseReachTest.cpp    # T16：独立位姿可达性用例组（KIN-11/AT-26——
                               #   计划预览/方向覆盖/协作取消/黄金设施复用）
     test/PluginPanelTest.cpp   # T12：L-K1~L-K12 界面链路用例（模型层——QCoreApplication 级）
-    test/KinP4FlowsTest.cpp    # ★ KIN-P4：TCP 解析单点三态/转后台携带目标/复算闭环（审查 §4 的编排半区自证——真实求解器）
     test/HostMigrationTest.cpp)  # T18：宿主迁移三接入面用例（O-44 v1 诚实边界——模型层）
 
 # T07 增列（仅集成模式）：test/CollisionPortTest.cpp——真实④端口路径
 # （真实 WorkCell＋RobWorkCollisionEvaluator＋policy 会话）与运行断言
 # （无二次缓存计数策略/三态映射）；消费 rw 非模板类，冒烟模式不编译
 # （policy CollisionEvaluationTest 同因同 gating）。
+# REUSE-T18 增列（同因同 gating）：test/FkTest.cpp 与 test/KinP4FlowsTest.cpp
+# ——FK 全套用例与 TCP 解析流程经真实编译快照锚驱动（测试夹具的真实编译
+# 路径依赖 runtime 编译器实现 TU——src/Snapshot.cpp 系仅集成模式编译），
+# 冒烟树不编入；IRD_HAVE_RUNTIME_COMPILE＝夹具真实编译锚的编译期开关
+# （F-919 门控同款机制——定义只在集成测试树注入）。
 if(TARGET sdurw_kinematics)
     target_sources(sdurws_ird_kinematics_test PRIVATE
         test/CollisionPortTest.cpp)  # WP-15-T07：真实④端口接入＋运行断言
+    target_sources(sdurws_ird_kinematics_test PRIVATE
+        test/FkTest.cpp          # REUSE-T18：FK/雅可比/指标全套（真实编译产物）
+        test/KinP4FlowsTest.cpp) #   ＋TCP 解析编排（真实求解器路径）
+    target_compile_definitions(sdurws_ird_kinematics_test PRIVATE
+        IRD_HAVE_RUNTIME_COMPILE=1)
 endif()
 
 target_compile_features(sdurws_ird_kinematics_test PRIVATE cxx_std_17)
@@ -589,13 +635,23 @@ ird_add_gtest(sdurws_ird_kinematics_gui_test)
 add_executable(sdurws_ird_kinematics_contract_test
     contract_test/ContractTestMain.cpp
     contract_test/BuildGraphContractTest.cpp
-    contract_test/PoseMetricsEvaluatorContractTest.cpp
     contract_test/TaskPointIkEvaluatorContractTest.cpp
     contract_test/TaskPointsBatchEvaluatorContractTest.cpp
     contract_test/RegionCoverageEvaluatorContractTest.cpp
     contract_test/CollisionConsistencyContractTest.cpp
     contract_test/CommandFacadeContractTest.cpp
     contract_test/PluginGraphContractTest.cpp)  # T12：插件链接面/命令目录/零计算扫描
+
+# REUSE-T18 增列（仅集成模式）：contract_test/PoseMetricsEvaluatorContractTest.cpp
+# ——kin.pose-metrics 评估器契约经 FkEvaluator 真实计算路径（消费真实编译
+# 产物，同 FkTest 门控原因）；冒烟树不编入，IRD_HAVE_RUNTIME_COMPILE 定义
+# 随集成树注入。
+if(TARGET sdurw_kinematics)
+    target_sources(sdurws_ird_kinematics_contract_test PRIVATE
+        contract_test/PoseMetricsEvaluatorContractTest.cpp)
+    target_compile_definitions(sdurws_ird_kinematics_contract_test PRIVATE
+        IRD_HAVE_RUNTIME_COMPILE=1)
+endif()
 
 target_compile_features(sdurws_ird_kinematics_contract_test PRIVATE cxx_std_17)
 set_target_properties(sdurws_ird_kinematics_contract_test PROPERTIES
