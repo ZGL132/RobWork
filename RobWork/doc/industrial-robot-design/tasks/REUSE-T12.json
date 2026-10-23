@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T12",
+  "unit": "drivetrain",
+  "masterWp": "WP-A",
+  "title": "传动映射数值核复用上游线性代数并删除自写SVD/求逆",
+  "status": "ready",
+  "branch": "codex/reuse-drivetrain-linalg",
+  "dependsOn": [
+    "REUSE-T07"
+  ],
+  "requirements": [
+    "MDL-21",
+    "DYN-04",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md#1.1",
+    "units/drivetrain.md#7.2",
+    "units/drivetrain.md#7.3",
+    "reuse/catalog.json#MATH-SVD",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T12.json"
+  },
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T12.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "cmake --build .cache/t11-smoke --config Release --target sdurws_ird_drivetrain sdurws_ird_drivetrain_test sdurws_ird_drivetrain_contract_test ird_gates",
+    ".cache/t11-smoke/drivetrain/Release/sdurws_ird_drivetrain_test.exe 与 sdurws_ird_drivetrain_contract_test.exe（金样回归＋新增组＋对端契约回归）"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/MappingCore.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T12.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T12.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json",
+    "RobWork/doc/industrial-robot-design/reuse/drivetrain-linalg-migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/**"
+  ],
+  "acceptance": [
+    "执行reuse/policy.md §1.1；在drivetrain-linalg-migration.md定位保留/删除/适配/职责归属及上游适用依据；独验核对准确性、架构、简洁性与运行效果；无依据退化不得自判可接受，单有上游调用不构成通过",
+    "singularValues与invertSquareMatrix的生产路径消费rw::math::LinearAlgebra::svd/inverse，自写单侧Jacobi核与Gauss-Jordan核及其迭代常量删除，无运行时旧算法回退",
+    "保持§7.2校验顺序（非有限/维度→自由轴零传动比→奇异→病态）与DT-MATRIX-SINGULAR/ILL-CONDITIONED诊断语义；奇异/病态阈值（1e-12/1e8）不放宽，不得经伪逆或截断奇异值放行非法矩阵；modeling旋转1e-6决议不适用于本包",
+    "虚功、功率、交叉耦合、反射惯量与窗口映射语义不变（矩阵转置/轴序/单位核对）；独立解析oracle（伴随法逆、解析谱）、阈值邻界、极端尺度用例与既有R2黄金回归及对端契约回归通过；断开上游调用真实失败",
+    "受影响集成/独立冒烟构建、drivetrain测试、ird_gates、复用证据与文档门禁通过；固定条件性能前后测量记录实际调用场景与预算；完整冻结能力包由所有者独立会话验收，实施者不自签"
+  ],
+  "note": "所有者2026-10-23授权与主重构会话并行实施传动模块复用RobWork线性代数、删除自写SVD及求逆核心。原拟编号REUSE-T11已被modeling契约占用（独立验收在途），按所有者裁决停用并改用全链路空闲的REUSE-T12；如所有者另有分配，凭证改名迁移即可。隔离起点8e4a08ac8并已按指令并入reuse-t01最新进展（EAA撤销与policy文本）。上游pseudoInverse仅作候选评估，不用于放行奇异/病态矩阵。共享catalog只读：MATH-SVD补登inverse符号的整合建议见迁移说明。functions/drivetrain.json为本任务专属整合文件，主会话整合时避开并发修改。",
+  "interUnit": false,
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  }
+}
