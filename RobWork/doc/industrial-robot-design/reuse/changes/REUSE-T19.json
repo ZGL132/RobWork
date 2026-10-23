@@ -1,7 +1,7 @@
 {
  "schemaVersion": "ird-reuse-change/1",
- "taskId": "REUSE-T18",
- "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json",
+ "taskId": "REUSE-T19",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json",
  "files": [
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
@@ -11,7 +11,7 @@
     "KIN-FK"
    ],
    "boundary": "FK/Jacobian 计算核替换为上游 Device::setQ/baseTframe/baseJframe＋LinearAlgebra::svd 消费（经 T17 锚＋任务私有 State）；手写链/雅可比/SVD 直调删除；指标链/编码/错误面保留",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
@@ -21,7 +21,7 @@
     "KIN-FK"
    ],
    "boundary": "新增单元私有纯函数 q_rw＝q_auth−zeroOffset（全库无既有公共转换入口——H1 检索在案）",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
@@ -31,7 +31,7 @@
     "KIN-FK"
    ],
    "boundary": "契约注释同步：@pre 锚要求/NoDevice 语义面/实现要点上游化——公共 API 零变化",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
@@ -41,7 +41,7 @@
     "KIN-FK"
    ],
    "boundary": "TestView 集成模式锚改真实编译快照（S1–S5 替身注入点＋S6–S10 产品工厂）；TestAnchor 保留为冒烟锚",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
@@ -51,7 +51,7 @@
     "KIN-FK"
    ],
    "boundary": "权威 q 断言随实现载体改容差（语义保留）；新增锚缺失拒绝/跨视图隔离/上游直接对照三用例",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
@@ -61,7 +61,7 @@
     "KIN-FK"
    ],
    "boundary": "KinGoldenFk 套件经 IRD_HAVE_RUNTIME_COMPILE 门控（真实编译产物路径）——IK/覆盖黄金两模式保留",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
@@ -71,7 +71,7 @@
     "KIN-FK"
    ],
    "boundary": "FK 独立复验块经 IRD_HAVE_RUNTIME_COMPILE 门控——IK 核心用例两模式保留",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
@@ -81,7 +81,7 @@
     "KIN-FK"
    ],
    "boundary": "KIN-P5 关节模式三用例经 IRD_HAVE_RUNTIME_COMPILE 门控（产品路径经 FkEvaluator）",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
@@ -91,7 +91,7 @@
     "KIN-FK"
    ],
    "boundary": "上游链接按 REUSE-T07/T12 先例（集成 sdurw_* 真实目标/冒烟 RW:: 导出包，绝不建 sdurw_kinematics 冒烟别名）；FK 测试文件集成门控＋IRD_HAVE_RUNTIME_COMPILE 定义",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/normal/kin_test.xml"
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml"
   }
  ]
 }

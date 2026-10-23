@@ -196,7 +196,7 @@
     "query"
    ],
    "origin": "runtime-borrow",
-   "lifetime": "REUSE-T17锚能力测试替身＋REUSE-T18真实编译锚（TestAnchor值面保留冒烟态；集成态经RuntimeSnapshotFactory真实编译——WC构造在runtime owner产品路径内，替身只注入CanonicalModel与调用工厂）：State类型仅作为IRuntimeModelView::makeState覆盖签名出现；仅测试目标，不授予生产权限、不授予模型构造/写入。",
+   "lifetime": "REUSE-T17锚能力测试替身＋REUSE-T19真实编译锚（TestAnchor值面保留冒烟态；集成态经RuntimeSnapshotFactory真实编译——WC构造在runtime owner产品路径内，替身只注入CanonicalModel与调用工厂）：State类型仅作为IRuntimeModelView::makeState覆盖签名出现；仅测试目标，不授予生产权限、不授予模型构造/写入。",
    "permissionRef": "ARCH:3.6.1",
    "usageRole": "adapter",
    "build": {
@@ -205,7 +205,7 @@
    }
   },
   {
-   "id": "REUSE-T18-Fk.cpp",
+   "id": "REUSE-T19-Fk.cpp",
    "source": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
     "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
@@ -221,7 +221,7 @@
     "write-state"
    ],
    "origin": "task-private",
-   "lifetime": "REUSE-T18 FK上游消费：write-state仅及每次evaluate经锚makeState()取得的任务私有State副本（Device::setQ写入，不触快照共享结构）；模型消费经runtimeModelView受控视图（findDevice/findFrame只读查询＋baseTframe/baseJframe值面返回）；无WC构造、无DWC、无发布面。",
+   "lifetime": "REUSE-T19 FK上游消费：write-state仅及每次evaluate经锚makeState()取得的任务私有State副本（Device::setQ写入，不触快照共享结构）；模型消费经runtimeModelView受控视图（findDevice/findFrame只读查询＋baseTframe/baseJframe值面返回）；无WC构造、无DWC、无发布面。",
    "permissionRef": "ARCH:3.6.1",
    "usageRole": "adapter",
    "build": {
@@ -230,7 +230,7 @@
    }
   },
   {
-   "id": "REUSE-T18-FkTest.cpp",
+   "id": "REUSE-T19-FkTest.cpp",
    "source": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
     "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
@@ -246,7 +246,7 @@
     "write-state"
    ],
    "origin": "task-private",
-   "lifetime": "REUSE-T18上游直接对照用例：write-state仅及测试内makeState任务私有State副本（直接Device::setQ与评估器路径同语义对照）；模型消费经真实编译快照受控视图；仅测试目标，无生产权限。",
+   "lifetime": "REUSE-T19上游直接对照用例：write-state仅及测试内makeState任务私有State副本（直接Device::setQ与评估器路径同语义对照）；模型消费经真实编译快照受控视图；仅测试目标，无生产权限。",
    "permissionRef": "ARCH:3.6.1",
    "usageRole": "adapter",
    "build": {

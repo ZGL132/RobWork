@@ -1,6 +1,8 @@
-# REUSE-T18：FK/Jacobian 上游复用（kinematics 消费已编译模型）
+# REUSE-T19：FK/Jacobian 上游复用（kinematics 消费已编译模型）
 
-实施记录（智能体A，2026-10-24，分支 codex/reuse-foundation）。精确契约：[REUSE-T18](../../../tasks/REUSE-T18.json)。
+> 编号映射：REUSE-T19（编号映射：本包实施期登记为 REUSE-T18，因主线同号〔F-958 testkit 监听器收口〕冲突，经协调流程改登记为 REUSE-T19；原验收受检 SHA 20522f776/434500c43 与用例标识保留不变）。下文与代码/用例中的 REUSE-T18 字样为实施期标识，受检 SHA 与证据绑定不受改名影响。
+
+实施记录（智能体A，2026-10-24，分支 codex/reuse-foundation）。精确契约：[REUSE-T18](../../../tasks/REUSE-T19.json)。
 状态＝实施完成待独验：复用基础包 REUSE-T13 独立验收仍无 PASS 记录（所有者安排在途），本包不解除合入门、不据此关闭债务。
 
 ## 保留/删除/适配边界

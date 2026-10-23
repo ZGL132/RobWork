@@ -992,7 +992,7 @@
     "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
     "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
    },
-   "differences": "REUSE-T17：锚能力入口懒构造同源。REUSE-T18：集成模式经 RuntimeSnapshotFactory 真实编译（FixtureModelCompiler＝S1–S5 替身注入点＋S6–S10 产品路径），冒烟保持 T17 值锚；FK 消费的真实业务路径由真实编译产物承载",
+   "differences": "REUSE-T17：锚能力入口懒构造同源。REUSE-T19：集成模式经 RuntimeSnapshotFactory 真实编译（FixtureModelCompiler＝S1–S5 替身注入点＋S6–S10 产品路径），冒烟保持 T17 值锚；FK 消费的真实业务路径由真实编译产物承载",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
@@ -1342,9 +1342,9 @@
    "status": "migrated",
    "search": {
     "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "构建注册宏区段随 REUSE-T18 行号刷新；目标注册/报告机制不变（business-specific——零上游重叠）"
+    "conclusion": "构建注册宏区段随 REUSE-T19 行号刷新；目标注册/报告机制不变（business-specific——零上游重叠）"
    },
-   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T18：区段行号随上游链接段插入刷新（544-556），内容逐字节未变。",
+   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T19：区段行号随上游链接段插入刷新（544-556），内容逐字节未变。",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
@@ -1643,7 +1643,7 @@
     "command": "rg -n \"setQ|baseTframe|baseJframe|LinearAlgebra::svd\" RobWork/RobWork/src/rw/models/Device.hpp RobWork/RobWork/src/rw/math/LinearAlgebra.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
     "conclusion": "上游 FK/Jacobian/SVD 消费已定位并逐符号核对（行义/列序/降序/T_base 读法）；删除自建链后本功能为薄适配——q 映射/TCP 选择/指标链/错误面为业务边界（非重叠见差异列与生产证据）"
    },
-   "differences": "REUSE-T18：手写链式 FK/几何雅可比/JacobiSVD 直调全删；消费 Device::setQ（任务私有 State，q_rw＝q_auth−zeroOffset——src/JointMapping.hpp）＋baseTframe（默认 TCP＝编译产物帧含偏置；命名 TCP＝法兰位姿·偏置一次复合）＋baseJframe（行 0-2 线/3-5 角已与 Jacobian::addPosition/addRotation 源码核对；命名 TCP 参考点移轴）＋LinearAlgebra::svd（降序）；条件数/可操作度/裕量/IRDPM01 编码逐字节保留；锚缺失/设备未命中→NoDevice 值面",
+   "differences": "REUSE-T19：手写链式 FK/几何雅可比/JacobiSVD 直调全删；消费 Device::setQ（任务私有 State，q_rw＝q_auth−zeroOffset——src/JointMapping.hpp）＋baseTframe（默认 TCP＝编译产物帧含偏置；命名 TCP＝法兰位姿·偏置一次复合）＋baseJframe（行 0-2 线/3-5 角已与 Jacobian::addPosition/addRotation 源码核对；命名 TCP 参考点移轴）＋LinearAlgebra::svd（降序）；条件数/可操作度/裕量/IRDPM01 编码逐字节保留；锚缺失/设备未命中→NoDevice 值面",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
@@ -1658,8 +1658,8 @@
     "target": "sdurws_ird_kinematics"
    },
    "evidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/production/kinematics.FkEvaluator.evaluate.json",
-    "sha256": "2152fc62f56def1d3a46472d05ca1b963b3c2d7cea009faee0acdbbd53e7548a"
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
+    "sha256": "43bb75c6d06de9e298e37fc11fe7aa6dc2ab3126f9139f32e33912dc0231ec1b"
    }
   },
   {
@@ -1731,7 +1731,7 @@
     "command": "rg -n \"PoseMetrics|IFkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include RobWork/RobWork/src/rw/models/Device.hpp",
     "conclusion": "公共契约面零 API 变化：PoseMetrics/IFkEvaluator/编码签名不动；@pre 补锚要求注释、NoDevice 语义面扩登记、实现要点上游化"
    },
-   "differences": "REUSE-T18 仅注释同步（D-KIN-2 行义/列序上游核对结论入档）——值模型与接口逐字节兼容",
+   "differences": "REUSE-T19 仅注释同步（D-KIN-2 行义/列序上游核对结论入档）——值模型与接口逐字节兼容",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
@@ -1772,7 +1772,7 @@
     "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
     "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
    },
-   "differences": "REUSE-T18：权威 q 双模型断言改容差（偏置映射相消——载体变化，语义保留）；新增 AnchorlessViewRejectedAsNoDevice／CrossViewIsolationRealSnapshots／UpstreamDirectDeviceComparison 三用例（生产证据 oracle/upstreamComparison 面载体）",
+   "differences": "REUSE-T19：权威 q 双模型断言改容差（偏置映射相消——载体变化，语义保留）；新增 AnchorlessViewRejectedAsNoDevice／CrossViewIsolationRealSnapshots／UpstreamDirectDeviceComparison 三用例（生产证据 oracle/upstreamComparison 面载体）",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",

@@ -7,6 +7,8 @@
 
 ## 判定：PASS（七项检查，两轮收口）
 
+> 编号映射（验收后追加，正文受检事实不变）：本包实施期以 REUSE-T18 登记，因主线同号（F-958 testkit 监听器收口）冲突，经协调流程改登记为 **REUSE-T19**。本记录所载受检 SHA（20522f776 / 434500c43）与全部验收结论不变；代码与用例内的 REUSE_T18 实施期标识按受检 SHA 约定保留，契约/凭证/引用已改指 REUSE-T19。
+
 | 检查项 | 结果 | 证据要点 |
 | --- | --- | --- |
 | 1 冻结与范围 | PASS（首轮 FAIL→修复后 PASS） | HEAD=434500c43、工作树干净；verify-task-scope PASS（28 路径全在允许面）；runtime/core/ui/Ik.cpp/上游/vcpkg 零改动。首轮唯一阻断＝契约 allowedFiles 漏列 catalog.json 与 kinematics-fk-migration.md（治理文档越界）——按验收意见以最小契约修订收口，代码内容 SHA 逐字未变 |

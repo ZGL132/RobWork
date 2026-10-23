@@ -1,6 +1,6 @@
 {
  "schemaVersion": "ird-task/1",
- "taskId": "REUSE-T18",
+ "taskId": "REUSE-T19",
  "unit": "kinematics",
  "masterWp": "WP-A",
  "title": "FK/Jacobian 上游复用——经 T17 锚消费已编译模型并删除 kinematics 重复计算核",
@@ -66,11 +66,11 @@
   "生产正向证据四面齐全（ird-reuse-production/1）：normal 291/291、oracle 独立 4×4 参考、upstreamComparison 与直接 Device 调用逐位一致、disconnected 变异断开 setQ 映射后 7 用例失败（exit 1）",
   "两模式构建：集成 291 全绿＋契约 57/57；冒烟按 REUSE-T07/T12 导出包机制登记（本机 RobWork 导出包解析环境回归已登记，未在本包扩权修复）"
  ],
- "note": "所有者本轮指令（智能体A接续已独验的REUSE-T17）授权本包实施；复用基础包REUSE-T13独立验收仍无PASS记录——本包状态＝实施完成待独验（不解除合入门，不据此关闭债务）。REUSE-T17锚接口只消费不改。停用口径：不用'调用了Device'当完成——完成＝计算准确＋单一模型权威＋结构更简＋真实业务路径生效＋无旧核兜底。",
+ "note": "所有者本轮指令（智能体A接续已独验的REUSE-T17）授权本包实施；复用基础包REUSE-T13独立验收仍无PASS记录——本包状态＝实施完成待独验（不解除合入门，不据此关闭债务）。REUSE-T17锚接口只消费不改。停用口径：不用'调用了Device'当完成——完成＝计算准确＋单一模型权威＋结构更简＋真实业务路径生效＋无旧核兜底。 编号映射：REUSE-T19（编号映射：本包实施期登记为 REUSE-T18，因主线同号〔F-958 testkit 监听器收口〕冲突，经协调流程改登记为 REUSE-T19；原验收受检 SHA 20522f776/434500c43 与用例标识保留不变） 代码与用例内的 REUSE_T18 实施期标识按受检 SHA 约定保留（原始验收记录与受检提交 20522f776/434500c43 不变）。",
  "interUnit": false,
  "reuse": {
   "policy": "H1-H6",
-  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T18.json"
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T19.json"
  },
  "outputs": [
   "FK/Jacobian 上游消费核（setQ/baseTframe/baseJframe/LinearAlgebra::svd）与手写链/雅可比/SVD 直调删除后的单一模型权威面",

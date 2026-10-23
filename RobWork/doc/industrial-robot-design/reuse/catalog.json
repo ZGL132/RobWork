@@ -122,7 +122,7 @@
     }
    ],
    "limits": {
-    "semantics": "REUSE-T18 已收口：6×n 基础雅可比（行0-2线/3-5角、列=可动链序）、SerialDevice 链 FK、0-DOF 退化面、默认/命名 TCP 选择（A-15）——q_auth offset/TCP/参考系/固定段适配边界见 reuse/kinematics-fk-migration.md；REUSE-T13 已修正 Prismatic 非零 offset 编译。",
+    "semantics": "REUSE-T19 已收口：6×n 基础雅可比（行0-2线/3-5角、列=可动链序）、SerialDevice 链 FK、0-DOF 退化面、默认/命名 TCP 选择（A-15）——q_auth offset/TCP/参考系/固定段适配边界见 reuse/kinematics-fk-migration.md；REUSE-T13 已修正 Prismatic 非零 offset 编译。",
     "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
     "determinism": "同输入同字节已由真实执行验证（DeterministicByteOutput/ACC5 bitwise；上游 setQ/baseTframe/baseJframe/LinearAlgebra::svd 单线程定序）"
    },
@@ -138,7 +138,7 @@
     "version": "b12e8503cc1c2a1acc040f506842a02e126b9515",
     "evidence": {
      "path": "RobWork/doc/industrial-robot-design/reuse/kinematics-fk-migration.md",
-     "sha256": "f5f802b3b95ecd23678522e66198bb6073edf05d1ceff576bb03d784b210d727"
+     "sha256": "2c02455b43053a99abd9a5143da750e0c4f98ff8a3b2fcb2c2c4bae05b92e91a"
     }
    },
    "tests": [],

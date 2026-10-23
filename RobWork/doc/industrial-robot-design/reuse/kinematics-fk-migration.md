@@ -1,6 +1,6 @@
 本能力将 kinematics FK/Jacobian 计算核迁移为消费 RobWork 上游真实计算，删除自建实现。
-精确契约：[REUSE-T18](../tasks/REUSE-T18.json)。实施基于已独验的 REUSE-T17 锚能力；复用基础包 REUSE-T13 独验未过＝本包实施待独验，不自行关闭、不合入。
-生产正向证据四面（normal/oracle/upstreamComparison/disconnected）：[REUSE-T18/production](../traceability/reuse/REUSE-T18/production/kinematics.FkEvaluator.evaluate.json)。
+精确契约：[REUSE-T19](../tasks/REUSE-T19.json)（编号映射：REUSE-T19（编号映射：本包实施期登记为 REUSE-T18，因主线同号〔F-958 testkit 监听器收口〕冲突，经协调流程改登记为 REUSE-T19；原验收受检 SHA 20522f776/434500c43 与用例标识保留不变））。实施基于已独验的 REUSE-T17 锚能力；复用基础包 REUSE-T13 独验未过＝本包实施待独验，不自行关闭、不合入。
+生产正向证据四面（normal/oracle/upstreamComparison/disconnected）：[REUSE-T19/production](../traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json)。
 
 | 功能/位置 | 复用来源 | 适配边界 |
 | --- | --- | --- |
