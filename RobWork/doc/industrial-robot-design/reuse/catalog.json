@@ -1196,8 +1196,12 @@
         "value"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/reuse/trajectory-polynomial-migration.md",
+          "sha256": "7b0f46e7352ff13c3b2fd56f2c70652bd195809adcf82528bcbb38a4afbf046b"
+        }
       },
       "tests": [
         {
