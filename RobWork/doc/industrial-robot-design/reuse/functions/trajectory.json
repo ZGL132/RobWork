@@ -87,450 +87,6 @@
       "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-      "functionId": "trajectory.hermiteH000",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "hermiteH000",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH000",
-          "startLine": 110,
-          "endLine": 113,
-          "sha256": "9a616c0f8de610e74396dde6ad3328208479052f3f591e018791a93d16a85355"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"hermiteH000|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.hermiteH100",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "hermiteH100",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH100",
-          "startLine": 116,
-          "endLine": 119,
-          "sha256": "f921cdda921ed88c1ef3f30b551d9dcf3bf77791a1355df0db51fe128c70b5ea"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"hermiteH100|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.hermiteH001",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "hermiteH001",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH001",
-          "startLine": 122,
-          "endLine": 126,
-          "sha256": "716c66e2ef454a741d5ee26cf4e9617d9205bc5abeccaac8eab1bf206c6ffbe6"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"hermiteH001|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.hermiteH101",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "hermiteH101",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH101",
-          "startLine": 129,
-          "endLine": 133,
-          "sha256": "e88402cbbf1056ba4808d260b5296fb7346ebdd7cbfe1ad0d596ec4273e9ee93"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"hermiteH101|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五次Hermite基；可将固定系数交给Polynomial求值，业务切线/几何保持不搬进新数学内核",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.basisH0000",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "basisH0000",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0000",
-          "startLine": 205,
-          "endLine": 221,
-          "sha256": "7af3040af18b868aac86f9be291ae76510f27e071c8783e27e775845013d123b"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"basisH0000|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.basisH0010",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "basisH0010",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0010",
-          "startLine": 224,
-          "endLine": 235,
-          "sha256": "2fe664b08b4584832ae36950ee69d79057126d4130e7fc462491e0ad71422662"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"basisH0010|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.basisH0001",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "basisH0001",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0001",
-          "startLine": 238,
-          "endLine": 249,
-          "sha256": "f95d18774e4dd3e2c85edb1f4a7f8d2aeab283279372d7942c8dd98f3bd316da"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"basisH0001|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.basisH0011",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "basisH0011",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0011",
-          "startLine": 252,
-          "endLine": 263,
-          "sha256": "89db514b65c88474e7987a6c96cc6d3dcd36816460c43592e91f68791755ba2d"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"basisH0011|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.septicS0",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "septicS0",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS0",
-          "startLine": 274,
-          "endLine": 287,
-          "sha256": "68f4015e4b1dc15de3d1fc39bd15d05e5aed17a0fc5e9ae2ae6fb7c4f7909eca"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"septicS0|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.septicS1",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "septicS1",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS1",
-          "startLine": 291,
-          "endLine": 304,
-          "sha256": "728c474bbc34c18ae5f3aa29df1a4b944dac942781fcc98795eee1dc9b16955d"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"septicS1|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.septicS2",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "septicS2",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS2",
-          "startLine": 308,
-          "endLine": 321,
-          "sha256": "9412b4e3054ea0fb58a1a8ded15442fa84b3358877d8947d319e910aa4ca41d2"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"septicS2|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
-      "functionId": "trajectory.septicS3",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-05"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
-          "symbol": "septicS3",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS3",
-          "startLine": 325,
-          "endLine": 341,
-          "sha256": "1c5ce7bfd3774824eb73c65dfc9f45029c81ccab1b1a811a1f4ddb575b513f48"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "MATH-POLYNOMIAL",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"septicS3|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-      },
-      "differences": "手写五/七次基及一至三阶导；复用evaluateDerivatives，按段时长h^-k缩放，保留端点C²/C³及jerk验证",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-    },
-    {
       "functionId": "trajectory.rotationAngleBetween",
       "ownerUnit": "trajectory",
       "requirements": [
@@ -560,117 +116,6 @@
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
       "differences": "已用上游Quaternion但又自持正规化/最短角，候选EAA::angle；须核0、微小角、pi及相对旋转方向，不以使用一个类型当完整正向证据",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
-    },
-    {
-      "functionId": "trajectory.canDropPoint",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "canDropPoint",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::canDropPoint",
-          "startLine": 378,
-          "endLine": 409,
-          "sha256": "a9fccc4634753fc726408822479ca117a6aeae86f15b38f6f4c80bf4cd78a8d8"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-SIMPLIFY",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
-        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-      },
-      "differences": "单点贪心剔除候选PathLengthOptimizer::pathPruning；保留必经点、关节/TCP双偏差、取消及失败语义；边碰撞约束不等同原点几何偏差",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
-    },
-    {
-      "functionId": "trajectory.buildTangents",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "buildTangents",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::buildTangents",
-          "startLine": 427,
-          "endLine": 447,
-          "sha256": "017600a3bc9a5c0a47d6200db1f2443137f67f69ffa700b6eb44bd068ba5993a"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "TRAJ-HIGH",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
-        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-      },
-      "differences": "中心差分加lambda收缩，候选SplineFactory/Polynomial；端导与几何保持是产品契约，不可用三次偷换五次",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
-        }
-      ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
-    },
-    {
-      "functionId": "trajectory.measureDeviation",
-      "ownerUnit": "trajectory",
-      "requirements": [
-        "TRJ-04"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
-          "symbol": "measureDeviation",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::measureDeviation",
-          "startLine": 466,
-          "endLine": 503,
-          "sha256": "b9071e84ad9a5a17446c2788f28176a296ffbcce7dce94dd59bb18ff8f4e6bd1"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_trajectory"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "TRAJ-HIGH",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
-        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
-      },
-      "differences": "固定每段64探针、关节逐轴/TCP双偏差，候选上游几何插值；FK只走端口，lambda重试与覆盖事实保留，不另建模型",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
@@ -1800,6 +1245,116 @@
         }
       ],
       "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+    },
+    {
+      "functionId": "trajectory.smoothQuinticHermiteReuse",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+          "symbol": "hermiteQuinticBases",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteQuinticBases",
+          "startLine": 1,
+          "endLine": 747,
+          "sha256": "dfd0533dc6fd6477183df5b070105bf89fccd72d8811ae4dfcf48858f298af04"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp",
+          "symbol": "SmoothUpstreamPolynomialCrossCheck_REUSE_T09",
+          "qualifiedSymbol": "",
+          "startLine": 1,
+          "endLine": 554,
+          "sha256": "87f045c75848a89fda647238ce3f8219bc2088a32b255b193079152d4b7fe81c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"hermiteQuinticBases|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "生产链smooth→QuinticHermiteGeometry::sampleAt消费上游evaluate基值；独立解析oracle（refH000族/refSampleThreePoint）、上游evaluateDerivatives直接对照、真实断开实验与性能/分配核查完成（REUSE-T09证据目录）；本行整文件区段吸收原hermiteH000~H101与canDropPoint/buildTangents/measureDeviation审计行"
+      },
+      "differences": "基值求值上游化（升幂系数表+Horner evaluate）；λ收缩切线、端点/必经点保护、共线零偏差NoChange位级判定保留；端点与结点位级还原由整数系数Horner在u=0/1无舍入保持（迁移说明§2）；evaluateDerivatives因每调用堆分配不入热路径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "production": {
+        "entry": "hermiteQuinticBases",
+        "upstream": "Polynomial",
+        "consumer": "hermiteQuinticBases",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-smooth.json",
+        "sha256": "acd8b4147d570a0ecf40892c96c17b2a999c659ff6b28d8769931669e22e6a57"
+      }
+    },
+    {
+      "functionId": "trajectory.timeParamHermiteBasesReuse",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-05",
+        "TRJ-06",
+        "TRJ-08-S1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+          "symbol": "evalBasis",
+          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::evalBasis",
+          "startLine": 1,
+          "endLine": 1651,
+          "sha256": "43d945a6864e7ac81a50cf0e84dee6ad56aab546faee229359cd6f46f3115bdd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp",
+          "symbol": "InteriorKnotNonZeroTangentUpstreamCrossCheck",
+          "qualifiedSymbol": "",
+          "startLine": 1,
+          "endLine": 1674,
+          "sha256": "1efc3ed949f0a0372e64a104123d6873fe42da7391363f7251d574b316324aec"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"quinticBases|septicBases|evalBasis|Polynomial|evaluateDerivatives\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "生产链timeParameterize→evaluateSpanDerivs消费上游基族表（derivative链+evaluate）；独立解析oracle（refH0001/refS2族）、上游evaluateDerivatives直接对照、真实断开实验与性能/分配核查完成（REUSE-T09证据目录）；本行整文件区段吸收原basisH0000~H0011与septicS0~S3审计行"
+      },
+      "differences": "五次/七次基值与一~三阶导求值上游化（derivative构造导数链+evaluate Horner）；驻留常值分支、结点二/三阶导恒0纪律、中心差分、初值闭式、缩放确认环、C²/C³守卫与素材保留；时间换算h^-k保留在业务合成处；evaluateDerivatives因每调用堆分配不入热路径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "production": {
+        "entry": "evalBasis",
+        "upstream": "Polynomial",
+        "consumer": "evalBasis",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json",
+        "sha256": "e6a628b6c7f0eeaa422ad4d08e79bf75b0bc75eac23a2d40b869515aab46558b"
+      }
     }
   ]
 }
