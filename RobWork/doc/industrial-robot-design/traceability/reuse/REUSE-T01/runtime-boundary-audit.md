@@ -26,3 +26,9 @@ runtime-probe复用产品原runtime CMake（包括真实WorkCellCompiler.cpp）�
 ## 未执行与后续验收
 
 未运行本批GUI或全量产品回归，未实施接口/算法替换；没有生产正向证据，因此全部新增关系保持pending。独立验收需核真实源边界、生命周期/权限及缺陷重现，不能以门禁结构PASS替代语义结论。下一步按全T01覆盖缺口继续审计，再提交T02精确契约与回归方案。
+
+## 2026-10-23 定向核查增量（只读调查；不回写上文历史行）
+
+- 上文"移动关节偏置缺陷"已由 REUSE-T13（`f378f01c5`，待独验）修复：PrismaticJoint/RevoluteJoint 按上游 `getTransform(offset)/setFixedTransform` 消费 offset，q_auth=offset+q_rw、限位减 offset、默认 q_rw=0；反例已纳入 WorkCellCompilerTest/WorkCellGeometryTest。本行只登记现状，独验状态见 REUSE-T13 README 追加节。
+- 上文"IKinRuntimeView 未暴露编译产物 / FrozenRuntimeView 值快照缺口"复核属实且仍开放：`KinTypes.hpp:141` IKinRuntimeView 仍仅 model()+worldToBase()（§14.4-6 表尾追加纪律在头内）；`KinematicsPanelWidget.cpp:74` FrozenRuntimeView 仍复制 CanonicalModel+T_world_base 值；`KinEvaluationChannel.cpp:61` SnapshotViewAdapter 已持 `shared_ptr<const RuntimeSnapshot>` 锚但接口未暴露。已编译 WC/Device/State 对 kinematics 的最小消费面是 runtime 下一能力包的精确缺口（migration §12.11 顺序"Device/State FK/Jacobian"的准入前置）。
+- 四条数据流复核：模型链（CanonicalModel→S6 编译→RuntimeSnapshot 持 Ptr<const WorkCell>/<const DWC>→IRuntimeModelView 四入口 workCell/tryDynamicWorkCell/makeState/nameResolver）端口已足够，**runtime 侧保留、无需修改**（`workCellHandle()` 仍限 MA-02 碰撞设施借持，不扩大）；生命周期链（快照锚→借持→DWC 先于 WC 析构序）由 Snapshot 成员声明序承载；并发链的"任务冻结原锚"当前靠值复制间接成立、结构性修复依赖消费面增量。关节链 q_auth↔q_rw 的换算归属（消费方经 model zeroOffset 单次换算，不缓存）是 FK/IK 替换包的设计决策点，须所有者确认。

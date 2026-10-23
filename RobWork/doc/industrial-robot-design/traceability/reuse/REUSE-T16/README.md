@@ -21,3 +21,9 @@ LoggingPipeline::Impl 已实审：redaction快照独立锁、devTail有界环、
 收口核查：原函数本包范围诊断 PASS（REUSE-T16/package-diagnostic.ps1、package-diagnostic.log），不是全量准入替代；架构引擎 PASS（REUSE-T16/ird-gates-r4.log）。全量 validate-reuse、validate-docs 与两任务 validate-task 均 FAIL，唯一阻断仍为集成基线继承的 drivetrain/CMakeLists.txt REUSE-COVERAGE，由协调会话安排，不修改业务文件/门禁迁就。实际退出码与分列测试计数见 verification.json；独验仍 NOT RUN。
 
 本轮两个有界能力包及失败候选记录作为一个本地交付提交；整体回滚须回退该提交，避免只回退代码而留下不匹配矩阵/凭证。未承诺两包可分别用单次 git revert 回滚。共享 execution/ui 行仅更新受影响输入绑定，不修改其 pending 状态或历史结论。
+
+## 独验状态核对（2026-10-23 复核会话追加；不回写上文历史结论）
+
+- 实施版本 `091e53353`（与 T15 同一本地交付提交）；实施后至 `6fb26b31d` diagnostics 产品源码零变化，上文证据输入仍适用。
+- 上文"全量门禁唯一阻断＝drivetrain/CMakeLists.txt REUSE-COVERAGE"已由 `6fb26b31d` 合入清除：冻结核实测 validate-reuse PASS（exit 0；余 10 条 REUSE-AD-PENDING 为分支既有状态）。
+- **独立验收仍 NOT RUN**：由所有者另开独立会话执行；最小核对清单＝verification.json 分列计数（diagnostics 122/contract 26/冒烟 122）＋保留的 diagnostics-r1 失败原件（121/0/1，夹具修正前）＋keep1/5→2/2→5/超长后缀/目录碰撞新五例边界。本会话不自签。

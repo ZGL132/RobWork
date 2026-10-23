@@ -1,0 +1,12 @@
+{
+  "candidate": "R2 fma-residual + TwoSum exact-fold",
+  "baseHead": "6fb26b31ddcd514ba2d3dab8ff548b977b54c9c6",
+  "seed": 20261023,
+  "totals": {"cases": 29072, "branchHits": 10708, "branchFixed": 2524},
+  "overflowMismatch": 0,
+  "invarianceViolation": 0,
+  "normalOracleDiff": 74,
+  "sentinel": 0,
+  "maxExactSignIter": 5,
+  "mismatches": []
+}

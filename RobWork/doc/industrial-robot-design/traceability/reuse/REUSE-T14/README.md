@@ -9,3 +9,5 @@
 - 决定：候选 FAIL、撤回；不继续自写补偿比较核心。后续若采用标准 fma 残差等更强边界处理，须先给出具体精度/复杂度及正常路径边界提案并由所有者批准；本记录不批准该方向。其余 FNV/日志包可独立推进。
 
 复现仅在独立实验现场应用 patch，以 VS x64 环境执行 `cl /std:c++17 /O2 /EHsc /utf-8 /I<core/include> C4Probe.cpp <core/src/Compare.cpp>`，再运行 oracle.py（探测可执行文件路径见脚本）。不在集成工作树恢复候选。独立验收 NOT RUN，不自签。
+
+后续（2026-10-23）：修订候选 R2（fma 残差＋TwoSum 精确折叠）隔离实验 PASS，见 [revision-candidate/README.md](revision-candidate/README.md) 与 [../../reuse/extensions/GAP-CORE-C4-01.md](../../reuse/extensions/GAP-CORE-C4-01.md) 修订提案章节；待所有者批准，F-966 保持 OPEN。本目录原有失败原件未改动。
