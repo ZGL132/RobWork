@@ -1,14 +1,15 @@
 ﻿# 精简治理回归：确认短提交可用、无信息标题仍拒绝、索引审计可选但没有失去拒绝能力。
 # 在隔离稀疏 Git 检出中破坏索引，不修改调用者的证据、工作树或分支。
-param([string]$RepoRoot = '', [string]$OutputDir = '', [switch]$ValidationBatchOnly)
+param([string]$RepoRoot = '', [string]$OutputDir = '', [switch]$ValidationBatchOnly, [switch]$SerialMainlineOnly)
 $ErrorActionPreference = 'Stop'
+if ($ValidationBatchOnly -and $SerialMainlineOnly) { throw 'select one governance suite' }
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }
 if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-tests' }
 [IO.Directory]::CreateDirectory($OutputDir) | Out-Null
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ird-gov-lite-' + [guid]::NewGuid().ToString('N'))
 $psExe = (Get-Process -Id $PID).Path
 $results = @()
-$expectedTests = if ($ValidationBatchOnly) { 23 } else { 21 }
+$expectedTests = if ($SerialMainlineOnly) { 8 } elseif ($ValidationBatchOnly) { 23 } else { 21 }
 
 # 每例检查真实子进程退出码及具名输出，避免“命令没执行”也被当成负例通过。
 function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int]$Expected, [string]$Pattern) {
@@ -129,8 +130,58 @@ exit 0
     Invoke-BatchProbe 'reuse-real-outside-root-rejected' ($realPrefix+'$TaskFile=@("../outside.json"); '+$selection[0].Extent.Text) 1 'REUSE-PATH' 0
 }
 
+# 主线串行规则只在临时小仓库测试真实脚本，不触发全量复用/产品构建。
+# 无 reuse 的夹具只证明分支和范围校验，不冒充生产算法或依赖准入证据。
+function Test-SerialMainline {
+    $scripts = Join-Path $testRoot 'RobWork/scripts/industrialrobot'
+    $tasks = Join-Path $testRoot 'RobWork/doc/industrial-robot-design/tasks'
+    [IO.Directory]::CreateDirectory($scripts) | Out-Null
+    [IO.Directory]::CreateDirectory($tasks) | Out-Null
+    foreach ($name in @('validate-task.ps1','verify-task-scope.ps1')) {
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $scripts $name)
+    }
+    $reference = Join-Path $testRoot 'RobWork/doc/industrial-robot-design/fixture.md'
+    [IO.File]::WriteAllText($reference, '# fixture')
+    $path = Join-Path $tasks 'SERIAL-T01.json'
+    $contract = @{taskId='SERIAL-T01';unit='foundation-governance';masterWp='WP-A';title='串行夹具';status='ready';branch='redesign-main';dependsOn=@();requirements=@('NFR-COR-02');designRefs=@('fixture.md');verify=@('Write-Output fixture');allowedFiles=@('fixture.txt');forbiddenFiles=@('forbidden.txt');outputs=@('fixture');acceptance=@('fixture');interUnit=$false}
+    foreach ($case in @(@('serial-mainline','redesign-main',0),@('serial-task-branch','codex/fixture',0),@('serial-main-rejected','main',1),@('serial-unknown-rejected','arbitrary-branch',1))) {
+        $contract.branch=$case[1]
+        $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+        $pattern = if ($case[2] -eq 0) { 'validate-task: PASS' } else { 'invalid branch' }
+        Invoke-Probe $case[0] (Join-Path $scripts 'validate-task.ps1') @('-RepoRoot',$testRoot,'-TaskFile',$path) $case[2] $pattern
+    }
+    $contract.branch='redesign-main'
+    $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+    & git -C $testRoot init --quiet
+    if ($LASTEXITCODE) { throw 'serial fixture git init failed' }
+    [IO.File]::WriteAllText((Join-Path $testRoot 'fixture.txt'),'before')
+    & git -C $testRoot add fixture.txt
+    if ($LASTEXITCODE) { throw 'serial fixture git add failed' }
+    & git -C $testRoot -c user.name=fixture -c user.email=fixture@example.invalid commit --quiet -m initial
+    if ($LASTEXITCODE) { throw 'serial fixture initial commit failed' }
+    $start = (& git -C $testRoot rev-parse HEAD).Trim()
+    [IO.File]::WriteAllText((Join-Path $testRoot 'fixture.txt'),'after')
+    & git -C $testRoot add fixture.txt
+    if ($LASTEXITCODE) { throw 'serial fixture second add failed' }
+    & git -C $testRoot -c user.name=fixture -c user.email=fixture@example.invalid commit --quiet -m changed
+    if ($LASTEXITCODE) { throw 'serial fixture second commit failed' }
+    $finish = (& git -C $testRoot rev-parse HEAD).Trim()
+    $scope = Join-Path $scripts 'verify-task-scope.ps1'
+    $common = @('-RepoRoot',$testRoot,'-TaskFile',$path,'-Head',$finish)
+    Invoke-Probe 'serial-base-required' $scope $common 1 'requires explicit -Base'
+    Invoke-Probe 'serial-explicit-scope' $scope ($common+@('-Base',$start)) 0 'verify-task-scope: PASS'
+    $contract.forbiddenFiles=@('fixture.txt')
+    $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+    Invoke-Probe 'serial-forbidden-rejected' $scope ($common+@('-Base',$start)) 1 '\[forbidden\]'
+    $contract.forbiddenFiles=@('forbidden.txt'); $contract.allowedFiles=@('other.txt')
+    $contract | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $path -Encoding UTF8
+    Invoke-Probe 'serial-outside-rejected' $scope ($common+@('-Base',$start)) 1 '\[out-of-scope\]'
+}
+
 try {
-  if ($ValidationBatchOnly) {
+  if ($SerialMainlineOnly) {
+    Test-SerialMainline
+  } elseif ($ValidationBatchOnly) {
     Test-ValidationBatch
   } else {
     $lint = Join-Path $PSScriptRoot 'commit-lint.ps1'
@@ -238,7 +289,7 @@ try {
   }
 } finally {
     $passed = @($results | Where-Object { $_.passed }).Count
-    $report = [pscustomobject]@{ suite=$(if($ValidationBatchOnly){'validation-batch'}else{'governance-lite'}); expected=$expectedTests; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=($expectedTests-$results.Count); complete=($results.Count -eq $expectedTests -and $passed -eq $expectedTests); cases=$results }
+    $report = [pscustomobject]@{ suite=$(if($SerialMainlineOnly){'serial-mainline'}elseif($ValidationBatchOnly){'validation-batch'}else{'governance-lite'}); expected=$expectedTests; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=($expectedTests-$results.Count); complete=($results.Count -eq $expectedTests -and $passed -eq $expectedTests); cases=$results }
     $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $OutputDir 'governance-lite-report.json') -Encoding UTF8
     # 沿既有治理测试的 JUnit＋JSON 口径，明确本次选中套件，不冒充全套历史回归。
     $xml = [xml]'<testsuite/>'

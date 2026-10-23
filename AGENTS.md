@@ -8,7 +8,9 @@
 
 - 产品源码：`RobWork/RobWorkStudio/src/rwslibs/industrialrobot/`；设计：`RobWork/doc/industrial-robot-design/`；治理脚本：`RobWork/scripts/industrialrobot/`。
 - 框架及 vcpkg 只读；确需框架改动，先登记 `industrialrobot/patches/PATCHES.md` 并产出 patch。
-- 一切工作基于 `redesign-main` 及其任务分支；`main` 冻结，禁止提交、合并或推送。
+- 当前复用重构统一在 `D:\10_Source_Repos\21_robot\RobWork` 的 `redesign-main` 串行实施，不再执行 A/B 并行开发或创建任务工作树；旧工作树保留，不重置、不清理。`main` 冻结，禁止修改。
+- 当前有效计划和续接入口为 [reuse/migration.md §13](RobWork/doc/industrial-robot-design/reuse/migration.md#13-主工作树串行工作包2026-10-24)。接手先核对分支、HEAD、工作区、当前包及未决裁决；历史任务分支、A/B 分工和旧“下一任务”不再用于调度。
+- 当前所有者禁止远程同步：不执行 fetch/pull/push 或远程排查。旧提交推送约定在本阶段由此条替代；没有远程执行不得声称远程交付。
 
 ## 0.1 上游复用硬约束（H1—H6）
 
@@ -88,15 +90,15 @@ L2 计算库零 Qt；业务域之间不直接互链，只经六类端口；不�
 
 ### 6.1 工作流程
 
-普通改动：明确范围和预期 → 修改 → 按 §4 验证 → 同步实际改变的契约/设计 → 提交推送。无需另写侦察画像、八节设计、计划、六段决策 Note、交接模板或重复状态台账；这些工具仅在复杂任务确有用途时使用，不逐阶段强制调用 Skill。
+普通改动：明确范围和预期 → 修改 → 按 §4 验证 → 同步实际改变的契约/设计 → 本地提交。无需另写侦察画像、八节设计、计划、六段决策 Note、交接模板或重复状态台账；这些工具仅在复杂任务确有用途时使用，不逐阶段强制调用 Skill。
 
 ### 6.2 分支与合入
 
-实现任务优先用契约分支 `wp<nn>-t<kk>`；非编号任务可用 `codex/<主题>`。纯文档可在 `redesign-main` 修订。实施者不得自行合入主线，合入由所有者决策。禁止改写已推送历史、强推或触碰 `main`。
+本阶段经所有者授权直接在主工作树 `redesign-main` 串行实施，一包一组可回滚本地提交，不另建分支、不自行合并其他分支。历史任务分支仅作溯源；领取旧任务时在该契约登记本轮主线范围与起始 SHA。独立验收仍由所有者另开会话或人工执行，实施提交不等于独验通过。`verify-task-scope.ps1` 必须显式传本包 `-Base <起始SHA> -Head <送验SHA>`，禁止以主线与自身比较冒充范围通过。禁止改写历史或触碰 `main`。
 
 ### 6.3 提交
 
-一个完整改动连同测试、必要文档同提交并立即推送 `origin`。中文标题用任务前缀或 `[docs]/[governance]/[DTB]/[units]/[ARCH]/[ACC]/[PIPE]/[CCP]`。正文简述原因、验证及影响，不要求固定四段标题；简单文档改动可仅标题。`commit-lint.ps1 -Range <base>..HEAD` 只检查新增提交。推送失败先查原因，非快进时在不改写已推送历史的前提下同步；不能安全解决则报告，不强推。
+一个完整改动连同测试、必要文档同本地提交；本阶段不推送 `origin`。中文标题用任务前缀或 `[docs]/[governance]/[DTB]/[units]/[ARCH]/[ACC]/[PIPE]/[CCP]`。正文简述原因、验证及影响，不要求固定四段标题；简单文档改动可仅标题。`commit-lint.ps1 -Range <base>..HEAD` 只检查新增提交。远程流程暂停；不得为检查交付状态进行同步或强推。
 
 ### 6.4 审查分级
 

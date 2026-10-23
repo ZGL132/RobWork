@@ -1,0 +1,15 @@
+powershell.exe : invalid branch 'main' (expect redesign-main / wp03-t01 / doc-t03 / codex/reuse-foundation): SERIAL-T01
+At D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:19 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (invalid branch ...on): SERIAL-T01:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e25982150c25463dbbd4fd0b8d401876\RobWork\scripts\industrialrobot\vali
+date-task.ps1:123 char:129
++ ... 9]+)*)$') { throw "invalid branch '$($t.branch)' (expect redesign-mai ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (invalid branch ...on): SERIAL-T01:String) [], RuntimeException
+    + FullyQualifiedErrorId : invalid branch 'main' (expect redesign-main / wp03-t01 / doc-t03 / codex/reuse-foundatio 
+   n): SERIAL-T01
+ 

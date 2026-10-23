@@ -78,6 +78,8 @@ function Resolve-Commit([string]$Rev, [string]$Label) {
 }
 $headSha = Resolve-Commit $Head 'head'
 if (-not $Base) {
+  # 主线串行任务不能用 redesign-main 与自身的 merge-base，避免零 diff 假绿。
+  if ($task.branch -eq 'redesign-main') { throw 'serial mainline task requires explicit -Base <start SHA>' }
   # 缺省基点＝与 redesign-main 的分叉点。任务分支从 redesign-main 切出时，这恰好
   # 是该任务引入的全部提交；若分支被 rebase 过，以显式 -Base 为准。
   $baseRef = 'redesign-main'

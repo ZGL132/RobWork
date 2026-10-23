@@ -117,9 +117,10 @@ foreach ($t in $tasks) {
   # 任务分支字段（PIPE v1.4 §0.2 queue 结构化条目的唯一来源）：ready 必填（进队前提）；
   # done 契约若为分支纪律之前的历史直会话执行可无 branch（如 FOUNDATION-CR-01 系），
   # 但若存在必须句法合法。根 AGENTS §6.2 也允许 codex/<主题>；仅对齐分支
-  # 命名约定，不授予 main/集成主线写权，也不改变复用或模型所有权准入规则。
+  # 命名约定。所有者已授权本轮 redesign-main 串行实施；main 仍拒绝。
+  # 接受分支名不代表依赖、独验或复用语义通过，也不授权自动 PIPE 执行。
   if ($t.status -eq 'ready' -and -not $t.branch) { throw "ready task missing required field branch (CCP §3): $($t.taskId)" }
-  if ($t.branch -and "$($t.branch)" -notmatch '^(?:[a-z][a-z0-9]*-t[0-9]+|codex/[a-z0-9]+(?:[-_][a-z0-9]+)*)$') { throw "invalid branch '$($t.branch)' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): $($t.taskId)" }
+  if ($t.branch -and "$($t.branch)" -notmatch '^(?:redesign-main|[a-z][a-z0-9]*-t[0-9]+|codex/[a-z0-9]+(?:[-_][a-z0-9]+)*)$') { throw "invalid branch '$($t.branch)' (expect redesign-main / wp03-t01 / doc-t03 / codex/reuse-foundation): $($t.taskId)" }
   if ($t.interUnit -eq $true) {
     # PS 细节：@($null).Count 为 1，须先滤空再判空，否则缺失字段会走错报错分支
     $pitfalls = @($t.knownPitfalls) | Where-Object { $null -ne $_ }

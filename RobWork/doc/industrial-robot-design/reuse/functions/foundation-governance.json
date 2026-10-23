@@ -2252,7 +2252,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2323,7 +2323,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2394,7 +2394,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2446,8 +2446,8 @@
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "$allTaskIds = @{}",
           "startLine": 60,
-          "endLine": 131,
-          "sha256": "89f82a383c2d83d95ad12150ed855a184dcbef22317431f546fb021370e7f519",
+          "endLine": 132,
+          "sha256": "72807c3a0782e6ba4ce5cc997a245580b3811003ed2616919a6db933d70b1c74",
           "semanticGroup": "index-and-contract",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::index-and-contract"
         }
@@ -2466,7 +2466,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2517,8 +2517,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "validate-reuse.ps1",
-          "startLine": 133,
-          "endLine": 138,
+          "startLine": 134,
+          "endLine": 139,
           "sha256": "2011a8904d62eada3247214102c0238b03c304e2b54ce60bbbaa4bb934f2a6e2",
           "semanticGroup": "reuse-gate",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::reuse-gate"
@@ -2538,7 +2538,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2626,7 +2626,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2710,7 +2710,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2758,8 +2758,8 @@
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "$ErrorActionPreference",
           "startLine": 4,
-          "endLine": 10,
-          "sha256": "ed1cba4b060fb677bdaf8ae69dc9bb1eab94ab2d6173da1279efaee38264655b",
+          "endLine": 12,
+          "sha256": "64efafa35c16e21c930b3e49eb26834e302b0beec825539a4aa79485df645ff9",
           "semanticGroup": "environment",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::environment"
         }
@@ -2778,7 +2778,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2794,7 +2794,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2873,8 +2873,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "Invoke-Probe",
-          "startLine": 14,
-          "endLine": 26,
+          "startLine": 15,
+          "endLine": 27,
           "sha256": "8271391b4c6ceb2e8eb17f710653d462f264d856e7370af8c8262119630fbfda",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::Invoke-Probe"
         }
@@ -2893,7 +2893,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2909,7 +2909,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2988,9 +2988,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "try {",
-          "startLine": 132,
-          "endLine": 264,
-          "sha256": "3c2f367752ffaf5c7d63e061c4cfa27b74c71f401aa1398b236c16865cb43dbe",
+          "startLine": 181,
+          "endLine": 315,
+          "sha256": "a5daed1fba7796949049d8b34422487c47c11abb07ef5788acf3805f16a51e61",
           "semanticGroup": "fixtures-and-report",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
         }
@@ -3009,7 +3009,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3025,7 +3025,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -3125,7 +3125,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3189,7 +3189,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3234,8 +3234,8 @@
           "symbol": "$headSha",
           "qualifiedSymbol": "PowerShell::base-and-diff",
           "startLine": 79,
-          "endLine": 101,
-          "sha256": "bd90792da7f9472f4fb2016ca437c538176c50893b2b5624e508f607cd92128c"
+          "endLine": 103,
+          "sha256": "5b0cdb924b8d2fa72e343eeb48849df3b5cb3afef2bd851f7477f53f0df064dd"
         }
       ],
       "semanticGroup": "base-and-diff",
@@ -3253,7 +3253,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3297,8 +3297,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
           "symbol": "ConvertTo-ScopeRegex",
           "qualifiedSymbol": "PowerShell::ConvertTo-ScopeRegex",
-          "startLine": 106,
-          "endLine": 117,
+          "startLine": 108,
+          "endLine": 119,
           "sha256": "62070098f387dab9b1b754774d0acc69936dbcb792a638779e885018c8cb775c"
         }
       ],
@@ -3317,7 +3317,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3361,8 +3361,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
           "symbol": "New-ScopeRule",
           "qualifiedSymbol": "PowerShell::New-ScopeRule",
-          "startLine": 118,
-          "endLine": 122,
+          "startLine": 120,
+          "endLine": 124,
           "sha256": "36f9ec35c73ff976d4484afec712380a38c28f016acce88b20382d42a95e95d3"
         }
       ],
@@ -3381,7 +3381,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3425,8 +3425,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
           "symbol": "$allowedRules",
           "qualifiedSymbol": "PowerShell::rule-registration",
-          "startLine": 123,
-          "endLine": 127,
+          "startLine": 125,
+          "endLine": 129,
           "sha256": "7a7cc8e824a93a1093a6bea8d6ee66027f207efa8c0c9073aee62d2aaa80c28a"
         }
       ],
@@ -3445,7 +3445,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3489,8 +3489,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
           "symbol": "Find-ScopeHit",
           "qualifiedSymbol": "PowerShell::Find-ScopeHit",
-          "startLine": 129,
-          "endLine": 134,
+          "startLine": 131,
+          "endLine": 136,
           "sha256": "f61b8ed45828f1eeee623be53538749ef03a0bdb539a5dc456773a92b6ac709b"
         }
       ],
@@ -3509,7 +3509,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3553,8 +3553,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
           "symbol": "$violations",
           "qualifiedSymbol": "PowerShell::path-verdict",
-          "startLine": 139,
-          "endLine": 159,
+          "startLine": 141,
+          "endLine": 161,
           "sha256": "99e208e069cc6010034ecc508ba6f094f266ec45b5800ba1a3ebf2c87fcc7a8a"
         }
       ],
@@ -3573,7 +3573,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
-          "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+          "sha256": "bf753a4aff0176e43fba86205e8edcd566592b406707d0d35a8db1897a72277f"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -3653,7 +3653,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3733,7 +3733,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3813,7 +3813,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3893,7 +3893,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -4356,7 +4356,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4439,7 +4439,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4522,7 +4522,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4605,7 +4605,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4688,7 +4688,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4771,7 +4771,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4854,7 +4854,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -4937,7 +4937,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5020,7 +5020,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5103,7 +5103,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5186,7 +5186,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5269,7 +5269,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5352,7 +5352,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5435,7 +5435,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         }
       ],
       "execution": {
@@ -5506,7 +5506,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5514,7 +5514,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5585,7 +5585,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5593,7 +5593,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5664,7 +5664,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5672,7 +5672,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5743,7 +5743,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5751,7 +5751,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5822,7 +5822,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5830,7 +5830,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5901,7 +5901,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5909,7 +5909,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -5980,7 +5980,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5988,7 +5988,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6059,7 +6059,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6067,7 +6067,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6138,7 +6138,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6146,7 +6146,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6217,7 +6217,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6225,7 +6225,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6296,7 +6296,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6304,7 +6304,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6375,7 +6375,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6383,7 +6383,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6454,7 +6454,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6462,7 +6462,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6533,7 +6533,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6541,7 +6541,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6612,7 +6612,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6620,7 +6620,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6691,7 +6691,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6699,7 +6699,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6770,7 +6770,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6778,7 +6778,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6849,7 +6849,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6857,7 +6857,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -6928,7 +6928,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+          "sha256": "2d149e7a1e8d785f63dff19a776e9f7c503e89c287f8347dff5be723c7e9c4b2"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6936,7 +6936,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
@@ -7011,7 +7011,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7094,7 +7094,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7177,7 +7177,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7260,7 +7260,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7343,7 +7343,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7426,7 +7426,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7509,7 +7509,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7592,7 +7592,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7675,7 +7675,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7758,7 +7758,7 @@
         },
         {
           "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
-          "sha256": "e1fcd76ccfe6ac5061b5cbc46e72548049f18b8cdde9052033bbf46b6bc3f2b9"
+          "sha256": "2c0d67734193cb57612127128df942d676a270579b20bc0b8e380e31aeb4ce81"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -7841,7 +7841,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7924,7 +7924,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8007,7 +8007,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8090,7 +8090,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8173,7 +8173,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8256,7 +8256,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8339,7 +8339,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8422,7 +8422,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8505,7 +8505,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8588,7 +8588,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8671,7 +8671,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8754,7 +8754,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8837,7 +8837,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8924,7 +8924,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9003,7 +9003,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9086,7 +9086,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9169,7 +9169,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9252,7 +9252,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9335,7 +9335,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9418,7 +9418,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9501,7 +9501,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9584,7 +9584,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9667,7 +9667,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9750,7 +9750,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+          "sha256": "52540f326e19dbc34b3b452f250c252c1f7c5945fc8cbd28e15569ec741d13a9"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9897,8 +9897,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "Invoke-BatchProbe",
-          "startLine": 30,
-          "endLine": 41,
+          "startLine": 31,
+          "endLine": 42,
           "sha256": "767de5b49f6e292b1a7b90e701994a5a64be1d76c62764ddc731cad818dc9190"
         }
       ],
@@ -9916,7 +9916,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         }
       ],
       "execution": {
@@ -9943,8 +9943,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "Test-ValidationBatch",
-          "startLine": 43,
-          "endLine": 130,
+          "startLine": 44,
+          "endLine": 131,
           "sha256": "c9ed07e8f73cf76586d6c9bc1e188e353ed7b0160119ae9400cd1e12f2e2f1ad"
         }
       ],
@@ -9962,7 +9962,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
         }
       ],
       "execution": {
@@ -9977,6 +9977,56 @@
         }
       ],
       "auditBoundary": "只审本次变更及影响；未宣称完整脚本审计或治理独验关闭。"
+    },
+    {
+      "functionId": "foundation-governance.serial-mainline.Test-SerialMainline",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "Test-SerialMainline",
+          "startLine": 135,
+          "endLine": 179,
+          "sha256": "0d8bf461414fefa37cfd93bfd551baec87db3bc16b8ee1759ff4b2eae34707a9"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "WP-00复用原Invoke-Probe/临时Git/报告机制，8项主线分支与显式范围正负例；不证明依赖完成或算法通过，独验NOT RUN。",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "17a7812bbae980e78ab783c6d001ba3524021787a9afaad3e034638f5834c1b7"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -SerialMainlineOnly"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/ps7/governance-lite-report.json",
+          "sha256": "6040ae4748d01682b0de5d85cebdb06b5b8b3af622822bdd27d0c6e1d4172a23"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/WP-00/ps51/governance-lite-report.json",
+          "sha256": "56baffd954f2fc400ec4fa7ebfca663732b2f3a2226aa1dc07e1e7b130433bc3"
+        }
+      ],
+      "auditBoundary": "WP-00定向自查，未重新验收其他pending治理功能"
     }
   ]
 }

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "GOV-T24",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "WP-01 定向核查并修复主线准入与构建供给",
+  "status": "planned",
+  "branch": "redesign-main",
+  "dependsOn": [],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13",
+    "reuse/policy.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T24.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "WP-01 定向核查并修复主线准入与构建供给及原始证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "先核T19三变量IRD-GATE-LIB误报，优先合法显式target接线，不放宽未知依赖",
+    "先定位RobWork导出包供给失败的真实文件；生产/CMake变动前补精确allowedFiles、reuse凭证及既有阶段验收引用，再置ready",
+    "实际变化的目标增量构建、依赖门禁、必要独立冒烟通过；未解决环境缺供如实标NOT RUN并说明影响"
+  ],
+  "note": "所有者授权主工作树redesign-main串行，本地提交不操作远程；WP别名仅用于migration调度。实施与独验分开；本任务不批准新核心、上游扩展或权限放宽。 本契约是定向核查入口，planned不授权生产修改。供给位置未确认不得猜测路径/复制框架清单；实际改动须精确能力契约和产品凭证，GOV编号不能绕过复用门禁。回滚只限本包接线和供给增量。"
+}

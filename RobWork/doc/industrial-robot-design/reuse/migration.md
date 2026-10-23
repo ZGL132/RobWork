@@ -1,5 +1,7 @@
 # 上游复用迁移计划（2026-10-22）
 
+> **当前执行入口：§13 主工作树串行工作包（2026-10-24）。** §1～§12 保留历史审计、决策与证据来源，其中旧的下一任务、任务分支、A/B 并行及合入安排不再用于当前调度；H1—H6、权限与独验阶段门不变。
+
 ## 1. 审计基点与结论
 
 基点 b12e8503cc1c2a1acc040f506842a02e126b9515；根目录内还有 RobWork/ 子树。Fk.cpp 自持 FK/Jacobian；Ik.cpp 自持 DLS/约束差分；InverseDynamics.cpp 自持 Vec3/Mat3/RNEA；ForwardDynamics.cpp 自持质量阵/消元/RK4。CouplingMath.hpp、DescriptionValidator.cpp、MappingCore.cpp 各有 SVD；CartesianLine.cpp 手写 SLERP。Planner.cpp 与 policy/runtime 的 RRT/碰撞适配保留。全文件入口为 inventory.json，未完成语义核查如实标记 audit-required。
@@ -221,7 +223,7 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 | 上游版本升级或证据过期 | catalog 锁定真实版本、符号/目标和相关摘要；触发受影响能力重验，不自动沿用旧 verified |
 | 外部网络/原有 CI 失败 | 区分当前变更与存量原因；保留失败，必需远程检查未完成不宣称远程交付/最终验收 |
 
-**当前下一项产品交付为REUSE-T07：CouplingMath调用上游svd并删除自写Jacobi。** 旧工作包0～2范围及历史验收保持；后续按§12.11能力准入推进。本次规划不批准扩展/新核心，不自动改变任何 planned 任务状态。
+**历史调度快照：当时下一项为 REUSE-T07。该包已有成果，当前调度以 §13 为准，不重复实施。** 旧工作包0～2范围及历史验收保持；本次规划不批准扩展/新核心，不自动改变任何 planned 任务状态。
 
 ## 12.11 所有者批准的能力交付调整（2026-10-23）
 
@@ -239,4 +241,74 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 - functions/catalog是唯一功能数据源，可按direct/adapter、既有适配待核、proposal受阻、NONE业务专属待确认及待审生成视图；不另维护人工进度台账。主指标是独验通过的实际替换能力、已删重复核心、生产消费证据及剩余阻断。
 - 相同冻结版本相同门禁只执行一次，未变原件直接引用；产品/CMake/公共接口执行受影响集成、必要独立冒烟、对端回归。T06仍要求全范围关闭与最终独验；不变库存分类，不把局部通过当全项目完成。
 
-继续隔离reuse-audit工作树和任务分支；不合入redesign-main，不触碰main，不执行push/fetch/pull或远程排查。回滚完整能力提交/制品，不重新启用隐藏旧核心。
+以上为历史隔离实施安排；当前主工作树与提交方式由 §13 取代。不触碰 main，不执行 push/fetch/pull 或远程排查。回滚完整能力提交/制品，不重新启用隐藏旧核心。
+
+## 13. 主工作树串行工作包（2026-10-24）
+
+### 13.1 执行现场、授权与续接入口
+
+所有者已批准本节计划并要求先实施 WP-00。唯一实施现场为 `D:\10_Source_Repos\21_robot\RobWork`、分支 `redesign-main`；参考起点 `58962b338505fc9f69b6a9f1a50e2d55712efffc`，核查时工作区干净。新会话核对实际 HEAD/状态，承接新增提交，不能重置到参考起点。取消 A/B 并行开发；旧工作树和历史证据保留，不再按旧 HEAD 调度。禁止远程同步、框架/vcpkg 修改和自动派子智能体。
+
+**当前续接**：WP-00 / [GOV-T23](../tasks/GOV-T23.json) 为本轮治理实施与定向自查对象，结论见 [本包原始记录](../traceability/reuse/WP-00/README.md)。随后领取 WP-01 / GOV-T24，先核当前准入阻断；本次不提前修改其生产接线。必要独验由所有者另开会话或人工完成，实施者不得自签。WP-00 的新脚本规则独验前不宣称已独验，不影响已有 GOV-T21/T22 的真实历史结论。
+
+每次结束或受阻，只在本节更新当前入口、相关任务和下一动作；任务 JSON 仍是契约状态来源，functions/catalog 是功能数据来源，原始记录与独验文件是验证结论来源，不新增状态平台或重复证据总账。不改既有状态枚举：planned 尚未准入、ready 可在前提内实施/待独验、blocked 有明确阻断、done 达到本任务全部退出条件；实施完成待独验在原任务 note/证据注明，不能伪装 done。
+
+开包时在既有任务或其引用说明中写清：文件/符号、业务契约、上游适用来源与被否候选、保留/删除/适配、唯一 owner、数据流、消费者、验证与可引用证据、回滚边界。正式 REUSE 编号先查重；下表 WP 编号只是计划别名。近期任务先细化，后续包临近执行再补可执行契约，不凭 planned 父任务任意改生产。
+
+### 13.2 交接索引与已知阻断
+
+交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。
+
+| 来源与范围 | 当前承接与遗留 | 责任 |
+| --- | --- | --- |
+| 主实施链 `82cd82ff7`；T01/README、functions、T11/README、extensions/required-proposals.md | 全项目审计未全完成；已验证成果直接引用，不重新全库深查 | 本轮实施者按能力补审；所有者裁决缺口 |
+| T12 `bc212f245`；tasks/REUSE-T12.json、reuse/drivetrain-linalg-migration.md、traceability/reuse/drivetrain-linalg/README.md | SVD/求逆已替换；性能、独验、CMake REUSE-COVERAGE 遗留先查最新证据，不能因集成关闭 | WP-03 核对，实际返工先落实精确任务 |
+| T09 `8db7a7e78`、`aee6ac5bf`、`b0997f8d8`；tasks/REUSE-T09.json、reuse/trajectory-polynomial-migration.md、traceability/reuse/REUSE-T09/README.md | Polynomial 已生产调用；189项与69项契约、断开及性能证据按适用性引用；独验以实际独立记录为准 | WP-03 核对；WP-11 不重写该成果 |
+| A/B 最后整合 `37a07c809`、`60bcddf1c`、`58962b338`；T17、T19、T20 原记录 | T17 接缝、T19 FK/Jacobian、T18 监听器修复已集成，不重复实施 | 本轮实施者承接稳定端口 |
+| T13、T15、T16 各任务及同名 traceability/reuse 记录 | 已实施，尚需核实/补足独验；FNV 本包性能开销已获所有者接受 | WP-03 准备；所有者安排独验 |
+| T19/integration-20261024/a-build.log | kinematics 三个局部 CMake 目标变量被 IRD-GATE-LIB 静态扫描拒绝；实际链接成功不代替门禁通过 | WP-01 |
+| T20：traceability/reuse/REUSE-T05/setcheck-max-matching/README.md §8.3/后续集成记录 | Boost 来源表达、稠密场景约220倍退化和最终独验未闭合；不得伪装 RobWork API/NONE 或恢复自写 fallback | WP-02；性能接受及独验由所有者决定 |
+| 主线集成/冒烟原记录 | 冒烟 RobWork 导出包路径/供给失败；UI F-560 字符串钉扎历史失败保留 | WP-01 定向核供给；未受影响 UI 不返工 |
+
+T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功能。T17/T19 一次集成裁决不等于 T13 已独验，也不自动放行未来依赖。T18 为监听器、T19 为 FK、T20 为 SetCheck，历史测试别名不作为再次占号理由。
+
+### 13.3 顺序工作包与实施边界
+
+路径默认相对 `industrialrobot/`；上游路径相对框架源码根。每包遵循：审清需求 → 验证上游 → 确定边界 → 重构替换 → 同包删冗余 → 增量验证及必要独验。未知具体符号在定向核查后写入任务，未查清不得放行生产修改。
+
+| 包/任务入口 | 文件、复用来源与实施步骤 | 必要前提、验收和退出 |
+| --- | --- | --- |
+| WP-00 / GOV-T23 | 根/分区 AGENTS、migration/policy、CCP/ACC/PIPE；统一主树串行/本地提交/续接；复用现有 validate-task、scope 与治理测试补主线分支及显式 Base 检查；不动产品算法/catalog/permissions | 定向正负例、文档及任务检查，记录自查与独验分离；下一步 WP-01 |
+| WP-01 / [GOV-T24](../tasks/GOV-T24.json) | kinematics/CMakeLists.txt 的三变量接线及 IRD-GATE-LIB；优先显式合法目标；定向核 modeling 的 RobWork 包供给，复用既有导出，不复制框架源清单/新 fallback | 契约先补确切供给修改文件及产品凭证再准入；受影响增量构建/门禁/必要冒烟；不得放宽未知依赖 |
+| WP-02 / [REUSE-T20](../tasks/REUSE-T20.json) | testkit SetCheckMatch.cpp/相关 CMake 与原 README §8.3；拆测图构造/转换/算法/结果，验证 Boost 入口适用性；如实表达第三方来源；删除无用转换，禁止恢复旧匹配核心 | 当前已实施但未收口；专项性能满足标准或获明确接受、来源可追溯、最终版本独验；受阻继续独立包 |
+| WP-03 / [GOV-T25](../tasks/GOV-T25.json) 引用 T13/T15/T16 | 不改生产，核已有数值/消费/所有权原证据，提交确切版本交独验；附查 T07/T09/T12 最新遗留，不重做已替换能力 | offset 正负/轴/安装/限位与旋转回归；FNV 精确 oracle/已接受性能；日志 keep 边界；发现缺陷另定返工范围；未验不得关闭 |
+| WP-04 / T03 精确子任务待编制 | kinematics/src/Ik.cpp、JointMapping.hpp；验证 rw/invkin/JacobianIKSolver 的 solve/solveLocal；复用 T17 视图与私有 State，单点 q 映射，独立残差复核 | 先只迁移完整位姿普通模式；满足前置准入/模型真值；删除该模式自写 DLS/正规方程/重复链；IK 定向及消费者契约、不可达/限位/确定性 |
+| WP-05 / GAP-IK-01 相关子任务 | 同 IK 入口分审位置、部分姿态、双容差、取消/迭代观测；比较已有上游入口，EAA 与 Euler 掩码不混同，后过滤不冒充约束求解 | 实质缺口先提案批准；不另写 DLS/差分。各模式残差、奇异/取消/误报收敛；所有消费者迁移后删除余下旧核心 |
+| WP-06 / T02 动力学映射子任务 | runtime/src/DynamicWorkCellCompiler.cpp 及现有公共视图；定向核 Body/Device/State、质心/惯量/固定段/载荷/重力映射；复用 offset 既有修复 | runtime 唯一模型 owner、任务私有 State；不接管摩擦/时间策略，不跨进程传指针；接口变化先明确消费者并确认语义 |
+| WP-07 / T04 RNE 子任务 | dynamics/src/InverseDynamics.cpp → rwsim/util/RecursiveNewtonEuler；核 solve 的 DOF+1 Wrench、参考系/索引及按关节类型投影 | 依赖 WP-06；移动关节反例必须正确，不能截尾或盲用 solveMotorTorques；删 Vec3/Mat3/RneaChain/buildRneaChain/computeGeometry/rneaTorques 等旧核；独立物理 oracle |
+| WP-08 / GAP-FD-BUILD-01 | 现有 PhysicsEngine/ODE 等实际供给定向探测；核 Device、力驱动、状态/步长/确定性与部署；记录 Bullet/RWPhysics 已知不适用证据 | 仅适用性与供给提案；新依赖/扩展等未获批不实施，不把刚体积分器当关节求解器 |
+| WP-09 / T04 FD 子任务 | dynamics/src/ForwardDynamics.cpp → WP-08 已验证引擎；保留公共输入/结果、单位和错误语义，删除质量阵/消元/RK4四阶段及重复状态 | 依赖 WP-06、WP-08 及所需批准；解析基准/平衡/能量/收敛/确定性及真实业务链，无隐藏 fallback |
+| WP-10 / GAP-CORE-C4-01 | core 原 C4 单点及原提案；重审 fma/TwoSum 候选的次正规 a/2 信息损失、哨兵/精度和是否新核心，先找成熟原语 | 原 A 撤回不授权新范围；批准前只修提案/验证候选；批准后单点修复和独立高精度 oracle，不拓展精确计算平台 |
+| WP-11 / T05 trajectory 子任务 | Ptp.cpp、CartesianLine.cpp；核上游 LinearInterpolator、Quaternion::slerp/路径轨迹工具；按 Ptp、直线、其余分别提交 | 保留已实施 Smooth/TimeParam Polynomial；核端点/时标/导数/连续性；时间加权 RMS 不强套 Statistics；删旧系数/转换/缓存 |
+| WP-12 / T05 modeling 子任务 | BaseWorldTransform/DescriptionValidator 按实际 owner 定位；modeling DH/惯量能力；优先 LinearAlgebra、RPY/EAA/Transform3D 及成熟标定入口 | 保留 CouplingMath 成果；模型真值归 runtime；每个数值子包独立坐标/单位/退化 oracle；LM/差分缺口不直接新写 |
+| WP-13 / policy 子任务 | 原规则入口 F-961：合法名称 REGEX 解释问题，优先已有字面 API/单点转义；随后独立审随机/LHS 候选 | 不把未证实规则不匹配描述为碰撞漏检；保留种子/分布/线程/确定性，具体消费者正反例 |
+| WP-14 / diagnostics 子任务 | F-968 原解析入口，失败后 partial names 最小事务提交/清理；复用既有错误轨 | diagnostics 稳定码/文案唯一权威；T16 不重写；中途失败/重复调用/残留验证 |
+| WP-15 / core、io 工具子任务 | 摘要、基础数值、JSON/CSV/UTF-8 三类分批；SHA 按 GAP-DIGEST-01 验证同渠道成熟供给，先查既有 codec/工具/测试 | T15 FNV 保留；不新建序列化框架/新依赖渠道；业务公式与独立 oracle 不为凑复用而替换；每子包确定符号后准入 |
+| WP-16 / project 子任务 | F-962 恢复 scan 的 manifest/内容摘要；复用 codec::contentVersionOf/core 摘要 | project 唯一修订/写 owner；摘要供给有前置先说明；篡改/缺失/合法恢复/历史兼容，不自写摘要 |
+| WP-17 / io 子任务 | F-963 磁盘满错误映射，核现有 SDK 与转换入口，删除错误硬编码 | SDK 正确映射与可控故障注入验证，不再建数字表，不制造无必要磁盘耗尽 |
+| WP-18 / execution、ui 两子任务 | F-964 既有状态机先验证再赋值，修拒 Completed 后半写；F-967 核 ReferenceEventBus 生产装配，优先 execution 现有总线与订阅生命周期 | 两项独立回滚；不重造状态机/第三总线；拒绝前后状态、退订/销毁、线程及真实 UI 接线 |
+| WP-19 / 剩余单元子任务 | 依次 requirements→selection→optimization→reporting→workflow→evidence→ui→testkit，附 drivetrain 遗留；沿已有矩阵反查隐藏 helper/工具/脚本/构建 | 保留合理适配和业务规则；不把业务搬 core；不扩宿主例外/模型多 owner；F-959 黄金生成脚本先修契约再审差异，不能洗绿 |
+| WP-20 / T06 最终收口 | 全20单元 functions/catalog 复核，关闭记录追溯；删死核心/转换/缓存/依赖/包装，查测试/备用路径回流生产 | 对新跨包影响增量集成、最终模式及确切版本独验；引用仍适用证据，未批/未验/本次缺陷不假关；不以全接入上游或清空无关债务为目标 |
+
+### 13.4 调度、验证与交付约束
+
+建议按 WP-00→WP-20 顺序，真正依赖为普通 IK 的稳定视图/准入、RNE 的模型映射、FD 的后端供给、C4 的修订批准。某提案受阻只停止相关改动，在原任务登记原因/消费者并继续下一无依赖包；影响模型真值、公共契约或必要门禁的缺陷未处理前，不推进依赖实施。计划登记不自动批准扩展/新核心或放宽性能与权限。
+
+- 任务契约复用现有 schema/status；开包先登记起始 SHA、实际范围与验证命令。主线范围检查必须显式 Base/Head；不得用主线自比较零改动冒充通过。verify-task 不替代独验/语义批准。
+- 文件/功能变更及来源、owner、批准、生产正向/独立正确性与证据新鲜度继续使用现有 validate-task/validate-reuse/verify-task-scope/架构门禁；这些检查不能自动证明所有依赖完成或批准真实。领取和验收时必须人工核对任务前置与独立记录，不宣称新自动调度规则已实现。
+- 治理文档只跑相关文档/任务检查；脚本只跑变动规则正负例。私有实现跑受影响目标与测试；公共接口、CMake、依赖和核心数值扩大到实际消费者、必要冒烟/数值对照；不默认全库重配或全量构建。有效证据按源码输入、相关依赖/工具链/配置/测试输入及范围判断，不只看 HEAD。
+- 同包稳定后一次同步实际受影响的矩阵/凭证/文档，批次命令去重，不重跑全部历史治理夹具、不刷新无关摘要。源文件完整功能覆盖规则继续有效，不能以拆文件/虚假 migrated 规避。
+- 数值独立 oracle、真实上游消费、唯一模型/状态所有权、相关业务回归和必要一次独验必须保留；Windows GUI 按根规则，纯模型不引 GUI。PASS/FAIL/SKIP/NOT RUN 分列，继承失败不能写通过。
+- 每包交付：确切版本、复用来源/数据流、删冗余清单及保留理由、原始验证与独验链接、稳定接口/限制、阻断消费者。回滚本包完整增量和相关消费者，不覆盖他人、不改历史、不恢复隐藏平行核心、不操作远程。
+
+WP-00 只验入口可定位、旧安排不冲突、近期契约范围明确和新规则定向结果；不构建产品，不把 WP-01 既知 IRD-GATE-LIB/供给失败改为通过。本节长期作为唯一人工调度入口，任务/功能/证据事实各从原来源引用。
