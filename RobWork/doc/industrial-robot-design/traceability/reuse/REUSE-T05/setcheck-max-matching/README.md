@@ -66,7 +66,19 @@
 
 ## 6. 未完成事项
 
-1. ird_gates 未转绿：预期首个阻断＝`Boost::headers` 未知目标族（第三方词表未登记）；治理落地后由协调者或下一轮复跑一次（`cmake --build build-int-lsn --config Release --target ird_gates`），validate-reuse 待 changes 凭证整合——不重复运行已知失败命令。
-2. 任务编号、testkit.md §3.1/§9 修订、functions/inventory 刷新：待协调批次。
+1. ~~ird_gates 未转绿~~ **已转绿**（§7 协调落地：复跑 exit 0）。
+2. ~~任务编号、testkit.md §3.1/§9 修订、functions/inventory 刷新~~ **已完成**（§7 协调落地：REUSE-T19 登记）。
 3. 独立验收未开始（所有者另开会话；本记录不构成自签）。
 4. 范围声明：本包仅覆盖 SetCheck 阶段 2 匹配内核一项复用，**不得扩大为整个 testkit 迁移完成**（JSON 解析/摘要等审计遗留候选仍各自待核）。
+
+## 7. 协调落地（2026-10-23，共享治理唯一修改者）
+
+**任务登记**：精确能力子任务 **REUSE-T19**（`tasks/REUSE-T19.json` ready＋`reuse/changes/REUSE-T19.json` 5 文件凭证——§5 四产品文件＋白名单）。§5 原拟 4 文件未含白名单：本批 `IRD_THIRDPARTY_ALLOWED_TARGETS` 增列 `Boost::headers`（＋注释 4 行）即白名单产品面改动，须凭证（ird_gates 首跑 LIB 命中的登记本体）。catalog/permissions 确认无真实变化未改。
+
+**依赖契约**：testkit.md §3.1 行按 §5 建议修订（header-only 编译期使用例外）＋§9 v1.7 版本行；DTB §4.5 增 LIB 行（Eigen3 先例；ird-gates-setcheck.log 首跑恰 1 项 IRD-GATE-LIB 命中留证）。
+
+**functions/testkit.json**：按 §5 处置表逐项落地——tryAugmentAt 删除；maximumBipartiteMatching 新增（SetCheck.hpp 134-136＋SetCheckMatch.cpp 1-88 双源）；compatible 105-122（哈希复算与原值逐字一致）；checkSetEquivalent 147-380／checkStableOrder 382-423／MatchPair＋Traits ＋6 平移全部复算吻合；§5.3 机械 pin 批量刷新（CMakeLists bdf5362e→新值 100 处、SetCheck.hpp 316a6239→新值 31 处、SetCheckTest.cpp f5fde51c→新值 7 处）。COVERAGE 规则（§5 未预见的机器面）：被改四文件须全行矩阵覆盖——SetCheck.hpp 补 6 段、SetCheckMatch 由 maximumBipartiteMatching 全文件源承载、SetCheckTest 按用例块 9 段、CMakeLists 7 行区间/哈希重排；被改文件覆盖行按 F-958／diagnostics 先例登记 `migrated＋business-specific＋NONE＋nonOverlapEvidence`（绑定 setcheck-run-release/gtest.xml，非closed）。foundation-governance 白名单 10 行区间/哈希随本批白名单增列重算。
+
+**哈希口径**：§5 的 4 文件 sha256 为原始字节口径（7b983374/334f1197/72999190 与 raw sha256sum 逐字吻合）；登记值按校验器 Digest 规则（CRLF→LF 归一）重算——SetCheck.hpp c882aeda…、SetCheckMatch.cpp 4cf78053…（两口径同值）、CMakeLists.txt ae543743…、SetCheckTest.cpp 93733df4…。区间哈希（b97ff334/1fc53e6b/c2bf1998 等）经本批复算全部吻合。
+
+**门禁终态**：`cmake --build build-int-lsn --config Release --target ird_gates` 复跑 **exit 0**——红线 11 类零命中（首跑 IRD-GATE-LIB 消解）＋validate-reuse 全量 PASS（inventory=1401、changed=69），日志 `ird-gates-setcheck-run2-final.log`。既有定向/消费者回归证据（§4 表）按增量口径原样引用（本批治理登记零产品代码变化）。F-958 套件与消费者面未重跑。
