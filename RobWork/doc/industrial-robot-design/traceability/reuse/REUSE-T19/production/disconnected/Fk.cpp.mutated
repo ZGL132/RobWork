@@ -1,0 +1,504 @@
+/**
+ * @file   Fk.cpp
+ * @brief  FK 与位姿指标实现（KIN-01，REUSE-T18 上游复用版）——经 T17 锚
+ *         消费已编译 WorkCell 的上游 FK/Jacobian，保留指标链与 canonical
+ *         载荷编码。
+ *
+ * 设计依据：
+ *   - units/kinematics.md §5.1/§5.2/§9.2（契约面，见 Fk.hpp 文件头）、
+ *     §3.4（数值恒 SI、纯函数确定性）、D-KIN-2（统一尺度规则）、D-KIN-6
+ *     （裕量归一化＝设计默认，随黄金数据集锁定）
+ *   - REUSE-T18 能力包（tasks/REUSE-T18.json）：删除本单元手写链式 FK/
+ *     几何雅可比/Eigen JacobiSVD 直调，改为消费上游真实计算——
+ *       · rw::models::Device::setQ / baseTframe / baseJframe
+ *         （RobWork/RobWork/src/rw/models/Device.hpp——T_base_f 读法与
+ *         雅可比行义〔0-2 线速度、3-5 角速度〕、列序＝设备活动关节序
+ *         ＝规范链序，与 PoseMetrics 契约逐行一致）；
+ *       · rw::math::LinearAlgebra::svd（Eigen JacobiSVD 内核，奇异值
+ *         降序——旧注释"rw::math 无 SVD"已过时，本文件不再直调 Eigen
+ *         SVD；Ik.cpp 的 Eigen 直用面不在本包范围）；
+ *       · runtime 编译事实（REUSE-T13）：每工具的默认 tcpOffset 已编译为
+ *         挂法兰的 FixedFrame（WorkCellCompiler.cpp 第 6 步）——默认 TCP
+ *         位姿即上游帧树 FK；WC 关节坐标＝q_rw，权威换算见
+ *         src/JointMapping.hpp。
+ *   - 两模式链接纪律（REUSE-T07/T12 先例）：本 TU 消费 rw 框架外联符号，
+ *     kinematics 库在集成模式链真实框架目标、独立冒烟经
+ *     find_package(RobWork CONFIG) 消费同一上游导出包（RW:: 目标）——
+ *     绝不源码复制/备用算法；旧"仅头内 inline 面"约束对本 TU 不再适用
+ *     （替代注册，见 kinematics/CMakeLists.txt 上游链接段）。
+ *   - 治理登记 O-40（DTB §4.2）：Eigen 仍为 kinematics PRIVATE 依赖
+ *     （Ik.cpp 直用＋本 TU 经 LinearAlgebra::svd 间接），消费点登记随本
+ *     包更新；公共头面零 Eigen 类型不变。
+ *
+ * 实现纪律：
+ *   - 基座—世界组合**只经** runtime::composeWorldBaseTcp（§5.1 唯一来源
+ *     声明/M-11/AT-37——本单元不写第二套基座变换代数）；
+ *   - 任务私有 State：每次 evaluate 经锚 makeState() 取独立值拷贝，setQ
+ *     只写该私有 State（§9.2 并发规则——WC 结构跨线程只读、State 每线程）；
+ *   - 全部浮点运算定序固定（逐关节单遍映射、上游 FK/Jacobian、SVD 单线程）
+ *     ——同输入同字节（NFR-COR-01，确定性来源登记：无并行归约、无时钟/
+ *     环境依赖）。
+ */
+
+#include <sdurws/ird/kinematics/Fk.hpp>
+
+#include <sdurws/ird/runtime/BaseWorldTransform.hpp>  // composeWorldBaseTcp——基座—世界唯一组合点
+#include <sdurws/ird/runtime/Snapshot.hpp>            // IRuntimeModelView 完整类型（锚消费面）
+#include "JointMapping.hpp"                           // q_rw＝q_auth−zeroOffset（单元私有纯函数）
+
+#include <rw/math/Jacobian.hpp>
+#include <rw/math/Q.hpp>
+#include <rw/math/LinearAlgebra.hpp>  // 上游 SVD——REUSE-T18 唯一奇异值实现点
+#include <rw/math/Vector3D.hpp>       // cross——参考点移轴（头内模板）
+#include <rw/models/Device.hpp>       // Device::setQ/baseTframe/baseJframe
+#include <rw/models/SerialDevice.hpp> // SerialDevice 完整类型（设备查询面）
+#include <rw/kinematics/Frame.hpp>
+#include <rw/kinematics/State.hpp>
+
+#include <algorithm>
+#include <cmath>
+#include <cstring>
+#include <limits>
+#include <string>
+#include <vector>
+
+namespace sdurws::ird::kinematics {
+
+namespace {
+
+// =====================================================================
+// 错误值构造辅助（KinematicsError 值面——§9.1 非异常出口；params 键为
+// T03 生产者登记面：expected-dof/actual-dof/nonfinite-index）
+// =====================================================================
+
+/// q 维度不符（expected/actual 均为自由度个数，无单位）。
+KinematicsError makeIllegalQDimension(std::size_t expectedDof, std::size_t actualDof)
+{
+    KinematicsError e;
+    e.code = KinematicsErrorCode::IllegalQ;
+    e.params.emplace_back("expected-dof", std::to_string(expectedDof));
+    e.params.emplace_back("actual-dof", std::to_string(actualDof));
+    e.detail = "q 维度与设备自由度不符（NFR-COR-03：拒绝，不钳制不置零）";
+    return e;
+}
+
+/// q 含非有限分量（firstIndex 为首个违例分量的下标——自由度序，无单位）。
+KinematicsError makeIllegalQNonFinite(std::size_t firstIndex)
+{
+    KinematicsError e;
+    e.code = KinematicsErrorCode::IllegalQ;
+    e.params.emplace_back("nonfinite-index", std::to_string(firstIndex));
+    e.detail = "q 含非有限分量（NaN/Inf——NFR-COR-03：拒绝，不置零）";
+    return e;
+}
+
+/// 无可用设备（§9.6 KIN-NO-DEVICE——结构化错误素材，FK 失败≠工程不可行）。
+KinematicsError makeNoDevice(std::string detail)
+{
+    KinematicsError e;
+    e.code = KinematicsErrorCode::NoDevice;
+    e.detail = std::move(detail);
+    return e;
+}
+
+/// TCP 未配置/悬空（§9.6 KIN-NO-TCP 两分语义；variantDetail 区分两分支）。
+KinematicsError makeNoTcp(const char* variantDetail)
+{
+    KinematicsError e;
+    e.code = KinematicsErrorCode::NoTcp;
+    e.detail = variantDetail;
+    return e;
+}
+
+/// TCP 帧未解析（§9.2 @错误 行 FrameUnresolved——键不命中即拒绝，不模糊匹配）。
+KinematicsError makeFrameUnresolved(const std::string& tcpKey, const std::string& toolName)
+{
+    KinematicsError e;
+    e.code = KinematicsErrorCode::FrameUnresolved;
+    e.params.emplace_back("tcp-key", tcpKey);
+    e.params.emplace_back("tool-local-name", toolName);
+    e.detail = "tcpKey 不命中 canonical TCP 身份（帧未解析——R-4 禁拼串定位）";
+    return e;
+}
+
+/// 关节是否消耗一个自由度（Fixed 为纯结构关节——无 q 分量）。
+bool isMovable(runtime::JointType t)
+{
+    return t != runtime::JointType::Fixed;
+}
+
+// =====================================================================
+// canonical 编码原语（定宽小端——卡面 §4.4 编码纪律；f64＝IEEE754 位
+// 模式小端 8 字节，含 +∞——位模式确定）
+// =====================================================================
+
+/// 追加小端 u32。
+void putU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+{
+    for (int i = 0; i < 4; ++i) {
+        out.push_back(static_cast<std::uint8_t>((v >> (8 * i)) & 0xFFu));
+    }
+}
+
+/// 追加小端 f64（位模式经 memcpy 取得——免别名 UB，位表示确定）。
+void putF64(std::vector<std::uint8_t>& out, double v)
+{
+    std::uint64_t bits = 0;
+    static_assert(sizeof(bits) == sizeof(v), "f64 位模式直写要求 8 字节 double");
+    std::memcpy(&bits, &v, sizeof(bits));
+    for (int i = 0; i < 8; ++i) {
+        out.push_back(static_cast<std::uint8_t>((bits >> (8 * i)) & 0xFFull));
+    }
+}
+
+// =====================================================================
+// 上游消费辅助（REUSE-T18）——锚→设备/帧/State 的薄适配
+// =====================================================================
+
+/// 非拥有 Ptr 包装（findFrame 返回裸指针——生命周期随快照，§8.2）。
+rw::core::Ptr<const rw::kinematics::Frame> framePtr(const rw::kinematics::Frame* f)
+{
+    return rw::core::Ptr<const rw::kinematics::Frame>(f);
+}
+
+}  // namespace
+
+// =====================================================================
+// FkEvaluator::evaluate——上游消费主流程（类注释列纲，逐步对号）
+// =====================================================================
+
+Expected<PoseMetrics> FkEvaluator::evaluate(const IKinRuntimeView& view,
+                                            const TcpRef& tcp,
+                                            const std::vector<double>& q) const
+{
+    // ---- 第 1 步：模型获取与结构守卫（§5.1 唯一来源——模型只经视图）----
+    const runtime::CanonicalModel& model = view.model();
+    const std::vector<runtime::CanonicalJoint>& joints = model.chain().joints;
+    if (joints.empty()) {
+        return Expected<PoseMetrics>::err(
+            makeNoDevice("快照模型无可用设备链（KIN-NO-DEVICE 素材——§9.6）"));
+    }
+
+    // 自由度清点：Fixed 关节不消耗 q（§5.2"q 维度=device DOF"的 DOF 定义
+    // ——可动关节（Revolute/Continuous/Prismatic）链序计数）。
+    std::size_t dof = 0;
+    for (const auto& j : joints) {
+        if (isMovable(j.type)) { ++dof; }
+    }
+
+    // ---- 第 2 步：非法输入 fail-fast（V-03 前半/NFR-COR-03）----
+    // 先维度后有限性，两检独立可辨（params 键区分）——不钳制不置零。
+    // 守卫先于锚消费：无锚视图的调用同样先得 IllegalQ 判别（可辨识性）。
+    if (q.size() != dof) {
+        return Expected<PoseMetrics>::err(makeIllegalQDimension(dof, q.size()));
+    }
+    for (std::size_t k = 0; k < q.size(); ++k) {
+        if (!std::isfinite(q[k])) {
+            return Expected<PoseMetrics>::err(makeIllegalQNonFinite(k));
+        }
+    }
+
+    // ---- 第 3 步：TCP 解析（KinTypes.hpp 解析规则；NoTcp 两分语义）----
+    const std::vector<runtime::CanonicalTool>& tools = model.tools();
+    if (tools.empty()) {
+        // 未配置：快照模型无任何工具（§9.6 KIN-NO-TCP"TCP 未配置"）。
+        return Expected<PoseMetrics>::err(
+            makeNoTcp("TCP 未配置：快照模型无工具（KIN-NO-TCP 素材——§9.6）"));
+    }
+    const auto loc = model.findObject(tcp.toolObject);
+    if (!loc.has_value() || loc->kind != runtime::CanonicalModel::ObjectKind::Tool) {
+        // 悬空：指名对象不在快照内、或不是工具定义（"引用悬空"分支）。
+        return Expected<PoseMetrics>::err(
+            makeNoTcp("TCP 引用悬空：toolObject 未解析到快照工具（KIN-NO-TCP 素材——§9.6）"));
+    }
+    const runtime::CanonicalTool& tool = tools.at(loc->index);
+    // A-15/KIN-14：实际键优先，避免工具名恰好等于某tcpKey时误用默认项。
+    // 指针仅在本次同步计算借用，所有权归不可变模型，不发布到UI或缓存。
+    const rw::math::Transform3D<double>* tcpOffset = &tool.tcpOffset;
+    if (!tcp.tcpKey.empty()) {
+        const auto selected = std::find_if(tool.namedTcpOffsets.begin(), tool.namedTcpOffsets.end(),
+            [&](const auto& entry) { return entry.first == tcp.tcpKey; });
+        if (selected != tool.namedTcpOffsets.end()) { tcpOffset = &selected->second; }
+        else if (tcp.tcpKey != tool.localName) {
+            return Expected<PoseMetrics>::err(makeFrameUnresolved(tcp.tcpKey, tool.localName));
+        }
+    }
+    // 命名 TCP 与默认 TCP 的上游承载面不同（编译事实——REUSE-T13）：
+    //   默认 tcpOffset 已编译为法兰子 FixedFrame → 位姿/雅可比全取上游帧树；
+    //   命名偏置是 KIN-14 消费侧选择语义（编译层不编译命名键帧）→
+    //   法兰上游 FK 位姿/雅可比＋消费侧一次偏置复合/参考点移轴。
+    // 判据＝实际选中的偏置是否就是默认 tcpOffset（指针同一——A-15 优先
+    // 级已在上方解析：localName 别名命中命名目录时仍走命名偏置，不得因
+    // 键等于工具名而误用默认编译帧——NamedTcpOffsets 用例第二行钉住）。
+    const bool defaultTcp = (tcpOffset == &tool.tcpOffset);
+
+    // ---- 第 4 步：锚与设备（REUSE-T18——已编译模型的唯一消费入口）----
+    // @pre"view 为请求绑定 RuntimeSnapshot 的只读模型视图"（§9.2）：锚缺失
+    // ＝无可用设备（NoDevice 值面——T17 锚能力入口的缺省体即纯数值视图）。
+    const std::shared_ptr<const runtime::IRuntimeModelView> anchor = view.runtimeModelView();
+    if (!anchor) {
+        return Expected<PoseMetrics>::err(makeNoDevice(
+            "视图未绑定编译产物锚（runtimeModelView()==nullptr——§9.2 @pre："
+            "FK 消费已编译 WorkCell，纯数值视图无设备可用）"));
+    }
+    // 设备查找：deviceName 是名称端口生成物（CanonicalModel.chain 携带值，
+    // S8 与映射交叉校验）——R-4 纪律下不做任何拼名/扫描兜底。
+    const rw::core::Ptr<const rw::models::SerialDevice> device =
+        anchor->workCell().findDevice(model.chain().deviceName);
+    if (!device) {
+        return Expected<PoseMetrics>::err(makeNoDevice(
+            "设备名未命中编译产物（deviceName=" + model.chain().deviceName
+            + "——快照 S8 交叉校验后不可达，防御 fail-fast）"));
+    }
+    // 结构一致性防御：设备自由度必须等于规范链可动关节数（同一编译产物
+    // 的两侧投影——S8 保证；不匹配＝快照内部违约，不静默继续）。
+    if (static_cast<std::size_t>(device->getDOF()) != dof) {
+        return Expected<PoseMetrics>::err(makeNoDevice(
+            "设备自由度与快照模型不符（编译产物 " + std::to_string(device->getDOF())
+            + " vs 规范链 " + std::to_string(dof) + "——快照内部一致性防御）"));
+    }
+
+    // ---- 第 5 步：任务私有 State 与权威 q 映射（§9.2 并发规则）----
+    // makeState＝WC 默认状态值拷贝（每线程独立）；setQ 只写该私有 State，
+    // 不触碰快照侧任何共享结构。q_rw＝q_auth−zeroOffset（JointMapping.hpp
+    // ——上游关节已承载偏置：WC 坐标 q_rw=0 ⟺ 权威 q=zeroOffset）。
+    rw::kinematics::State state = anchor->makeState();
+    std::vector<double> qRw;
+    qRw.reserve(dof);
+    for (const auto& j : joints) {
+        if (!isMovable(j.type)) { continue; }
+        qRw.push_back(jointmapping::qRuntimeFromAuthoritative(j, q[qRw.size()]));
+    }
+    device->setQ(rw::math::Q(std::vector<double>(dof, 0.0)), state);  // REUSE-T18 断开实验：权威 q 映射被切断（恒零构型）——上游 FK 仍被调用但消费错误输入
+
+    // ---- 第 6/7 步：TCP 位姿与基础雅可比（上游 FK——D-KIN-2 统一尺度
+    // 规则）----
+    // 位姿：6a 默认 TCP＝ObjectId 经名称解析器取编译产物帧名（R-4：名称↔
+    // 对象互查权威路径），baseTframe 给出含偏置的 T_base_tcp——上游帧树
+    // FK；6b 命名 TCP＝T_base_flange·T_flange_tcp（一次复合——法兰系取
+    // device->getEnd()，编译链终于法兰；Transform3D 复合为上游外联符号，
+    // 两模式经导出包链接）。
+    // 雅可比行义（上游 Jacobian::addPosition/addRotation 登记）：行 0~2＝
+    // 线速度（转动列 m per rad/s、移动列无量纲）、行 3~5＝角速度（无量纲；
+    // 移动列恒 0）；列＝设备活动关节＝可动链序——与 PoseMetrics 契约逐行
+    // 一致。命名 TCP：法兰雅可比＋参考点移轴（v_tcp＝v_flange＋ω×
+    // (p_tcp−p_flange)——刚体速度分解，一次逐列叉积；非几何雅可比重建）。
+    rw::math::Transform3D<double> tcpInBase;
+    rw::math::Jacobian jac;
+    if (defaultTcp) {
+        const auto resolved = anchor->nameResolver().resolveObjectId(tool.objectId);
+        if (!resolved.ok()) {
+            return Expected<PoseMetrics>::err(makeFrameUnresolved(tcp.tcpKey, tool.localName));
+        }
+        const rw::kinematics::Frame* tcpFrame =
+            anchor->workCell().findFrame(resolved.get().fullName);
+        if (tcpFrame == nullptr) {
+            return Expected<PoseMetrics>::err(makeFrameUnresolved(tcp.tcpKey, tool.localName));
+        }
+        tcpInBase = device->baseTframe(framePtr(tcpFrame), state);
+        jac = device->baseJframe(framePtr(tcpFrame), state);
+    } else {
+        const rw::kinematics::Frame* flange = device->getEnd();
+        const rw::math::Transform3D<double> baseTflange =
+            device->baseTframe(framePtr(flange), state);
+        tcpInBase = baseTflange * (*tcpOffset);
+        rw::math::Jacobian jf = device->baseJframe(framePtr(flange), state);
+        const rw::math::Vector3D<double> r = tcpInBase.P() - baseTflange.P();
+        for (std::size_t c = 0; c < dof; ++c) {
+            const auto ci = static_cast<Eigen::Index>(c);
+            const rw::math::Vector3D<double> w(
+                jf.e()(3, ci), jf.e()(4, ci), jf.e()(5, ci));
+            const rw::math::Vector3D<double> vShift = cross(w, r);
+            jf.e()(0, ci) += vShift[0];
+            jf.e()(1, ci) += vShift[1];
+            jf.e()(2, ci) += vShift[2];
+        }
+        jac = std::move(jf);
+    }
+
+    // ---- 第 8 步：指标链（D-KIN-2 统一尺度规则）----
+    PoseMetrics m;
+    m.tcpInBase = tcpInBase;
+
+    // 8a. TCP 位姿（世界系）——只经 runtime 唯一组合点（M-11/AT-37）。
+    m.tcpInWorld = runtime::composeWorldBaseTcp(view.worldToBase(), m.tcpInBase);
+
+    // 8b. 雅可比行优先展平（6·n——字段契约＝行优先；经 (i,j) 显式映射
+    // 拷贝，不耦合 Eigen 存储序）。
+    m.jacobian.assign(static_cast<std::size_t>(6 * dof), 0.0);
+    for (std::size_t r = 0; r < 6; ++r) {
+        for (std::size_t c = 0; c < dof; ++c) {
+            m.jacobian[r * dof + c] =
+                jac.e()(static_cast<Eigen::Index>(r), static_cast<Eigen::Index>(c));
+        }
+    }
+
+    // 8c. 奇异值（rw::math::LinearAlgebra::svd——REUSE-T18 唯一 SVD 实现
+    // 点；上游 JacobiSVD 契约保证降序；单线程无归约——确定性）。6×n 的
+    // 非零奇异值个数＝min(6, n)。dof=0（全固定链）跳过 SVD——零列矩阵无
+    // 奇异值面（下游按空集承载——条件数走 8d 的奇异口径）。
+    if (dof > 0) {
+        Eigen::MatrixXd u;
+        Eigen::VectorXd sigma;
+        Eigen::MatrixXd v;
+        rw::math::LinearAlgebra::svd(jac.e(), u, sigma, v);
+        m.singularValues.assign(sigma.data(), sigma.data() + sigma.size());
+    }
+
+    // 8d. 条件数＝σmax/σmin（降序首末）；σmin＝0 或商非有限（上溢）→
+    // +∞＋isFinite=false——D-KIN-2"奇异→+∞，以 isFinite 标记承载，不
+    // 静默截断"。零雅可比（全零 σ）落入同一出口（0/0 非有限）。
+    if (m.singularValues.empty()) {
+        // 全固定链（dof=0）：无奇异值——条件数不定义，按奇异口径承载。
+        m.conditionNumber = std::numeric_limits<double>::infinity();
+        m.conditionNumberIsFinite = false;
+    } else {
+        const double smax = m.singularValues.front();
+        const double smin = m.singularValues.back();
+        if (smin == 0.0) {
+            m.conditionNumber = std::numeric_limits<double>::infinity();
+            m.conditionNumberIsFinite = false;
+        } else {
+            const double cond = smax / smin;
+            if (std::isfinite(cond)) {
+                m.conditionNumber = cond;
+                m.conditionNumberIsFinite = true;
+            } else {
+                m.conditionNumber = std::numeric_limits<double>::infinity();
+                m.conditionNumberIsFinite = false;
+            }
+        }
+    }
+
+    // 8e. 可操作度 w＝√det(J·Jᵀ)：由 SVD 恒等式 det(J·Jᵀ)＝∏σᵢ²（满秩
+    // 因子）——w＝∏σᵢ（n≥6 时恰为前 6 个；n<6 时 det 恒 0 → w＝0）。
+    // 用奇异值积而非显式行列式：数学等价、天然非负，确定性更强——实现
+    // 口径随卡 §14.6 登记。
+    if (m.singularValues.size() < 6U) {
+        m.manipulability = 0.0;  // 行秩 <6 → det(J·Jᵀ)=0（恒等式）
+    } else {
+        double w = 1.0;
+        for (double s : m.singularValues) {
+            w *= s;  // 恰 6 个（min(6,n)=6）——逐个连乘，定序固定
+        }
+        m.manipulability = w;
+    }
+
+    // 8f. 归一化关节裕量（D-KIN-6 设计默认——随黄金数据集锁定；权威 q
+    // 对 canonical 区间评价——消费语义与上游 WC 编码解耦）：有界
+    // （Revolute/Prismatic 的 bounds；Continuous 的 workingRange）
+    // margin＝min(q−lo, hi−q)/(行程/2)——中点 1、限位 0、超限为负
+    // （超限 q 可计算、违例素材交调用方——§5.2 两分语义；无量纲）；
+    // Continuous 无工作范围＝无分析限位 → +∞。
+    m.jointMargins.reserve(dof);
+    double minMargin = std::numeric_limits<double>::infinity();
+    bool anyFinite = false;
+    std::size_t qIndex = 0;
+    for (const auto& j : joints) {
+        if (!isMovable(j.type)) { continue; }
+        const double qi = q[qIndex];
+        ++qIndex;
+
+        // 评价区间三态：bounds（Revolute/Prismatic 必有）→ workingRange
+        // （Continuous 可有——MDL-12 分析消费属性，与 bounds 值面同构：
+        // 有限有序区间）→ 均无（Continuous 未配置工作范围）＝无分析限位。
+        // 前两态同式评价（区间来源不同、公式相同）。
+        double lo = 0.0;
+        double hi = 0.0;
+        bool bounded = false;
+        if (j.bounds.has_value()) {
+            lo = j.bounds->lower;
+            hi = j.bounds->upper;
+            bounded = true;
+        } else if (j.workingRange.has_value()) {
+            lo = j.workingRange->lower;
+            hi = j.workingRange->upper;
+            bounded = true;
+        }
+
+        if (bounded) {
+            const double half = (hi - lo) / 2.0;
+            // ★ 审查 G13 防御（WP-15-T20 第三批）：half<=0（零/负行程区
+            // 间）时 min(...)/half 为 0/0=NaN，会下游污染渲染层（require-
+            // NotNan 抛出）。上游不变式 builder 强制 lower<upper（runtime/
+            // CanonicalModel 严格不等），正常装配不可达——防御取边界值
+            // 0（区间退化＝处处处于边界），不用 NaN。
+            const double margin =
+                half > 0.0 ? (std::min)(qi - lo, hi - qi) / half : 0.0;
+            m.jointMargins.push_back(margin);
+            if (std::isfinite(margin) && (!anyFinite || margin < minMargin)) {
+                minMargin = margin;
+                anyFinite = true;
+            }
+        } else {
+            // 无分析限位：裕量不定义 → +∞（IEEE 位模式确定——确定性）。
+            m.jointMargins.push_back(std::numeric_limits<double>::infinity());
+        }
+    }
+    m.minimumJointMargin = anyFinite ? minMargin
+                                     : std::numeric_limits<double>::infinity();
+
+    return Expected<PoseMetrics>::ok(std::move(m));
+}
+
+// =====================================================================
+// canonical 载荷编码（Fk.hpp 布局表；字段序即写序）
+// =====================================================================
+
+std::vector<std::uint8_t> encodePoseMetricsCanonical(const PoseMetrics& m)
+{
+    std::vector<std::uint8_t> out;
+    // 预算上限估算（避免重分配抖动；不改变内容——纯容量优化）。
+    out.reserve(7 + 1 + 4 + 24 + 24 + m.jacobian.size() * 8 + 4
+                + m.singularValues.size() * 8 + 8 + 1 + 8 + 8
+                + m.jointMargins.size() * 8);
+
+    // magic "IRDPM01"（7 字节 ASCII）＋ codec 版本 u8=1（布局演进即推进）。
+    const char magic[] = {'I', 'R', 'D', 'P', 'M', '0', '1'};
+    out.insert(out.end(), magic, magic + sizeof(magic));
+    out.push_back(1U);
+
+    // dof＝自由度数（jacobian 长度恒 6·dof——布局自洽校验隐含于消费方）。
+    const auto dof = static_cast<std::uint32_t>(m.jointMargins.size());
+    putU32(out, dof);
+
+    // tcpInBase / tcpInWorld：{R 9×f64 行优先, p 3×f64}（m/rad）。
+    for (const rw::math::Transform3D<double>* t :
+         {&m.tcpInBase, &m.tcpInWorld}) {
+        const rw::math::Rotation3D<double>& r = t->R();
+        for (std::size_t i = 0; i < 3; ++i) {
+            for (std::size_t j = 0; j < 3; ++j) {
+                putF64(out, r(i, j));
+            }
+        }
+        const rw::math::Vector3D<double>& p = t->P();
+        for (std::size_t i = 0; i < 3; ++i) {
+            putF64(out, p[i]);
+        }
+    }
+
+    // jacobian 6·dof×f64（行优先——与 PoseMetrics 字段序一致）。
+    for (double v : m.jacobian) {
+        putF64(out, v);
+    }
+
+    // 奇异值块（个数＋降序值）。
+    putU32(out, static_cast<std::uint32_t>(m.singularValues.size()));
+    for (double v : m.singularValues) {
+        putF64(out, v);
+    }
+
+    // 条件数＋有限性标记＋可操作度＋最小裕量。
+    putF64(out, m.conditionNumber);
+    out.push_back(m.conditionNumberIsFinite ? 1U : 0U);
+    putF64(out, m.manipulability);
+    putF64(out, m.minimumJointMargin);
+
+    // 逐自由度裕量。
+    for (double v : m.jointMargins) {
+        putF64(out, v);
+    }
+    return out;
+}
+
+}  // namespace sdurws::ird::kinematics

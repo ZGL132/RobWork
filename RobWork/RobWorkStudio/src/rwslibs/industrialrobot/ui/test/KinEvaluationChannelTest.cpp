@@ -41,16 +41,24 @@
 #include <vector>
 
 #include <sdurws/ird/core/Digest.hpp>
+#include <sdurws/ird/modeling/Codec.hpp>          // REUSE-T17：RobotDesignCodec（真实编译输入）
+#include <sdurws/ird/modeling/ObjectTypes.hpp>    // kRobotDesignObjectType
+#include <sdurws/ird/modeling/RobotDesign.hpp>    // RobotDesign 值模型（锚用例夹具）
 #include <sdurws/ird/policy/PolicyInput.hpp>
 #include <sdurws/ird/policy/PolicyParsing.hpp>
 #include <sdurws/ird/policy/SystemDefaultPolicy.hpp>
 #include <sdurws/ird/core/Identity.hpp>
 #include <sdurws/ird/kinematics/KinematicsPanelChannels.hpp>  // 通道值面
 #include <sdurws/ird/kinematics/AnalysisConfig.hpp>           // 合法配置基线
+#include <sdurws/ird/project/CommandService.hpp>  // CompileRequest/ObjectWrite（S5 输入）
+#include <sdurws/ird/project/QueryPort.hpp>       // IProjectQueryPort（内存替身契约）
 #include <sdurws/ird/requirements/Editor.hpp>                 // IRequirementEditor（替身接口）
 #include <sdurws/ird/requirements/RequirementTypes.hpp>       // 工作集值面
+#include <rw/models/Device.hpp>                   // Device::setQ/getQ（State 隔离写读对照）
+#include <rw/models/WorkCell.hpp>                 // WorkCell 完整类型（设备遍历）
 
 #include "KinFkFixture.hpp"                 // 两连杆黄金模型（kinematics 测试夹具——header-only）
+#include "plugin/HostCompilePort.hpp"       // REUSE-T17：真实编译端口（锚用例快照源）
 #include "plugin/KinEvaluationChannel.hpp"  // 被测执行器（同源编入 TU）
 
 // ---- 使用声明（与被测头同一命名空间——用例可读性）--------------------
@@ -1706,4 +1714,215 @@ TEST(KinEvaluationChannel, EnabledCollisionWithoutFacilityRemainsInsufficient_AR
     EXPECT_NE(result->errorText.find("数据不足"),std::string::npos);
     // 域契约保留几何解作为诊断，但逐解未评价且整体不可走绿色完成通道。
     for(const auto& solution:result->solutionSet->solutions)EXPECT_FALSE(solution.collisionStatus.evaluated);
+}
+
+// =====================================================================
+// REUSE-T17——锚能力入口的值委托转发（ui 侧会话缝）
+// =====================================================================
+namespace {
+/** 无锚值替身（不覆盖 runtimeModelView——缺省空＝能力缺席如实表达）。 */
+class AnchorlessValueView final : public kinematics::IKinRuntimeView {
+public:
+    const runtime::CanonicalModel& model() const override { return m_model; }
+    rw::math::Transform3D<double> worldToBase() const override { return {}; }
+
+private:
+    runtime::CanonicalModel m_model = twoLinkModel();  // 解析黄金二连杆（testfixture 夹具同源）
+};
+}  // namespace
+
+/**
+ * 值委托经会话缝转发＝缺省空锚（能力缺席如实传递，不伪造、不回退）；
+ * rebind 换委托后转发目标同拍切换。绑定态消费前置与会话缝既有成员
+ * 同域（未绑定调用＝装配缺陷，不在本用例面）。
+ */
+TEST(KinSessionAnchor, ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17)
+{
+    KinSessionModelView session;
+    auto valueView = std::make_shared<AnchorlessValueView>();
+    session.rebind(valueView);
+    EXPECT_EQ(session.runtimeModelView(), nullptr)
+        << "值视图必须如实暴露能力缺席（缺省空），不得伪造锚";
+
+    // 换绑另一无锚值委托——转发目标随 rebind 同拍切换（仍为空，但来源
+    // 已是新委托：以委托指针经 model() 引用稳定性旁证换绑生效）。
+    auto otherView = std::make_shared<AnchorlessValueView>();
+    session.rebind(otherView);
+    EXPECT_EQ(&session.model(), &otherView->model());
+    EXPECT_EQ(session.runtimeModelView(), nullptr);
+}
+
+// =====================================================================
+// REUSE-T17——锚能力入口的 executor 级语义（真实编译快照）
+// =====================================================================
+// 编译设施与 ui/test/HostCompilePipelineTest.cpp 同源缩减（真实
+// HostModelCompilePort＋内存查询替身——runtime 公共编译链不经第二路径）。
+
+namespace AnchorCaptureNS {
+
+class QueryPort final : public project::IProjectQueryPort {
+public:
+    project::RevisionView view;
+    std::map<std::string, std::vector<std::uint8_t>> objects;
+
+    void addObject(const core::ObjectId& oid, std::string token,
+                   const std::vector<std::uint8_t>& bytes)
+    {
+        core::ContentDigester d;
+        d.update(bytes.data(), bytes.size());
+        core::ContentVersion cv;
+        cv.bytes = d.finalize();
+        project::ObjectRef ref;
+        ref.objectId = oid;
+        ref.contentVersion = cv;
+        ref.objectTypeToken = std::move(token);
+        static const char* kHex = "0123456789abcdef";
+        std::string hex;
+        hex.reserve(64);
+        for (std::uint8_t b : cv.bytes) {
+            hex.push_back(kHex[b >> 4]);
+            hex.push_back(kHex[b & 0x0F]);
+        }
+        ref.digest256 = std::move(hex);
+        view.objectRefs.push_back(std::move(ref));
+        objects[oid.toCanonical() + "|" + cv.toCanonical()] = bytes;
+    }
+
+    project::RevisionView head() const override { return view; }
+    std::optional<project::RevisionView> tryRevision(core::RevisionId id) const override
+    {
+        if (id == view.id) { return view; }
+        return std::nullopt;
+    }
+    project::RevisionView revision(core::RevisionId) const override { return view; }
+    project::ProjectMetadataView currentMetadata() const override { return {}; }
+    std::optional<project::ProjectMetadataView> metadataAt(core::RevisionId) const override
+    {
+        return std::nullopt;
+    }
+    std::vector<project::BranchTip> branchTips() const override { return {}; }
+    std::vector<project::RevisionView> branchHistory(core::BranchId, std::uint32_t) const override
+    {
+        return {};
+    }
+    std::optional<std::vector<std::uint8_t>> tryObject(
+        core::ObjectId oid, core::ContentVersion cv) const noexcept override
+    {
+        auto it = objects.find(oid.toCanonical() + "|" + cv.toCanonical());
+        if (it == objects.end()) { return std::nullopt; }
+        return it->second;
+    }
+    std::vector<std::uint8_t> object(core::ObjectId oid, core::ContentVersion cv) const override
+    {
+        auto bytes = tryObject(oid, cv);
+        if (!bytes.has_value()) { throw std::logic_error("fixture: 对象字节缺失"); }
+        return *bytes;
+    }
+    std::vector<project::DraftInfo> listDrafts(core::BranchId) const override { return {}; }
+    std::vector<project::RunInfo> listRuns(core::RevisionId) const override { return {}; }
+    std::filesystem::path runDir(core::RunId) const override { return {}; }
+};
+
+}  // namespace AnchorCaptureNS
+
+/**
+ * 提交拍捕获锚的 executor 级语义（真实编译快照）：
+ *   ①attachSnapshot 包装视图经 runtimeModelView() 暴露同源锚（模型身份与
+ *     快照一致；多次取用同一实例——无第二包装层）；
+ *   ②UI 解绑/换绑后，已捕获锚仍指向原模型（旧任务不受会话换绑影响）；
+ *   ③两任务各自的 makeState 互不污染（真实 SerialDevice 写读对照——
+ *     runtime §9.2 每线程值拷贝经生产路径实证）；
+ *   ④任务释放＋宿主释放后快照可析构（shared_ptr 真实引用计数——无
+ *     no-op deleter 伪装保活）。
+ */
+TEST(KinAnchorCapture, RebindKeepsOldTaskModelAndLifetime_REUSE_T17)
+{
+    using namespace AnchorCaptureNS;
+    // 最小合法根对象：1 旋转关节＋2 连杆（HostCompilePipelineTest 夹具同构）。
+    modeling::RobotDesign design;
+    design.displayName = "AnchorTestRobot";
+    modeling::JointEntry joint;
+    joint.objectId = core::ObjectId::generate();
+    joint.localName = "J1";
+    joint.type = modeling::JointType::Revolute;
+    joint.axis = core::SourcedValue<rw::math::Vector3D<double>>::provided(
+        rw::math::Vector3D<double>(0.0, 0.0, 1.0),
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    joint.origin = core::SourcedValue<modeling::JointPose>::provided(
+        modeling::JointPose{}, core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    joint.bounds = core::SourcedValue<modeling::JointLimits>::provided(
+        modeling::JointLimits{0.0, 1.0},
+        core::ValueProvenance::make(core::ProvenanceKind::UserProvided));
+    design.joints.push_back(std::move(joint));
+    modeling::LinkEntry base;
+    base.objectId = core::ObjectId::generate();
+    base.localName = "base";
+    design.links.push_back(std::move(base));
+    modeling::LinkEntry link1;
+    link1.objectId = core::ObjectId::generate();
+    link1.localName = "link1";
+    design.links.push_back(std::move(link1));
+
+    modeling::RobotDesignCodec codec;
+    auto encoded = codec.encode(modeling::ObjectVariant{std::move(design)},
+                                modeling::kCurrentFormatVersion);
+    ASSERT_TRUE(encoded.ok());
+
+    auto query = std::make_shared<QueryPort>();
+    query->view.id = core::RevisionId::generate();
+    query->view.branch = core::BranchId::generate();
+    query->view.seq = 1;
+    const auto rootId = core::ObjectId::generate();
+    query->addObject(rootId, std::string(modeling::kRobotDesignObjectType),
+                     {0x01, 0x02});
+    std::vector<project::ObjectWrite> plannedWrites;
+    project::ObjectWrite write;
+    write.objectId = rootId;
+    write.objectTypeToken = std::string(modeling::kRobotDesignObjectType);
+    write.payloadCanonical = encoded.get();
+    plannedWrites.push_back(std::move(write));
+    project::CompileRequest request{*query, plannedWrites, query->view.id};
+
+    auto snapshot = [&] {
+        sdurws::ird::ui::HostModelCompilePort port({query.get(), core::ProjectId::generate(),
+            std::string(modeling::kRobotDesignObjectType), nullptr});
+        const auto result = port.compileWorkCellAndDwc(request);
+        EXPECT_TRUE(result.ok);
+        return port.lastPublishedSnapshot();
+    }();
+    ASSERT_TRUE(snapshot);
+    KinEvaluationExecutor executor(KinEvaluationExecutor::Deps{});
+    executor.attachSnapshot(snapshot, snapshot->snapshotIdentity());
+
+    // ①任务提交拍捕获锚（面板提交面同款取法——经会话视图能力入口）。
+    auto taskAnchor = executor.sessionView()->runtimeModelView();
+    ASSERT_TRUE(taskAnchor) << "产品快照包装视图必须提供编译产物锚";
+    EXPECT_EQ(taskAnchor->model().contentIdentity(), snapshot->modelIdentity());
+    EXPECT_EQ(taskAnchor.get(), executor.sessionView()->runtimeModelView().get());
+
+    // ③两任务各自的 State 互不污染：state1 写入设备 q，state2 保持默认。
+    auto stateTask1 = taskAnchor->makeState();
+    auto stateTask2 = taskAnchor->makeState();
+    const auto& workCell = taskAnchor->workCell().workCell();
+    ASSERT_GT(workCell.getDevices().size(), std::size_t{0});
+    auto* device = workCell.getDevices().front().get();
+    const auto dof = static_cast<std::size_t>(device->getDOF());
+    ASSERT_GT(dof, std::size_t{0});
+    rw::math::Q qWritten(dof, 0.25);
+    device->setQ(qWritten, stateTask1);
+    const rw::math::Q qOther = device->getQ(stateTask2);
+    for (std::size_t i = 0; i < dof; ++i) {
+        EXPECT_DOUBLE_EQ(qOther[i], 0.0) << "跨任务 State 串扰（i=" << i << "）";
+    }
+
+    // ②UI 解绑（换绑拍）——旧任务锚不受影响（未绑定态的能力查询同属
+    // 装配前置违约，不在本用例面；空锚转发语义由上方值委托用例承载）。
+    executor.attachView(nullptr, core::ContentIdentity{});
+    EXPECT_EQ(taskAnchor->model().contentIdentity(), snapshot->modelIdentity());
+
+    // ④任务结束（锚释放）＋宿主释放 → 快照可析构。
+    std::weak_ptr<const runtime::IRuntimeModelView> lease = taskAnchor;
+    taskAnchor.reset();
+    snapshot.reset();
+    EXPECT_TRUE(lease.expired()) << "锚与宿主都释放后快照必须可回收";
 }

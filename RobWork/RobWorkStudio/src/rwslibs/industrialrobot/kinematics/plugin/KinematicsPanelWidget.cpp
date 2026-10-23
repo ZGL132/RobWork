@@ -29,7 +29,8 @@
 #include <vector>
 
 #include <sdurws/ird/core/Units.hpp>               // UnitToken::find（字段量纲锚）
-#include <sdurws/ird/runtime/CanonicalModel.hpp>  // FrozenRuntimeView 的值快照
+#include <sdurws/ird/runtime/CanonicalModel.hpp>  // 模型值真值（工作域/统计呈现）
+#include <sdurws/ird/runtime/Snapshot.hpp>         // REUSE-T17：IRuntimeModelView 完整类型（锚 upcast）
 #include <sdurws/ird/ui/FormEditCommon.hpp>        // 表单公共件（UI-T08 对端——参数表面板）
 #include <sdurws/ird/ui/UiText.hpp>                // 文案键解析（UI-T25——迁移标记标签挂键；
                                                    // 构造期命令标题 resolver 尚未注入，此处直读
@@ -63,32 +64,48 @@ void fillSingleColumn(QTableWidget* table, const QStringList& texts)
     }
 }
 
+// REUSE-T17：原 FrozenRuntimeView（提交期值复制视图）整类删除——提交冻结
+// 改为捕获 runtimeModelView() 锚（RuntimeSnapshot 为真实 owner 的
+// shared_ptr）：换绑/宿主释放不影响在途任务，且同一锚同时承载值面与编译
+// 产物面（workCell/makeState/nameResolver——Device/State FK 替换的准入
+// 前提）。runtime::IRuntimeModelView 与 kinematics::IKinRuntimeView 是无
+// 继承关系的两个接口族，故保留一个**纯转发桥**（不复制任何模型值——与
+// 旧值复制的本质区别），提交任务视图经桥消费锚。
 /**
- * @brief 提交期冻结的运动学只读视图。
+ * @brief 提交期锚视图——已编译模型锚的 kinematics 面纯转发适配。
  *
- * 后台求解不能持有会被会话换绑的 KinSessionModelView 地址；这里在 UI
- * 线程提交瞬间复制模型值与 T_world_base，形成构造后不可变、可并发只读的
- * 视图。复制的成本与一次请求载荷同阶，换绑只会替换下一次提交使用的值，
- * 因而迟到任务不会读到新项目的模型。
+ * 只做成员转发：model()/worldToBase() 委托锚的同名成员（语义逐字同
+ * runtime §8.3），runtimeModelView() 返回同源锚。构造后不可变、并发只读
+ * 安全；锚的 shared_ptr 保活即本视图全部生命周期依据。前置：锚非空
+ * （提交拍已检查——空锚走两分错误轨，不构造本视图）。
  */
-class FrozenRuntimeView final : public IKinRuntimeView {
+class AnchorRuntimeView final : public IKinRuntimeView {
 public:
-    explicit FrozenRuntimeView(const IKinRuntimeView& source)
-        : m_model(source.model()), m_worldToBase(source.worldToBase())
+    explicit AnchorRuntimeView(
+        std::shared_ptr<const runtime::IRuntimeModelView> anchor)
+        : m_anchor(std::move(anchor))
     {
     }
 
-    const runtime::CanonicalModel& model() const override { return m_model; }
+    const runtime::CanonicalModel& model() const override
+    {
+        return m_anchor->model();
+    }
 
     rw::math::Transform3D<double> worldToBase() const override
     {
-        return m_worldToBase;
+        return m_anchor->worldToBase();
+    }
+
+    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+    {
+        return m_anchor;
     }
 
 private:
-    runtime::CanonicalModel m_model;
-    rw::math::Transform3D<double> m_worldToBase;
+    std::shared_ptr<const runtime::IRuntimeModelView> m_anchor;
 };
+
 
 /**
  * @brief 比较两个基座系 SI 位姿是否代表同一目标。
@@ -1241,10 +1258,20 @@ void KinematicsPanelWidget::runSolveNonBlocking(
         refreshAll();
         return;
     }
-    // 把可 rebind 的长命视图复制成独立快照；后台任务只持有该对象，
-    // 从此不再通过 m_services.modelView 读取会话委托。
-    auto modelSnapshot =
-        std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+    // REUSE-T17：提交拍经锚能力入口取已编译模型视图（RuntimeSnapshot 为
+    // 真实 owner）；经 AnchorRuntimeView 纯转发桥供任务消费——后台任务只
+    // 持有该锚，UI 换绑/宿主释放均不影响其存活与内容。纯值视图（无编译
+    // 产物）在提交拍即拒绝——不回退旧手写链（两分错误轨）。
+    auto modelAnchor = m_services.modelView->runtimeModelView();
+    if (modelAnchor == nullptr) {
+        m_solveInFlight = false;
+        m_solveTargetAtSubmit.reset();
+        showStatusText(tr("求解失败：提交时没有可用的模型快照"));
+        refreshAll();
+        return;
+    }
+    auto modelSnapshot = std::make_shared<const AnchorRuntimeView>(
+        std::move(modelAnchor));
     req.modelView = modelSnapshot.get();
     m_solveInFlight = true;
     m_solveTargetAtSubmit = targetInBase;
@@ -1650,9 +1677,16 @@ void KinematicsPanelWidget::onWsRunClicked()
         }
     }
     if (m_services.workspaceAsync && m_services.modelView != nullptr) {
-        // KIN-09：复制可换绑视图，后台只有独占临时会话；宿主执行端口
-        // 负责线程与回投，插件不创建线程，不从后台读取任何编辑器。
-        const auto model = std::make_shared<const FrozenRuntimeView>(*m_services.modelView);
+        // KIN-09：REUSE-T17——提交拍捕获编译模型锚并经 AnchorRuntimeView
+        // 纯转发桥供后台独占临时会话；换绑/宿主释放不影响锚存活。纯值
+        // 视图无锚即拒绝（两分错误轨，不回退旧手写链）。
+        auto modelAnchor = m_services.modelView->runtimeModelView();
+        if (modelAnchor == nullptr) {
+            showStatusText(tr("采样失败：当前模型视图无已编译产物"));
+            return;
+        }
+        const auto model = std::make_shared<const AnchorRuntimeView>(
+            std::move(modelAnchor));
         const auto snapshot = m_session.snapshotId;
         const auto epoch = m_session.epoch;
         const auto config = m_session.savedConfig;

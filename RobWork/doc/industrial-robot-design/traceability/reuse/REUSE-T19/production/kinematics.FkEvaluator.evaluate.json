@@ -1,0 +1,104 @@
+{
+ "schemaVersion": "ird-reuse-production/1",
+ "functionId": "kinematics.FkEvaluator.evaluate",
+ "target": "sdurws_ird_kinematics",
+ "bindings": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+   "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+   "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/models/Device.hpp",
+   "sha256": "d331f07323c5cbc2f89426302e7532f0d0e05a136550161be9aa1c22df57c041"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+   "sha256": "5ebe466fc5e8c0d431a3d5ae08463d738c88f2d2d2e66d6c4a1f2e7d3e61450e"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+   "sha256": "428118721de2c8927de1703e04cd64a54f55f00abf17491af006cef5df67db23"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+   "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+   "sha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+   "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+  }
+ ],
+ "normal": {
+  "command": "sdurws_ird_kinematics_test.exe --gtest_filter=KinFk.*（集成树，RWS_BUILD_INDUSTRIALROBOT=ON）——FK 全套 18 用例经真实编译快照锚（RuntimeSnapshotFactory S6–S10 产品路径）",
+  "exitCode": 0,
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml",
+   "sha256": "2e75396be917165dfdd0138fc22713c9f5e0c4a963c03f55952b2f2b8acec820"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.log",
+   "sha256": "613bc2319e9cd363013d769531631462664a129945b5881d9c59cdea6dc8a64d"
+  }
+ },
+ "oracle": {
+  "command": "同 normal 运行——独立 4×4 齐次参考实现（test/KinFkFixture.hpp referenceFk，与产品零共享代码）逐元素对照用例",
+  "exitCode": 0,
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml",
+   "sha256": "2e75396be917165dfdd0138fc22713c9f5e0c4a963c03f55952b2f2b8acec820"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.log",
+   "sha256": "613bc2319e9cd363013d769531631462664a129945b5881d9c59cdea6dc8a64d"
+  },
+  "testcases": [
+   "KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1",
+   "KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1",
+   "KinFk.CrossViewIsolationRealSnapshots_REUSE_T18"
+  ]
+ },
+ "upstreamComparison": {
+  "command": "同 normal 运行——同模型同 State 直接调用上游 Device::setQ/baseTframe/baseJframe 与评估器输出逐元素 EXPECT_DOUBLE_EQ",
+  "exitCode": 0,
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.xml",
+   "sha256": "2e75396be917165dfdd0138fc22713c9f5e0c4a963c03f55952b2f2b8acec820"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/normal/kin_test.log",
+   "sha256": "613bc2319e9cd363013d769531631462664a129945b5881d9c59cdea6dc8a64d"
+  },
+  "testcases": [
+   "KinFk.UpstreamDirectDeviceComparison_REUSE_T18"
+  ]
+ },
+ "disconnected": {
+  "command": "变异构建后 sdurws_ird_kinematics_test.exe --gtest_filter=KinFk.*（断开权威 q 映射：setQ 输入替换为恒零构型）",
+  "exitCode": 1,
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/disconnected/kin_disconnect.xml",
+   "sha256": "6a80f8dda5a15e720dcb214d27af45ab5ffb1a73a7d5d23f067c513958b90b0c"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/disconnected/kin_disconnect.log",
+   "sha256": "283dc7abc4f0700cabca896687d1df65a2c60e51467ca8d2842b88a8e08a0a7e"
+  },
+  "mutation": {
+   "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+   "originalSha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361",
+   "description": "断开实验：Fk.cpp 第5步 setQ 输入由 q_rw＝q_auth−zeroOffset 映射替换为恒零 Q——上游 FK/Jacobian 仍被调用但消费错误构型，非零 q 的 FK 断言失败（业务断言依赖上游返回值）"
+  },
+  "mutatedSource": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/disconnected/Fk.cpp.mutated",
+   "sha256": "1621a370014c3e83e6fb964d658c563ae942e961dffa291f4cd5a717aaedd7e8"
+  }
+ }
+}

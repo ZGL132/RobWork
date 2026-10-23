@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T17",
+  "unit": "kinematics",
+  "masterWp": "WP-A",
+  "title": "kinematics 消费已编译 runtime 模型的可域能力入口与提交冻结面",
+  "status": "ready",
+  "branch": "codex/reuse-foundation",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "KIN-01",
+    "ARC-03",
+    "ARC-04",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.6",
+    "units/kinematics.md#4.2",
+    "units/runtime.md#8.3",
+    "reuse/policy.md#1.1",
+    "traceability/reuse/REUSE-T01/runtime-boundary-audit.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinPanelTypes.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/PluginPanelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/kinematics.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "IKinRuntimeView 表尾追加 runtimeModelView()（缺省返回空＝纯值视图）；接口契约版本 /2 入单元卡，全体 8 实现者同步，虚表序登记；不声称二进制 ABI 不变，公共头零新依赖（runtime::IRuntimeModelView 前置声明）",
+    "FrozenRuntimeView 整类删除，IK/workspace 两处提交路径直接捕获 runtimeModelView() 锚；executor 级并发用例实证：提交后 UI 换绑旧任务仍用原模型、原宿主释放后锚保活、两任务 State 互不污染、任务结束锚可释放",
+    "attachView 值视图路径行为逐位不变（MA-03 清碰撞场景/纪元推进/账面清空/取消旗标）；缺编译产物＝KIN-NO-DEVICE 族两分错误（params 标注来源），禁止旧手写链 fallback；5 个值替身零语义改动",
+    "真实验证：sdurws_ird_kinematics_test、sdurws_ird_ui_test、sdurws_ird_kinematics_contract_test 目标构建通过并留 gtest XML＋ird-test-report 原件；GUI 仅 sdurws_ird_kinematics_gui_test 之 KinematicsPanelSessionGuiTest 增提交后换绑单例（VS x64/windows 插件/单 exe）；实施者只自查并交接确切 SHA，不自签独验、不合入、不远程"
+  ],
+  "note": "所有者2026-10-23确认三项推荐决定（'按照推荐的决定进行'）：方案二锚能力入口签名、编号T17、TCP帧命名＝模型事实归runtime/tcpKey选择参数留kinematics消费侧；据此转ready并实施。接口签名、三方案比较、四条数据流、FK/Jacobian后续准备清单见 runtime-boundary-audit.md 2026-10-23 设计增量节。零 runtime 侧改动（IRuntimeModelView 四入口已足够——上轮边界核查结论直接引用）；不修改生产数值核心；与 C4 R2 无依赖。实施者只自查并交接确切 SHA，独验由所有者授权的独立子智能体执行，不自签、不合入、不远程。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json"
+  },
+  "outputs": [
+    "可执行能力入口（runtimeModelView()）与删除 FrozenRuntimeView 后的提交冻结面",
+    "executor 级换绑/保活/State 隔离并发用例与全部实现者同步",
+    "自查后交所有者安排独立验收；FK/Jacobian 替换包以本包为前置"
+  ]
+}

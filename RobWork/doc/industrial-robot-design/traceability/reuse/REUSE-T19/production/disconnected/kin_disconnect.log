@@ -1,0 +1,980 @@
+Note: Google Test filter = KinFk.*
+[==========] Running 20 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 20 tests from KinFk
+[ RUN      ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1
+[       OK ] KinFk.PlanarTwoLinkZeroPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(119): error: The difference between m.tcpInBase.P()[0] and 0.0 - 0.7 is 2.5, which exceeds kPoseTol, where
+m.tcpInBase.P()[0] evaluates to 1.8,
+0.0 - 0.7 evaluates to -0.69999999999999996, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(120): error: The difference between m.tcpInBase.P()[1] and 1.1 is 1.1000000000000001, which exceeds kPoseTol, where
+m.tcpInBase.P()[1] evaluates to 0,
+1.1 evaluates to 1.1000000000000001, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(126): error: The difference between m.tcpInBase.R()(i, j) and rzPi(i, j) is 2, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 1,
+rzPi(i, j) evaluates to -1, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(126): error: The difference between m.tcpInBase.R()(i, j) and rzPi(i, j) is 2, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 1,
+rzPi(i, j) evaluates to -1, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+[  FAILED  ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\../test/KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 1.1 vs 1.1010000000000002e-09
+雅可比元素：actual=0 ref=-1.1000000000000001
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\../test/KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 2.5 vs 7.0099999999999985e-10
+雅可比元素：actual=1.8 ref=-0.69999999999999984
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\../test/KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 1.4 vs 7.0099999999999996e-10
+雅可比元素：actual=0.69999999999999996 ref=-0.69999999999999996
+
+[  FAILED  ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1
+[       OK ] KinFk.RevPrismSingularValuesAnalytic_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(206): error: The difference between m.tcpInBase.P()[0] and ref.tcp[0][3] is 0.14359968613765961, which exceeds kPoseTol, where
+m.tcpInBase.P()[0] evaluates to 1.6499999999999999,
+ref.tcp[0][3] evaluates to 1.5064003138623403, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(207): error: The difference between m.tcpInBase.P()[1] and ref.tcp[1][3] is 0.34096598609716489, which exceeds kPoseTol, where
+m.tcpInBase.P()[1] evaluates to 0,
+ref.tcp[1][3] evaluates to 0.34096598609716489, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(208): error: The difference between m.tcpInBase.P()[2] and ref.tcp[2][3] is 0.027515377151890563, which exceeds kPoseTol, where
+m.tcpInBase.P()[2] evaluates to 0.5,
+ref.tcp[2][3] evaluates to 0.47248462284810944, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.16529566303015125, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 6.123233995736766e-17,
+ref.tcp[i][j] evaluates to -0.1652956630301512, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (0,0)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.02876465272760953, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to -1,
+ref.tcp[i][j] evaluates to -0.97123534727239047, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (0,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.17140374556030491, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 0,
+ref.tcp[i][j] evaluates to 0.17140374556030491, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (0,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.65801983199277669, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 1,
+ref.tcp[i][j] evaluates to 0.34198016800722331, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (1,0)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.21945585818546925, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 6.123233995736766e-17,
+ref.tcp[i][j] evaluates to -0.2194558581854692, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (1,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.91372243651878804, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 0,
+ref.tcp[i][j] evaluates to -0.91372243651878804, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (1,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.92505508402104031, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 0,
+ref.tcp[i][j] evaluates to 0.92505508402104031, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (2,0)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.092417674266117911, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 0,
+ref.tcp[i][j] evaluates to -0.092417674266117911, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (2,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(211): error: The difference between m.tcpInBase.R()(i, j) and ref.tcp[i][j] is 0.63158167118061603, which exceeds kPoseTol, where
+m.tcpInBase.R()(i, j) evaluates to 1,
+ref.tcp[i][j] evaluates to 0.36841832881938397, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+旋转元素 (2,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.34096598609716489 vs 3.4196598609716488e-10
+雅可比元素：actual=0 ref=-0.34096598609716489
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.030752794892693447 vs 7.0247205107306534e-11
+雅可比元素：actual=0.099999999999999978 ref=0.069247205107306531
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.25975915031633945 vs 1.6075915031633944e-10
+雅可比元素：actual=0.099999999999999978 ref=-0.15975915031633944
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.015229676923754182 vs 1.6229676923754184e-11
+雅可比元素：actual=0 ref=0.015229676923754182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.031255347344982976 vs 6.9744652655016998e-11
+雅可比元素：actual=0.099999999999999978 ref=0.068744652655017002
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.016529566303015122 vs 1.7529566303015123e-11
+雅可比元素：actual=0 ref=0.016529566303015122
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.14359968613765961 vs 1.5074003138623405e-09
+雅可比元素：actual=1.6499999999999999 ref=1.5064003138623403
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.021420670723842548 vs 2.2420670723842549e-11
+雅可比元素：actual=0 ref=0.021420670723842548
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.049419296399676495 vs 5.0419296399676501e-11
+雅可比元素：actual=0 ref=-0.049419296399676495
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.068667889209871075 vs 1.6966788920987106e-10
+雅可比元素：actual=-0.099999999999999978 ref=-0.16866788920987105
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.083929233337249859 vs 8.492923333724986e-11
+雅可比元素：actual=0 ref=0.083929233337249859
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.065801983199277658 vs 3.519801680072232e-11
+雅可比元素：actual=-0.099999999999999978 ref=-0.034198016800722313
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.1101184742611192 vs 1.540881525738881e-09
+雅可比元素：actual=-1.6499999999999999 ref=-1.5398815257388807
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.048909755206305583 vs 1.1020902447936946e-09
+雅可比元素：actual=-1.1499999999999999 ref=-1.1010902447936943
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.11410012062316802 vs 1.1510012062316802e-10
+雅可比元素：actual=0 ref=-0.11410012062316802
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.012880848452617666 vs 3.3811915154738222e-10
+雅可比元素：actual=-0.34999999999999987 ref=-0.3371191515473822
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092505508402104003 vs 9.3505508402103999e-11
+雅可比元素：actual=0 ref=-0.092505508402104003
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+雅可比元素：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+雅可比元素：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.087332192545160892 vs 9.1366780745483916e-10
+雅可比元素：actual=1 ref=0.91266780745483911
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.23354090646158562 vs 2.3454090646158564e-10
+雅可比元素：actual=0 ref=-0.23354090646158562
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.02876465272760953 vs 9.7223534727239066e-10
+雅可比元素：actual=1 ref=0.97123534727239047
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+雅可比元素：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+雅可比元素：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.28232123669751763 vs 2.8332123669751765e-10
+雅可比元素：actual=0 ref=0.28232123669751763
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.046356408165988183 vs 9.5464359183401202e-10
+雅可比元素：actual=1 ref=0.95364359183401182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.21945585818546923 vs 2.2045585818546923e-10
+雅可比元素：actual=0 ref=0.21945585818546923
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133966 vs 2.9652020666133969e-10
+雅可比元素：actual=0 ref=-0.29552020666133966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.18979606097868743 vs 1.9079606097868743e-10
+雅可比元素：actual=0 ref=0.18979606097868743
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092417674266117966 vs 9.3417674266117962e-11
+雅可比元素：actual=0 ref=0.092417674266117966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\../test/KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.76052727345942195 vs 1.2180472726540582e-08
+Σσ²＝‖J‖_F²：actual=12.940000000000003 ref=12.179472726540581
+
+[  FAILED  ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1 (1 ms)
+[ RUN      ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1
+[       OK ] KinFk.AllFixedChainDegenerateMetrics_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2
+[       OK ] KinFk.BaseWorldInvertedMount_V02_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(362): error: The difference between a.tcpInBase.P()[i] and b.tcpInBase.P()[i] is 0.085692206676738936, which exceeds kPoseTol, where
+a.tcpInBase.P()[i] evaluates to 1.7143077933232611,
+b.tcpInBase.P()[i] evaluates to 1.8, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(364): error: The difference between a.tcpInBase.R()(i, j) and b.tcpInBase.R()(i, j) is 0.12241743810962724, which exceeds kPoseTol, where
+a.tcpInBase.R()(i, j) evaluates to 0.87758256189037276,
+b.tcpInBase.R()(i, j) evaluates to 1, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(364): error: The difference between a.tcpInBase.R()(i, j) and b.tcpInBase.R()(i, j) is 0.47942553860420301, which exceeds kPoseTol, where
+a.tcpInBase.R()(i, j) evaluates to -0.47942553860420301,
+b.tcpInBase.R()(i, j) evaluates to 0, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(362): error: The difference between a.tcpInBase.P()[i] and b.tcpInBase.P()[i] is 0.33559787702294208, which exceeds kPoseTol, where
+a.tcpInBase.P()[i] evaluates to 0.33559787702294208,
+b.tcpInBase.P()[i] evaluates to 0, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(364): error: The difference between a.tcpInBase.R()(i, j) and b.tcpInBase.R()(i, j) is 0.47942553860420301, which exceeds kPoseTol, where
+a.tcpInBase.R()(i, j) evaluates to 0.47942553860420301,
+b.tcpInBase.R()(i, j) evaluates to 0, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(364): error: The difference between a.tcpInBase.R()(i, j) and b.tcpInBase.R()(i, j) is 0.12241743810962724, which exceeds kPoseTol, where
+a.tcpInBase.R()(i, j) evaluates to 0.87758256189037276,
+b.tcpInBase.R()(i, j) evaluates to 1, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.33559787702294208 vs 9.9999999999999998e-13
+偏置映射相消·雅可比元素：actual=-0.33559787702294208 ref=0
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.33559787702294208 vs 9.9999999999999998e-13
+偏置映射相消·雅可比元素：actual=-0.33559787702294208 ref=0
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.085692206676738936 vs 1.8010000000000003e-09
+偏置映射相消·雅可比元素：actual=1.7143077933232611 ref=1.8
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.085692206676738936 vs 7.0099999999999996e-10
+偏置映射相消·雅可比元素：actual=0.61430779332326102 ref=0.69999999999999996
+
+[  FAILED  ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2 (0 ms)
+[ RUN      ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQDimensionRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3
+[       OK ] KinFk.IllegalQNonFiniteRejected_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.NoTcpTwoBranches_WP15T03_ACC3
+[       OK ] KinFk.NoTcpTwoBranches_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3
+[       OK ] KinFk.OverLimitQComputableWithNegativeMargin_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.MarginNormalization_WP15T03_ACC1
+[       OK ] KinFk.MarginNormalization_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.MarginZeroSpanDefensiveDocumentedUnreachable_WP15T20
+[       OK ] KinFk.MarginZeroSpanDefensiveDocumentedUnreachable_WP15T20 (0 ms)
+[ RUN      ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3
+[       OK ] KinFk.NoDeviceGuardDocumentedUnreachable_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinFk.DeterministicByteOutput_WP15T03_ACC1
+[       OK ] KinFk.DeterministicByteOutput_WP15T03_ACC1 (0 ms)
+[ RUN      ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(567): error: The difference between value.get().tcpInBase.P()[0] and row.second.P()[0] is 1.1000000000000001, which exceeds 1e-12, where
+value.get().tcpInBase.P()[0] evaluates to 1.3,
+row.second.P()[0] evaluates to 0.20000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(568): error: The difference between value.get().tcpInBase.P()[1] and 1.1 + row.second.P()[1] is 1.1000000000000001, which exceeds 1e-12, where
+value.get().tcpInBase.P()[1] evaluates to 0.80000000000000004,
+1.1 + row.second.P()[1] evaluates to 1.9000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(567): error: The difference between value.get().tcpInBase.P()[0] and row.second.P()[0] is 1.1000000000000001, which exceeds 1e-12, where
+value.get().tcpInBase.P()[0] evaluates to 0.90000000000000013,
+row.second.P()[0] evaluates to -0.20000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(568): error: The difference between value.get().tcpInBase.P()[1] and 1.1 + row.second.P()[1] is 1.1000000000000001, which exceeds 1e-12, where
+value.get().tcpInBase.P()[1] evaluates to 0.29999999999999999,
+1.1 + row.second.P()[1] evaluates to 1.4000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(574): error: The difference between defaultValue.get().tcpInBase.P()[0] and 0.7 is 1.1000000000000001, which exceeds 1e-12, where
+defaultValue.get().tcpInBase.P()[0] evaluates to 1.8,
+0.7 evaluates to 0.69999999999999996, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+[  FAILED  ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15 (0 ms)
+[ RUN      ] KinFk.AnchorlessViewRejectedAsNoDevice_REUSE_T18
+[       OK ] KinFk.AnchorlessViewRejectedAsNoDevice_REUSE_T18 (0 ms)
+[ RUN      ] KinFk.CrossViewIsolationRealSnapshots_REUSE_T18
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.10438716615981392, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 1.8,
+refP.tcp[i][3] evaluates to 1.6956128338401861, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.14359968613765961, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 1.6499999999999999,
+refS.tcp[i][3] evaluates to 1.5064003138623403, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.052479387711418246, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 0,
+refP.tcp[i][3] evaluates to 0.052479387711418246, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.34096598609716489, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0,
+refS.tcp[i][3] evaluates to 0.34096598609716489, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.027515377151890563, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0.5,
+refS.tcp[i][3] evaluates to 0.47248462284810944, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.052479387711418246 vs 5.347938771141825e-11
+平面链雅可比：actual=0 ref=-0.052479387711418246
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.27259283961605529 vs 2.735928396160553e-10
+平面链雅可比：actual=0 ref=0.27259283961605529
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.10438716615981392 vs 1.6966128338401864e-09
+平面链雅可比：actual=1.8 ref=1.6956128338401861
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.055257304197980472 vs 6.4574269580201953e-10
+平面链雅可比：actual=0.69999999999999996 ref=0.64474269580201948
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.34096598609716489 vs 3.4196598609716488e-10
+六轴雅可比：actual=0 ref=-0.34096598609716489
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.030752794892693447 vs 7.0247205107306534e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.069247205107306531
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.25975915031633945 vs 1.6075915031633944e-10
+六轴雅可比：actual=0.099999999999999978 ref=-0.15975915031633944
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.015229676923754182 vs 1.6229676923754184e-11
+六轴雅可比：actual=0 ref=0.015229676923754182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.031255347344982976 vs 6.9744652655016998e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.068744652655017002
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.016529566303015122 vs 1.7529566303015123e-11
+六轴雅可比：actual=0 ref=0.016529566303015122
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.14359968613765961 vs 1.5074003138623405e-09
+六轴雅可比：actual=1.6499999999999999 ref=1.5064003138623403
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.021420670723842548 vs 2.2420670723842549e-11
+六轴雅可比：actual=0 ref=0.021420670723842548
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.049419296399676495 vs 5.0419296399676501e-11
+六轴雅可比：actual=0 ref=-0.049419296399676495
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.068667889209871075 vs 1.6966788920987106e-10
+六轴雅可比：actual=-0.099999999999999978 ref=-0.16866788920987105
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.083929233337249859 vs 8.492923333724986e-11
+六轴雅可比：actual=0 ref=0.083929233337249859
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.065801983199277658 vs 3.519801680072232e-11
+六轴雅可比：actual=-0.099999999999999978 ref=-0.034198016800722313
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.1101184742611192 vs 1.540881525738881e-09
+六轴雅可比：actual=-1.6499999999999999 ref=-1.5398815257388807
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.048909755206305583 vs 1.1020902447936946e-09
+六轴雅可比：actual=-1.1499999999999999 ref=-1.1010902447936943
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.11410012062316802 vs 1.1510012062316802e-10
+六轴雅可比：actual=0 ref=-0.11410012062316802
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.012880848452617666 vs 3.3811915154738222e-10
+六轴雅可比：actual=-0.34999999999999987 ref=-0.3371191515473822
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092505508402104003 vs 9.3505508402103999e-11
+六轴雅可比：actual=0 ref=-0.092505508402104003
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.087332192545160892 vs 9.1366780745483916e-10
+六轴雅可比：actual=1 ref=0.91266780745483911
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.23354090646158562 vs 2.3454090646158564e-10
+六轴雅可比：actual=0 ref=-0.23354090646158562
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.02876465272760953 vs 9.7223534727239066e-10
+六轴雅可比：actual=1 ref=0.97123534727239047
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.28232123669751763 vs 2.8332123669751765e-10
+六轴雅可比：actual=0 ref=0.28232123669751763
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.046356408165988183 vs 9.5464359183401202e-10
+六轴雅可比：actual=1 ref=0.95364359183401182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.21945585818546923 vs 2.2045585818546923e-10
+六轴雅可比：actual=0 ref=0.21945585818546923
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133966 vs 2.9652020666133969e-10
+六轴雅可比：actual=0 ref=-0.29552020666133966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.18979606097868743 vs 1.9079606097868743e-10
+六轴雅可比：actual=0 ref=0.18979606097868743
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092417674266117966 vs 9.3417674266117962e-11
+六轴雅可比：actual=0 ref=0.092417674266117966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.10438716615981392, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 1.8,
+refP.tcp[i][3] evaluates to 1.6956128338401861, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.14359968613765961, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 1.6499999999999999,
+refS.tcp[i][3] evaluates to 1.5064003138623403, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.052479387711418246, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 0,
+refP.tcp[i][3] evaluates to 0.052479387711418246, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.34096598609716489, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0,
+refS.tcp[i][3] evaluates to 0.34096598609716489, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.027515377151890563, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0.5,
+refS.tcp[i][3] evaluates to 0.47248462284810944, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.052479387711418246 vs 5.347938771141825e-11
+平面链雅可比：actual=0 ref=-0.052479387711418246
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.27259283961605529 vs 2.735928396160553e-10
+平面链雅可比：actual=0 ref=0.27259283961605529
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.10438716615981392 vs 1.6966128338401864e-09
+平面链雅可比：actual=1.8 ref=1.6956128338401861
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.055257304197980472 vs 6.4574269580201953e-10
+平面链雅可比：actual=0.69999999999999996 ref=0.64474269580201948
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.34096598609716489 vs 3.4196598609716488e-10
+六轴雅可比：actual=0 ref=-0.34096598609716489
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.030752794892693447 vs 7.0247205107306534e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.069247205107306531
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.25975915031633945 vs 1.6075915031633944e-10
+六轴雅可比：actual=0.099999999999999978 ref=-0.15975915031633944
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.015229676923754182 vs 1.6229676923754184e-11
+六轴雅可比：actual=0 ref=0.015229676923754182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.031255347344982976 vs 6.9744652655016998e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.068744652655017002
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.016529566303015122 vs 1.7529566303015123e-11
+六轴雅可比：actual=0 ref=0.016529566303015122
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.14359968613765961 vs 1.5074003138623405e-09
+六轴雅可比：actual=1.6499999999999999 ref=1.5064003138623403
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.021420670723842548 vs 2.2420670723842549e-11
+六轴雅可比：actual=0 ref=0.021420670723842548
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.049419296399676495 vs 5.0419296399676501e-11
+六轴雅可比：actual=0 ref=-0.049419296399676495
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.068667889209871075 vs 1.6966788920987106e-10
+六轴雅可比：actual=-0.099999999999999978 ref=-0.16866788920987105
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.083929233337249859 vs 8.492923333724986e-11
+六轴雅可比：actual=0 ref=0.083929233337249859
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.065801983199277658 vs 3.519801680072232e-11
+六轴雅可比：actual=-0.099999999999999978 ref=-0.034198016800722313
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.1101184742611192 vs 1.540881525738881e-09
+六轴雅可比：actual=-1.6499999999999999 ref=-1.5398815257388807
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.048909755206305583 vs 1.1020902447936946e-09
+六轴雅可比：actual=-1.1499999999999999 ref=-1.1010902447936943
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.11410012062316802 vs 1.1510012062316802e-10
+六轴雅可比：actual=0 ref=-0.11410012062316802
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.012880848452617666 vs 3.3811915154738222e-10
+六轴雅可比：actual=-0.34999999999999987 ref=-0.3371191515473822
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092505508402104003 vs 9.3505508402103999e-11
+六轴雅可比：actual=0 ref=-0.092505508402104003
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.087332192545160892 vs 9.1366780745483916e-10
+六轴雅可比：actual=1 ref=0.91266780745483911
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.23354090646158562 vs 2.3454090646158564e-10
+六轴雅可比：actual=0 ref=-0.23354090646158562
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.02876465272760953 vs 9.7223534727239066e-10
+六轴雅可比：actual=1 ref=0.97123534727239047
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.28232123669751763 vs 2.8332123669751765e-10
+六轴雅可比：actual=0 ref=0.28232123669751763
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.046356408165988183 vs 9.5464359183401202e-10
+六轴雅可比：actual=1 ref=0.95364359183401182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.21945585818546923 vs 2.2045585818546923e-10
+六轴雅可比：actual=0 ref=0.21945585818546923
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133966 vs 2.9652020666133969e-10
+六轴雅可比：actual=0 ref=-0.29552020666133966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.18979606097868743 vs 1.9079606097868743e-10
+六轴雅可比：actual=0 ref=0.18979606097868743
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092417674266117966 vs 9.3417674266117962e-11
+六轴雅可比：actual=0 ref=0.092417674266117966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.10438716615981392, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 1.8,
+refP.tcp[i][3] evaluates to 1.6956128338401861, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.14359968613765961, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 1.6499999999999999,
+refS.tcp[i][3] evaluates to 1.5064003138623403, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(641): error: The difference between rp.get().tcpInBase.P()[i] and refP.tcp[i][3] is 0.052479387711418246, which exceeds kPoseTol, where
+rp.get().tcpInBase.P()[i] evaluates to 0,
+refP.tcp[i][3] evaluates to 0.052479387711418246, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.34096598609716489, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0,
+refS.tcp[i][3] evaluates to 0.34096598609716489, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(642): error: The difference between rs.get().tcpInBase.P()[i] and refS.tcp[i][3] is 0.027515377151890563, which exceeds kPoseTol, where
+rs.get().tcpInBase.P()[i] evaluates to 0.5,
+refS.tcp[i][3] evaluates to 0.47248462284810944, and
+kPoseTol evaluates to 1.0000000000000001e-09.
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.052479387711418246 vs 5.347938771141825e-11
+平面链雅可比：actual=0 ref=-0.052479387711418246
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.27259283961605529 vs 2.735928396160553e-10
+平面链雅可比：actual=0 ref=0.27259283961605529
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.10438716615981392 vs 1.6966128338401864e-09
+平面链雅可比：actual=1.8 ref=1.6956128338401861
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.055257304197980472 vs 6.4574269580201953e-10
+平面链雅可比：actual=0.69999999999999996 ref=0.64474269580201948
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.34096598609716489 vs 3.4196598609716488e-10
+六轴雅可比：actual=0 ref=-0.34096598609716489
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.030752794892693447 vs 7.0247205107306534e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.069247205107306531
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.25975915031633945 vs 1.6075915031633944e-10
+六轴雅可比：actual=0.099999999999999978 ref=-0.15975915031633944
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.015229676923754182 vs 1.6229676923754184e-11
+六轴雅可比：actual=0 ref=0.015229676923754182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.031255347344982976 vs 6.9744652655016998e-11
+六轴雅可比：actual=0.099999999999999978 ref=0.068744652655017002
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.016529566303015122 vs 1.7529566303015123e-11
+六轴雅可比：actual=0 ref=0.016529566303015122
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.14359968613765961 vs 1.5074003138623405e-09
+六轴雅可比：actual=1.6499999999999999 ref=1.5064003138623403
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.021420670723842548 vs 2.2420670723842549e-11
+六轴雅可比：actual=0 ref=0.021420670723842548
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.049419296399676495 vs 5.0419296399676501e-11
+六轴雅可比：actual=0 ref=-0.049419296399676495
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.068667889209871075 vs 1.6966788920987106e-10
+六轴雅可比：actual=-0.099999999999999978 ref=-0.16866788920987105
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.083929233337249859 vs 8.492923333724986e-11
+六轴雅可比：actual=0 ref=0.083929233337249859
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.065801983199277658 vs 3.519801680072232e-11
+六轴雅可比：actual=-0.099999999999999978 ref=-0.034198016800722313
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.1101184742611192 vs 1.540881525738881e-09
+六轴雅可比：actual=-1.6499999999999999 ref=-1.5398815257388807
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.048909755206305583 vs 1.1020902447936946e-09
+六轴雅可比：actual=-1.1499999999999999 ref=-1.1010902447936943
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.11410012062316802 vs 1.1510012062316802e-10
+六轴雅可比：actual=0 ref=-0.11410012062316802
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.012880848452617666 vs 3.3811915154738222e-10
+六轴雅可比：actual=-0.34999999999999987 ref=-0.3371191515473822
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092505508402104003 vs 9.3505508402103999e-11
+六轴雅可比：actual=0 ref=-0.092505508402104003
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133955 vs 2.9652020666133954e-10
+六轴雅可比：actual=0 ref=-0.29552020666133955
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.087332192545160892 vs 9.1366780745483916e-10
+六轴雅可比：actual=1 ref=0.91266780745483911
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.23354090646158562 vs 2.3454090646158564e-10
+六轴雅可比：actual=0 ref=-0.23354090646158562
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.02876465272760953 vs 9.7223534727239066e-10
+六轴雅可比：actual=1 ref=0.97123534727239047
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.044663510874394019 vs 9.563364891256061e-10
+六轴雅可比：actual=1 ref=0.95533648912560598
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.28232123669751763 vs 2.8332123669751765e-10
+六轴雅可比：actual=0 ref=0.28232123669751763
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.046356408165988183 vs 9.5464359183401202e-10
+六轴雅可比：actual=1 ref=0.95364359183401182
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.21945585818546923 vs 2.2045585818546923e-10
+六轴雅可比：actual=0 ref=0.21945585818546923
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.29552020666133966 vs 2.9652020666133969e-10
+六轴雅可比：actual=0 ref=-0.29552020666133966
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.18979606097868743 vs 1.9079606097868743e-10
+六轴雅可比：actual=0 ref=0.18979606097868743
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\KinFkFixture.hpp(712): error: Expected: (std::abs(actual - ref)) <= (kGoldenRel * std::abs(ref) + kGoldenAbs), actual: 0.092417674266117966 vs 9.3417674266117962e-11
+六轴雅可比：actual=0 ref=0.092417674266117966
+
+[  FAILED  ] KinFk.CrossViewIsolationRealSnapshots_REUSE_T18 (2 ms)
+[ RUN      ] KinFk.UpstreamDirectDeviceComparison_REUSE_T18
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(701): error: Expected equality of these values:
+  m.tcpInBase.P()[i]
+    Which is: 1.6499999999999999
+  t.P()[i]
+    Which is: 1.5064003138623403
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 6.123233995736766e-17
+  t.R()(i, k)
+    Which is: -0.1652956630301512
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: -1
+  t.R()(i, k)
+    Which is: -0.97123534727239047
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 0
+  t.R()(i, k)
+    Which is: 0.17140374556030491
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(701): error: Expected equality of these values:
+  m.tcpInBase.P()[i]
+    Which is: 0
+  t.P()[i]
+    Which is: 0.34096598609716489
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 1
+  t.R()(i, k)
+    Which is: 0.34198016800722331
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 6.123233995736766e-17
+  t.R()(i, k)
+    Which is: -0.2194558581854692
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 0
+  t.R()(i, k)
+    Which is: -0.91372243651878804
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(701): error: Expected equality of these values:
+  m.tcpInBase.P()[i]
+    Which is: 0.5
+  t.P()[i]
+    Which is: 0.47248462284810944
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 0
+  t.R()(i, k)
+    Which is: 0.92505508402104031
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 0
+  t.R()(i, k)
+    Which is: -0.092417674266117911
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(703): error: Expected equality of these values:
+  m.tcpInBase.R()(i, k)
+    Which is: 1
+  t.R()(i, k)
+    Which is: 0.36841832881938397
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.34096598609716489
+J(0,0)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0.099999999999999978
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.069247205107306531
+J(0,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0.099999999999999978
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.15975915031633944
+J(0,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.015229676923754182
+J(0,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0.099999999999999978
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.068744652655017002
+J(0,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.016529566303015122
+J(0,5)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1.6499999999999999
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 1.5064003138623403
+J(1,0)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.021420670723842548
+J(1,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.049419296399676495
+J(1,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: -0.099999999999999978
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.16866788920987105
+J(1,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.083929233337249859
+J(1,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: -0.099999999999999978
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.034198016800722313
+J(1,5)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: -1.6499999999999999
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -1.5398815257388807
+J(2,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: -1.1499999999999999
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -1.1010902447936943
+J(2,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.11410012062316802
+J(2,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: -0.34999999999999987
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.3371191515473822
+J(2,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.092505508402104003
+J(2,5)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.29552020666133955
+J(3,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.29552020666133955
+J(3,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.91266780745483911
+J(3,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.23354090646158562
+J(3,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.97123534727239047
+J(3,5)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.95533648912560598
+J(4,1)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.95533648912560598
+J(4,2)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.28232123669751763
+J(4,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 1
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.95364359183401182
+J(4,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.21945585818546923
+J(4,5)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: -0.29552020666133966
+J(5,3)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.18979606097868743
+J(5,4)
+
+D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\FkTest.cpp(711): error: Expected equality of these values:
+  m.jacobian[row * 6 + col]
+    Which is: 0
+  j.e()(static_cast<Eigen::Index>(row), static_cast<Eigen::Index>(col))
+    Which is: 0.092417674266117966
+J(5,5)
+
+[  FAILED  ] KinFk.UpstreamDirectDeviceComparison_REUSE_T18 (1 ms)
+[----------] 20 tests from KinFk (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 1 test suite ran. (9 ms total)
+[  PASSED  ] 13 tests.
+[  FAILED  ] 7 tests, listed below:
+[  FAILED  ] KinFk.PlanarTwoLinkQuarterPoseAnalytic_WP15T03_ACC1
+[  FAILED  ] KinFk.PlanarTwoLinkJacobianAnalytic_WP15T03_ACC1
+[  FAILED  ] KinFk.SixAxisAgainstIndependentReference_WP15T03_ACC1
+[  FAILED  ] KinFk.AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2
+[  FAILED  ] KinFk.NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15
+[  FAILED  ] KinFk.CrossViewIsolationRealSnapshots_REUSE_T18
+[  FAILED  ] KinFk.UpstreamDirectDeviceComparison_REUSE_T18
+
+ 7 FAILED TESTS

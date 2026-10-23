@@ -21,6 +21,11 @@
 
 #include "KinFkFixture.hpp"
 
+#include <rw/math/Jacobian.hpp>
+#include <rw/math/Q.hpp>
+#include <rw/models/Device.hpp>
+#include <rw/models/SerialDevice.hpp>  // REUSE-T18 upstreamComparison 直接调用面
+
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>  // IRD_TEST_INFO——需求/AT 追溯登记
 
 #include <gtest/gtest.h>
@@ -318,7 +323,11 @@ TEST(KinFk, BaseWorldInvertedMount_V02_WP15T03_ACC2)
 }
 
 /// 权威关节角：FK 消费 q 为权威值（q_authoritative＝q_zeroOffset＋q_rw，
-/// §5.1）——内部不叠加 zeroOffset（同几何双模型字节级同输出）。
+/// §5.1）——调用方视角偏置映射零影响（REUSE-T18 语义：权威 q 在输入侧减
+/// zeroOffset 映射为 WC 坐标，上游关节内烘焙的偏置在编译侧加回——两侧
+/// 相消，同几何双模型在容差内同结果）。T03 旧版为跨模型字节级断言（值域
+/// FK 不消费 zeroOffset 字段）；T18 起偏置由上游关节承载，浮点复合路径
+/// 不同——按附录 D 第 9 项标量容差对照。
 TEST(KinFk, AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2)
 {
     IRD_TEST_INFO(std::vector<std::string>{"MDL-09"},
@@ -331,7 +340,7 @@ TEST(KinFk, AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2)
                                   trans(0, 0, 0), -2.97, 2.97));
         rt::CanonicalJoint j2 = revolute("j2", rw::math::Vector3D<double>(0, 0, 1),
                                          trans(1.1, 0, 0), -3.14, 3.14);
-        j2.zeroOffset = zeroOffset;  // rad——仅建模层权威换算用（§5.1）
+        j2.zeroOffset = zeroOffset;  // rad——权威↔运行时坐标换算分量（§5.1）
         joints.push_back(j2);
         return makeModel(joints, trans(0.7, 0, 0));
     };
@@ -346,9 +355,19 @@ TEST(KinFk, AuthoritativeQZeroOffsetNotAdded_WP15T03_ACC2)
     const auto r2 = fk.evaluate(v2, tcpRef(), q);
     ASSERT_TRUE(r1.ok());
     ASSERT_TRUE(r2.ok());
-    // zeroOffset 不参与 FK 计算（q 即权威值）——字节级一致。
-    EXPECT_EQ(encodePoseMetricsCanonical(r1.get()),
-              encodePoseMetricsCanonical(r2.get()));
+    // 权威 q 直入：偏置映射相消——位姿逐元素＋雅可比逐元素容差内一致。
+    const PoseMetrics& a = r1.get();
+    const PoseMetrics& b = r2.get();
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_NEAR(a.tcpInBase.P()[i], b.tcpInBase.P()[i], kPoseTol);
+        for (std::size_t j = 0; j < 3; ++j) {
+            EXPECT_NEAR(a.tcpInBase.R()(i, j), b.tcpInBase.R()(i, j), kPoseTol);
+        }
+    }
+    ASSERT_EQ(a.jacobian.size(), b.jacobian.size());
+    for (std::size_t k = 0; k < a.jacobian.size(); ++k) {
+        expectGoldenNear(a.jacobian[k], b.jacobian[k], "偏置映射相消·雅可比元素");
+    }
 }
 
 // =====================================================================
@@ -555,4 +574,142 @@ TEST(KinFk, NamedTcpOffsetsUseExactKeyAndLegacyAlias_REQ01_A15)
     EXPECT_NEAR(defaultValue.get().tcpInBase.P()[0], 0.7, 1e-12);
     ref.tcpKey = "missing";
     EXPECT_FALSE(FkEvaluator().evaluate(view, ref, q).ok());
+}
+
+// =====================================================================
+// REUSE-T18——已编译模型消费面（锚缺失值面拒绝＋跨视图任务隔离）
+// =====================================================================
+
+/// 纯数值视图（runtimeModelView()==nullptr——T17 锚缺省体）→ NoDevice
+/// 值面拒绝：FK 消费已编译 WorkCell，无编译产物即无设备可用（§9.2 @pre
+/// 的运行期承载；错误码面不变——4 值语义内承载）。
+TEST(KinFk, AnchorlessViewRejectedAsNoDevice_REUSE_T18)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"},
+                  std::vector<std::string>{});
+
+    /// 无锚替身：值面完整、锚返回空（T17 缺省体形态的显式载体）。
+    struct AnchorlessView final : public sdurws::ird::kinematics::IKinRuntimeView {
+        rt::CanonicalModel m_model;
+        explicit AnchorlessView(rt::CanonicalModel model)
+            : m_model(std::move(model)),
+              m_wtb(m_model.world().T_world_base)
+        {
+        }
+        const rt::CanonicalModel& model() const override { return m_model; }
+        rw::math::Transform3D<double> worldToBase() const override { return m_wtb; }
+        rw::math::Transform3D<double> m_wtb;
+    };
+
+    AnchorlessView view(twoLinkModel());
+    const FkEvaluator fk;
+    const auto r = fk.evaluate(view, tcpRef(), {0.0, 0.0});
+    ASSERT_FALSE(r.ok());
+    EXPECT_EQ(r.error().code, KinematicsErrorCode::NoDevice);
+    // 非法 q 守卫仍先于锚消费（可辨识性——维度不符先报 IllegalQ）。
+    const auto rBad = fk.evaluate(view, tcpRef(), {0.1, 0.2, 0.3});
+    ASSERT_FALSE(rBad.ok());
+    EXPECT_EQ(rBad.error().code, KinematicsErrorCode::IllegalQ);
+}
+
+/// 跨视图任务隔离（真实生产消费面）：两不同模型的真实编译快照交替评估，
+/// 各自结果与独立参考逐元素一致——任务私有 State＋每次 setQ 保证无跨
+/// 任务污染（§9.2；T17 提交面冻结语义的评估侧验证）。
+TEST(KinFk, CrossViewIsolationRealSnapshots_REUSE_T18)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01", "NFR-COR-01"},
+                  std::vector<std::string>{"AT-03"});
+
+    const rt::CanonicalModel planar = twoLinkModel();
+    const rt::CanonicalModel six = sixAxisModel();
+    TestView planarView(planar);
+    TestView sixView(six);
+    const FkEvaluator fk;
+    const std::vector<double> qPlanar = {0.3, -0.7};
+    const std::vector<double> qSix = {0.3, -0.5, 0.8, 0.2, -0.4, 1.0};
+
+    // 交替评估三轮——锚/State/雅可比路径在两快照间往返。
+    for (int round = 0; round < 3; ++round) {
+        const auto rp = fk.evaluate(planarView, tcpRef(), qPlanar);
+        const auto rs = fk.evaluate(sixView, tcpRef(), qSix);
+        ASSERT_TRUE(rp.ok()) << rp.error().detail;
+        ASSERT_TRUE(rs.ok()) << rs.error().detail;
+
+        const RefChainResult refP = referenceFk(planar, qPlanar);
+        const RefChainResult refS = referenceFk(six, qSix);
+        for (std::size_t i = 0; i < 3; ++i) {
+            EXPECT_NEAR(rp.get().tcpInBase.P()[i], refP.tcp[i][3], kPoseTol);
+            EXPECT_NEAR(rs.get().tcpInBase.P()[i], refS.tcp[i][3], kPoseTol);
+        }
+        ASSERT_EQ(rp.get().jacobian.size(), refP.jacobian6xN.size());
+        for (std::size_t k = 0; k < rp.get().jacobian.size(); ++k) {
+            expectGoldenNear(rp.get().jacobian[k], refP.jacobian6xN[k], "平面链雅可比");
+        }
+        ASSERT_EQ(rs.get().jacobian.size(), refS.jacobian6xN.size());
+        for (std::size_t k = 0; k < rs.get().jacobian.size(); ++k) {
+            expectGoldenNear(rs.get().jacobian[k], refS.jacobian6xN[k], "六轴雅可比");
+        }
+    }
+    // 同视图重复评估仍与首轮逐字节一致（同快照同输入同字节——NFR-COR-01）。
+    const auto again = fk.evaluate(sixView, tcpRef(), qSix);
+    ASSERT_TRUE(again.ok());
+    const auto first = fk.evaluate(sixView, tcpRef(), qSix);
+    ASSERT_TRUE(first.ok());
+    EXPECT_EQ(encodePoseMetricsCanonical(again.get()),
+              encodePoseMetricsCanonical(first.get()));
+}
+
+/// 上游直接对照（REUSE-T18 正向证据 upstreamComparison 面）：同模型同
+/// State 语义下，FkEvaluator 输出与直接调用上游 Device（setQ/baseTframe/
+/// baseJframe）的结果逐元素一致——评估器消费的就是上游计算，不重建第二套
+/// FK/Jacobian（H2；q_auth−zeroOffset 映射与 src/JointMapping.hpp 同式）。
+TEST(KinFk, UpstreamDirectDeviceComparison_REUSE_T18)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"KIN-01"},
+                  std::vector<std::string>{});
+
+    const rt::CanonicalModel model = sixAxisModel();
+    TestView view(model);
+    const FkEvaluator fk;
+    const std::vector<double> q = {0.3, -0.5, 0.8, 0.2, -0.4, 1.0};
+    const auto r = fk.evaluate(view, tcpRef(), q);
+    ASSERT_TRUE(r.ok()) << r.error().detail;
+    const PoseMetrics& m = r.get();
+
+    // 直接上游调用（生产同一入口——经锚的受控视图，任务私有 State）。
+    const auto anchor = view.runtimeModelView();
+    ASSERT_TRUE(anchor != nullptr);
+    const auto device = anchor->workCell().findDevice(model.chain().deviceName);
+    ASSERT_TRUE(device != nullptr);
+    rw::kinematics::State state = anchor->makeState();
+    std::vector<double> qRw;  // q_rw＝q_auth−zeroOffset（与 JointMapping 同式）
+    for (const auto& j : model.chain().joints) {
+        if (j.type != rt::JointType::Fixed) { qRw.push_back(q[qRw.size()] - j.zeroOffset); }
+    }
+    device->setQ(rw::math::Q(qRw), state);
+    const auto resolved =
+        anchor->nameResolver().resolveObjectId(model.tools().at(0).objectId);
+    ASSERT_TRUE(resolved.ok());
+    const rw::kinematics::Frame* tcpFrame =
+        anchor->workCell().findFrame(resolved.get().fullName);
+    ASSERT_TRUE(tcpFrame != nullptr);
+    const rw::core::Ptr<const rw::kinematics::Frame> fptr(tcpFrame);
+    const rw::math::Transform3D<double> t = device->baseTframe(fptr, state);
+    const rw::math::Jacobian j = device->baseJframe(fptr, state);
+
+    for (std::size_t i = 0; i < 3; ++i) {
+        EXPECT_DOUBLE_EQ(m.tcpInBase.P()[i], t.P()[i]);
+        for (std::size_t k = 0; k < 3; ++k) {
+            EXPECT_DOUBLE_EQ(m.tcpInBase.R()(i, k), t.R()(i, k));
+        }
+    }
+    ASSERT_EQ(m.jacobian.size(), 36U);
+    for (std::size_t row = 0; row < 6; ++row) {
+        for (std::size_t col = 0; col < 6; ++col) {
+            EXPECT_DOUBLE_EQ(m.jacobian[row * 6 + col],
+                             j.e()(static_cast<Eigen::Index>(row),
+                                   static_cast<Eigen::Index>(col)))
+                << "J(" << row << "," << col << ")";
+        }
+    }
 }
