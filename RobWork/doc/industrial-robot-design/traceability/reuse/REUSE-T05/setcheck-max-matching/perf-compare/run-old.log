@@ -1,0 +1,13 @@
+probe start argc=3
+profile loaded
+mode=old n=64 density=sparse tol=0.01 matched=37 edges~82 best_ms=2.19 analyticMB=0.0 peakWS=4.9
+mode=old n=256 density=sparse tol=0.01 matched=216 edges~1311 best_ms=47.21 analyticMB=0.0 peakWS=5.0
+mode=old n=1024 density=sparse tol=0.01 matched=970 edges~20972 best_ms=3443.21 analyticMB=0.0 peakWS=5.2
+mode=old n=4096 density=sparse tol=0.01 matched=4068 edges~335544 best_ms=137199.29 analyticMB=0.1 peakWS=6.0
+mode=old n=64 density=medium tol=0.05 matched=57 edges~410 best_ms=6.48 analyticMB=0.0 peakWS=6.0
+mode=old n=256 density=medium tol=0.05 matched=256 edges~6554 best_ms=162.85 analyticMB=0.0 peakWS=6.0
+mode=old n=1024 density=medium tol=0.05 matched=1024 edges~104858 best_ms=199.55 analyticMB=0.0 peakWS=6.0
+mode=old n=64 density=dense tol=0.2 matched=64 edges~1638 best_ms=0.64 analyticMB=0.0 peakWS=6.0
+mode=old n=256 density=dense tol=0.2 matched=256 edges~26214 best_ms=1.97 analyticMB=0.0 peakWS=6.0
+mode=old n=1024 density=dense tol=0.2 matched=1024 edges~419430 best_ms=6.96 analyticMB=0.0 peakWS=6.0
+done mode=old
