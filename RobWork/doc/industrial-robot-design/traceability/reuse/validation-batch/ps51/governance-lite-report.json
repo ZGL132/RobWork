@@ -1,0 +1,150 @@
+﻿{
+    "suite":  "validation-batch",
+    "expected":  23,
+    "executed":  23,
+    "passed":  23,
+    "failed":  0,
+    "skipped":  0,
+    "notRun":  0,
+    "complete":  true,
+    "cases":  [
+                  {
+                      "name":  "batch-single-compatible",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "batch-two-tasks-one-gate",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "batch-duplicate-path-once",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "batch-array-contract-one-gate",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "batch-bad-second-blocks",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "batch-gate-fail-propagates",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "verify-identical-leading-reused",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-relative-root-same-input",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-other-runtime-not-reused",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-stronger-check-executes",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "verify-after-command-executes",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-preflight-fail-stops",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "verify-dryrun-still-checks",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-other-task-executes",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "verify-command-suffix-not-reused",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "docs-default-full-gate",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "docs-batch-one-gate",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "docs-bad-task-not-hidden",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "docs-legacy-still-full-gate",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "reuse-real-checktask-batch",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "reuse-real-array-contracts",
+                      "passed":  true,
+                      "exitCode":  0,
+                      "expectedExitCode":  0
+                  },
+                  {
+                      "name":  "reuse-real-bad-second-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  },
+                  {
+                      "name":  "reuse-real-outside-root-rejected",
+                      "passed":  true,
+                      "exitCode":  1,
+                      "expectedExitCode":  1
+                  }
+              ]
+}

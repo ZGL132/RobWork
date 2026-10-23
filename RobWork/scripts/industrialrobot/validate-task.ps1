@@ -13,10 +13,15 @@
 # 用法：pwsh -File validate-task.ps1 -TaskFile <契约路径> [-RepoRoot <仓库根>]
 # 仓库根解析与 verify-task.ps1 同一套健壮逻辑（CORE-T01 验收 G-1 教训），调用方式无关。
 param(
-  [Parameter(Mandatory=$true)][string]$TaskFile,
+  [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string[]]$TaskFile,
   [string]$RepoRoot = ""
 )
-if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
+# 同一能力批次共用契约索引及一次全量复用检查；每份契约仍逐项验证。
+# 先解析真实路径去重，避免同一文件的相对/绝对拼写触发重复校验。
+$TaskFile = @($TaskFile | ForEach-Object {
+  if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "task file not found: $_" }
+  (Resolve-Path -LiteralPath $_).Path
+} | Sort-Object -Unique)
 
 # 仓库根解析：优先显式参数；否则脚本位置上三级（scripts/industrialrobot → 仓库根），
 # 并以"doc 目录存在"自检——解析失败必须显性报错，不允许归约到盘根后静默错判（G-1 根因对策）。
@@ -60,7 +65,11 @@ Get-ChildItem (Join-Path $docBase "tasks") -Recurse -Filter "*.json" -ErrorActio
   if ($j.taskId) { $allTaskIds[$j.taskId] = $true }
 }
 
-$tasks = @(Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json)
+$tasks = @(foreach ($taskPath in $TaskFile) {
+  # PS5.1 的 ConvertFrom-Json 会把 JSON 数组作为单个管道对象输出，显式展开后再逐契约检查。
+  $decoded = Get-Content -LiteralPath $taskPath -Raw -Encoding UTF8 | ConvertFrom-Json
+  foreach ($contract in $decoded) { $contract }
+})
 $required = 'taskId','unit','masterWp','title','status','dependsOn','requirements','designRefs','verify'
 $readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'
 foreach ($t in $tasks) {
@@ -121,10 +130,9 @@ foreach ($t in $tasks) {
   }
 }
 # 新编译契约的复用字段不能只停留在文字上；历史契约结构检查不冒充重新授权执行。
-foreach ($t in $tasks) {
-  if ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done'))) {
-    & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
-    if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
-  }
+$requiresReuse = @($tasks | Where-Object { $_.reuse -or ($_.taskId -like 'REUSE-*' -and $_.status -in @('ready','done')) }).Count -gt 0
+if ($requiresReuse) {
+  & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+  if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
 }
 Write-Output "validate-task: PASS ($($tasks.Count) tasks)"

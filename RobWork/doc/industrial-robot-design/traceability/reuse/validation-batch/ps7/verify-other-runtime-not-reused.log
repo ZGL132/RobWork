@@ -1,0 +1,6 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513
+fixture full reuse PASS
+validate-task: PASS (1 tasks)
+> powershell -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json
+fixture full reuse PASS
+verify-task: PASS BATCH-T01（实际执行 1 条通过；散文人工核对 0 条；reusedPreflight=0）

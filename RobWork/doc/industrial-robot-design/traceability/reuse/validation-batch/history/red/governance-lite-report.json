@@ -1,0 +1,24 @@
+{
+  "suite": "validation-batch",
+  "expected": 19,
+  "executed": 2,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "notRun": 17,
+  "complete": false,
+  "cases": [
+    {
+      "name": "batch-single-compatible",
+      "passed": true,
+      "exitCode": 0,
+      "expectedExitCode": 0
+    },
+    {
+      "name": "batch-two-tasks-one-gate",
+      "passed": false,
+      "exitCode": 1,
+      "expectedExitCode": 0
+    }
+  ]
+}

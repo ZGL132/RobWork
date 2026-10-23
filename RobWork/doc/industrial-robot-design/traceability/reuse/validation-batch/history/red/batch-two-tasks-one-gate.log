@@ -1,0 +1,5 @@
+validate-task.ps1: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a35a6d2b35184780a934214d825369c4\RobWork\scripts\industrialrobot\batch-runner.ps1:2
+Line |
+   2 |  … industrialrobot/validate-task.ps1' -RepoRoot $root -TaskFile @($a,$b)
+     |                                                                 ~~~~~~~~
+     | Cannot process argument transformation on parameter 'TaskFile'. Cannot convert value to type System.String.

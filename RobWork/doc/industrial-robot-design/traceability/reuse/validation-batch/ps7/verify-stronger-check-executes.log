@@ -1,0 +1,11 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513
+fixture full reuse PASS
+validate-task: PASS (1 tasks)
+> pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json -RequireMigrationComplete
+fixture gate rejected
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513\RobWork\scripts\industrialrobot\verify-task.ps1:76
+Line |
+  76 |  … TCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" }
+     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | verification failed: pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile
+     | RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json -RequireMigrationComplete

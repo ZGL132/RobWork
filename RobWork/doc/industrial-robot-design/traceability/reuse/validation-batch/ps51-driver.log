@@ -1,0 +1,24 @@
+PASS batch-single-compatible
+PASS batch-two-tasks-one-gate
+PASS batch-duplicate-path-once
+PASS batch-array-contract-one-gate
+PASS batch-bad-second-blocks
+PASS batch-gate-fail-propagates
+PASS verify-identical-leading-reused
+PASS verify-relative-root-same-input
+PASS verify-other-runtime-not-reused
+PASS verify-stronger-check-executes
+PASS verify-after-command-executes
+PASS verify-preflight-fail-stops
+PASS verify-dryrun-still-checks
+PASS verify-other-task-executes
+PASS verify-command-suffix-not-reused
+PASS docs-default-full-gate
+PASS docs-batch-one-gate
+PASS docs-bad-task-not-hidden
+PASS docs-legacy-still-full-gate
+PASS reuse-real-checktask-batch
+PASS reuse-real-array-contracts
+PASS reuse-real-bad-second-rejected
+PASS reuse-real-outside-root-rejected
+governance-lite: PASS (23 passed, 0 failed, 0 skipped)

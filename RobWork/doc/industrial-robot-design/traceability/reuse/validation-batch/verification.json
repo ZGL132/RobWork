@@ -1,0 +1,68 @@
+{
+  "base": "091e53353a10334a7be4f701324b6a51d5db7dcf",
+  "scriptInputs": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+      "sha256": "92930924d04ef41e2e04a7ba130e10590abb68b2698ee0aac71f8ac3788b35eb"
+    }
+  ],
+  "results": [
+    {
+      "host": "ps7",
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -ValidationBatchOnly -OutputDir <output>",
+      "exitCode": 0,
+      "report": "ps7/governance-lite-report.json",
+      "junit": "ps7/governance-lite.junit.xml",
+      "passed": 23,
+      "skipped": 0,
+      "failed": 0,
+      "notRun": 0
+    },
+    {
+      "host": "ps51",
+      "command": "powershell -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -ValidationBatchOnly -OutputDir <output>",
+      "exitCode": 0,
+      "report": "ps51/governance-lite-report.json",
+      "junit": "ps51/governance-lite.junit.xml",
+      "passed": 23,
+      "skipped": 0,
+      "failed": 0,
+      "notRun": 0
+    }
+  ],
+  "cppBuild": "NOT RUN: no C++/CMake/dependency changes",
+  "unaffectedTests": "NOT RUN: original21/152 and product numeric/GUI tests are outside impact",
+  "independentAcceptance": "NOT RUN",
+  "remoteCI": "NOT RUN",
+  "batchCheck": {
+    "status": "FAIL",
+    "exitCode": 1,
+    "elapsedSeconds": 28.5982804,
+    "command": "validate-docs.ps1 -TaskFile @(REUSE-T15,REUSE-T16)",
+    "log": "batch-final.log",
+    "terminalError": "batch-terminal.txt",
+    "blocker": "Inherited REUSE-COVERAGE: drivetrain/CMakeLists.txt; coordination session assigns owner; outside foundation implementation scope",
+    "baselineEvidence": "governance-before.log"
+  },
+  "scriptHashFormat": "SHA-256 of UTF-8 text without BOM, CRLF normalized to LF, one final LF (repository binding convention)"
+}

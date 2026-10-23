@@ -2,7 +2,9 @@
   [string]$RepoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path,
   # 全库证据索引只在显式审计时检查；普通提交按当前任务的原始证据验收，
   # 避免每次新增日志都重写整个历史索引。该开关仍检查路径、字节数和摘要。
-  [switch]$DeepEvidence
+  [switch]$DeepEvidence,
+  # 批次入口：文档与选中任务共用一次全量复用检查，不增加跳过门禁的开关。
+  [ValidateNotNullOrEmpty()][string[]]$TaskFile = @()
 )
 $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 $errors = @()
@@ -375,8 +377,23 @@ if (-not (Test-Path $manifestPath)) {
   }
 }
 # H1—H6：文档检查和构建门禁共用校验器；RepoRoot 在本脚本为源码子根，需回到 Git 根。
-& (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot (Split-Path -Parent $RepoRoot)
-if ($LASTEXITCODE -ne 0) { $errors += 'H1-H6 reuse governance failed' }
+if ($TaskFile) {
+  # validate-task 只在含复用契约时执行复用检查；纯历史契约批次仍须补一次。
+  try {
+    & (Join-Path $PSScriptRoot 'validate-task.ps1') -RepoRoot (Split-Path -Parent $RepoRoot) -TaskFile $TaskFile
+    $batchTasks = @(foreach ($taskPath in $TaskFile) {
+      $decoded = Get-Content -LiteralPath $taskPath -Raw -Encoding UTF8 | ConvertFrom-Json
+      foreach ($contract in $decoded) { $contract }
+    })
+    if (-not @($batchTasks | Where-Object { $_.reuse -or ($_.taskId -like 'REUSE-*' -and $_.status -in @('ready','done')) }).Count) {
+      & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot (Split-Path -Parent $RepoRoot)
+      if ($LASTEXITCODE -ne 0) { $errors += 'H1-H6 reuse governance failed' }
+    }
+  } catch { $errors += $_.Exception.Message }
+} else {
+  & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot (Split-Path -Parent $RepoRoot)
+  if ($LASTEXITCODE -ne 0) { $errors += 'H1-H6 reuse governance failed' }
+}
 if ($errors.Count) { $errors | ForEach-Object { Write-Error $_ }; exit 1 }
 $evidenceSummary = if ($DeepEvidence) { "$evidenceCount audited" } else { "NOT AUDITED" }
 Write-Output "validate-docs: PASS ($($ids.Count) units, $($trace.entries.Count) trace entries, $($taskFiles.Count) task files, $assetCount registered assets, $noteCount notes, $skillCount skills, $packCount packs, $evidenceSummary evidence)"

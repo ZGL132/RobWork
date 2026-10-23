@@ -1,0 +1,5 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b
+fixture full reuse PASS
+validate-task: PASS (1 tasks)
+[dryrun] Write-Output must-not-run
+verify-task: DRYRUN PASS BATCH-T01

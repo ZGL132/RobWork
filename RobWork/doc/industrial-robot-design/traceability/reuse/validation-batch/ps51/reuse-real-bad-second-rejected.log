@@ -1,0 +1,14 @@
+powershell.exe : REUSE-TASK-STATE : GOV-T21: execution needs ready/done contract
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\test-governance-lite.ps1:18 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (REUSE-TASK-STAT...y/done contract:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b\RobWork\scripts\industrialrobot\batc
+h-runner.ps1:2 char:566
++ ... "; function Fail($code,$detail){throw "REUSE-$code : $detail"}; funct ...
++                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (REUSE-TASK-STAT...y/done contract:String) [], RuntimeException
+    + FullyQualifiedErrorId : REUSE-TASK-STATE : GOV-T21: execution needs ready/done contract
+ 
