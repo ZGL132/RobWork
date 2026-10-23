@@ -28,7 +28,7 @@
    "status": "pending",
    "search": {
     "command": "rg -n \"singularValuesJacobi|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "conclusion": "REUSE包REUSE-T09实施：自写核已删，生产消费LinearAlgebra::svd实证（断开实验+解析谱+阈值邻界用例），待独立验收，不授予最终完成"
+    "conclusion": "REUSE包REUSE-T12实施：自写核已删，生产消费LinearAlgebra::svd实证（断开实验+解析谱+阈值邻界用例），待独立验收，不授予最终完成"
    },
    "differences": "原自写单侧Jacobi核删除；复用上游svd（Eigen JacobiSVD降序），量纲归一适配防平方上溢/下溢，谱条件数阈值（1e-12/1e8）仍归本单元",
    "inputs": [
@@ -65,7 +65,7 @@
    "status": "pending",
    "search": {
     "command": "rg -n \"invertSquareMatrix|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "conclusion": "REUSE包REUSE-T09实施：Gauss-Jordan已删，生产消费LinearAlgebra::inverse实证（伴随法解析oracle双路对照），待独立验收"
+    "conclusion": "REUSE包REUSE-T12实施：Gauss-Jordan已删，生产消费LinearAlgebra::inverse实证（伴随法解析oracle双路对照），待独立验收"
    },
    "differences": "Gauss-Jordan消元核删除；实现改为RowMatrix↔Eigen薄适配+LinearAlgebra::inverse（Eigen LU）；防御面等价改为逆非有限fail-fast抛DT-MATRIX-SINGULAR；§7.2校验前提不变",
    "inputs": [

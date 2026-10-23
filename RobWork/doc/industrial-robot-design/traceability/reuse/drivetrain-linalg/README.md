@@ -1,6 +1,6 @@
-# 传动模块复用上游线性代数能力包（REUSE-T09）证据汇总
+# 传动模块复用上游线性代数能力包（REUSE-T12）证据汇总
 
-冻结现场：分支 `codex/reuse-drivetrain-linalg`（起点 `8e4a08ac8`，已并入 `reuse-t01` 最新治理文本）。契约 `tasks/REUSE-T09.json`（status=ready，冻结包待所有者独立会话验收，实施者不自签）。
+冻结现场：分支 `codex/reuse-drivetrain-linalg`（起点 `8e4a08ac8`，已并入 `reuse-t01` 最新治理文本）。契约 `tasks/REUSE-T12.json`（status=ready，冻结包待所有者独立会话验收，实施者不自签）。
 
 ## 验证结果分档
 
