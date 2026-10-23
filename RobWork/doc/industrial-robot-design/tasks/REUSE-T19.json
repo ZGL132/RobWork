@@ -43,9 +43,9 @@
   "RobWork/doc/industrial-robot-design/reuse/kinematics-fk-migration.md",
   "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json",
   "RobWork/doc/industrial-robot-design/reuse/permissions.json",
-  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T18.json",
-  "RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json",
-  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T18/**"
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T19.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/**"
  ],
  "forbiddenFiles": [
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
