@@ -1,0 +1,1210 @@
+[
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\acceptance.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\acceptance.md",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "archive-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\archive-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "audit-b16.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\audit-b16.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "audit-b16.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\audit-b16.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "audit-b16.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\audit-b16.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "changed-files.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\changed-files.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\checkout.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\checkout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\clone.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "definition-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\definition-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "diff-check-exclusions.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\diff-check-exclusions.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\docs.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\docs.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "dynamics-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\dynamics-rows.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "facts.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\facts.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "foundation-governance-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\foundation-governance-rows.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "freshness-probe.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\freshness-probe.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "freshness-probe.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\freshness-probe.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "freshness-probe.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\freshness-probe.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "freshness-probe.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\freshness-probe.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "git-status-end.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\git-status-end.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\hash-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "modeling-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\modeling-rows.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "optimization-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\optimization-rows.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "product-upstream-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\product-upstream-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\reuse.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\reuse.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "scoped-diff-check-initial.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\scoped-diff-check-initial.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "scoped-diff-check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\scoped-diff-check.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "scoped-diff-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\scoped-diff-check.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-0.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-0.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-1.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-1.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-2.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-2.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-3.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-3.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-4.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-4.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-5.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-5.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "search-replays.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\search-replays.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "semantic-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\semantic-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "target-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\target-checks.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\task.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\task.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "write-acceptance.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\write-acceptance.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "write-acceptance.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\write-acceptance.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-r1-20261023/",
+    "file": "write-acceptance.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-c3a79e954a1a4ef9ac693acb81f562b9\\write-acceptance.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "F-959-facts.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\F-959-facts.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "F-959-frozen.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\F-959-frozen.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "F-959-source-evidence.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\F-959-source-evidence.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\acceptance.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\acceptance.md",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "artifact-relocation.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\artifact-relocation.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "check-f959.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\check-f959.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "check-f959.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\check-f959.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "check-f959.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\check-f959.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\checkout.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\checkout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\clone.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\clone.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "comparison-base.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\comparison-base.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "drift-evidence-bindings.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\drift-evidence-bindings.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "driver-command.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\driver-command.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "execution-summary.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\execution-summary.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finalize.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finalize.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finalize.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finalize.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finalize.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finalize.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finish-execution.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finish-execution.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finish-execution.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finish-execution.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "finish-execution.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\finish-execution.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "frozen-sha.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\frozen-sha.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-01.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-01.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-01.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-01.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-02.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-02.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-02.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-02.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-03.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-03.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-03.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-03.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-04.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-04.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-04.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-04.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-05.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-05.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-05.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-05.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-06.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-06.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-06.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-06.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-07.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-07.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-07.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-07.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-08.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-08.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-08.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-08.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-09.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-09.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-09.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-09.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-10.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-10.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-10.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-10.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-11.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-11.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-11.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-11.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-12.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-12.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-12.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-12.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-13.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-13.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-13.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-13.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-14.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-14.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-14.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-14.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-15.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-15.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-15.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-15.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-16.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-16.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-16.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-16.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-17.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-17.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-17.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-17.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-18.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-18.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-18.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-18.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-19.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-19.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-19.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-19.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-20.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-20.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-20.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-20.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-21.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-21.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-21.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-21.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-22.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-22.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-22.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-22.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-23.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-23.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-23.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-23.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-24.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-24.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-24.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-24.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-25.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-25.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-25.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-25.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-26.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-26.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-26.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-26.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-27.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-27.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-27.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-27.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-28.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-28.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-28.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-28.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-29.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-29.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "generator-29.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\generator-29.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "git-status-end.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\git-status-end.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "git-status-start.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\git-status-start.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "git-status-with-generated-cache.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\git-status-with-generated-cache.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "independent-drift-confirm.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\independent-drift-confirm.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "independent-generator-drift.diff",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\independent-generator-drift.diff",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "independent-generator-replay.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\independent-generator-replay.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "independent-json-comparisons.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\independent-json-comparisons.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "product-upstream-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\product-upstream-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "recorded-baseline-source-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\recorded-baseline-source-diff.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "recorded-generator-source-hashes.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\recorded-generator-source-hashes.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "recorded-replay-cross-check.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\recorded-replay-cross-check.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "replay-driver.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\replay-driver.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "replay-driver.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\replay-driver.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "replay-driver.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\replay-driver.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "run-replay.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\run-replay.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "run-replay.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\run-replay.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "run-replay.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\run-replay.py",
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "runtime.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\runtime.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "second-confirm.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\second-confirm.exit.txt",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "second-confirm.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\second-confirm.stderr.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "second-confirm.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\second-confirm.stdout.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "source-after-hashes.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\source-after-hashes.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "source-before-hashes.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\source-before-hashes.json",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch16-generators-20261023/",
+    "file": "urdf-generator-write-sites.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\urdf-generator-write-sites.log",
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  }
+]

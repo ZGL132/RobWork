@@ -1,0 +1,152 @@
+{
+  "head": "52285db6f0d276742531ecb7e7bcf73db283e563",
+  "base": "933dc6016c078b7d674fea68af19c038e0388979",
+  "original": "0900751718849863af1190ece61c8ddb1f1cf547",
+  "matrix": {
+    "added": [],
+    "changed": [
+      "core.ContentDigester.compressBlock",
+      "core.audit-b30.Digest.tryParseDigest",
+      "core.audit-b30.Digest.formatDigest",
+      "core.audit-b30.Digest.fromCanonical",
+      "core.audit-b30.Digest.tryFromCanonical",
+      "core.audit-b30.Digest.toCanonical",
+      "core.audit-b30.Digest.isValid",
+      "core.audit-b30.Digest.loadBE32",
+      "core.audit-b30.Digest.storeBE32",
+      "core.audit-b30.Digest.rotr",
+      "core.audit-b30.Digest.kSha256K",
+      "core.audit-b30.Digest.update",
+      "core.audit-b30.Digest.finalize",
+      "core.audit-b30.Digest.feed",
+      "core.audit-b30.Digest.ContentVersion.equal",
+      "core.audit-b30.Digest.ContentVersion.notEqual",
+      "core.audit-b30.Digest.ContentVersion.order",
+      "core.audit-b30.Digest.ContentIdentity.equal",
+      "core.audit-b30.Digest.ContentIdentity.notEqual",
+      "core.audit-b30.Digest.ContentIdentity.order",
+      "core.audit-b30.Digest.ContentDigester.default",
+      "core.audit-b30.Digest.hash.ContentVersion",
+      "core.audit-b30.Digest.hash.ContentIdentity",
+      "core.audit-b30.DigestTest.toHex",
+      "core.audit-b30.DigestTest.EmptyString_UT_ID_D",
+      "core.audit-b30.DigestTest.Abc_UT_ID_D",
+      "core.audit-b30.DigestTest.TwoBlock_UT_ID_D",
+      "core.audit-b30.DigestTest.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D",
+      "core.audit-b30.DigestTest.DifferentBytesDifferentDigest_UT_ID_D",
+      "core.audit-b30.DigestTest.FinalizeDisallowsFurtherUse_UT_ID_D",
+      "core.audit-b30.DigestTest.RoundtripAndStrictParse_UT_ID_D"
+    ],
+    "count": 31,
+    "allPending": true
+  },
+  "publicHashBindings": [
+    {
+      "functionId": "core.audit-b30.Digest.hash.ContentVersion",
+      "directIdentityBindings": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+          "sha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210"
+        }
+      ],
+      "actualIdentitySha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210",
+      "priorInputsPreserved": true,
+      "sourcesPreserved": true
+    },
+    {
+      "functionId": "core.audit-b30.Digest.hash.ContentIdentity",
+      "directIdentityBindings": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+          "sha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210"
+        }
+      ],
+      "actualIdentitySha256": "966007ba8d3822f096b9978af59d9dca1fcd9730e3e6c342237240fb6ae3d210",
+      "priorInputsPreserved": true,
+      "sourcesPreserved": true
+    }
+  ],
+  "preservedAll31Sources": true,
+  "preservedAll31Inputs": true,
+  "sourceComparison": {
+    "paths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/CMakeLists.txt",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch30/DigestSuitabilityTest.cpp"
+    ],
+    "changed": []
+  },
+  "originalManifestUnchanged": true,
+  "tests": {
+    "original": {
+      "total": 13,
+      "passed": 11,
+      "failed": 2,
+      "skipped": 0,
+      "failedNames": [
+        "ContentVersionPublicFnv_CORE_T02",
+        "ContentIdentityPublicFnv_CORE_T02"
+      ],
+      "cngCount": 14,
+      "hashlibMatch": true
+    },
+    "originalIndependent": {
+      "total": 13,
+      "passed": 11,
+      "failed": 2,
+      "skipped": 0,
+      "failedNames": [
+        "ContentVersionPublicFnv_CORE_T02",
+        "ContentIdentityPublicFnv_CORE_T02"
+      ],
+      "cngCount": 14,
+      "hashlibMatch": true
+    }
+  },
+  "searchReruns": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "sha.?256|sha.?2\\b|openssl|bcrypt|cryptopp|crypto",
+        "RobWork/RobWork",
+        "RobWork/RobWorkSim"
+      ],
+      "exit": 1,
+      "recordedExit": 1,
+      "output": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "BCryptHash\\(|BCryptCreateHash\\(|BCryptHashData\\(|BCryptDuplicateHash\\(|BCryptFinishHash\\(",
+        "D:/Windows Kits/10/Include/10.0.22621.0/shared/bcrypt.h"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "output": "1343:BCryptCreateHash(\r\n1356:BCryptHashData(\r\n1366:BCryptFinishHash(\r\n1402:BCryptDuplicateHash(\r\n1419:BCryptHash(\r\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "fnv1a128",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp"
+      ],
+      "exit": 0,
+      "recordedExit": 0,
+      "output": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp:71:void fnv1a128(const std::uint8_t* data, std::size_t n,\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:51:void fnv1a128(const std::uint8_t* data, std::size_t n,\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:146:        sdurws::ird::core::detail::fnv1a128(v.bytes.data(), v.bytes.size(), &hi, &lo);\nRobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Digest.hpp:154:        sdurws::ird::core::detail::fnv1a128(c.bytes.data(), c.bytes.size(), &hi, &lo);\n",
+      "stderr": ""
+    }
+  ],
+  "fnvOracleFold": "d84cf67ff3e90eee",
+  "errors": []
+}
+bindings 622 raw counts [37, 57, 66] errors 0

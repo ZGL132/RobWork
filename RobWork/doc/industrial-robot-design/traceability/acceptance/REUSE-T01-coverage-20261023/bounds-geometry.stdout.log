@@ -1,0 +1,10 @@
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:53:        static math::Transform3D<> worldTframe (rw::core::Ptr< const rw::kinematics::Frame > to,
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:62:         inverse(worldTframe(from, state)) *
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:63:         worldTframe(to, state);
+RobWork/RobWork/src/rw/models/Device.hpp:215:        rw::math::Transform3D< double > baseTend (const rw::kinematics::State& state) const;
+RobWork/RobWork/src/rw/geometry\AABB.hpp:32:    template< class T > class AABB : public BV< AABB< T > >
+RobWork/RobWork/src/rw/geometry\AABB.hpp:34:    template< class T > class AABB
+RobWork/RobWork/src/rw/geometry\Geometry.cpp:65:Geometry::Ptr Geometry::makeSphere (double radi)
+RobWork/RobWork/src/rw/geometry\Geometry.hpp:223:        static Geometry::Ptr makeSphere (double radi);
+RobWork/RobWork/src/rw/geometry\analytic\quadratics\QuadraticSurface.cpp:1135:QuadraticSurface::Ptr QuadraticSurface::makeSphere (const double radius)
+RobWork/RobWork/src/rw/geometry\analytic\quadratics\QuadraticSurface.hpp:319:        static QuadraticSurface::Ptr makeSphere (double radius);

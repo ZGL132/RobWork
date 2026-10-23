@@ -2,6 +2,10 @@
 # RepoRoot 为 Git 根；Head 指定时所有输入取自同一 Git 树，避免验收混入工作树内容。
 param([string]$RepoRoot = '', [string]$Head = '', [string]$TaskFile = '', [switch]$RequireMigrationComplete)
 $ErrorActionPreference = 'Stop'
+# PS5.1 在 MSBuild/CI 重定向环境中默认按系统代码页解码 Git stdout，可能破坏中文 JSON。
+# Git 对象采用 UTF-8；显式统一 native 交互编码，避免把解码故障误归为证据损坏。
+[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+$OutputEncoding = [Console]::OutputEncoding
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }
 $RepoRoot = [IO.Path]::GetFullPath($RepoRoot)
 $baseline = 'b12e8503cc1c2a1acc040f506842a02e126b9515'
@@ -19,7 +23,7 @@ function ReadText([string]$path, [switch]$Optional) {
         $savedPreference = $ErrorActionPreference
         try { $ErrorActionPreference = 'Continue'; $v = & git -C $RepoRoot show "${Head}:$path" 2>$null; $gitCode = $LASTEXITCODE } finally { $ErrorActionPreference = $savedPreference }
         if ($gitCode -ne 0) { if ($Optional) { return $null }; Fail 'MISSING' $path }
-        return (($v -join "`n") + "`n")
+        return (($v -join "`n") + "`n").TrimStart([char]0xFEFF)
     }
     $full = Join-Path $RepoRoot $path
     if (-not (Test-Path -LiteralPath $full -PathType Leaf)) { if ($Optional) { return $null }; Fail 'MISSING' $path }
@@ -31,14 +35,17 @@ function ReadText([string]$path, [switch]$Optional) {
         if ($parent.Attributes -band [IO.FileAttributes]::ReparsePoint) { Fail 'PATH' $path }
         $parent = $parent.Parent
     }
-    return [IO.File]::ReadAllText($full)
+    return ([IO.File]::ReadAllText($full)).TrimStart([char]0xFEFF)
 }
 function Digest([string]$text) {
-    $bytes = [Text.Encoding]::UTF8.GetBytes(($text -replace "`r`n", "`n").TrimEnd("`n") + "`n")
+    # 已验版本比较也会直接接收 git show 文本；摘要入口统一规范化，避免绕过 ReadText。
+    $bytes = [Text.Encoding]::UTF8.GetBytes(($text.TrimStart([char]0xFEFF) -replace "`r`n", "`n").TrimEnd("`n") + "`n")
     $sha = [Security.Cryptography.SHA256]::Create()
     try { return ([BitConverter]::ToString($sha.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant() } finally { $sha.Dispose() }
 }
 function Json([string]$path) { return ((ReadText $path) | ConvertFrom-Json) }
+# 私有数据契约函数复用本入口的冻结树读取/规范化摘要；禁止另起可绕过的校验入口。
+. (Join-Path $PSScriptRoot 'reuse-contract.ps1')
 function GitLines([string[]]$arguments) {
     $v = @(& git -C $RepoRoot @arguments)
     if ($LASTEXITCODE -ne 0) { Fail 'GIT' ($arguments -join ' ') }
@@ -65,6 +72,15 @@ function CheckTask($t) {
     if ($t.status -notin @('ready','done')) { Fail 'TASK-STATE' "$($t.taskId): execution needs ready/done contract" }
     if (-not $t.reuse -or $t.reuse.policy -ne 'H1-H6' -or -not $t.reuse.manifest) { Fail 'TASK' "$($t.taskId): reuse contract required" }
     if ($t.taskId -ne 'GOV-T21') { CheckAcceptance $t }
+    if ($t.taskId -eq 'GOV-T22') {
+        # 治理补强仅能修改既有门禁、数据和文档；不能通过新增 bootstrap 任务自批产品算法。
+        $allowed = @('RobWork/scripts/industrialrobot/validate-reuse.ps1','RobWork/scripts/industrialrobot/reuse-contract.ps1','RobWork/scripts/industrialrobot/test-reuse-governance.ps1',
+            'RobWork/doc/industrial-robot-design/reuse/catalog.json','RobWork/doc/industrial-robot-design/reuse/permissions.json','RobWork/doc/industrial-robot-design/reuse/migration.md',
+            'RobWork/doc/industrial-robot-design/reuse/audit-contract.md','RobWork/doc/industrial-robot-design/reuse/policy.md','RobWork/doc/industrial-robot-design/reuse/changes/GOV-T22.json',
+            'RobWork/doc/industrial-robot-design/tasks/GOV-T22.json','.github/workflows/upstream-reuse-governance.yml','RobWork/scripts/industrialrobot/ci/upstream-reuse-governance.github-workflow.yml',
+            ($product+'cmake/ird_gates.cmake'))
+        foreach ($path in $t.allowedFiles) { if ($path -notin $allowed) { Fail 'GOV-SCOPE' "GOV-T22 cannot authorize $path" } }
+    } elseif ($t.taskId -ne 'GOV-T21') { CheckSupplementAcceptance $t }
     if ($t.reuse.manifest -ne ($design+'reuse/changes/'+$t.taskId+'.json')) { Fail 'MANIFEST' "$($t.taskId): canonical manifest required" }
     $proof = Json $t.reuse.manifest
     if ($proof.taskId -ne $t.taskId -or $proof.schemaVersion -ne 'ird-reuse-change/1' -or -not $proof.PSObject.Properties['files']) { Fail 'MANIFEST' "$($t.taskId): missing manifest identity/files" }
@@ -73,7 +89,7 @@ try {
     if ($Head) { $Head = @(GitLines @('rev-parse', '--verify', "${Head}^{commit}"))[0] }
     $catalog = Json ($design + 'reuse/catalog.json')
     $inventory = Json ($design + 'reuse/inventory.json')
-    if ($catalog.schemaVersion -ne 'ird-reuse/1' -or $inventory.schemaVersion -ne 'ird-reuse-inventory/1' -or $catalog.baselineCommit -ne $baseline -or $inventory.baselineCommit -ne $baseline) { Fail 'BASELINE' 'fixed baseline/schema mismatch' }
+    if ($catalog.schemaVersion -ne 'ird-reuse/2' -or $inventory.schemaVersion -ne 'ird-reuse-inventory/1' -or $catalog.baselineCommit -ne $baseline -or $inventory.baselineCommit -ne $baseline) { Fail 'BASELINE' 'fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)' }
     $units = @('core','diagnostics','drivetrain','dynamics','evidence','execution','io','kinematics','modeling','optimization','policy','project','reporting','requirements','runtime','selection','testkit','trajectory','ui','workflow')
     if (@(Compare-Object $units @($catalog.units)).Count) { Fail 'UNITS' 'all 20 units required' }
     $caps = @{}
@@ -85,11 +101,14 @@ try {
             $txt = ReadText $u.path
             if ((Digest $txt) -ne $u.sha256) { Fail 'UPSTREAM-HASH' $u.path }
             foreach ($s in $u.symbols) { if (-not $txt.Contains("$s")) { Fail 'UPSTREAM-SYMBOL' "$($u.path): $s" } }
-            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/src/.+/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
+            # 测试入口/夹具亦须优先复用；仅允许两上游既有gtest根目标登记，仍拒绝任意路径。
+            if ("$($u.targetFile)" -notmatch '^RobWork/(RobWork|RobWorkSim)/(src/.+|gtest)/CMakeLists\.txt$') { Fail 'UPSTREAM-TARGET' "$($c.id): target evidence required" }
             $targetText = ReadText $u.targetFile
             if ((Digest $targetText) -ne $u.targetSha256 -or -not $targetText.Contains("$($u.target)")) { Fail 'UPSTREAM-TARGET' "$($u.target): build registration missing/stale" }
         }
     }
+    CheckCatalogV2 $catalog
+    $grants = CheckPermissions
     $tree = @{}; $allBaselineProduct = @{}
     foreach ($line in (GitLines @('ls-tree','-r',$baseline,'--',$product))) {
         if ($line -match '^\d+ blob ([a-f0-9]+)\t(.+)$') {
@@ -118,7 +137,7 @@ try {
     }
     if ($seen.Count -ne $tree.Count) { Fail 'INVENTORY' "coverage $($seen.Count)/$($tree.Count)" }
     # 基线债务不可通过直接删库存关闭。终验需另行批准迁移结项数据协议，不能让默认门禁静默放行。
-    if ($RequireMigrationComplete -and ($debt -or $audit)) { Fail 'MIGRATION' "debt=$debt unresolved=$audit; final semantic closure required" }
+    # 固定库存不改分类；最终模式由 CheckFunctions 的独立关闭记录判定，不能永远锁死历史计数。
     $tip = 'HEAD'; if ($Head) { $tip = $Head }
     $changed = @(GitLines @('diff','--name-only',$baseline,$tip,'--',$product))
     $manifestPaths = @(GitLines @('ls-tree','-r','--name-only',$tip,'--',($design+'reuse/changes/')))
@@ -127,7 +146,7 @@ try {
         $changed += @(GitLines @('ls-files','--others','--exclude-standard','--',$product))
         $manifestPaths = @(Get-ChildItem (Join-Path $RepoRoot ($design+'reuse/changes')) -Filter '*.json' | ForEach-Object { $design+'reuse/changes/'+$_.Name })
     }
-    $records = @{}; $governanceFiles = @{}
+    $records = @{}; $governanceFiles = @{}; $governanceBootstrap = @{}
     foreach ($mp in $manifestPaths) {
         if (-not $mp.EndsWith('.json')) { continue }
         $m = Json $mp
@@ -149,6 +168,8 @@ try {
             if (-not $records.ContainsKey($p)) { $records[$p] = @() }
             $records[$p] += $f
             if ($m.taskId -eq 'GOV-T21') { $governanceFiles[$p] = $true }
+            if ($m.taskId -in @('GOV-T21','GOV-T22') -and $f.mode -eq 'governance' -and
+                $p -in @(($product+'CMakeLists.txt'),($product+'cmake/ird_gates.cmake'))) { $governanceBootstrap[$p]=$true }
         }
     }
     # 指纹仅止增，不冒充语义查重。即使声明为 business，也不能增加已知自持核心标志。
@@ -172,9 +193,13 @@ try {
         if ([regex]::Matches("$txt",$fingerprint).Count -gt [regex]::Matches($old,$fingerprint).Count) { Fail 'DUPLICATE' $p }
         if ($governanceFiles.ContainsKey($p) -and ($p -ne ($product+'CMakeLists.txt') -or @($match | Where-Object { $_.mode -ne 'governance' }).Count)) { Fail 'GOV-SCOPE' "governance authorization cannot cover product algorithms: $p" }
     }
+    $functionalChanges = @($changed | Sort-Object -Unique | Where-Object {
+        (IsProduct $_) -and -not $governanceBootstrap.ContainsKey($_)
+    })
+    CheckFunctions $grants $functionalChanges
     # 框架源码只读；最小扩展也必须另走 SA-02，不可借本轮治理许可直改。
-    $upstreamDiff = @(GitLines @('diff','--name-only',$baseline,$tip,'--','RobWork/RobWork/src','RobWork/RobWorkSim/src'))
-    if (-not $Head) { $upstreamDiff += @(GitLines @('diff','--name-only','HEAD','--','RobWork/RobWork/src','RobWork/RobWorkSim/src')); $upstreamDiff += @(GitLines @('ls-files','--others','--exclude-standard','--','RobWork/RobWork/src','RobWork/RobWorkSim/src')) }
+    $upstreamDiff = @(GitLines @('diff','--name-only',$baseline,$tip,'--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest'))
+    if (-not $Head) { $upstreamDiff += @(GitLines @('diff','--name-only','HEAD','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')); $upstreamDiff += @(GitLines @('ls-files','--others','--exclude-standard','--','RobWork/RobWork/src','RobWork/RobWorkSim/src','RobWork/RobWork/gtest','RobWork/RobWorkSim/gtest')) }
     if ($upstreamDiff.Count) { Fail 'UPSTREAM-READONLY' ($upstreamDiff -join ',') }
     # 新任务进入 ready/done 需阶段门；历史契约仅保留历史，不自动重新授权执行。
     $taskPaths = @(GitLines @('diff','--name-only',$baseline,$tip,'--',($design+'tasks/')))

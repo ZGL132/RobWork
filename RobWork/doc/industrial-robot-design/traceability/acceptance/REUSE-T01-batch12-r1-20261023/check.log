@@ -1,0 +1,72 @@
+NEW 34
+testkit.JsonLite.Parser UTIL-TEXT ['sdurws_ird_testkit']
+  40 43 sdurws::ird::testkit::(anonymous namespace)::Parser::Parser HASH True
+testkit.JsonLite.run UTIL-TEXT ['sdurws_ird_testkit']
+  45 63 sdurws::ird::testkit::(anonymous namespace)::Parser::run HASH True
+testkit.JsonLite.skipWs UTIL-TEXT ['sdurws_ird_testkit']
+  78 92 sdurws::ird::testkit::(anonymous namespace)::Parser::skipWs HASH True
+testkit.JsonLite.expect UTIL-TEXT ['sdurws_ird_testkit']
+  95 101 sdurws::ird::testkit::(anonymous namespace)::Parser::expect HASH True
+testkit.JsonLite.fail UTIL-TEXT ['sdurws_ird_testkit']
+  104 110 sdurws::ird::testkit::(anonymous namespace)::Parser::fail HASH True
+testkit.JsonLite.parseValue UTIL-TEXT ['sdurws_ird_testkit']
+  113 150 sdurws::ird::testkit::(anonymous namespace)::Parser::parseValue HASH True
+testkit.JsonLite.expectLiteral UTIL-TEXT ['sdurws_ird_testkit']
+  153 161 sdurws::ird::testkit::(anonymous namespace)::Parser::expectLiteral HASH True
+testkit.JsonLite.eof UTIL-TEXT ['sdurws_ird_testkit']
+  67 74 sdurws::ird::testkit::(anonymous namespace)::Parser::eof HASH True
+testkit.JsonLite.JsonValue.find UTIL-TEXT ['sdurws_ird_testkit']
+  505 512 sdurws::ird::testkit::JsonValue::find HASH True
+testkit.JsonLite.JsonValue.deepEquals UTIL-TEXT ['sdurws_ird_testkit']
+  514 543 sdurws::ird::testkit::JsonValue::deepEquals HASH True
+testkit.Check.nonFinite NONE ['sdurws_ird_testkit']
+  20 23 sdurws::ird::testkit::(anonymous namespace)::nonFinite HASH True
+testkit.Check.makeDetail NONE ['sdurws_ird_testkit']
+  28 40 sdurws::ird::testkit::(anonymous namespace)::makeDetail HASH True
+testkit.Check.checkCloseWithin NONE ['sdurws_ird_testkit']
+  44 58 sdurws::ird::testkit::checkCloseWithin HASH True
+testkit.Check.checkAllCloseWithin NONE ['sdurws_ird_testkit']
+  60 99 sdurws::ird::testkit::checkAllCloseWithin HASH True
+testkit.Check.checkAtMost NONE ['sdurws_ird_testkit']
+  101 123 sdurws::ird::testkit::checkAtMost HASH True
+testkit.Check.checkIdentical NONE ['sdurws_ird_testkit']
+  125 137 sdurws::ird::testkit::checkIdentical HASH True
+testkit.Check.checkIdentical.int64 NONE ['sdurws_ird_testkit']
+  139 151 sdurws::ird::testkit::checkIdentical HASH True
+testkit.ProcessRunner.toWin32Wait UTIL-THREAD ['sdurws_ird_testkit']
+  141 151 (anonymous namespace)::toWin32Wait HASH True
+testkit.ProcessRunner.utf8ToWide UTIL-THREAD ['sdurws_ird_testkit']
+  165 181 (anonymous namespace)::utf8ToWide HASH True
+testkit.ProcessRunner.buildEnvironmentBlock UTIL-THREAD ['sdurws_ird_testkit']
+  199 237 (anonymous namespace)::buildEnvironmentBlock HASH True
+testkit.ProcessRunner.quoteWindowsArg UTIL-THREAD ['sdurws_ird_testkit']
+  65 101 sdurws::ird::testkit::detail::quoteWindowsArg HASH True
+testkit.ProcessRunner.TestProcessRunner.start UTIL-THREAD ['sdurws_ird_testkit']
+  310 424 sdurws::ird::testkit::TestProcessRunner::start HASH True
+testkit.ProcessRunner.TestProcessRunner.outcome UTIL-THREAD ['sdurws_ird_testkit']
+  443 531 sdurws::ird::testkit::TestProcessRunner::outcome HASH True
+testkit.ProcessRunner.TestProcessRunner.kill UTIL-THREAD ['sdurws_ird_testkit']
+  543 562 sdurws::ird::testkit::TestProcessRunner::kill HASH True
+testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner UTIL-THREAD ['sdurws_ird_testkit']
+  571 585 sdurws::ird::testkit::TestProcessRunner::~TestProcessRunner HASH True
+testkit.ProcessRunner.EventWatch.awaitFile UTIL-THREAD ['sdurws_ird_testkit']
+  606 620 sdurws::ird::testkit::EventWatch::awaitFile HASH True
+testkit.ProcessRunner.EventWatch.awaitLineInFile UTIL-THREAD ['sdurws_ird_testkit']
+  639 666 sdurws::ird::testkit::EventWatch::awaitLineInFile HASH True
+testkit.ProcessRunner.DestructorImpl UTIL-THREAD ['sdurws_ird_testkit']
+  275 287 sdurws::ird::testkit::TestProcessRunner::Impl::~Impl HASH True
+workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor UTIL-THREAD ['sdurws_ird_workflow']
+  25 47 sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor HASH True
+workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor UTIL-THREAD ['sdurws_ird_workflow']
+  49 53 sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor HASH True
+workflow.CloseSupervisor.StoreCloseSupervisor.start UTIL-THREAD ['sdurws_ird_workflow']
+  55 78 sdurws::ird::workflow::StoreCloseSupervisor::start HASH True
+workflow.CloseSupervisor.StoreCloseSupervisor.stop UTIL-THREAD ['sdurws_ird_workflow']
+  80 93 sdurws::ird::workflow::StoreCloseSupervisor::stop HASH True
+workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop UTIL-THREAD ['sdurws_ird_workflow']
+  95 177 sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop HASH True
+workflow.CloseSupervisor.running UTIL-THREAD ['sdurws_ird_workflow']
+  162 178 sdurws::ird::workflow::StoreCloseSupervisor::running HASH True
+CAT TYPES dict_keys(['schemaVersion', 'baselineCommit', 'units', 'capabilities'])
+NEW CAT []
+BINDINGS 172 FAIL 0

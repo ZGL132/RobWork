@@ -1,0 +1,20 @@
+Note: Google Test filter = CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CouplingReuse
+[ RUN      ] CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\CouplingReuseTest.cpp(111): error: The difference between result.recomputedConditionNumber and 3.0 is 2, which exceeds 2e-14, where
+result.recomputedConditionNumber evaluates to 1,
+3.0 evaluates to 3, and
+2e-14 evaluates to 2e-14.
+
+[  FAILED  ] CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07 (0 ms)
+[----------] 1 test from CouplingReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CouplingReuse.ProductionConsumesRecomputedCondition_REUSE_T07
+
+ 1 FAILED TEST

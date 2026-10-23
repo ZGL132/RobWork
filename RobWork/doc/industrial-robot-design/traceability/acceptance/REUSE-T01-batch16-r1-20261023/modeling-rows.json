@@ -1,0 +1,497 @@
+[
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "asBytes",
+        "qualifiedSymbol": "(global anonymous namespace)::asBytes",
+        "startLine": 74,
+        "endLine": 77,
+        "sha256": "c3e69cbbdf74ab13395874142d4a367f2b96003acab2a31738549f11954d0b59"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "标准容器字节转换，无自写编码器",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "digestOf",
+        "qualifiedSymbol": "(global anonymous namespace)::digestOf",
+        "startLine": 81,
+        "endLine": 86,
+        "sha256": "0a8e153e60b4f7fb89e9fbc3996feff7137620802bdf71baca7f1b01c979a2a6"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "真实复用core ContentDigester，不能因此称core SHA核心已上游复用",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "existingNodeFor",
+        "qualifiedSymbol": "(global anonymous namespace)::existingNodeFor",
+        "startLine": 90,
+        "endLine": 102,
+        "sha256": "c94aabb4255acda5ee974d9b2f5dfa68f2a63f045c60ddae1fcefccb309b415b"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "fake finalPath/mtime与真实摘要供资源产物模拟，不执行磁盘读或生产安全沙箱",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "missingNode",
+        "qualifiedSymbol": "(global anonymous namespace)::missingNode",
+        "startLine": 105,
+        "endLine": 111,
+        "sha256": "2ff87e7ec6c851cf89042ffa86c5a45693b747f46f9adc666f18e775d23f92f3"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "缺失叶DTO，测试防御性注入，不证明真实IO可产非法树",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "includeEdge",
+        "qualifiedSymbol": "(global anonymous namespace)::includeEdge",
+        "startLine": 114,
+        "endLine": 121,
+        "sha256": "9599838f2c7dd0c5d7a0f1cf4798ac2d2bce9eac02d274c875e0101a4c94bdd0"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "声明include边，不承担真实依赖遍历/环检测",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "makeXacroSource",
+        "qualifiedSymbol": "(global anonymous namespace)::makeXacroSource",
+        "startLine": 128,
+        "endLine": 158,
+        "sha256": "323e17d208da728ece6a12bae915a6dda7de5b4f4d7acdd20c378f8ee13fc05c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "ValidatedXacroSource装配，稳定sort节点和边；default includeBytes={}属于签名而非函数体；非第二展开器",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "asText",
+        "qualifiedSymbol": "(global anonymous namespace)::asText",
+        "startLine": 161,
+        "endLine": 165,
+        "sha256": "860e198d20bd28de3d4717bc583e6ed1b0539f6b51fd08cdd782c0bc4365ed22"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "optional expandedBytes转string，未完成返回空，仅断言辅助",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "findDiag",
+        "qualifiedSymbol": "(global anonymous namespace)::findDiag",
+        "startLine": 168,
+        "endLine": 175,
+        "sha256": "16cd1f0ca10d7fa07240f9d121bd585687874e0db745157d275a99c8fe1eb13c"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "稳定码匹配首下标/无则size_t(-1)，不创造用户文案或码权威",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "ownerUnit": "modeling",
+    "requirements": [
+      "MDL-19"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "symbol": "makeBasicSource",
+        "qualifiedSymbol": "(global anonymous namespace)::makeBasicSource",
+        "startLine": 202,
+        "endLine": 205,
+        "sha256": "ead0ecd371e75ca3ad81cee9c777e04b18677187c5d22a67ebc6934b38697ca2"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_modeling_test"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "NONE",
+    "decision": "pending",
+    "status": "pending",
+    "search": {
+      "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
+      "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+    },
+    "differences": "调用同文件makeXacroSource组装固定Xacro，不另做语义替换",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "sha256": "d28e39d4e5499e4c247ae56e9ff49f9fdc3198e2b05e373dfd1e192c1c37116e"
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/XacroExpand.hpp",
+        "sha256": "302e5c55ff37b2f22d963156a5efb72c696926c58ccb799bfecfd82ccc25c2b1"
+      }
+    ],
+    "auditEvidence": [
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
+        "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
+        "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
+      },
+      {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
+        "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
+      }
+    ],
+    "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+  }
+]

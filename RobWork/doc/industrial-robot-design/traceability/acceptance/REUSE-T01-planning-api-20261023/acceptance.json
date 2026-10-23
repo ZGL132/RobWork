@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "taskId": "REUSE-T01",
+  "batch": 11,
+  "scope": "仅新增4项ReusePlanningAudit公开API探测",
+  "frozenSha": "a3cb564810b3eae8515ba11bfed9c37756d808f4",
+  "verdict": "PASS",
+  "findings": [],
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\repo",
+  "checkoutClean": true,
+  "build": {
+    "independentTempClone": true,
+    "independentBuild": true,
+    "parentBuildUsed": false,
+    "copiedSourceList": false,
+    "generator": "Visual Studio 17 2022",
+    "VSDeveloperShell": "17.12.0",
+    "hostArch": "x64",
+    "targetArch": "x64",
+    "configuration": "Release",
+    "target": "ird_reuse_audit_probe",
+    "buildDir": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\build",
+    "exe": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\build\\Release\\ird_reuse_audit_probe.exe",
+    "configureExit": 0,
+    "buildExit": 0,
+    "runExit": 0,
+    "filter": "ReusePlanningAudit.*",
+    "originalProbeCMakeTargetAndGTestTestkitReused": true
+  },
+  "results": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "cases": [
+    {
+      "testId": "ReusePlanningAudit.ManhattanPathLengthPreservesSelectionMeaning",
+      "outcome": "passed",
+      "meaning": "公开PathAnalyzer逐相邻段调用Manhattan：指定路径L1=10；第一段Linf=4、L2=5；空及单点路径长度=0",
+      "limits": "不证明生产候选选择位级等价、全部维数/非有限/极值或舍入稳定顺序；规划L2不等同选择L1"
+    },
+    {
+      "testId": "ReusePlanningAudit.StopCriteriaDelegatesCancellation",
+      "outcome": "passed",
+      "meaning": "stopEither(stopNever,stopByFun)两次stop读取取消标志，false到true，回调计数2",
+      "limits": "未测真实RRT运行中取消、线程/预算、生产适配或断开实验"
+    },
+    {
+      "testId": "ReusePlanningAudit.UniformSamplerSharesSeededProcessSource",
+      "outcome": "passed",
+      "meaning": "两个makeUniform sampler在Math::seed(17U)重播种后给出相同第一样本，随后另一sampler消费相同全局后续样本；显式static_cast<unsigned>((1ULL<<32)+17)后与17序列相同",
+      "limits": "高位丢失发生于探测显式unsigned投影，不误称API接收64位后内部吞高位；未测并发，不是任务私有随机流证明"
+    },
+    {
+      "testId": "ReusePlanningAudit.TrapezoidPrimitiveAllowsPerIntervalSteps",
+      "outcome": "passed",
+      "meaning": "TrapMethod M=2对[2,4] h=1得3，对[4,8] h=2得12，相加15；模板为(h/2)*(f0+fL)+h*sum",
+      "limits": "只测两个正值区间；不是DYN-03时间RMS、缺口、正负分项、峰值、非有限/极值溢出与舍入等全输入证明"
+    }
+  ],
+  "supply": {
+    "pathplanning": "find_package(RobWork CONFIG COMPONENTS ... pathplanning)及RW::sdurw_pathplanning真实SHARED IMPORTED目标，生成项目链接既有sdurw_pathplanning.lib/DLL",
+    "softbodyBuildFlag": "BUILD_sdurw_softbody:BOOL=OFF",
+    "trapAvailability": "模板实现由导出目标公开的RobWork/src include解析、在探测TU实例化，无softbody模块构建/链接",
+    "productionDependencyApproved": false,
+    "boundary": "当前模板可编不等于生产供给/安装头/模块启用批准，不启用整个softbody，也不复制模板"
+  },
+  "sourceAndReportChecks": {
+    "manifestSourceHashes": 2,
+    "manifestUpstreamHashes": 5,
+    "mismatches": 0,
+    "frozenVsActualSuppliedSourceChecks": 8,
+    "suppliedSourceMismatches": 0,
+    "xmlNativeNamesOutcomesAndCountsMatch": true,
+    "priorProbeR11NamesOutcomesMatch": true,
+    "independentProjectIncludesFrozenPlanningSource": true,
+    "scopedDiffExit": 0,
+    "productFrameworkVcpkgChanges": "NONE",
+    "previous26SourcesChanged": "NONE"
+  },
+  "historicalFailure": {
+    "preserved": true,
+    "file": "original-initial-build-fail.log",
+    "original": "repo/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/initial-build-fail.log",
+    "failure": "C2440：QPath不接受该3项initializer_list初始化，Path构造函数无法匹配",
+    "frozenCorrection": "当前源码使用默认构造加3次push_back",
+    "rerunInitialFailure": "NOT RUN，未倒改冻结源码；日志真实性通过冻结归档与Path.hpp构造接口核对",
+    "boundary": "独立本轮构建成功不覆盖或删除首轮失败事实"
+  },
+  "previousCases": {
+    "count": 26,
+    "status": "NOT RUN",
+    "reason": "仅ReusePlanningAudit.*执行，旧源编译不等于旧用例执行；历史报告未改"
+  },
+  "limitations": [
+    "仅4项公共API探测PASS，不是生产迁移、独立oracle/断开验收、性能或全输入正确性证明，不授予T01整体PASS。",
+    "Math::seed及Random的进程全局源由源码与单线程重复序列共同证实，不宣称已证明跨任务隔离或并发安全。",
+    "使用既有D盘RobWork/Sim导出库及安装依赖；本次供给源码8份与冻结树一致，DLL/CONFIG摘要另存，不声称完整上游可复现构建。",
+    "原生JSON gitCommit为空，外部精确冻结SHA、独立干净checkout、输入/产物摘要绑定来源；未改写原生报告。",
+    "Temp构建有MSB8029增量生成警告，本次全新配置/构建/运行均成功。"
+  ],
+  "notRun": [
+    "旧26项API探测",
+    "首轮initializer_list失败重演",
+    "全产品/上游/GUI/性能测试",
+    "真实规划器取消与预算实验",
+    "softbody模块构建或生产供给验收",
+    "完整数值极值/非有限/舍入/并发矩阵",
+    "B11治理关系语义及全T01退出"
+  ],
+  "parentTreeModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "evidence": [
+    "clone.log",
+    "clone.exit.txt",
+    "checkout.log",
+    "checkout.exit.txt",
+    "run-probe.ps1",
+    "driver.log",
+    "driver.exit.txt",
+    "environment.log",
+    "configure.log",
+    "configure.exit.txt",
+    "build.log",
+    "build.exit.txt",
+    "tests.log",
+    "tests.exit.txt",
+    "gtest.xml",
+    "ird-test-report.json",
+    "report-cross-check.json",
+    "source-hash-checks.json",
+    "supplied-source-checks.json",
+    "upstream-source-review.log",
+    "config-and-semantics.log",
+    "original-initial-build-fail.log",
+    "final-inspection.log",
+    "scoped-diff.log",
+    "scoped-diff.exit.txt",
+    "artifact-binding.json"
+  ]
+}

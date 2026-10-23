@@ -1,0 +1,46 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b33-build\parent-probe\ird-core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt
+  Diagnostics.cpp
+  Errors.cpp
+  DiagCodes.cpp
+  ParamSchema.cpp
+  Catalog.cpp
+  Factory.cpp
+  Confirmable.cpp
+  Aggregation.cpp
+  Logging.cpp
+  Redaction.cpp
+  CrashReport.cpp
+  sdurws_ird_diagnostics.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b33-build\ird-diagnostics\Release\sdurws_ird_diagnostics.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b33-build\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33/CMakeLists.txt
+  DiagnosticSchemaSuitabilityTest.cpp
+  StableCodeRegistryTest.cpp
+  CatalogFactoryTest.cpp
+  TestMainReport.cpp
+  ird_diagnostic_schema_audit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b33-build\Release\ird_diagnostic_schema_audit.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b33-build\Release\gtest.dll done

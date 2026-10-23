@@ -1,0 +1,428 @@
+{
+  "schemaVersion": "ird-coverage-gaps/1",
+  "reviewedCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "result": "NOT PASS",
+  "scope": "20组风险优先具体遗漏，下限而非全量函数清单",
+  "gaps": [
+    {
+      "id": "FCOV-01",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "事务提交与崩溃恢复",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit",
+        "startLine": 287,
+        "endLine": 797,
+        "fileSha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c",
+        "sectionSha256": "35aabcc8d00c06d9285cf7ba6954a02fc528df462bdd65bb2d6d3696019a6670"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "校验计划后发布不可变对象、切换HEAD并发送事件；恢复扫描区分闭包内损坏与闭包外残留。仅ObjectStore发布/读取两条不能覆盖事务编排。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-01.frozen.txt"
+    },
+    {
+      "id": "FCOV-02",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "命令槽、确认放行与编译/提交",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::CommandServiceImpl::submit",
+        "startLine": 169,
+        "endLine": 221,
+        "fileSha256": "9cbe83b9272fd24c40b950efc192dae99d229a663cf825f8ad42936ffae40054",
+        "sectionSha256": "0b4fd5b8104be7f2d89951ff1a84ce05d62e5214a494ed07b1fc11074a7ec006"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "互斥执行槽和在途票据，S1形式校验、S2基线，executePlan执行确认/编译/事务并归类失败。Codec登记不覆盖该状态与写权威行为。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-02.frozen.txt"
+    },
+    {
+      "id": "FCOV-03",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "权威分支历史查询",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchHistory",
+        "startLine": 347,
+        "endLine": 394,
+        "fileSha256": "40cdd36f115de51730f22cf249ff6bd936cde2f1b00543e653636f1dc719cde9",
+        "sectionSha256": "e3b54e863655e0253cb14db62c6a958c682108270fe6e5eb77de1b6278453940"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "在writer锁内取权威tip，锁外沿不可变parent链组装RevisionView，悬挂parent拒绝；不是纯字段访问器。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-03.frozen.txt"
+    },
+    {
+      "id": "FCOV-04",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "归档会话终局与幂等发布",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::finalize",
+        "startLine": 853,
+        "endLine": 1065,
+        "fileSha256": "2a8a9dace6c709c43c3d6be49d5032019d585c49806db95f60dbb4fbac78670f",
+        "sectionSha256": "9d364b4a1c6b6a5ae7074f1d7ebc11a8156243440180db58b64bc721d763979c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "复核五元组/写权威，重算manifest摘要，互斥仲裁finalize与abandon，幂等/冲突与文件核验。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-04.frozen.txt"
+    },
+    {
+      "id": "FCOV-05",
+      "priority": "coverage-blocker",
+      "unit": "project",
+      "title": "Windows持久性/可见性原语",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+        "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough",
+        "startLine": 226,
+        "endLine": 294,
+        "fileSha256": "04e0b8d64a45a1598f6d944f3934ee7f928fd143804d619d766dfb7e39b87520",
+        "sectionSha256": "d656394b7d99482f4bf972bf1ed0602734b57ae490618c564c76b59c9f8bea7f"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "RAII句柄、分块写、flush和close失败路径决定是否允许发布；publishNew/replaceExisting承载不同原子语义，不等于普通文件工具。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-05.frozen.txt"
+    },
+    {
+      "id": "FCOV-06",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "策略解析/阈值及规则归一化",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyParsing.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::runParsePipeline",
+        "startLine": 489,
+        "endLine": 844,
+        "fileSha256": "46b1f136c1d44208c10d6f0a04df0a3defa8a8d10f422f8c7e5aa4a8089985e6",
+        "sectionSha256": "dbda61a854efa29ed909e9ad05ae64ff86057dbe59bfd5f2ebc58483bac9a7f8"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "schema拒绝、角色词表/对象解析、阈值合法性、默认供给、规则规范化与冲突判定；已有ByteReader/Writer条目不是此语义。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-06.frozen.txt"
+    },
+    {
+      "id": "FCOV-07",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "关节限位与近限位判定",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/JointLimits.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::JointLimitEvaluator::evaluate",
+        "startLine": 266,
+        "endLine": 589,
+        "fileSha256": "bcd16cce3aea06d4c18f8246e2e02adf45e8c649c8154f74324b97132e173511",
+        "sectionSha256": "ef37bb0c84d69e35170756839e0f7c230963aa0fb93803b99760658651e3ba3c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "有限性/名称检查、规范排序、有限/连续关节分支，有符号margin与比例、Should/Must和不适用记录；直接影响可行性判定。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-07.frozen.txt"
+    },
+    {
+      "id": "FCOV-08",
+      "priority": "coverage-blocker",
+      "unit": "policy",
+      "title": "碰撞作用域展开与必检保护",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+        "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts",
+        "startLine": 508,
+        "endLine": 560,
+        "fileSha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2",
+        "sectionSha256": "40dabbf6f886bc8547c718d204c7d156d3d325830e1561d0de6f6c14bcc49420"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "将role/group/object规则展开成对象对，拒绝必检与排除交集；同文件会话构造还决定域/相邻过滤/必检优先，不由CollisionQuery::evaluate已登记区段覆盖。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-08.frozen.txt"
+    },
+    {
+      "id": "FCOV-09",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "worker真实进程入口及隔离生命周期",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp",
+        "qualifiedSymbol": "::wWinMain",
+        "startLine": 613,
+        "endLine": 783,
+        "fileSha256": "85e7a6d8e1b842312193f41997ba8cd8e007eeadc2b57e3e60aa0a623a7826a9",
+        "sectionSha256": "e4502d98f541aa7c3403b9cd35495d3a134313451e65bb6d89105ba69c6fe8ad"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "命令读/心跳线程、Hello握手、分帧派发、物化摘要重算、临时目录及线程收尾；当前runScript为替身评估器，也需审进程/文件边界，不能误称已机器人计算迁移。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-09.frozen.txt"
+    },
+    {
+      "id": "FCOV-10",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "结果归档接纳事务与失权重试",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Admission.cpp",
+        "qualifiedSymbol": "sdurws::ird::execution::ResultAdmission::runArchiveTransaction",
+        "startLine": 581,
+        "endLine": 811,
+        "fileSha256": "dd87b143feaa3910bfdf2e65f08a4c4c5cd6ffb56d71aa0e738f4729bece553b",
+        "sectionSha256": "4a671c2a7dfe197e6ac203a4868fd953ea5f2e86a9b6d867df9cb4e5a2e38337"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "复用预留会话、begin失权重取并重绑写面、有限退避、writeBatch/finalize与失败阶段记账；ChannelProtocol编解码不覆盖归档状态。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-10.frozen.txt"
+    },
+    {
+      "id": "FCOV-11",
+      "priority": "coverage-blocker",
+      "unit": "execution",
+      "title": "取消/超时进程树强杀序列",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Controller.cpp",
+        "qualifiedSymbol": "sdurws::ird::execution::TaskController::forceKillSequence",
+        "startLine": 686,
+        "endLine": 729,
+        "fileSha256": "c68d6077f09b5b062b504b49ebfc37abf81109474d423b7edb3d65a7dd798bef",
+        "sectionSha256": "fe418aafe34f69e605e65a1c97678fd98edb99bfbde7d7c59dd23118eb8e57aa"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "一次终止保护、运行超时/心跳失联区分、因果诊断顺序与Canceling到Failed转换；同文件poll/requestCancel等未由scheduler submit审计替代。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-11.frozen.txt"
+    },
+    {
+      "id": "FCOV-12",
+      "priority": "coverage-blocker",
+      "unit": "diagnostics",
+      "title": "一次性确认令牌与绑定四元组复核",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp",
+        "qualifiedSymbol": "sdurws::ird::diagnostics::ConfirmableService::submitConfirmation",
+        "startLine": 498,
+        "endLine": 547,
+        "fileSha256": "43c8672fc1a2ffb449f4e474f03cba542e8abfe81aa4c40a118aa1f9fd14f8c8",
+        "sectionSha256": "6b87a8be1c522f735b81503a9ab8caecdf88cd69fd38adb19c361c96f06e88b4"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "互斥状态迁移、惰性过期、callbackToken一次性检查、binding重验和失效/确认凭据写入，是身份/放行边界，不是文案DTO。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-12.frozen.txt"
+    },
+    {
+      "id": "FCOV-13",
+      "priority": "coverage-blocker",
+      "unit": "diagnostics",
+      "title": "日志脱敏与失败时封闭降级",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Redaction.cpp",
+        "qualifiedSymbol": "sdurws::ird::diagnostics::RedactionService::redact",
+        "startLine": 580,
+        "endLine": 595,
+        "fileSha256": "bbbe7c163e54f07e06adf494a0a313875f10cda7515caf242f227a38b9f3d69b",
+        "sectionSha256": "57cadf5030a2c3066b9409dc676c8d15e4872eb691de2b42889134d0e992e6f0"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "实际执行规则链、累计统计，任何内部失败返回降级文本而非原文；同文件路径清理/UTF8截断/凭据规则需要语义审查，LoggingPipeline登记不能涵盖。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-13.frozen.txt"
+    },
+    {
+      "id": "FCOV-14",
+      "priority": "coverage-blocker",
+      "unit": "testkit",
+      "title": "黄金数据装载与完整性依据",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp",
+        "qualifiedSymbol": "sdurws::ird::testkit::GoldenDataset::load",
+        "startLine": 197,
+        "endLine": 486,
+        "fileSha256": "e4a3a43ffd7f6f62b4082581cbaaea65f690df130630594accf5f990bdc02f3d",
+        "sectionSha256": "faf2ac946a8a838984fd94e031b1d8fabee3db0d0e35c998e6e685178a77fdbd"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "manifest/schema/版本/单位/容差/edgeCases与完整性清单校验，逐文件size和SHA256检查；决定黄金对照是否可信，不能靠JsonLite骨架审计代替。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-14.frozen.txt"
+    },
+    {
+      "id": "FCOV-15",
+      "priority": "coverage-blocker",
+      "unit": "testkit",
+      "title": "头内集合等价与最大二分匹配",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+        "qualifiedSymbol": "sdurws::ird::testkit::checkSetEquivalent<T>",
+        "startLine": 163,
+        "endLine": 392,
+        "fileSha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+        "sectionSha256": "d2f24168670e91c511f9f379492a77f7c650fa4944a1257a47bdb4a9d6722699"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "身份重复、身份匹配/逐字段容差、Kuhn增广路径数值一一匹配及稳定序检查；真实模板算法，不能作为简单DTO或三行断言样板跳过。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-15.frozen.txt"
+    },
+    {
+      "id": "FCOV-16",
+      "priority": "coverage-blocker",
+      "unit": "core",
+      "title": "公共容差公式及头内合法性工厂",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+        "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+        "startLine": 18,
+        "endLine": 33,
+        "fileSha256": "a70a057c296e5310d6fa7fa79448d15520f8c6c32505f97458b1d37355976da6",
+        "sectionSha256": "9fc6cecb00e82baaea9de8fa59113eb2692c2606ef5223122ff01bd2ed834be4"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "C4非有限拒绝/相对绝对阈值与逐元素比较；关联Compare.hpp::Tolerance::make内联合法性判定和C7默认转写，决定大量测试/生产数值结论。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-16.frozen.txt"
+    },
+    {
+      "id": "FCOV-17",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "构建依赖/权限门禁的实际解析与规则消费",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+        "qualifiedSymbol": "ird_classify_target",
+        "startLine": 152,
+        "endLine": 169,
+        "fileSha256": "235757fbd10f785b4e23aeaf732d4795afe2c5b796091d2a197d6e7e9e09f476",
+        "sectionSha256": "2e81bc42a12453932efb4237aa69a44647980bdb230dc67789c4e2e1e587a26a"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "目标形态分类后，顶层IRD_EDGES扫描应用自边/测试/工具/白名单和Qt规则。20个ird_add_gtest只登记测试注册宏，不覆盖这些门禁或主CMake接线。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-17.frozen.txt"
+    },
+    {
+      "id": "FCOV-18",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "独立FK黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs",
+        "qualifiedSymbol": "<ES module>::closedFormFk",
+        "startLine": 53,
+        "endLine": 69,
+        "fileSha256": "7cd0b216c7e42843d71ed93792f073da83d08a647071d53552951f777a60caab",
+        "sectionSha256": "2ec9ec3d0cfe91c5528bd8c3d25f8157350b28ba7355d521d01b7b5eb3f93f1c"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "自行累计平面3R姿态/关节原点/轴，写expected/fk.json；需审适用域/offset/单位/独立性及实际消费，不因生成脚本或独立oracle身份而豁免。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-18.frozen.txt"
+    },
+    {
+      "id": "FCOV-19",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "独立动力学及功率积分黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+        "qualifiedSymbol": "<ES module>::rneaReference",
+        "startLine": 77,
+        "endLine": 103,
+        "fileSha256": "e49d9e85fc41f568673aa1d2c9885dd21555646d169faa903b78acdd3b5f4cef",
+        "sectionSha256": "b65fc96b5bfae78664437854a0c8d62453962771cfb768167bef4060624c6495"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "闭式二连杆质量/重力/科氏/惯性/摩擦分项；同模块trapezoid/mapCase计算功率能量、包络与身份，必须明确参考实现独立性及适用域。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-19.frozen.txt"
+    },
+    {
+      "id": "FCOV-20",
+      "priority": "coverage-blocker",
+      "unit": "foundation-governance",
+      "title": "碰撞接触边界黄金生成器",
+      "location": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs",
+        "qualifiedSymbol": "<ES module>::handDerived",
+        "startLine": 41,
+        "endLine": 60,
+        "fileSha256": "55c80e787e88ae08c4e18e0e648786d9b6f3add22676f302aa64bc3163e39026",
+        "sectionSha256": "9ac8b0d564f32a61e9f38347657e028fb31d7fb0665550299e81146138e37c83"
+      },
+      "sourceReferenceCount": 0,
+      "auditedSectionCoveringCount": 0,
+      "inputOnly": false,
+      "behaviorRead": "手算轴对齐盒距离/接触/碰撞，含直立/倒挂与独立自检，决定测试oracle边界；只审RobWork生产碰撞适配不能覆盖脚本。",
+      "conclusion": "具体未登记行为；不判定其实现错误、上游缺能力或应删除",
+      "requiredAudit": "沿实际定义、调用链、上游候选及语义差异登记或有理由成组；复用/独立oracle/业务协议边界需证据，不在本报告代填矩阵",
+      "evidence": "FCOV-20.frozen.txt"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "name": "lite-before-ps7",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\before\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\lite-before-ps7"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:22:25.1928832Z",
+    "endUtc": "2026-10-22T20:22:39.2245810Z",
+    "exitCode": 1,
+    "log": "lite-before-ps7.log"
+  },
+  {
+    "name": "lite-before-ps51",
+    "executable": "C:\\windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\before\\test-governance-lite.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-OutputDir",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\lite-before-ps51"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:22:39.2424327Z",
+    "endUtc": "2026-10-22T20:22:50.7515741Z",
+    "exitCode": 1,
+    "log": "lite-before-ps51.log"
+  },
+  {
+    "name": "validate-invalid-branch",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\validate-task.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\invalid-branch.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:22:50.7695347Z",
+    "endUtc": "2026-10-22T20:22:53.3174739Z",
+    "exitCode": 1,
+    "log": "validate-invalid-branch.log"
+  },
+  {
+    "name": "verify-invalid-branch-dryrun",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\invalid-branch.json",
+      "-DryRun"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:22:53.3289110Z",
+    "endUtc": "2026-10-22T20:22:54.1600998Z",
+    "exitCode": 1,
+    "log": "verify-invalid-branch-dryrun.log"
+  },
+  {
+    "name": "verify-valid-dryrun",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+      "-DryRun"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:22:54.1627251Z",
+    "endUtc": "2026-10-22T20:23:21.7109343Z",
+    "exitCode": 0,
+    "log": "verify-valid-dryrun.log"
+  },
+  {
+    "name": "verify-task-real",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\verify-task.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:23:21.7141283Z",
+    "endUtc": "2026-10-22T20:24:23.5957970Z",
+    "exitCode": 0,
+    "log": "verify-task-real.log"
+  },
+  {
+    "name": "commit-lint-frozen-range",
+    "executable": "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+    "arguments": [
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo\\RobWork\\scripts\\industrialrobot\\commit-lint.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+      "-Range",
+      "d52fd06aafcb025a7d494d59c6d44bc9c16f3643..cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7"
+    ],
+    "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\repo",
+    "startUtc": "2026-10-22T20:24:23.5982704Z",
+    "endUtc": "2026-10-22T20:24:24.2096228Z",
+    "exitCode": 0,
+    "log": "commit-lint-frozen-range.log"
+  }
+]

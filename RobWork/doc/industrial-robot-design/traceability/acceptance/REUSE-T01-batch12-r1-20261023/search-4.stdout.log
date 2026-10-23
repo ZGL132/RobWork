@@ -1,0 +1,111 @@
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\XMLHelpers.hpp:12:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\XMLHelpers.hpp:13:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\XMLHelpers.hpp:24:typedef boost::property_tree::ptree PTree;
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\XMLHelpers.cpp:12:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.hpp:12:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.hpp:13:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:16:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:308:    } catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:477:		boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskDescription.cpp:479:    } catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:11:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:12:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:28:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:58:    } catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:85:		boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\SurfaceSample.cpp:87:    } catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:9:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:10:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:28:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:215:    } catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:282:		boost::property_tree::xml_writer_settings<char> settings('\t', 1);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GripperXMLLoader.cpp:284:    } catch (const ptree_error& e) {
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:10:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:11:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:17:using namespace boost::property_tree;
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:448:typedef boost::property_tree::basic_ptree< std::string, std::string, compareElemStrings > PTree;
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:451:typedef boost::property_tree::basic_ptree< std::string, std::string, compareElemStrings >::iterator
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:798:        catch (const ptree_error& e) {
+RobWork/RobWork/src\rwlibs\task\GraspTask.cpp:835:        catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimUtilityPlugin.hpp:49:                           "SimUtilityPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\SimTaskPlugin.hpp:48:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTaskPlugin.json")
+RobWork/RobWork/src\sandbox\learnbip\Experiments.cpp:6:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWork/src\sandbox\learnbip\Experiments.cpp:7:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWork/src\sandbox\learnbip\Experiments.cpp:13:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimulatorPlugin.hpp:54:                           "RWSimulatorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\RWSimPlugin.hpp:57:    Q_PLUGIN_METADATA (IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "RWSimPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\GraspTableGeneratorPlugin.hpp:85:                           "GraspTableGeneratorPlugin.json")
+RobWork/RobWorkSim/src\rwsimlibs\plugins\EngineTestPlugin.hpp:67:                               "EngineTestPlugin.json")
+RobWork/RobWork/src\rw\loaders\rwxml\XML.hpp:29:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XML.hpp:64:        typedef boost::property_tree::ptree PTree;
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:30:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:31:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:35:typedef boost::property_tree::ptree PTree;
+RobWork/RobWork/src\rw\loaders\rwxml\XML.cpp:41:using namespace boost::property_tree;
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:25:#include <boost/property_tree/ptree_fwd.hpp>
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:83:        rw::core::Ptr< boost::property_tree::ptree > _tree;
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:95:         * @param ptree [in] boost property tree.
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:100:        BoostDOMElem (const std::string& key, rw::core::Ptr< boost::property_tree::ptree > ptree,
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:101:                      rw::core::Ptr< boost::property_tree::ptree > parent,
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:102:                      rw::core::Ptr< boost::property_tree::ptree > root, BoostXMLParser* parser) :
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:104:            _node (ptree), _parent (parent), _root (root), _parser (parser)
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:167:        rw::core::Ptr< boost::property_tree::ptree > getRoot () { return _root; }
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:174:        rw::core::Ptr< boost::property_tree::ptree > _node;
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:175:        rw::core::Ptr< boost::property_tree::ptree > _parent;
+RobWork/RobWork/src\rw\core\BoostXMLParser.hpp:176:        rw::core::Ptr< boost::property_tree::ptree > _root;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:23:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:38:        boost::property_tree::xml_parser::xmlattr< char > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:39:        boost::property_tree::xml_parser::xmltext< char > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:40:        boost::property_tree::xml_parser::xmlcomment< char > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:41:        boost::property_tree::xml_parser::xmldecl< char > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:43:        boost::property_tree::xml_parser::xmlattr< std::string > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:44:        boost::property_tree::xml_parser::xmltext< std::string > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:45:        boost::property_tree::xml_parser::xmlcomment< std::string > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:46:        boost::property_tree::xml_parser::xmldecl< std::string > ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:55:    _tree = ownedPtr (new boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:62:    _tree            = ownedPtr (new boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:64:        read_xml (file, *_tree, boost::property_tree::xml_parser::trim_whitespace);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:68:    catch (const boost::property_tree::xml_parser_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:72:    catch (const boost::property_tree::ptree_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:80:    _tree = ownedPtr (new boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:82:        read_xml (input, *_tree, boost::property_tree::xml_parser::trim_whitespace);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:86:    catch (const boost::property_tree::xml_parser_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:90:    catch (const boost::property_tree::ptree_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:100:        boost::property_tree::xml_writer_settings< char > settings (' ', 1);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:102:        boost::property_tree::xml_writer_settings< std::string > settings (' ', 1);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:106:    catch (const boost::property_tree::ptree_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:116:        boost::property_tree::xml_writer_settings< char > settings (' ', 1);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:118:        boost::property_tree::xml_writer_settings< std::string > settings (' ', 1);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:122:    catch (const boost::property_tree::ptree_error& e) {
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:131:    boost::property_tree::ptree::iterator _begin, _end;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:132:    rw::core::Ptr< boost::property_tree::ptree > _parent, _root;
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:135:    ElemIterImpl (boost::property_tree::ptree::iterator begin,
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:136:                  boost::property_tree::ptree::iterator end,
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:137:                  rw::core::Ptr< boost::property_tree::ptree > parent,
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:138:                  rw::core::Ptr< boost::property_tree::ptree > root, BoostXMLParser* parser) :
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:230:    boost::optional< boost::property_tree::ptree& > child = _node->get_child_optional (name);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:238:    boost::optional< boost::property_tree::ptree& > attr = _node->get_child_optional ("<xmlattr>");
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:240:        boost::optional< boost::property_tree::ptree& > child =
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:253:    boost::optional< boost::property_tree::ptree& > child = _node->get_child_optional (name);
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:270:    boost::optional< boost::property_tree::ptree& > attr = _node->get_child_optional ("<xmlattr>");
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:272:        boost::optional< boost::property_tree::ptree& > child =
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:283:    // boost::property_tree::ptree *child = &(_node->get_child("<xmlattr>").get_child(name));
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:297:    boost::property_tree::ptree& attribs = _node->get_child ("<xmlattr>");
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:306:    boost::property_tree::ptree& child = _node->add_child (name, boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:314:    _node->add_child (namePath, boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:335:    boost::property_tree::ptree& newchild =
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:336:        _parent->add_child (name, boost::property_tree::ptree ());
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:340:    boost::property_tree::ptree::iterator child_iter = _parent->begin ();
+RobWork/RobWork/src\rw\core\BoostXMLParser.cpp:344:            _node = rw::core::Ptr< boost::property_tree::ptree > (&newchild);
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:25:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:26:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:29:typedef boost::property_tree::ptree PTree;
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:120:    using namespace boost::property_tree;
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:136:    catch (const ptree_bad_path& e) {
+RobWork/RobWork/src\rw\loaders\colsetup\CollisionSetupLoader.cpp:141:    catch (const ptree_error& e) {
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:49:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:50:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:73:typedef boost::property_tree::ptree PTree;
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:96:using namespace boost::property_tree;
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:1645:        boost::optional< ptree& > child = tree.get_child_optional ("DynamicWorkcell");
+RobWork/RobWorkSim/src\rwsim\loaders\DynamicWorkCellLoader.cpp:1653:    catch (const ptree_error& e) {

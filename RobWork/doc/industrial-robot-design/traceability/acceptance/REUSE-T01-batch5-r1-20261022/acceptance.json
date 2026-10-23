@@ -1,0 +1,32 @@
+{
+  "sha": "9fd7256cf61a7768622810ed547617a66013949b",
+  "scope": "batch5-only",
+  "result": "FAIL",
+  "findings": [
+    {
+      "id": "B5-P2-01",
+      "priority": 2,
+      "file": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+      "line": 87,
+      "description": "SampleGridRender.draw的唯一需求UX-07不对应格线/点色/高亮呈现"
+    }
+  ],
+  "gates": {
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0
+  },
+  "searchReplay": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0
+  },
+  "rows": 25,
+  "allPending": true,
+  "notRun": [
+    "C++/公共API探测（分工外）",
+    "GUI执行",
+    "全库DeepEvidence",
+    "全T01退出审计"
+  ]
+}

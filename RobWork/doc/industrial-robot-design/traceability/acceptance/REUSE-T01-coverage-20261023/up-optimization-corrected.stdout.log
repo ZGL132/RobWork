@@ -1,0 +1,18 @@
+RobWork/RobWork/src/sandbox/optimization\DirectionSetOptimizer.hpp:20:class DirectionSetOptimizer: public Optimizer {
+RobWork/RobWork/src/rwlibs/pathoptimization\clearance\ClearanceOptimizer.hpp:63:    class ClearanceOptimizer
+RobWork/RobWork/src/sandbox/optimization\BFGSOptimizer.hpp:20:class BFGSOptimizer: public GradientOptimizer {
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:53:    class PathLengthOptimizer
+RobWork/RobWork/src/sandbox/optimization\DownhillOptimizer.hpp:29:class DownhillOptimizer: public Optimizer {
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:52:	virtual RES_T f(ARG_T q) {
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:59:	virtual GRAD_T df(ARG_T q) {
+RobWork/RobWork/src/sandbox/optimization\FunctionWrapper.hpp:49:	virtual RES_T f(ARG_T q) {
+RobWork/RobWork/src/sandbox/optimization\FunctionWrapper.hpp:93:	virtual GRAD_T df(ARG_T q) {
+RobWork/RobWork/src/sandbox/optimization\GradientDescentOptimizer.hpp:30:class GradientDescentOptimizer: public GradientOptimizer {
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:40:class GradientOptimizer: public Optimizer {
+RobWork/RobWork/src/sandbox/optimization\LineSearch.hpp:26:class LineSearch: public Optimizer {
+RobWork/RobWork/src/sandbox/optimization\Optimizer.hpp:31:class Optimizer {
+RobWork/RobWork/src/sandbox/optimization\OptimizerFactory.hpp:21:class OptimizerFactory {
+RobWork/RobWork/src/sandbox/optimization\PowellOptimizer.hpp:20:class PowellOptimizer: public DirectionSetOptimizer {
+RobWork/RobWork/src/sandbox/optimization\SimulatedAnnealingOptimizer.hpp:20:class SimulatedAnnealingOptimizer: public Optimizer {
+RobWork/RobWork/src/sandbox/optimization\StopCondition.hpp:19:class Optimizer;
+RobWork/RobWork/src/sandbox/optimization\TaxiCabOptimizer.hpp:27:class TaxiCabOptimizer: public DirectionSetOptimizer {

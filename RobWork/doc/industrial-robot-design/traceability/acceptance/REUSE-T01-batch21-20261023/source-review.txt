@@ -1,0 +1,326 @@
+foundation-governance.commit-lint.root-and-encoding
+UTF8原生命令输出与显式根/脚本路径回退；Git根唯一，不新建仓库/路径解析平台
+18: try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }
+19: 
+20: # ---------- 仓库根解析（与其余治理脚本同一套三段逻辑）----------
+21: $scriptDir = $PSScriptRoot
+22: if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
+23: if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path }
+24: if (-not (Test-Path (Join-Path $RepoRoot "RobWork/doc/industrial-robot-design"))) {
+25:   throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）"
+26: }
+27: $repoTop = (& git -C $RepoRoot rev-parse --show-toplevel 2>$null)
+28: if (-not $repoTop) { throw "not a git repository: $RepoRoot" }
+29: $repoTop = (Resolve-Path $repoTop).Path
+
+foundation-governance.commit-lint.Test-CommitMessage
+合法前缀、空/泛化/80字符标题；Merge豁免，正文真实性仍人工，AllowWip仅兼容参数
+36: function Test-CommitMessage([string]$Text, [string]$Id) {
+37:   $errors = @()
+38:   $lines = @($Text -split "`r?`n")
+39:   $title = ''
+40:   foreach ($l in $lines) { if ($l.Trim()) { $title = $l.Trim(); break } }
+41:   if (-not $title) { return @('empty commit message') }
+42:   if ($title -match '^Merge ') { return @() }  # 合并提交豁免
+43: 
+44:   if ($title -notmatch $prefixRe) {
+45:     $errors += "标题缺少合法前缀（[WP-nn-Tkk]/[DTB]/[docs]/[units]/[ARCH]/[governance]/[ACC]/[PIPE]/[CCP]）: $title"
+46:   }
+47:   $afterPrefix = $title -replace $prefixRe, ''
+48:   $afterPrefix = $afterPrefix -replace '^\[WIP\]\s*', ''
+49:   $afterPrefix = $afterPrefix.Trim()
+50:   if (-not $afterPrefix) { $errors += "标题前缀后为空: $title" }
+51:   if ($afterPrefix -match $genericRe) { $errors += "标题无信息量（禁用空话）: $title" }
+52:   if ($title.Length -gt 80) { $errors += "标题过长（>80 字符，AGENTS 要求 ≤50 字左右）: $($title.Length)" }
+53: 
+54:   # 根 AGENTS §6.3：保留可追溯前缀与有信息量标题，取消四段正文形式检查。
+55:   # 原因/验证/影响由实际改动决定篇幅；AllowWip 参数保留兼容已有调用。
+56:   return $errors
+57: }
+
+foundation-governance.commit-lint.input-and-range
+Message预检或真实git log/show范围；空范围显式无对象，不声称验证历史全部提交
+60: $commits = @()
+61: if ($Message.Count -gt 0) {
+62:   $i = 0
+63:   foreach ($m in $Message) { $commits += [pscustomobject]@{ Id = "message[$i]"; Text = $m }; $i++ }
+64: } else {
+65:   if (-not $Range) { $Range = 'origin/redesign-main..HEAD' }
+66:   $ids = @(& git -C $repoTop log --format=%H $Range 2>$null)
+67:   if ($LASTEXITCODE -ne 0) { throw "git log failed for range '$Range'（检查范围语法与远端引用）" }
+68:   foreach ($id in $ids) {
+69:     if (-not $id) { continue }
+70:     $text = (& git -C $repoTop show -s --format=%B $id 2>$null) -join "`n"
+71:     $commits += [pscustomobject]@{ Id = "$id".Substring(0, 12); Text = $text }
+72:   }
+73: }
+74: if ($commits.Count -eq 0) {
+75:   Write-Output "commit-lint: PASS（范围 '$Range' 无新提交——无可检查对象）"
+76:   exit 0
+77: }
+
+foundation-governance.commit-lint.aggregate-exit
+逐提交调用唯一Test-CommitMessage，错误累计并exit1；不是PR语义或复用正确性审查
+80: $failed = 0
+81: foreach ($c in $commits) {
+82:   $errs = @(Test-CommitMessage $c.Text $c.Id)
+83:   if ($errs.Count -gt 0) {
+84:     $failed++
+85:     Write-Output "  [FAIL] $($c.Id)"
+86:     foreach ($e in $errs) { Write-Output "         - $e" }
+87:   } else {
+88:     Write-Output "  [PASS] $($c.Id)"
+89:   }
+90: }
+91: if ($failed -gt 0) {
+92:   Write-Output "commit-lint: FAIL —— $failed/$($commits.Count) 个提交不合规（历史提交按 F-012 豁免，不回写；新提交请按 AGENTS §6.3 修正后重提）"
+93:   exit 1
+94: }
+95: Write-Output "commit-lint: PASS（$($commits.Count) 个提交全部合规）"
+
+foundation-governance.validate-task.root
+真实契约存在性、三段根解析、设计树自检，标准文件工具而非机器人模型加载
+19: if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
+20: 
+21: # 仓库根解析：优先显式参数；否则脚本位置上三级（scripts/industrialrobot → 仓库根），
+22: # 并以"doc 目录存在"自检——解析失败必须显性报错，不允许归约到盘根后静默错判（G-1 根因对策）。
+23: if (-not $RepoRoot) {
+24:   $scriptDir = $PSScriptRoot
+25:   if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
+26:   $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path
+27: }
+28: $docBase = Join-Path $RepoRoot "RobWork/doc/industrial-robot-design"
+29: if (-not (Test-Path $docBase)) { throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）" }
+
+foundation-governance.validate-task.Test-AnchorExists
+项目编号标题前缀/数字边界正则，非通用Markdown解析器；不等同语义引用证明
+33: function Test-AnchorExists([string]$text, [string]$anchor) {
+34:   $a = ($anchor -replace "\s", "")
+35:   if (-not $a) { return $false }
+36:   $pattern = "^#{1,6}" + [regex]::Escape($a) + "($|[^0-9])"
+37:   foreach ($line in ($text -split "`n")) {
+38:     $cond = ($line -replace "\s", "")
+39:     if ($cond -match $pattern) { return $true }
+40:   }
+41:   return $false
+42: }
+
+foundation-governance.validate-task.Test-AnchorRequired
+四权威文档和units要求章节；过程证据可整文件引用，不复制上游文档系统
+46: function Test-AnchorRequired([string]$relPath) {
+47:   if ($relPath -like "units/*") { return $true }
+48:   foreach ($d in @("REQUIREMENTS.md","ARCHITECTURE.md","DETAILED-DESIGN.md","development-task-breakdown.md")) {
+49:     if ($relPath.EndsWith($d)) { return $true }
+50:   }
+51:   return $false
+52: }
+
+foundation-governance.validate-task.index-and-contract
+索引既有任务、结构/ready字段/前置存在/锚点/跨单元陷阱/分支句法；未证明前置已完成或任务语义可执行
+55: $allTaskIds = @{}
+56: Get-ChildItem (Join-Path $docBase "tasks") -Recurse -Filter "*.json" -ErrorAction SilentlyContinue | ForEach-Object {
+57:   if ($_.Name -eq "foundation-tasks.json") { return }
+58:   $j = Get-Content $_.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
+59:   if ($j -is [array]) { return }
+60:   if ($j.taskId) { $allTaskIds[$j.taskId] = $true }
+61: }
+62: 
+63: $tasks = @(Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json)
+64: $required = 'taskId','unit','masterWp','title','status','dependsOn','requirements','designRefs','verify'
+65: $readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'
+66: foreach ($t in $tasks) {
+67:   foreach ($k in $required) { if ($null -eq $t.$k) { throw "missing task field: $k" } }
+68:   if ($t.taskId -notmatch '^([A-Z]+-(T[0-9]+|CR-[0-9]+)|WP-[0-9]+-T[0-9]+)$') { throw "invalid taskId: $($t.taskId)" }
+69:   if ($t.masterWp -notmatch '^WP-[A-I]$') { throw "invalid masterWp: $($t.masterWp)" }
+70:   if ($t.status -notin 'planned','ready','blocked','done','design-written') { throw "invalid task status: $($t.taskId)" }
+71:   if (@($t.verify).Count -eq 0) { throw "verify must contain at least one command: $($t.taskId)" }
+72:   # ready 表示任务可直接领取，必须具备可评审的需求、范围、产物与验收；
+73:   # planned 允许保留任务占位，但绝不能因字段名存在而被当作已准备就绪。
+74:   if ($t.status -eq 'ready') {
+75:     foreach ($k in $readyRequired) {
+76:       # F-855：字段完全缺失时 $t.$k 为 $null，@($null).Count＝1——仅查 Count
+77:       # 会放行缺字段的 ready 契约；先显式判字段在位，再查空值（两态都拒绝）。
+78:       if (-not $t.PSObject.Properties[$k] -or @($t.$k).Count -eq 0) { throw "ready task has empty or missing field ${k}: $($t.taskId)" }
+79:     }
+80:   }
+81: 
+82:   # ①dependsOn 引用完整性（全部状态生效——悬空前置在任何阶段都是数据缺陷）
+83:   foreach ($d in @($t.dependsOn)) {
+84:     if (-not $allTaskIds.ContainsKey("$d")) { throw "dependsOn target not found: $d (referenced by $($t.taskId))" }
+85:     if ("$d" -eq "$($t.taskId)") { throw "self dependency: $($t.taskId)" }
+86:   }
+87: 
+88:   # ②designRefs 引用完整性：文件必须存在；ready/done 契约引用设计文档必须带真实锚点
+89:   foreach ($ref in @($t.designRefs)) {
+90:     $parts = "$ref" -split "#", 2
+91:     $relPath = $parts[0]
+92:     $anchor = $null; if ($parts.Count -gt 1) { $anchor = $parts[1] }
+93:     $fullPath = Join-Path $docBase $relPath
+94:     if (-not (Test-Path $fullPath)) { throw "designRef file not found: $ref (referenced by $($t.taskId))" }
+95:     if (($t.status -eq 'ready' -or $t.status -eq 'done') -and (Test-AnchorRequired $relPath)) {
+96:       if (-not $anchor) { throw "design doc designRef missing anchor (CCP §3): $ref (in $($t.taskId))" }
+97:       $text = Get-Content $fullPath -Raw -Encoding UTF8
+98:       if (-not (Test-AnchorExists $text $anchor)) { throw "designRef anchor not found in target: $ref (in $($t.taskId))" }
+99:     }
+100:   }
+101: 
+102:   # ③陷阱随契约走（CCP §3）：interUnit 是编译产物必填字段——ready/done 契约缺失该字段即校验失败
+103:   #   （此前仅在恰为 true 时检查，139 份契约集体缺字段等于把守卫绕空——审核结论 P1-4 对策）；
+104:   #   planned 契约允许暂缺（未编译），但若存在必须为 bool。interUnit=true ⇒ knownPitfalls 必填。
+105:   $iuRequired = ($t.status -eq 'ready' -or $t.status -eq 'done')
+106:   if ($iuRequired -and $null -eq $t.interUnit) { throw "ready/done task missing required bool field interUnit (CCP §3): $($t.taskId)" }
+107:   if ($null -ne $t.interUnit -and $t.interUnit -isnot [bool]) { throw "interUnit must be bool, got '$($t.interUnit)': $($t.taskId)" }
+108:   # 任务分支字段（PIPE v1.4 §0.2 queue 结构化条目的唯一来源）：ready 必填（进队前提）；
+109:   # done 契约若为分支纪律之前的历史直会话执行可无 branch（如 FOUNDATION-CR-01 系），
+110:   # 但若存在必须句法合法。句法 <前缀>-t<序号>（小写）。
+111:   if ($t.status -eq 'ready' -and -not $t.branch) { throw "ready task missing required field branch (CCP §3): $($t.taskId)" }
+112:   if ($t.branch -and "$($t.branch)" -notmatch '^[a-z][a-z0-9]*-t[0-9]+$') { throw "invalid branch '$($t.branch)' (expect like wp03-t01 / doc-t03): $($t.taskId)" }
+113:   if ($t.interUnit -eq $true) {
+114:     # PS 细节：@($null).Count 为 1，须先滤空再判空，否则缺失字段会走错报错分支
+115:     $pitfalls = @($t.knownPitfalls) | Where-Object { $null -ne $_ }
+116:     if ($pitfalls.Count -eq 0) { throw "interUnit task must list knownPitfalls (CCP §3): $($t.taskId)" }
+117:     foreach ($p in $pitfalls) {
+118:       if ("$p" -notmatch '^(O-[0-9]+|CR-[0-9]+|P-[A-Z]+-[0-9]+)$') { throw "invalid knownPitfalls id '$p' (expect O-nn / CR-nn / P-XX-nn): $($t.taskId)" }
+119:     }
+120:   }
+121: }
+
+foundation-governance.validate-task.reuse-gate
+已有reuse或ready/done REUSE契约转交原validate-reuse，非第二复用门禁实现
+123: foreach ($t in $tasks) {
+124:   if ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done'))) {
+125:     & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+126:     if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
+127:   }
+128: }
+129: Write-Output "validate-task: PASS ($($tasks.Count) tasks)"
+
+foundation-governance.verify-task.preflight-and-dryrun
+调用原validate-task和validate-reuse，DryRun也预检、仅打印verify不执行；不能当三命令真实通过
+18: if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
+19: 
+20: # 仓库根解析（与 validate-task.ps1 同一套逻辑，保持两个脚本行为一致）
+21: $scriptDir = $PSScriptRoot
+22: if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
+23: if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path }
+24: if (-not (Test-Path (Join-Path $RepoRoot "RobWork/doc/industrial-robot-design"))) {
+25:   throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）"
+26: }
+27: Write-Output "verify-task: RepoRoot=$RepoRoot"
+28: 
+29: & (Join-Path $scriptDir "validate-task.ps1") -TaskFile $TaskFile -RepoRoot $RepoRoot
+30: 
+31: $t = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json
+32: # 新执行（包括旧契约重新执行）必须补齐复用证据与阶段门，DryRun 也不能绕过。
+33: & (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+34: if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }
+35: if ($DryRun) {
+36:   foreach ($cmd in @($t.verify)) { Write-Output "[dryrun] $cmd" }
+37:   Write-Output "verify-task: DRYRUN PASS $($t.taskId)"
+38:   return
+39: }
+
+foundation-governance.verify-task.execute-and-count
+逐verify Push/Pop根、Invoke-Expression、退出码拒绝；Parse/CommandNotFound只标manual，PASS仅机器部分。结构化机器条目与散文识别边界仍待后续全量治理审查
+47: $manualEntries = 0
+48: $machineEntries = 0
+49: foreach ($cmd in @($t.verify)) {
+50:   Write-Output "> $cmd"
+51:   Push-Location $RepoRoot
+52:   try {
+53:     Invoke-Expression $cmd -ErrorAction Stop
+54:     if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" }
+55:     $machineEntries++
+56:   } catch {
+57:     # 散文条目判定＝Parse/CommandNotFound 类错误（非命令文本必然抛出）；
+58:     # 其余异常＝真实验证失败，原样重抛（不吞错——验证失败轨保持致命）。
+59:     if ($_.Exception -is [System.Management.Automation.CommandNotFoundException] -or
+60:         $_.Exception -is [System.Management.Automation.ParseException]) {
+61:       Write-Output "[manual] 条目非机器可执行——人工核对口径（结论归验收记录）: $cmd"
+62:       $manualEntries++
+63:     } else {
+64:       throw
+65:     }
+66:   }
+67:   finally { Pop-Location }
+68: }
+69: Write-Output ("verify-task: PASS {0}（机器可执行 {1} 条全部通过；散文人工核对 {2} 条）" -f $t.taskId, $machineEntries, $manualEntries)
+
+foundation-governance.test-governance-lite.environment
+用当前PS进程路径、独立GUID临时根及标准IO；不引第二测试/构建平台
+4: $ErrorActionPreference = 'Stop'
+5: if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }
+6: if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-tests' }
+7: [IO.Directory]::CreateDirectory($OutputDir) | Out-Null
+8: $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ird-gov-lite-' + [guid]::NewGuid().ToString('N'))
+9: $psExe = (Get-Process -Id $PID).Path
+10: $results = @()
+
+foundation-governance.test-governance-lite.Invoke-Probe
+真实子进程退出码+具名输出双判据，失败先记录再throw，不能零执行假通过
+13: function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int]$Expected, [string]$Pattern) {
+14:     $previous = $ErrorActionPreference
+15:     try {
+16:         $ErrorActionPreference = 'Continue'
+17:         $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-String)
+18:         $code = $LASTEXITCODE
+19:     } finally { $ErrorActionPreference = $previous }
+20:     [IO.File]::WriteAllText((Join-Path $OutputDir "$Name.log"), $output)
+21:     $pass = ($code -eq $Expected -and $output -match $Pattern)
+22:     $script:results += [pscustomobject]@{ name=$Name; passed=$pass; exitCode=$code; expectedExitCode=$Expected }
+23:     if (-not $pass) { throw "$Name failed: exit=$code expected=$Expected; see $OutputDir" }
+24:     Write-Output "PASS $Name"
+25: }
+
+foundation-governance.test-governance-lite.fixtures-and-report
+原8例/原共享对象稀疏clone/overlay/坏索引；finally完整性计数及受限Temp清理。仅补catalog已绑定两套gtest检出面，不放宽验证规则；红绿实跑分列
+27: try {
+28:     $lint = Join-Path $PSScriptRoot 'commit-lint.ps1'
+29:     $cases = @(
+30:         @{name='short-doc'; text='[docs] 精简普通任务入口'; code=0; pattern='commit-lint: PASS'},
+31:         @{name='free-body'; text=("[governance] 取消固定提交段落`n`n验证：正负例已执行。"); code=0; pattern='commit-lint: PASS'},
+32:         @{name='no-prefix'; text='精简普通任务入口'; code=1; pattern='标题缺少合法前缀'},
+33:         @{name='generic-title'; text='[docs] 更新文件'; code=1; pattern='标题无信息量'},
+34:         @{name='empty-title'; text='[docs]'; code=1; pattern='标题前缀后为空'},
+35:         @{name='unknown-prefix'; text='[unknown] 精简入口'; code=1; pattern='标题缺少合法前缀'}
+36:     )
+37:     foreach ($case in $cases) {
+38:         Invoke-Probe $case.name $lint @('-RepoRoot',$RepoRoot,'-Message',$case.text) $case.code $case.pattern
+39:     }
+40: 
+41:     # 只检出门禁实际需要的树；共享对象但独立索引和文件，避免复制现有 build/vcpkg。
+42:     & git clone --shared --quiet --no-checkout $RepoRoot $testRoot
+43:     if ($LASTEXITCODE) { throw 'fixture clone failed' }
+44:     & git -C $testRoot sparse-checkout init --cone
+45:     if ($LASTEXITCODE) { throw 'fixture sparse init failed' }
+46:     # 父目录文件由 cone 模式自动带入；只取 traceability/pipeline，避免检出历史
+47:     # builds 中的长路径截图，也让本测试与“普通任务不加载历史库”的实际流程一致。
+48:     # 沿用test-reuse-governance的两套上游gtest检出面：catalog已绑定测试入口，
+49:     # 漏带时正例会因REUSE-MISSING提前失败，无法实际验证索引的允许/拒绝行为。
+50:     & git -C $testRoot sparse-checkout set 'RobWork/doc/industrial-robot-design/context' 'RobWork/doc/industrial-robot-design/tasks' 'RobWork/doc/industrial-robot-design/units' 'RobWork/doc/industrial-robot-design/reuse' 'RobWork/doc/industrial-robot-design/traceability/pipeline' 'RobWork/doc/industrial-robot-design/traceability/acceptance' 'RobWork/scripts' 'RobWork/.agents' 'RobWork/RobWork/src' 'RobWork/RobWorkSim/src' 'RobWork/RobWork/gtest' 'RobWork/RobWorkSim/gtest' 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot'
+51:     if ($LASTEXITCODE) { throw 'fixture sparse set failed' }
+52:     & git -C $testRoot checkout --quiet --detach HEAD
+53:     if ($LASTEXITCODE) { throw 'fixture checkout failed' }
+54: 
+55:     # 同时支持提交前工作树验证与提交后重跑；只覆盖本测试所需的治理文件。
+56:     $overlays = @('AGENTS.md','RobWork/doc/industrial-robot-design/AGENTS.md','RobWork/doc/industrial-robot-design/acceptance-protocol.md','RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md')
+57:     $overlays += @(Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.ps1' | ForEach-Object { 'RobWork/scripts/industrialrobot/' + $_.Name })
+58:     foreach ($path in $overlays) { Copy-Item -LiteralPath (Join-Path $RepoRoot $path) -Destination (Join-Path $testRoot $path) -Force }
+59:     $index = Join-Path $testRoot 'RobWork/doc/industrial-robot-design/traceability/evidence-index.json'
+60:     [IO.File]::WriteAllText($index, '{ invalid-index')
+61:     $docs = Join-Path $testRoot 'RobWork/scripts/industrialrobot/validate-docs.ps1'
+62:     Invoke-Probe 'default-ignores-optional-index' $docs @() 0 'validate-docs: PASS'
+63:     Invoke-Probe 'deep-rejects-invalid-index' $docs @('-DeepEvidence') 1 'evidence-index.json is not valid JSON'
+64: } finally {
+65:     $passed = @($results | Where-Object { $_.passed }).Count
+66:     $report = [pscustomobject]@{ expected=8; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; complete=($results.Count -eq 8 -and $passed -eq 8); cases=$results }
+67:     $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $OutputDir 'governance-lite-report.json') -Encoding UTF8
+68:     # Windows 删除前核对绝对路径属于本次唯一临时目录，绝不沿主树依赖 junction 清理。
+69:     $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
+70:     $resolvedTest = [IO.Path]::GetFullPath($testRoot)
+71:     if ($resolvedTest.StartsWith($tempPrefix,[StringComparison]::OrdinalIgnoreCase) -and (Split-Path -Leaf $resolvedTest) -like 'ird-gov-lite-*') {
+72:         if (Test-Path -LiteralPath $resolvedTest) { Remove-Item -LiteralPath $resolvedTest -Recurse -Force }
+73:     }
+74: }
+75: if (-not $report.complete) { exit 1 }
+76: Write-Output "governance-lite: PASS ($passed passed, 0 failed, 0 skipped)"

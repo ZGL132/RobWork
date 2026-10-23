@@ -1,0 +1,9 @@
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:27:#include <rw/graphics/WorkCellScene.hpp>
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:756:    std::cout << "Initializing WorkCellScene" << std::endl;
+RobWork/RobWork/example\simplegui\src\SimpleGLViewer.cpp:757:    _wcscene = new WorkCellScene (_scene);
+RobWork/RobWork/gtest\CMakeLists.txt:166:    set(GRAPHICS_TEST_SRC graphics/SceneGraphTest.cpp graphics/WorkCellSceneTest.cpp
+RobWork/RobWork/gtest\graphics\WorkCellSceneTest.cpp:21:#include <rw/graphics/WorkCellScene.hpp>
+RobWork/RobWork/gtest\graphics\WorkCellSceneTest.cpp:31:using rw::graphics::WorkCellScene;
+RobWork/RobWork/gtest\graphics\WorkCellSceneTest.cpp:117:TEST(WorkCellScene, Test) {
+RobWork/RobWork/gtest\graphics\WorkCellSceneTest.cpp:119:	const WorkCellScene::Ptr WSscene = ownedPtr(new WorkCellScene(scene));
+RobWork/RobWork/gtest\graphics\WorkCellSceneTest.cpp:164:	// Check that frame2 has been removed from the WorkCellScene

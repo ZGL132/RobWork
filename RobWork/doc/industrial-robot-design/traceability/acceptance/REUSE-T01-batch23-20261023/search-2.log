@@ -1,0 +1,12 @@
+5:macro(ADD_RWSIM_GTEST target)
+6:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+15:                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml
+25:endmacro(ADD_RWSIM_GTEST)
+31:add_library(sdurwsim-gtest-main STATIC TestEnvironment.cpp test-main.cpp)
+32:target_link_libraries(sdurwsim-gtest-main ${RW_BUILD_WITH_LIBRARIES_GTEST} RW::sdurw_core sdurwsim_test)
+38:    set(COMMON_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST})
+50:    set(DYNAMICS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST}
+65:    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+83:    set(PERFORMANCE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode
+101:    set(SENSORS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+130:    set(TASKSIMULATION_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode

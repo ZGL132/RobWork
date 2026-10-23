@@ -1,0 +1,211 @@
+RobWork/RobWork/src/rw/core/DOMParser.hpp:59:        virtual void load (const std::string& filename) = 0;
+RobWork/RobWork/src/rw/core/DOMParser.hpp:65:        virtual void load (std::istream& input) = 0;
+RobWork/RobWork/src/rw/core/DOMParser.hpp:71:        virtual void save (const std::string& filename) = 0;
+RobWork/RobWork/src/rw/core/DOMParser.hpp:77:        virtual void save (std::ostream& input) = 0;
+RobWork/RobWork/src/rw/core/DOMParser.hpp:104:        static rw::core::Ptr< DOMParser > make ();
+RobWork/RobWork/src/rw/loaders\GeometryFactory.cpp:197:Geometry::Ptr GeometryFactory::load (const std::string& raw_filename, bool useCache)
+RobWork/RobWork/src/rw/loaders\GeometryFactory.cpp:227:            GeometryData::Ptr data = STLFile::load (filename);
+RobWork/RobWork/src/rw/loaders\colsetup\CollisionSetupLoader.hpp:65:        static rw::proximity::CollisionSetup load (const std::string& prefix,
+RobWork/RobWork/src/rw/loaders\GeometryFactory.hpp:92:        static rw::geometry::Geometry::Ptr load (const std::string& str, bool useCache = true);
+RobWork/RobWork/src/rw/loaders\colsetup\CollisionSetupLoader.cpp:151:rw::proximity::CollisionSetup CollisionSetupLoader::load (const std::string& prefix,
+RobWork/RobWork/src/rw/loaders\image\PGMLoader.cpp:157:    return PGMLoader::load (filename);
+RobWork/RobWork/src/rw/loaders\image\PGMLoader.cpp:167:rw::sensor::Image::Ptr PGMLoader::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\ImageLoader.cpp:113:rw::sensor::Image::Ptr ImageLoader::Factory::load (const std::string& file)
+RobWork/RobWork/src/rw/loaders\image\PGMLoader.hpp:53:        static rw::sensor::Image::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:127:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:129:    parser->load (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:142:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathLoader.cpp:144:    parser->load (instream);
+RobWork/RobWork/src/rw/loaders\ImageLoader.hpp:109:            static rw::sensor::Image::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\image\PPMLoader.cpp:270:    return PPMLoader::load (filename);
+RobWork/RobWork/src/rw/loaders\image\PPMLoader.cpp:280:rw::sensor::Image::Ptr PPMLoader::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\image\PPMLoader.hpp:53:        static rw::sensor::Image::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\image\RGBLoader.cpp:327:    return RGBLoader::load (fname);
+RobWork/RobWork/src/rw/loaders\image\RGBLoader.cpp:337:rw::sensor::Image::Ptr RGBLoader::load (const std::string& fname)
+RobWork/RobWork/src/rw/loaders\model3d\Loader3DS.cpp:52:Model3D::Ptr Loader3DS::load (const std::string& name)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:148:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:150:    parser->save (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:156:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:158:    parser->save (outstream);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:163:void DOMPathSaver::save (const QPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:168:void DOMPathSaver::save (const Vector3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:173:void DOMPathSaver::save (const Rotation3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:178:void DOMPathSaver::save (const Transform3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:183:void DOMPathSaver::save (const StatePath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:188:void DOMPathSaver::save (const TimedQPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.cpp:193:void DOMPathSaver::save (const TimedStatePath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:145:        PlainTriMeshN1F::Ptr data = STLFile::load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:166:        Model3D::Ptr model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:172:        Model3D::Ptr model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:178:        Model3D::Ptr model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:186:            model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:194:            model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:205:        Model3D::Ptr model = loader.load (filename);
+RobWork/RobWork/src/rw/loaders\Model3DFactory.cpp:213:            Model3D::Ptr model              = loader->load (filename);
+RobWork/RobWork/src/rw/loaders\image\RGBLoader.hpp:51:        static rw::sensor::Image::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\Loader3DS.hpp:51:        rw::graphics::Model3D::Ptr load (const std::string& filename);    // Loads a model
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:49:        static void save (const rw::trajectory::QPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:59:        static void save (const rw::trajectory::Vector3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:69:        static void save (const rw::trajectory::Rotation3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:79:        static void save (const rw::trajectory::Transform3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:89:        static void save (const rw::trajectory::StatePath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:99:        static void save (const rw::trajectory::TimedQPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPathSaver.hpp:109:        static void save (const rw::trajectory::TimedStatePath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\Model3DLoader.hpp:48:        virtual rw::graphics::Model3D::Ptr load (const std::string& filename) = 0;
+RobWork/RobWork/src/rw/loaders\model3d\LoaderAC3D.cpp:59:Model3D::Ptr LoaderAC3D::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\model3d\LoaderAC3D.cpp:662:        image = rw::loaders::ImageLoader::Factory::load (filename);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderAC3D.hpp:57:        rw::graphics::Model3D::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderAssimp.cpp:62:Model3D::Ptr LoaderAssimp::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\WorkCellLoader.cpp:47:WorkCell::Ptr WorkCellLoader::Factory::load (const std::string& file)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:51:PropertyValueBase::Ptr DOMPropertyMapLoader::readPropertyValue (DOMElem::Ptr child)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:60:            list.push_back(readPropertyValue(val));
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:149:PropertyBase::Ptr DOMPropertyMapLoader::readProperty (DOMElem::Ptr element, bool checkHeader)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:180:        PropertyValueBase::Ptr baseval = readPropertyValue(child);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:319:            PropertyBase::Ptr property = readProperty (child, false);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:328:PropertyMap DOMPropertyMapLoader::load (std::istream& instream, const std::string& schemaFileName)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:330:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:332:    parser->load (instream);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:340:PropertyMap DOMPropertyMapLoader::load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:343:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.cpp:345:    parser->load (filename);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderAssimp.hpp:52:        rw::graphics::Model3D::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.hpp:54:        static rw::core::PropertyValueBase::Ptr readPropertyValue (
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.hpp:67:        static rw::core::PropertyBase::Ptr readProperty (rw::core::Ptr< rw::core::DOMElem > element,
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.hpp:94:        static rw::core::PropertyMap load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapLoader.hpp:107:        static rw::core::PropertyMap load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\WorkCellLoader.hpp:114:            static models::WorkCell::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderOBJ.cpp:478:                TextureData (token, ImageLoader::Factory::load (_dirName + token)));
+RobWork/RobWork/src/rw/loaders\model3d\LoaderOBJ.cpp:741:Model3D::Ptr LoaderOBJ::load (const std::string& name)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:45:void DOMPropertyMapSaver::save (const PropertyBase::Ptr property, DOMElem::Ptr parent)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:67:void DOMPropertyMapSaver::save (const rw::core::PropertyMap& map, DOMElem::Ptr parent)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:73:        save (*it, root);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:77:void DOMPropertyMapSaver::save (const rw::core::PropertyMap& map, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:80:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:83:    parser->save (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:86:void DOMPropertyMapSaver::write (const rw::core::PropertyMap& map, std::ostream& outstream)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:89:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:92:    parser->save (outstream);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:100:    save (map, doc);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:105:void DOMPropertyMapSaver::save (const PropertyValueBase& value, DOMElem::Ptr parent)
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.cpp:118:            save (prop->getValue (), parent);
+RobWork/RobWork/src/rw/loaders\rwxml\XML.cpp:117:void readProperty (const PTree& tree, PropertyMap& properties)
+RobWork/RobWork/src/rw/loaders\rwxml\XML.cpp:207:void XML::readPropertyMap (const PTree& tree, PropertyMap& properties)
+RobWork/RobWork/src/rw/loaders\rwxml\XML.cpp:216:        readProperty (p->second, properties);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:56:        static void save (rw::core::Ptr< rw::core::PropertyBase > property,
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:70:        static void save (const rw::core::PropertyMap& map, rw::core::DOMElem::Ptr parent);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:80:        static void save (const rw::core::PropertyMap& map, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:90:        static void write (const rw::core::PropertyMap& map, std::ostream& outstream);
+RobWork/RobWork/src/rw/loaders\dom\DOMPropertyMapSaver.hpp:127:        static void save (const rw::core::PropertyValueBase& value, rw::core::DOMElem::Ptr parent);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderOBJ.hpp:50:        rw::graphics::Model3D::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\rwxml\XML.hpp:109:        static void readPropertyMap (const PTree& tree, core::PropertyMap& properties);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderTRI.cpp:26:Model3D::Ptr LoaderTRI::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:29:ProximitySetup DOMProximitySetupLoader::load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:32:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:34:    parser->load (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:40:ProximitySetup DOMProximitySetupLoader::load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:43:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.cpp:45:    parser->load (instream);
+RobWork/RobWork/src/rw/loaders\model3d\LoaderTRI.hpp:50:        rw::graphics::Model3D::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\Model3DS.cpp:725:    rw::sensor::Image::Ptr img       = rw::loaders::ImageLoader::Factory::load (fullname);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.hpp:51:        static rw::proximity::ProximitySetup load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupLoader.hpp:63:        static rw::proximity::ProximitySetup load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:40:void DOMProximitySetupSaver::save (const ProximitySetup& prox, Ptr< DOMElem > parent)
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:74:void DOMProximitySetupSaver::save (const ProximitySetup& prox, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:76:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:78:    parser->save (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:83:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:85:    parser->save (outstream);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.cpp:92:    save (prox, doc);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLParser.hpp:72:            typename ScannerT::iterator_t const save (scan.first);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLParser.hpp:173:            typename ScannerT::iterator_t const save (scan.first);
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.hpp:55:        static void save (const rw::proximity::ProximitySetup& prox,
+RobWork/RobWork/src/rw/loaders\dom\DOMProximitySetupSaver.hpp:66:        static void save (const rw::proximity::ProximitySetup& prox, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\STLFile.cpp:360:PlainTriMeshN1F::Ptr STLFile::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\model3d\STLFile.cpp:377:void STLFile::save (const TriMesh& mesh, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\model3d\STLFile.hpp:44:        static void save (const rw::geometry::TriMesh& mesh, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\model3d\STLFile.hpp:52:        static rw::geometry::PlainTriMeshN1F::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:278:            Geometry::Ptr geom = GeometryFactory::load (val.str (), true);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:305:            Geometry::Ptr geom = GeometryFactory::load (val.str (), true);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:1139:            CollisionSetup s = CollisionSetupLoader::load (prefix, filename);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:1166:            ProximitySetup s = DOMProximitySetupLoader::load (filename);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.cpp:1210:rw::models::WorkCell::Ptr XMLRWLoader::load (const std::string& filename)
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:185:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:187:    parser->load (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:194:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectoryLoader.cpp:196:    parser->load (instream);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:47:void XMLPathSaver::save (const QPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:52:void XMLPathSaver::save (const Vector3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:58:void XMLPathSaver::save (const Rotation3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:64:void XMLPathSaver::save (const Transform3DPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:70:void XMLPathSaver::save (const rw::trajectory::StatePath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:75:void XMLPathSaver::save (const rw::trajectory::TimedQPath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.cpp:80:void XMLPathSaver::save (const rw::trajectory::TimedStatePath& path, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:129:        static void save (const rw::trajectory::QPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:139:        static void save (const rw::trajectory::Vector3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:149:        static void save (const rw::trajectory::Rotation3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:159:        static void save (const rw::trajectory::Transform3DPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:169:        static void save (const rw::trajectory::StatePath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:179:        static void save (const rw::trajectory::TimedQPath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPathSaver.hpp:189:        static void save (const rw::trajectory::TimedStatePath& path, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\rwxml\XMLRWLoader.hpp:54:        static rw::models::WorkCell::Ptr load (const std::string& filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:261:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:263:    parser->save (filename);
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:270:    DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:272:    parser->save (outstream);
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:277:bool DOMTrajectorySaver::save (const rw::trajectory::QTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:284:bool DOMTrajectorySaver::save (const rw::trajectory::Vector3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:291:bool DOMTrajectorySaver::save (const rw::trajectory::Rotation3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.cpp:298:bool DOMTrajectorySaver::save (const rw::trajectory::Transform3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.hpp:48:        static bool save (const rw::trajectory::QTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.hpp:59:        static bool save (const rw::trajectory::Vector3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.hpp:70:        static bool save (const rw::trajectory::Rotation3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMTrajectorySaver.hpp:81:        static bool save (const rw::trajectory::Transform3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:302:                        rw::loaders::STLFile::save (TriMeshList (list),
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1230:    rw::loaders::DOMProximitySetupSaver::save (prox_setup, proxFilePath);
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1238:void DOMWorkCellSaver::save (rw::core::Ptr< const rw::models::WorkCell > workcell,
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1241:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1247:    doc->save (fileName);
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1250:void DOMWorkCellSaver::save (rw::core::Ptr< const rw::models::WorkCell > workcell,
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1253:    DOMParser::Ptr doc = DOMParser::make ();
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.cpp:1259:    doc->save (ostream);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:197:PropertyValueBase::Ptr XMLPropertyLoader::readPropertyValue (xercesc::DOMElement* valueNode)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:212:            list.push_back(readPropertyValue(child));
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:277:PropertyBase::Ptr XMLPropertyLoader::readProperty (xercesc::DOMElement* element, bool checkHeader)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:325:    const PropertyValueBase::Ptr baseval = readPropertyValue (valueElement);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:348:                PropertyBase::Ptr property = readProperty (element, false);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:358:PropertyMap XMLPropertyLoader::load (std::istream& instream, const std::string& schemaFileName)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.cpp:369:PropertyMap XMLPropertyLoader::load (const std::string& filename, const std::string& schemaFileName)
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.hpp:54:        static void save (rw::core::Ptr< const rw::models::WorkCell > workcell,
+RobWork/RobWork/src/rw/loaders\dom\DOMWorkCellSaver.hpp:63:        static void save (rw::core::Ptr< const rw::models::WorkCell > workcell,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.hpp:53:        static rw::core::PropertyValueBase::Ptr readPropertyValue (xercesc::DOMElement* element);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.hpp:65:        static rw::core::PropertyBase::Ptr readProperty (xercesc::DOMElement* element,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.hpp:91:        static rw::core::PropertyMap load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertyLoader.hpp:104:        static rw::core::PropertyMap load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:64:xercesc::DOMElement* XMLPropertySaver::save (PropertyBase::Ptr property, xercesc::DOMDocument* doc)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:98:void XMLPropertySaver::save (const rw::core::PropertyMap& map, xercesc::DOMElement* parent,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:103:        xercesc::DOMElement* element = save (*it, doc);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:109:xercesc::DOMElement* XMLPropertySaver::save (const PropertyMap& map, xercesc::DOMDocument* doc)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:112:    save (map, element, doc);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:131:            save (map, root, doc);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:152:void XMLPropertySaver::save (const rw::core::PropertyMap& map, const std::string& filename)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:159:void XMLPropertySaver::write (const rw::core::PropertyMap& map, std::ostream& outstream)
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:166:void XMLPropertySaver::save (
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.cpp:176:            elem = save (prop->getValue (), doc);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:59:        static xercesc::DOMElement* save (rw::core::PropertyBase::Ptr property,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:74:        static xercesc::DOMElement* save (const rw::core::PropertyMap& map,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:90:        static void save (const rw::core::PropertyMap& map, xercesc::DOMElement* element,
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:101:        static void save (const rw::core::PropertyMap& map, const std::string& filename);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:111:        static void write (const rw::core::PropertyMap& map, std::ostream& outstream);
+RobWork/RobWork/src/rw/loaders\xml\XMLPropertySaver.hpp:146:        static void save (const rw::core::PropertyValueBase& property,
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.hpp:124:        static rw::proximity::ProximitySetup load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.hpp:136:        static rw::proximity::ProximitySetup load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.cpp:117:ProximitySetup XMLProximitySetupLoader::load (const std::string& filename,
+RobWork/RobWork/src/rw/loaders\xml\XMLProximitySetupLoader.cpp:127:ProximitySetup XMLProximitySetupLoader::load (std::istream& instream,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.cpp:337:bool XMLTrajectorySaver::save (const rw::trajectory::QTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.cpp:344:bool XMLTrajectorySaver::save (const rw::trajectory::Vector3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.cpp:351:bool XMLTrajectorySaver::save (const rw::trajectory::Rotation3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.cpp:358:bool XMLTrajectorySaver::save (const rw::trajectory::Transform3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.hpp:48:        static bool save (const rw::trajectory::QTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.hpp:59:        static bool save (const rw::trajectory::Vector3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.hpp:70:        static bool save (const rw::trajectory::Rotation3DTrajectory& trajectory,
+RobWork/RobWork/src/rw/loaders\xml\XMLTrajectorySaver.hpp:81:        static bool save (const rw::trajectory::Transform3DTrajectory& trajectory,

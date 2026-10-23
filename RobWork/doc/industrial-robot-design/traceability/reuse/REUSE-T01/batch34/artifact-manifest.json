@@ -1,0 +1,135 @@
+{
+  "batch": "B34",
+  "entries": [
+    {
+      "path": "b34-build-before-syntax.log",
+      "bytes": 27197,
+      "rawSha256": "7eb4d3dafd605e1885856c40820e3177b3f35bdce02780705593f0bc04483c07"
+    },
+    {
+      "path": "b34-build-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-build-final.log",
+      "bytes": 14239,
+      "rawSha256": "fecbf00ff813e3fe95a0df0946b6f6477b65a24fac3cc5db581a7acee7f1a8c0"
+    },
+    {
+      "path": "b34-build.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b34-build.log",
+      "bytes": 154,
+      "rawSha256": "6e3289b5a430a0284178b3af18dbffb04c43bba5b53b59f45f604333bae979bd"
+    },
+    {
+      "path": "b34-configure-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-configure-final.log",
+      "bytes": 2135,
+      "rawSha256": "a41acb3a5a1fe60d5a083e159bd272c6dcb0ca01b2d2fd11f1c018b2c0a41de8"
+    },
+    {
+      "path": "b34-configure.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-configure.log",
+      "bytes": 2707,
+      "rawSha256": "4bc9f9080d909d4911360002cbf14e64e23ad88b1535472dfb2a5a3d72bd12ca"
+    },
+    {
+      "path": "b34-docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-docs.log",
+      "bytes": 2725,
+      "rawSha256": "ec0566a2821c394351b4b21eaa28ba353c37c87166ba0e6fa7fda34bd53238b9"
+    },
+    {
+      "path": "b34-reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-reuse.log",
+      "bytes": 2487,
+      "rawSha256": "a84ae14f3bd01847fd49dec6d265f80b19c177075e306e313a0e185c3bf7c155"
+    },
+    {
+      "path": "b34-task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b34-task.log",
+      "bytes": 2518,
+      "rawSha256": "16ea212483eb8a0a7b5f81af76766a9f0fe328a30fcccc8584c96db32b7de3b0"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 375,
+      "rawSha256": "493cc2eca1c7fa5e4ba6a8e1c1417c69ce79e21582abc6b216d19da3d48fa394"
+    },
+    {
+      "path": "CodeManifestSuitabilityTest.cpp",
+      "bytes": 3986,
+      "rawSha256": "cbefb9b148ff0db5f46be35eb0932d856663ee3f3475e0774a035312a06217ab"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1667,
+      "rawSha256": "4fef9ff689677c174c62775c56ef10241ab2ec7bb0a461278b794f13a28e1e59"
+    },
+    {
+      "path": "oracle-result.json",
+      "bytes": 993,
+      "rawSha256": "091cf76e8d14cdd49eaa5d10733d208de42c08f8d90f88a4ddf8b284cd2b60d5"
+    },
+    {
+      "path": "oracle.py",
+      "bytes": 1048,
+      "rawSha256": "141758de4e94f4860b9d97b95e47faa3eec7ce30eed836ba5820793fbe0b6a27"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 9184,
+      "rawSha256": "3bd9b3f557b5009899dcafaa68b5f043896bbb320425306b306c09b5336ceed5"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 18088,
+      "rawSha256": "90111065be6776af540ed1bdf447d8b1d9ce48ff0cdb1915bb26936d790a035e"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 4665,
+      "rawSha256": "a43b4668d30621969340be3b12f51a340c118191f21fc73c167050825a1df15e"
+    },
+    {
+      "path": "search.json",
+      "bytes": 15266,
+      "rawSha256": "1f5f1ca51ae9289cf2b3ff79fd012e45563c9bfc1ecf439ef168566394d148f0"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 875,
+      "rawSha256": "a6327f1ac782b77f9b1e42ec3a9ea21eb672fa0e825a9c2528560347ecd08e85"
+    }
+  ]
+}

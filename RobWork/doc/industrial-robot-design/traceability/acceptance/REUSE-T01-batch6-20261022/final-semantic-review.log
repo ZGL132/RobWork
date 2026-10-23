@@ -1,0 +1,170 @@
+constexpr UnitRow kUnitTable[] = {
+    // length
+    {"m",       QuantityKind::Length,       1.0},
+    {"cm",      QuantityKind::Length,       0.01},
+    {"mm",      QuantityKind::Length,       0.001},
+    // angle
+    {"rad",     QuantityKind::Angle,        1.0},
+    {"deg",     QuantityKind::Angle,        3.14159265358979323846 / 180.0},
+    // mass / time
+    {"kg",      QuantityKind::Mass,         1.0},
+    {"s",       QuantityKind::Time,         1.0},
+    // force / torque / inertia / power
+    {"N",       QuantityKind::Force,        1.0},
+    {"N*m",     QuantityKind::Torque,       1.0},
+    {"kg*m^2",  QuantityKind::Inertia,      1.0},
+    {"W",       QuantityKind::Power,        1.0},
+    // velocities / accelerations
+    {"m/s",     QuantityKind::LinearVelocity,        1.0},
+    {"rad/s",   QuantityKind::AngularVelocity,       1.0},
+    {"m/s^2",   QuantityKind::LinearAcceleration,    1.0},
+    {"rad/s^2", QuantityKind::AngularAcceleration,   1.0},
+    // voltage / dimensionless
+    {"V",       QuantityKind::Voltage,      1.0},
+    {"1",       QuantityKind::Dimensionless, 1.0},
+    // GF-A/UX-05：仅在表尾补显示制式，旧token索引与SI定义保持稳定。
+    {"mm/s",    QuantityKind::LinearVelocity, 0.001},
+    {"mm/s^2",  QuantityKind::LinearAcceleration, 0.001},
+    {"deg/s",   QuantityKind::AngularVelocity, 3.14159265358979323846 / 180.0},
+    {"deg/s^2", QuantityKind::AngularAcceleration, 3.14159265358979323846 / 180.0},
+};
+
+constexpr std::uint16_t kInvalidIndex = 0xFFFF;
+
+/// 统一错误出口（§4.4 错误口径表的三段前缀）。
+[[noreturn]] void fail(const char* prefix, const std::string& detail)
+{
+    throw CoreError(std::string{prefix} + detail);
+}
+
+}  // namespace
+
+// ---- detail 注册表访问（Units.hpp detail 声明的实现） ----
+namespace detail {
+std::string_view unitSymbolAt(std::uint16_t index) noexcept
+{
+    return kUnitTable[index].symbol;
+}
+QuantityKind unitKindAt(std::uint16_t index) noexcept
+{
+    return kUnitTable[index].kind;
+}
+double unitFactorAt(std::uint16_t index) noexcept
+{
+    return kUnitTable[index].factor;
+}
+}  // namespace detail
+
+// ---- UnitToken 成员 ----
+std::optional<UnitToken> UnitToken::find(std::string_view symbol) noexcept
+{
+    // 线性扫描（17 条常量表；编译期冻结——无哈希表必要）。
+    for (std::uint16_t i = 0; i < sizeof(kUnitTable) / sizeof(kUnitTable[0]); ++i) {
+        if (kUnitTable[i].symbol == symbol) {
+            UnitToken u;
+            u.tableIndex_ = i;
+            return u;
+        }
+    }
+    return std::nullopt;   // 未知符号（try 语义——调用方决定违约处理）
+}
+
+std::string_view UnitToken::symbol() const noexcept { return detail::unitSymbolAt(tableIndex_); }
+QuantityKind UnitToken::kind() const noexcept { return detail::unitKindAt(tableIndex_); }
+double UnitToken::siFactor() const noexcept { return detail::unitFactorAt(tableIndex_); }
+
+// ---- 自由函数形态（§4.4） ----
+QuantityKind kindOf(UnitToken u) noexcept { return u.kind(); }
+RobWork/doc/industrial-robot-design/units/dynamics.md:92:> **WP-17-T04 实现落位登记（2026-10-07，输出序列与峰值/RMS 包络——§4.4/§7/§10.3-5 落地面与实现口径）**：`DynTypes.hpp` 表尾增列 §4.4 类型四枚——PeakRecord/DynamicsSeries/PowerEnergySummary/OperatingConditionResult（DynamicsEnvelope 连同 mergeEnvelope 随 T07 包络合并落位〔DTB §2.18 T07 行分界〕、DynamicsEvidence 随 T06/T10、JointSideSeriesPack 随 drivetrain 交接任务——不预建占位〔NFR-MNT-04〕）；新增公共头 `SeriesBuilder.hpp`（§10.3 序列构建器＋SeriesIdentity 身份块 DTO）、`Envelope.hpp`（§10.4 统计面 computePeaks/computeRms）、`PowerEnergy.hpp`（§10.5 功率/能量）与实现 `src/SeriesBuilder.cpp`/`src/Envelope.cpp`/`src/PowerEnergy.cpp`（CMake 源码集增列）。**实现口径与契约形态的微调（DTB §5.4 登记）**：①§10.4 以**具体类**形态落地（同 T03 先例——evidence 适配与注册面随 T10 装配冻结），mergeEnvelope 不在本批（见上分界），本头 token 表注释钉扎每关节恒 6 行峰值行序（τ⁺/τ⁻/速度/加速度/P⁺/P⁻——§7.2 枚举序，§7.6"(jointIndex, 量纲 token, conditionId) 全序"的落地面）；②峰值持续时间窗＝峰值样本在其**关节时间序**上的连续位等值 run（D-DYN-8 无阈值化；series 全局行序为多关节交错行，run 扩展以单关节 Ok 行序列为准；并列峰值取时间轴首个样本——tPeakS 确定性口径；非 Ok 行切断 run 连续性）；③τ_max⁺/P⁺ 取带符号实际值 max（全循环无正向值时为负值形态、信息不丢失），τ_max⁻/P⁻＝max(−值) 幅值形态；PowerEnergySummary.powerPeak 单记录位取合并幅值 max(|P|)（正反向分列由 computePeaks 承载）；④RMS＝τ_total² 梯形时间加权、T_cycle＝有效行全跨度（§7.3 含驻留；禁样本平均）；非 Ok 行不进统计、缺口不插值（缺口时长计入相邻有效对 Δt、贡献 0——保守低估，完整循环统计以 Complete 序列为准）；无有效行/行数<2/零跨度→显式 NaN（不伪造 0——§4.6）；⑤`includesDwell` 统计器口径＝"积分已按序列全程时间轴执行"（上游轨迹含驻留段即自动计入；统计器无段类型信息、不做任何速度阈值判定）；⑥SeriesIdentity 为 §10.3 身份块的字段级落地（§4.4 身份块＋plannedSampleCount〔计划数来自调用方——构建器无法从行集反推上游计划采样数〕＋validitySeed 事实透传〔frictionMissing/估算计数/forwardCheck——构建器无此事实通道，派生字段由行集重算覆写〕）；⑦非法示例处置分解：时间**倒退**＝§10.3 前置行明文违例→addSample 即抛 DynamicsError("series-non-monotonic")（DYN-SERIES-NON-MONOTONIC 语义 fail-fast）；同刻度**重复 (t, jointIndex) 行对**＝非法示例"addSample 不报错但 finalize 标记"→diagRefs 追加 DYN-INPUT-INVALID 语义素材＋完整性压 Partial（§4.3 上游校验才是正式拒绝点，builder 侧防御性二次校验）；⑧contentIdentity canonical 编码唯一实现点＝SeriesBuilder.cpp（域分隔 magic "IRDDYNS1"＋§4.4 字段序＋显式小端标量编码＋u32 长度前缀字符串＋diagRefs 排序后编码〔清单等价集合〕——SHA-256，同输入字节同摘要）；⑨P-DYN-9 遵守：能量/功率量纲零运行校验容差（产品侧无任何自设阈值），数值正确性唯一对照面＝测试黄金算例。测试面：`test/StatisticsTest.cpp` 16 用例（DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3——含峰值平顶/孤立窗与段报告黄金、含驻留时间加权 RMS 解析对照与禁样本平均钉扎、E⁺/E⁻ 制动段符号、RNEA→序列→统计端到端、Prismatic+Revolute 混合链类型化不混算黄金、内容身份确定性与灵敏度、fail-fast 边界）；_contract_test 无新增（T04 零新跨单元边界——既有 BuildGraph/include 白名单/DYN-04 词表扫描自动覆盖新头）。测试期间测试侧期望式修正两处（构建器乱序输入跨时刻构成时间倒退被 fail-fast 正确拒收〔产品行为正确〕；E⁺ 手算漏跳变段梯形项½(2+0)×1——期望式修正，实现与 V-22 对照性质〔E_net=样本行 energyIntegralJ 末值〕一致通过）。
+RobWork/doc/industrial-robot-design/units/dynamics.md:737:### 7.3 RMS 与完整任务循环（DYN-03"含驻留"硬性口径）
+RobWork/doc/industrial-robot-design/units/dynamics.md:740:- 非均匀采样：梯形时间加权数值积分（对采样网格），公式固定、黄金算例对照解析积分（V-30 行）；**禁止** Σ/√N 的样本平均（会因采样不均失真——口径钉死）。
+RobWork/doc/industrial-robot-design/units/dynamics.md:754:- 积分边界＝[t₀, t_N]（完整任务循环，含驻留）；时间基准＝上游轨迹时间轴；积分格式＝梯形时间加权（config.dyn.powerIntegral 唯一词表值）。
+RobWork/doc/industrial-robot-design/units/dynamics.md:1361:| D-DYN-9 | RMS 时间加权（梯形积分）含驻留；禁样本平均 | DYN-03"完整任务循环（含驻留）"；非均匀采样下样本平均失真——口径钉死＋黄金对照 |
+RobWork/doc/industrial-robot-design/units/dynamics.md:1398:| v0.4 | 2026-10-07 | WP-17-T04 实现落位登记：§1.2 追加 T04 实现登记注（DynTypes 表尾增列 PeakRecord/DynamicsSeries/PowerEnergySummary/OperatingConditionResult 四类型＋SeriesBuilder/Envelope/PowerEnergy 三公共头＋三实现 TU；九项实现口径微调登记——具体类形态与 T04/T07 分界〔mergeEnvelope 归 T07〕、峰值窗关节时间序位等值 run、正/反向峰值符号语义与 powerPeak 幅值合并位、RMS 梯形时间加权含驻留与非 Ok 行跳行口径、includesDwell 统计器口径、SeriesIdentity 字段级落地〔planned/validitySeed〕、倒退 fail-fast 与重复行 finalize 标记分解、canonical 编码唯一实现点、P-DYN-9 零运行容差）；§16.3 测试行刷新（_test 39/39——DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3 计 16 新用例真实执行＋_contract_test 11/11 无新增；两处测试侧期望式修正如实登记、产品实现零缺陷检出）；表头"构建落位"行同步；文档其余章节（§4.4/§7/§10.3-5 设计面）与本实现一致——差异均为实现口径细化登记非语义变更 |
+RobWork/doc/industrial-robot-design/units/dynamics.md:1451:- **测试**：`sdurws_ird_dynamics_test` **9/9 通过**（DynDiagCodes 5＋DynBuildRedLine 4）、`sdurws_ird_dynamics_contract_test` **9/9 通过**（DynBuildGraph 6＋DynPluginAssembly 3）——gtest XML＋ird-test-report.json 留痕同目录；期间契约测试曾真实检出插件面注释含词表符号字样的违例（PluginFaceHasZeroComputationSymbols 首跑 FAILED），修正注释措辞后复跑通过——失败能力与检出纪律有效。**WP-17-T03 起业务用例入列（2026-10-07）**：`sdurws_ird_dynamics_test` **23/23 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋**DynRnea 14**——二连杆解析算例〔静态重力矩/倒挂 AT-37 符号翻转/工具负载合成/分项恒等式＋M·q̈ 与科氏解析对照/摩擦 sgn₀ 三分支/MDL-16 缺失降级/负载事件变体/外力恒零/维度与单调性等 fail-fast/非有限样本级标记/DYN-04 传动无关/取消语义〕）；`sdurws_ird_dynamics_contract_test` **11/11 通过**（DynBuildGraph 6＋DynPluginAssembly 3＋**DynRneaBoundary 2**——DYN-04 零传动映射消费符号＋include 白名单）；gtest XML 留痕 traceability/gtest-reports/wp-17-t03/。期间测试真实检出三处缺陷并返工：①测试期望式漏工具 L1 力臂/行索引错位（测试侧修正）；②composeEndEffector 以已合成值作基项导致变体重复合成（产品缺陷，改 flangeBase 只读基线修复）；③单关节非有限输入经耦合项污染他关节输出（产品缺陷，按 §4.6 改样本级 NonFiniteInput 处置）。**WP-17-T04 统计用例入列（2026-10-07）**：`sdurws_ird_dynamics_test` **39/39 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋**DynSeries 6**〔身份冻结与行序稳定排序/内容身份确定性与灵敏度/时间倒退 fail-fast/重复行 finalize 标记/身份缺失七项 fail-fast/Empty 语义与缺口计数〕＋**DynEnvelope 4**〔峰值平顶窗·孤立窗·段报告·token 序黄金/含驻留时间加权 RMS 解析对照与禁样本平均钉扎/非 Ok 行剔除/Empty 与退化显式 NaN〕＋**DynPowerEnergy 3**〔含驻留 E⁺/E⁻/E_net 黄金与 V-22 对照/制动段符号与多段等值窗/退化时间显式无效〕＋**DynStatsIntegration 3**〔RNEA→序列→统计端到端静态循环/Prismatic+Revolute 混合链类型化不混算黄金/OperatingConditionResult 聚合形态〕）；`sdurws_ird_dynamics_contract_test` **11/11 通过**（无新增——T04 零新跨单元边界，既有 BuildGraph/插件装配/DYN-04 边界契约继续覆盖）；gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-17-t04/ 与 traceability/builds/wp17-t04/。期间测试检出两处**测试侧期望式错误**并修正（产品实现无缺陷）：①构建器乱序用例的喂入顺序跨时刻构成时间倒退——被 addSample fail-fast 正确拒收（§10.3 前置行行为正确，乱序改限同刻度内）；②E⁺ 手算漏跳变段梯形项 ½(2+0)×1——修正后 E_net=3 J 与样本行 energyIntegralJ 末值对照一致（V-22 性质成立）。**WP-17-T05 正动力学一致性用例入列（2026-10-08）**：`sdurws_ird_dynamics_test` **50/50 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3＋**DynForward 11**〔解析黄金算例——伸直构型 q₂≡0 匀加速 τ_ref 恒定，RK4 二次多项式精确，误差<1e-12 双重对照/一致性超阈 Failed＋比较型素材/发散检出 DYN-FD-DIVERGED/质量阵奇异 DYN-FD-NUMERIC-ANOMALY/NotRun 三路径〔空/单样本/初始态非有限〕/NotApplicable Skip 短路/取消语义/确定性复现逐位/负载事件共源 Passed＋素材透传/fail-fast 十项〕）；`sdurws_ird_dynamics_contract_test` **13/13 通过**（DynBuildGraph 6＋DynPluginAssembly 3＋DynRneaBoundary 2＋**DynForwardBoundary 2**〔P-DYN-7 落位选型静态钉扎——正动力学面零 rwsim 物理引擎消费符号词表扫描＋公共契约形态编译期核对〕）；gtest XML 留痕 traceability/gtest-reports/wp-17-t05/。期间测试真实检出**产品缺陷一处并修复（T03 遗留）**：RNEA 物性提取对 NotProvided 惯量分支未显式置零——`Mat3` 默认单位阵静默充当 1 kg·m² 惯量（T03 降级用例只测标记面未测数值面故漏过），本任务零物性黄金算例暴露——连杆缺失分支与点质量路径修复为显式零张量后，T03/T04 既有 39 用例回归全绿＋本批 13 新用例全绿。**WP-17-T06 证据装配用例入列（2026-10-08）**：`sdurws_ird_dynamics_test` **58/58 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3＋DynForward 11＋**DynEvidence 8**〔dynProfile §8.4 表 4 对账＋注册期校验＋真实 EvidenceProfileRegistry 注册＋内容身份确定性/干净链四必需＋两建议全 Satisfied 且 validateEvidenceItems＋checkEvidenceCompleteness 双零问题、无限定语/摩擦缺失→provenance 项 Invalid＋DYN-FRICTION-MISSING＋对账 requiredGaps 恰含该项〔V-09〕/估算物性→estimated 限定语＋DYN-PROPERTY-DOWNGRADED 不包装精确〔V-10〕/缺失清单全量不短路〔Invalid＋两 Missing 三面并存〕/正动力学四态→证据五态映射〔Passed→Satisfied/Failed→Invalid＋DYN-FD 素材/Skip→NotApplicable 不计缺失/NotRun→Missing〕/fail-fast 契约〔重复注入/缺锚/工况不一致/身份缺失〕/Empty 序列与未 build 访问器〕）；`sdurws_ird_dynamics_contract_test` **15/15 通过**（DynBuildGraph 6＋DynPluginAssembly 3＋DynRneaBoundary 2＋DynForwardBoundary 2＋**DynEvidenceBoundary 2**〔dyn Profile 六项 itemId 词表编译期静态钉扎＋DYN-06 限定语 token 词表冻结与 trustQualifiers 三层映射契约〕）；gtest XML 留痕 traceability/gtest-reports/wp-17-t06/。期间测试检出**测试侧缺陷一处并修正**（用例在临时 vector 上取证据行指针——悬垂指针未定义行为），产品实现无缺陷检出。ird_gates 复跑零命中。**WP-17-T07 多工况与包络合并用例入列（2026-10-08）**：`sdurws_ird_dynamics_test` **65/65 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3＋DynForward 11＋DynEvidence 8＋**DynEnvelopeMerge 7**〔三工况手工黄金 max 合并与来源归因——并列 τ⁻ 按 conditionId 字典序取胜、逆序重合并内容身份逐位同／多负载＋保持型设计工况统一 RNEA 端到端〔P-DYN-4 无自设构造语义〕解析黄金／Partial 来源→envelopeComplete=false＋来源清单仍在＋覆盖呈现独立〔V-26〕／覆盖分母＝冻结 RequiredCaseSet〔V-25 漏验呈现/disabled Must 不参与/空分母平凡完备/纯 Should 完整包络不得声称覆盖——EVI-02〕／Empty 语义〔空集/全无 Ok 行/Empty 来源覆盖保守不计〕／RMS NaN 不参与 max 与全无效显式 NaN／fail-fast 装配契约七面〕）；`sdurws_ird_dynamics_contract_test` **17/17 通过**（DynBuildGraph 6＋DynPluginAssembly 3＋DynRneaBoundary 2＋DynForwardBoundary 2＋DynEvidenceBoundary 2＋**DynEnvelopeBoundary 2**〔mergeEnvelope 契约形态编译期核对——签名静态钉扎＋包络摘要 magic IRDDYVE1 词面冻结＋token 常量；EVI-02 覆盖分母口径行为契约——分母翻转→coversAllMandatory 翻转且内容身份随之改变／与 envelopeComplete 互相独立／空结果集 Empty 语义〕）；gtest XML 留痕 traceability/gtest-reports/wp-17-t07/。期间测试检出**测试侧期望式错误一处并修正**（多负载算例工具对关节 1 力臂漏计 L₁——首跑 FAILED，按 T03 用例 3 同式修正后复跑全绿），产品实现无缺陷检出。双模式构建零错误（集成模式 sdurws_ird_dynamics/_plugin/_test/_contract_test 四目标 Release 构建零错误＋独立冒烟全树配置与构建退出 0）＋ird_gates 零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）。§11 V-24/V-25/V-26 的 dynamics 统计面与 V-27 的空集保守呈现已随本批真实执行（覆盖矩阵本体与汇总保守判定归 evidence，随 T10 装配对账）；V-15～V-19、V-35～V-48（黄金数据集/取消超时崩溃链/GUI 等）仍为设计，**未执行**（随 T08～T10）。**WP-17-T08 DYN-08 数据面与命令面用例入列（2026-10-09）**：`sdurws_ird_dynamics_test` **83/83 通过**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3＋DynForward 11＋DynEvidence 8＋DynEnvelopeMerge 7＋**DynCurveProjector 4**〔两关节五通道黄金投影逐字段直拷对账／非 Ok 行剔除＋nonOkCount 计数＋Partial 透传／行序违约 fail-fast〔构建器 addSample 拦截＋投影器重复行与手工倒退序列双路径 token 核对〕／Empty 显式〕＋**DynReplayData 3**〔帧重组黄金——帧 t/段定位键/帧内关节升序/五量直拷/严格递增／缺行帧 completeAllJoints=false 不截断／Empty 无帧〕＋**DynReplaySampler 4**〔帧点精确命中原值直拷／区间中点 α=0.5 线性插值逐点手算黄金＋段取左帧＋端点亦帧点／越界不外推＋NaN fail-fast／空数据集空态＋缺行帧逐关节独立插值单侧取值〕＋**DynPeakLocate 3**〔两关节全 6 token 定位与 computePeaks 行集逐位对账＋峰值三要素手工黄金抽查〔速度峰 4 rad/s@t=2 段 1／全负循环力矩正峰带符号 −5 N〕／无 Ok 行关节与空序列定位空态／token 越界与行集截断 fail-fast〕＋**DynCommands 3**〔五命令全受理四语义位零修订〔AT-04 机器断言〕＋表外与错配负载拒绝〔大小写敏感〕／零修订契约常量与词表字面冻结〔KIN-06/AT-04 同值对账〕〕＋**DynDyn08Chain 1**〔曲线投影→computePeaks→locate→sampleAt(tPeak)→replay-at 受理全链联动——"曲线游标跳转峰值时刻＋三维姿态同步"的领域侧演练，链尾零修订钉扎〕）；`sdurws_ird_dynamics_contract_test` **20/20 通过**（DynBuildGraph 6＋DynPluginAssembly 3＋DynRneaBoundary 2＋DynForwardBoundary 2＋DynEvidenceBoundary 2＋DynEnvelopeBoundary 2＋**DynCommandsBoundary 3**〔§9.5 五 token 词表与 kReplaySessionContract 四值编译期 static_assert 钉扎＋CommandOutcome 拒绝形态默认安全／命令面零动力学计算红线源码级词表扫描——Commands.hpp/.cpp 剥注释后零评估器/统计器/投影器消费符号〔§10.7 硬边界〕／受理结果与契约逐位恒等〕）；gtest XML 留痕 traceability/gtest-reports/wp-17-t08/。期间首跑 8 FAILED 复盘修正**缺陷两处**：①产品缺陷（本批新增代码）——投影器 Ok 关节收集与关节行推进按"同关节行连续"假设实现，与 (t, jointIndex) 交错行序矛盾（关节表膨胀且非首刻度行被跳过，黄金投影用例检出），修复为逐行查重插入＋升序排序＋逐行二分定位；②测试侧错误——倒退用例把构建器 addSample 抛出放在 EXPECT_THROW 外（构建器对倒退是 addSample 即抛，SeriesBuilder 契约），修正后补投影器对手工倒退序列的防御路径覆盖。双模式构建零错误（集成模式四目标 Release 增量构建＋独立冒烟全树构建退出 0）＋ird_gates 零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）。§11.5 GUI 手动点验通道仍归 T09（本批零 GUI 用例——领域数据面与命令面无 GUI 载体）。**WP-17-T09 插件界面面用例入列（2026-10-09）**：`sdurws_ird_dynamics_test` **96 用例＝95 PASSED＋1 SKIPPED（envUnavailable 如实登记）＋0 FAILED**（DynDiagCodes 5＋DynBuildRedLine 4＋DynRnea 14＋DynSeries 6＋DynEnvelope 4＋DynPowerEnergy 3＋DynStatsIntegration 3＋DynForward 11＋DynEvidence 8＋DynEnvelopeMerge 7＋DynCurveProjector 4＋DynReplayData 3＋DynReplaySampler 4＋DynPeakLocate 3＋DynCommands 3＋DynDyn08Chain 1＋**DynPanelWorkflow 3＋DynPanelCurves 3＋DynPanelReplay 2＋DynPanelCatalog 3＋DynPanelText 1＋DynPanelGui 1〔skip〕**——L-D1~L-D6 六流界面链路）；`sdurws_ird_dynamics_contract_test` **22/22 通过**（DynBuildGraph 6〔allowed 集增登本单元 `_app`〕＋DynPluginAssembly 5〔原 3＋T09 登记面值断言＋白名单词表对账〕＋DynRneaBoundary 2＋DynForwardBoundary 2＋DynEvidenceBoundary 2＋DynEnvelopeBoundary 2＋DynCommandsBoundary 3）；gtest XML 留痕 traceability/gtest-reports/wp-17-t09/；构建/门禁留痕 traceability/builds/wp17-t09/execution-log.md。期间测试首跑 2 FAILED 复盘修正**测试侧期望式错误两处**（峰值 token 1＝反向幅值 max(−τ) 语义；回放插值＝帧值线性混合非轨迹函数值 q(0.5)），产品实现无缺陷检出。双模式构建零错误（集成模式五目标——计算库/插件/两测试/harness——Release 构建零错误＋独立冒烟全树构建退出 0）＋ird_gates 零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）。**GUI 测试仍未执行**（harness 已落位构建通过，无人值守门禁不做 GUI 运行验证——§11.5 流程②～⑦待人工执行，不标注通过）。**WP-17-T10 契约测试与黄金数据集入列（2026-10-09）**：`sdurws_ird_dynamics_test` **102 用例＝101 PASSED＋1 SKIPPED（DynPanelGui envUnavailable——T09 既有登记）＋0 FAILED**（既有 96＋**DynGolden 6**〔DynGoldenDatasetTest——manifest 登记面钉扎〔kind=analytic-case＋C4 三布尔＋independent=true＋committed generator＋integrity 三文件〕/静态重力矩地面黄金对照〔五分项/功率/能量逐样本档案容差对照＋静态行惯性/科氏/功率/能量精确零 EXPECT_EQ＋q=(π/2,0) 近零重力矩钉扎＋手算锚点 r×F 第三路〕/倒挂 AT-37 符号翻转〔重力通道反号量值相等〕/完整任务循环〔逐样本对照＋computePeaks 12 行逐槽档案对照＋时间加权 RMS 含驻留＋E⁺/E⁻/E_net/meanPower/powerPeak 幅值与窗＋V-22 能量末值对照〕/三工况包络合并参考对照〔五峰值槽值/胜者 conditionIdHex 归因/RMS max/来源工况集/envelopeComplete＋内容身份确定性〕/条件 id 派生对账〕）；`sdurws_ird_dynamics_contract_test` **26/26 通过**（既有 22＋**DynAt07 2**〔AT-07 面①③——三必验全执行 coversAllMandatory=true/V-25 漏一必验→false 而包络行集仍非空〔漂亮包络≠覆盖〕/disabled Must 不进分母/Empty 工况两在场口径钉扎〔conditionCount=3 而覆盖分子=2〕；AT-07 面②——黄金 degradationFace 摩擦全缺→frictionMissing＋DYN-FRICTION-MISSING＋provenance 项 Invalid＋missingList 含该项＋data-insufficient 限定语＋干净链对照无限定语〕＋**DynHandoffBoundary 2**〔P-DYN-2/5 载荷对齐——对端卡登记消费键 dyn.joint-series 与本卡产出身份 token 词面冻结＋字段面六行对应表〕）；gtest XML＋ird-test-report.json 留痕 traceability/gtest-reports/wp-17-t10/。期间修正**测试侧问题三处**（首跑 4 FAILED 复盘）：①黄金模型摩擦三元组不能为零值 Provided（runtime CanonicalModelBuilder 合法域要求 Provided 摩擦值＞0——§4.3.3，产品行为正确，黄金模型改正小值三元组并重建 expected/manifest）；②样本 t 容差路径误挂关节级前缀致 tolerance-undefined（档案条目段数不匹配——改样本级路径）；③AT-37 符号翻转断言误加于 tauTotal（摩擦 bias 与安装姿态无关——收窄至重力通道，总力矩由档案逐行对照承载）；另契约测试 disabled 分支首版构造了重复 caseId 覆盖条目（mergeEnvelope 冻结集唯一性防御正确拒绝——改为替换式构造）。产品实现**零缺陷检出**（mergeEnvelope 拒绝语义首跑即按卡面契约工作）。**红实验证（非恒真）**：篡改 expected 单值＋同步申报新哈希绕过完整性层→StaticGround 黄金对照 FAILED→生成脚本重产出（与入库版逐字节一致实测）→6/6 复绿——对照断言与完整性校验双层有效。双模式构建零错误（集成模式计算库/两测试目标 Release 构建零错误＋独立冒烟全树构建 0 错误）＋ird_gates 零命中（R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02）＋validate-docs PASS（20 units/12 trace entries/312 task files）。§11 V-01/09/13/20/22/23/24/25/26 的 dynamics 侧观测点已随本批真实执行（黄金对照＋AT-07 三面）；V-05/07/15/16/32 及取消超时崩溃链（V-35～V-39，execution 承载）、GUI 流程（V-08 回放手动点验面）仍为设计，**未执行**（如实保留——上游门禁归 modeling/runtime、任务通道归 execution、GUI 归 harness 手动流程）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Envelope.hpp:12: *     完整任务循环——时间加权梯形积分、含驻留、禁样本平均）、§7.4
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Envelope.hpp:24: *     D-DYN-9（RMS 时间加权〔梯形积分〕含驻留；禁样本平均）、D-DYN-4
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Envelope.hpp:43: *      （密采段权重虚高）；梯形时间加权对采样网格逼近 ∫v²dt/T_cycle，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Envelope.hpp:150:     * 重力保持矩计入积分）。数值积分＝对采样网格的梯形时间加权（相邻
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/Envelope.hpp:155:     * numericState==Ok 的行；缺口区间不插值（无数据贡献 0——时间加权
+工位标签文本渲染：HostView3DPreviewBackend draw 增标签半区——逐 marker 以框架 RenderText 挂帧投递（label 直投；与 FrameAxis 同帧同组）——证据：后端编排 gui 替身断言（标签随 update 整组透传）＋代码核查 RenderText 挂帧面
+采样格线投递：View3DSampleGrid 增格线段字段（世界系）——UiPlugin 投影 geo.gridLines 经 worldTframe 变换直投；SampleGridRender 增线段渲染（格线灰/点着色分色并存）——证据：投影闭包 gui 替身断言（gridLines 变换透传）
+投影断言增强：网关预览替身用例扩格线/标签字段断言（lastDrawn 深检）——证据：ui_gui_test 预览用例扩断言全绿
+回归门禁：受影响目标零错误构建＋ui/requirements gui 套件全绿＋ird_gates 语义全等零新增＋validate-docs PASS——留痕 traceability/builds/ui-t52/
+162:| ERR-01 | P0 | 执行状态、工程判定和诊断类别正交；稳定诊断项以 `subjectObjectId` 绑定对象，并包含局部/运行时名称、原因和建议动作；比较型校验额外包含实际值、期望值和单位；不适用字段显式标记"不适用"，不伪造数值（显示口径见 UX-03） | A～E | R1 | WP-09 | - |
+414:| UX-02 | P0 | 主操作使用"检查""计算""重新计算""比较方案"等工程用语，不显示哈希、Schema 或内部插件名 | B～E | R1 | WP-10 | WP-22 |
+    /// 版本错配，调用方须按登记版本重编码）。
+    void expectHeader(std::string_view magic, std::uint32_t version)
+    {
+        if (m_bytes.size() < 8 + sizeof(std::uint32_t)
+            || std::memcmp(m_bytes.data(), magic.data(), 8) != 0) {
+            throw std::invalid_argument("组合校核解码：magic 头不符（期望 "
+                                        + std::string(magic) + "——字节形态/协议版本违约）");
+        }
+        const std::uint32_t v = u32At(8);
+        if (v != version) {
+            throw std::invalid_argument("组合校核解码：codec 版本不符（实际 "
+                                        + std::to_string(v) + "，期望 "
+                                        + std::to_string(version) + "）");
+        }
+        m_pos = 8 + sizeof(std::uint32_t);
+    }
+
+    /// 指引面），形态不符＝结构轨。
+    void expectHeader(std::string_view magic, std::uint32_t version)
+    {
+        if (m_bytes.size() < 8 + sizeof(std::uint32_t)
+            || std::memcmp(m_bytes.data(), magic.data(), 8) != 0) {
+            fail("magic 头不符（期望 " + std::string(magic) + "——字节形态违约）");
+            return;
+        }
+        const std::uint32_t v = u32At(8);
+        if (v != version) {
+            fail("codec 版本不符（实际 " + std::to_string(v) + "，期望 "
+                 + std::to_string(version) + "）");
+            m_versionMismatch = true;
+            return;
+        }
+        m_pos = 8 + sizeof(std::uint32_t);
+    }
+RobWork/RobWork/src/rw/common/BINArchive.hpp:93:        void doWrite (int8_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:94:        void doWrite (uint8_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:95:        void doWrite (int16_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:96:        void doWrite (uint16_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:97:        void doWrite (int32_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:98:        void doWrite (uint32_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:99:        void doWrite (int64_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:100:        void doWrite (uint64_t val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:101:        void doWrite (float val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:102:        void doWrite (double val, const std::string& id) { writeValue (val, id); };
+RobWork/RobWork/src/rw/common/BINArchive.hpp:107:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:111:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:115:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:119:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:123:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:127:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:131:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:135:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:139:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:143:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:147:            writeValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:161:        template< class T > void writeValue (const std::vector< T >& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:174:        template< class T > void writeValue (const T& val, const std::string& id)
+RobWork/RobWork/src/rw/common/BINArchive.hpp:209:            readValue< int8_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:213:            readValue< uint8_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:217:            readValue< int16_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:221:            readValue< uint16_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:225:            readValue< int32_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:229:            readValue< uint32_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:233:            readValue< int64_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:237:            readValue< uint64_t > (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:239:        virtual void doRead (float& val, const std::string& id) { readValue< float > (val, id); }
+RobWork/RobWork/src/rw/common/BINArchive.hpp:240:        virtual void doRead (double& val, const std::string& id) { readValue< double > (val, id); }
+RobWork/RobWork/src/rw/common/BINArchive.hpp:246:            readValue (val, id);
+RobWork/RobWork/src/rw/common/BINArchive.hpp:250:            readValue (val, id);
+
+Name     Count
+----     -----
+pending    171
+proposal     3
+

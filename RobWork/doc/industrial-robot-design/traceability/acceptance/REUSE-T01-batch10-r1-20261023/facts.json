@@ -1,0 +1,45 @@
+{
+  "reviewedCommit": "e0bee2994eee0e8f3299ea5ccf200c354f4454be",
+  "baseCommit": "a7171137a77048e2f1102b80051fb66fce52daa9",
+  "rows": 58,
+  "units": [
+    "core",
+    "diagnostics",
+    "drivetrain",
+    "dynamics",
+    "evidence",
+    "execution",
+    "io",
+    "kinematics",
+    "modeling",
+    "optimization",
+    "policy",
+    "project",
+    "reporting",
+    "requirements",
+    "runtime",
+    "selection",
+    "testkit",
+    "trajectory",
+    "ui",
+    "workflow"
+  ],
+  "allPending": true,
+  "failedBindingCount": 0,
+  "catalog": [
+    {
+      "path": "RobWork/RobWork/gtest/test-main.cpp",
+      "shaMatches": true,
+      "target": "sdurw-gtest-main",
+      "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "targetShaMatches": true
+    },
+    {
+      "path": "RobWork/RobWork/gtest/TestEnvironment.cpp",
+      "shaMatches": true,
+      "target": "sdurw-gtest-main",
+      "targetFile": "RobWork/RobWork/gtest/CMakeLists.txt",
+      "targetShaMatches": true
+    }
+  ]
+}

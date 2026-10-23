@@ -1,0 +1,28 @@
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:25:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:31:#include <rwlibs/pathplanners/rrt/RRTPlanner.hpp>
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:62:    QSampler::Ptr anyQ = QSampler::makeUniform (bounds);
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:126:    QToQPlanner::Ptr rrtplanner                  = RRTPlanner::makeQToQPlanner (constraint, device);
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:133:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:135:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:137:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:139:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:141:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:169:    planners.push_back (std::make_pair ("RRT", rrtplanner));
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:178:    // Plan some paths to random configurations with RRT and SBL.
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:181:        QSampler::Ptr cfreeQ = QSampler::makeConstrained (
+RobWork/RobWork/gtest\pathplanning\PathPlanningTest.cpp:182:            QSampler::makeUniform (device), constraint.getQConstraintPtr (), 1000);
+RobWork/RobWork/example\cpp\ex-motionplanning.cpp:13:#include <rwlibs/pathplanners/rrt/RRTPlanner.hpp>
+RobWork/RobWork/example\cpp\ex-motionplanning.cpp:24:using rwlibs::pathplanners::RRTPlanner;
+RobWork/RobWork/example\cpp\ex-motionplanning.cpp:58:    const QToQPlanner::Ptr planner = RRTPlanner::makeQToQPlanner (con, device);
+RobWork/RobWork/example\snippets\ex-get-path-planner.cpp:4:#include <rwlibs/pathplanners/rrt/RRTPlanner.hpp>
+RobWork/RobWork/example\snippets\ex-get-path-planner.cpp:19:    } else if (type == "RRT") {
+RobWork/RobWork/example\snippets\ex-get-path-planner.cpp:20:        return RRTPlanner::makeQToQPlanner(constraint, device);
+RobWork/RobWork/example\snippets\ex-ik-reachable.cpp:5:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/example\snippets\ex-ik-reachable.cpp:23:    QSampler::Ptr sampler = QSampler::makeUniform(device);
+RobWork/RobWork/example\snippets\ex-main.cpp:57:	const QToQPlanner::Ptr planner = getQToQPlanner(device,constraint,"RRT");
+RobWork/RobWork/example\snippets\ex-qsampler.cpp:5:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/example\snippets\ex-qsampler.cpp:27:    QSampler::Ptr anyQ = QSampler::makeUniform(device);
+RobWork/RobWork/example\snippets\ex-qsampler.cpp:28:    QSampler::Ptr cfreeQ = QSampler::makeConstrained(anyQ, constraint);
+RobWork/RobWork/example\snippets\ex-path-planning.cpp:4:#include <rw/pathplanning/QSampler.hpp>
+RobWork/RobWork/example\snippets\ex-path-planning.cpp:41:    QSampler::Ptr cfreeQ = QSampler::makeConstrained(
+RobWork/RobWork/example\snippets\ex-path-planning.cpp:42:        QSampler::makeUniform(device), constraint);

@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "ird-owner-decision/1",
+  "date": "2026-10-23",
+  "source": "本会话用户对request_user_input_async的明确回复",
+  "proposal": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+  "answer": "批准方案 A（上游 EAA 最小修正）",
+  "scope": [
+    "先登记SA-02 patch",
+    "修正上游既有EAA精度",
+    "执行上游及产品回归"
+  ],
+  "notAuthorized": [
+    "新产品核心",
+    "改容差",
+    "Quaternion新API",
+    "远程同步",
+    "实施者独验自签"
+  ],
+  "taskId": "REUSE-T10",
+  "ownerQuote": "批准方案 A（上游 EAA 最小修正）",
+  "proposalSha256": "40adfa6eb6d2985f390b0024f57cc7a56985de1aa643ed7b9eda8236cafe7633",
+  "allowedFiles": [
+    "RobWork/RobWork/gtest/math/EAATest.cpp",
+    "RobWork/RobWork/src/rw/math/EAA.cpp"
+  ]
+}

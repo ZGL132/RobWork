@@ -1,0 +1,79 @@
+{
+  "result": "PASS",
+  "meaning": "证据一致性通过；不将core真实失败改写为产品通过",
+  "runs": [
+    {
+      "name": "candidates",
+      "total": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "testIds": [
+        "ReuseAuditMatching.BoostMatchingDistinguishesAlternativeAfterRemovingEdge",
+        "ReuseAuditMatching.BoostMaximumMatchingAvoidsGreedyTrap"
+      ],
+      "matchesOriginalTestIdentityAndOutcomes": true,
+      "xmlAndNativeReportAgree": true,
+      "artifacts": [
+        {
+          "path": "candidates/gtest.xml",
+          "rawSha256": "e6bb15e2e18d63d8aa93d51331355e04b029de4ad15f5be6f39c985693607828"
+        },
+        {
+          "path": "candidates/ird-test-report.json",
+          "rawSha256": "a376e638e4544eae7f0b6c854846c5ce9498ad5fa7b94d1fd052df4b17f0e130"
+        },
+        {
+          "path": "candidates/stdout.log",
+          "rawSha256": "ceebeab2989df266f60bf40ca87b61c868e840000104124ff8aa0ab4d4fed3e1"
+        },
+        {
+          "path": "candidates/exit.txt",
+          "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+        }
+      ]
+    },
+    {
+      "name": "core-red",
+      "total": 1,
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 1,
+      "testIds": [
+        "ReuseAuditCoreBoundary.C4FiniteOverflowMustNotAcceptOutOfTolerance"
+      ],
+      "matchesOriginalTestIdentityAndOutcomes": true,
+      "xmlAndNativeReportAgree": true,
+      "artifacts": [
+        {
+          "path": "core-red/gtest.xml",
+          "rawSha256": "1e496d924a86466bac193a2b688c9f23af0dbd5f54cc8e47b1ea88fa42cc5f47"
+        },
+        {
+          "path": "core-red/ird-test-report.json",
+          "rawSha256": "ab01da543089e518c51f29bd44d7ce16b94f234d36cb506a9cad3e729548cb7b"
+        },
+        {
+          "path": "core-red/stdout.log",
+          "rawSha256": "be5156bba5069479666c34a78406bfe592e1f04112c3a27ea8376f490fc355a9"
+        },
+        {
+          "path": "core-red/exit.txt",
+          "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "total": 3,
+    "notRun": 0,
+    "passed": 2,
+    "skipped": 0,
+    "failed": 1
+  },
+  "oldProbeTestsNotRun": 30
+}

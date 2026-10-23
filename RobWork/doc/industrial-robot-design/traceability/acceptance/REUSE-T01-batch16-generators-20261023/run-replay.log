@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690/run-replay.py", line 49, in <module>
+    status=git('status','--porcelain');assert status=='';(ev/'git-status-end.log').write_text(status)
+                                              ^^^^^^^^^^
+AssertionError

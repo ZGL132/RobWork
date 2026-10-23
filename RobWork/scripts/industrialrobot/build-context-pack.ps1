@@ -35,14 +35,9 @@ if (-not $taskMap.ContainsKey($TaskId)) { throw "task not found: $TaskId（在 t
 $contractFile = $taskMap[$TaskId]
 $contract = Get-Content $contractFile.FullName -Raw -Encoding UTF8 | ConvertFrom-Json
 
-# ---------- 单元 → 阅读路径映射（context/reading-paths.md 的五条路径） ----------
-$pathOneUnits = @('core','evidence','policy','runtime','testkit','diagnostics','modeling','requirements','kinematics','trajectory','dynamics','drivetrain','selection','optimization')
+# ---------- 按根规则使用可选导航，不恢复已经撤销的五条强制阅读路径 ----------
 $unit = "$($contract.unit)"
-if ($unit -eq 'ui') { $readingPath = '路径二：Qt 功能（context/reading-paths.md §2）' }
-elseif (@('project','execution','io','workflow','reporting') -contains $unit) { $readingPath = '路径三：项目持久化（context/reading-paths.md §3）' }
-elseif (@('delivery','governance','docs') -contains $unit) { $readingPath = '路径四：流程门禁（context/reading-paths.md §4）' }
-elseif ($pathOneUnits -contains $unit) { $readingPath = '路径一：核心算法（context/reading-paths.md §1）' }
-else { $readingPath = '默认路径一（context/reading-paths.md §1；单元未映射，按任务性质就近选择）' }
+$readingPath = 'context/reading-paths.md 按任务性质取用（可选导航）'
 
 # ---------- 已知阻塞：① dependsOn 非 done；② open findings 引用本任务 ----------
 $blockedDeps = @()
@@ -67,18 +62,9 @@ if (Test-Path $findingsPath) {
 # 指纹取 git hash-object（经 clean 过滤的 blob SHA-1，行尾无关）——字节级哈希在
 # core.autocrlf 下随检出行尾漂移，干净树上全量误报 STALE（演练验收 F-909 教训）。
 function Get-BlobSha([string]$path) { $h = git -C $script:repoTop hash-object $path 2>$null | Select-Object -First 1; if (-not $h) { throw "git hash-object failed: $path" }; return "$h".ToLowerInvariant() }
-$fingerprintFiles = New-Object System.Collections.Generic.List[string]
+. (Join-Path $scriptDir 'context-pack-files.ps1')
+$fingerprintFiles = @(Get-ContextFingerprintFiles $contract $contractFile.FullName $repoTop)
 $relContract = [IO.Path]::GetFullPath($contractFile.FullName).Substring([IO.Path]::GetFullPath($repoTop).Length + 1).Replace('\','/')
-$fingerprintFiles.Add($relContract)
-foreach ($dr in @($contract.designRefs)) {
-  if (-not $dr) { continue }
-  # designRefs 是设计树（doc/industrial-robot-design/）相对路径，可带 #锚点；转仓库根相对路径入指纹表
-  $rel = 'RobWork/doc/industrial-robot-design/' + (($dr -replace '#.*$','') -replace '^\./','').Replace('\','/')
-  if ($fingerprintFiles -notcontains $rel) { $fingerprintFiles.Add($rel) }
-}
-foreach ($extra in @('RobWork/doc/industrial-robot-design/REQUIREMENTS.md','RobWork/doc/industrial-robot-design/context/reading-paths.md','RobWork/doc/industrial-robot-design/context/asset-inventory.json','AGENTS.md','RobWork/doc/industrial-robot-design/AGENTS.md','RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md')) {
-  if ($fingerprintFiles -notcontains $extra) { $fingerprintFiles.Add($extra) }
-}
 $shaRows = @()
 foreach ($rel in $fingerprintFiles) {
   $abs = Join-Path $repoTop $rel
@@ -110,10 +96,10 @@ $L.Add("| 跨单元 | $($contract.interUnit) |")
 $L.Add('')
 $L.Add('## 1. 阅读阶梯（规则入口）')
 $L.Add('')
-$L.Add('- 仓库根 `AGENTS.md` §6.1 分层阅读顺序 → 设计区/源码区 `AGENTS.md`（按任务性质取其一，跨区任务两个都读）；')
+$L.Add('- 仓库根 `AGENTS.md` §1：当前契约＋相关条款/源码；分区规则按实际修改区域取用；')
 $L.Add("- 本任务阅读路径：**$readingPath**；")
 $L.Add('- 规则执法分级：`context/rule-enforcement.md`；')
-$L.Add('- **流水线相位：读 `traceability/pipeline/state.json` 本体**（本包不复制状态——PIPE 权威红线）。')
+$L.Add('- **仅自动编排读取 `traceability/pipeline/state.json` 本体**（人工任务不读；本包不复制状态——PIPE 权威红线）。')
 $L.Add('')
 $L.Add('## 2. 权威章节（必须读，章节级取用）')
 $L.Add('')

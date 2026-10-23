@@ -1,0 +1,51 @@
+[
+  {
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+    "expected": "0d8d32f1d0e0aff79527c9fe9fa2440588de57df1c4bf1c53891cf2501a99924",
+    "actual": "0d8d32f1d0e0aff79527c9fe9fa2440588de57df1c4bf1c53891cf2501a99924",
+    "pass": true
+  },
+  {
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "expected": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909",
+    "actual": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909",
+    "pass": true
+  },
+  {
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "expected": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1",
+    "actual": "b8b94b93c80a45771244953260991263e3bdba87aaa7cbc45e83ce1a3a8e8ae1",
+    "pass": true
+  },
+  {
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/PersistenceFormatTest.cpp",
+    "expected": "94a5753f3766ecdf553669eebab5876a149ddba312d2ab2851842a6929cb5c6b",
+    "actual": "94a5753f3766ecdf553669eebab5876a149ddba312d2ab2851842a6929cb5c6b",
+    "pass": true
+  },
+  {
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "expected": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc",
+    "actual": "1bb9dbef42ec85df013f07196a0cda9bf93440c56077091c63761510454a9ccc",
+    "pass": true
+  },
+  {
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch14-search.json",
+    "expected": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3",
+    "actual": "37e8445363f104d1f72eea6e39e89f02a2fa0a5d8301aa4e67c1449d34847ca3",
+    "pass": true
+  },
+  {
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/persistence-report-codec-audit.md",
+    "expected": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d",
+    "actual": "66b5212008c25142eccf6d0f7700aaf92f2fda6c6e7e05edfb81fcbbafcaa27d",
+    "pass": true
+  }
+]

@@ -1,0 +1,250 @@
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp core.TestMainReport.main
+18: int main(int argc, char** argv)
+19: {
+20:     ::testing::InitGoogleTest(&argc, argv);
+21:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+22:     return RUN_ALL_TESTS();
+23: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.appendU16
+97: void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+98: {
+99:     out.push_back(static_cast<std::uint8_t>(v >> 8));
+100:     out.push_back(static_cast<std::uint8_t>(v));
+101: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.appendU32
+104: void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+105: {
+106:     out.push_back(static_cast<std::uint8_t>(v >> 24));
+107:     out.push_back(static_cast<std::uint8_t>(v >> 16));
+108:     out.push_back(static_cast<std::uint8_t>(v >> 8));
+109:     out.push_back(static_cast<std::uint8_t>(v));
+110: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.appendU64
+113: void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+114: {
+115:     for (int shift = 56; shift >= 0; shift -= 8) {
+116:         out.push_back(static_cast<std::uint8_t>(v >> shift));
+117:     }
+118: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.appendLengthString
+130: void appendLengthString(std::vector<std::uint8_t>& out, const std::string& s)
+131: {
+132:     if (s.find('\0') != std::string::npos) {
+133:         throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+134:                             "字符串含 NUL（§5.2 编码安全）");
+135:     }
+136:     if (s.size() > 0xFFFFu) {
+137:         throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+138:                             "字符串超出 65535 字节编码上限（长度 "
+139:                                 + std::to_string(s.size()) + "）");
+140:     }
+141:     appendU16(out, static_cast<std::uint16_t>(s.size()));
+142:     appendRaw(out, reinterpret_cast<const std::uint8_t*>(s.data()), s.size());
+143: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.appendLengthBytes
+148: void appendLengthBytes(std::vector<std::uint8_t>& out, const std::vector<std::uint8_t>& bytes)
+149: {
+150:     if (bytes.size() > 0xFFFFFFFFu) {
+151:         throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+152:                             "字节块超出 2^32-1 编码上限（长度 "
+153:                                 + std::to_string(bytes.size()) + "）");
+154:     }
+155:     appendU32(out, static_cast<std::uint32_t>(bytes.size()));
+156:     appendRaw(out, bytes.data(), bytes.size());
+157: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.Reader.readU16
+187:     std::uint16_t readU16()
+188:     {
+189:         need(2);
+190:         const std::uint16_t hi = data[pos];
+191:         const std::uint16_t lo = data[pos + 1];
+192:         pos += 2;
+193:         return static_cast<std::uint16_t>((hi << 8) | lo);
+194:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.Reader.readU32
+196:     std::uint32_t readU32()
+197:     {
+198:         need(4);
+199:         std::uint32_t v = 0;
+200:         for (int i = 0; i < 4; ++i) {
+201:             v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+202:         }
+203:         pos += 4;
+204:         return v;
+205:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.Reader.readU64
+207:     std::uint64_t readU64()
+208:     {
+209:         need(8);
+210:         std::uint64_t v = 0;
+211:         for (int i = 0; i < 8; ++i) {
+212:             v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+213:         }
+214:         pos += 8;
+215:         return v;
+216:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.Reader.readLengthString
+227:     std::string readLengthString()
+228:     {
+229:         const std::uint16_t len = readU16();
+230:         need(len);
+231:         std::string s(reinterpret_cast<const char*>(data.data() + pos), len);
+232:         pos += len;
+233:         if (s.find('\0') != std::string::npos) {
+234:             throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+235:                                 "字符串含 NUL（偏移 " + std::to_string(pos) + "，§5.2）");
+236:         }
+237:         return s;
+238:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp evidence.Snapshot.Reader.readLengthBytes
+241:     std::vector<std::uint8_t> readLengthBytes()
+242:     {
+243:         const std::uint32_t len = readU32();
+244:         need(len);
+245:         std::vector<std::uint8_t> bytes(data.begin() + static_cast<std::ptrdiff_t>(pos),
+246:                                         data.begin() + static_cast<std::ptrdiff_t>(pos)
+247:                                             + len);
+248:         pos += len;
+249:         return bytes;
+250:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.appendU16
+122: void appendU16(std::vector<std::uint8_t>& out, std::uint16_t v)
+123: {
+124:     out.push_back(static_cast<std::uint8_t>(v >> 8));
+125:     out.push_back(static_cast<std::uint8_t>(v));
+126: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.appendU32
+129: void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+130: {
+131:     out.push_back(static_cast<std::uint8_t>(v >> 24));
+132:     out.push_back(static_cast<std::uint8_t>(v >> 16));
+133:     out.push_back(static_cast<std::uint8_t>(v >> 8));
+134:     out.push_back(static_cast<std::uint8_t>(v));
+135: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.appendU64
+138: void appendU64(std::vector<std::uint8_t>& out, std::uint64_t v)
+139: {
+140:     for (int shift = 56; shift >= 0; shift -= 8) {
+141:         out.push_back(static_cast<std::uint8_t>(v >> shift));
+142:     }
+143: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.appendLengthString
+167: void appendLengthString(std::vector<std::uint8_t>& out, const std::string& s)
+168: {
+169:     if (s.find('\0') != std::string::npos) {
+170:         throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+171:                             "字符串含 NUL（§5.2 编码安全）");
+172:     }
+173:     if (s.size() > 0xFFFFu) {
+174:         throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+175:                             "字符串超出 65535 字节编码上限（长度 "
+176:                                 + std::to_string(s.size()) + "）");
+177:     }
+178:     appendU16(out, static_cast<std::uint16_t>(s.size()));
+179:     appendRaw(out, reinterpret_cast<const std::uint8_t*>(s.data()), s.size());
+180: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.appendLengthBytes
+185: void appendLengthBytes(std::vector<std::uint8_t>& out,
+186:                        const std::vector<std::uint8_t>& bytes)
+187: {
+188:     if (bytes.size() > 0xFFFFFFFFu) {
+189:         throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+190:                             "字节块超出 2^32-1 编码上限（长度 "
+191:                                 + std::to_string(bytes.size()) + "）");
+192:     }
+193:     appendU32(out, static_cast<std::uint32_t>(bytes.size()));
+194:     appendRaw(out, bytes.data(), bytes.size());
+195: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.Reader.readU16
+225:     std::uint16_t readU16()
+226:     {
+227:         need(2);
+228:         const std::uint16_t hi = data[pos];
+229:         const std::uint16_t lo = data[pos + 1];
+230:         pos += 2;
+231:         return static_cast<std::uint16_t>((hi << 8) | lo);
+232:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.Reader.readU32
+234:     std::uint32_t readU32()
+235:     {
+236:         need(4);
+237:         std::uint32_t v = 0;
+238:         for (int i = 0; i < 4; ++i) {
+239:             v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+240:         }
+241:         pos += 4;
+242:         return v;
+243:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.Reader.readU64
+245:     std::uint64_t readU64()
+246:     {
+247:         need(8);
+248:         std::uint64_t v = 0;
+249:         for (int i = 0; i < 8; ++i) {
+250:             v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+251:         }
+252:         pos += 8;
+253:         return v;
+254:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.Reader.readLengthString
+281:     std::string readLengthString()
+282:     {
+283:         const std::uint16_t len = readU16();
+284:         need(len);
+285:         std::string s(reinterpret_cast<const char*>(data.data() + pos), len);
+286:         pos += len;
+287:         if (s.find('\0') != std::string::npos) {
+288:             throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+289:                                 "字符串含 NUL（偏移 " + std::to_string(pos) + "）");
+290:         }
+291:         return s;
+292:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp evidence.Slice.Reader.readLengthBytes
+295:     std::vector<std::uint8_t> readLengthBytes()
+296:     {
+297:         const std::uint32_t len = readU32();
+298:         need(len);
+299:         std::vector<std::uint8_t> b(data.begin() + static_cast<std::ptrdiff_t>(pos),
+300:                                     data.begin() + static_cast<std::ptrdiff_t>(pos) + len);
+301:         pos += len;
+302:         return b;
+303:     }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp evidence.Evidence.appendU32
+51: void appendU32(std::vector<std::uint8_t>& out, std::uint32_t v)
+52: {
+53:     out.push_back(static_cast<std::uint8_t>((v >> 24) & 0xFFu));
+54:     out.push_back(static_cast<std::uint8_t>((v >> 16) & 0xFFu));
+55:     out.push_back(static_cast<std::uint8_t>((v >> 8) & 0xFFu));
+56:     out.push_back(static_cast<std::uint8_t>(v & 0xFFu));
+57: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp evidence.Evidence.appendLenStr
+60: void appendLenStr(std::vector<std::uint8_t>& out, const std::string& s)
+61: {
+62:     appendU32(out, static_cast<std::uint32_t>(s.size()));
+63:     out.insert(out.end(), s.begin(), s.end());
+64: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp evidence.Evaluator.appendU32
+64: void appendU32(std::vector<std::uint8_t>& out, std::uint32_t value)
+65: {
+66:     out.push_back(static_cast<std::uint8_t>((value >> 24) & 0xFFu));
+67:     out.push_back(static_cast<std::uint8_t>((value >> 16) & 0xFFu));
+68:     out.push_back(static_cast<std::uint8_t>((value >> 8) & 0xFFu));
+69:     out.push_back(static_cast<std::uint8_t>(value & 0xFFu));
+70: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp evidence.Evaluator.appendLenStr
+73: void appendLenStr(std::vector<std::uint8_t>& out, const std::string& text)
+74: {
+75:     appendU32(out, static_cast<std::uint32_t>(text.size()));
+76:     out.insert(out.end(), text.begin(), text.end());
+77: }
+FILE: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp evidence.TestMainReport.main
+23: int main(int argc, char** argv)
+24: {
+25:     ::testing::InitGoogleTest(&argc, argv);
+26:     // 监听器为静态存储期对象（gtest listeners 不接管所有权）；聚合报告
+27:     // 在 OnTestProgramEnd 写盘（--ird_report=<path> 指定，缺省＝工作目录
+28:     // 下 ird-test-report.json）；写盘失败只向 stderr 告警，不掩盖测试
+29:     // 结果（RecordListener 契约——gtest 退出码仍真实反映用例成败）。
+30:     sdurws::ird::testkit::installTestRecordListener(argc, argv);
+31:     return RUN_ALL_TESTS();
+32: }

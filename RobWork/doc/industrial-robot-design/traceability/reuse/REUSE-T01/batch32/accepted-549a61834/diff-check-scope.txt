@@ -1,0 +1,14 @@
+RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md
+RobWork/doc/industrial-robot-design/reuse/functions/core.json
+RobWork/doc/industrial-robot-design/reuse/functions/execution.json
+RobWork/doc/industrial-robot-design/reuse/functions/ui.json
+RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json
+RobWork/doc/industrial-robot-design/traceability/findings.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/CMakeLists.txt
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/EventLifetimeSuitabilityTest.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/artifact-manifest.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/commands.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/findings-prefix.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/run/ird-test-report.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/search.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/verification.json

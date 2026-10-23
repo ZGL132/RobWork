@@ -1,0 +1,480 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B26",
+  "round": 2,
+  "reviewedCommit": "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+  "baseCommit": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+  "verdict": "FAIL_LOCAL_B26_PS51_MISSING_STAGE_EXIT_CONTRACT",
+  "blockingFindings": [
+    {
+      "id": "B26-R2-01",
+      "file": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+      "line": 59,
+      "expected": "缺少三方stage应经Fail 2返回调用/环境错误",
+      "actual": "Windows PowerShell 5.1因Git stderr触发NativeCommandError而退出1；PS7退出2",
+      "scope": "新增stage读取审计段与脚本退出码契约；既有非回归，基点仅补parser BOM对照同样复现",
+      "worktreeAndIndexPreserved": true,
+      "evidence": "fixtures-v3/powershell-missing-stage/stderr.log"
+    }
+  ],
+  "freeze": {
+    "independentClone": true,
+    "noHardlinks": true,
+    "noCheckoutThenDetached": true,
+    "coreAutocrlf": false,
+    "coreLongpaths": true,
+    "initialClean": true,
+    "finalHead": "4b9977f096d0b3d58687ecc94013f435e5b0502c",
+    "finalStatus": "",
+    "noSharedWrites": true
+  },
+  "checks": [
+    {
+      "name": "pipeline-ps7",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 17.1,
+      "log": "pipeline-ps7.log"
+    },
+    {
+      "name": "pipeline-ps51",
+      "command": [
+        "powershell",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 13.83,
+      "log": "pipeline-ps51.log"
+    },
+    {
+      "name": "validate-task",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-task.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      ],
+      "exitCode": 0,
+      "seconds": 28.0,
+      "log": "validate-task.log"
+    },
+    {
+      "name": "validate-reuse",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+        "-Head",
+        "4b9977f096d0b3d58687ecc94013f435e5b0502c"
+      ],
+      "exitCode": 0,
+      "seconds": 327.72,
+      "log": "validate-reuse.log"
+    },
+    {
+      "name": "validate-docs",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/validate-docs.ps1"
+      ],
+      "exitCode": 0,
+      "seconds": 17.39,
+      "log": "validate-docs.log"
+    },
+    {
+      "name": "scope-frozen",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+        "-Base",
+        "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+        "-Head",
+        "4b9977f096d0b3d58687ecc94013f435e5b0502c"
+      ],
+      "exitCode": 0,
+      "seconds": 46.86,
+      "log": "scope-frozen.log"
+    },
+    {
+      "name": "commit-lint",
+      "command": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "RobWork/scripts/industrialrobot/commit-lint.ps1",
+        "-Range",
+        "d0fcb96f62a863684848161f7b8ecd93ef0be302..4b9977f096d0b3d58687ecc94013f435e5b0502c"
+      ],
+      "exitCode": 0,
+      "seconds": 1.04,
+      "log": "commit-lint.log"
+    }
+  ],
+  "archives": [
+    {
+      "batch": "B24",
+      "original": "C:/Users/zgl18/AppData/Local/Temp/ird-b24-accept-7d7d2502",
+      "expected": 173,
+      "checked": 173,
+      "passed": 173,
+      "failed": 0
+    },
+    {
+      "batch": "B25",
+      "original": "C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-batch25-accept-e331f08d036d45f29b1c84a7182f2e4c",
+      "expected": 159,
+      "checked": 159,
+      "passed": 159,
+      "failed": 0
+    },
+    {
+      "batch": "B23",
+      "original": "Git d0fcb96f62a863684848161f7b8ecd93ef0be302",
+      "expected": 136,
+      "checked": 136,
+      "passed": 136,
+      "failed": 0
+    }
+  ],
+  "priorFailPreserved": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/acceptance.json",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\acceptance.json",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/acceptance.md",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\acceptance.md",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/archive-raw-report.json",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\archive-raw-report.json",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/pipeline-ps51.log",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\pipeline-ps51.log",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/pipeline-ps7.log",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\pipeline-ps7.log",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/validate-reuse.log",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\validate-reuse.log",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/validate-task.exit.txt",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\validate-task.exit.txt",
+      "rawMatch": true
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch26/rejected-aa31/validate-task.log",
+      "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-acceptance-20261023\\validate-task.log",
+      "rawMatch": true
+    }
+  ],
+  "static": {
+    "outOfScope": [],
+    "gitlinks": [],
+    "minimalMergePatch": true,
+    "bom": "efbbbf",
+    "bindings": {
+      "newRows": 10,
+      "oldRowDeltas": [
+        {
+          "functionId": "foundation-governance.pipeline-lock.Get-LockMutexName",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.pipeline-lock.Read-Lock",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.pipeline-lock.Test-Fencing",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.pipeline-lock.root",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.pipeline-lock.actions",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.root",
+          "changedKeys": [
+            "auditEvidence",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.test-pipeline-pipeline.regressions",
+          "changedKeys": [
+            "auditEvidence",
+            "sources",
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.Convert-ToIso",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.Compare-Iso",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.Test-NonNegativeInteger",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.root",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.schema",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.heartbeat",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.fencing-presence",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.attempts",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.policy",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.contract-index",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.queue",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.phase",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.acceptance",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.failure-record",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.run",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.history",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.docRefs",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.narrative-limit",
+          "changedKeys": [
+            "inputs"
+          ]
+        },
+        {
+          "functionId": "foundation-governance.validate-state.verdict",
+          "changedKeys": [
+            "inputs"
+          ]
+        }
+      ],
+      "pendingOwnerOnly": true,
+      "bindingChecks": 110,
+      "bindingFailed": 0
+    }
+  },
+  "adversarial": {
+    "passed": 25,
+    "failed": 1,
+    "skipped": 0,
+    "report": "adversarial-report.json"
+  },
+  "sourceSearches": [
+    {
+      "name": "search-governance",
+      "command": [
+        "rg",
+        "-n",
+        "findings\\.json|merge-findings-union|update-index --index-info|merge-base",
+        "RobWork/scripts/industrialrobot"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "search-upstream",
+      "command": [
+        "rg",
+        "-n",
+        "union|merge\\(",
+        "RobWork/RobWork/src/rw/core",
+        "RobWork/RobWork/src/rw/common",
+        "RobWork/RobWorkSim/src/rwsim"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "search-upstream-test",
+      "command": [
+        "rg",
+        "-n",
+        "LinearInterpolatorTest|add_rw_gtest|sdurw-gtest-main",
+        "RobWork/RobWork/gtest/CMakeLists.txt"
+      ],
+      "exitCode": 0
+    }
+  ],
+  "notRun": [
+    "C++构建、GUI、数值、性能（治理脚本局部验收不适用）",
+    "DeepEvidence",
+    "全REUSE-T01/T02或算法迁移验收",
+    "远程同步、CI、提交与合入"
+  ],
+  "limitations": [
+    "本结论仅B26冻结对象，不授予全T01或T02放行",
+    "验收夹具第一次使用NUL排除文件不被Git接受，第二次同号新增正例缺少真实增量；两次夹具失败日志保留，最终26例独立运行结果25/1/0",
+    "首次检出因Windows长路径128，clone本地启用core.longpaths后重试0；日志保留",
+    "静态首轮自编摘要校验漏了登记Digest末尾换行规范，原首轮报告保留；修正后110绑定0失败"
+  ],
+  "evidenceRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r2-acceptance-20261023"
+}

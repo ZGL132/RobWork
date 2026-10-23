@@ -1,0 +1,8 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp:65:bool dominates(const FeasibleCandidate& a, const FeasibleCandidate& b,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp:94:ParetoFrontResult ParetoFrontBuilder::buildFront(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp:212:                if (dominates(*unique[j], *unique[i], objectives)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Objective.cpp:325:StaticMetricResult computeStaticMetrics(OptimizationStage stage,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp:39:GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp:110:GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp:276:        return SeededLhsGenerator{}.generateNextBatch(ctx);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp:279:    return BaselinePerturbGenerator{perturbParams}.generateNextBatch(ctx);

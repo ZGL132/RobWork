@@ -1,0 +1,19 @@
+{
+  "batch": "B31-r2",
+  "base": "52285db6f",
+  "reviewedOriginal": "933dc6016",
+  "sourceComparison": {
+    "base": "933dc6016",
+    "paths": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp"
+    ],
+    "changed": []
+  },
+  "cppRerun": "未重复：产品/探测/CMake未变，原独验真实22跑19passed3failed0skipped；F966仍OPEN",
+  "independentAcceptance": "pending",
+  "remote": "not executed"
+}

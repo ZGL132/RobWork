@@ -1,0 +1,203 @@
+{
+  "schemaVersion": "ird-limited-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B22",
+  "reviewedCommit": "daf0dcd175fb76c956154fe0213f2d791dad8575",
+  "baseCommit": "cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7",
+  "batchEvidenceVerdict": "accepted",
+  "scope": "仅B22登记/接纳审计与F-964反例证据",
+  "grants": [],
+  "fullTaskAcceptance": "notGranted",
+  "T02": "notGranted",
+  "T06": "notGranted",
+  "productTestVerdict": "FAIL：F-964真实复现且保持open",
+  "isolation": {
+    "delegation": false,
+    "root": "C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/RobWork",
+    "sharedWorkspaceModified": false,
+    "commits": 0,
+    "frozenHeadMatches": true,
+    "cleanClone": true,
+    "remoteSynchronization": false,
+    "pushes": 0
+  },
+  "checks": {
+    "productFrameworkVcpkgDiff": 0,
+    "scopeExit": 0,
+    "configureExit": 0,
+    "sourceRegions": 26,
+    "priorRowsUnchanged": 41,
+    "allowedPaths": 20,
+    "searchExitCodes": [
+      0,
+      0,
+      0,
+      2,
+      0
+    ],
+    "verifyTaskExit": 0,
+    "fullBindings": 390,
+    "testExit": 1,
+    "commitLintExit": 0,
+    "changedPaths": 20,
+    "buildExit": 0,
+    "verifyMachineCommands": 3,
+    "newPendingRows": 26
+  },
+  "actualTests": {
+    "original": {
+      "failed": 0,
+      "passed": 25,
+      "skipped": 0,
+      "total": 25
+    },
+    "total": 27,
+    "passed": 26,
+    "jsonXmlCasesAndOutcomesAgree": true,
+    "failed": 1,
+    "submittedCasesAndOutcomesAgree": true,
+    "new": {
+      "failed": 1,
+      "passed": 1,
+      "skipped": 0,
+      "total": 2
+    },
+    "notRun": 0,
+    "skipped": 0
+  },
+  "openFindings": [
+    {
+      "owner": "execution / REUSE-T05",
+      "id": "F-964",
+      "healthyControl": "RunRegistryAdmissionTest.ReuseBoundaryValidCancelWritesOnce",
+      "failedTest": "RunRegistryAdmissionTest.ReuseBoundaryInvalidCompletedPreservesRegistration",
+      "severity": "major",
+      "status": "open"
+    }
+  ],
+  "notRun": [
+    "其他execution套件",
+    "真实worker/runtime接线",
+    "IPC/强杀",
+    "并发/性能",
+    "GUI",
+    "全库DeepEvidence",
+    "远程CI"
+  ],
+  "environmentAttempt": {
+    "sourceModified": false,
+    "successfulFreshBuildDirectory": "C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/build-original",
+    "initialExtraToolchainConfigureExit": 1,
+    "initialLog": "logs/configure.log",
+    "reason": "上游RobWorkConfig的C:\\local提示在vcpkg包装路径中触发非法转义"
+  },
+  "commands": {
+    "QT_QPA_PLATFORM": "windows",
+    "pathPrefix": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release;D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin",
+    "vs": "Launch-VsDevShell.ps1 -Arch amd64 -HostArch amd64 -SkipAutomaticLocation",
+    "verify": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "scope": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7 -Head daf0dcd175fb76c956154fe0213f2d791dad8575",
+    "test": "C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/build-original/Release/ird_execution_boundary_audit.exe --gtest_filter=RunRegistryAdmissionTest.* --gtest_output=xml:C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/logs/gtest.xml --ird_report=C:/Users/zgl18/AppData/Local/Temp/ird-b22-accept-7c3d9afa/logs/ird-test-report.json",
+    "configure": "cmake -S <clone>/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r22 -B <temp>/build-original -G \"Visual Studio 17 2022\" -A x64 -DIRD_SOURCE_DIR=<clone>/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DRobWork_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake -DCMAKE_PREFIX_PATH=\"D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows;D:/software/Qt/6.11.1/msvc2022_64\"",
+    "build": "cmake --build <temp>/build-original --config Release --target ird_execution_boundary_audit",
+    "commitLint": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7..daf0dcd175fb76c956154fe0213f2d791dad8575"
+  },
+  "logs": [
+    {
+      "path": "logs/bindings.log",
+      "rawSha256": "8c26f5b37833b68cf0d10da7be0ed7af67f8b29f03f3ea1c15ad2f63348e4744"
+    },
+    {
+      "path": "logs/build.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "logs/build.log",
+      "rawSha256": "97a9e12d7134d05af9fbd8da8b033f98c9cc3ba32d6f4a64952a32e22adbbe16"
+    },
+    {
+      "path": "logs/commit-lint.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "logs/commit-lint.log",
+      "rawSha256": "c8cd0c0d2d095d2e58343e63dc6f252d6b97b821a64ac10203b36ff0a4e1e622"
+    },
+    {
+      "path": "logs/configure-original.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "logs/configure-original.log",
+      "rawSha256": "0cba03a615b1ab7ee76ea4270d4dd349bf9f0ad6e3b04c5d733aed69a04e3353"
+    },
+    {
+      "path": "logs/configure.exit.txt",
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "logs/configure.log",
+      "rawSha256": "045a1da980b99047b0190391649ae6137c9e6df9ea667cad2f47991788ba6ab0"
+    },
+    {
+      "path": "logs/diff-scope.log",
+      "rawSha256": "7062ee7d046fe4941eb9d896596a97f9328344b30f2edca23dca613f8a885070"
+    },
+    {
+      "path": "logs/gtest.xml",
+      "rawSha256": "5e5e5df39d94efed0af3e37becc57fa8390762ce664d60df5af3e0ce9e41c549"
+    },
+    {
+      "path": "logs/ird-test-report.json",
+      "rawSha256": "17de8305ad2001cc98d69a5bee410aba6b9a6ecb31827e806fe5bfdc24672906"
+    },
+    {
+      "path": "logs/probe-compile-inputs.log",
+      "rawSha256": "df8bf20eb0b9c9307d19adf77c52454e3addfbd8711ff18988a666de2603f372"
+    },
+    {
+      "path": "logs/scope.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "logs/scope.log",
+      "rawSha256": "a365ca19371cbebbb530c67291f679a89142901d7fa2cd6aa313f97c52ba31dc"
+    },
+    {
+      "path": "logs/search-rerun.json",
+      "rawSha256": "55067d9b0e3ab99377041ab147b8ce030a2ca03eca5371874d4ccb484b9ecdcd"
+    },
+    {
+      "path": "logs/source-definition-locations.log",
+      "rawSha256": "4abdce2e765d50e76fb160e5dd7fd455393b24c6774a52e3e2c9fe79c99a9b23"
+    },
+    {
+      "path": "logs/stdout.log",
+      "rawSha256": "f6baa8373c2dc1fd89bf7f04d2f2ef09a241c11143d5a382f240fa74968cbc47"
+    },
+    {
+      "path": "logs/submitted-report-comparison.log",
+      "rawSha256": "43bf39cb64b669e8da58b1f77718907c232f0e828402dd2e6cc582ef6fb1422b"
+    },
+    {
+      "path": "logs/test.exit.txt",
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "logs/verify-task.exit.txt",
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "logs/verify-task.log",
+      "rawSha256": "390019b9aeea1ca723aa688e8f1ef18b8dd70c97039baf76a012fb1169c5fa8e"
+    },
+    {
+      "path": "logs/vs-retry.log",
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "logs/vs.log",
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    }
+  ]
+}

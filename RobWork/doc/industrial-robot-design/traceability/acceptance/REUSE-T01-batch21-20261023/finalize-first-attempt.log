@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d161\finalize.py", line 56, in <module>
+    assert not (root/'git-status-end.log').read_text(encoding='utf-8-sig').strip()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\zgl18\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b21-accept-35dfa8d161\\git-status-end.log'

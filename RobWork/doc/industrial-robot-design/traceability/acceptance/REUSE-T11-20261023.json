@@ -1,0 +1,63 @@
+{
+  "taskId": "REUSE-T11",
+  "verdict": "pass",
+  "reviewedCommit": "a1393ad4ac88f18a57ddb463c204a91e2887a76c",
+  "baseCommit": "0032c8e78b0a",
+  "branch": "reuse-t01",
+  "reviewedAt": "2026-10-23",
+  "scope": "独立验收RpyMath薄适配、局部EAA表示转换1e-6、真实生产消费及testcase[failure]计数修正；未实施修改。",
+  "findings": [],
+  "checks": [
+    "48个提交差异路径均在契约允许面，未改上游或专属禁区。",
+    "RpyMath仅交换roll/pitch/yaw为上游yaw/pitch/roll；保留rad与RzRyRx语义，删除九元素展开和半角四元数核，无新模型/状态/缓存/owner。既有业务入口继续校验有限性、Custom身份、原子拒绝；runtime仍唯一形成安装矩阵。",
+    "仅EulerCompilesAndCodecRoundTrips的EAA表示往返比较改为批准1e-6，普通RPY正向及其他阈值未改。",
+    "EAA.cpp与EAA.hpp在HEAD与原始31b818452基线的Git blob分别一致；原补丁未恢复。",
+    "54个生产证据绑定摘要实际核对一致；断开XML两例失败、真实恢复XML两例通过。旧时间戳未重编的失败记录未计作通过。",
+    "XPath testcase[failure]按失败用例计数，同用例多断言不再误拒绝；空报告、skip、error、计数不符、正常轨失败仍拒绝。"
+  ],
+  "environment": {
+    "workingDirectory": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork",
+    "developerShell": "D:/software/Microsoft Visual Studio/2022/Community/Common7/Tools/Launch-VsDevShell.ps1 -Arch amd64 -HostArch amd64 -SkipAutomaticLocation",
+    "pathPrefix": [".cache/t07-integrated/RobWork/bin/Release", ".cache/t07-integrated/RobWorkStudio/bin/Release", ".cache/t07-integrated/RobWorkSim/bin/Release", "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin", "D:/software/Miniconda3"],
+    "QT_QPA_PLATFORM": "windows",
+    "launch": "模型测试无GUI；每次单个绝对路径可执行文件，未使用offscreen。"
+  },
+  "executed": [
+    {
+      "command": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t07-integrated/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlTemplate.CreateEditChain_OriginEditField_UI_T53:MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/independent/production.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/independent/ird-test-report.json",
+      "passed": 2, "skipped": 0, "failed": 0, "exitCode": 0,
+      "evidence": "traceability/reuse/REUSE-T11/independent/production.log; production.xml; ird-test-report.json"
+    },
+    {
+      "command": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/t11/probe-build/Release/rpy_current.exe --gtest_filter=RpyReuse.IndependentBoundaryOracle_MDL22_AT37 --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/independent/probe.xml",
+      "passed": 1, "skipped": 0, "failed": 0, "exitCode": 0,
+      "samples": 1140, "maxForward": 0, "maxEaaRoundTrip": 9.996e-8,
+      "evidence": "traceability/reuse/REUSE-T11/independent/probe.log; probe.xml"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/TestFailureCounting.ps1 -OutputFile RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/independent/failure-counting.json",
+      "passed": 8, "skipped": 0, "failed": 0, "exitCode": 0,
+      "evidence": "traceability/reuse/REUSE-T11/independent/failure-counting.log; failure-counting.json"
+    },
+    {
+      "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T11.json -Base 0032c8e78 -Head a1393ad4ac88f18a57ddb463c204a91e2887a76c",
+      "result": "PASS，48路径均在允许面", "exitCode": 0,
+      "evidence": "traceability/reuse/REUSE-T11/independent/scope.log"
+    }
+  ],
+  "referencedEvidence": [
+    {"path": "traceability/reuse/REUSE-T11/modeling-final.xml", "status": "引用既有证据", "passed": 474, "skipped": 0, "failed": 0},
+    {"path": "traceability/reuse/REUSE-T11/contract.xml", "status": "引用既有证据", "passed": 17, "skipped": 0, "failed": 0},
+    {"path": "traceability/reuse/REUSE-T11/disconnected.xml", "status": "引用既有真实断开证据", "passed": 0, "skipped": 0, "failed": 2},
+    {"path": "traceability/reuse/REUSE-T11/restored-real.xml", "status": "引用既有真实重编恢复证据", "passed": 2, "skipped": 0, "failed": 0},
+    {"path": "traceability/reuse/REUSE-T11/build.log; docs-final.log; gates.log", "status": "引用既有构建、文档与复用门禁、ird_gates证据"},
+    {"path": "traceability/reuse/REUSE-T11/probe-baseline-final.log; probe-current-final.log", "status": "引用既有单次Release微基准0.0525205至0.0318005微秒每次，非端到端保证"},
+    {"path": "traceability/reuse/REUSE-T10/original-envelope/", "status": "引用原上游12例与原库网格证据，不重复运行"}
+  ],
+  "limitations": [
+    "未重复全库配置、全套产品测试、152治理夹具、全库冻结深查或性能测量；无相关输入变化且本轮局部测试通过，增量构建未再执行。",
+    "边界网格与同构建重复输入验证不代表穷尽全部旋转输入或跨平台位级一致。",
+    "现场存在他人未提交治理稿；只核对冻结提交及相关输入，未修改或纳入他人稿。",
+    "仅能力包验收，不自签closure，不合入、提交、stage或访问远程；drivetrain和trajectory专属范围未触碰。"
+  ]
+}

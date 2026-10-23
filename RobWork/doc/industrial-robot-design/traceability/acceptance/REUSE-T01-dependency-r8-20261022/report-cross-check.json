@@ -1,0 +1,26 @@
+[
+  {
+    "testId": "ReuseDependencyAudit.EndianPublicLoadStorePreserveWireBits",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "ReuseDependencyAudit.PropertyTreePublicDomErasesTypesAndEmptyShapes",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "ReuseDependencyAudit.PropertyTreePublicReaderAcceptsDuplicateKeysAndBom",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  }
+]

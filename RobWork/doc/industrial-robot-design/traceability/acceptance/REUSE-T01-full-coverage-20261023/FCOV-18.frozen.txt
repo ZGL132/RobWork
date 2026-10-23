@@ -1,0 +1,19 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/rt-fk-equation/1.0.0/generate/make_fk_equation.mjs
+<ES module>::closedFormFk
+53: function closedFormFk(joints, q) {
+54:   const out = [];
+55:   let origin = [0.0, 0.0, 0.0];
+56:   let acc = 0.0; // q_1 + … + q_{i-1}（rad）
+57:   for (let i = 0; i < joints.length; ++i) {
+58:     const t = joints[i].originTranslation;
+59:     origin = [
+60:       origin[0] + Math.cos(acc) * t[0] - Math.sin(acc) * t[1],
+61:       origin[1] + Math.sin(acc) * t[0] + Math.cos(acc) * t[1],
+62:       origin[2] + t[2],
+63:     ];
+64:     const axis = mulVec(rz(acc + q[i] + joints[i].zeroOffset), joints[i].axis);
+65:     out.push({ origin, axis });
+66:     acc += q[i];
+67:   }
+68:   return out;
+69: }

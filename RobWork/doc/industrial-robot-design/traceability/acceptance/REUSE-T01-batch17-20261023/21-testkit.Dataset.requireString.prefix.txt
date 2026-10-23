@@ -1,0 +1,11 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::requireString
+31: std::string requireString(const JsonValue& obj, const std::string& key,
+32:                           const std::string& pathPrefix)
+33: {
+34:     const JsonValue* v = obj.find(key);
+35:     if (v == nullptr || !v->isString()) {
+36:         failField(pathPrefix + key, "必填字段缺失或非字符串");
+37:     }
+38:     return v->text;
+39: }

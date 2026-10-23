@@ -1,0 +1,5 @@
+integrity 申报表（path / sizeBytes / sha256）：
+inputs/partial-pose.json 8112 1477cb3ffaa95f596388a96b21fe48633b6cb18c67f27dbcb8f8c1683088db7a
+expected/partial-pose-expected.json 3890 90838f46b1e50e6ce03d4bb4b4fd234cb17c11f28d391e5fb5ee7f9c86099782
+generate/make_partial_pose_golden.mjs 4968 c3a79dd2204186c07837f868f7dc3095357672f6caf51715240671d88f0d4763
+expected 写出: C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\req-partial-pose\1.0.0\expected\partial-pose-expected.json

@@ -1,0 +1,31 @@
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:1:set(SUBSYS_NAME sdurw_loaders)
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:3:set(SUBSYS_DEPS
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:18:    build ${SUBSYS_NAME} ${SUBSYS_DESC} ON
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:19:    DEPENDS ${SUBSYS_DEPS}
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:148:    rw_add_library(
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:149:        ${SUBSYS_NAME}
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:160:    rw_add_includes(${SUBSYS_NAME} "rw/loaders" ${FILES_HPP})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:161:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/colsetup" ${FILES_HPP_colsetup})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:162:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/dom" ${FILES_HPP_dom})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:163:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/image" ${FILES_HPP_image})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:164:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/model3d" ${FILES_HPP_model3d})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:165:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/path" ${FILES_HPP_path})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:166:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/rwxml" ${FILES_HPP_rwxml})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:167:    rw_add_includes(${SUBSYS_NAME} "rw/loaders/xml" ${FILES_HPP_xml})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:168:    rw_add_includes(${SUBSYS_NAME} "rw" ../loaders.hpp)
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:169:    target_link_libraries(${SUBSYS_NAME} PUBLIC ${Boost_LIBRARIES} ${SUBSYS_DEPS})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:171:        ${SUBSYS_NAME}
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:176:        target_link_libraries(${SUBSYS_NAME} PUBLIC ${XERCESC_LIBRARIES})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:179:        target_link_libraries(${SUBSYS_NAME} PRIVATE ${ASSIMP_LIBRARIES})
+RobWork/RobWork/src/rw/loaders/CMakeLists.txt:182:    set_target_properties(${SUBSYS_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+RobWork/RobWork/src/rw/math/CMakeLists.txt:1:set(SUBSYS_NAME sdurw_math)
+RobWork/RobWork/src/rw/math/CMakeLists.txt:3:set(SUBSYS_DEPS sdurw_core sdurw_common)
+RobWork/RobWork/src/rw/math/CMakeLists.txt:7:    build ${SUBSYS_NAME} ${SUBSYS_DESC} ON
+RobWork/RobWork/src/rw/math/CMakeLists.txt:8:    DEPENDS ${SUBSYS_DEPS}
+RobWork/RobWork/src/rw/math/CMakeLists.txt:94:    rw_add_library(${SUBSYS_NAME} ${FILES_CPP} ${FILES_HPP})
+RobWork/RobWork/src/rw/math/CMakeLists.txt:95:    rw_add_includes(${SUBSYS_NAME} "rw/math" ${FILES_HPP})
+RobWork/RobWork/src/rw/math/CMakeLists.txt:96:    target_link_libraries(${SUBSYS_NAME} PUBLIC ${SUBSYS_DEPS})
+RobWork/RobWork/src/rw/math/CMakeLists.txt:98:    rw_include_eigen(${SUBSYS_NAME})
+RobWork/RobWork/src/rw/math/CMakeLists.txt:101:        ${SUBSYS_NAME} PUBLIC $<BUILD_INTERFACE:${RW_ROOT}/src>
+RobWork/RobWork/src/rw/math/CMakeLists.txt:105:    rw_add_includes(${SUBSYS_NAME} "rw" ${CMAKE_CURRENT_SOURCE_DIR}/../math.hpp)
+RobWork/RobWork/src/rw/math/CMakeLists.txt:108:        target_link_libraries(${SUBSYS_NAME} PUBLIC ${OpenMP_CXX_LIBRARIES})

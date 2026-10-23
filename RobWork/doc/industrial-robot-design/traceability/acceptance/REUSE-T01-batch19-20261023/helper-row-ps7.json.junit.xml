@@ -1,0 +1,5 @@
+<testsuite name="b19-helper-row" tests="3" failures="0" skipped="0">
+  <testcase name="pending-positive" />
+  <testcase name="pending-final-rejected" />
+  <testcase name="closed-rejected" />
+</testsuite>

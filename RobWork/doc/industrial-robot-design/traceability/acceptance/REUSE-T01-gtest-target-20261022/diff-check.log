@@ -1,0 +1,14 @@
+RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch6-20261022/final-semantic-review.log:170: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r1-ps51-driver.log:39: trailing whitespace.
++    + FullyQualifiedErrorId : reuse tests failed/incomplete: failed=23 executed=30 expected=142 driver=Exception calli 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r1-ps51-driver.log:40: trailing whitespace.
++   ng "ReadAllText" with "1" argument(s): "Could not find a part of the path 'C:\Users\zgl18\AppData\Local\Temp\ird-r  
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r1-ps51-driver.log:42: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r1-ps51-driver.log:42: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r2-ps51-driver.log:150: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r2-ps51-driver.log:150: new blank line at EOF.
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r3-ps51-driver.log:150: trailing whitespace.
++ 
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/gates/gtest-target/r3-ps51-driver.log:150: new blank line at EOF.

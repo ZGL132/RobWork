@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "ird-reuse-closures/1",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp",
+      "baselineBlob": "3fedec5b24ee89eea7b5c8dd2b85efc6e00d19fe",
+      "currentSha256": "2d81267428a41d56e6cce9d321f63c40321d24b708b489a7aa5b0f771a1e9512",
+      "functionKeys": [
+        "modeling.rpyToRotation|MATH-ROT",
+        "modeling.rpyToEaa|MATH-ROT"
+      ],
+      "migrationCommit": "a1393ad4ac88f18a57ddb463c204a91e2887a76c",
+      "acceptance": {
+        "commit": "30b5a2343f4d08ce0b203fdbc2c5b7cfee867c27",
+        "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T11-20261023.json",
+        "reviewedCommit": "a1393ad4ac88f18a57ddb463c204a91e2887a76c"
+      }
+    }
+  ]
+}

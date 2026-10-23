@@ -1,0 +1,31 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B24",
+  "parentCommit": "062522fdeb9215e6a604a11d95cfca99842523db",
+  "rows": 14,
+  "regressionEach": {
+    "exitCode": 0,
+    "result": "原入口PASS，未生成逐例计数报告"
+  },
+  "processProbes": {
+    "executed": 23,
+    "fixture": 3,
+    "actions": 20,
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0
+  },
+  "initialExploration": {
+    "driverFailure": true,
+    "notRun": [
+      "最初Python驱动的PS5.1循环"
+    ],
+    "replacedBy": "双Shell独立before探测与完整green/report"
+  },
+  "notRun": [
+    "PS5.1原生validate-state",
+    "长压力/真正进程崩溃",
+    "全19治理脚本",
+    "全T01/T02"
+  ]
+}

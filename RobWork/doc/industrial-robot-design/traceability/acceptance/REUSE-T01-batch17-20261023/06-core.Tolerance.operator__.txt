@@ -1,0 +1,6 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp
+sdurws::ird::core::Tolerance::operator==
+74:     bool operator==(const Tolerance& o) const noexcept
+75:     {
+76:         return relative == o.relative && absolute == o.absolute;
+77:     }

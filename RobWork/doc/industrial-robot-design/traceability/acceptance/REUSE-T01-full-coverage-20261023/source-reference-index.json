@@ -1,0 +1,4902 @@
+{
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Digest.cpp": [
+    {
+      "functionId": "core.ContentDigester.compressBlock",
+      "capabilityId": "NONE",
+      "startLine": 139,
+      "endLine": 171,
+      "symbol": "sdurws::ird::core::ContentDigester::compressBlock",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/core.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp": [
+    {
+      "functionId": "core.convert",
+      "capabilityId": "UTIL-UNITS",
+      "startLine": 134,
+      "endLine": 152,
+      "symbol": "sdurws::ird::core::convert",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/core.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp": [
+    {
+      "functionId": "core.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 18,
+      "endLine": 23,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/core.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt": [
+    {
+      "functionId": "core.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 134,
+      "endLine": 147,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/core.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp": [
+    {
+      "functionId": "diagnostics.StableCodeRegistry.registerCode",
+      "capabilityId": "NONE",
+      "startLine": 604,
+      "endLine": 720,
+      "symbol": "sdurws::ird::diagnostics::StableCodeRegistry::registerCode",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp": [
+    {
+      "functionId": "diagnostics.FileLogFileOps.appendLine",
+      "capabilityId": "UTIL-LOG",
+      "startLine": 369,
+      "endLine": 373,
+      "symbol": "sdurws::ird::diagnostics::FileLogFileOps::appendLine",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
+    },
+    {
+      "functionId": "diagnostics.LoggingPipeline.log",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 1295,
+      "endLine": 1300,
+      "symbol": "sdurws::ird::diagnostics::LoggingPipeline::log",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt": [
+    {
+      "functionId": "diagnostics.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 257,
+      "endLine": 269,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp": [
+    {
+      "functionId": "drivetrain.singularValuesJacobi",
+      "capabilityId": "MATH-SVD",
+      "startLine": 193,
+      "endLine": 266,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::singularValuesJacobi",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.invertSquareMatrix",
+      "capabilityId": "MATH-SVD",
+      "startLine": 283,
+      "endLine": 351,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::invertSquareMatrix",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/DriveTrainCodec.cpp": [
+    {
+      "functionId": "drivetrain.ByteWriter.putU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 54,
+      "endLine": 59,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 61,
+      "endLine": 66,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putF64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 69,
+      "endLine": 75,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putF64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteWriter.putString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 82,
+      "endLine": 86,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteWriter::putString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 129,
+      "endLine": 137,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 139,
+      "endLine": 147,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getF64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 149,
+      "endLine": 155,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getF64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    },
+    {
+      "functionId": "drivetrain.ByteReader.getString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 179,
+      "endLine": 196,
+      "symbol": "sdurws::ird::drivetrain::(anonymous namespace)::ByteReader::getString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "drivetrain.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 25,
+      "endLine": 36,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp": [
+    {
+      "functionId": "drivetrain.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 45,
+      "endLine": 71,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt": [
+    {
+      "functionId": "drivetrain.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 203,
+      "endLine": 215,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/drivetrain.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp": [
+    {
+      "functionId": "dynamics.buildRneaChain",
+      "capabilityId": "DYN-RNE",
+      "startLine": 458,
+      "endLine": 620,
+      "symbol": "sdurws::ird::dynamics::(anonymous namespace)::buildRneaChain",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    },
+    {
+      "functionId": "dynamics.computeGeometry",
+      "capabilityId": "KIN-FK",
+      "startLine": 747,
+      "endLine": 800,
+      "symbol": "sdurws::ird::dynamics::(anonymous namespace)::computeGeometry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    },
+    {
+      "functionId": "dynamics.rneaTorques",
+      "capabilityId": "DYN-RNE",
+      "startLine": 836,
+      "endLine": 916,
+      "symbol": "sdurws::ird::dynamics::(anonymous namespace)::rneaTorques",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp": [
+    {
+      "functionId": "dynamics.solveLinearSystem",
+      "capabilityId": "DYN-FD",
+      "startLine": 170,
+      "endLine": 225,
+      "symbol": "sdurws::ird::dynamics::(anonymous namespace)::solveLinearSystem",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    },
+    {
+      "functionId": "dynamics.evalAcceleration",
+      "capabilityId": "DYN-FD",
+      "startLine": 509,
+      "endLine": 567,
+      "symbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate::<lambda:evalAcceleration>",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    },
+    {
+      "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+      "capabilityId": "DYN-FD",
+      "startLine": 251,
+      "endLine": 874,
+      "symbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    },
+    {
+      "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+      "kind": "auditedSection",
+      "startLine": 612,
+      "endLine": 692,
+      "symbol": "",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Replay.cpp": [
+    {
+      "functionId": "dynamics.DynamicsReplayProjector.sampleAt",
+      "capabilityId": "TRAJ-LINEAR",
+      "startLine": 230,
+      "endLine": 348,
+      "symbol": "sdurws::ird::dynamics::DynamicsReplayProjector::sampleAt",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Envelope.cpp": [
+    {
+      "functionId": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+      "capabilityId": "MATH-STATS",
+      "startLine": 181,
+      "endLine": 241,
+      "symbol": "sdurws::ird::dynamics::DynamicsEnvelopeCalculator::computeRms",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "dynamics.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 25,
+      "endLine": 36,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp": [
+    {
+      "functionId": "dynamics.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 38,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt": [
+    {
+      "functionId": "dynamics.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 482,
+      "endLine": 494,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp": [
+    {
+      "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+      "capabilityId": "MATH-TRAPEZOID",
+      "startLine": 63,
+      "endLine": 186,
+      "symbol": "sdurws::ird::dynamics::PowerEnergyCalculator::compute",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp": [
+    {
+      "functionId": "evidence.aggregateVerdict",
+      "capabilityId": "NONE",
+      "startLine": 379,
+      "endLine": 586,
+      "symbol": "sdurws::ird::evidence::aggregateVerdict",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp": [
+    {
+      "functionId": "evidence.Snapshot.appendU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 97,
+      "endLine": 101,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.appendU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 104,
+      "endLine": 110,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.appendU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 113,
+      "endLine": 118,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.appendLengthString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 130,
+      "endLine": 143,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.appendLengthBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 148,
+      "endLine": 157,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.Reader.readU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 187,
+      "endLine": 194,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.Reader.readU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 196,
+      "endLine": 205,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.Reader.readU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 207,
+      "endLine": 216,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.Reader.readLengthString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 227,
+      "endLine": 238,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Snapshot.Reader.readLengthBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 241,
+      "endLine": 250,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp": [
+    {
+      "functionId": "evidence.Slice.appendU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 122,
+      "endLine": 126,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.appendU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 129,
+      "endLine": 135,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.appendU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 138,
+      "endLine": 143,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.appendLengthString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 167,
+      "endLine": 180,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.appendLengthBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 185,
+      "endLine": 195,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLengthBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.Reader.readU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 225,
+      "endLine": 232,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.Reader.readU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 234,
+      "endLine": 243,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.Reader.readU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 245,
+      "endLine": 254,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.Reader.readLengthString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 281,
+      "endLine": 292,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Slice.Reader.readLengthBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 295,
+      "endLine": 303,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::Reader::readLengthBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp": [
+    {
+      "functionId": "evidence.Evidence.appendU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 51,
+      "endLine": 57,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Evidence.appendLenStr",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 60,
+      "endLine": 64,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLenStr",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp": [
+    {
+      "functionId": "evidence.Evaluator.appendU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 64,
+      "endLine": 70,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    },
+    {
+      "functionId": "evidence.Evaluator.appendLenStr",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 73,
+      "endLine": 77,
+      "symbol": "sdurws::ird::evidence::(anonymous namespace)::appendLenStr",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp": [
+    {
+      "functionId": "evidence.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 23,
+      "endLine": 32,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt": [
+    {
+      "functionId": "evidence.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 131,
+      "endLine": 143,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp": [
+    {
+      "functionId": "execution.TaskScheduler.submit",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 163,
+      "endLine": 237,
+      "symbol": "sdurws::ird::execution::TaskScheduler::submit",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp": [
+    {
+      "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 264,
+      "endLine": 344,
+      "symbol": "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "execution.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 35,
+      "endLine": 53,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp": [
+    {
+      "functionId": "execution.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 31,
+      "endLine": 38,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt": [
+    {
+      "functionId": "execution.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 459,
+      "endLine": 471,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp": [
+    {
+      "functionId": "execution.ChannelProtocol.putU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 22,
+      "endLine": 63,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::putU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.putStr",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 65,
+      "endLine": 69,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::putStr",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.getStr",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 72,
+      "endLine": 87,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::getStr",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.putBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 89,
+      "endLine": 93,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::putBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.getBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 95,
+      "endLine": 109,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::getBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.digestToHex",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 112,
+      "endLine": 122,
+      "symbol": "sdurws::ird::execution::(anonymous namespace)::digestToHex",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeIdentityBlock",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 130,
+      "endLine": 155,
+      "symbol": "sdurws::ird::execution::encodeIdentityBlock",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeIdentityBlock",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 157,
+      "endLine": 198,
+      "symbol": "sdurws::ird::execution::decodeIdentityBlock",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeFrame",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 204,
+      "endLine": 234,
+      "symbol": "sdurws::ird::execution::encodeFrame",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.FrameAssembler.feed",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 236,
+      "endLine": 303,
+      "symbol": "sdurws::ird::execution::FrameAssembler::feed",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.FrameSequencer.FrameSequencer",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 309,
+      "endLine": 317,
+      "symbol": "sdurws::ird::execution::FrameSequencer::FrameSequencer",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.FrameSequencer.accept",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 319,
+      "endLine": 382,
+      "symbol": "sdurws::ird::execution::FrameSequencer::accept",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.FrameSequencer.gapTimedOut",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 384,
+      "endLine": 397,
+      "symbol": "sdurws::ird::execution::FrameSequencer::gapTimedOut",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.FrameSequencer.drainInOrder",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 399,
+      "endLine": 412,
+      "symbol": "sdurws::ird::execution::FrameSequencer::drainInOrder",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.isFragmentableType",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 418,
+      "endLine": 430,
+      "symbol": "sdurws::ird::execution::isFragmentableType",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.fragmentMessage",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 432,
+      "endLine": 468,
+      "symbol": "sdurws::ird::execution::fragmentMessage",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.MessageReassembler.accept",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 470,
+      "endLine": 567,
+      "symbol": "sdurws::ird::execution::MessageReassembler::accept",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.manifestDigestHex",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 824,
+      "endLine": 835,
+      "symbol": "sdurws::ird::execution::manifestDigestHex",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.computeContentIdentity",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 837,
+      "endLine": 845,
+      "symbol": "sdurws::ird::execution::computeContentIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.contentIdentityMatches",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 847,
+      "endLine": 851,
+      "symbol": "sdurws::ird::execution::contentIdentityMatches",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeHello",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 573,
+      "endLine": 579,
+      "symbol": "sdurws::ird::execution::encodeHello",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeHello",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 581,
+      "endLine": 597,
+      "symbol": "sdurws::ird::execution::decodeHello",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeHelloAck",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 599,
+      "endLine": 606,
+      "symbol": "sdurws::ird::execution::encodeHelloAck",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeHelloAck",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 608,
+      "endLine": 625,
+      "symbol": "sdurws::ird::execution::decodeHelloAck",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeDispatchRequest",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 627,
+      "endLine": 635,
+      "symbol": "sdurws::ird::execution::encodeDispatchRequest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeDispatchRequest",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 637,
+      "endLine": 663,
+      "symbol": "sdurws::ird::execution::decodeDispatchRequest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeProgress",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 665,
+      "endLine": 673,
+      "symbol": "sdurws::ird::execution::encodeProgress",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeProgress",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 675,
+      "endLine": 703,
+      "symbol": "sdurws::ird::execution::decodeProgress",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeResultBatch",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 705,
+      "endLine": 711,
+      "symbol": "sdurws::ird::execution::encodeResultBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeResultBatch",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 713,
+      "endLine": 729,
+      "symbol": "sdurws::ird::execution::decodeResultBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeCheckpointBatch",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 731,
+      "endLine": 737,
+      "symbol": "sdurws::ird::execution::encodeCheckpointBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeCheckpointBatch",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 739,
+      "endLine": 756,
+      "symbol": "sdurws::ird::execution::decodeCheckpointBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeFinalOutput",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 758,
+      "endLine": 765,
+      "symbol": "sdurws::ird::execution::encodeFinalOutput",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeFinalOutput",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 767,
+      "endLine": 789,
+      "symbol": "sdurws::ird::execution::decodeFinalOutput",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.encodeErrorReport",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 791,
+      "endLine": 798,
+      "symbol": "sdurws::ird::execution::encodeErrorReport",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    },
+    {
+      "functionId": "execution.ChannelProtocol.decodeErrorReport",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 800,
+      "endLine": 818,
+      "symbol": "sdurws::ird::execution::decodeErrorReport",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp": [
+    {
+      "functionId": "io.strictUtf8Check",
+      "capabilityId": "NONE",
+      "startLine": 145,
+      "endLine": 162,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::strictUtf8Check",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.canonicalizeJson",
+      "capabilityId": "NONE",
+      "startLine": 1651,
+      "endLine": 1678,
+      "symbol": "sdurws::ird::io::canonicalizeJson",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.parseObject",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 995,
+      "endLine": 1074,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseObject",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.parseArray",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 1077,
+      "endLine": 1121,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseArray",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.parseString",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 604,
+      "endLine": 720,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.readHex4",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 723,
+      "endLine": 747,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.appendUtf8",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 750,
+      "endLine": 767,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::appendUtf8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.Parser.parseNumber",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 788,
+      "endLine": 907,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseNumber",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Json.mapSystemError",
+      "capabilityId": "NONE",
+      "startLine": 174,
+      "endLine": 190,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp": [
+    {
+      "functionId": "io.Csv.DecodedStream.nextUtf8",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 409,
+      "endLine": 447,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Csv.DecodedStream.nextUtf16ToUtf8",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 450,
+      "endLine": 516,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf16ToUtf8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    },
+    {
+      "functionId": "io.Csv.mapSystemError",
+      "capabilityId": "NONE",
+      "startLine": 1066,
+      "endLine": 1082,
+      "symbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "io.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 34,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp": [
+    {
+      "functionId": "io.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 35,
+      "endLine": 44,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt": [
+    {
+      "functionId": "io.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 252,
+      "endLine": 264,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/io.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp": [
+    {
+      "functionId": "kinematics.FkEvaluator.evaluate",
+      "capabilityId": "KIN-FK",
+      "startLine": 174,
+      "endLine": 445,
+      "symbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.FkEvaluator.evaluate",
+      "capabilityId": "MATH-SVD",
+      "startLine": 174,
+      "endLine": 445,
+      "symbol": "sdurws::ird::kinematics::FkEvaluator::evaluate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp": [
+    {
+      "functionId": "kinematics.IkSolver.solve",
+      "capabilityId": "KIN-IK",
+      "startLine": 565,
+      "endLine": 1044,
+      "symbol": "sdurws::ird::kinematics::IkSolver::solve",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.nearestToolRollTarget",
+      "capabilityId": "KIN-IK",
+      "startLine": 255,
+      "endLine": 280,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::nearestToolRollTarget",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.transposeOf",
+      "capabilityId": "MATH-ROT",
+      "startLine": 221,
+      "endLine": 225,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.composeOf",
+      "capabilityId": "MATH-ROT",
+      "startLine": 228,
+      "endLine": 241,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.zyxEulerAngles",
+      "capabilityId": "MATH-ROT",
+      "startLine": 194,
+      "endLine": 212,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.poseError",
+      "capabilityId": "MATH-ROT",
+      "startLine": 150,
+      "endLine": 183,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.constrainedPoseError",
+      "capabilityId": "KIN-IK",
+      "startLine": 295,
+      "endLine": 322,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.constrainedDampedLeastSquaresStep",
+      "capabilityId": "KIN-IK",
+      "startLine": 336,
+      "endLine": 368,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.dampedLeastSquaresStep",
+      "capabilityId": "KIN-IK",
+      "startLine": 379,
+      "endLine": 401,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.makeInitialValues",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 503,
+      "endLine": 559,
+      "symbol": "sdurws::ird::kinematics::makeInitialValues",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp": [
+    {
+      "functionId": "kinematics.orientBoxPoint",
+      "capabilityId": "MATH-ROT",
+      "startLine": 87,
+      "endLine": 96,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.orientSampleRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 105,
+      "endLine": 113,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.poseFromDirectionRoll",
+      "capabilityId": "MATH-ROT",
+      "startLine": 359,
+      "endLine": 418,
+      "symbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.validateBoxOrientation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 56,
+      "endLine": 78,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.generateRandomPositions",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 308,
+      "endLine": 328,
+      "symbol": "sdurws::ird::kinematics::generateRandomPositions",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.generateGridPositions",
+      "capabilityId": "NONE",
+      "startLine": 261,
+      "endLine": 305,
+      "symbol": "sdurws::ird::kinematics::generateGridPositions",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.generateDirections",
+      "capabilityId": "GEOM-SPHERE-SAMPLING",
+      "startLine": 330,
+      "endLine": 344,
+      "symbol": "sdurws::ird::kinematics::generateDirections",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp": [
+    {
+      "functionId": "kinematics.splitmix64",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 34,
+      "endLine": 41,
+      "symbol": "sdurws::ird::kinematics::kseed::splitmix64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.streamSeedFor",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 61,
+      "endLine": 69,
+      "symbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp": [
+    {
+      "functionId": "kinematics.rodrigues",
+      "capabilityId": "KIN-FK",
+      "startLine": 380,
+      "endLine": 397,
+      "symbol": "sdurws::ird::kinematics::testfixture::rodrigues",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.mul4",
+      "capabilityId": "KIN-FK",
+      "startLine": 408,
+      "endLine": 419,
+      "symbol": "sdurws::ird::kinematics::testfixture::mul4",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.referenceFk",
+      "capabilityId": "KIN-FK",
+      "startLine": 429,
+      "endLine": 518,
+      "symbol": "sdurws::ird::kinematics::testfixture::referenceFk",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.TestView",
+      "capabilityId": "KIN-FK",
+      "startLine": 337,
+      "endLine": 351,
+      "symbol": "sdurws::ird::kinematics::testfixture::TestView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp": [
+    {
+      "functionId": "kinematics.IKinRuntimeView",
+      "capabilityId": "KIN-FK",
+      "startLine": 141,
+      "endLine": 154,
+      "symbol": "sdurws::ird::kinematics::IKinRuntimeView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp": [
+    {
+      "functionId": "kinematics.FrozenRuntimeView",
+      "capabilityId": "KIN-FK",
+      "startLine": 74,
+      "endLine": 91,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::FrozenRuntimeView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp": [
+    {
+      "functionId": "kinematics.MidSolveDegradedView",
+      "capabilityId": "KIN-FK",
+      "startLine": 241,
+      "endLine": 264,
+      "symbol": "::MidSolveDegradedView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp": [
+    {
+      "functionId": "kinematics.RigView",
+      "capabilityId": "KIN-FK",
+      "startLine": 191,
+      "endLine": 202,
+      "symbol": "(anonymous namespace)::RigView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "kinematics.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 19,
+      "endLine": 26,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp": [
+    {
+      "functionId": "kinematics.gui_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 34,
+      "endLine": 47,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp": [
+    {
+      "functionId": "kinematics.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 42,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt": [
+    {
+      "functionId": "kinematics.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 498,
+      "endLine": 510,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp": [
+    {
+      "functionId": "kinematics.Envelope.probeSeedFor",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 63,
+      "endLine": 66,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.Envelope.failCaller",
+      "capabilityId": "NONE",
+      "startLine": 69,
+      "endLine": 72,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.Envelope.probeReachability",
+      "capabilityId": "KIN-IK",
+      "startLine": 127,
+      "endLine": 209,
+      "symbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    },
+    {
+      "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+      "capabilityId": "KIN-IK",
+      "startLine": 217,
+      "endLine": 481,
+      "symbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp": [
+    {
+      "functionId": "modeling.symmetricEigenvalues3x3",
+      "capabilityId": "MATH-EIGEN",
+      "startLine": 54,
+      "endLine": 91,
+      "symbol": "sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp": [
+    {
+      "functionId": "modeling.accumulateRotatedInertia",
+      "capabilityId": "MATH-INERTIA",
+      "startLine": 92,
+      "endLine": 102,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateRotatedInertia",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.accumulateParallelAxis",
+      "capabilityId": "MATH-INERTIA",
+      "startLine": 106,
+      "endLine": 116,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::accumulateParallelAxis",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp": [
+    {
+      "functionId": "modeling.couplingSingularValues",
+      "capabilityId": "MATH-SVD",
+      "startLine": 111,
+      "endLine": 188,
+      "symbol": "sdurws::ird::modeling::couplingmath::couplingSingularValues",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp": [
+    {
+      "functionId": "modeling.rpyToRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 47,
+      "endLine": 64,
+      "symbol": "sdurws::ird::modeling::rpymath::rpyToRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rpyToEaa",
+      "capabilityId": "MATH-ROT",
+      "startLine": 74,
+      "endLine": 93,
+      "symbol": "sdurws::ird::modeling::rpymath::rpyToEaa",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp": [
+    {
+      "functionId": "modeling.rotVec",
+      "capabilityId": "MATH-ROT",
+      "startLine": 169,
+      "endLine": 176,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotVec",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotMul",
+      "capabilityId": "MATH-ROT",
+      "startLine": 181,
+      "endLine": 193,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotMul",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.transformMul",
+      "capabilityId": "MATH-ROT",
+      "startLine": 196,
+      "endLine": 203,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::transformMul",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotZ",
+      "capabilityId": "MATH-ROT",
+      "startLine": 206,
+      "endLine": 213,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotZ",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotX",
+      "capabilityId": "MATH-ROT",
+      "startLine": 216,
+      "endLine": 223,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotX",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.axisAngleRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 228,
+      "endLine": 241,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::axisAngleRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotateTranspose",
+      "capabilityId": "MATH-ROT",
+      "startLine": 888,
+      "endLine": 895,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTranspose",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotateTransposeFrame",
+      "capabilityId": "MATH-ROT",
+      "startLine": 898,
+      "endLine": 910,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotateTransposeFrame",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rotationAngleBetween",
+      "capabilityId": "MATH-ROT",
+      "startLine": 372,
+      "endLine": 390,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotationAngleBetween",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.dhCoreTransform",
+      "capabilityId": "MATH-DH",
+      "startLine": 260,
+      "endLine": 264,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::dhCoreTransform",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.dhStaticSegment",
+      "capabilityId": "MATH-DH",
+      "startLine": 273,
+      "endLine": 277,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::dhStaticSegment",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.dhRebuildStep",
+      "capabilityId": "MATH-DH",
+      "startLine": 300,
+      "endLine": 317,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::dhRebuildStep",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.solveLinearSystem",
+      "capabilityId": "NONE",
+      "startLine": 504,
+      "endLine": 543,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::solveLinearSystem",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.numericJacobian",
+      "capabilityId": "NONE",
+      "startLine": 553,
+      "endLine": 584,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::numericJacobian",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.lmSolve",
+      "capabilityId": "NONE",
+      "startLine": 607,
+      "endLine": 723,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::lmSolve",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.rankAndFreeColumns",
+      "capabilityId": "NONE",
+      "startLine": 735,
+      "endLine": 778,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rankAndFreeColumns",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.zeroConfigFK",
+      "capabilityId": "KIN-FK",
+      "startLine": 1780,
+      "endLine": 1799,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::zeroConfigFK",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp": [
+    {
+      "functionId": "modeling.rotateInertia",
+      "capabilityId": "MATH-INERTIA",
+      "startLine": 261,
+      "endLine": 296,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotateInertia",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp": [
+    {
+      "functionId": "modeling.rotationToRpy",
+      "capabilityId": "MATH-ROT",
+      "startLine": 72,
+      "endLine": 81,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::rotationToRpy",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp": [
+    {
+      "functionId": "modeling.makeLinkPlaceholderCylinder",
+      "capabilityId": "MATH-ROT",
+      "startLine": 1097,
+      "endLine": 1178,
+      "symbol": "sdurws::ird::modeling::makeLinkPlaceholderCylinder",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "modeling.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 19,
+      "endLine": 26,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/gui_test/TestMainReport.cpp": [
+    {
+      "functionId": "modeling.gui_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 39,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp": [
+    {
+      "functionId": "modeling.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 31,
+      "endLine": 46,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt": [
+    {
+      "functionId": "modeling.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 664,
+      "endLine": 676,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp": [
+    {
+      "functionId": "modeling.XacroExpand.xacroExpandErrorCodeToken",
+      "capabilityId": "UTIL-XML",
+      "startLine": 73,
+      "endLine": 83,
+      "symbol": "sdurws::ird::modeling::xacroExpandErrorCodeToken",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.LineIndex.LineIndex",
+      "capabilityId": "UTIL-XML",
+      "startLine": 98,
+      "endLine": 104,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::LineIndex::LineIndex",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.LineIndex.lineColumn",
+      "capabilityId": "UTIL-XML",
+      "startLine": 107,
+      "endLine": 115,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::LineIndex::lineColumn",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.flushDiags",
+      "capabilityId": "UTIL-XML",
+      "startLine": 148,
+      "endLine": 161,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::flushDiags",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.escapeXmlText",
+      "capabilityId": "UTIL-XML",
+      "startLine": 172,
+      "endLine": 185,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::escapeXmlText",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.escapeXmlAttribute",
+      "capabilityId": "UTIL-XML",
+      "startLine": 191,
+      "endLine": 205,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::escapeXmlAttribute",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.isPlainIdentifier",
+      "capabilityId": "UTIL-XML",
+      "startLine": 219,
+      "endLine": 233,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::isPlainIdentifier",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.SourceFile.SourceFile",
+      "capabilityId": "UTIL-XML",
+      "startLine": 263,
+      "endLine": 264,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::SourceFile::SourceFile",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.fail",
+      "capabilityId": "UTIL-XML",
+      "startLine": 300,
+      "endLine": 311,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::fail",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.pushUnresolvedDiag",
+      "capabilityId": "UTIL-XML",
+      "startLine": 316,
+      "endLine": 333,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::pushUnresolvedDiag",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.pushIoPassthroughDiag",
+      "capabilityId": "UTIL-XML",
+      "startLine": 337,
+      "endLine": 351,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::pushIoPassthroughDiag",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.spanOf",
+      "capabilityId": "UTIL-XML",
+      "startLine": 354,
+      "endLine": 358,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::spanOf",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.Engine.resolveSymbol",
+      "capabilityId": "UTIL-XML",
+      "startLine": 362,
+      "endLine": 373,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::Engine::resolveSymbol",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.substituteText",
+      "capabilityId": "UTIL-XML",
+      "startLine": 403,
+      "endLine": 506,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::substituteText",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.emitChildren",
+      "capabilityId": "UTIL-XML",
+      "startLine": 524,
+      "endLine": 546,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::emitChildren",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.emitElement",
+      "capabilityId": "UTIL-XML",
+      "startLine": 557,
+      "endLine": 872,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::emitElement",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.detectIncludeCycle",
+      "capabilityId": "UTIL-XML",
+      "startLine": 882,
+      "endLine": 924,
+      "symbol": "sdurws::ird::modeling::(anonymous namespace)::detectIncludeCycle",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    },
+    {
+      "functionId": "modeling.XacroExpand.XacroExpandService.expand",
+      "capabilityId": "UTIL-XML",
+      "startLine": 933,
+      "endLine": 1142,
+      "symbol": "sdurws::ird::modeling::XacroExpandService::expand",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp": [
+    {
+      "functionId": "optimization.generateSeededLhsCandidates",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 404,
+      "endLine": 528,
+      "symbol": "sdurws::ird::optimization::generateSeededLhsCandidates",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/JointStrategy.cpp": [
+    {
+      "functionId": "optimization.nextU64",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 161,
+      "endLine": 168,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.nextUnit",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 172,
+      "endLine": 175,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::SplitMix64::nextUnit",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.makeLayerPermutation",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 183,
+      "endLine": 196,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::makeLayerPermutation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.generateStageDJointCandidates",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 704,
+      "endLine": 909,
+      "symbol": "sdurws::ird::optimization::generateStageDJointCandidates",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "optimization.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 38,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp": [
+    {
+      "functionId": "optimization.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 28,
+      "endLine": 39,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt": [
+    {
+      "functionId": "optimization.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 458,
+      "endLine": 470,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp": [
+    {
+      "functionId": "optimization.Pareto.slotValue",
+      "capabilityId": "NONE",
+      "startLine": 30,
+      "endLine": 33,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::slotValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Pareto.notWorse",
+      "capabilityId": "NONE",
+      "startLine": 37,
+      "endLine": 46,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::notWorse",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Pareto.strictlyBetter",
+      "capabilityId": "NONE",
+      "startLine": 50,
+      "endLine": 57,
+      "symbol": "sdurws::ird::optimization::(anonymous namespace)::strictlyBetter",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Pareto.dominates",
+      "capabilityId": "NONE",
+      "startLine": 65,
+      "endLine": 88,
+      "symbol": "sdurws::ird::optimization::dominates",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+      "capabilityId": "NONE",
+      "startLine": 94,
+      "endLine": 291,
+      "symbol": "sdurws::ird::optimization::ParetoFrontBuilder::buildFront",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp": [
+    {
+      "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+      "capabilityId": "NONE",
+      "startLine": 32,
+      "endLine": 37,
+      "symbol": "sdurws::ird::optimization::SeededLhsGenerator::strategyId",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+      "capabilityId": "MATH-RANDOM",
+      "startLine": 39,
+      "endLine": 61,
+      "symbol": "sdurws::ird::optimization::SeededLhsGenerator::generateNextBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.validateBaselinePerturbParams",
+      "capabilityId": "NONE",
+      "startLine": 67,
+      "endLine": 98,
+      "symbol": "sdurws::ird::optimization::validateBaselinePerturbParams",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+      "capabilityId": "NONE",
+      "startLine": 105,
+      "endLine": 108,
+      "symbol": "sdurws::ird::optimization::BaselinePerturbGenerator::strategyId",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+      "capabilityId": "NONE",
+      "startLine": 110,
+      "endLine": 229,
+      "symbol": "sdurws::ird::optimization::BaselinePerturbGenerator::generateNextBatch",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.builtInStrategyIds",
+      "capabilityId": "NONE",
+      "startLine": 235,
+      "endLine": 246,
+      "symbol": "sdurws::ird::optimization::builtInStrategyIds",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    },
+    {
+      "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+      "capabilityId": "NONE",
+      "startLine": 248,
+      "endLine": 280,
+      "symbol": "sdurws::ird::optimization::generateWithBuiltInStrategy",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp": [
+    {
+      "functionId": "policy.RobWorkCollisionEvaluator.createSession",
+      "capabilityId": "COLLISION",
+      "startLine": 82,
+      "endLine": 93,
+      "symbol": "sdurws::ird::policy::RobWorkCollisionEvaluator::createSession",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp": [
+    {
+      "functionId": "policy.CollisionEvaluationSession.evaluate",
+      "capabilityId": "COLLISION",
+      "startLine": 372,
+      "endLine": 712,
+      "symbol": "sdurws::ird::policy::CollisionEvaluationSession::evaluate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/PolicyInput.cpp": [
+    {
+      "functionId": "policy.ByteWriter.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 88,
+      "endLine": 94,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    },
+    {
+      "functionId": "policy.ByteWriter.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 116,
+      "endLine": 120,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    },
+    {
+      "functionId": "policy.ByteWriter.lengthPrefixedText",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 103,
+      "endLine": 113,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteWriter::lengthPrefixedText",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    },
+    {
+      "functionId": "policy.ByteReader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 168,
+      "endLine": 179,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    },
+    {
+      "functionId": "policy.ByteReader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 212,
+      "endLine": 220,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    },
+    {
+      "functionId": "policy.ByteReader.text",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 200,
+      "endLine": 209,
+      "symbol": "sdurws::ird::policy::(anonymous namespace)::ByteReader::text",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp": [
+    {
+      "functionId": "policy.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 23,
+      "endLine": 32,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt": [
+    {
+      "functionId": "policy.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 316,
+      "endLine": 328,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/policy.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp": [
+    {
+      "functionId": "project.ObjectStore.publishObject",
+      "capabilityId": "UTIL-FILE",
+      "startLine": 179,
+      "endLine": 322,
+      "symbol": "sdurws::ird::project::objstore::ObjectStore::publishObject",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.ObjectStore.readVerified",
+      "capabilityId": "UTIL-FILE",
+      "startLine": 328,
+      "endLine": 389,
+      "symbol": "sdurws::ird::project::objstore::ObjectStore::readVerified",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp": [
+    {
+      "functionId": "project.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 32,
+      "endLine": 41,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt": [
+    {
+      "functionId": "project.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 639,
+      "endLine": 651,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp": [
+    {
+      "functionId": "project.Codec.anonymous.corrupt",
+      "capabilityId": "NONE",
+      "startLine": 62,
+      "endLine": 65,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::corrupt",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.checkSchemaVersion",
+      "capabilityId": "NONE",
+      "startLine": 84,
+      "endLine": 110,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::checkSchemaVersion",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.checkFormatId",
+      "capabilityId": "NONE",
+      "startLine": 117,
+      "endLine": 124,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::checkFormatId",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.findMember",
+      "capabilityId": "NONE",
+      "startLine": 144,
+      "endLine": 150,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::findMember",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.JsonParser",
+      "capabilityId": "NONE",
+      "startLine": 162,
+      "endLine": 165,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::JsonParser",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseDocument",
+      "capabilityId": "NONE",
+      "startLine": 169,
+      "endLine": 176,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseDocument",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.atEnd",
+      "capabilityId": "NONE",
+      "startLine": 184,
+      "endLine": 184,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::atEnd",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.peek",
+      "capabilityId": "NONE",
+      "startLine": 187,
+      "endLine": 191,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::peek",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.next",
+      "capabilityId": "NONE",
+      "startLine": 194,
+      "endLine": 199,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::next",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.expect",
+      "capabilityId": "NONE",
+      "startLine": 202,
+      "endLine": 209,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::expect",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.printable",
+      "capabilityId": "NONE",
+      "startLine": 212,
+      "endLine": 221,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::printable",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseValue",
+      "capabilityId": "NONE",
+      "startLine": 224,
+      "endLine": 252,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseObject",
+      "capabilityId": "NONE",
+      "startLine": 255,
+      "endLine": 278,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseObject",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseArray",
+      "capabilityId": "NONE",
+      "startLine": 281,
+      "endLine": 296,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseArray",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseString",
+      "capabilityId": "NONE",
+      "startLine": 299,
+      "endLine": 320,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseEscape",
+      "capabilityId": "NONE",
+      "startLine": 323,
+      "endLine": 340,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseEscape",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseHex4",
+      "capabilityId": "NONE",
+      "startLine": 344,
+      "endLine": 356,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseHex4",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseUnicodeEscape",
+      "capabilityId": "NONE",
+      "startLine": 360,
+      "endLine": 379,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseUnicodeEscape",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.appendUtf8",
+      "capabilityId": "NONE",
+      "startLine": 382,
+      "endLine": 399,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::appendUtf8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.JsonParser.parseNumber",
+      "capabilityId": "NONE",
+      "startLine": 403,
+      "endLine": 441,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::JsonParser::parseNumber",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.decodeUtf8At",
+      "capabilityId": "NONE",
+      "startLine": 454,
+      "endLine": 494,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::decodeUtf8At",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.appendUnicodeEscape",
+      "capabilityId": "NONE",
+      "startLine": 498,
+      "endLine": 515,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::appendUnicodeEscape",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.appendJsonString",
+      "capabilityId": "NONE",
+      "startLine": 527,
+      "endLine": 569,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::appendJsonString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.appendHexString",
+      "capabilityId": "NONE",
+      "startLine": 578,
+      "endLine": 588,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::appendHexString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.decodeHexString",
+      "capabilityId": "NONE",
+      "startLine": 592,
+      "endLine": 614,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::decodeHexString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.appendRefPair",
+      "capabilityId": "NONE",
+      "startLine": 637,
+      "endLine": 644,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::appendRefPair",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireMember",
+      "capabilityId": "NONE",
+      "startLine": 651,
+      "endLine": 655,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireMember",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireStringField",
+      "capabilityId": "NONE",
+      "startLine": 658,
+      "endLine": 665,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireStringField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.hasMember",
+      "capabilityId": "NONE",
+      "startLine": 668,
+      "endLine": 671,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::hasMember",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.integerInRange",
+      "capabilityId": "NONE",
+      "startLine": 675,
+      "endLine": 705,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::integerInRange",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireIntField",
+      "capabilityId": "NONE",
+      "startLine": 708,
+      "endLine": 713,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireIntField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireUint64Field",
+      "capabilityId": "NONE",
+      "startLine": 716,
+      "endLine": 720,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireUint64Field",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireUint32Field",
+      "capabilityId": "NONE",
+      "startLine": 723,
+      "endLine": 727,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireUint32Field",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireObjectField",
+      "capabilityId": "NONE",
+      "startLine": 730,
+      "endLine": 737,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireObjectField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireArrayField",
+      "capabilityId": "NONE",
+      "startLine": 740,
+      "endLine": 747,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireArrayField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireTokenField",
+      "capabilityId": "NONE",
+      "startLine": 756,
+      "endLine": 771,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireTokenField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requirePathField",
+      "capabilityId": "NONE",
+      "startLine": 779,
+      "endLine": 794,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requirePathField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireHex64Field",
+      "capabilityId": "NONE",
+      "startLine": 799,
+      "endLine": 813,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireHex64Field",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireIdField",
+      "capabilityId": "NONE",
+      "startLine": 818,
+      "endLine": 827,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireIdField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.optionalIdField",
+      "capabilityId": "NONE",
+      "startLine": 830,
+      "endLine": 835,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::optionalIdField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.parseRefPair",
+      "capabilityId": "NONE",
+      "startLine": 845,
+      "endLine": 852,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::parseRefPair",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.optionalRefPairField",
+      "capabilityId": "NONE",
+      "startLine": 855,
+      "endLine": 860,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::optionalRefPairField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.requireTimestampField",
+      "capabilityId": "NONE",
+      "startLine": 864,
+      "endLine": 867,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::requireTimestampField",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.rejectUnknownFields",
+      "capabilityId": "NONE",
+      "startLine": 872,
+      "endLine": 889,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::rejectUnknownFields",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.anonymous.parsePreambleVersioned",
+      "capabilityId": "NONE",
+      "startLine": 895,
+      "endLine": 904,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::parsePreambleVersioned",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.ProjectId",
+      "capabilityId": "NONE",
+      "startLine": 617,
+      "endLine": 617,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.BranchId",
+      "capabilityId": "NONE",
+      "startLine": 620,
+      "endLine": 620,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.RevisionId",
+      "capabilityId": "NONE",
+      "startLine": 623,
+      "endLine": 623,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.sdurws.ird.core.RunId",
+      "capabilityId": "NONE",
+      "startLine": 628,
+      "endLine": 628,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.ObjectId",
+      "capabilityId": "NONE",
+      "startLine": 631,
+      "endLine": 631,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.canonical.ContentVersion",
+      "capabilityId": "NONE",
+      "startLine": 634,
+      "endLine": 634,
+      "symbol": "sdurws::ird::project::codec::(anonymous namespace)::canonical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.ProjectStaticIdentity",
+      "capabilityId": "NONE",
+      "startLine": 914,
+      "endLine": 929,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.HeadRecord",
+      "capabilityId": "NONE",
+      "startLine": 931,
+      "endLine": 947,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.RevisionManifest",
+      "capabilityId": "NONE",
+      "startLine": 949,
+      "endLine": 988,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.ProjectMetadataRecord",
+      "capabilityId": "NONE",
+      "startLine": 990,
+      "endLine": 1032,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.CommandRecord",
+      "capabilityId": "NONE",
+      "startLine": 1034,
+      "endLine": 1086,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.DraftDocument",
+      "capabilityId": "NONE",
+      "startLine": 1088,
+      "endLine": 1126,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.dump.RunManifest",
+      "capabilityId": "NONE",
+      "startLine": 1128,
+      "endLine": 1164,
+      "symbol": "sdurws::ird::project::codec::dump",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseStaticIdentity",
+      "capabilityId": "NONE",
+      "startLine": 1168,
+      "endLine": 1184,
+      "symbol": "sdurws::ird::project::codec::parseStaticIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseHeadRecord",
+      "capabilityId": "NONE",
+      "startLine": 1186,
+      "endLine": 1204,
+      "symbol": "sdurws::ird::project::codec::parseHeadRecord",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseRevisionManifest",
+      "capabilityId": "NONE",
+      "startLine": 1206,
+      "endLine": 1260,
+      "symbol": "sdurws::ird::project::codec::parseRevisionManifest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseMetadataRecord",
+      "capabilityId": "NONE",
+      "startLine": 1262,
+      "endLine": 1309,
+      "symbol": "sdurws::ird::project::codec::parseMetadataRecord",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseCommandRecord",
+      "capabilityId": "NONE",
+      "startLine": 1311,
+      "endLine": 1393,
+      "symbol": "sdurws::ird::project::codec::parseCommandRecord",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseDraftDocument",
+      "capabilityId": "NONE",
+      "startLine": 1395,
+      "endLine": 1445,
+      "symbol": "sdurws::ird::project::codec::parseDraftDocument",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.parseRunManifest",
+      "capabilityId": "NONE",
+      "startLine": 1447,
+      "endLine": 1506,
+      "symbol": "sdurws::ird::project::codec::parseRunManifest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.contentVersionOf",
+      "capabilityId": "NONE",
+      "startLine": 1510,
+      "endLine": 1520,
+      "symbol": "sdurws::ird::project::codec::contentVersionOf",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.toToken",
+      "capabilityId": "NONE",
+      "startLine": 1529,
+      "endLine": 1537,
+      "symbol": "sdurws::ird::project::toToken",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    },
+    {
+      "functionId": "project.Codec.public.draftOriginFromToken",
+      "capabilityId": "NONE",
+      "startLine": 1539,
+      "endLine": 1545,
+      "symbol": "sdurws::ird::project::draftOriginFromToken",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Archive.cpp": [
+    {
+      "functionId": "reporting.ReportArchiveCoordinator.publish",
+      "capabilityId": "UTIL-FILE",
+      "startLine": 226,
+      "endLine": 512,
+      "symbol": "sdurws::ird::reporting::ReportArchiveCoordinator::publish",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp": [
+    {
+      "functionId": "reporting.contract_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 35,
+      "endLine": 42,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp": [
+    {
+      "functionId": "reporting.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 38,
+      "endLine": 45,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/CMakeLists.txt": [
+    {
+      "functionId": "reporting.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 409,
+      "endLine": 421,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp": [
+    {
+      "functionId": "reporting.ReportCodec.Writer.u8",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 53,
+      "endLine": 53,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.u16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 54,
+      "endLine": 58,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 59,
+      "endLine": 65,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.u64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 66,
+      "endLine": 71,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::u64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.i64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 74,
+      "endLine": 74,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::i64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 78,
+      "endLine": 88,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.boolean",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 91,
+      "endLine": 91,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::boolean",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.presence",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 94,
+      "endLine": 94,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::presence",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.raw",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 97,
+      "endLine": 100,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::raw",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.string",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 103,
+      "endLine": 111,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::string",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.unitToken",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 115,
+      "endLine": 122,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::unitToken",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.u8",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 145,
+      "endLine": 149,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u8",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.u16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 150,
+      "endLine": 157,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 158,
+      "endLine": 167,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.u64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 168,
+      "endLine": 177,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::u64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.i64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 178,
+      "endLine": 178,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::i64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 181,
+      "endLine": 191,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.boolean",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 193,
+      "endLine": 201,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::boolean",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.presence",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 204,
+      "endLine": 212,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::presence",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.raw",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 215,
+      "endLine": 220,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::raw",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.string",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 230,
+      "endLine": 241,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::string",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.unitToken",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 244,
+      "endLine": 253,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::unitToken",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Writer.take",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 125,
+      "endLine": 125,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Writer::take",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.pointer",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 138,
+      "endLine": 138,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::Reader",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.vector",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 140,
+      "endLine": 143,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::Reader",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.rawArray",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 222,
+      "endLine": 227,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::rawArray",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.expectEnd",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 256,
+      "endLine": 263,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::expectEnd",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Reader.need",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 267,
+      "endLine": 274,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::Reader::need",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Header",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 286,
+      "endLine": 290,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeHeader",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Header",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 293,
+      "endLine": 308,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readHeader",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Time",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 323,
+      "endLine": 327,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeTime",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Time",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 329,
+      "endLine": 337,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readTime",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Enum",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 344,
+      "endLine": 348,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeEnum",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Enum",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 352,
+      "endLine": 362,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readEnum",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.OptionalIdentity",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 381,
+      "endLine": 387,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeOptionalIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.OptionalIdentity",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 389,
+      "endLine": 397,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readOptionalIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.TaskIdentity",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 401,
+      "endLine": 408,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeTaskIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.TaskIdentity",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 410,
+      "endLine": 419,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readTaskIdentity",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Provenance",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 427,
+      "endLine": 442,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeProvenance",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Provenance",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 444,
+      "endLine": 462,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readProvenance",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SourcedDouble",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 466,
+      "endLine": 481,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeSourcedDouble",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SourcedDouble",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 483,
+      "endLine": 500,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readSourcedDouble",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ComparativeValue",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 503,
+      "endLine": 507,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeComparativeValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ComparativeValue",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 509,
+      "endLine": 515,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readComparativeValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ComparativeFields",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 518,
+      "endLine": 522,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeComparativeFields",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ComparativeFields",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 524,
+      "endLine": 530,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readComparativeFields",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.InvalidationReason",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 534,
+      "endLine": 539,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeInvalidationReason",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.InvalidationReason",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 541,
+      "endLine": 549,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readInvalidationReason",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.BaselineResult",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 553,
+      "endLine": 560,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeBaselineResult",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.BaselineResult",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 562,
+      "endLine": 574,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readBaselineResult",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.FieldValue",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 581,
+      "endLine": 593,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeFieldValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.FieldValue",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 595,
+      "endLine": 607,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readFieldValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ResultBinding",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 610,
+      "endLine": 614,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeResultBinding",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ResultBinding",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 616,
+      "endLine": 622,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readResultBinding",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.EvidenceBinding",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 625,
+      "endLine": 637,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeEvidenceBinding",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.EvidenceBinding",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 639,
+      "endLine": 656,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readEvidenceBinding",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.JumpTarget",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 659,
+      "endLine": 673,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeJumpTarget",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.JumpTarget",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 675,
+      "endLine": 694,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readJumpTarget",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SectionEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 698,
+      "endLine": 715,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeSectionEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SectionEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 717,
+      "endLine": 741,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readSectionEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.MissingItem",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 744,
+      "endLine": 748,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeMissingItem",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.MissingItem",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 750,
+      "endLine": 756,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readMissingItem",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.EligibilityNote",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 760,
+      "endLine": 765,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeEligibilityNote",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.EligibilityNote",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 767,
+      "endLine": 774,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readEligibilityNote",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.DiagRefEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 779,
+      "endLine": 806,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeDiagRefEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.DiagRefEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 808,
+      "endLine": 838,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readDiagRefEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.CurrentnessSnapshot",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 846,
+      "endLine": 867,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeCurrentnessSnapshot",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.CurrentnessSnapshot",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 869,
+      "endLine": 887,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readCurrentnessSnapshot",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Section",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 892,
+      "endLine": 928,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeSection",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.Section",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 930,
+      "endLine": 975,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readSection",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ReviewComment",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 982,
+      "endLine": 991,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeReviewComment",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ReviewComment",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 993,
+      "endLine": 1003,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readReviewComment",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SignOff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1007,
+      "endLine": 1013,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeSignOff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.SignOff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1015,
+      "endLine": 1023,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readSignOff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.TradeOff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1026,
+      "endLine": 1034,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeTradeOff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.TradeOff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1036,
+      "endLine": 1045,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readTradeOff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.VariantDiff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1049,
+      "endLine": 1059,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeVariantDiff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.VariantDiff",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1061,
+      "endLine": 1074,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readVariantDiff",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.VersionEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1078,
+      "endLine": 1085,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeVersionEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.VersionEntry",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1087,
+      "endLine": 1096,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readVersionEntry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ReviewMetadata",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1101,
+      "endLine": 1126,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeReviewMetadata",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ReviewMetadata",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1128,
+      "endLine": 1154,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readReviewMetadata",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ResultDataSourceRef",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1164,
+      "endLine": 1174,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeResultDataSourceRef",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.ResultDataSourceRef",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1176,
+      "endLine": 1191,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readResultDataSourceRef",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.UnitPreference",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1195,
+      "endLine": 1202,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::writeUnitPreference",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.UnitPreference",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1204,
+      "endLine": 1219,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::readUnitPreference",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.anonymous.digestBytes",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 312,
+      "endLine": 319,
+      "symbol": "sdurws::ird::reporting::(anonymous namespace)::digestBytes",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.encodeData",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1227,
+      "endLine": 1253,
+      "symbol": "sdurws::ird::reporting::ReportCodec::encodeData",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.parseData",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1255,
+      "endLine": 1283,
+      "symbol": "sdurws::ird::reporting::ReportCodec::parseData",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.digestData",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1285,
+      "endLine": 1290,
+      "symbol": "sdurws::ird::reporting::ReportCodec::digestData",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.encodeFull",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1296,
+      "endLine": 1325,
+      "symbol": "sdurws::ird::reporting::ReportCodec::encodeFull",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.parseFull",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1327,
+      "endLine": 1365,
+      "symbol": "sdurws::ird::reporting::ReportCodec::parseFull",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    },
+    {
+      "functionId": "reporting.ReportCodec.public.ReportCodec.digestFull",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 1367,
+      "endLine": 1390,
+      "symbol": "sdurws::ird::reporting::ReportCodec::digestFull",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp": [
+    {
+      "functionId": "requirements.SamplingPlanBuilder.buildPlan",
+      "capabilityId": "NONE",
+      "startLine": 35,
+      "endLine": 83,
+      "symbol": "sdurws::ird::requirements::SamplingPlanBuilder::buildPlan",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.SamplingPlanBuilder.digest",
+      "capabilityId": "NONE",
+      "startLine": 85,
+      "endLine": 130,
+      "symbol": "sdurws::ird::requirements::SamplingPlanBuilder::digest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp": [
+    {
+      "functionId": "requirements.reflectPosition",
+      "capabilityId": "MATH-ROT",
+      "startLine": 219,
+      "endLine": 226,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::reflectPosition",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.rotationFromRpy",
+      "capabilityId": "MATH-ROT",
+      "startLine": 230,
+      "endLine": 243,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::rotationFromRpy",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.reflectionMatrix",
+      "capabilityId": "MATH-ROT",
+      "startLine": 246,
+      "endLine": 253,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::reflectionMatrix",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.matMul",
+      "capabilityId": "MATH-ROT",
+      "startLine": 256,
+      "endLine": 273,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::matMul",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.reflectRpy",
+      "capabilityId": "MATH-ROT",
+      "startLine": 289,
+      "endLine": 330,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::reflectRpy",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp": [
+    {
+      "functionId": "requirements.targetEditRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 72,
+      "endLine": 78,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.targetEditRpy",
+      "capabilityId": "MATH-ROT",
+      "startLine": 80,
+      "endLine": 86,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRpy",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    },
+    {
+      "functionId": "requirements.finiteTargetEditPose",
+      "capabilityId": "MATH-ROT",
+      "startLine": 88,
+      "endLine": 104,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::finiteTargetEditPose",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp": [
+    {
+      "functionId": "requirements.rotationToRpyPresentation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 75,
+      "endLine": 85,
+      "symbol": "sdurws::ird::requirements::(anonymous namespace)::rotationToRpyPresentation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "requirements.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 19,
+      "endLine": 26,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp": [
+    {
+      "functionId": "requirements.gui_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 25,
+      "endLine": 37,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp": [
+    {
+      "functionId": "requirements.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 28,
+      "endLine": 43,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt": [
+    {
+      "functionId": "requirements.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 473,
+      "endLine": 485,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/requirements.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp": [
+    {
+      "functionId": "runtime.multiplyRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 69,
+      "endLine": 83,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::multiplyRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rotateVector",
+      "capabilityId": "MATH-ROT",
+      "startLine": 86,
+      "endLine": 93,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::rotateVector",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rotationFromCustomEaa",
+      "capabilityId": "MATH-ROT",
+      "startLine": 207,
+      "endLine": 244,
+      "symbol": "sdurws::ird::runtime::rotationFromCustomEaa",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.composeWorldBaseTcp",
+      "capabilityId": "MATH-ROT",
+      "startLine": 477,
+      "endLine": 490,
+      "symbol": "sdurws::ird::runtime::composeWorldBaseTcp",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rotateTransposed",
+      "capabilityId": "MATH-ROT",
+      "startLine": 97,
+      "endLine": 104,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::rotateTransposed",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp": [
+    {
+      "functionId": "runtime.singularValuesOneSidedJacobi",
+      "capabilityId": "MATH-SVD",
+      "startLine": 279,
+      "endLine": 338,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::singularValuesOneSidedJacobi",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp": [
+    {
+      "functionId": "runtime.compileWorkCell",
+      "capabilityId": "KIN-FK",
+      "startLine": 592,
+      "endLine": 966,
+      "symbol": "sdurws::ird::runtime::compileWorkCell",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.axisAlignmentRotation",
+      "capabilityId": "MATH-ROT",
+      "startLine": 469,
+      "endLine": 493,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::axisAlignmentRotation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.spanPlacement",
+      "capabilityId": "MATH-ROT",
+      "startLine": 512,
+      "endLine": 521,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::spanPlacement",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.WorkCellConstView.findFrame",
+      "capabilityId": "KIN-FK",
+      "startLine": 990,
+      "endLine": 995,
+      "symbol": "sdurws::ird::runtime::WorkCellConstView::findFrame",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.WorkCellConstView.findDevice",
+      "capabilityId": "KIN-FK",
+      "startLine": 997,
+      "endLine": 1003,
+      "symbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.WorkCellConstView.defaultState",
+      "capabilityId": "KIN-FK",
+      "startLine": 1011,
+      "endLine": 1015,
+      "symbol": "sdurws::ird::runtime::WorkCellConstView::defaultState",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.jointStaticTransform",
+      "capabilityId": "KIN-FK",
+      "startLine": 541,
+      "endLine": 553,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::jointStaticTransform",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp": [
+    {
+      "functionId": "runtime.symmetrizedSpdWitness",
+      "capabilityId": "MATH-EIGEN",
+      "startLine": 85,
+      "endLine": 134,
+      "symbol": "sdurws::ird::runtime::inertia_validation_detail::symmetrizedSpdWitness",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.relativeAsymmetry",
+      "capabilityId": "MATH-EIGEN",
+      "startLine": 50,
+      "endLine": 73,
+      "symbol": "sdurws::ird::runtime::inertia_validation_detail::relativeAsymmetry",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp": [
+    {
+      "functionId": "runtime.rtcodec.Writer.u16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 65,
+      "endLine": 69,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Writer.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 72,
+      "endLine": 77,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Writer.u64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 80,
+      "endLine": 85,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::u64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Writer.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 91,
+      "endLine": 100,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Writer.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 103,
+      "endLine": 107,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Writer::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Reader.u16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 150,
+      "endLine": 156,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Reader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 158,
+      "endLine": 167,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Reader.u64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 169,
+      "endLine": 178,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::u64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Reader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 180,
+      "endLine": 191,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.rtcodec.Reader.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 193,
+      "endLine": 201,
+      "symbol": "sdurws::ird::runtime::rtcodec::(anonymous namespace)::Reader::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp": [
+    {
+      "functionId": "runtime.snapshotcodec.ByteReader.readU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 337,
+      "endLine": 344,
+      "symbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.snapshotcodec.ByteReader.readU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 347,
+      "endLine": 356,
+      "symbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.snapshotcodec.ByteReader.readU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 359,
+      "endLine": 368,
+      "symbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.snapshotcodec.ByteReader.readString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 382,
+      "endLine": 390,
+      "symbol": "sdurws::ird::runtime::snapshotcodec::(anonymous namespace)::ByteReader::readString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.appendU16",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 80,
+      "endLine": 84,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::appendU16",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.appendU32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 87,
+      "endLine": 93,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::appendU32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.appendU64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 96,
+      "endLine": 101,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::appendU64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.appendString",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 129,
+      "endLine": 133,
+      "symbol": "sdurws::ird::runtime::(anonymous namespace)::appendString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.RuntimeSnapshot.workCell",
+      "capabilityId": "KIN-FK",
+      "startLine": 753,
+      "endLine": 756,
+      "symbol": "sdurws::ird::runtime::RuntimeSnapshot::workCell",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.RuntimeSnapshot.makeState",
+      "capabilityId": "KIN-FK",
+      "startLine": 811,
+      "endLine": 816,
+      "symbol": "sdurws::ird::runtime::RuntimeSnapshot::makeState",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.RuntimeSnapshot.tryDynamicWorkCell",
+      "capabilityId": "KIN-FK",
+      "startLine": 768,
+      "endLine": 784,
+      "symbol": "sdurws::ird::runtime::RuntimeSnapshot::tryDynamicWorkCell",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    },
+    {
+      "functionId": "runtime.RuntimeSnapshot.workCellHandle",
+      "capabilityId": "KIN-FK",
+      "startLine": 758,
+      "endLine": 766,
+      "symbol": "sdurws::ird::runtime::RuntimeSnapshot::workCellHandle",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp": [
+    {
+      "functionId": "runtime.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 23,
+      "endLine": 32,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt": [
+    {
+      "functionId": "runtime.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 352,
+      "endLine": 364,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CapabilityCurve.cpp": [
+    {
+      "functionId": "selection.LinearCurveEvaluator.evaluate",
+      "capabilityId": "TRAJ-LINEAR",
+      "startLine": 52,
+      "endLine": 137,
+      "symbol": "sdurws::ird::selection::LinearCurveEvaluator::evaluate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp": [
+    {
+      "functionId": "selection.symmetricEigenvalues3x3",
+      "capabilityId": "MATH-EIGEN",
+      "startLine": 80,
+      "endLine": 106,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::symmetricEigenvalues3x3",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 123,
+      "endLine": 129,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 134,
+      "endLine": 143,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 145,
+      "endLine": 149,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 218,
+      "endLine": 227,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 235,
+      "endLine": 249,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 250,
+      "endLine": 265,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.backfillCodec.ByteReader.u32At",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 332,
+      "endLine": 337,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp": [
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 177,
+      "endLine": 183,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 190,
+      "endLine": 199,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 201,
+      "endLine": 205,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.u32",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 273,
+      "endLine": 282,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.f64",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 290,
+      "endLine": 305,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.str",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 306,
+      "endLine": 313,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.u32At",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "startLine": 367,
+      "endLine": 372,
+      "symbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "selection.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 25,
+      "endLine": 36,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp": [
+    {
+      "functionId": "selection.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 38,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt": [
+    {
+      "functionId": "selection.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 441,
+      "endLine": 453,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/selection.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp": [
+    {
+      "functionId": "testkit.parseJson",
+      "capabilityId": "NONE",
+      "startLine": 545,
+      "endLine": 549,
+      "symbol": "sdurws::ird::testkit::parseJson",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.dumpJson",
+      "capabilityId": "NONE",
+      "startLine": 551,
+      "endLine": 600,
+      "symbol": "sdurws::ird::testkit::dumpJson",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseObject",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 164,
+      "endLine": 216,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseObject",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseArray",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 219,
+      "endLine": 253,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseArray",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseString",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 256,
+      "endLine": 296,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseString",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseUnicodeEscape",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 299,
+      "endLine": 318,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseUnicodeEscape",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseHex4",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 320,
+      "endLine": 335,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseHex4",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.utf8Encode",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 338,
+      "endLine": 357,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::utf8Encode",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser.parseNumber",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 360,
+      "endLine": 418,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseNumber",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.dumpEscaped",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 432,
+      "endLine": 455,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::dumpEscaped",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.dumpNumber",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 458,
+      "endLine": 466,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::dumpNumber",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.dumpValue",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 469,
+      "endLine": 497,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::dumpValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.Parser",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 40,
+      "endLine": 43,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::Parser",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.run",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 45,
+      "endLine": 63,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::run",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.skipWs",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 78,
+      "endLine": 92,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::skipWs",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.expect",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 95,
+      "endLine": 101,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::expect",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.fail",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 104,
+      "endLine": 110,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::fail",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.parseValue",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 113,
+      "endLine": 150,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseValue",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.expectLiteral",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 153,
+      "endLine": 161,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::expectLiteral",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.eof",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 67,
+      "endLine": 74,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::eof",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.JsonValue.find",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 505,
+      "endLine": 512,
+      "symbol": "sdurws::ird::testkit::JsonValue::find",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+      "capabilityId": "UTIL-TEXT",
+      "startLine": 514,
+      "endLine": 543,
+      "symbol": "sdurws::ird::testkit::JsonValue::deepEquals",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp": [
+    {
+      "functionId": "testkit.test.TestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 24,
+      "endLine": 33,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt": [
+    {
+      "functionId": "testkit.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 165,
+      "endLine": 177,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp": [
+    {
+      "functionId": "testkit.TestRecordListener",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 44,
+      "endLine": 108,
+      "symbol": "sdurws::ird::testkit::TestRecordListener",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.installTestRecordListener",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 120,
+      "endLine": 142,
+      "symbol": "sdurws::ird::testkit::installTestRecordListener",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp": [
+    {
+      "functionId": "testkit.Check.nonFinite",
+      "capabilityId": "NONE",
+      "startLine": 20,
+      "endLine": 23,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::nonFinite",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.makeDetail",
+      "capabilityId": "NONE",
+      "startLine": 28,
+      "endLine": 40,
+      "symbol": "sdurws::ird::testkit::(anonymous namespace)::makeDetail",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.checkCloseWithin",
+      "capabilityId": "NONE",
+      "startLine": 44,
+      "endLine": 58,
+      "symbol": "sdurws::ird::testkit::checkCloseWithin",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.checkAllCloseWithin",
+      "capabilityId": "NONE",
+      "startLine": 60,
+      "endLine": 99,
+      "symbol": "sdurws::ird::testkit::checkAllCloseWithin",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.checkAtMost",
+      "capabilityId": "NONE",
+      "startLine": 101,
+      "endLine": 123,
+      "symbol": "sdurws::ird::testkit::checkAtMost",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.checkIdentical",
+      "capabilityId": "NONE",
+      "startLine": 125,
+      "endLine": 137,
+      "symbol": "sdurws::ird::testkit::checkIdentical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.Check.checkIdentical.int64",
+      "capabilityId": "NONE",
+      "startLine": 139,
+      "endLine": 151,
+      "symbol": "sdurws::ird::testkit::checkIdentical",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp": [
+    {
+      "functionId": "testkit.ProcessRunner.toWin32Wait",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 141,
+      "endLine": 151,
+      "symbol": "(anonymous namespace)::toWin32Wait",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.utf8ToWide",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 165,
+      "endLine": 181,
+      "symbol": "(anonymous namespace)::utf8ToWide",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 199,
+      "endLine": 237,
+      "symbol": "(anonymous namespace)::buildEnvironmentBlock",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 65,
+      "endLine": 101,
+      "symbol": "sdurws::ird::testkit::detail::quoteWindowsArg",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 310,
+      "endLine": 424,
+      "symbol": "sdurws::ird::testkit::TestProcessRunner::start",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 443,
+      "endLine": 531,
+      "symbol": "sdurws::ird::testkit::TestProcessRunner::outcome",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 543,
+      "endLine": 562,
+      "symbol": "sdurws::ird::testkit::TestProcessRunner::kill",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 571,
+      "endLine": 585,
+      "symbol": "sdurws::ird::testkit::TestProcessRunner::~TestProcessRunner",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 606,
+      "endLine": 620,
+      "symbol": "sdurws::ird::testkit::EventWatch::awaitFile",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 639,
+      "endLine": 666,
+      "symbol": "sdurws::ird::testkit::EventWatch::awaitLineInFile",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    },
+    {
+      "functionId": "testkit.ProcessRunner.DestructorImpl",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 275,
+      "endLine": 287,
+      "symbol": "sdurws::ird::testkit::TestProcessRunner::Impl::~Impl",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Ptp.cpp": [
+    {
+      "functionId": "trajectory.interpolateJointLinear",
+      "capabilityId": "TRAJ-LINEAR",
+      "startLine": 61,
+      "endLine": 82,
+      "symbol": "sdurws::ird::trajectory::interpolateJointLinear",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp": [
+    {
+      "functionId": "trajectory.interpolateCartesianLine",
+      "capabilityId": "TRAJ-SLERP",
+      "startLine": 191,
+      "endLine": 268,
+      "symbol": "sdurws::ird::trajectory::interpolateCartesianLine",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp": [
+    {
+      "functionId": "trajectory.hermiteH000",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 110,
+      "endLine": 113,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH000",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.hermiteH100",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 116,
+      "endLine": 119,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH100",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.hermiteH001",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 122,
+      "endLine": 126,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH001",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.hermiteH101",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 129,
+      "endLine": 133,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::hermiteH101",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.canDropPoint",
+      "capabilityId": "PATH-SIMPLIFY",
+      "startLine": 378,
+      "endLine": 409,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::canDropPoint",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.buildTangents",
+      "capabilityId": "TRAJ-HIGH",
+      "startLine": 427,
+      "endLine": 447,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::buildTangents",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.measureDeviation",
+      "capabilityId": "TRAJ-HIGH",
+      "startLine": 466,
+      "endLine": 503,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::measureDeviation",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp": [
+    {
+      "functionId": "trajectory.basisH0000",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 205,
+      "endLine": 221,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0000",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.basisH0010",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 224,
+      "endLine": 235,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0010",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.basisH0001",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 238,
+      "endLine": 249,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0001",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.basisH0011",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 252,
+      "endLine": 263,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::basisH0011",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.septicS0",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 274,
+      "endLine": 287,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS0",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.septicS1",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 291,
+      "endLine": 304,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS1",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.septicS2",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 308,
+      "endLine": 321,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS2",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.septicS3",
+      "capabilityId": "MATH-POLYNOMIAL",
+      "startLine": 325,
+      "endLine": 341,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::septicS3",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Continuity.cpp": [
+    {
+      "functionId": "trajectory.rotationAngleBetween",
+      "capabilityId": "MATH-ROT",
+      "startLine": 51,
+      "endLine": 67,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::rotationAngleBetween",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "trajectory.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 26,
+      "endLine": 37,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp": [
+    {
+      "functionId": "trajectory.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 27,
+      "endLine": 38,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt": [
+    {
+      "functionId": "trajectory.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 532,
+      "endLine": 544,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp": [
+    {
+      "functionId": "trajectory.Planner.cancellationRequested",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 106,
+      "endLine": 109,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::cancellationRequested",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.alive",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 112,
+      "endLine": 112,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::alive",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.doSetLog",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 158,
+      "endLine": 158,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doSetLog",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.doInCollision",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 161,
+      "endLine": 193,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doInCollision",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.parsePlannerSelection",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 235,
+      "endLine": 298,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::parsePlannerSelection",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.validateConfigPairAndBounds",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 310,
+      "endLine": 340,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::validateConfigPairAndBounds",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.sampleStraightPath",
+      "capabilityId": "MATH-METRIC",
+      "startLine": 360,
+      "endLine": 387,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::sampleStraightPath",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.reviewPathSequence",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 419,
+      "endLine": 462,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::reviewPathSequence",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.maxAdjacentStep",
+      "capabilityId": "MATH-METRIC",
+      "startLine": 469,
+      "endLine": 478,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::maxAdjacentStep",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.pathJointLength",
+      "capabilityId": "MATH-METRIC",
+      "startLine": 481,
+      "endLine": 490,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::pathJointLength",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.minNormalizedMargin",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 494,
+      "endLine": 510,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::minNormalizedMargin",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.candidatePreferred",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 516,
+      "endLine": 533,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::candidatePreferred",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.makeAvoidFailure",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 543,
+      "endLine": 555,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::makeAvoidFailure",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.search",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 580,
+      "endLine": 819,
+      "symbol": "sdurws::ird::trajectory::(anonymous namespace)::PathPlannerAdapterImpl::search",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.makePathPlannerAdapter",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 828,
+      "endLine": 831,
+      "symbol": "sdurws::ird::trajectory::makePathPlannerAdapter",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    },
+    {
+      "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
+      "capabilityId": "PATH-PLANNING",
+      "startLine": 837,
+      "endLine": 1088,
+      "symbol": "sdurws::ird::trajectory::planPtpWithObstacleAvoidance",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp": [
+    {
+      "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+      "capabilityId": "HOST-SCENE",
+      "startLine": 471,
+      "endLine": 504,
+      "symbol": "sdurws::ird::ui::HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    },
+    {
+      "functionId": "ui.SampleGridRender.draw",
+      "capabilityId": "HOST-LINES",
+      "startLine": 268,
+      "endLine": 344,
+      "symbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp": [
+    {
+      "functionId": "ui.HostView3DGateway.currentTcpPose",
+      "capabilityId": "KIN-FK",
+      "startLine": 120,
+      "endLine": 135,
+      "symbol": "sdurws::ird::ui::HostView3DGateway::currentTcpPose",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp": [
+    {
+      "functionId": "ui.SnapshotViewAdapter",
+      "capabilityId": "KIN-FK",
+      "startLine": 61,
+      "endLine": 80,
+      "symbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    },
+    {
+      "functionId": "ui.KinEvaluationExecutor.attachSnapshot",
+      "capabilityId": "KIN-FK",
+      "startLine": 94,
+      "endLine": 111,
+      "symbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    },
+    {
+      "functionId": "ui.KinEvaluationExecutor.attachView",
+      "capabilityId": "KIN-FK",
+      "startLine": 113,
+      "endLine": 139,
+      "symbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp": [
+    {
+      "functionId": "ui.KinSessionModelView",
+      "capabilityId": "KIN-FK",
+      "startLine": 108,
+      "endLine": 135,
+      "symbol": "sdurws::ird::ui::KinSessionModelView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp": [
+    {
+      "functionId": "ui.FixtureView",
+      "capabilityId": "KIN-FK",
+      "startLine": 79,
+      "endLine": 118,
+      "symbol": "(anonymous namespace)::FixtureView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    },
+    {
+      "functionId": "ui.ObservedView",
+      "capabilityId": "KIN-FK",
+      "startLine": 957,
+      "endLine": 971,
+      "symbol": "(anonymous namespace)::KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp": [
+    {
+      "functionId": "ui.contract_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 34,
+      "endLine": 50,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp": [
+    {
+      "functionId": "ui.gui_test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 33,
+      "endLine": 45,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp": [
+    {
+      "functionId": "ui.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 36,
+      "endLine": 49,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt": [
+    {
+      "functionId": "ui.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 279,
+      "endLine": 291,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp": [
+    {
+      "functionId": "workflow.PureStageGateService.evaluate",
+      "capabilityId": "NONE",
+      "startLine": 134,
+      "endLine": 297,
+      "symbol": "sdurws::ird::workflow::PureStageGateService::evaluate",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp": [
+    {
+      "functionId": "workflow.contract_test.ContractTestMain.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 19,
+      "endLine": 26,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp": [
+    {
+      "functionId": "workflow.test.TestMainReport.main",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 29,
+      "endLine": 40,
+      "symbol": "::main",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt": [
+    {
+      "functionId": "workflow.CMake.ird_add_gtest",
+      "capabilityId": "TEST-HARNESS",
+      "startLine": 374,
+      "endLine": 386,
+      "symbol": "ird_add_gtest",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp": [
+    {
+      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 25,
+      "endLine": 47,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    },
+    {
+      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 49,
+      "endLine": 53,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    },
+    {
+      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 55,
+      "endLine": 78,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::start",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    },
+    {
+      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 80,
+      "endLine": 93,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::stop",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    },
+    {
+      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 95,
+      "endLine": 177,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ],
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp": [
+    {
+      "functionId": "workflow.CloseSupervisor.running",
+      "capabilityId": "UTIL-THREAD",
+      "startLine": 162,
+      "endLine": 178,
+      "symbol": "sdurws::ird::workflow::StoreCloseSupervisor::running",
+      "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json"
+    }
+  ]
+}

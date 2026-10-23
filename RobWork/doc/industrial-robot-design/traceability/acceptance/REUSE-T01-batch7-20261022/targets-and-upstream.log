@@ -1,0 +1,245 @@
+/********************************************************************************
+ * Copyright 2016 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include "TestEnvironment.hpp"
+
+#include <gtest/gtest.h>
+
+int main(int argc, char** argv) {
+	::testing::InitGoogleTest(&argc, argv);
+    ::testing::AddGlobalTestEnvironment(TestEnvironment::make(argc,argv));
+	return RUN_ALL_TESTS();
+}
+/********************************************************************************
+ * Copyright 2016 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include "TestEnvironment.hpp"
+
+#include <RobWorkConfig.hpp>
+#include <rw/core/RobWork.hpp>
+#include <rw/core/DOMElem.hpp>
+#include <rw/core/DOMParser.hpp>
+
+#include <boost/filesystem.hpp>
+
+using rw::core::RobWork;
+using rw::core::DOMElem;
+using rw::core::DOMParser;
+
+TestEnvironment::TestEnvironment () : _argc (0), _argv (NULL)
+{}
+
+TestEnvironment::~TestEnvironment ()
+{}
+
+void TestEnvironment::SetUp ()
+{
+    RobWork::init (_argc, (const char**) _argv);
+    testfilesDir ();
+}
+
+void TestEnvironment::init (int argc, char** argv)
+{
+    _argc = argc;
+    _argv = argv;
+}
+
+std::string TestEnvironment::executableDir ()
+{
+    static std::string executableDir;
+    if (executableDir.empty () && get() != NULL) {
+        boost::filesystem::path path (get ()->_argv[0]);
+        boost::filesystem::path full_path = boost::filesystem::canonical (path);
+        executableDir = full_path.parent_path ().string () + SLASH;
+    }
+    return executableDir;
+}
+
+std::string TestEnvironment::testfilesDir ()
+{
+    static std::string testfilesDir;
+    if (testfilesDir.empty ()) {
+        const DOMParser::Ptr parser = DOMParser::make ();
+        parser->load (executableDir () + SLASH + "TestSuiteConfig.xml");
+        const DOMElem::Ptr testElem = parser->getRootElement ()->getChild ("RobWorkTest", false);
+        const DOMElem::Ptr dirElem  = testElem->getChild ("TestfilesDIR", false);
+        testfilesDir                = dirElem->getValue () + SLASH;
+    }
+    return testfilesDir;
+}
+
+std::string TestEnvironment::xmlSchemasDir()
+{
+    static std::string schemasDir;
+    if (schemasDir.empty ()) {
+        const DOMParser::Ptr parser = DOMParser::make ();
+        parser->load (executableDir () + SLASH + "TestSuiteConfig.xml");
+        const DOMElem::Ptr testElem = parser->getRootElement ()->getChild ("RobWorkTest", false);
+        const DOMElem::Ptr dirElem  = testElem->getChild ("XMLSchemasDIR", false);
+        schemasDir                  = dirElem->getValue () + SLASH;
+    }
+    return schemasDir;
+}
+
+TestEnvironment* TestEnvironment::get ()
+{
+    static TestEnvironment* env = new TestEnvironment ();
+    return env;
+}
+
+TestEnvironment* TestEnvironment::make (int argc, char** argv)
+{
+    TestEnvironment* const env = get ();
+    env->init (argc, argv);
+    return env;
+}
+include_directories(${GTEST_INCLUDE_DIRS})
+
+# ##################################################################################################
+# Standard Macro
+# ##################################################################################################
+
+macro(ADD_RW_GTEST target)
+    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+    add_custom_target(
+        ${target}_report-makedir
+        COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${target}>/gtest_reports
+        COMMENT "Creating directory gtest_reports if it does not exist."
+    )
+    add_custom_target(
+        ${target}_report
+        COMMAND $<TARGET_FILE:${target}>
+                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml
+        DEPENDS ${target} ${target}_report-makedir
+    )
+    set(REPORT_TARGETS ${REPORT_TARGETS} ${target}_report)
+    if(GTEST_SHARED_LIBS)
+        target_compile_definitions(${target} PRIVATE GTEST_LINKED_AS_SHARED_LIBRARY=1)
+        if(MSVC)
+            target_compile_options(${target} PRIVATE /wd4251 /wd4275)
+        endif()
+    endif()
+endmacro()
+
+# ##################################################################################################
+# RobWork main function for initialization (link with this if needed).
+# ##################################################################################################
+
+set(RWMAIN_TEST_LIBRARIES ${GTEST_BOTH_LIBRARIES} sdurw_core)
+
+set(RWMAIN_TEST_SRC TestEnvironment.cpp test-main.cpp)
+add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+
+# ##################################################################################################
+# Algorithms
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:80:add_executable(sdurws_ird_core_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:81:    test/TestMainReport.cpp # MA-09补扫：固定gtest_main无法生成原生报告，统一入口只安装一次。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt:109:    GTest::gtest)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:24:# src/Snapshot.cpp＝EV-T03 快照（builder 冻结协议＋SnapshotCodec 双形态
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:26:# src/Slice.cpp＝EV-T04 切片（SliceBuilder 冻结协议＋SliceCodec 双形态＋
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:29:# src/Evidence.cpp＝EV-T05 证据契约校验器（Profile 注册期校验与内容身份
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:46:# src/Evaluator.cpp＝EV-T10 评估器接口与注册表（EvaluatorRegistry 注册
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:51:    src/Evidence.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:53:    src/Snapshot.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:54:    src/Slice.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:59:    src/Evaluator.cpp)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:85:add_executable(sdurws_ird_evidence_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:86:    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:118:    GTest::gtest)  # 自有 main（TestMainReport.cpp）——gtest_main 的 main 不再用
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:153:add_executable(sdurws_ird_evidence_contract_test
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:154:    test/TestMainReport.cpp            # 自有测试入口：安装 testkit 记录监听器
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt:185:    GTest::gtest)  # 自有 main（TestMainReport.cpp）
+### 5.2 canonical 编码（SliceCodec / SnapshotCodec）
+
+| 规则 | 内容 | 依据 |
+| --- | --- | --- |
+| 编码形态 | 确定性二进制：magic（`IRDSLCE1`/`IRDSNAP1`）＋条目按 (kind, key) 字典序＋每字段长度前缀；无填充、无端序歧义（大端） | 跨进程一致（worker/main 同身份，NFR-COR-02） |
+| 可选值 | presence 字节（0x00/0x01）显式编码——optional 缺失与空值不等价 | NFR-COR-03（缺失不伪造） |
+| 数值 | 整数十进制无关（定宽整型承载）；配置中的浮点以 IEEE754 双精度 8 字节大端**位模式**承载（round-trip 精确）；NaN/±Inf 在编码入口拒绝（抛 EvidenceError） | 位模式保证同值同字节；非有限拒绝 |
+| 单位归一化 | 切片不承载物理量数值（配置容差等以域 schema 字节不透明承载，其 SI 归一化归域）；evidence 自有字段的数值仅为计数/版本（无量纲） | 单位换算唯一权威在 core（SA-12），本单元不出现第二换算点 |
+| 字符串 | UTF-8、禁止 NUL；token 语法校验在构造入口 | 稳定排序与编码安全 |
+| 版本化 | codec 版本号写入编码并作为 Environment 条目进入 sliceId——**编码升版＝全体切片身份变化**（破坏性变更，走设计变更评审并同步缓存治理登记） | 身份可演化且留痕 |
+| 实现 | 纯函数：同输入同字节；无隐藏状态；线程安全（可重入） | NFR-COR-02 |
+
+### 5.3 输入变化与失效矩阵（AT-05 承接；按实际消费关系，条件显式声明）
+
+矩阵读法：某输入变化→其新 ContentVersion/内容身份与切片条目比对；仅当该条目**在切片中且被消费**时失效（sliceId 变化→当前性 Superseded＋缓存不命中）。✓＝失效（需重算），✗＝不失效，◐＝条件失效（条件在"条件"列，条件输入已入切片）。
+
+| 输入变化（新修订产生） | 运动学（IK/FK/批量） | 区域覆盖 | 轨迹（含复检） | 动力学 | 选型 | 优化（OPT-B 静态） | 条件与依据 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 电机**成本**（成本字段/成本目录数据） | ✗ | ✗ | ✗ | ✗ | ✓（成本指标条目） | ◐（仅器件成本指标激活时） | 成本对象不在运动学/轨迹/动力学切片（AT-05 原文正例）；OPT 指标按激活目标（OPT-07） |
+| **TCP 偏置**（KIN-14 设默认经命令） | ✓（IK 目标/解） | ✓ | ✓（笛卡尔段/节拍） | ◐（TCP 影响负载力臂时——负载安装/TCP 对象同版本变化） | ✗ | ✓（Must 可达约束） | AT-05 原文反例："TCP 变更失效运动学及下游"——下游按实际消费条目传播 |
+| 连杆**几何**（碰撞模型对象） | ◐（策略启用碰撞→碰撞证据消费碰撞几何；禁用→不消费） | ◐（同左） | ◐（复检碰撞） | ✗（动力学消费惯量/质量对象，几何仅经物性对象影响） | ✗ | ◐（静态碰撞约束） | 几何与物性是不同对象（MDL-05 分层）；仅视觉几何变化不涉碰撞消费时不进碰撞相关切片 |
+| **负载**（质量/惯量/负载几何对象） | ◐（负载几何仅在碰撞证据消费链上） | ◐（同左） | ◐（复检碰撞/动力学耦合） | ✓（RNEA 负载输入） | ◐（惯量比条目） | ◐ | 负载质量/惯量与负载几何为不同角色键，分别按消费关系失效 |
+| **摩擦参数**（MDL-16） | ✗ | ✗ | ✗ | ✓（DYN-02） | ✗ | ✐（OPT-D 前） | 摩擦仅动力学消费；缺失→DataInsufficient 降级（DYN-06）走域判定，非失效问题 |
+| **目录能力曲线**（SEL-01/02 锁定版本） | ✗ | ✗ | ✗ | ✗（关节侧结果与传动无关，DYN-04） | ✓（工作点/淘汰条目） | ◐（OPT-D 器件联合启用后） | 目录版本锁定（SEL-08）经 Object 条目进选型切片；更新不静默改变历史结果（历史结果保持原切片身份） |
+| **工程策略**（碰撞规则/阈值/行程上限） | ◐（策略身份变化→凡声明 Policy 条目者失效；碰撞证据按启用条件） | ◐ | ◐（安全间距/复检阈值） | ◐（判定阈值消费） | ◐（判定阈值消费） | ◐ | 策略进入依赖切片（CON-06）；"实际依赖"由各评估器声明是否含 Policy 条目 |
+| **求解配置**（AnalysisConfiguration） | ◐（仅该域消费的参数：IK 参数→运动学；采样预算→覆盖样本基准） | ◐（采样预算/种子→**样本集身份变化**＝基准变化） | ◐ | ◐（线程数等） | ◐ | ◐ | KIN-13：进入运行身份与缓存身份；按实际输入依赖提示受影响结果重算（AT-27） |
+| **需求定义**（任务点/区域/工况集） | ✓ | ✓ | ✓ | ✓ | ◐（负载工况条目） | ✓ | 需求对象直接被各域消费；工况集变化另触发覆盖矩阵核对（EVI-02） |
+### 7.2 机器可读测试结果最小契约（TestRecord）
+
+每测试一条记录，运行结束聚合为 `ird-test-report.json`（与 gtest XML 并存，§7.3）。
+
+| 字段 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `testId` | string | 是 | `<suite>.<case>`（gtest 全名） |
+| `requirementIds[]` | string[] | 否 | 经 IRD_TEST_INFO 登记（§7.3）；建议 P0 测试必填（lint 提示，不强制失败） |
+| `atIds[]` | string[] | 否 | 同上 |
+| `dataset` | `{id, version}` | 条件 | 使用黄金数据时必填 |
+| `toleranceProfile` | string | 条件 | `<id>@<version>` |
+| `repro` | ReproRecord | 是 | 种子/线程/版本/commit |
+| `environment` | `{compiler, qtVersion?, arch, os, machineTag}` | 是 | CI 注入；qtVersion 仅 Qt 相关目标 |
+| `outcome` | enum | 是 | `passed`/`failed`/`skipped`/`notRun`/`envUnavailable`/`datasetInvalid`（六值，见下分类） |
+| `reason` | string | 条件 | 非 passed 时必填（机器前缀＋人读说明） |
+| `comparisons[]` | CompareDetail[] | 否 | 全部失败比较点（字段/索引/实际/期望/单位/容差/来源/差值） |
+| `failureLocation` | `{path?, elementIndex?, setRole?}` | 否 | 失败对象定位（集合断言含 missing/extra/mismatched 角色） |
+| `artifacts[]` | `{path, kind}[]` | 否 | TempDir 现场/repro.json/子进程日志等 |
+| `durationMs` | int | 是 | — |
+
+**四类状态区分**（任务约束§四.6；Skipped/NotRun **不得**计为 Passed——聚合统计分列）：
+
+| 类别 | outcome | 触发 | 处置 |
+| --- | --- | --- | --- |
+| 测试失败 | `failed` | 断言失败/被测行为不符 | 计入失败统计 |
+| 环境不可用 | `envUnavailable` | 数据根缺失/必备进程不可启动/gtest 自身错误（§6.5） | 不计失败；CI 必须显式标注并阻断"全绿"误判 |
+| 数据集非法 | `datasetInvalid` | manifest/档案/完整性校验失败、容差未定义、单位不匹配 | 不计失败；属数据资产缺陷，指向数据集修复 |
+| 测试未执行 | `skipped`（显式跳过，含理由）／`notRun`（未启动，如前置失败级联） | — | 不计通过；发布检查表必须逐条消账 |
+
+### 7.3 与 gtest 的关系与追溯登记
+
+- 断言＝gtest 宏（唯一框架，D-01）；IRD 宏（`gtest/AssertMacros.hpp`）是其薄包装＋结构化详情旁路；
+- `TestRecordListener : public ::testing::EmptyTestEventListener`——header-only 适配头（`gtest/RecordListener.hpp`），在消费方 TU 编译；提供 `installTestRecordListener(int& argc, char** argv)`（消费方 main 或 gtest main 替换处调用一次）；testkit 库本体因此保持零 gtest（§3.3）；
+- 追溯登记：`IRD_TEST_INFO("KIN-02", {"AT-03"}, datasetRef)`——在测试内首行声明，写入当前 TestRecord；不修改 gtest 注册机制、不发明参数化引擎；
+- **独立性**：报告生成不依赖 reporting 单元（ReviewReport 是产品对象，测试报告不是；两者数据契约无共享，§2.2 第 8 条）。
+
+### 7.4 与产品报告的边界复述
+

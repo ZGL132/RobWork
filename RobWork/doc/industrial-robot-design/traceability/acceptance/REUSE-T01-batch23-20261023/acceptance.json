@@ -1,0 +1,223 @@
+{
+  "reviewType": "independent-local-batch-review",
+  "taskId": "REUSE-T01",
+  "batch": "B23",
+  "verdict": "B23_LOCAL_PASS",
+  "reviewedCommit": "062522fdeb9215e6a604a11d95cfca99842523db",
+  "base": "daf0dcd175fb76c956154fe0213f2d791dad8575",
+  "createdUtc": "2026-10-22T20:39:52.9404754Z",
+  "notStageAcceptance": true,
+  "bindings": {
+    "rows": 18,
+    "bindings": 126,
+    "bindingsFailed": 0,
+    "astDefinitions": 80,
+    "astEqual": true,
+    "manifestEntries": 91,
+    "manifestFailed": 0,
+    "originalFailed": 0,
+    "beforeRawHash": "35878035bec1a1eabbf507ad2aafc70b7948d6f1772fc1d9cde9019fa9d9a1e3",
+    "parentRawHash": "28da2cf7dbc230de3cfb97257500791875770e0c56cc8e59382af4f28a8cfb93",
+    "beforeCRLF": 151,
+    "parentCRLF": 0,
+    "beforeParentNormalizedEqual": true,
+    "afterRawHash": "a9bf73af7820bf69705b121f403d17f5cdea783a0014dbfc97adf29fb924d3fc"
+  },
+  "B21FilesByteEqual": 92,
+  "parserEach": {
+    "red": {
+      "failed": 3,
+      "passed": 4,
+      "skipped": 0
+    },
+    "independent": {
+      "failed": 0,
+      "passed": 5,
+      "skipped": 0
+    },
+    "green": {
+      "failed": 0,
+      "passed": 7,
+      "skipped": 0
+    },
+    "selftest": {
+      "failed": 0,
+      "passed": 7,
+      "skipped": 0
+    }
+  },
+  "governance": {
+    "failed": 0,
+    "passed": 5,
+    "skipped": 0
+  },
+  "scopePaths": 184,
+  "verifyTask": {
+    "manual": 0,
+    "machinePassed": 3
+  },
+  "commands": [
+    {
+      "name": "selftest-ps7",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/run-flake-probe.ps1",
+        "-SelfTest"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "red-ps7",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/parser-probes.ps1",
+        "-Script",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/flake-before.ps1",
+        "-OutDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0/red-ps7"
+      ],
+      "exitCode": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "name": "green-ps7",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/parser-probes.ps1",
+        "-Script",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/run-flake-probe.ps1",
+        "-OutDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0/green-ps7"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "selftest-ps51",
+      "shell": "powershell",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/run-flake-probe.ps1",
+        "-SelfTest"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "red-ps51",
+      "shell": "powershell",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/parser-probes.ps1",
+        "-Script",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/flake-before.ps1",
+        "-OutDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0/red-ps51"
+      ],
+      "exitCode": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "name": "green-ps51",
+      "shell": "powershell",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/parser-probes.ps1",
+        "-Script",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/run-flake-probe.ps1",
+        "-OutDir",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0/green-ps51"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "governance",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch23/governance-probes.ps1"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "scope-frozen",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/verify-task-scope.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+        "-Base",
+        "daf0dcd175fb76c956154fe0213f2d791dad8575",
+        "-Head",
+        "062522fdeb9215e6a604a11d95cfca99842523db"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "verify-task-real",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/verify-task.ps1",
+        "-TaskFile",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "name": "commit-lint",
+      "shell": "pwsh",
+      "arguments": [
+        "-NoProfile",
+        "-File",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/commit-lint.ps1",
+        "-Range",
+        "daf0dcd175fb76c956154fe0213f2d791dad8575..062522fdeb9215e6a604a11d95cfca99842523db"
+      ],
+      "exitCode": 0,
+      "expected": 0,
+      "passed": true
+    }
+  ],
+  "rawWhitespaceExit": 2,
+  "windowsWhitespaceExit": 0,
+  "exe": {
+    "rawSha256": "e03cbf526bc958ee02cd78c321f0bc128bed2ebf9927866c11918897dcd5cd14",
+    "path": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/.cache/b22-execution/Release/ird_execution_boundary_audit.exe"
+  },
+  "notRun": [
+    "持续负载",
+    "竞态",
+    "GUI",
+    "全产品构建/测试",
+    "全T01/T02/迁移/最终关闭"
+  ],
+  "modelPermissionGranted": false
+}

@@ -1,0 +1,165 @@
+{
+  "batch": "B32",
+  "entries": [
+    {
+      "path": "b32-build-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-build-final.log",
+      "bytes": 848,
+      "rawSha256": "23aeff08f61ddfaf4ca14a45e66bd80be0b2747cf5367b92fd3971218a3cef9e"
+    },
+    {
+      "path": "b32-build-prefix-first.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b32-build-prefix-first.log",
+      "bytes": 1692,
+      "rawSha256": "33eb790485f19f024c5a54936420bc6225c3e55c7aba5dba0ece1eb4a7c9f86d"
+    },
+    {
+      "path": "b32-build-prefix.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b32-build-prefix.log",
+      "bytes": 1692,
+      "rawSha256": "33eb790485f19f024c5a54936420bc6225c3e55c7aba5dba0ece1eb4a7c9f86d"
+    },
+    {
+      "path": "b32-configure-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-configure-final.log",
+      "bytes": 2017,
+      "rawSha256": "acbe955a50e49f01abe5f4aa3b841c81a65e9d866485ee25d4f7acd9ecba3373"
+    },
+    {
+      "path": "b32-configure-prefix-first.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b32-configure-prefix-first.log",
+      "bytes": 2058,
+      "rawSha256": "0bcbc786858d1df2ca44714726026ef73f9ff3230a510a0acc14fd8b53a3bb5a"
+    },
+    {
+      "path": "b32-configure-prefix.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-configure-prefix.log",
+      "bytes": 2017,
+      "rawSha256": "849596bd9eda8cd1d8827301da441f3b173319a5229e87b0a5eefcc361910766"
+    },
+    {
+      "path": "b32-configure.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b32-configure.log",
+      "bytes": 1363,
+      "rawSha256": "9754f506994d23b5b10dd043f915e01f5d565aa38cd34cb0789c4f24db8d7250"
+    },
+    {
+      "path": "b32-docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-docs.log",
+      "bytes": 2725,
+      "rawSha256": "eb6e618607f6857e0b384c5441bae44df9a8cb2899457c4227229240b8d1d7b4"
+    },
+    {
+      "path": "b32-reuse-first.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b32-reuse-first.log",
+      "bytes": 127,
+      "rawSha256": "0b91d8b9222bb273afd2bc47f6f8bfefa9634a70ae611f910ebaec72d79a5a59"
+    },
+    {
+      "path": "b32-reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-reuse.log",
+      "bytes": 2487,
+      "rawSha256": "3dbafe0b3ccdcc68b4eb2aa335e6a006ebf2b492ddb1cf4673de998218f82b18"
+    },
+    {
+      "path": "b32-task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b32-task.log",
+      "bytes": 2518,
+      "rawSha256": "bd83658ef99179acdf0187e7db6e5f8e1963805e1b679936baa5bbf350983928"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1582,
+      "rawSha256": "2846b134386a062e13ad949c024769ca4677c1e943e37c83b041e048a6ec85ba"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1997,
+      "rawSha256": "48478133d9d100a74652cc460b3220adba09f3a0fcea4203aec6fd82e27ff6fd"
+    },
+    {
+      "path": "EventLifetimeSuitabilityTest.cpp",
+      "bytes": 5867,
+      "rawSha256": "f22aec21c9023f7cb07acc00fcf39679a5db4869da1ece6b2305c916cc08f23e"
+    },
+    {
+      "path": "findings-prefix.json",
+      "bytes": 144,
+      "rawSha256": "797f2aa864dd0a20267caafe2370ef5a40abdeb929037e396bbef9419095e828"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 10024,
+      "rawSha256": "af1a22d704242cf10848dfa0343f2082216400a6081ceb136b4dba00029a2ca7"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 17860,
+      "rawSha256": "766fb7be94fc8fd248474cfd39c9f25d18fc29604cc29d10722c2c738ec0142a"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 4820,
+      "rawSha256": "9c175aea7f25a3b99e8e25434bd47af66b63b5528d80608e2f34d58a85cdcf66"
+    },
+    {
+      "path": "search.json",
+      "bytes": 27461,
+      "rawSha256": "1c4570dffd56881224b85d0f0d7859dd3c3f4fc400f09de865b070aeafec2305"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 1022,
+      "rawSha256": "25bdbec7bbf5c881b50a576d0f7d8c220b199b3d4a9dda91cf8a9fe12bb66ab3"
+    }
+  ]
+}

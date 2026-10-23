@@ -1,0 +1,23 @@
+[
+  {
+    "path": "RobWork/RobWork/src/rw/models/Device.hpp",
+    "shaMatches": true,
+    "target": "sdurw_models",
+    "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/models/WorkCell.hpp",
+    "shaMatches": true,
+    "target": "sdurw_models",
+    "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/src/rw/models/PrismaticJoint.hpp",
+    "shaMatches": true,
+    "target": "sdurw_models",
+    "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+    "targetShaMatches": true
+  }
+]

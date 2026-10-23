@@ -1,0 +1,23 @@
+Frozen bb997f1cfb89c8d8eb24b457d2c82d4c0711af44 baseline 1401 relations 220 sourcePaths 63
+core 30 3 3 1 {'build': 1, 'production': 18, 'test': 11}
+diagnostics 38 3 2 1 {'build': 1, 'production': 22, 'test': 15}
+drivetrain 22 10 2 1 {'build': 1, 'test': 10, 'production': 11}
+dynamics 61 8 4 1 {'build': 1, 'production': 37, 'test': 23}
+evidence 37 26 6 1 {'build': 1, 'production': 19, 'test': 17}
+execution 60 2 2 1 {'build': 1, 'test': 22, 'production': 37}
+foundation-governance 33 0 0 0 {'build': 3, 'production': 30}
+io 37 12 2 1 {'build': 1, 'test': 12, 'production': 24}
+kinematics 104 24 5 1 {'build': 1, 'production': 70, 'test': 33}
+modeling 138 26 8 1 {'build': 1, 'production': 96, 'test': 41}
+optimization 76 5 2 1 {'build': 1, 'production': 43, 'test': 32}
+policy 43 8 3 1 {'build': 1, 'production': 24, 'test': 18}
+project 87 2 1 1 {'build': 1, 'production': 53, 'test': 33}
+reporting 66 1 1 1 {'build': 1, 'test': 34, 'production': 31}
+requirements 92 11 4 1 {'build': 1, 'production': 68, 'test': 23}
+runtime 57 29 6 1 {'build': 1, 'production': 33, 'test': 23}
+selection 71 16 3 1 {'build': 1, 'production': 35, 'test': 35}
+testkit 46 12 1 1 {'build': 1, 'production': 29, 'test': 16}
+trajectory 81 18 5 1 {'build': 1, 'production': 50, 'test': 30}
+ui 162 3 2 1 {'build': 1, 'production': 117, 'test': 44}
+workflow 60 1 1 1 {'build': 1, 'production': 29, 'test': 30}
+SOURCE ROLES {'production': 60, 'test': 3}

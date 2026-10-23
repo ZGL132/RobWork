@@ -1,0 +1,47 @@
+[
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\run-probe.ps1",
+    "rawSha256": "34ff282fab49d17e326ba1cf7e6b2010700974654f336eafdea3f0299b766f1f",
+    "bytes": 1981
+  },
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\build\\Release\\ird_reuse_audit_probe.exe",
+    "rawSha256": "b690ae88355aa471cb78989ad23560bf446da0c6e3688b5b97b96a91ab3a2821",
+    "bytes": 560128
+  },
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\build\\CMakeCache.txt",
+    "rawSha256": "ec4e322b54e2e2f65795399be1a18be92f249af71e4fa6be6aa93edfa11f860e",
+    "bytes": 51260
+  },
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\gtest.xml",
+    "rawSha256": "6955a30ebc8a9a3079e269f9c226a631d213f9d7c8eee5673f9cfeb848cf9a78",
+    "bytes": 731
+  },
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\ird-test-report.json",
+    "rawSha256": "a4caad32337477b93d702b1744c2873f556907052746c25d4ceb27fff9ce08c7",
+    "bytes": 1011
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin/gtest.dll",
+    "rawSha256": "553e609b8a4267ec66370e42605403c665f55da7306f8bb0845c90f47f4dfab4",
+    "bytes": 447488
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets.cmake",
+    "rawSha256": "dc4b25e9c9418b878869983ac2fc2c711d0031d6c26ea866c7ef67417c8f014f",
+    "bytes": 5580
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/share/gtest/GTestTargets-release.cmake",
+    "rawSha256": "0fa5c976e5b5a557724eb9e53bb269fe928ba1f3ed5987ff752d9a3ea8e83a41",
+    "bytes": 2545
+  },
+  {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\\repo\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include\\sdurws\\ird\\testkit\\gtest\\RecordListener.hpp",
+    "rawSha256": "cc5db6c501ff9d3be411f8c26c62f4348135523c28d0b675f715a92da8febbe7",
+    "bytes": 6537
+  }
+]

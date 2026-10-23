@@ -1,0 +1,147 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "new": false,
+    "changedKeys": [
+      "requirements",
+      "sources",
+      "targets",
+      "search",
+      "differences",
+      "inputs",
+      "auditEvidence",
+      "auditBoundary"
+    ]
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "new": false,
+    "changedKeys": [
+      "requirements",
+      "sources",
+      "targets",
+      "search",
+      "differences",
+      "inputs",
+      "auditEvidence",
+      "auditBoundary"
+    ]
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "new": false,
+    "changedKeys": [
+      "requirements",
+      "search",
+      "differences",
+      "inputs",
+      "auditEvidence",
+      "auditBoundary"
+    ]
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "new": true,
+    "changedKeys": []
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "new": true,
+    "changedKeys": []
+  }
+]

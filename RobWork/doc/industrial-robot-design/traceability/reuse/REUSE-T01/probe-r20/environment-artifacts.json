@@ -1,0 +1,55 @@
+{
+  "taskId": "REUSE-T01",
+  "configureExit": 0,
+  "buildExit": 0,
+  "runExit": 1,
+  "passed": 2,
+  "failed": 4,
+  "skipped": 0,
+  "notRun": 0,
+  "commands": [
+    "Launch-VsDevShell.ps1 -Arch amd64 -HostArch amd64 -SkipAutomaticLocation",
+    "cmake -S RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/ -B .cache/b20-project -G Visual Studio 17 2022 -A x64 -DRobWork_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake -DCMAKE_PREFIX_PATH=<installed-vcpkg;Qt-6.11.1>",
+    "cmake --build .cache/b20-project --config Release --target ird_project_boundary_audit",
+    "absolute .cache/b20-project/Release/ird_project_boundary_audit.exe --gtest_filter=ReuseProjectBoundary.* --gtest_output=xml:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/gtest.xml --ird_report=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/ird-test-report.json"
+  ],
+  "inputs": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/CMakeLists.txt",
+      "sha256": "4b8d3650c33f9d538c4b96b44b5671695a2387ec4b26916c179e5fb7aa5702a7"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/ProjectBoundaryTest.cpp",
+      "sha256": "949b6d933bcdaac1109186536123b089a69a0d9f41beaf17a77e74c363c9c0ad"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+      "sha256": "67dc97d954737ede1ee4bebee7c3e3bd5d164b4e90a1963c42b4433938130909"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+      "sha256": "c98e2ef8d410cf590615252668d18631a44665d5e71a5eba7319483edc931aab"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "sha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "sha256": "1a19ba558d7d99c40ba10ce560bcf98631574634626deaa8d9ad24f46fd2ea07"
+    }
+  ],
+  "xml": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/gtest.xml",
+    "sha256": "3540045f38ee5503e6e71bc42f5976479b21445fe5f996f24ba1c6a33d6e0235"
+  },
+  "report": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/ird-test-report.json",
+    "sha256": "5bdc9e453a8247fb3ae9dbec42ceb57c3c4911dcbc38b06fae4d6a2e3c5c96a5"
+  },
+  "stdout": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/stdout.log",
+    "sha256": "1150d094295623335fbdeb6324d947d3afd79c34d10cf0a90e52b94a53bb934a"
+  },
+  "scope": "仅新增6项；原注册测试未运行；未跑全project/GUI/进程kill/并发/性能，2健康正例passed，4反例failed，不是迁移PASS"
+}

@@ -1,0 +1,195 @@
+TEST(ReuseAudit, EulerMaskCannotBeSubstitutedByEaaRows) {
+    using namespace rw::math;
+    // RobWork RPY 参数顺序是 yaw/pitch/roll，产品字段顺序是 roll/pitch/yaw。
+    // 仅 roll 改变；固定 yaw/pitch 时，空间 EAA 的 y/z 仍出现非零分量。
+    const auto actual = RPY<>(0.7, 0.4, 0.6).toRotation3D();
+    const auto desired = RPY<>(0.7, 0.4, 1.2).toRotation3D();
+    const RPY<> actualAngles(actual), desiredAngles(desired);
+    EXPECT_NEAR(0.0, desiredAngles[0] - actualAngles[0], 1e-12); // yaw 固定。
+    EXPECT_NEAR(0.0, desiredAngles[1] - actualAngles[1], 1e-12); // pitch 固定。
+    const EAA<> spatialError = actual * EAA<>(inverse(actual) * desired);
+    EXPECT_GT(std::hypot(spatialError[1], spatialError[2]), 0.2);
+}
+
+// 上游选择的反例：JacobianIKSolver 在半周目标处的公开收敛结果须用独立姿态误差复核。
+TEST(ReuseAudit, JacobianSolverHalfTurnNeedsIndependentValidation) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>());
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    const auto device = rw::core::ownedPtr(new SerialDevice(base, tcp, "view", state));
+    rw::invkin::JacobianIKSolver solver(device, state);
+    // 夹具只有绕 Z 的关节；绕 X 半周不可达，不能把 RPY 首参误当 roll。
+    const Transform3D<> target(RPY<>(0, 0, rw::math::Pi).toRotation3D());
+    const bool reportedConverged = solver.solveLocal(target, 1e-6, state, 2);
+    EXPECT_TRUE(reportedConverged); // 实测上游差异，不允许生产沿用其成功判定。
+    const EAA<> actualResidual(inverse(device->baseTend(state).R()) * target.R());
+    EXPECT_NEAR(rw::math::Pi, actualResidual.angle(), 1e-12);
+}
+
+// GAP-IK/KIN-02：ParallelIK耗尽预算后仍可能返回候选，非空不能作为成功证据。
+TEST(ReuseAudit, ParallelSolverBudgetExhaustionStillReturnsCandidate) {
+    using namespace rw::kinematics;
+    using namespace rw::math;
+    using namespace rw::models;
+    StateStructure structure;
+    auto* base = new FixedFrame("base", Transform3D<>());
+    auto* joint = new RevoluteJoint("joint", Transform3D<>());
+    auto* tcp = new FixedFrame("tcp", Transform3D<>(Vector3D<>(1, 0, 0)));
+    structure.addFrame(base, structure.getRoot());
+    structure.addFrame(joint, base);
+    structure.addFrame(tcp, joint);
+    joint->setActive(true);
+    State state = structure.getDefaultState();
+    ParallelLeg leg(std::vector<Frame*>{base, joint, tcp});
+    ParallelDevice device(ParallelDevice::Legs{&leg}, "view", state);
+    device.setBounds({Q(1, -3.14), Q(1, 3.14)});
+    rw::invkin::ParallelIKSolver solver(&device);
+    solver.setMaxIterations(2);
+    solver.setMaxError(1e-10);
+    VectorND<6, bool> enabled;
+    for (int i = 0; i < 6; ++i) enabled[i] = i < 3;
+    const Transform3D<> target(Vector3D<>(2, 0, 0));
+    const auto solutions = solver.solve(
+        std::vector<rw::invkin::ParallelIKSolver::Target>{{tcp, target, enabled}}, state);
+    // 独立几何界限：TCP只能在半径1 m的圆上，(2,0,0)至少相差1 m。
+    ASSERT_EQ(1u, solutions.size());
+    State candidate = state;
+    device.setQ(solutions.front(), candidate);
+    EXPECT_NEAR(1.0, (leg.baseTend(candidate).P() - target.P()).norm2(), 1e-12);
+void ODESimulator::resetScene (rw::kinematics::State& state)
+{
+    if (isInErrorGlobal) {
+        // delete world and reinitialize everything
+    }
+
+    isInErrorGlobal = false;
+    _time           = 0.0;
+
+    // first run through all rigid bodies and set the velocity and force to zero
+    RW_DEBUGS ("- Resetting bodies: " << _allbodies.size ());
+    for (dBodyID body : _allbodies) {
+        dBodySetLinearVel (body, 0, 0, 0);
+        dBodySetAngularVel (body, 0, 0, 0);
+        dBodySetForce (body, 0, 0, 0);
+        dBodySetTorque (body, 0, 0, 0);
+    }
+
+    for (ODEBody* body : _odeBodies) {
+        body->reset (state);
+    }
+
+    // next the position need be reset to what is in state
+    // run through all rw bodies and set the body position accordingly
+    RW_DEBUGS ("- Resetting sensors: " << _odeSensors.size ());
+    for (ODETactileSensor* sensor : _odeSensors) {
+        sensor->clear ();
+    }
+
+    RW_DEBUGS ("- Resetting devices: " << _odeDevices.size ());
+    // run through all devices and set the rigid bodies accoringly
+    for (ODEDevice* device : _odeDevices) {
+        device->reset (state);
+    }
+    RW_DEBUGS ("Finished reset!!");
+}
+
+void ODESimulator::disableCollision (rwsim::dynamics::Body::Ptr b1, rwsim::dynamics::Body::Ptr b2)
+{
+    _bpstrategy->addRule (ProximitySetupRule::makeExclude (b1->getName (), b2->getName ()));
+}
+
+void ODESimulator::enableCollision (rwsim::dynamics::Body::Ptr b1, rwsim::dynamics::Body::Ptr b2)
+{
+    _bpstrategy->addRule (ProximitySetupRule::makeInclude (b1->getName (), b2->getName ()));
+}
+
+void ODESimulator::exitPhysics ()
+{
+    for (ODEConstraint* constraint : _odeConstraints) {
+        delete constraint;
+    }
+    _odeConstraints.clear ();
+
+    for (ODEDevice* vdev : _odeDevices) {
+        delete vdev;
+    }
+    _odeDevices.clear ();
+
+    for (ODETactileSensor* sensor : _odeSensors) {
+        delete sensor;
+    }
+    _odeSensors.clear ();
+
+    while (_odeBodies.size () > 0) {
+        ODEBody* body = _odeBodies[0];
+        if (!_dwc->inDevice (body->getRwBody ()))
+            delete body;
+        std::vector< ODEBody* >::iterator it = _odeBodies.begin ();
+        while (it < _odeBodies.end ()) {
+         * The method provides the, in a least square sense, optimal joint
+         * velocity for the specified tool velocity screw. That is the
+         * \f$\mathbf{\dot{q}}\f$ minimizing
+         * \f$\|\mathbf{J}\mathbf{\dot{q}}-\mathbf{\dot{x}}\|^2\f$, subject to the joint position,
+         * velocity and acceleration limits.
+         *
+         * @param q [in] current device joint configuration
+         * @param dq [in] current device joint velocity
+         * @param tcpscrew [in] desired velocity screw of tcp
+         *
+         * @return the optimal joint velocity
+         */
+        rw::math::Q solve (const rw::math::Q& q, const rw::math::Q& dq,
+                           const rw::math::VelocityScrew6D<>& tcpscrew);
+
+      private:
+        typedef rw::math::Q::Base VectorBase;
+
+        VectorBase inequalitySolve (const Eigen::MatrixXd& G, const VectorBase& b,
+                                    const VectorBase& lower, const VectorBase& upper);
+
+        void calculateVelocityLimits (VectorBase& lower, VectorBase& upper, const VectorBase& q,
+                                      const VectorBase& dq);
+        /**
+         * @copydoc rw::invkin::IterativeIK::solve
+         */
+        std::vector< rw::math::Q > solve (const rw::math::Transform3D<>& baseTend,
+                                          const rw::kinematics::State& state) const;
+
+        void setCheckJointLimits (bool limit){};
+
+      private:
+        QPController _qpcontroller;
+        const rw::models::SerialDevice* _device;
+        rw::core::PropertyMap _properties;
+        rw::kinematics::State _state;
+        double _maxQuatStep;
+
+        bool performLocalSearch (const rw::models::SerialDevice* device,
+                                 const rw::math::Transform3D<>& bTed, double maxError,
+                                 rw::kinematics::State& state, unsigned int maxIter) const;
+    };
+
+}}    // namespace rwlibs::algorithms
+
+#endif    // end include guard
+48:| REUSE-T05 | trajectory/modeling/drivetrain 及其余单元重复实现清理 | T03/T04＋高阶能力批准 | 分能力 revert |
+73:| C REUSE-T01 双向审计 | 按 audit-contract §2 分批 review 上游并反查项目，扩展 catalog，填 functions/<unit>.json；真实 GAP 探测和候选排除；完成全项目功能决策，影响 REUSE 契约随审计细化 | 不要求先通读整个库；每个缺口单独批准，审计完成不批准新核心 |
+79:每能力批次同时替换生产路径、删被替代核心、补真实边界测试及同步文档；不为每个值运算加接口，不建第二模型层/通用 facade。回滚完整能力提交或已知制品，不以恢复隐藏旧内核掩盖差异。数值差异不放宽需求容差，批准 SA-19 或宿主例外不能授权算法重写。
+104:退出条件：交付 SHA、授权范围、阶段准入和可执行验收均可追溯；没有用 approved=true 或 Markdown 勾选冒充独立批准。网络问题只阻止远程交付，不伪报本地验证失败或算法失败。
+169:| T03-B 普通与受限 IK | kinematics/src/Ik.cpp → rw/invkin/JacobianIKSolver.hpp；受限功能按 GAP-IK 结论 | 保留目标编排、稳定排序/去重与契约限位，删自持 DLS/重复差分；上游不能满足的功能阻断，不能以后过滤假冒求解约束 | IkTest、TaskPoints/RegionCoverage 契约；双容差、限位/奇异、不可达、取消/统计真实性、多解确定性 |
+170:| T04-A 逆动力学 | dynamics/src/InverseDynamics.cpp → rwsim/util/RecursiveNewtonEuler；runtime DWC/RigidDevice 事实 | 保留工况/统计/证据、单位与已批准投影适配；删除 Vec3/Mat3/RneaChain 自建内核，摩擦/工具/载荷单点计入 | RneaTest、DynGoldenDatasetTest、真实 evaluator；DOF+1、移动关节广义力、Body/惯量参考系、固定段、重力/载荷，独立单/双杆物理 oracle |
+171:| T04-B 正动力学 | dynamics/src/ForwardDynamics.cpp → rwsim/simulator/PhysicsEngine::load/initPhysics/step 与实际可用后端 | 保留请求/结果/工况编排，删自持质量阵/消元/关节 RK4；真实会话由 runtime 物化支持，不直接把刚体 RK4 当替换 | ForwardDynamicsTest、RNE/FD 一致性、真实力控制/初态/步长/收敛、能量与确定性、失败/取消/资源释放、性能 |
+179:3. 仅实现已批准薄适配/直接调用，替换真实生产入口；同一能力提交删除被替代核心/死依赖和隐藏 fallback。
+183:SVD 等纯值运算的审计和测试设计可以较早完成；本计划保留现有 T05 执行依赖，不能以风险较低为由跳过门禁/全功能审计准入。高阶轨迹、约束 IK 或动力学缺口未批准则该能力停在提案，已通过其他能力不自动替其验收。
+216:| 接口/ABI/DTO 不兼容 | T02 先核全部消费者与版本；按已批准接口方案迁移，回滚受影响接口及消费者完整提交组，不悄改虚表 |
+218:| 上游能力不足/后端缺失 | 单独缺口提案和批准；不提前写核心，不把仿真环境缺供伪报算法通过 |
+223:**下一步建议仅启动工作包 0～2：补强实施契约、数据/权限/功能/正向证据门禁与独立验收。** T01 的校准审计作为门禁样本可先开展；全量功能审计和算法迁移按上述阶段逐步放行。本次规划不批准扩展/新核心，不自动改变任何 planned 任务状态。

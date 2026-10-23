@@ -1,0 +1,13 @@
+powershell.exe : C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-cbff9c8f804a440a8d5ec06b363ad7ba\validate-b1-lf.ps1 : s
+chemaVersion must
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\clone\RobWork\scripts\industrialrobot\test-governance-l
+ite.ps1:17 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\zgl18\...emaVersion must:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ be ird-pipeline-batch/1
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-b1-lf.ps1
+ 

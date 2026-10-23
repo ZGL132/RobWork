@@ -1,0 +1,20 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::requireStringArray
+47: std::vector<std::string> requireStringArray(const JsonValue& obj, const std::string& key,
+48:                                             std::size_t minCount)
+49: {
+50:     const JsonValue* v = obj.find(key);
+51:     if (v == nullptr || !v->isArray()) {
+52:         if (minCount == 0) { return {}; }
+53:         failField(key, "必填数组字段缺失或非数组");
+54:     }
+55:     if (v->items.size() < minCount) {
+56:         failField(key, "至少 " + std::to_string(minCount) + " 个元素");
+57:     }
+58:     std::vector<std::string> out;
+59:     for (const auto& item : v->items) {
+60:         if (!item.isString()) { failField(key, "数组元素须为字符串"); }
+61:         out.push_back(item.text);
+62:     }
+63:     return out;
+64: }

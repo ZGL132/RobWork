@@ -1,0 +1,408 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "function",
+    "symbol": "Test-CommitMessage",
+    "startLine": 36,
+    "endLine": 57
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch { }",
+    "startLine": 18,
+    "endLine": 18
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$scriptDir = $PSScriptRoot",
+    "startLine": 21,
+    "endLine": 21
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }",
+    "startLine": 22,
+    "endLine": 22
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir \"..\\..\\..\")).Path }",
+    "startLine": 23,
+    "endLine": 23
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path (Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"))) {",
+    "startLine": 24,
+    "endLine": 26
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$repoTop = (& git -C $RepoRoot rev-parse --show-toplevel 2>$null)",
+    "startLine": 27,
+    "endLine": 27
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $repoTop) { throw \"not a git repository: $RepoRoot\" }",
+    "startLine": 28,
+    "endLine": 28
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$repoTop = (Resolve-Path $repoTop).Path",
+    "startLine": 29,
+    "endLine": 29
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$prefixRe = '^\\[(WP-\\d{2}-T\\d{2}|DTB|docs|units|ARCH|governance|ACC|PIPE|CCP)\\]'",
+    "startLine": 33,
+    "endLine": 33
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$genericRe = '^(修复\\s*bug|优化代码|更新文件|修改文件|update|fix)[。.!！]?$'",
+    "startLine": 34,
+    "endLine": 34
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$commits = @()",
+    "startLine": 60,
+    "endLine": 60
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($Message.Count -gt 0) {",
+    "startLine": 61,
+    "endLine": 73
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($commits.Count -eq 0) {",
+    "startLine": 74,
+    "endLine": 77
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "$failed = 0",
+    "startLine": 80,
+    "endLine": 80
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($c in $commits) {",
+    "startLine": 81,
+    "endLine": 90
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($failed -gt 0) {",
+    "startLine": 91,
+    "endLine": 94
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"commit-lint: PASS（$($commits.Count) 个提交全部合规）\"",
+    "startLine": 95,
+    "endLine": 95
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "function",
+    "symbol": "Test-AnchorExists",
+    "startLine": 33,
+    "endLine": 42
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "function",
+    "symbol": "Test-AnchorRequired",
+    "startLine": 46,
+    "endLine": 52
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $TaskFile)) { throw \"task file not found: $TaskFile\" }",
+    "startLine": 19,
+    "endLine": 19
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) {",
+    "startLine": 23,
+    "endLine": 27
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$docBase = Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"",
+    "startLine": 28,
+    "endLine": 28
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $docBase)) { throw \"repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定仓库根）\" }",
+    "startLine": 29,
+    "endLine": 29
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$allTaskIds = @{}",
+    "startLine": 55,
+    "endLine": 55
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "Get-ChildItem (Join-Path $docBase \"tasks\") -Recurse -Filter \"*.json\" -ErrorAction SilentlyContinue | ForEach-Object {",
+    "startLine": 56,
+    "endLine": 61
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$tasks = @(Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json)",
+    "startLine": 63,
+    "endLine": 63
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$required = 'taskId','unit','masterWp','title','status','dependsOn','requirements','designRefs','verify'",
+    "startLine": 64,
+    "endLine": 64
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'",
+    "startLine": 65,
+    "endLine": 65
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($t in $tasks) {",
+    "startLine": 66,
+    "endLine": 121
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($t in $tasks) {",
+    "startLine": 123,
+    "endLine": 128
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"validate-task: PASS ($($tasks.Count) tasks)\"",
+    "startLine": 129,
+    "endLine": 129
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path $TaskFile)) { throw \"task file not found: $TaskFile\" }",
+    "startLine": 18,
+    "endLine": 18
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$scriptDir = $PSScriptRoot",
+    "startLine": 21,
+    "endLine": 21
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }",
+    "startLine": 22,
+    "endLine": 22
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir \"..\\..\\..\")).Path }",
+    "startLine": 23,
+    "endLine": 23
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path (Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design\"))) {",
+    "startLine": 24,
+    "endLine": 26
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"verify-task: RepoRoot=$RepoRoot\"",
+    "startLine": 27,
+    "endLine": 27
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "& (Join-Path $scriptDir \"validate-task.ps1\") -TaskFile $TaskFile -RepoRoot $RepoRoot",
+    "startLine": 29,
+    "endLine": 29
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$t = Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json",
+    "startLine": 31,
+    "endLine": 31
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "& (Join-Path $scriptDir 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile",
+    "startLine": 33,
+    "endLine": 33
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($LASTEXITCODE -ne 0) { throw 'H1-H6 execution blocked: compile reuse contract first' }",
+    "startLine": 34,
+    "endLine": 34
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($DryRun) {",
+    "startLine": 35,
+    "endLine": 39
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$manualEntries = 0",
+    "startLine": 47,
+    "endLine": 47
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "$machineEntries = 0",
+    "startLine": 48,
+    "endLine": 48
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "foreach ($cmd in @($t.verify)) {",
+    "startLine": 49,
+    "endLine": 68
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output (\"verify-task: PASS {0}（机器可执行 {1} 条全部通过；散文人工核对 {2} 条）\" -f $t.taskId, $machineEntries, $manualEntries)",
+    "startLine": 69,
+    "endLine": 69
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "function",
+    "symbol": "Invoke-Probe",
+    "startLine": 13,
+    "endLine": 25
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "$ErrorActionPreference = 'Stop'",
+    "startLine": 4,
+    "endLine": 4
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }",
+    "startLine": 5,
+    "endLine": 5
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-tests' }",
+    "startLine": 6,
+    "endLine": 6
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "[IO.Directory]::CreateDirectory($OutputDir) | Out-Null",
+    "startLine": 7,
+    "endLine": 7
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "$testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ird-gov-lite-' + [guid]::NewGuid().ToString('N'))",
+    "startLine": 8,
+    "endLine": 8
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "$psExe = (Get-Process -Id $PID).Path",
+    "startLine": 9,
+    "endLine": 9
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "$results = @()",
+    "startLine": 10,
+    "endLine": 10
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 27,
+    "endLine": 74
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $report.complete) { exit 1 }",
+    "startLine": 75,
+    "endLine": 75
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "kind": "entry-statement",
+    "symbol": "Write-Output \"governance-lite: PASS ($passed passed, 0 failed, 0 skipped)\"",
+    "startLine": 76,
+    "endLine": 76
+  }
+]

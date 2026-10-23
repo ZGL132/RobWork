@@ -1,0 +1,33 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  Probe.cpp
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(61,29): error C2065: “RPY”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(61,33): error C2059: 语法错误:“>” [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(62,50): error C2065: “EAA”: 未声明的标识符 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(62,54): error C2059: 语法错误:“>” [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(69,13): error C3536: “upstream”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(69,13): error C2064: 项不会计算为接受 2 个参数的函数 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(69,13): error C2660: “testing::internal::DoubleNearPredFormat”: 函数不接受 5 个参数 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1612,28):
+      参见“testing::internal::DoubleNearPredFormat”的声明
+      C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(69,13):
+      尝试匹配参数列表“(const char [12], const char [14], const char [6], const T, double)”时
+          with
+          [
+              T=double
+          ]
+  
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(70,13): error C3536: “upstreamRoundTrip”: 初始化之前无法使用 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(70,13): error C2064: 项不会计算为接受 2 个参数的函数 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(70,13): error C2660: “testing::internal::DoubleNearPredFormat”: 函数不接受 5 个参数 [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\rpy_baseline.vcxproj]
+      D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\include\gtest\gtest.h(1612,28):
+      参见“testing::internal::DoubleNearPredFormat”的声明
+      C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T11\probe\Probe.cpp(70,13):
+      尝试匹配参数列表“(const char [15], const char [23], const char [5], const T, double)”时
+          with
+          [
+              T=double
+          ]
+  
+  Probe.cpp
+  rpy_current.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t11\probe-build\Release\rpy_current.exe

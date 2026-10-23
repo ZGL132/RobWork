@@ -1,0 +1,22 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp:44:CheckResult checkCloseWithin(std::string_view fieldPath, double actualSi,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp:60:CheckResult checkAllCloseWithin(std::string_view fieldPathTemplate,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp:57:        JsonValue v = parseValue(0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp:113:    JsonValue parseValue(std::size_t depth)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp:202:            v.members.emplace_back(key, parseValue(depth + 1));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp:236:            v.items.push_back(parseValue(depth + 1));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:65:std::wstring quoteWindowsArg(const std::wstring& arg)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:199:std::wstring buildEnvironmentBlock(const std::map<std::string, std::string>& overrides)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:310:void TestProcessRunner::start(const ProcessSpec& spec, std::filesystem::path workingDir)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:315:                           "TestProcessRunner::start：实例已启动过，不可重复 start"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:320:                           "TestProcessRunner::start：ProcessSpec.executable 为空——"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:328:                           "TestProcessRunner::start：CreateJobObjectW 失败（GetLastError=" +
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:338:                           "TestProcessRunner::start：SetInformationJobObject 失败"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:346:    std::wstring cmdLine = detail::quoteWindowsArg(spec.executable.wstring());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:349:        cmdLine += detail::quoteWindowsArg(utf8ToWide(rawArg));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:351:    std::wstring envBlock = buildEnvironmentBlock(spec.env);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:364:                           "TestProcessRunner::start：workingDir 不存在（" +
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:372:    const BOOL created = ::CreateProcessW(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:374:        cmdLine.data(),                 // 可写缓冲（CreateProcessW 会原位改写）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:387:                           "TestProcessRunner::start：CreateProcessW 失败"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:400:                           "TestProcessRunner::start：AssignProcessToJobObject 失败"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp:413:                           "TestProcessRunner::start：ResumeThread 失败"

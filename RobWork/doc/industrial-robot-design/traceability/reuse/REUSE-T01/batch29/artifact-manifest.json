@@ -1,0 +1,477 @@
+[
+  {
+    "path": "b29-docs.log",
+    "bytes": 2724,
+    "rawSha256": "366f350bb2be43d7728989f3f964fceb5a6d70d0ec7c3867130381797f27cebd"
+  },
+  {
+    "path": "b29-reuse.log",
+    "bytes": 2486,
+    "rawSha256": "5dd05f328925d29e81c2fa2dcdf4a622efce4bbeab97ea3459b4cf45baeed1f1"
+  },
+  {
+    "path": "b29-task.log",
+    "bytes": 2517,
+    "rawSha256": "a4a5515e2a55f244d2d46d4f9c622cd1350af234c3b7c7af40f3f892beeeafc6"
+  },
+  {
+    "path": "before/test-governance-lite.ps1",
+    "bytes": 10185,
+    "rawSha256": "a95bd06c486aecc79d14ae2bd2003c6bb2f103113c1c14679c98cb91fa37443d"
+  },
+  {
+    "path": "before/validate-b1-batch.ps1",
+    "bytes": 5486,
+    "rawSha256": "19607466fa66809fe90b93bc4d606c9fb46cfa344a48f72d6005686fa0f5d063"
+  },
+  {
+    "path": "green-powershell/b1-lf-invalid.log",
+    "bytes": 790,
+    "rawSha256": "92868c7fb94da6e89b2f44a4f36f6cf2c645bdc364af326131cd62aa3dc160a3"
+  },
+  {
+    "path": "green-powershell/b1-lf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-powershell/empty-title.log",
+    "bytes": 205,
+    "rawSha256": "716a8124d0995a725a9051e1e110a8534110d6b88c9525d6b27ad55573adcc5f"
+  },
+  {
+    "path": "green-powershell/free-body.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-powershell/generic-title.log",
+    "bytes": 233,
+    "rawSha256": "ba2427b0aa24e3dda7718e1c0c24931788c52241c0a2fcbf6fed2073894849ce"
+  },
+  {
+    "path": "green-powershell/governance-lite-report.json",
+    "bytes": 1910,
+    "rawSha256": "0599cf0f4bb0fd233dd9865217232ceaf279526f08ac38513cb80940c51bee45"
+  },
+  {
+    "path": "green-powershell/no-prefix.log",
+    "bytes": 303,
+    "rawSha256": "aa0a4d6bada09a7248aa214cf301e975786e0f75e48ec2fa40be4e5636664e38"
+  },
+  {
+    "path": "green-powershell/short-doc.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-powershell/unknown-prefix.log",
+    "bytes": 301,
+    "rawSha256": "a045162152c698cb60990a55997efaddfa7dd3759a24c2b4ef0fd88890abb681"
+  },
+  {
+    "path": "green-powershell.log",
+    "bytes": 703,
+    "rawSha256": "dea7caf96710cf8627fd7bc7aeea3aeab7e2653c0db90538ff9d8b108e2a5b23"
+  },
+  {
+    "path": "green-pwsh/b1-crlf-invalid.log",
+    "bytes": 57,
+    "rawSha256": "a593730ee23bd32640da43ee38483323765bd4bd1a224371192d291759b22a9e"
+  },
+  {
+    "path": "green-pwsh/b1-crlf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-pwsh/b1-lf-invalid.log",
+    "bytes": 57,
+    "rawSha256": "a593730ee23bd32640da43ee38483323765bd4bd1a224371192d291759b22a9e"
+  },
+  {
+    "path": "green-pwsh/b1-lf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-pwsh/context-all-no-dir.log",
+    "bytes": 59,
+    "rawSha256": "5700577df2fabfecc02136d4942e9f6310cff81c6ee26022b61da652249beb3a"
+  },
+  {
+    "path": "green-pwsh/context-build.log",
+    "bytes": 107,
+    "rawSha256": "2966853e99e6ee0c2ad183f5a6e28f41b34a30d158de8557ce482c3b74b87af2"
+  },
+  {
+    "path": "green-pwsh/context-changed-design.log",
+    "bytes": 251,
+    "rawSha256": "6ad1f95e0a73b2154769afb88f2c05945fddb94e7c9f5b8c7a4c8e7d237838a4"
+  },
+  {
+    "path": "green-pwsh/context-fresh.log",
+    "bytes": 72,
+    "rawSha256": "5ce8d84865782c491a2f0e42754e351d300964d0c598f62c08fea801f3db8186"
+  },
+  {
+    "path": "green-pwsh/context-missing-AGENTS.md.log",
+    "bytes": 168,
+    "rawSha256": "2aacfd972443869f8fd7450fc049ceba377e705095b3e178f6160f81dae55a17"
+  },
+  {
+    "path": "green-pwsh/context-missing-LITE-T01.json.log",
+    "bytes": 225,
+    "rawSha256": "0c27d284aff49983cabf8596132e9f322ed866f8e80eee7f797afeb7e7da623b"
+  },
+  {
+    "path": "green-pwsh/context-missing-README.md.log",
+    "bytes": 212,
+    "rawSha256": "b4dc310fd8f52a6e9966a67c4bf392211538eabd34db256200eb0a868c7202e1"
+  },
+  {
+    "path": "green-pwsh/context-selected-no-dir.log",
+    "bytes": 73,
+    "rawSha256": "31f043140236df448d331f5f71cd4a402456661faa99e63963e2d5527e0e9f6a"
+  },
+  {
+    "path": "green-pwsh/context-state-copy.log",
+    "bytes": 187,
+    "rawSha256": "a678549a3779c7bcd3464e84fcdb563e31686f4799577bfbbd42c8143c4012af"
+  },
+  {
+    "path": "green-pwsh/deep-rejects-invalid-index.log",
+    "bytes": 2661,
+    "rawSha256": "a948cd541f71d560386ceb9bf6c362e194c4b17353bfd75969491dc82eb3fe6a"
+  },
+  {
+    "path": "green-pwsh/default-ignores-optional-index.log",
+    "bytes": 2724,
+    "rawSha256": "366f350bb2be43d7728989f3f964fceb5a6d70d0ec7c3867130381797f27cebd"
+  },
+  {
+    "path": "green-pwsh/empty-title.log",
+    "bytes": 205,
+    "rawSha256": "716a8124d0995a725a9051e1e110a8534110d6b88c9525d6b27ad55573adcc5f"
+  },
+  {
+    "path": "green-pwsh/free-body.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-pwsh/generic-title.log",
+    "bytes": 233,
+    "rawSha256": "ba2427b0aa24e3dda7718e1c0c24931788c52241c0a2fcbf6fed2073894849ce"
+  },
+  {
+    "path": "green-pwsh/governance-lite-report.json",
+    "bytes": 2776,
+    "rawSha256": "6a6e0e6caaf4087d7267c69ed33d43b46d74b47d37e77e1f4a38b6d474d1e1c7"
+  },
+  {
+    "path": "green-pwsh/no-prefix.log",
+    "bytes": 303,
+    "rawSha256": "aa0a4d6bada09a7248aa214cf301e975786e0f75e48ec2fa40be4e5636664e38"
+  },
+  {
+    "path": "green-pwsh/short-doc.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-pwsh/unknown-prefix.log",
+    "bytes": 301,
+    "rawSha256": "a045162152c698cb60990a55997efaddfa7dd3759a24c2b4ef0fd88890abb681"
+  },
+  {
+    "path": "green-pwsh.log",
+    "bytes": 562,
+    "rawSha256": "177a4f4eae4742526b0432b6cd8ba4837ba5f1e77629d2ed075e8f589845c127"
+  },
+  {
+    "path": "green-r2-powershell/b1-crlf-invalid.log",
+    "bytes": 794,
+    "rawSha256": "452be99a66850f16c99677b1a3ac99c6d1c2b239db53593f9d74582dabf48894"
+  },
+  {
+    "path": "green-r2-powershell/b1-crlf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-r2-powershell/b1-lf-invalid.log",
+    "bytes": 790,
+    "rawSha256": "94bd1053d48790bdc472c3b41ea7cae10bb5c6abb5fab698273d0d2f080542b9"
+  },
+  {
+    "path": "green-r2-powershell/b1-lf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-r2-powershell/context-all-no-dir.log",
+    "bytes": 59,
+    "rawSha256": "5700577df2fabfecc02136d4942e9f6310cff81c6ee26022b61da652249beb3a"
+  },
+  {
+    "path": "green-r2-powershell/context-build.log",
+    "bytes": 107,
+    "rawSha256": "2966853e99e6ee0c2ad183f5a6e28f41b34a30d158de8557ce482c3b74b87af2"
+  },
+  {
+    "path": "green-r2-powershell/context-changed-design.log",
+    "bytes": 253,
+    "rawSha256": "7c37f0b8a95f7eb54eae176d25fe0399f07b74194711734f7042851184c55ae5"
+  },
+  {
+    "path": "green-r2-powershell/context-fresh.log",
+    "bytes": 72,
+    "rawSha256": "5ce8d84865782c491a2f0e42754e351d300964d0c598f62c08fea801f3db8186"
+  },
+  {
+    "path": "green-r2-powershell/context-missing-AGENTS.md.log",
+    "bytes": 919,
+    "rawSha256": "da1e6471ea07aefb3d335a668290ca0eb1cfd990b0353265cd4d00add3c3b457"
+  },
+  {
+    "path": "green-r2-powershell/context-missing-LITE-T01.json.log",
+    "bytes": 978,
+    "rawSha256": "9766d48b24e70afde3746fbd647c0bbb4d66310fcd9c75099c61d1cfd1d8d373"
+  },
+  {
+    "path": "green-r2-powershell/context-missing-README.md.log",
+    "bytes": 963,
+    "rawSha256": "d5240ec7c3b4c0e742c2b3b23a114ed4c91d0a440c10d4f881a5a2ce6c7ca80c"
+  },
+  {
+    "path": "green-r2-powershell/context-selected-no-dir.log",
+    "bytes": 824,
+    "rawSha256": "559069a36b7cbfa61ab73c079c26c27bd4032414619b097110eed4ff8a4b46e1"
+  },
+  {
+    "path": "green-r2-powershell/context-state-copy.log",
+    "bytes": 938,
+    "rawSha256": "f70b71eeb448c55b52c7d499bca480bbd317b3ac897564e53faf76c89e15f1b2"
+  },
+  {
+    "path": "green-r2-powershell/deep-rejects-invalid-index.log",
+    "bytes": 3373,
+    "rawSha256": "b38ca5382c3f8dd618a46c38eabf5663f9afd598978c151d5ff96d24822a26fa"
+  },
+  {
+    "path": "green-r2-powershell/default-ignores-optional-index.log",
+    "bytes": 2724,
+    "rawSha256": "366f350bb2be43d7728989f3f964fceb5a6d70d0ec7c3867130381797f27cebd"
+  },
+  {
+    "path": "green-r2-powershell/empty-title.log",
+    "bytes": 205,
+    "rawSha256": "716a8124d0995a725a9051e1e110a8534110d6b88c9525d6b27ad55573adcc5f"
+  },
+  {
+    "path": "green-r2-powershell/free-body.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-r2-powershell/generic-title.log",
+    "bytes": 233,
+    "rawSha256": "ba2427b0aa24e3dda7718e1c0c24931788c52241c0a2fcbf6fed2073894849ce"
+  },
+  {
+    "path": "green-r2-powershell/governance-lite-report.json",
+    "bytes": 4831,
+    "rawSha256": "973e40d11dd75f7fe69fadd7c7150c9a98875a7846e2b002e8379a240483b306"
+  },
+  {
+    "path": "green-r2-powershell/no-prefix.log",
+    "bytes": 303,
+    "rawSha256": "aa0a4d6bada09a7248aa214cf301e975786e0f75e48ec2fa40be4e5636664e38"
+  },
+  {
+    "path": "green-r2-powershell/short-doc.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-r2-powershell/unknown-prefix.log",
+    "bytes": 301,
+    "rawSha256": "a045162152c698cb60990a55997efaddfa7dd3759a24c2b4ef0fd88890abb681"
+  },
+  {
+    "path": "green-r2-powershell.log",
+    "bytes": 562,
+    "rawSha256": "177a4f4eae4742526b0432b6cd8ba4837ba5f1e77629d2ed075e8f589845c127"
+  },
+  {
+    "path": "green-r2-pwsh/b1-crlf-invalid.log",
+    "bytes": 57,
+    "rawSha256": "a593730ee23bd32640da43ee38483323765bd4bd1a224371192d291759b22a9e"
+  },
+  {
+    "path": "green-r2-pwsh/b1-crlf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-r2-pwsh/b1-lf-invalid.log",
+    "bytes": 57,
+    "rawSha256": "a593730ee23bd32640da43ee38483323765bd4bd1a224371192d291759b22a9e"
+  },
+  {
+    "path": "green-r2-pwsh/b1-lf-valid.log",
+    "bytes": 50,
+    "rawSha256": "3810b081d04f3f2a89dec324217c0b824bf2236b4547291e1691ba42673dcb0a"
+  },
+  {
+    "path": "green-r2-pwsh/context-all-no-dir.log",
+    "bytes": 59,
+    "rawSha256": "5700577df2fabfecc02136d4942e9f6310cff81c6ee26022b61da652249beb3a"
+  },
+  {
+    "path": "green-r2-pwsh/context-build.log",
+    "bytes": 107,
+    "rawSha256": "2966853e99e6ee0c2ad183f5a6e28f41b34a30d158de8557ce482c3b74b87af2"
+  },
+  {
+    "path": "green-r2-pwsh/context-changed-design.log",
+    "bytes": 251,
+    "rawSha256": "6ad1f95e0a73b2154769afb88f2c05945fddb94e7c9f5b8c7a4c8e7d237838a4"
+  },
+  {
+    "path": "green-r2-pwsh/context-fresh.log",
+    "bytes": 72,
+    "rawSha256": "5ce8d84865782c491a2f0e42754e351d300964d0c598f62c08fea801f3db8186"
+  },
+  {
+    "path": "green-r2-pwsh/context-missing-AGENTS.md.log",
+    "bytes": 168,
+    "rawSha256": "2aacfd972443869f8fd7450fc049ceba377e705095b3e178f6160f81dae55a17"
+  },
+  {
+    "path": "green-r2-pwsh/context-missing-LITE-T01.json.log",
+    "bytes": 225,
+    "rawSha256": "0c27d284aff49983cabf8596132e9f322ed866f8e80eee7f797afeb7e7da623b"
+  },
+  {
+    "path": "green-r2-pwsh/context-missing-README.md.log",
+    "bytes": 212,
+    "rawSha256": "b4dc310fd8f52a6e9966a67c4bf392211538eabd34db256200eb0a868c7202e1"
+  },
+  {
+    "path": "green-r2-pwsh/context-selected-no-dir.log",
+    "bytes": 73,
+    "rawSha256": "31f043140236df448d331f5f71cd4a402456661faa99e63963e2d5527e0e9f6a"
+  },
+  {
+    "path": "green-r2-pwsh/context-state-copy.log",
+    "bytes": 187,
+    "rawSha256": "a678549a3779c7bcd3464e84fcdb563e31686f4799577bfbbd42c8143c4012af"
+  },
+  {
+    "path": "green-r2-pwsh/deep-rejects-invalid-index.log",
+    "bytes": 2661,
+    "rawSha256": "a948cd541f71d560386ceb9bf6c362e194c4b17353bfd75969491dc82eb3fe6a"
+  },
+  {
+    "path": "green-r2-pwsh/default-ignores-optional-index.log",
+    "bytes": 2724,
+    "rawSha256": "366f350bb2be43d7728989f3f964fceb5a6d70d0ec7c3867130381797f27cebd"
+  },
+  {
+    "path": "green-r2-pwsh/empty-title.log",
+    "bytes": 205,
+    "rawSha256": "716a8124d0995a725a9051e1e110a8534110d6b88c9525d6b27ad55573adcc5f"
+  },
+  {
+    "path": "green-r2-pwsh/free-body.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-r2-pwsh/generic-title.log",
+    "bytes": 233,
+    "rawSha256": "ba2427b0aa24e3dda7718e1c0c24931788c52241c0a2fcbf6fed2073894849ce"
+  },
+  {
+    "path": "green-r2-pwsh/governance-lite-report.json",
+    "bytes": 2776,
+    "rawSha256": "6a6e0e6caaf4087d7267c69ed33d43b46d74b47d37e77e1f4a38b6d474d1e1c7"
+  },
+  {
+    "path": "green-r2-pwsh/no-prefix.log",
+    "bytes": 303,
+    "rawSha256": "aa0a4d6bada09a7248aa214cf301e975786e0f75e48ec2fa40be4e5636664e38"
+  },
+  {
+    "path": "green-r2-pwsh/short-doc.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "green-r2-pwsh/unknown-prefix.log",
+    "bytes": 301,
+    "rawSha256": "a045162152c698cb60990a55997efaddfa7dd3759a24c2b4ef0fd88890abb681"
+  },
+  {
+    "path": "green-r2-pwsh.log",
+    "bytes": 562,
+    "rawSha256": "177a4f4eae4742526b0432b6cd8ba4837ba5f1e77629d2ed075e8f589845c127"
+  },
+  {
+    "path": "red-powershell/b1-lf-valid.log",
+    "bytes": 939,
+    "rawSha256": "2b62e2fece324009ea3a197829919f39775b058969dce3a1ab890b678d36514f"
+  },
+  {
+    "path": "red-powershell/empty-title.log",
+    "bytes": 205,
+    "rawSha256": "716a8124d0995a725a9051e1e110a8534110d6b88c9525d6b27ad55573adcc5f"
+  },
+  {
+    "path": "red-powershell/free-body.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "red-powershell/generic-title.log",
+    "bytes": 233,
+    "rawSha256": "ba2427b0aa24e3dda7718e1c0c24931788c52241c0a2fcbf6fed2073894849ce"
+  },
+  {
+    "path": "red-powershell/governance-lite-report.json",
+    "bytes": 1693,
+    "rawSha256": "1a64a91145e8dd62c5b6d3fa5be79d7b7068464954751a30b13a60e530ca67e3"
+  },
+  {
+    "path": "red-powershell/no-prefix.log",
+    "bytes": 303,
+    "rawSha256": "aa0a4d6bada09a7248aa214cf301e975786e0f75e48ec2fa40be4e5636664e38"
+  },
+  {
+    "path": "red-powershell/short-doc.log",
+    "bytes": 69,
+    "rawSha256": "5b77d87df483ab70b8bfc2eebe8ae0ffb009d93e8f1c322d5fc4cd273f203d6c"
+  },
+  {
+    "path": "red-powershell/unknown-prefix.log",
+    "bytes": 301,
+    "rawSha256": "a045162152c698cb60990a55997efaddfa7dd3759a24c2b4ef0fd88890abb681"
+  },
+  {
+    "path": "red-powershell.log",
+    "bytes": 677,
+    "rawSha256": "7784e9958bb36f3dcb3a88b6bfe8bfb6859084fbe23057ec29260de9032677c9"
+  },
+  {
+    "path": "stderr-width-probe.log",
+    "bytes": 346,
+    "rawSha256": "567ad8794c168a13508c10fb11b96a2252ef23990449819f6eaf7f68b0b227e4"
+  },
+  {
+    "path": "verification.json",
+    "bytes": 1341,
+    "rawSha256": "7fd6c68fc4dd52e936cb04530999d2c2411cfdd8e4ca6b709c1bce20890bf859"
+  }
+]

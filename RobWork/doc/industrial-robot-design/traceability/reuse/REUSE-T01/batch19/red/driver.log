@@ -1,0 +1,13 @@
+script-audit-no-fake-target : False (exit=1 expected=PASS)
+script-audit-reject-cmake-target : False (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-product-escape : False (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-other-directory : False (exit=1 expected=REUSE-EXECUTION)
+script-audit-reject-fake-migration : False (exit=1 expected=REUSE-EXECUTION)
+script-audit-require-own-context : False (exit=1 expected=REUSE-EXECUTION)
+script-audit-stale-context : False (exit=1 expected=REUSE-FRESHNESS)
+script-audit-reject-production-disguise : False (exit=1 expected=REUSE-EXECUTION)
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b19-red-driver.ps1:275
+Line |
+ 275 |  … tedTests) { throw "reuse tests failed/incomplete: failed=$failed exec …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | reuse tests failed/incomplete: failed=8 executed=8 expected=8 driver=

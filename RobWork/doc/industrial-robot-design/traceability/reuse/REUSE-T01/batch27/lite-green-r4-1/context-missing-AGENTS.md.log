@@ -1,0 +1,14 @@
+powershell.exe : C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-context-p
+ack.ps1 : validat
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:17 char
+:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\zgl18\...k.ps1 : validat:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+e-context-pack: pack missing required fingerprint: AGENTS.md (LITE-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1

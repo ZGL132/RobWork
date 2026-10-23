@@ -1,0 +1,102 @@
+{
+  "reviewedCommit": "d52fd06aafcb025a7d494d59c6d44bc9c16f3643",
+  "checks": [
+    {
+      "name": "raw-validate-reuse.ps1",
+      "passed": true,
+      "detail": "report=1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f gitBlob=367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf windowsCRLF=1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f tempCheckout=367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf"
+    },
+    {
+      "name": "raw-reuse-contract.ps1",
+      "passed": true,
+      "detail": "report=60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3 gitBlob=60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3 windowsCRLF=60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3 tempCheckout=60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3"
+    },
+    {
+      "name": "raw-test-reuse-governance.ps1",
+      "passed": true,
+      "detail": "report=bb1ce6a78600f492f52e4e9ea171622ed5e2d0a1e517a58a378e6ed82088f249 gitBlob=bb1ce6a78600f492f52e4e9ea171622ed5e2d0a1e517a58a378e6ed82088f249 windowsCRLF=bb1ce6a78600f492f52e4e9ea171622ed5e2d0a1e517a58a378e6ed82088f249 tempCheckout=bb1ce6a78600f492f52e4e9ea171622ed5e2d0a1e517a58a378e6ed82088f249"
+    },
+    {
+      "name": "ps7-counts",
+      "passed": true,
+      "detail": "expected=152 passed=152 failed=0"
+    },
+    {
+      "name": "ps7-every-log-xml-driver",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "ps7-frozen-driver-inputs",
+      "passed": true,
+      "detail": "validator/helper/driver raw bytes match frozen SHA"
+    },
+    {
+      "name": "ps51-counts",
+      "passed": true,
+      "detail": "expected=152 passed=152 failed=0"
+    },
+    {
+      "name": "ps51-every-log-xml-driver",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "ps51-frozen-driver-inputs",
+      "passed": true,
+      "detail": "validator/helper/driver raw bytes match frozen SHA"
+    },
+    {
+      "name": "red-counts",
+      "passed": true,
+      "detail": "expected=8 passed=0 failed=8"
+    },
+    {
+      "name": "red-every-log-xml-driver",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "red-old-helper-bytes",
+      "passed": true,
+      "detail": "BOM/CRLF checkout of old helper: 25F27251FAFA9CB40146243AFC4916EA82B93CDF8708B6FA050C4B37D77F0E57"
+    },
+    {
+      "name": "red-driver-bytes",
+      "passed": true,
+      "detail": "1280372559625AB0F7C6EA0E18FF436382D516A5A2459FDAB4B7BA759C51916A"
+    },
+    {
+      "name": "intermediate-green-counts",
+      "passed": true,
+      "detail": "expected=8 passed=8 failed=0"
+    },
+    {
+      "name": "intermediate-green-every-log-xml-driver",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "intermediate-helper-is-distinct",
+      "passed": true,
+      "detail": "B2BFFD5F6A66F9CD7723A066A74FC232E09AD27E65AD1EED8BAE8EF3720D8AAE"
+    },
+    {
+      "name": "changed-340-exact-allowed",
+      "passed": true,
+      "detail": "changed=340 outOfScope=0"
+    },
+    {
+      "name": "no-production-framework-vcpkg",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "no-real-script-execution-rows",
+      "passed": true,
+      "detail": "existing governance functions=21"
+    }
+  ],
+  "passed": 19,
+  "failed": 0
+}

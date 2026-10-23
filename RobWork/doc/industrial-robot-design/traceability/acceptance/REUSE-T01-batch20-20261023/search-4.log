@@ -1,0 +1,18 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp:871: * 返回 ERROR_DISK_FULL。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp:879:    m_ops->failAt(fp::kWriteChunk, 3, 70 /*ERROR_DISK_FULL*/);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:41:#ifndef ERROR_DISK_FULL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:96: *   - ERROR_DISK_FULL → DiskFull（磁盘满）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ArchiveServiceImpl.cpp:105:    if (osError == ERROR_DISK_FULL) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:64:///   ERROR_DISK_FULL/ERROR_DISK_QUOTA_EXCEEDED → DiskFull（磁盘满——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:73:    constexpr unsigned long kDiskFull = 70;              // ERROR_DISK_FULL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:74:    constexpr unsigned long kQuotaExceeded = 395;        // ERROR_DISK_QUOTA_EXCEEDED
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\ObjectStore.cpp:78:    if (osError == kDiskFull || osError == kQuotaExceeded) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:36:#ifndef ERROR_DISK_FULL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:89: *   - ERROR_DISK_FULL（含 0xE0 扩展面的等价值不逐一枚举——底层以原始码
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\DraftServiceImpl.cpp:101:    if (osError == ERROR_DISK_FULL) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:47:    constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:48:    constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\TxEngine.cpp:52:    if (osError == kDiskFull || osError == kQuotaExceeded) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:608:    constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:609:    constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src\StoreClone.cpp:613:    if (osError == kDiskFull || osError == kQuotaExceeded) {

@@ -1,0 +1,3292 @@
+[
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.osToStoreError",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      44,
+      59
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.cvHex",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      64,
+      72
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.readAllBytes",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      76,
+      90
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.verifyStagedFile",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      103,
+      132
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.emitReport",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      135,
+      140
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      147,
+      168
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.makeStoreCorruptRecord",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      174,
+      184
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.operator()",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      191,
+      198
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.TxEngine",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      207,
+      228
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.stagingRoot",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      230,
+      233
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectsRoot",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      235,
+      238
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      240,
+      243
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.revisionDir",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      245,
+      250
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.objectFile",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      252,
+      259
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.generateTxId",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      261,
+      281
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.commit",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      287,
+      797
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishOneObject",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      799,
+      843
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      845,
+      865
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      871,
+      1142
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.readHead",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      1144,
+      1158
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.TxEngine.reportDev",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      1164,
+      1171
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "lines": [
+      503,
+      508
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.handleToResult",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      40,
+      56
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.boolToResult",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      59,
+      67
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      76,
+      91
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      93,
+      123
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      125,
+      131
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      133,
+      136
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      138,
+      146
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      148,
+      159
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      161,
+      182
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      184,
+      200
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      226,
+      294
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      296,
+      303
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      305,
+      311
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.default",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      207,
+      214
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.AtomicFile.ctor.injected",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      216,
+      224
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.win32.AtomicFile.~HandleGuard",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+    "lines": [
+      246,
+      251
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+    "lines": [
+      169,
+      221
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+    "lines": [
+      322,
+      345
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+    "lines": [
+      347,
+      394
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.readSmallFile",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "lines": [
+      70,
+      89
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.mapOsError",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "lines": [
+      103,
+      112
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "lines": [
+      853,
+      1065
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "lines": [
+      455,
+      470
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+    "lines": [
+      472,
+      500
+    ],
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/IFileOps.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/include/sdurws/ird/project/PersistenceFormat.hpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "inputs",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch20-search.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/project-transaction-audit.md",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r20/environment-artifacts.json",
+    "match": true
+  },
+  {
+    "functionId": "project.ProjectStoreImpl.loadCommittedState",
+    "kind": "source",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+    "lines": [
+      519,
+      632
+    ],
+    "match": true
+  }
+]

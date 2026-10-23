@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-23T00:19:09.499" name="AllTests">
+  <testsuite name="ReuseTestHarnessAudit" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T00:19:09.499">
+    <testcase name="ListenerCollectionOwnsAppendedListener" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-gtest-listeners-675a9c64d3b04ef7bc0519b539926fb7\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\TestHarnessSuitabilityTest.cpp" line="24" status="run" result="completed" time="0." timestamp="2026-10-23T00:19:09.499" classname="ReuseTestHarnessAudit" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,162 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs
+8:  *   - 忽略清单（3）：<gazebo> 外来扩展（§6.3"报告不解释"）＋
+9:  *     <disable_collisions>（实现语义：顶层扫描入外来扩展面、全树收集入
+10:  *     自碰撞候选——双登记面，ImportTest 包含式断言同口径）＋robot 级
+11:  *     <material> 定义（元素名 "material 'gray'"——无落点无密度语义）；
+12:  *   - 不支持清单（8）：<transmission>（R2）×1＋<limit velocity>（§4.3-A
+13:  *     无落点，不发明 schema）×5（j1/j2/j4/j5/j6 携带 velocity）＋非单位
+14:  *     scale（schema 无落点）×1＋package:// ROS URI（引导改相对路径）×1；
+15:  *   - 待确认清单（2）：j2 缺 axis（MDL-11 默认局部 +X 待确认）＋j3 缺
+16:  *     limit（MDL-06④ revolute 限位必填面）——subject 为定位主体稳定
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs
+56:     pendingKinds: [
+57:       { kind: 'axis-default-plus-x', subject: "joint 'j2'" },
+58:       { kind: 'limit-missing', subject: "joint 'j3'" },
+59:     ],
+60:     ignored: 3,
+61:     ignoredElements: ['gazebo', 'disable_collisions', "material 'gray'"],
+62:     unsupported: 8,
+63:     unsupportedKinds: [
+64:       { kind: 'transmission', count: 1 },
+65:       { kind: 'joint-velocity-limit', count: 5 },
+66:       { kind: 'mesh-scale', count: 1 },
+67:       { kind: 'ros-uri', count: 1 },
+68:     ],
+69:     mappedCountAtLeast: 6,
+70:     defaultsCountAtLeast: 3,
+71:     submittable: true,
+72:     noNamedBlockingError: true,
+73:   },
+74:   draft: {
+75:     displayName: 'golden arm',
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs
+144:   path.join(thisDir, '..', 'expected', 'import-report.json'),
+145:   JSON.stringify(importReport, null, 2) + '\n', 'utf8');
+146: fs.writeFileSync(
+147:   path.join(thisDir, '..', 'expected', 'xacro-samples.json'),
+148:   JSON.stringify(xacroSamples, null, 2) + '\n', 'utf8');
+149: console.log('mdl-urdf-import: expected/import-report.json + expected/xacro-samples.json 已生成');
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp
+118: /// JSON 取数（缺字段即失败后返回 0——同上）。
+119: double jNum(const tk::JsonValue& o, const std::string& k)
+120: {
+121:     const tk::JsonValue* v = o.find(k);
+122:     if (v == nullptr) {
+123:         ADD_FAILURE() << "JSON 缺字段: " << k;
+124:         return 0.0;
+125:     }
+126:     return v->number;
+127: }
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp
+299: TEST(MdlGoldenImport, GoldenUrdfReportCounts_V06_WP13T16_ACC3)
+300: {
+301:     IRD_TEST_INFO(std::vector<std::string>{"MDL-03", "MDL-11", "MDL-12"},
+302:                   std::vector<std::string>{"AT-15", "AT-17"},
+303:                   tk::DatasetRef{"mdl-urdf-import", "1.0.0"});
+304: 
+305:     const tk::GoldenDataset ds = loadImportDataset();
+306:     const tk::JsonValue expectedRoot = tk::parseJson(readFile(
+307:         ds.resolveExpected("expected/import-report.json")));
+308:     const tk::JsonValue* counts = expectedRoot.find("counts");
+309:     ASSERT_NE(counts, nullptr) << "期望文件缺 counts 段";
+310: 
+311:     const ModelImportMapper mapper;
+312:     std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+313:     const ImportOutcome outcome
+314:         = mapper.mapUrdf(makeGoldenSource(ds), ImportOptions{}, diags);
+315: 
+316:     // 草稿产出（golden 样例无不可表达类型/分支——无阻断型失败）。
+317:     ASSERT_TRUE(outcome.draft.has_value()) << "黄金导入必须产出草稿";
+318:     EXPECT_FALSE(outcome.error.has_value()) << "黄金样例无命名阻断条件";
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp
+405:     // —— 不支持清单：恰 8 条；kind 分布逐项一致且无期望外 kind ——
+406:     ASSERT_EQ(report.unsupported.size(),
+407:               static_cast<std::size_t>(jNum(*counts, "unsupported")));
+408:     std::map<std::string, int> kindCounts;
+409:     for (const auto& item : report.unsupported) { ++kindCounts[item.kind]; }
+410:     const tk::JsonValue* unsupportedKinds = counts->find("unsupportedKinds");
+411:     ASSERT_NE(unsupportedKinds, nullptr);
+412:     int declaredTotal = 0;
+413:     for (const tk::JsonValue& entry : unsupportedKinds->items) {
+414:         const std::string kind = jStr(entry, "kind");
+415:         const int want = static_cast<int>(jNum(entry, "count"));
+416:         declaredTotal += want;
+417:         EXPECT_EQ(kindCounts[kind], want)
+418:             << "不支持类 " << kind << " 计数与期望不符";
+419:     }
+420:     EXPECT_EQ(static_cast<int>(report.unsupported.size()), declaredTotal)
+421:         << "不支持清单总数与期望分布之和一致";
+422: 
+423:     // —— 映射/默认补全下界（数据集 generate 脚本头注的计数约定：粒度
+424:     // 属实现细化，以 countAtLeast＋关键命中承载）——
+425:     EXPECT_GE(report.mapped.size(),
+426:               static_cast<std::size_t>(jNum(*counts, "mappedCountAtLeast")));
+427:     EXPECT_GE(report.defaults.size(),
+428:               static_cast<std::size_t>(jNum(*counts, "defaultsCountAtLeast")));
+429:     // F01（WP-13-T25）：velocity→maxVelocity 映射计数钉住（golden 五轴——
+430:     // j1/j2/j4/j5/j6；旧 joint-velocity-limit 未保留面随 schema 落位消亡）。
+431:     {
+432:         std::size_t velocityRows = 0;
+433:         for (const auto& m : report.mapped) {
+434:             if (m.targetField.find(".maxVelocity") != std::string::npos) {
+435:                 ++velocityRows;
+436:             }
+437:         }
+438:         EXPECT_EQ(velocityRows,
+439:                   static_cast<std::size_t>(jNum(*counts, "mappedVelocityCount")))
+440:             << "velocity 映射行计数与黄金期望不符（F01）";
+441:     }
+
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp
+1919:         // —— velocity（F01/{1,1}：maxVelocity 真实落点——§6.3 limit 行
+1920:         //     "velocity→maxVelocity"）。合法（有限且 ≥0，单位随类型 SI 直入
+1921:         //     rad/s｜m/s）→Provided＋映射行；语法/负值→错误项不静默；fixed
+1922:         //     关节→忽略面（无可动限值语义）。
+1923:         if (src.hasVelocity) {
+1924:             double velocityValue = 0.0;
+1925:             const bool syntaxOk = parseDoubleStable(src.velocityText, &velocityValue);
+1926:             if (!isMovableType(type)) {
+1927:                 ImportIgnoredItem item;
+1928:                 item.element = "joint '" + name + "'/limit@velocity";
+1929:                 item.reason = "fixed 关节无可动限值语义——忽略（不解释）";
+1930:                 item.span = src.limitSpan;
+1931:                 report.ignored.push_back(std::move(item));
+1932:             } else if (!syntaxOk || !std::isfinite(velocityValue)) {
+1933:                 valueIllegal = true;
+1934:                 ImportErrorItem item;
+1935:                 item.kind = "value-illegal";
+1936:                 item.subject = "joint '" + name + "'.limit@velocity";
+1937:                 item.detail = "velocity 数值语法非法/非有限（原文: "
+1938:                               + src.velocityText + "）";
+1939:                 item.span = src.limitSpan;
+1940:                 report.errors.push_back(std::move(item));
+1941:             } else if (velocityValue < 0.0) {
+1942:                 valueIllegal = true;
+1943:                 ImportErrorItem item;
+1944:                 item.kind = "value-illegal";
+1945:                 item.subject = "joint '" + name + "'.limit@velocity";
+1946:                 item.detail = "velocity 为负（" + src.velocityText
+1947:                               + "）——最大速度须 ≥0（rad/s｜m/s）";
+1948:                 item.span = src.limitSpan;
+1949:                 report.errors.push_back(std::move(item));
+1950:             } else {
+1951:                 entry.maxVelocity = core::SourcedValue<double>::provided(
+1952:                     velocityValue, importProvenance("urdf-import"));
+1953:                 ImportMappedItem mapped;
+1954:                 mapped.sourcePath = "joint[" + std::to_string(ci) + "]/limit@velocity";
+1955:                 mapped.targetField =
+1956:                     "joints[" + std::to_string(ci) + "].maxVelocity";
+1957:                 mapped.valueText = formatDoubleStable(velocityValue)
+1958:                                    + (type == 0 ? " rad/s" : " m/s");
+1959:                 mapped.note = "来源 import-mapped（F01 schema 落点）";
+1960:                 mapped.span = src.limitSpan;
+1961:                 report.mapped.push_back(std::move(mapped));
+1962:             }
+1963:         }
+1964: 
+1965:         draft.joints.push_back(std::move(entry));

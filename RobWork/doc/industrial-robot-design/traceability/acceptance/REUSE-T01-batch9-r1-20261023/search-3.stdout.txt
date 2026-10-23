@@ -1,0 +1,13 @@
+46: * 只读视图）；WC/DWC 结构跨线程只读共享、State 每线程 makeState 拷贝；
+167: * shared_ptr；tryDynamicWorkCell 无 DWC→Expected 错误（非崩溃）；全部查询
+174:class IRuntimeModelView {
+185:    virtual const WorkCellConstView& workCell() const = 0;
+187:    virtual Expected<DynamicWorkCellConstView, RuntimeError> tryDynamicWorkCell() const = 0;
+203:    /// WC 默认状态值拷贝（＝workCell().defaultState()——调用方线程私有）。
+204:    virtual rw::kinematics::State makeState() const = 0;
+207:    virtual const IRuntimeNameResolver& nameResolver() const = 0;
+342: * 并发（§9.2）：构造后只读＋只读视图→跨线程共享安全；makeState 每线程
+444:    const WorkCellConstView& workCell() const override;
+459:    Expected<DynamicWorkCellConstView, RuntimeError> tryDynamicWorkCell() const override;
+464:    rw::kinematics::State makeState() const override;
+465:    const IRuntimeNameResolver& nameResolver() const override;

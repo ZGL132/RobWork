@@ -1,0 +1,93 @@
+[
+  {
+    "kind": "source",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
+    "expected": "b9b3188b05fa74ce660031c4315f2c9ff5bbab74f2f1ca7c46dce8fb1c588dba",
+    "actual": "b9b3188b05fa74ce660031c4315f2c9ff5bbab74f2f1ca7c46dce8fb1c588dba",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "expected": "dfad366b5008189b70f1b42d2d0fa3309dea51665f852b9215f5b6fb0992c3a5",
+    "actual": "dfad366b5008189b70f1b42d2d0fa3309dea51665f852b9215f5b6fb0992c3a5",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+    "expected": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+    "actual": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser.hpp",
+    "expected": "e6dc0371dd810dbf3ef7d90fe10fb4c9b9d0e4354b666e88e0a559a8aa2fc51c",
+    "actual": "e6dc0371dd810dbf3ef7d90fe10fb4c9b9d0e4354b666e88e0a559a8aa2fc51c",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\standard_callbacks.hpp",
+    "expected": "dafae5990123f8b6e2072a9f7e77cb39f7b5d24ab56dfb5486d6ae7a4b1fccb6",
+    "actual": "dafae5990123f8b6e2072a9f7e77cb39f7b5d24ab56dfb5486d6ae7a4b1fccb6",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\narrow_encoding.hpp",
+    "expected": "2470738ee46c9f2678bd7de85695354ed8ee0c55874db6eca64f26b6d38c7887",
+    "actual": "2470738ee46c9f2678bd7de85695354ed8ee0c55874db6eca64f26b6d38c7887",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\conversion.hpp",
+    "expected": "30c0b4afd03bbb7cf12c710143af477cc476da86cf5063541c58854562ccaf13",
+    "actual": "30c0b4afd03bbb7cf12c710143af477cc476da86cf5063541c58854562ccaf13",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_load.hpp",
+    "expected": "926d4093d47a6583352a09b322da92328430a67f5750aff880191b2d694503be",
+    "actual": "926d4093d47a6583352a09b322da92328430a67f5750aff880191b2d694503be",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_store.hpp",
+    "expected": "905befac4beb737aeb4d1e9dfec7ca3d791dc765cf9666e859ae2c92840a9693",
+    "actual": "905befac4beb737aeb4d1e9dfec7ca3d791dc765cf9666e859ae2c92840a9693",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-config.cmake",
+    "expected": "598cc4a24ad5ad4eb13cb1677a71da0c760541fcb4a78f59b2789d152e75b9da",
+    "actual": "598cc4a24ad5ad4eb13cb1677a71da0c760541fcb4a78f59b2789d152e75b9da",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-targets.cmake",
+    "expected": "6e90d2b0197afe9bce8efd6e8889929d4b05f22304d80dbacc14a5c386077c20",
+    "actual": "6e90d2b0197afe9bce8efd6e8889929d4b05f22304d80dbacc14a5c386077c20",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-config.cmake",
+    "expected": "82c522f025eeb438d1bdf31a6dc5fb96e66b328e539b17e0aa263198cd652835",
+    "actual": "82c522f025eeb438d1bdf31a6dc5fb96e66b328e539b17e0aa263198cd652835",
+    "matches": true
+  },
+  {
+    "kind": "installedDependency",
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-targets.cmake",
+    "expected": "6f1c4dce46ef2448892e47ff16f0645a5cd353ac6b07b4b2b2466787991d9823",
+    "actual": "6f1c4dce46ef2448892e47ff16f0645a5cd353ac6b07b4b2b2466787991d9823",
+    "matches": true
+  }
+]

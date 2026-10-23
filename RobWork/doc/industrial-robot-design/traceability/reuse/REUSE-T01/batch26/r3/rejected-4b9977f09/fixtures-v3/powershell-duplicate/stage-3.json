@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "ird-findings/1",
+  "note": "RuleA",
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "原始α",
+      "when": "2026-10-23T01:02:03Z"
+    },
+    {
+      "id": "F-002",
+      "title": "对方新增",
+      "when": "2026-10-23T01:02:03Z"
+    },
+    {
+      "id": "F-001",
+      "title": "原始α",
+      "when": "2026-10-23T01:02:03Z"
+    }
+  ]
+}

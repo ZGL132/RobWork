@@ -1,0 +1,48 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B32",
+  "baseline": "a02785a10",
+  "tests": {
+    "total": 23,
+    "passed": 22,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "originalTests": {
+    "coreEvents": 7,
+    "coreProvenance": 8,
+    "upstreamEvent": 2,
+    "total": 17,
+    "passed": 17,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newTests": {
+    "total": 6,
+    "passed": 5,
+    "failed": 1,
+    "skipped": 0
+  },
+  "productionChanges": false,
+  "protected": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/",
+    "RobWork/RobWork/src",
+    "RobWork/RobWorkSim/src",
+    "vcpkg"
+  ],
+  "changed": [],
+  "independentAcceptance": "pending",
+  "notRun": [
+    "真实GUI/最终插件DLL符号留存",
+    "UI改装execution后的线程与项目切换回归",
+    "总线并发退订在投回调生命周期",
+    "生产修正",
+    "全部SourcedValue消费者泛型约束",
+    "全T01验收"
+  ],
+  "remote": "not executed"
+}

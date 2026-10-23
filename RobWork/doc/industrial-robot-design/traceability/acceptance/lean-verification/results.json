@@ -1,0 +1,37 @@
+[
+  {
+    "name": "reuse-once",
+    "pass": true,
+    "exitCode": 0,
+    "commandRan": true,
+    "reuseCalls": 1
+  },
+  {
+    "name": "dryrun-still-checks-once",
+    "pass": true,
+    "exitCode": 0,
+    "commandRan": false,
+    "reuseCalls": 1
+  },
+  {
+    "name": "legacy-task-not-exempt",
+    "pass": true,
+    "exitCode": 1,
+    "commandRan": false,
+    "reuseCalls": 1
+  },
+  {
+    "name": "reuse-denied-stops-command",
+    "pass": true,
+    "exitCode": 1,
+    "commandRan": false,
+    "reuseCalls": 1
+  },
+  {
+    "name": "invalid-contract-stops-command",
+    "pass": true,
+    "exitCode": 1,
+    "commandRan": false,
+    "reuseCalls": 0
+  }
+]

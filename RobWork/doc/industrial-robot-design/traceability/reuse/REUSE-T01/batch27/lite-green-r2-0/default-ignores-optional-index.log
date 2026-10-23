@@ -1,0 +1,3 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+REUSE-FRESHNESS : RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1
+Write-Error: H1-H6 reuse governance failed

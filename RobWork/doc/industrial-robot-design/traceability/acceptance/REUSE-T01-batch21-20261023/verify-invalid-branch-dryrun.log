@@ -1,0 +1,6 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d161\repo
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d161\repo\RobWork\scripts\industrialrobot\validate-task.ps1:112
+Line |
+ 112 |  … [0-9]+$') { throw "invalid branch '$($t.branch)' (expect like wp03-t0 …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid branch 'main' (expect like wp03-t01 / doc-t03): REUSE-T01

@@ -1,0 +1,80 @@
+21:#   1. 骨架期 INTERFACE 占位升级为 STATIC 库（目标名 sdurws_ird_project
+23:#   2. 注册 gtest 测试目标 sdurws_ird_project_test（PRJ-TX-14 前两项＝源码
+24:#      include 面红线扫描）与跨单元契约目标 sdurws_ird_project_contract_test
+50:# AtomicFile.cpp 增列（§12 PRJ-T02 行产物——存储原语：publishNew/原子
+51:# 替换/write-through 写＋IFileOps 接缝；IFileOps.hpp/AtomicFile.hpp 为
+72:# 纯进程内语义模型，零磁盘 I/O——文件读写归 TxEngine/T07）。
+73:# PRJ-T07 落位：src/TxEngine.cpp 增列（§12 PRJ-T07 行产物——事务引擎：
+76:# TxEngine.hpp 为 src/ 私有实现头——R-2；文件/目录操作一律经 win32 原语
+181:# ＋既有 AtomicFile/publishNew 原语复用〔不绕过事务原语私写〕；
+184:add_library(sdurws_ird_project STATIC
+189:    src/TxEngine.cpp
+201:    src/win32/AtomicFile.cpp
+209:target_compile_features(sdurws_ird_project PUBLIC cxx_std_17)
+210:set_target_properties(sdurws_ird_project PROPERTIES
+221:    target_compile_options(sdurws_ird_project PUBLIC /utf-8)
+226:# 实现细节头（如 src/win32/AtomicFile.hpp，PRJ-T02 落地）只能放 src/ 并以
+228:target_include_directories(sdurws_ird_project PUBLIC
+249:target_link_libraries(sdurws_ird_project PUBLIC sdurws_ird_core)
+255:    add_library(RWS::ird::project ALIAS sdurws_ird_project)
+258:# ---- 测试目标 sdurws_ird_project_test（随 PRJ-T01 登记，不预建于骨架）----
+264:# PRJ-T02 增列：AtomicFileTest（PRJ-TX-2/4/5 的单文件原语层——F2/F4/F5
+278:# PRJ-T07 增列：TxEngineTest（acceptance 1 §7.6 F1～F7 边界注入逐项——
+378:add_executable(sdurws_ird_project_test
+380:    test/AtomicFileTest.cpp
+386:    test/TxEngineTest.cpp
+400:# src/ 私有实现头目录（仅测试目标 PRIVATE）：AtomicFileTest.cpp 消费
+401:# src/win32/{IFileOps,AtomicFile}.hpp 接缝（PRJ-T02 acceptance 3——fake 经
+405:target_include_directories(sdurws_ird_project_test PRIVATE
+408:target_compile_features(sdurws_ird_project_test PRIVATE cxx_std_17)
+409:set_target_properties(sdurws_ird_project_test PROPERTIES
+417:    target_compile_options(sdurws_ird_project_test PRIVATE /utf-8)
+422:# 产品库 sdurws_ird_project 同时验证"公共头可被正常 include＋库可链接"。
+426:target_link_libraries(sdurws_ird_project_test PRIVATE
+427:    sdurws_ird_project
+434:target_compile_definitions(sdurws_ird_project_test PRIVATE
+441:add_custom_command(TARGET sdurws_ird_project_test POST_BUILD
+443:            $<TARGET_RUNTIME_DLLS:sdurws_ird_project_test>
+444:            $<TARGET_FILE_DIR:sdurws_ird_project_test>
+447:# ---- 跨单元契约测试目标 sdurws_ird_project_contract_test（随 PRJ-T01 登记）----
+494:add_executable(sdurws_ird_project_contract_test
+511:target_include_directories(sdurws_ird_project_contract_test PRIVATE
+514:target_compile_features(sdurws_ird_project_contract_test PRIVATE cxx_std_17)
+515:set_target_properties(sdurws_ird_project_contract_test PROPERTIES
+520:    target_compile_options(sdurws_ird_project_contract_test PRIVATE /utf-8)
+527:# sdurws_ird_project 传染，公共头 StoreTypes.hpp 的 core::DiagnosticRecord
+535:target_link_libraries(sdurws_ird_project_contract_test PRIVATE
+536:    sdurws_ird_project
+541:target_compile_definitions(sdurws_ird_project_contract_test PRIVATE
+544:add_custom_command(TARGET sdurws_ird_project_contract_test POST_BUILD
+546:            $<TARGET_RUNTIME_DLLS:sdurws_ird_project_contract_test>
+547:            $<TARGET_FILE_DIR:sdurws_ird_project_contract_test>
+550:# ---- 冷启动采样子进程 sdurws_ird_project_openbench_worker（WP-23-T05 增列）----
+563:add_executable(sdurws_ird_project_openbench_worker
+565:target_compile_features(sdurws_ird_project_openbench_worker PRIVATE cxx_std_17)
+566:set_target_properties(sdurws_ird_project_openbench_worker PROPERTIES
+571:    target_compile_options(sdurws_ird_project_openbench_worker PRIVATE /utf-8)
+573:# 链接面：产品库（PUBLIC 传染 core——打开协议面）；产品目标 sdurws_ird_project
+575:target_link_libraries(sdurws_ird_project_openbench_worker PRIVATE
+576:    sdurws_ird_project)
+578:# ---- 性能基准测试目标 sdurws_ird_project_perf_test（WP-23-T05 增列）----
+589:# 链接面：sdurws_ird_project（被测产品目标）＋sdurws_ird_testkit（
+593:add_executable(sdurws_ird_project_perf_test
+599:add_dependencies(sdurws_ird_project_perf_test sdurws_ird_project_openbench_worker)
+601:target_compile_features(sdurws_ird_project_perf_test PRIVATE cxx_std_17)
+602:set_target_properties(sdurws_ird_project_perf_test PROPERTIES
+607:    target_compile_options(sdurws_ird_project_perf_test PRIVATE /utf-8)
+612:target_link_libraries(sdurws_ird_project_perf_test PRIVATE
+613:    sdurws_ird_project
+619:target_compile_definitions(sdurws_ird_project_perf_test PRIVATE
+620:    IRD_PROJECT_OPENBENCH_WORKER_EXE="$<TARGET_FILE:sdurws_ird_project_openbench_worker>")
+624:add_custom_command(TARGET sdurws_ird_project_perf_test POST_BUILD
+626:            $<TARGET_RUNTIME_DLLS:sdurws_ird_project_perf_test>
+627:            $<TARGET_FILE_DIR:sdurws_ird_project_perf_test>
+653:ird_add_gtest(sdurws_ird_project_test)
+654:ird_add_gtest(sdurws_ird_project_contract_test)
+655:ird_add_gtest(sdurws_ird_project_perf_test)   # WP-23-T05——B-04 黄金项目打开基准
+667:get_target_property(_ird_prj_link_libs sdurws_ird_project LINK_LIBRARIES)
+668:get_target_property(_ird_prj_iface_libs sdurws_ird_project INTERFACE_LINK_LIBRARIES)
+671:                                       AND NOT _lib STREQUAL "sdurws_ird_project")
+673:            "project 依赖红线（R-1/T-1）：sdurws_ird_project 仅可链接 core，"

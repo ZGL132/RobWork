@@ -1,0 +1,681 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "requirements",
+  "functions": [
+    {
+      "functionId": "requirements.SamplingPlanBuilder.buildPlan",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+          "symbol": "SamplingPlanBuilder::buildPlan",
+          "qualifiedSymbol": "sdurws::ird::requirements::SamplingPlanBuilder::buildPlan",
+          "startLine": 35,
+          "endLine": 83,
+          "sha256": "30830fbce617cd541748073c1daf9cac29133265d6510e8435f3f827342c99b9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "构造规范化采样计划，不执行随机/姿态采样；调用WorkRegionService而非复制生成器，不能按文件名误报重复采样核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "requirements.SamplingPlanBuilder.digest",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "CON-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp",
+          "symbol": "SamplingPlanBuilder::digest",
+          "qualifiedSymbol": "sdurws::ird::requirements::SamplingPlanBuilder::digest",
+          "startLine": 85,
+          "endLine": 130,
+          "sha256": "eda2ccc43e71f4cc8f79e0fe5c707095d824a2150cae3238451cb743fd9e5200"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "计划分母与codec字节身份；现调用core摘要器而非新SHA核心。饱和乘积/Random分母与零样本的消费者一致性仍待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "requirements.reflectPosition",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-11"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+          "symbol": "reflectPosition",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectPosition",
+          "startLine": 219,
+          "endLine": 226,
+          "sha256": "158036ceebb484a3d8eff5db09ac61f26dacb50659322e7da3d3938d9057f405"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "镜像业务规则p-2(n·p)n保留；点积/向量运算优先上游值API，不能为复用把反射当proper rotation",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.rotationFromRpy",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-11"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+          "symbol": "rotationFromRpy",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationFromRpy",
+          "startLine": 230,
+          "endLine": 243,
+          "sha256": "62494b8a27b2a585416a0a399f6e16cd9e3adb09f4944a664ac054367006b276"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "手写ZYX展开，候选RPY(yaw,pitch,roll).toRotation3D；字段换序、rad及近奇异姿态需回归",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.reflectionMatrix",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-11"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+          "symbol": "reflectionMatrix",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectionMatrix",
+          "startLine": 246,
+          "endLine": 253,
+          "sha256": "4202282acb452142373701cc1b66e00c836bd54c7e00c6d46d91446638d19789"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "镜像面M=I-2nnT是det=-1的业务变换；用既有矩阵值工具，不能将M强转Rotation3D合法旋转",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.matMul",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-11"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+          "symbol": "matMul",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::matMul",
+          "startLine": 256,
+          "endLine": 273,
+          "sha256": "22a87b4c1cf939d62fed93cf70ab3db50d9c2fe67759b1fa5d6d8a65946c190c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "手写固定3阶乘法，优先已有矩阵运算；M为反射不能冒充Rotation3D",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.reflectRpy",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-11"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+          "symbol": "reflectRpy",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::reflectRpy",
+          "startLine": 289,
+          "endLine": 330,
+          "sha256": "dc7044b7966753f99eb1672a78d350e5ae698763806e78e14019ffd02c312bb4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "MRM业务镜像共轭保留，基础乘法/RPY解算候选上游；保持gimbal确定性，精确±90度上游往返仍待实测；probe-r6实测RPY近奇异及精确±pi/2均旋转往返正确，奇异时上游yaw=0与产品roll=0表示不同，需保持规范化字段/摘要约定；不需要据此改上游或重写通用反解",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+          "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+          "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
+        }
+      ]
+    },
+    {
+      "functionId": "requirements.targetEditRotation",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "symbol": "targetEditRotation",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRotation",
+          "startLine": 72,
+          "endLine": 78,
+          "sha256": "70c11faf93c7098aa103279d751ecc559d4a058c43d1264cd6a561ab0952fc34"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.targetEditRpy",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "symbol": "targetEditRpy",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::targetEditRpy",
+          "startLine": 80,
+          "endLine": 86,
+          "sha256": "8a88bf036d95a56b12bac625d5a0f571500bb31d0ddf3536e79c62416d44e8c4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测；probe-r6实测RPY近奇异及精确±pi/2均旋转往返正确，奇异时上游yaw=0与产品roll=0表示不同，需保持规范化字段/摘要约定；不需要据此改上游或重写通用反解",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+          "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+          "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
+        }
+      ]
+    },
+    {
+      "functionId": "requirements.finiteTargetEditPose",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsPanelWidget.cpp",
+          "symbol": "finiteTargetEditPose",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::finiteTargetEditPose",
+          "startLine": 88,
+          "endLine": 104,
+          "sha256": "2ab399158ec6ab00c65dbb1e9281976c54e08d876a20a4c9e418e585124fbc43"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "交互位姿数学仍受H1/H2约束：ZYX换序/反解与SO3合法性候选上游；保留m/rad、world系及1e-8容差，近奇异与非法矩阵先实测",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "requirements.rotationToRpyPresentation",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "REQ-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/plugin/RequirementsCommandFlows.cpp",
+          "symbol": "rotationToRpyPresentation",
+          "qualifiedSymbol": "sdurws::ird::requirements::(anonymous namespace)::rotationToRpyPresentation",
+          "startLine": 75,
+          "endLine": 85,
+          "sha256": "1769067ae0530cad49f18497389503597ea8bc3701a20d9c09bd5cce235a1d99"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "因冒烟外联缺供重写RPY不构成豁免；修构建供给优先，保持1e-8rad偏离奇异的TCP捕获摘要和gimbal分支；probe-r6实测RPY近奇异及精确±pi/2均旋转往返正确，奇异时上游yaw=0与产品roll=0表示不同，需保持规范化字段/摘要约定；不需要据此改上游或重写通用反解",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r6/gtest.xml",
+          "sha256": "dd829e28710a8be4b36b59baf4ad95be23b6c8c3bc6d3381e412f7157f833f43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
+          "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
+        }
+      ]
+    },
+    {
+      "functionId": "requirements.contract_test.ContractTestMain.main",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/contract_test/ContractTestMain.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 19,
+          "endLine": 26,
+          "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "requirements.gui_test.TestMainReport.main",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/gui_test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 25,
+          "endLine": 37,
+          "sha256": "46e884280c66e32d7deeb3bfc175c1bdd8f80ababc9f64fce9b52935443fda4f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "requirements.test.TestMainReport.main",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 28,
+          "endLine": 43,
+          "sha256": "09e891ac1a87e705fdcaaee85cd35290672018b9ff8752103d62e98a7e147060"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "requirements.CMake.ird_add_gtest",
+      "ownerUnit": "requirements",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "qualifiedSymbol": "ird_add_gtest",
+          "startLine": 473,
+          "endLine": 485,
+          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_requirements_test",
+        "sdurws_ird_requirements_contract_test",
+        "sdurws_ird_requirements_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+          "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    }
+  ]
+}

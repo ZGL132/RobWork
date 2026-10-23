@@ -1,0 +1,913 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "selection",
+  "functions": [
+    {
+      "functionId": "selection.LinearCurveEvaluator.evaluate",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CapabilityCurve.cpp",
+          "symbol": "LinearCurveEvaluator::evaluate",
+          "qualifiedSymbol": "sdurws::ird::selection::LinearCurveEvaluator::evaluate",
+          "startLine": 52,
+          "endLine": 137,
+          "sha256": "534c45f484fb7722eda81eb894b192d77befb6c6a1634819de36674d3e2e1db4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TRAJ-LINEAR",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"class LinearInterpolator|LinearInterpolator \\(|T x \\(|duration\" RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+      },
+      "differences": "底层标量分段线性插值候选LinearInterpolator<double>，保留禁止外推/有效区间/目录身份与单位，x不是时间但段参数可归一；不能让适配层接管淘汰原因",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+    },
+    {
+      "functionId": "selection.symmetricEigenvalues3x3",
+      "ownerUnit": "selection",
+      "requirements": [
+        "MDL-06",
+        "SEL-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "symmetricEigenvalues3x3",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::symmetricEigenvalues3x3",
+          "startLine": 80,
+          "endLine": 106,
+          "sha256": "b83c0ec700693d9976aecb18e0b035aae16c9d95a352e77b8accc1b581283bc1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-EIGEN",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+      },
+      "differences": "自持acos三角闭式求谱用于checkSynthesisAssertions；优先上游对称特征分解，保持升序、严格SPD、惯量三角不等式、非有限失败与单位kg*m^2",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+    },
+    {
+      "functionId": "selection.ByteWriter.u32",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "u32",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+          "startLine": 123,
+          "endLine": 129,
+          "sha256": "6cc8be86c7a4b16220712b45dcbd6ffb29608a1995b9170029504a11c5decaea"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.ByteWriter.f64",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "f64",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+          "startLine": 134,
+          "endLine": 143,
+          "sha256": "f69f6a234a579d952bfc3cd7c327660a74329c7e511aed5d84ea76053f898364"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.ByteWriter.str",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "str",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+          "startLine": 145,
+          "endLine": 149,
+          "sha256": "c66ce5d6be36be13df5211081dbf6a2ccb70b10382c95b8036b7da8527d0be10"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.ByteReader.u32",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "u32",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+          "startLine": 218,
+          "endLine": 227,
+          "sha256": "bc3aa2e37a34f85615b76c1677eca26f88b84a516735c6cb361fa01cc857920f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.ByteReader.f64",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "f64",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+          "startLine": 235,
+          "endLine": 249,
+          "sha256": "5c1998a894bfdb665730d439b5f3a4e7ffceb0214e49b43f58ab210e1b063eed"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.ByteReader.str",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "str",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+          "startLine": 250,
+          "endLine": 265,
+          "sha256": "ce8b1cb7eb2319b8e8269733df26d5b4bf89fdaa35a73ad265ed4e24a7193a39"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"BINArchive|writeValue|readValue|isLittleEndian|endian|hton|ntoh\" RobWork/RobWork/src/rw/common/BINArchive.hpp RobWork/RobWork/src/rw/common/BINArchive.cpp RobWork/RobWork/src/rw/core/IOUtil.hpp RobWork/RobWork/src/rw/core/IOUtil.cpp RobWork/RobWork/gtest/common/SerializationTest.cpp",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "与另两域低层读写重叠；显式小端，f64读取拒绝非有限；查询轨failFlag/首错原因与版本轨保留，字符串1MiB上限不被通用archive预分配绕过。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+          "sha256": "f15c2830a19dcf8486fc09dc9778a5ae2ca40504cf1ec8bc98b9775ecba47a85"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+          "sha256": "51121b0f84e9388a57f8c9175061693816215bcba0c1d2f70f669c802c93b85d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/ird-test-report.json",
+          "sha256": "d481ff3ef54ae540120bcf980bf97a72999cc7ad84d9690daaf63d3d6314cc36"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/environment-artifacts.json",
+          "sha256": "26dfc863efe7d225cd87297c0c8a7f7d28030d3c18058dbe56dc43a280616995"
+        }
+      ]
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.u32",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "u32",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::u32",
+          "startLine": 177,
+          "endLine": 183,
+          "sha256": "6cc8be86c7a4b16220712b45dcbd6ffb29608a1995b9170029504a11c5decaea"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.f64",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "f64",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::f64",
+          "startLine": 190,
+          "endLine": 199,
+          "sha256": "f69f6a234a579d952bfc3cd7c327660a74329c7e511aed5d84ea76053f898364"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteWriter.str",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "str",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteWriter::str",
+          "startLine": 201,
+          "endLine": 205,
+          "sha256": "c66ce5d6be36be13df5211081dbf6a2ccb70b10382c95b8036b7da8527d0be10"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.u32",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "u32",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32",
+          "startLine": 273,
+          "endLine": 282,
+          "sha256": "bc3aa2e37a34f85615b76c1677eca26f88b84a516735c6cb361fa01cc857920f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.f64",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "f64",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::f64",
+          "startLine": 290,
+          "endLine": 305,
+          "sha256": "e3f669040e8435b4fe183de8326f628812fd80cb68c39d36f840fef2bf925f31"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.str",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "str",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::str",
+          "startLine": 306,
+          "endLine": 313,
+          "sha256": "ddbae193617e8db9a7179678095ecf7dc70f6b0ff7f622f996182f487e25e7ca"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.combinationCodec.ByteReader.u32At",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-03",
+        "SEL-04",
+        "SEL-05",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+          "symbol": "u32At",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+          "startLine": 367,
+          "endLine": 372,
+          "sha256": "20c9d9992428fe6a9a689e97f6d9a44f573753822011e594261849eaf2281d61"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "组合校核复制小端codec；普通u32显式解码但u32At版本字段用memcpy主机序，跨端不能由x64测试证明。保留抛invalid_argument与payload字段顺序，不越权改变业务接口",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.backfillCodec.ByteReader.u32At",
+      "ownerUnit": "selection",
+      "requirements": [
+        "SEL-10",
+        "CON-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+          "symbol": "u32At",
+          "qualifiedSymbol": "sdurws::ird::selection::(anonymous namespace)::ByteReader::u32At",
+          "startLine": 332,
+          "endLine": 337,
+          "sha256": "20c9d9992428fe6a9a689e97f6d9a44f573753822011e594261849eaf2281d61"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "UTIL-BINARCHIVE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"u16|u32|u64|f64|readU|appendU|u32At|memcpy|readString|appendString\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+        "conclusion": "已读取精确实现和候选差异；尚未覆盖全部消费者、测试构建或生产适配"
+      },
+      "differences": "回填普通u32/f64为显式小端，版本字段u32At仍memcpy主机序；与CombinationCheck相同隐藏差异，必须纳入跨端协议测试，不用已有F-777完成标签当豁免",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
+    },
+    {
+      "functionId": "selection.contract_test.ContractTestMain.main",
+      "ownerUnit": "selection",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 25,
+          "endLine": 36,
+          "sha256": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "selection.test.TestMainReport.main",
+      "ownerUnit": "selection",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 27,
+          "endLine": 38,
+          "sha256": "d99619008e2779c279bd9e9b910117b32ae119c400feebc9f5b114cd621e89c6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "selection.CMake.ird_add_gtest",
+      "ownerUnit": "selection",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "qualifiedSymbol": "ird_add_gtest",
+          "startLine": 441,
+          "endLine": 453,
+          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_selection_test",
+        "sdurws_ird_selection_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+          "sha256": "a3d3cddfdd5fbd6248eec9379ff92e375907408f6de6cda61cd97802aa4cbc8c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    }
+  ]
+}

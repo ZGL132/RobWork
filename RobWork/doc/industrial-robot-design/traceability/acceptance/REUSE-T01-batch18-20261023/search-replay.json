@@ -1,0 +1,50 @@
+[
+  {
+    "index": 1,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": false,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  },
+  {
+    "index": 2,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": false,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  },
+  {
+    "index": 3,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": false,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  },
+  {
+    "index": 4,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": false,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  },
+  {
+    "index": 5,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": true,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  },
+  {
+    "index": 6,
+    "exit": 0,
+    "recordedExit": 0,
+    "stdoutExactMatch": true,
+    "stdoutSortedLinesMatch": true,
+    "stderrMatch": true
+  }
+]

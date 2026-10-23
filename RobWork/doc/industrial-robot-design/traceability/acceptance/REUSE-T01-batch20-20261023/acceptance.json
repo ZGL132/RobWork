@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B20",
+  "reviewedCommit": "eddb82a8e29f91660b048a69f4ec90c3d0a0e63a",
+  "parentCommit": "daee4f8905587b05cd1bab88bb570b8dc240097c",
+  "decision": "PASS",
+  "scope": "仅47条project pending审计登记、UTIL-FILE边界、F-962/F-963与6项红证复现，以及161归档原件保存；非产品合规通过",
+  "blockingAuditFindings": [],
+  "definitionCount": 47,
+  "contextAndEvidenceBindings": 517,
+  "candidateHashChecks": 6,
+  "originalEvidenceBindings": 9,
+  "matrixDelta": {
+    "added": 47,
+    "existing72RowsUnchanged": true,
+    "allAddedPending": true
+  },
+  "searchReplay": {
+    "commands": 6,
+    "sortedLineSetsMatch": true,
+    "exitCodes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "archivePreservation": {
+    "B17": 101,
+    "B18": 60,
+    "total": 161,
+    "rawByteMatchesOriginalAndFrozenGitBlob": true,
+    "priorScopeUnchanged": true
+  },
+  "build": {
+    "fresh": true,
+    "generator": "Visual Studio 17 2022",
+    "arch": "x64",
+    "configureExit": 0,
+    "buildExit": 0,
+    "target": "ird_project_boundary_audit",
+    "originalCoreProjectTestkitTargets": true,
+    "originalTxEngineTestFixture": true
+  },
+  "test": {
+    "filter": "ReuseProjectBoundary.*",
+    "passed": 2,
+    "failed": 4,
+    "skipped": 0,
+    "notRun": 0,
+    "exitCode": 1,
+    "verdict": "EXPECTED RED REPRODUCED",
+    "nativeXmlExitAgreement": true
+  },
+  "findings": {
+    "F-962": {
+      "status": "open",
+      "independentlyReproduced": [
+        "wrong HEAD manifest digest scan accepts",
+        "parseable manifest timestamp byte change scan accepts",
+        "public ProjectStoreFactory::open accepts wrong HEAD digest"
+      ]
+    },
+    "F-963": {
+      "status": "open",
+      "independentlyReproduced": "original IFileOps SDK ERROR_DISK_FULL=112 injection returns WriteRejected, committed old bytes unchanged; not real exhausted disk"
+    }
+  },
+  "gates": {
+    "verifyTaskExit": 0,
+    "machineCommands": 3,
+    "validateTask": "PASS",
+    "validateReuse": "PASS governance only",
+    "validateDocs": "PASS",
+    "DeepEvidence": "NOT RUN",
+    "functions": 744,
+    "inventory": 1401,
+    "DEBT": 16,
+    "UNRESOLVED": 1399,
+    "closedFiles": 0
+  },
+  "notRun": [
+    "原project完整套件（虽被注册）",
+    "其他ObjectStore/StoreClone错误映射路径",
+    "真实磁盘耗尽",
+    "断电/进程kill/崩溃矩阵",
+    "命令排队/关闭及归档事件票据并发",
+    "性能",
+    "GUI",
+    "全T01退出/T02迁移/算法合规"
+  ],
+  "remainingStaticRisks": [
+    "readAllBytes中途读取bad/目录错误归类",
+    "幻影守卫武装前注册异常",
+    "短写GetLastError及同卷/持久性细节",
+    "本地中文诊断正式模板消费",
+    "archive writerGuard覆盖事件/票据释放及noexcept事件make保证"
+  ],
+  "productUpstreamChanges": false,
+  "cloneFinalGitClean": true,
+  "implementationTreeModified": false,
+  "commitPushMerge": false,
+  "operationalEvents": [
+    "首次clone默认硬链接失败Improper link；改用--no-hardlinks全新目录成功；未复制build/vcpkg/.cache。"
+  ],
+  "evidenceRoot": "C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277",
+  "validatorBindings": [
+    {
+      "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+      "rawSha256": "5e21497276d728e3ae78742d7e676d3ace98c36c33b92c99b8984ad5f4e97f33"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "rawSha256": "396ccc1981bbcc5c41a0cb1d8a70e444ba8aa97f302f87f9a77e9b2d63d9796c"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "rawSha256": "367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "rawSha256": "bf2b8604a548d74b86e00f966de79bb6cff8690a54d5bd89f23579a9c6852903"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "rawSha256": "aad3d7c723423c7c33f2a6ed558597a97d285b46b39e77fa7158e7538aef306c"
+    }
+  ],
+  "notIncluded": "B19门禁实现和test-governance-lite未提交修正不在冻结提交；本次不验收它们"
+}

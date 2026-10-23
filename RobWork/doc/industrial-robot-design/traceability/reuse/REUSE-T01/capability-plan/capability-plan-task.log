@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\validate-task.ps1:68
+Line |
+  68 |  … 0-9]+)|WP-[0-9]+-T[0-9]+)$') { throw "invalid taskId: $($t.taskId)" }
+     |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid taskId: REUSE-T05-SVD

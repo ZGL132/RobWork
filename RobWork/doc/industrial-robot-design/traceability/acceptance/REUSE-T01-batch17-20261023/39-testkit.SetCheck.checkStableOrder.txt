@@ -1,0 +1,44 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::checkStableOrder
+394: template <class T>
+395: OrderCheckResult checkStableOrder(const std::vector<T>& expectedOrder,
+396:                                   const std::vector<T>& actual,
+397:                                   const SetMatchTraits<T>& traits,
+398:                                   const ToleranceProfile& profile)
+399: {
+400:     OrderCheckResult r;
+401:     const std::size_t n = std::min(expectedOrder.size(), actual.size());
+402:     if (expectedOrder.size() != actual.size()) {
+403:         r.sameOrder = false;
+404:         r.firstDivergence = n;   // 长度不等＝较短长度处起全部错位
+405:     }
+406:     for (std::size_t i = 0; i < n; ++i) {
+407:         const auto ei = traits.identity(expectedOrder[i]);
+408:         const auto ai = traits.identity(actual[i]);
+409:         bool posOk = true;
+410:         if (ei.has_value() && ai.has_value()) {
+411:             // 身份按位精确相等（附录 D 第 12 项：无容差）。
+412:             if (*ei != *ai) { posOk = false; }
+413:         } else {
+414:             // 数值按位容差：对应位置 numeric 字段逐项（resolve 按 expected 路径）。
+415:             const auto ef = traits.numerics(expectedOrder[i]);
+416:             const auto af = traits.numerics(actual[i]);
+417:             if (ef.size() != af.size()) { posOk = false; }
+418:             for (std::size_t k = 0; posOk && k < ef.size(); ++k) {
+419:                 if (ef[k].fieldPath != af[k].fieldPath) { posOk = false; continue; }
+420:                 const auto tol = profile.resolve(ef[k].fieldPath).tolerance;
+421:                 if (!core::closeWithin(af[k].valueSi, ef[k].valueSi, tol)) {
+422:                     posOk = false;
+423:                 }
+424:             }
+425:         }
+426:         if (!posOk) {
+427:             if (r.details.empty() && r.sameOrder) { r.firstDivergence = i; }
+428:             r.sameOrder = false;
+429:             r.details.push_back(CompareDetail{
+430:                 std::string{"order["} + std::to_string(i) + "]", i, true,
+431:                 0.0, 0.0, 0.0, std::string{}, core::Tolerance{}});
+432:         }
+433:     }
+434:     return r;
+435: }

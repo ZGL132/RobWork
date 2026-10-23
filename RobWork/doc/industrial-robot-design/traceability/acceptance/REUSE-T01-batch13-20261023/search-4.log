@@ -1,0 +1,160 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\perf_test\InteractionResponseBenchmarkTest.cpp:396:        a.manifestDigest = execution::manifestDigestHex("stage-a-double|1|7");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp:370:    std::string manifestDigestHex;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp:371:    const std::string manifestJson = buildManifestJson(payload, &manifestDigestHex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\workflow\contract_test\SaveAsPackageContractTest.cpp:373:        buildRwpackJson(manifestDigestHex, payload.size(), totalBytes);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\TxEngine.cpp:467:    const std::string manifestDigestHex = cvHex(manifestCv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\TxEngine.cpp:702:    newHead.manifestDigest = manifestDigestHex;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\TxEngine.cpp:794:    result.manifestDigest = manifestDigestHex;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:123:            bytes = encodeFrame(frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:142:            bytes = encodeFrame(frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:164:        if (!fragmentMessage(type, binding, cursor, message, 64 * 1024, frames)) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:169:            const std::vector<std::uint8_t> bytes = encodeFrame(frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:215:    FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:228:        if (assembler.feed(buffer.data(), got, frames) != FrameAssembler::Status::Ok) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:651:    hello.manifestDigestHex = manifestDigestHex(kStageAManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\worker\main.cpp:692:    MessageReassembler reassembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\perf_test\MemoryThrottleBenchmarkTest.cpp:581:        a.manifestDigest = execution::manifestDigestHex(kStageAManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\perf_test\CancelTimingBenchmarkTest.cpp:633:        a.manifestDigest = execution::manifestDigestHex(kStageAManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:10: *     （IXacroExpandService 契约）、§9.5（MDL-IMPORT-XACRO-UNRESOLVED——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:172:std::string escapeXmlText(std::string_view text)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:191:std::string escapeXmlAttribute(std::string_view text)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:540:            engine.out += escapeXmlText(replaced);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:842:        engine.out += escapeXmlAttribute(value);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:929:// 主体：XacroExpandService::expand（六步——契约校验→缺失预扫描→环检测
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:933:ExpandOutcome XacroExpandService::expand(const ValidatedXacroSource& source,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\src\XacroExpand.cpp:1118:                engine.out += escapeXmlAttribute(attr.value());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:98:    const std::vector<std::uint8_t> bytes = encodeFrame(src);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:100:    FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:102:    ASSERT_EQ(assembler.feed(bytes.data(), bytes.size(), out), FrameAssembler::Status::Ok);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:115:    const std::vector<std::uint8_t> bytes = encodeFrame(src);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:117:    FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:120:    ASSERT_EQ(assembler.feed(bytes.data(), half, out), FrameAssembler::Status::Ok);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:123:              FrameAssembler::Status::Ok);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:134:    std::vector<std::uint8_t> bytes = encodeFrame(src);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:137:        FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:140:                  FrameAssembler::Status::ProtocolError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:143:    bytes = encodeFrame(src);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:146:        FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:149:                  FrameAssembler::Status::ProtocolError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:158:    std::vector<std::uint8_t> bytes = encodeFrame(src);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:164:    FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:167:              FrameAssembler::Status::ProtocolError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:175:    EXPECT_THROW(encodeFrame(frame), ExecutionError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:178:    EXPECT_THROW(encodeFrame(frame), ExecutionError);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:187:    FrameSequencer sequencer;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:189:        FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:192:        ASSERT_EQ(outcome, FrameSequencer::Outcome::Delivered);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:202:    FrameSequencer sequencer;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:203:    FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:205:    ASSERT_EQ(outcome, FrameSequencer::Outcome::Delivered);  // 基线帧直接交付
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:208:    EXPECT_EQ(outcome, FrameSequencer::Outcome::Buffered);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:212:    EXPECT_EQ(outcome, FrameSequencer::Outcome::Delivered);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:224:    FrameSequencer sequencer;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:225:    FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:227:    ASSERT_EQ(outcome, FrameSequencer::Outcome::Delivered);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:230:    EXPECT_EQ(outcome, FrameSequencer::Outcome::DuplicateDropped);  // 已交付 seq 重发
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:233:    ASSERT_EQ(outcome, FrameSequencer::Outcome::Buffered);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:235:    EXPECT_EQ(outcome, FrameSequencer::Outcome::DuplicateDropped);  // 窗口内重复
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:245:    FrameSequencer::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:247:    FrameSequencer sequencer(config);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:248:    FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:252:    EXPECT_EQ(outcome, FrameSequencer::Outcome::WindowOverflow);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:260:    FrameSequencer::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:262:    FrameSequencer sequencer(config, [&clock]() { return clock(); });
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:263:    FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:279:    FrameSequencer::Config config;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:281:    FrameSequencer sequencer(config, [&clock]() { return clock(); });
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:282:    FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:306:    ASSERT_TRUE(fragmentMessage(ChannelMsgType::DispatchRequest, identity, seq, message,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:311:    MessageReassembler reassembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:331:    ASSERT_TRUE(fragmentMessage(ChannelMsgType::FinalOutput, identity, seq, {0x01, 0x02},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:336:    MessageReassembler reassembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:353:    ASSERT_TRUE(fragmentMessage(ChannelMsgType::DispatchRequest, identity, seq, {}, 1024,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:357:    MessageReassembler reassembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:373:    EXPECT_FALSE(fragmentMessage(ChannelMsgType::Heartbeat, identity, seq, {1}, 1024,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:375:    EXPECT_FALSE(fragmentMessage(ChannelMsgType::DispatchRequest, identity, seq, {1}, 0,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:387:    hello.manifestDigestHex = manifestDigestHex("stage-a-double|1|7");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:391:    EXPECT_EQ(decoded->manifestDigestHex, hello.manifestDigestHex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:485:    const std::string digest1 = manifestDigestHex(kManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:486:    const std::string digest2 = manifestDigestHex(kManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ChannelProtocolTest.cpp:489:    EXPECT_THROW(manifestDigestHex(""), ExecutionError);  // 空装配拒绝
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\test\ContractSuiteFacilities.hpp:98:/// 通道接收接缝（ChannelPair 读面/FrameAssembler——帧错乱注入位）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:5: *           ACC1 接口落位/受控子集（IXacroExpandService §9.4.9 签名、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:54:using sdurws::ird::modeling::IXacroExpandService;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:61:using sdurws::ird::modeling::XacroExpandService;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:326: * 基础展开（acceptance 1——IXacroExpandService §9.4.9 签名落位；经接口
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:335:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:338:    const IXacroExpandService& api = service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:397:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:419:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:475:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:513:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:559:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:592:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:622:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:647:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:691:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:778:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:802:    const XacroExpandService serviceA;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:803:    const XacroExpandService serviceB;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\XacroExpandTest.cpp:851:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:8: *   - 读线程只做"字节→帧→收件箱"（含 FrameAssembler——其状态属字节流
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:108:                 FrameSequencer::Config seqConfig)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:129:    FrameSequencer sequencer;          ///< seq 重排/去重/断裂（EX-CHN-1 判定本体）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:130:    MessageReassembler reassembler;    ///< 分帧续传重组（DispatchRequest/FinalOutput）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:400:    const std::vector<std::uint8_t> bytes = encodeFrame(frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:421:    if (!fragmentMessage(ChannelMsgType::DispatchRequest, record.identity, record.outSeq,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:763:        FrameSequencer::Outcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:766:        case FrameSequencer::Outcome::DuplicateDropped:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:775:        case FrameSequencer::Outcome::WindowOverflow:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:784:        case FrameSequencer::Outcome::Delivered:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:785:        case FrameSequencer::Outcome::Buffered:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:1010:    } else if (hello->manifestDigestHex != record.assignment.manifestDigest) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:1175:    FrameAssembler assembler;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:1212:            case FrameAssembler::Status::Ok:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:1215:            case FrameAssembler::Status::ProtocolError:
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\WorkerSupervisor.cpp:1230:                       == FrameAssembler::Status::ProtocolError) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\WorkerSupervisor.hpp:57:#include <sdurws/ird/execution/ChannelProtocol.hpp>  // ChannelFrame/FrameSequencer/MessageReassembler（协议本体）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\WorkerSupervisor.hpp:340:        /// 缺省值见 FrameSequencer::Config——均实现参数非上游值；契约
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\WorkerSupervisor.hpp:342:        FrameSequencer::Config channelSequencer{};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:442:        a.manifestDigest = manifestDigestHex(kStageAManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\contract_test\WorkerProcessContractTest.cpp:935:    // 缺口超时以 400 ms 实现参数注入（有界实证——FrameSequencer 缺省
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\plugin\ModelingCommandFlows.hpp:5: *         TemplateFactory/ModelImportMapper/XacroExpandService/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:34: * 线程安全：本头全部函数与类均为纯逻辑/纯值——无共享可变状态；FrameSequencer
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:35: *   与 MessageReassembler 实例非线程安全（每通道读线程各持一个，§6.2）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:130:    std::vector<std::uint8_t> payload;            ///< 载荷（分片帧＝分片头＋分片字节；见 MessageReassembler）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:149:std::vector<std::uint8_t> encodeFrame(const ChannelFrame& frame);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:159:class FrameAssembler {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:204:class FrameSequencer {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:225:    explicit FrameSequencer(Config config = {}, ClockFn clock = nullptr);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:287:bool fragmentMessage(ChannelMsgType type, const core::TaskIdentity& identity,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:294: * 纪律：分片帧必须先经 FrameSequencer 按序交付再进入本类（分片续传依赖
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:298:class MessageReassembler {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:300:    explicit MessageReassembler() = default;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:335:    std::string manifestDigestHex;                         ///< manifest 摘要（64 小写 hex——见 manifestDigestHex）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\ChannelProtocol.hpp:432:std::string manifestDigestHex(std::string_view canonicalManifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:204:std::vector<std::uint8_t> encodeFrame(const ChannelFrame& frame)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:236:FrameAssembler::Status FrameAssembler::feed(const std::uint8_t* data, std::size_t size,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:309:FrameSequencer::FrameSequencer(Config config, ClockFn clock)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:319:std::vector<ChannelFrame> FrameSequencer::accept(ChannelFrame&& frame, Outcome* outcome)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:384:bool FrameSequencer::gapTimedOut()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:399:std::vector<ChannelFrame> FrameSequencer::drainInOrder()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:432:bool fragmentMessage(ChannelMsgType type, const core::TaskIdentity& identity,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:470:std::vector<ChannelFrame> MessageReassembler::accept(ChannelFrame&& frame, bool* broken)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:482:        return {};  // 失败闩——同 FrameAssembler 纪律
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:577:    putStr(out, p.manifestDigestHex);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:595:    p.manifestDigestHex = std::move(*digest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\src\ChannelProtocol.cpp:824:std::string manifestDigestHex(std::string_view canonicalManifest)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:3: * @brief  Xacro 受控展开语义——IXacroExpandService 纯函数服务、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:12: *     （IXacroExpandService 概要契约——ExpandOutcome expand(const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:58: * 线程安全：XacroExpandService 无共享可变状态、可重入、多线程并发调用
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:282:// 接口：IXacroExpandService（§9.4.9 原文签名）＋无状态实现
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:309:class IXacroExpandService {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:311:    virtual ~IXacroExpandService() = default;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:332: * @brief IXacroExpandService 无状态实现（卡 §3.4 总约定 1；ModelImportMapper
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:342:class XacroExpandService final : public IXacroExpandService {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\include\sdurws\ird\modeling\XacroExpand.hpp:344:    XacroExpandService() = default;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:78:using sdurws::ird::modeling::XacroExpandService;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:687:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\test\GoldenImportTest.cpp:844:    const XacroExpandService service;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\modeling\plugin\ModelingXacroBridge.cpp:199:    const auto expanded=XacroExpandService{}.expand(source,substitutions,diags);

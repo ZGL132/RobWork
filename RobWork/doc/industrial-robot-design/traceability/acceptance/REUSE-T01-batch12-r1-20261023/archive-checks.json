@@ -1,0 +1,778 @@
+[
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\acceptance.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\acceptance.md",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "archive-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\archive-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "check-rework.ps1",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\check-rework.ps1",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\check.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\check.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\checkout.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\checkout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\clone.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\clone.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\docs.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\docs.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "facts.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\facts.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "frozen-sha.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\frozen-sha.txt",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "git-status-end.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\git-status-end.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\hash-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "macro-target-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\macro-target-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "removed-targets.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\removed-targets.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\reuse.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\reuse.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\task.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch10-r2-20261023",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch10-r2-4fd24994\\task.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\acceptance.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\acceptance.md",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "bindings.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\bindings.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "catalog-bindings.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\catalog-bindings.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\check.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "check.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\check.py",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "checkout-longpaths.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\checkout-longpaths.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\checkout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\clone.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "commands.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\commands.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "definition-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\definition-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "diff-check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\diff-check.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "diff-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\diff-check.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "docs.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\docs.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "docs.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\docs.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "finalize.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\finalize.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "finalize.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\finalize.py",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "frozen-sha.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\frozen-sha.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "git-status-end.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\git-status-end.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "new-catalog.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\new-catalog.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "new-rows.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\new-rows.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "probe-cross-check.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\probe-cross-check.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "product-upstream-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\product-upstream-diff.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "reuse.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\reuse.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "reuse.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\reuse.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "scoped-diff-check.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\scoped-diff-check.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "scoped-diff-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\scoped-diff-check.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-1.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-1.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-1.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-1.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-2.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-2.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-2.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-2.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-3.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-3.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-3.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-3.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-4.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-4.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-4.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-4.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-5.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-5.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-5.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-5.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-7.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-7.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-7.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-7.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-8.stderr.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-8.stderr.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-8.stdout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-8.stdout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "search-replay.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\search-replay.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "semantic-check.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\semantic-check.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "semantic-check.py",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\semantic-check.py",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "source-excerpts.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\source-excerpts.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "task.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\task.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-batch11-20261023",
+    "file": "task.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b11-20261023-003003-759712800\\task.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "acceptance.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\acceptance.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "acceptance.md",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\acceptance.md",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "artifact-binding.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\artifact-binding.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "build.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\build.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "build.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\build.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "checkout.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\checkout.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "checkout.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\checkout.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "clone.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\clone.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "clone.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\clone.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "config-and-semantics.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\config-and-semantics.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "configure.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\configure.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "configure.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\configure.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "driver.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\driver.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "driver.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\driver.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "environment.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\environment.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "final-inspection.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\final-inspection.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "gtest.xml",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\gtest.xml",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "ird-test-report.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\ird-test-report.json",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "original-initial-build-fail.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\original-initial-build-fail.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "report-cross-check.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\report-cross-check.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "run-probe.ps1",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\run-probe.ps1",
+    "exists": true,
+    "rawMatches": false,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "scoped-diff.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\scoped-diff.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "scoped-diff.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\scoped-diff.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "source-hash-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\source-hash-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "supplied-source-checks.json",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\supplied-source-checks.json",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "tests.exit.txt",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\tests.exit.txt",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "tests.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\tests.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  },
+  {
+    "archive": "REUSE-T01-planning-api-20261023",
+    "file": "upstream-source-review.log",
+    "original": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\\upstream-source-review.log",
+    "exists": true,
+    "rawMatches": true,
+    "newlineMatches": true
+  }
+]

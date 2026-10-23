@@ -1,0 +1,51 @@
+[
+  {
+    "index": 1,
+    "command": "rg -n \"solveLocal|setMax|MaxIterations|MaxError|updateDeltaX|updateJacobian|enabled|private:\" RobWork/RobWork/src/rw/invkin/IterativeIK.hpp RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 2,
+    "command": "rg -n \"solve|performLocalSearch|private:|VelocityScrew|Jacobian\" RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/IKQPSolver.hpp RobWork/RobWork/src/rwlibs/algorithms/qpcontroller/QPController.hpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 3,
+    "command": "rg -n \"Force|setForce|MotorControlMode|setMotorForceTarget|step|initPhysics|resetScene|exitPhysics\" RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 4,
+    "command": "rg -n \"sdurwsim_ode|RWSIM_HAVE_ODE|ODE_TEST|add_rwsim_gtest|ODEControlTest|ODESimpleTest\" RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt RobWork/RobWorkSim/gtest/CMakeLists.txt RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp RobWork/RobWorkSim/gtest/ode/ODESimpleTest.cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 5,
+    "command": "rg -n \"RigidDevice|not supported|not implemented|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 6,
+    "command": "rg -n \"ODE_DIR|ODE_INCLUDE_DIR|ODE_LIBRARY_TMP|BUILD_sdurwsim_ode\" D:/10_Source_Repos/21_robot/RobWork/build/CMakeCache.txt",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  },
+  {
+    "index": 7,
+    "command": "rg --files RobWork/RobWork/gtest/invkin RobWork/RobWorkSim/gtest/ode RobWork/RobWorkSim/example/cpp",
+    "exitCode": 0,
+    "exitMatches": true,
+    "hitMultisetMatches": true
+  }
+]

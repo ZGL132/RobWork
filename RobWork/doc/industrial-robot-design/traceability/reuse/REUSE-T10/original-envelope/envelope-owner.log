@@ -1,0 +1,15 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from EaaOriginal
+[ RUN      ] EaaOriginal.MatrixToVectorEnvelope_MDL22_AT37
+ENVELOPE matrix_to_vector samples=3156 maxElementError=1.0734242583231835e-09 worstAngle=3.1415926435897932
+[       OK ] EaaOriginal.MatrixToVectorEnvelope_MDL22_AT37 (0 ms)
+[ RUN      ] EaaOriginal.VectorAndRoundTripEnvelope_MDL22_AT37
+ENVELOPE vector_to_matrix samples=3156 maxElementError=9.9999899999983327e-07 roundTripMax=9.4406087628578315e-07 worstAngle=9.9999899999999993e-07
+[       OK ] EaaOriginal.VectorAndRoundTripEnvelope_MDL22_AT37 (0 ms)
+[----------] 2 tests from EaaOriginal (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.

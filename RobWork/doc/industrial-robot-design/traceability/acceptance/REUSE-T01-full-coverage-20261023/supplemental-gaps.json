@@ -1,0 +1,128 @@
+[
+  {
+    "id": "PARTIAL-01",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp",
+    "qualifiedSymbol": "sdurws::ird::project::objstore::ObjectStore::scanObjects",
+    "startLine": 441,
+    "endLine": 591,
+    "meaning": "双向引用/磁盘扫描和可选摘要校验；同文件两项已审区段不覆盖",
+    "fileSha256": "5e3f14bfc665c94236e05fbcbd18a635fab3b3b7fffd08f66f91ba78afd87723",
+    "fileReferenceCount": 2,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [
+      {
+        "functionId": "project.ObjectStore.publishObject",
+        "capabilityId": "UTIL-FILE",
+        "startLine": 179,
+        "endLine": 322,
+        "symbol": "sdurws::ird::project::objstore::ObjectStore::publishObject",
+        "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+      },
+      {
+        "functionId": "project.ObjectStore.readVerified",
+        "capabilityId": "UTIL-FILE",
+        "startLine": 328,
+        "endLine": 389,
+        "symbol": "sdurws::ird::project::objstore::ObjectStore::readVerified",
+        "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/project.json"
+      }
+    ],
+    "evidence": "PARTIAL-01.frozen.txt"
+  },
+  {
+    "id": "PARTIAL-02",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp",
+    "qualifiedSymbol": "sdurws::ird::execution::WorkerSupervisor::handleHandshake",
+    "startLine": 999,
+    "endLine": 1053,
+    "meaning": "协议/manifest拒绝、进程终结及握手后派发；spawnNewWorker区段不覆盖",
+    "fileSha256": "6e7bc35fa5dc1732986d5f05e4e8d1628fdfa885b14533153725fcd18f9d1720",
+    "fileReferenceCount": 1,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [
+      {
+        "functionId": "execution.WorkerSupervisor.spawnNewWorker",
+        "capabilityId": "UTIL-THREAD",
+        "startLine": 264,
+        "endLine": 344,
+        "symbol": "sdurws::ird::execution::WorkerSupervisor::spawnNewWorker",
+        "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+      }
+    ],
+    "evidence": "PARTIAL-02.frozen.txt"
+  },
+  {
+    "id": "PARTIAL-03",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp",
+    "qualifiedSymbol": "sdurws::ird::execution::TaskScheduler::dispatchOne",
+    "startLine": 538,
+    "endLine": 645,
+    "meaning": "并发预算/优先级/FIFO/单项目额度/内联派发；submit区段不覆盖",
+    "fileSha256": "b5833ea2f23f3776d36582b7a04ea7fd772fb120be8ec6f1bf5ee0f5f56f2a2b",
+    "fileReferenceCount": 1,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [
+      {
+        "functionId": "execution.TaskScheduler.submit",
+        "capabilityId": "UTIL-THREAD",
+        "startLine": 163,
+        "endLine": 237,
+        "symbol": "sdurws::ird::execution::TaskScheduler::submit",
+        "matrixFile": "RobWork/doc/industrial-robot-design/reuse/functions/execution.json"
+      }
+    ],
+    "evidence": "PARTIAL-03.frozen.txt"
+  },
+  {
+    "id": "TEST-01",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+    "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
+    "startLine": 78,
+    "endLine": 88,
+    "meaning": "构造含基线标记与缺失指标的测试候选；fixture helper应按样板/真实行为分组，不能只审main",
+    "fileSha256": "80a338d6d1396ecf0a5d8ebffe07ff2077c04996d11b2250a5106e02bc8c2c80",
+    "fileReferenceCount": 0,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [],
+    "evidence": "TEST-01.frozen.txt"
+  },
+  {
+    "id": "INLINE-01",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+    "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+    "startLine": 57,
+    "endLine": 72,
+    "meaning": "头内有限性与非负合法性工厂，超出纯DTO字段",
+    "fileSha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d",
+    "fileReferenceCount": 0,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [],
+    "evidence": "INLINE-01.frozen.txt"
+  },
+  {
+    "id": "RECOVERY-01",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::scanForRecovery",
+    "startLine": 871,
+    "endLine": 1142,
+    "meaning": "区分staging残留、HEAD闭包损坏与闭包外对象，非ObjectStore读取",
+    "fileSha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c",
+    "fileReferenceCount": 0,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [],
+    "evidence": "RECOVERY-01.frozen.txt"
+  },
+  {
+    "id": "CORE-TEMPLATE-01",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
+    "qualifiedSymbol": "sdurws::ird::testkit::detail::tryAugmentAt<EdgeFn>",
+    "startLine": 122,
+    "endLine": 151,
+    "meaning": "递归增广路径/回滚；非简单容差包装",
+    "fileSha256": "316a6239c02ebb922852a67951d94e654d4601399f9b86274e66fe80a225893f",
+    "fileReferenceCount": 0,
+    "intersectingDeclaredSources": [],
+    "allDeclaredSources": [],
+    "evidence": "CORE-TEMPLATE-01.frozen.txt"
+  }
+]

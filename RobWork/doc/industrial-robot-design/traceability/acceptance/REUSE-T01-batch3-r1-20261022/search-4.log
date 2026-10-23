@@ -1,0 +1,6 @@
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:86:        void setWorkCell (rw::core::Ptr< rw::models::WorkCell > wc);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:89:        rw::core::Ptr< rw::models::WorkCell > getWorkCell ();
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:103:        rw::graphics::GroupNode::Ptr getWorldNode ();
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:53:        static math::Transform3D<> worldTframe (rw::core::Ptr< const rw::kinematics::Frame > to,
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:62:         inverse(worldTframe(from, state)) *
+RobWork/RobWork/src/rw/kinematics/Kinematics.hpp:63:         worldTframe(to, state);

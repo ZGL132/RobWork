@@ -1,0 +1,123 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp:25:StoreCloseSupervisor::StoreCloseSupervisor(project::ProjectStore& store,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp:49:StoreCloseSupervisor::~StoreCloseSupervisor()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp:55:void StoreCloseSupervisor::start()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp:80:void StoreCloseSupervisor::stop() noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp:95:void StoreCloseSupervisor::superviseLoop()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:4: *         .hpp——WorkCellScene 原语编排＋自绘 Render 族）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:39:#include <rw/graphics/WorkCellScene.hpp>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:50:using namespace rw::graphics;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:51:using namespace rw::kinematics;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:52:using namespace rw::math;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:110:std::array<float, 3> tintColor(std::optional<View3DTint> tint)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:356:HostView3DPreviewBackend::HostView3DPreviewBackend(rws::RobWorkStudio* studio)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:360:bool HostView3DPreviewBackend::draw(const View3DPreviewUpdate& update)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:366:    WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:373:    //   ①宿主 WorkCell（发布链 setWorkCell 后——常态路径）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:378:    // ——WorkCellScene::addDrawable 防御），修复让锚恒在位而非放弃渲染。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:405:    //   防与轴同名冲突——removeDrawable 按名逐个删互不干扰）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:415:            scene->addRender(nodeName,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:435:        scene->addRender(labelName,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:445:        scene->addRender(nodeName,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:454:        scene->addRender(nodeName,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:470:rw::core::Ptr<rw::models::WorkCell>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:471:HostView3DPreviewBackend::ensureSessionPreviewAnchor(WorkCellScene& scene)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:474:    // 重复 setWorkCell 会无谓重建场景节点树并触发查看器世界节点再同步，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:496:    scene.setWorkCell(m_sessionAnchor);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:497:    // 世界节点重同步（框架硬契约）：WorkCellScene::setWorkCell 会重建
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:499:    // 缓存的是旧节点引用——框架自身路径（RWStudioView3D::setWorkCell/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:506:void HostView3DPreviewBackend::clear()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:511:    WorkCellScene::Ptr scene = m_studio->getWorkCellScene();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp:517:        scene->removeDrawable(name);  // 幂等（不存在＝false，无副作用）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:2: * @file   Comparison.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:4: *         纯函数组装核＋ISchemeComparisonController 端口组合编排。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:8: * 登记段）、§10.3（错误语义＝调用方 fail-fast；buildComparison const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:18:#include <sdurws/ird/workflow/Comparison.hpp>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:38:bool currentnessEqual(const ui::CurrentnessProjection& a,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:67:int diffGroupIndex(const std::string& group)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:87:bool SchemeMetricFacts::operator==(const SchemeMetricFacts& o) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:108:bool SchemeDiffEntry::operator==(const SchemeDiffEntry& o) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:117:bool ComparisonMetricRow::operator==(const ComparisonMetricRow& o) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:123:bool ComparisonDiffBlock::operator==(const ComparisonDiffBlock& o) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:132:bool ComparisonViewData::operator==(const ComparisonViewData& o) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:142:std::string renderMetricValueText(double v)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:157:std::string comparisonBaselineDimensionKey(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:180:std::vector<ComparisonMetricRow> assembleMetricRows(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:184:    // 空集在本单元不可能由 buildComparison 产生（方案数已校验 ≥2）——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:225:    std::vector<ComparisonMetricRow> rows;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:228:        ComparisonMetricRow row;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:242:            ComparisonMetricRow::Cell cell;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:279:ComparisonDiffBlock assembleDiffBlock(const SchemeDiffFacts& facts,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:285:    ComparisonDiffBlock block;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:298:        block.warnings.push_back(kComparisonWarningDiffSourceUnavailable);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:340:SchemeComparisonController::SchemeComparisonController(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:342:    const IComparisonDiffPort& diffPort) noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:347:ComparisonOutcome SchemeComparisonController::buildComparison(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:352:    if (schemes.size() < kMinComparisonSchemes
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:353:        || schemes.size() > kMaxComparisonSchemes) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:355:            "buildComparison: 方案数越界（" + std::to_string(schemes.size())
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:364:                    "buildComparison: 重复方案分支（"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:379:            "buildComparison: 指标端口快照长度与方案数不符（"
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:390:                "buildComparison: 方案分支不可用（" + f.branch.toCanonical()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:397:    // checkComparisonBaselinesConsistent，本单元零重实现 PA-1）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:398:    std::vector<evidence::ComparisonBaseline> baselines;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:404:        evidence::checkComparisonBaselinesConsistent(baselines);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:410:        ComparisonRejection rejection;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:412:        rejection.reasonKey = kComparisonBaselineMismatchKey;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:413:        rejection.actionKey = kComparisonBaselineMismatchActionKey;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:418:        ComparisonOutcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:426:    ComparisonViewData view;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Comparison.cpp:452:    ComparisonOutcome outcome;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/src/HostController.cpp:97:std::unique_ptr<IHostController> createHostController(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:47:ui::TextKey newProjectErrorKey(const char* token)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:54:ui::TextKey newProjectSummaryKey(const char* token)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:62:std::string pathSummaryText(const std::filesystem::path& p)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:73:const std::vector<NewProjectStep>& newProjectStepSequence()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:89:std::string installPresetToken(InstallPreset preset)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:99:std::string templateKindToken(TemplateKind kind)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:108:std::string initialSourceToken(InitialSourceKind source)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:118:std::string externalHandlingToken(ExternalResourceHandling handling)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:131:std::vector<ui::TextKey> validateStep(NewProjectStep step, const NewProjectInputs& inputs)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:189:std::vector<ui::TextKey> validateNewProjectInputs(const NewProjectInputs& inputs)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:200:std::vector<WizardSummaryLine> buildNewProjectSummary(const NewProjectInputs& inputs)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:231:NewProjectOutcome NewProjectWizardFlow::commit(const NewProjectInputs& inputs,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:329:    // 注意顺序：锁未释放前 remove_all 在 Windows 上会因句柄占用失败。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:340:    std::filesystem::remove_all(inputs.directory, cleanupEc);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:375:std::string openPathText(const std::filesystem::path& p)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:397:std::string detailValueAfter(const std::string& detail, const std::string& keyProbe)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:437:std::string extractDetailLocation(const std::string& detail)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:463:std::string recommendActionFor(project::StoreErrorCode code)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:488:OpenTargetKind classifyOpenTarget(const std::filesystem::path& path)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:520:OpenProjectOutcome OpenProjectFlow::run(OpenSource source,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:627:UpgradeGuidance parseUpgradeGuidance(const std::string& detail)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:646:ReadOnlySessionNotice buildReadOnlySessionNotice(const project::LockInfo& lockInfo)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:672:std::string closeScenarioKey(CloseKind kind)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:684:std::vector<std::string> closeTaskStateTokens(const std::vector<core::TaskState>& states)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:702:CloseFlowFailure makeCloseFailure(std::string context,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:723:void awaitStoreClosed(project::ProjectStore& store)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:742:std::optional<std::pair<bool, std::optional<CloseFlowFailure>>>
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:781:CloseFlowOutcome CloseFlow::run(CloseKind kind,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:954:SchemeBranchSwitchOutcome SchemeBranchSwitchFlow::run(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1022:std::filesystem::path normalizedPathForCompare(const std::filesystem::path& p)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1035:bool samePathLexical(const std::filesystem::path& a, const std::filesystem::path& b)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1046:bool hasRwpackExtension(const std::filesystem::path& p)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1058:bool directoryExistsNonEmpty(const std::filesystem::path& p)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1069:std::string leftoverCleanupAction()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1084:std::vector<ui::TextKey> validateSaveAsInputs(const std::filesystem::path& sourceDir,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1104:SaveAsOutcome SaveAsFlow::run(project::ProjectStore& source,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1203:std::vector<ui::TextKey> validatePackageExportInput(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1220:PackageExportOutcome PackageExportFlow::run(project::ProjectStore& source,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1303:std::vector<ui::TextKey> validatePackageImportInput(const PackageImportRequest& request)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1333:PackageImportOutcome PackageImportFlow::run(const PackageImportRequest& request,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1412:std::vector<PackageImportReportLine> buildPackageImportReportView(
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1478:RelinkFailure makeRelinkFailure(std::string context,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1491:std::string relinkContextText(const RelinkRequest& request,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1505:RelinkOutcome RelinkFlow::run(const RelinkRequest& request,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1605:RecentProjectsService::RecentProjectsService(std::size_t maxEntries)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1616:std::vector<RecentProjectEntry> RecentProjectsService::list() const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1631:void RecentProjectsService::record(const std::string& canonicalPath)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1647:        std::remove_if(m_entries.begin(), m_entries.end(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1667:void RecentProjectsService::remove(const std::string& canonicalPath)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1669:    // 空路径同样 fail-fast（与 record 同一入口契约——remove("") 不是
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1672:        throw WorkflowError("RecentProjectsService::remove: 空路径");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1679:        std::remove_if(m_entries.begin(), m_entries.end(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Lifecycle.cpp:1686:std::filesystem::path recentProjectKey(const std::string& canonicalPath)

@@ -1,0 +1,22 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/pol-collision-analytic/1.0.0/generate/make_pol_collision_analytic.mjs
+<ES module>::handDerived
+41: function handDerived(c) {
+42:   // 分离轴与中心距：直立 mount＝z 轴（环境盒 z 偏移）；倒挂 q=0＝x 轴
+43:   // （工具心 (−0.5,0,0) vs 环境心 (0.5,0,0)，中心距 2·armLength）；
+44:   // 倒挂 q=π＝重合（工具心世界 (0.5,0,0)＝环境心）。
+45:   let axis, centerOffset;
+46:   if (c.mount === "identity") {
+47:     axis = "z";
+48:     centerOffset = Math.abs(c.envCenterZM);
+49:   } else if (c.qRad === 0) {
+50:     axis = "x";
+51:     centerOffset = 2 * input.geometry.armLengthM;
+52:   } else {
+53:     axis = "coincident";
+54:     centerOffset = 0;
+55:   }
+56:   const collision = centerOffset < boxSize; // 中心距小于边长＝投影重叠（重合含于）
+57:   const gap = collision ? 0.0 : centerOffset - boxSize; // 碰撞例不承载间隙参考（二值语义）
+58:   const pairs = collision ? [["ToolBox", "EnvBox"]] : [];
+59:   return { id: c.id, axis, centerOffsetM: centerOffset, collision, referenceGapM: gap, pairs };
+60: }

@@ -1,0 +1,146 @@
+[
+  {
+    "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.currentTcpPose",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.SampleGridRender.draw",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.draw",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DPreviewBackend.clear",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.constructor",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.PreviewColorScope.destructor",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.anonymous.applyCellColor",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.anonymous.tintColor",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.StationMarkerRender.draw",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.RegionOutlineRender.draw",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.HostView3DGateway",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPresentation",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.releasePresentation",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.onSceneCleared",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.applyPreview",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.HostView3DGateway.removePreview",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.QtTextBillboard",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.QtTextBillboard.drawBillboard",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  },
+  {
+    "functionId": "ui.QtTextBillboardRender.draw",
+    "matches": true,
+    "manuallyReadCompleteDefinition": true,
+    "completeReturnTypeAndScope": true
+  }
+]

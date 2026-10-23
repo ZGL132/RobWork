@@ -1,0 +1,41 @@
+FCOV-01	project	TxEngine.cpp	FILE-COVERED	commit: HIT(project.TxEngine.makeIgnoredUncommittedRecord,project.TxEngine.TxEngine.commit,project.TxEngine.~PhantomRegistrationGuard); scanForRecovery: HIT(project.TxEngine.TxEngine.scanForRecovery)
+FCOV-02	project	CommandServiceImpl.cpp	FILE-COVERED	submit: HIT(project.CommandServiceImpl.CommandServiceImpl.submit)
+FCOV-03	project	QueryPortImpl.cpp	FILE-COVERED	branchHistory: HIT(project.QueryPortImpl.QueryPortImpl.branchHistory)
+FCOV-04	project	ArchiveServiceImpl.cpp	FILE-COVERED	finalize: HIT(project.ArchiveServiceImpl.ArchiveServiceImpl.finalize)
+FCOV-05	project	AtomicFile.cpp	FILE-COVERED	writeThrough: HIT(project.win32.AtomicFile.AtomicFile.writeThrough,project.win32.AtomicFile.~HandleGuard); publishNew: HIT(project.win32.AtomicFile.Win32FileOps.publishNew,project.win32.AtomicFile.AtomicFile.publishNew); replaceExisting: HIT(project.win32.AtomicFile.Win32FileOps.replaceExisting,project.win32.AtomicFile.AtomicFile.replaceFile)
+FCOV-06	policy	PolicyParsing.cpp	FILE-COVERED	runParsePipeline: HIT(policy.PolicyParsing.(anonymous namespace).runParsePipeline)
+FCOV-07	policy	JointLimits.cpp	FILE-COVERED	evaluate: HIT(policy.JointLimits.JointLimitEvaluator.evaluate)
+FCOV-08	policy	CollisionEvaluator.cpp	FILE-COVERED	expandRulesAndCheckConflicts: HIT(policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts)
+FCOV-09	execution	worker/main.cpp	ABSENT	wWinMain: MISS
+FCOV-10	execution	Admission.cpp	FILE-COVERED	runArchiveTransaction: HIT(execution.ResultAdmission::runArchiveTransaction)
+FCOV-11	execution	Controller.cpp	ABSENT	forceKillSequence: MISS
+FCOV-12	diagnostics	Confirmable.cpp	ABSENT	submitConfirmation: MISS
+FCOV-13	diagnostics	Redaction.cpp	ABSENT	redact: MISS
+FCOV-14	testkit	Dataset.cpp	FILE-COVERED	load: HIT(testkit.Dataset.GoldenDataset.load)
+FCOV-15	testkit	SetCheck.hpp	FILE-COVERED	checkSetEquivalent: HIT(testkit.SetCheck.checkSetEquivalent); tryAugmentAt: HIT(testkit.SetCheck.tryAugmentAt)
+FCOV-16	core	Compare.cpp	FILE-COVERED	closeWithin: HIT(core.Compare.closeWithin)
+FCOV-17	foundation-governance	ird_gates.cmake	ABSENT	ird_classify_target: MISS; ird_read_flat: MISS; ird_extract_blocks: MISS
+FCOV-18	foundation-governance	make_fk_equation.mjs	ABSENT	closedFormFk: MISS
+FCOV-19	foundation-governance	make_dyn_two_link_golden.mjs	FILE-COVERED	rneaReference: HIT(foundation-governance.make_dyn_two_link_golden.rneaReference)
+FCOV-20	foundation-governance	make_pol_collision_analytic.mjs	ABSENT	handDerived: MISS
+FCOV-S1	project	ObjectStore.cpp	FILE-COVERED	scanObjects: MISS
+FCOV-S2	execution	WorkerSupervisor.cpp	FILE-COVERED	handleHandshake: MISS
+FCOV-S3	execution	Scheduler.cpp	FILE-COVERED	dispatchOne: MISS
+FCOV-S4	optimization	ParetoTest.cpp	FILE-COVERED	makeCandidate: HIT(optimization.ParetoTest.makeCandidate)
+FCOV-S5	core	Compare.hpp	FILE-COVERED	make: HIT(core.Tolerance.make)
+COV-01	trajectory	Planner.cpp	FILE-COVERED	doInCollision: HIT(trajectory.Planner.doInCollision); sampleStraightPath: HIT(trajectory.Planner.sampleStraightPath); makePathPlannerAdapter: HIT(trajectory.Planner.makePathPlannerAdapter); planPtpWithObstacleAvoidance: HIT(trajectory.Planner.planPtpWithObstacleAvoidance)
+COV-02	optimization	Pareto.cpp	FILE-COVERED	notWorse: HIT(optimization.Pareto.notWorse); strictlyBetter: HIT(optimization.Pareto.strictlyBetter); dominates: HIT(optimization.Pareto.dominates); buildFront: HIT(optimization.Pareto.ParetoFrontBuilder.buildFront)
+COV-03	optimization	Generator.cpp	FILE-COVERED	generateNextBatch: HIT(optimization.Generator.SeededLhsGenerator.generateNextBatch,optimization.Generator.BaselinePerturbGenerator.generateNextBatch); generateWithBuiltInStrategy: HIT(optimization.Generator.generateWithBuiltInStrategy)
+COV-04	dynamics	PowerEnergy.cpp	FILE-COVERED	compute: HIT(dynamics.PowerEnergy.PowerEnergyCalculator.compute)
+COV-05	kinematics	Envelope.cpp	FILE-COVERED	probeReachability: HIT(kinematics.Envelope.probeReachability); computeApproximateEnvelope: HIT(kinematics.Envelope.computeApproximateEnvelope)
+COV-06	modeling	XacroExpand.cpp	FILE-COVERED	escapeXmlText: HIT(modeling.XacroExpand.escapeXmlText); escapeXmlAttribute: HIT(modeling.XacroExpand.escapeXmlAttribute); substituteText: HIT(modeling.XacroExpand.substituteText); expand: HIT(modeling.XacroExpand.XacroExpandService.expand)
+COV-07	execution	ChannelProtocol.cpp	FILE-COVERED	putU32: MISS; feed: HIT(execution.ChannelProtocol.FrameAssembler.feed); accept: HIT(execution.ChannelProtocol.FrameSequencer.accept,execution.ChannelProtocol.MessageReassembler.accept); fragmentMessage: HIT(execution.ChannelProtocol.fragmentMessage)
+COV-08	project	Codec.cpp	FILE-COVERED	JsonParser: HIT(project.Codec.JsonParser.JsonParser,project.Codec.JsonParser.parseDocument,project.Codec.JsonParser.atEnd,project.Codec.JsonParser.peek,project.Codec.JsonParser.next,project.Codec.JsonParser.expect,project.Codec.JsonParser.printable,project.Codec.JsonParser.parseValue,project.Codec.JsonParser.parseObject,project.Codec.JsonParser.parseArray,project.Codec.JsonParser.parseString,project.Codec.JsonParser.parseEscape,project.Codec.JsonParser.parseHex4,project.Codec.JsonParser.parseUnicodeEscape,project.Codec.JsonParser.appendUtf8,project.Codec.JsonParser.parseNumber); parseValue: HIT(project.Codec.JsonParser.parseValue); parseString: HIT(project.Codec.JsonParser.parseString)
+COV-09	reporting	ReportCodec.cpp	FILE-COVERED	Writer: HIT(reporting.ReportCodec.Writer.u8,reporting.ReportCodec.Writer.u16,reporting.ReportCodec.Writer.u32,reporting.ReportCodec.Writer.u64,reporting.ReportCodec.Writer.i64,reporting.ReportCodec.Writer.f64,reporting.ReportCodec.Writer.boolean,reporting.ReportCodec.Writer.presence,reporting.ReportCodec.Writer.raw,reporting.ReportCodec.Writer.string,reporting.ReportCodec.Writer.unitToken,reporting.ReportCodec.Reader.string,reporting.ReportCodec.Writer.take); parseData: HIT(reporting.ReportCodec.public.ReportCodec.parseData,reporting.ReportCodec.public.ReportCodec.parseFull); parseFull: HIT(reporting.ReportCodec.public.ReportCodec.parseData,reporting.ReportCodec.public.ReportCodec.parseFull)
+COV-10	testkit	JsonLite.cpp	FILE-COVERED	skipWs: HIT(testkit.JsonLite.skipWs); expectLiteral: HIT(testkit.JsonLite.expectLiteral)
+COV-11	testkit	Check.cpp	FILE-COVERED	checkCloseWithin: HIT(testkit.Check.checkCloseWithin); checkAllCloseWithin: HIT(testkit.Check.checkAllCloseWithin)
+COV-11b	testkit	ProcessRunner.cpp	FILE-COVERED	quoteWindowsArg: HIT(testkit.ProcessRunner.quoteWindowsArg); buildEnvironmentBlock: HIT(testkit.ProcessRunner.buildEnvironmentBlock)
+COV-12	dynamics	StatisticsTest.cpp	FILE-COVERED	expectNearRel: HIT(dynamics.StatisticsTest.expectNearRel); rowAt: HIT(dynamics.StatisticsTest.rowAt)
+COV-12b	modeling	XacroExpandTest.cpp	FILE-COVERED	digestOf: HIT(modeling.XacroExpandTest.digestOf); existingNodeFor: HIT(modeling.XacroExpandTest.existingNodeFor)
+COV-15	ui	HostView3DPreviewBackend.cpp	FILE-COVERED	draw: HIT(ui.SampleGridRender.draw,ui.HostView3DPreviewBackend.draw,ui.StationMarkerRender.draw,ui.RegionOutlineRender.draw); clear: HIT(ui.HostView3DPreviewBackend.draw,ui.HostView3DPreviewBackend.clear)
+COV-16	workflow	CloseSupervisor.cpp	FILE-COVERED	superviseLoop: HIT(workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop); start: HIT(workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor,workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor,workflow.CloseSupervisor.StoreCloseSupervisor.start,workflow.CloseSupervisor.StoreCloseSupervisor.stop,workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop)

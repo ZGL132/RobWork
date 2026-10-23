@@ -1,0 +1,48 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=8
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/README
+.md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/extra.
+md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/REQUIREMENTS.m
+d (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/readin
+g-paths.md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/context/asset-
+inventory.json (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: AGENTS.md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/doc/industrial-robot-design/AGENTS.md (ACC
+-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/
+AGENTS.md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 

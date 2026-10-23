@@ -1,0 +1,51 @@
+{
+  "taskId": "REUSE-T01",
+  "reviewedParentCommit": "e0bee2994eee0e8f3299ea5ccf200c354f4454be",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/PlanningSuitabilityTest.cpp",
+      "sha256": "b8e40dd87012692fc33302025b10cf5f02e1630107b245e7615cca0b997eabf0"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "sha256": "e2b638b649b3390242490b36dfb8ea9ab30e98e2d6db1b2cf83350d6f966112b"
+    }
+  ],
+  "upstream": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "sha256": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+      "sha256": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.cpp",
+      "sha256": "ef3428a35c402b1f9ddeff3f3a1eb8fc34c61040f18e1e6cb1415bb0e92c66b5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.cpp",
+      "sha256": "2eeb8c712a2746e92c61ad62007f1641868332bb1f57b0aaf6579c5b1d439ecf"
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+      "sha256": "8474ac0238ae27327e1ed47ad86f34fbb59fb775087d6b2bb39dc6e7862ae4a5"
+    }
+  ],
+  "commands": [
+    "VS x64: cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "ird_reuse_audit_probe.exe --gtest_filter=ReusePlanningAudit.* --gtest_output=xml:<probe-r11/gtest.xml> --ird_report=<probe-r11/ird-test-report.json>"
+  ],
+  "results": {
+    "total": 4,
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "limits": "仅新增4项公开API实跑，旧26项NOT RUN；首轮QPath不接受initializer_list导致编译失败，已改用上游push_back并保留失败日志。非产品迁移/供给/全输入证明，未运行全产品/GUI/性能。"
+}

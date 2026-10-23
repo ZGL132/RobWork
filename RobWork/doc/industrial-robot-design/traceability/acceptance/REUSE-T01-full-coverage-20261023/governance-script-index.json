@@ -1,0 +1,432 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+    "sourceReferences": 0,
+    "sha256": "b5c1b87c975a8092d249a0f1c19b242e8794a8289c951ddcb33918b8f28e9095",
+    "functions": [
+      {
+        "symbol": "Get-BlobSha",
+        "line": 69
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+    "sourceReferences": 0,
+    "sha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24",
+    "functions": [
+      {
+        "symbol": "Test-CommitMessage",
+        "line": 36
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/gate-all.ps1",
+    "sourceReferences": 0,
+    "sha256": "36f1922e615ca037d6bbf24df1bf81bbc83b2d6201ad5ecf5ee537c23c6bac58",
+    "functions": [
+      {
+        "symbol": "Step",
+        "line": 131
+      },
+      {
+        "symbol": "Ok",
+        "line": 139
+      },
+      {
+        "symbol": "Fail",
+        "line": 140
+      },
+      {
+        "symbol": "Skip",
+        "line": 144
+      },
+      {
+        "symbol": "Find-TestTargets",
+        "line": 226
+      },
+      {
+        "symbol": "Find-TestExePath",
+        "line": 245
+      },
+      {
+        "symbol": "Invoke-GateTest",
+        "line": 275
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+    "sourceReferences": 0,
+    "sha256": "a6e27a5ad64ff246c060ecc87a5b6fc19721d523b1acca535f4dc84f3ac07aa1",
+    "functions": [
+      {
+        "symbol": "Get-IndexedContent",
+        "line": 33
+      },
+      {
+        "symbol": "Get-EvidenceKind",
+        "line": 64
+      },
+      {
+        "symbol": "ConvertTo-CanonicalTaskId",
+        "line": 87
+      },
+      {
+        "symbol": "Get-TaskIds",
+        "line": 92
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+    "sourceReferences": 0,
+    "sha256": "401ab2a51ea5cf643f20bedd332e82172036be6f6d1ef239887bcf685938e286",
+    "functions": [
+      {
+        "symbol": "Fail",
+        "line": 42
+      },
+      {
+        "symbol": "Get-StageLines",
+        "line": 58
+      },
+      {
+        "symbol": "Get-EntryMap",
+        "line": 71
+      },
+      {
+        "symbol": "Get-NormBlock",
+        "line": 99
+      },
+      {
+        "symbol": "Get-SortKey",
+        "line": 107
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "sourceReferences": 0,
+    "sha256": "4f9ea333e6045b4b62d160d2d974a19a37c6b760b7bf8e39b60a132a5065a802",
+    "functions": [
+      {
+        "symbol": "Get-LockMutexName",
+        "line": 42
+      },
+      {
+        "symbol": "Invoke-InLockMutex",
+        "line": 57
+      },
+      {
+        "symbol": "Read-Lock",
+        "line": 78
+      },
+      {
+        "symbol": "Test-Fencing",
+        "line": 94
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "sourceReferences": 0,
+    "sha256": "09fe4502ddb348e18986f6b50ab2e9cbe4f8fbc9a8979e4b1767178223d165fa",
+    "functions": [
+      {
+        "symbol": "RequireFields",
+        "line": 5
+      },
+      {
+        "symbol": "ReuseFiles",
+        "line": 11
+      },
+      {
+        "symbol": "CheckBinding",
+        "line": 17
+      },
+      {
+        "symbol": "CheckPermissionRef",
+        "line": 23
+      },
+      {
+        "symbol": "CheckCatalogV2",
+        "line": 27
+      },
+      {
+        "symbol": "CheckPermissions",
+        "line": 59
+      },
+      {
+        "symbol": "CheckSourcePermission",
+        "line": 108
+      },
+      {
+        "symbol": "CheckSupplementAcceptance",
+        "line": 146
+      },
+      {
+        "symbol": "CheckProductionEvidence",
+        "line": 160
+      },
+      {
+        "symbol": "CheckFunctions",
+        "line": 196
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/run-flake-probe.ps1",
+    "sourceReferences": 0,
+    "sha256": "53569780384d6889a28a52c50e5f361c6b2d0147f268b01074b7a9dbc0eecd30",
+    "functions": [
+      {
+        "symbol": "Get-FailedTestNames",
+        "line": 47
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+    "sourceReferences": 0,
+    "sha256": "129de7fdb18de1db62a282aa6edcc9aaf982243826250a9ff10c4dab947f2b24",
+    "functions": [
+      {
+        "symbol": "Invoke-Probe",
+        "line": 13
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "sourceReferences": 0,
+    "sha256": "1f48423e67f5777bd0be594481fb17120ac23044ebb27b0e1c8113ed57ffb44e",
+    "functions": [
+      {
+        "symbol": "Assert-Equal",
+        "line": 22
+      },
+      {
+        "symbol": "Assert-ExitCode",
+        "line": 26
+      },
+      {
+        "symbol": "Invoke-Lock",
+        "line": 30
+      },
+      {
+        "symbol": "Get-LockMutexName",
+        "line": 40
+      },
+      {
+        "symbol": "Assert-LockActionWaitsOnMutex",
+        "line": 52
+      },
+      {
+        "symbol": "Invoke-StateValidation",
+        "line": 85
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+    "sourceReferences": 0,
+    "sha256": "e412008206bceaba4ad56e1c2fcf7a719109d5b40750c2f5ab52ea3044dc3bee",
+    "functions": [
+      {
+        "symbol": "Put",
+        "line": 22
+      },
+      {
+        "symbol": "GetJson",
+        "line": 31
+      },
+      {
+        "symbol": "PutJson",
+        "line": 32
+      },
+      {
+        "symbol": "Hash",
+        "line": 33
+      },
+      {
+        "symbol": "Declare",
+        "line": 37
+      },
+      {
+        "symbol": "MathMatrix",
+        "line": 45
+      },
+      {
+        "symbol": "PutMath",
+        "line": 58
+      },
+      {
+        "symbol": "IsolateFinalClosureMatrices",
+        "line": 59
+      },
+      {
+        "symbol": "RestrictedAuditMatrix",
+        "line": 67
+      },
+      {
+        "symbol": "Grant",
+        "line": 75
+      },
+      {
+        "symbol": "FunctionalChange",
+        "line": 81
+      },
+      {
+        "symbol": "ProbeMatrix",
+        "line": 90
+      },
+      {
+        "symbol": "ProbeGrant",
+        "line": 100
+      },
+      {
+        "symbol": "WriteProduction",
+        "line": 104
+      },
+      {
+        "symbol": "ProductionFixture",
+        "line": 109
+      },
+      {
+        "symbol": "ClosureFixture",
+        "line": 149
+      },
+      {
+        "symbol": "Case",
+        "line": 179
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-b1-batch.ps1",
+    "sourceReferences": 0,
+    "sha256": "78c0ab989a402fa8105e364f7b80634d65bd6108688d9ca7f69ad6171852c2c9",
+    "functions": []
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+    "sourceReferences": 0,
+    "sha256": "f38390dceabba7012b992d728e13dfc69776286f55020fbff96fabd02da8d2a3",
+    "functions": []
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "sourceReferences": 0,
+    "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511",
+    "functions": [
+      {
+        "symbol": "Get-IndexedContent",
+        "line": 15
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "sourceReferences": 0,
+    "sha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2",
+    "functions": [
+      {
+        "symbol": "Fail",
+        "line": 14
+      },
+      {
+        "symbol": "SafePath",
+        "line": 15
+      },
+      {
+        "symbol": "ReadText",
+        "line": 19
+      },
+      {
+        "symbol": "Digest",
+        "line": 40
+      },
+      {
+        "symbol": "Json",
+        "line": 46
+      },
+      {
+        "symbol": "GitLines",
+        "line": 49
+      },
+      {
+        "symbol": "IsProduct",
+        "line": 56
+      },
+      {
+        "symbol": "CheckAcceptance",
+        "line": 57
+      },
+      {
+        "symbol": "CheckTask",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "sourceReferences": 0,
+    "sha256": "a057f3dda4e08bddef1ae32fea9a421c76b805d9fd3f821d1d7037a86e432a83",
+    "functions": [
+      {
+        "symbol": "Convert-ToIso",
+        "line": 42
+      },
+      {
+        "symbol": "Compare-Iso",
+        "line": 48
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "sourceReferences": 0,
+    "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55",
+    "functions": [
+      {
+        "symbol": "Test-AnchorExists",
+        "line": 33
+      },
+      {
+        "symbol": "Test-AnchorRequired",
+        "line": 46
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+    "sourceReferences": 0,
+    "sha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad",
+    "functions": [
+      {
+        "symbol": "Resolve-Commit",
+        "line": 74
+      },
+      {
+        "symbol": "ConvertTo-ScopeRegex",
+        "line": 106
+      },
+      {
+        "symbol": "New-ScopeRule",
+        "line": 118
+      },
+      {
+        "symbol": "Find-ScopeHit",
+        "line": 129
+      }
+    ]
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
+    "sourceReferences": 0,
+    "sha256": "e3ccb7ba5ccaaa7b7d9c8a21e344f9706e8a7ed0c9f41e3fa9c07380d3434aeb",
+    "functions": []
+  }
+]

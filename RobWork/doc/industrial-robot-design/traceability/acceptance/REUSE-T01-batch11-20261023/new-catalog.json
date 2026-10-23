@@ -1,0 +1,257 @@
+[
+  {
+    "id": "PATH-PLANNING",
+    "search": {
+      "command": "rg -n \"RRT|QSampler|StopCriteria\" RobWork/RobWork/src/rw/pathplanning RobWork/RobWork/src/rwlibs/pathplanners RobWork/RobWork/gtest/pathplanning",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+    },
+    "boundary": "现有Planner已调用RRT，不应重写；仅借持runtime WorkCellConstView，不自建模型，任务私有规划器。QSampler共享Random全局unsigned源；取消可用StopCriteria组合预算但产品尚仅传秒数。policy终态/适用/finalized三态不可削弱。",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp",
+        "sha256": "66f61439563561943f3f358b7ced694ccbdbc64c94c5c9adcc1e880dc202f59d",
+        "symbols": [
+          "RRTPlanner",
+          "makeQToQPlanner"
+        ],
+        "target": "sdurw_pathplanners",
+        "targetFile": "RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt",
+        "targetSha256": "7ce494ad5bb1cad0f6a0761dc07aafe654623eb3dd5fc1a75e4ba8762b735604"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+        "sha256": "d46af647083283c0c660e3beb5924b931b7a5c257dd19d14850b2dbe1933295e",
+        "symbols": [
+          "QConstraint",
+          "makeBounds",
+          "makeMerged",
+          "inCollision"
+        ],
+        "target": "sdurw_pathplanning",
+        "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+        "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.hpp",
+        "sha256": "c00c94d1902e803c8d3853ff74bcea92ad88b6220c48a6f82cb7ed6efc194765",
+        "symbols": [
+          "QSampler",
+          "makeUniform",
+          "makeConstrained"
+        ],
+        "target": "sdurw_pathplanning",
+        "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+        "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/pathplanning/QEdgeConstraint.hpp",
+        "sha256": "cd8f2417c7fc7786524cf2fa6dd36ef73cab1a73481516aa4bda215043f26ddf",
+        "symbols": [
+          "QEdgeConstraint",
+          "make"
+        ],
+        "target": "sdurw_pathplanning",
+        "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+        "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.hpp",
+        "sha256": "bb139a8d54e175e422e13d035336b61bb915d8cebec8f7e5920fd5ff24500bf7",
+        "symbols": [
+          "StopCriteria",
+          "stopByFun",
+          "stopEither",
+          "stopAfter"
+        ],
+        "target": "sdurw_pathplanning",
+        "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+        "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_pathplanners",
+        "sdurw_pathplanning"
+      ],
+      "constraints": "现有Planner已调用RRT，不应重写；仅借持runtime WorkCellConstView，不自建模型，任务私有规划器。QSampler共享Random全局unsigned源；取消可用StopCriteria组合预算但产品尚仅传秒数。policy终态/适用/finalized三态不可削弱。"
+    },
+    "usages": [
+      {
+        "consumerUnit": "trajectory",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "现有Planner已调用RRT，不应重写；仅借持runtime WorkCellConstView，不自建模型，任务私有规划器。QSampler共享Random全局unsigned源；取消可用StopCriteria组合预算但产品尚仅传秒数。policy终态/适用/finalized三态不可削弱。",
+      "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+      "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+    },
+    "ownerUnit": "trajectory",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [
+      {
+        "path": "RobWork/RobWork/gtest/pathplanning/PathPlanningTest.cpp",
+        "sha256": "148a98d560fc27b313e61d7b63f72c4e49a323418fb96a24de05603484bce7e9",
+        "symbols": [
+          "testPathPlanning",
+          "testPartialIndexTable"
+        ],
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      }
+    ],
+    "resourceSearch": {
+      "command": "rg -n \"RRT|QSampler|StopCriteria\" RobWork/RobWork/src/rw/pathplanning RobWork/RobWork/src/rwlibs/pathplanners RobWork/RobWork/gtest/pathplanning",
+      "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+    }
+  },
+  {
+    "id": "MATH-METRIC",
+    "search": {
+      "command": "rg -n \"pathLength|makeManhattan|makeInfinity|makeEuclidean\" RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+    },
+    "boundary": "L1路径长度、逐段Linf最大步长与L2采样长度分开。pathLength按段先归约，原实现按轴累加，浮点舍入/稳定选择可能变化；4项探测中的小整数例不是全部输入或生产接线证明。PathAnalyzer静态模板无需新建Device/State。",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+        "sha256": "79736cb31891c2a8ba98bec9f4324102226ea6b0e3ba56e44ec806d8e8eb1ce0",
+        "symbols": [
+          "makeManhattan",
+          "makeInfinity",
+          "makeEuclidean"
+        ],
+        "target": "sdurw_math",
+        "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+        "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+      },
+      {
+        "path": "RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp",
+        "sha256": "26deb95e77f4d73d949cfd1f3e5f047b783883b9fd864a8826349553022ab4ec",
+        "symbols": [
+          "pathLength"
+        ],
+        "target": "sdurw_pathplanning",
+        "targetFile": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+        "targetSha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_math",
+        "sdurw_pathplanning"
+      ],
+      "constraints": "L1路径长度、逐段Linf最大步长与L2采样长度分开。pathLength按段先归约，原实现按轴累加，浮点舍入/稳定选择可能变化；4项探测中的小整数例不是全部输入或生产接线证明。PathAnalyzer静态模板无需新建Device/State。"
+    },
+    "usages": [
+      {
+        "consumerUnit": "trajectory",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "L1路径长度、逐段Linf最大步长与L2采样长度分开。pathLength按段先归约，原实现按轴累加，浮点舍入/稳定选择可能变化；4项探测中的小整数例不是全部输入或生产接线证明。PathAnalyzer静态模板无需新建Device/State。",
+      "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+      "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+    },
+    "ownerUnit": "core",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [
+      {
+        "path": "RobWork/RobWork/gtest/math/MetricFactoryTest.cpp",
+        "sha256": "cba3bde95986409577283dc4c2813463d330b51129cfb14aa221d3bf34aa04a5",
+        "symbols": [
+          "MetricFactory"
+        ],
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+      }
+    ],
+    "resourceSearch": {
+      "command": "rg -n \"pathLength|makeManhattan|makeInfinity|makeEuclidean\" RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+    }
+  },
+  {
+    "id": "MATH-TRAPEZOID",
+    "search": {
+      "command": "rg -n \"trapezMethod|TrapMethod\" RobWork/RobWork/src/rwlibs/softbody RobWork/RobWork/gtest",
+      "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+      "conclusion": "已读列明的公共API、实现或构建，不视为覆盖所有业务；候选适用性仍需后续实证"
+    },
+    "boundary": "确有梯形原语，不能声称上游无积分。模板M点固定h；M=2逐区间可消费非等距dt，但需保留缺口零贡献、正负分项、算术顺序及NaN语义。上游目标默认OFF，当前CONFIG未供给；本次仅通过既有导出目标的源码include验证模板，不视为产品供给批准，不能为两点公式拉起整套软体库。",
+    "upstream": [
+      {
+        "path": "RobWork/RobWork/src/rwlibs/softbody/numerics/TrapMethod.hpp",
+        "sha256": "8474ac0238ae27327e1ed47ad86f34fbb59fb775087d6b2bb39dc6e7862ae4a5",
+        "symbols": [
+          "TrapMethod",
+          "trapezMethod"
+        ],
+        "target": "sdurw_softbody",
+        "targetFile": "RobWork/RobWork/src/rwlibs/softbody/CMakeLists.txt",
+        "targetSha256": "f7d0934ff754dcae1547f04278bc619a68ffd5569c7f786be11ceb56c7d20006"
+      }
+    ],
+    "build": {
+      "targets": [
+        "sdurw_softbody"
+      ],
+      "constraints": "确有梯形原语，不能声称上游无积分。模板M点固定h；M=2逐区间可消费非等距dt，但需保留缺口零贡献、正负分项、算术顺序及NaN语义。上游目标默认OFF，当前CONFIG未供给；本次仅通过既有导出目标的源码include验证模板，不视为产品供给批准，不能为两点公式拉起整套软体库。"
+    },
+    "usages": [
+      {
+        "consumerUnit": "dynamics",
+        "usageRole": "adapter",
+        "permissionRef": "ARCH:3.6",
+        "operations": [
+          "value"
+        ]
+      }
+    ],
+    "limits": {
+      "semantics": "确有梯形原语，不能声称上游无积分。模板M点固定h；M=2逐区间可消费非等距dt，但需保留缺口零贡献、正负分项、算术顺序及NaN语义。上游目标默认OFF，当前CONFIG未供给；本次仅通过既有导出目标的源码include验证模板，不视为产品供给批准，不能为两点公式拉起整套软体库。",
+      "lifetime": "仅值类型或算法私有会话，不赋予模型构造/修改权",
+      "determinism": "逐消费者审查；未承诺保留既有PRNG序列或跨平台位模式"
+    },
+    "ownerUnit": "core",
+    "examples": [],
+    "docs": [],
+    "operations": [
+      "value"
+    ],
+    "review": {
+      "status": "candidate",
+      "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    },
+    "tests": [],
+    "resourceSearch": {
+      "command": "rg -n \"trapezMethod|TrapMethod\" RobWork/RobWork/src/rwlibs/softbody RobWork/RobWork/gtest",
+      "conclusion": "列出实际核对路径；未找到同名不能证明能力缺失，未执行上游完整测试集"
+    }
+  }
+]

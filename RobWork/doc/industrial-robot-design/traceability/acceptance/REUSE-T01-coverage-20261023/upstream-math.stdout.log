@@ -1,0 +1,8 @@
+RobWork/RobWork/src/rw/math/Q.hpp:223:        double normInf () const
+RobWork/RobWork/src/rw/math/Math.hpp:77:                // If s close to zero then direction of axis not important. If
+RobWork/RobWork/src/rw/math/Math.hpp:678:         * @brief Implements an isNaN function
+RobWork/RobWork/src/rw/math/Math.hpp:682:        static bool isNaN (double d);
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:22: * @file MetricUtil.hpp
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:38:    class MetricUtil
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:211:        static inline typename VectorType::value_type normInf (const VectorType& q)
+RobWork/RobWork/src/rw/math/MetricUtil.hpp:244:        static inline typename VectorType::value_type normInfWeighted (const VectorType& q,

@@ -1,0 +1,48 @@
+{
+  "frozenCommit": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "baselineFiles": 1401,
+  "relations": 548,
+  "distinctFunctions": 547,
+  "distinctSourcePaths": 138,
+  "sourceReferencedBaseline": 138,
+  "noFunctionSourceBaseline": 1263,
+  "inputOnly": 22,
+  "mjsTotal": 29,
+  "mjsNoSources": 29,
+  "unreferencedByExtension": {
+    ".txt": 1,
+    ".cmake": 2,
+    ".hpp": 443,
+    ".cpp": 786,
+    ".html": 1,
+    ".mjs": 29,
+    ".ps1": 1
+  },
+  "currentCodeFilesBeyondBaseline": 19,
+  "missingBaseline": [],
+  "decisionCounts": {
+    "pending": 545,
+    "proposal": 3
+  }
+}
+core: baseline=30 unreferenced=26 impl/script=24 dto/declaration=2 rows=4
+diagnostics: baseline=38 unreferenced=35 impl/script=32 dto/declaration=3 rows=4
+drivetrain: baseline=22 unreferenced=17 impl/script=14 dto/declaration=3 rows=13
+dynamics: baseline=61 unreferenced=53 impl/script=38 dto/declaration=15 rows=12
+evidence: baseline=37 unreferenced=30 impl/script=30 dto/declaration=0 rows=27
+execution: baseline=60 unreferenced=54 impl/script=47 dto/declaration=7 rows=41
+foundation-governance: baseline=33 unreferenced=33 impl/script=32 dto/declaration=0 rows=0
+io: baseline=37 unreferenced=32 impl/script=26 dto/declaration=6 rows=15
+kinematics: baseline=104 unreferenced=90 impl/script=77 dto/declaration=13 rows=37
+modeling: baseline=138 unreferenced=125 impl/script=107 dto/declaration=18 rows=48
+optimization: baseline=76 unreferenced=69 impl/script=55 dto/declaration=14 rows=20
+policy: baseline=43 unreferenced=38 impl/script=34 dto/declaration=4 rows=10
+project: baseline=87 unreferenced=83 impl/script=65 dto/declaration=18 rows=72
+reporting: baseline=66 unreferenced=61 impl/script=57 dto/declaration=4 rows=68
+requirements: baseline=92 unreferenced=84 impl/script=74 dto/declaration=10 rows=15
+runtime: baseline=57 unreferenced=49 impl/script=38 dto/declaration=11 rows=39
+selection: baseline=71 unreferenced=65 impl/script=57 dto/declaration=8 rows=19
+testkit: baseline=46 unreferenced=40 impl/script=36 dto/declaration=4 rows=44
+trajectory: baseline=81 unreferenced=72 impl/script=59 dto/declaration=13 rows=37
+ui: baseline=162 unreferenced=153 impl/script=122 dto/declaration=31 rows=13
+workflow: baseline=60 unreferenced=54 impl/script=50 dto/declaration=4 rows=10

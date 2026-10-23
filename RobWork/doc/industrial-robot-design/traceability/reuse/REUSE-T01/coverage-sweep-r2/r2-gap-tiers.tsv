@@ -1,0 +1,20 @@
+FCOV-09	execution	worker/main.cpp	wWinMain	def@613	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-11	execution	src/Controller.cpp	forceKillSequence	def@451	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-12	diagnostics	src/Confirmable.cpp	submitConfirmation	def@?	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-13	diagnostics	src/Redaction.cpp	redact	def@?	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-17a	foundation-governance	cmake/ird_gates.cmake	ird_classify_target	def@267	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-17b	foundation-governance	cmake/ird_gates.cmake	ird_read_flat	def@122	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-17c	foundation-governance	cmake/ird_gates.cmake	ird_extract_blocks	def@123	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-18	foundation-governance	generate/make_fk_equation.mjs	closedFormFk	def@53	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-20	foundation-governance	generate/make_pol_collision_analytic.mjs	handDerived	def@41	ABSENT-零登记	-	acceptance有文件引用	
+FCOV-S1	project	src/ObjectStore.cpp	scanObjects	def@?	A-仅字符串命中	-	acceptance有文件引用	project.ObjectStore.publishObject|project.ObjectStore.readVerified
+FCOV-S2	execution	src/WorkerSupervisor.cpp	handleHandshake	def@852	A-仅字符串命中	-	acceptance有文件引用	execution.WorkerSupervisor.spawnNewWorker
+FCOV-S3	execution	src/Scheduler.cpp	dispatchOne	def@530	A-仅字符串命中	-	acceptance有文件引用	execution.TaskScheduler.submit
+COV-07p	execution	src/ChannelProtocol.cpp	putU32	def@28	B-语义覆盖	execution.ChannelProtocol.putU16	acceptance有文件引用	execution.ChannelProtocol.putU16|execution.ChannelProtocol.putStr|execution.ChannelProtocol.getStr
+ROT-01	modeling	src/RpyMath.hpp	rpyToEaa	def@74	B-语义覆盖	modeling.rpyToEaa	acceptance有文件引用	modeling.rpyToRotation|modeling.rpyToEaa
+ROT-02	runtime	src/BaseWorldTransform.cpp	BaseWorldTransform	def@?	A-仅字符串命中	-	acceptance有文件引用	runtime.multiplyRotation|runtime.rotateVector|runtime.rotationFromCustomEaa
+FK-01	runtime	src/CompilerImpl.cpp	buildCanonicalModel	def@5	ABSENT-零登记	-	acceptance有文件引用	
+FK-02	kinematics	kinematics/Fk.hpp	Fk	def@?	ABSENT-零登记	-	acceptance有文件引用	
+FK-03	kinematics	src/Evaluators.cpp	solveItem	def@1285	ABSENT-零登记	-	acceptance有文件引用	
+FK-04	kinematics	src/Workspace.cpp	generateJointSpaceConfigurations	def@216	ABSENT-零登记	-	acceptance有文件引用	
+FK-05	kinematics	src/PoseReach.cpp	computePoseReachCoverage	def@364	ABSENT-零登记	-	acceptance有文件引用	

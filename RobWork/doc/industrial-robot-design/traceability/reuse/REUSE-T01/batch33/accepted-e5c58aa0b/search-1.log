@@ -1,0 +1,33 @@
+RobWork/RobWorkSim/example\bootstrap\plugin\BootstrapPlugin.hpp:23:    Q_PLUGIN_METADATA(IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "BootstrapPlugin.json")
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:22:#include <rw/core/DOMParser.hpp>
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:28:using rw::core::DOMParser;
+RobWork/RobWorkSim/gtest\TestEnvironment.cpp:61:	    const DOMParser::Ptr parser = DOMParser::make();
+RobWork/RobWorkSim/example\SimTaskPlugin\SimTaskPlugin.hpp:49:    Q_PLUGIN_METADATA(IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTaskPlugin.json")
+RobWork/RobWorkSim/example\SimTemplatePlugin\SimTemplatePlugin.hpp:23:    Q_PLUGIN_METADATA(IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTemplatePlugin.json")
+RobWork/RobWorkSim/example\SimTaskVisPlugin\SimTaskVisPlugin.hpp:38:    Q_PLUGIN_METADATA(IID "dk.sdu.mip.Robwork.RobWorkStudioPlugin/0.1" FILE "SimTaskVisPlugin.json")
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:12:#include <boost/property_tree/ptree.hpp>
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:13:#include <boost/property_tree/xml_parser.hpp>
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:19:using namespace boost::property_tree;
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:50:typedef boost::property_tree::basic_ptree<std::string, std::string, compareElemStrings> PTree;
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:53:    typedef boost::property_tree::basic_ptree<std::string, std::string, compareElemStrings>::iterator CI;
+RobWork/RobWorkSim/example\tools\src\ConvertSimTask.cpp:269:        //state.dir = StringUtil::getDirectoryName(file);
+RobWork/RobWork/gtest\TestEnvironment.cpp:23:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/gtest\TestEnvironment.cpp:29:using rw::core::DOMParser;
+RobWork/RobWork/gtest\TestEnvironment.cpp:64:        const DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/gtest\TestEnvironment.cpp:77:        const DOMParser::Ptr parser = DOMParser::make ();
+RobWork/RobWork/gtest\task\GraspTaskTest.cpp:202:TEST(GraspTaskLoaderSaver, DOMParser) {
+RobWork/RobWork/gtest\core\PluginTest.cpp:22:#include <rw/core/DOMParser.hpp>
+RobWork/RobWork/gtest\core\PluginTest.cpp:29:    const DOMParser::Ptr parser = DOMParser::make();
+RobWork/RobWork/gtest\core\StringUtilTest.cpp:22:#include <rw/core/StringUtil.hpp>
+RobWork/RobWork/gtest\core\StringUtilTest.cpp:24:using rw::core::StringUtil;
+RobWork/RobWork/gtest\core\StringUtilTest.cpp:26:TEST(StringUtil, GetRelativeDirectoryNameTest_HardcodedPathTest) {
+RobWork/RobWork/gtest\core\StringUtilTest.cpp:30:    const std::string result = StringUtil::getRelativeDirectoryName(robotGeometryTestString, StringUtil::getDirectoryName(wcPath));
+RobWork/RobWork/gtest\CMakeLists.txt:82:        core/StringUtilTest.cpp
+RobWork/RobWork/gtest\CMakeLists.txt:112:        common/StringUtilTest.cpp
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:19:#include <rw/core/StringUtil.hpp>
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:23:TEST(StringUtilTest, StringUtilGetFileExtensionTest )
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:43:        EXPECT_EQ(StringUtil::getFileExtension(pair.first) , pair.second);
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:48:TEST(StrinUtilTest, StringUtilGetFileNameTest )
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:50:    EXPECT_EQ(StringUtil::getFileName("d:\\test\\folder1\\filename.txt") , "filename.txt");
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:51:    EXPECT_EQ(StringUtil::getFileName("/test/folder1/filename.txt") , "filename.txt");
+RobWork/RobWork/gtest\common\StringUtilTest.cpp:52:    EXPECT_EQ(StringUtil::getFileName("d:\\test\\folder1\\filename") , "filename");

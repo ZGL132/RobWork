@@ -1,0 +1,63 @@
+{
+  "finding": {
+    "id": "F-966",
+    "source": "reuse/core-units-compare-audit.md / batch31",
+    "severity": "major",
+    "status": "open",
+    "registeredAt": "2026-10-23",
+    "title": "core C4有限极值中间溢出令标量与vector/Q公共比较误绿",
+    "owner": "core / REUSE-T05",
+    "resolution": "22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。"
+  },
+  "review": {
+    "status": "candidate",
+    "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+  },
+  "docResources": [],
+  "resourceSearch": {
+    "command": "batch31/search.json + batch31/r2/search.json",
+    "conclusion": "原公共头/实现/测试/示例/构建定向检索，加真实共享RobWork/doc的md/rst检索及basic.rst阅读；candidate，不宣称完整产品契约或全套上游测试通过。共享doc路径以r2/search.read摘要绑定，未伪造catalog docs路径。"
+  },
+  "catalogResourcePathRule": "^RobWork/(RobWork|RobWorkSim)/",
+  "pathRestrictionExists": true,
+  "scriptVerification": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "blobRawSha256": "396ccc1981bbcc5c41a0cb1d8a70e444ba8aa97f302f87f9a77e9b2d63d9796c",
+      "executedNormalizedMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "blobRawSha256": "aad3d7c723423c7c33f2a6ed558597a97d285b46b39e77fa7158e7538aef306c",
+      "executedNormalizedMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "blobRawSha256": "367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf",
+      "executedNormalizedMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "blobRawSha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3",
+      "executedNormalizedMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "blobRawSha256": "8e8b28487656a1ad8b7ad194f94dbf694bb1b123e084cf628b140ee74b0cb08b",
+      "executedNormalizedMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "blobRawSha256": "3fcab11e7d4132b8866e11ec3ffd6ee7185575e6f92b8dc2f1e0b6d689260436",
+      "executedNormalizedMatchesFrozen": true
+    }
+  ],
+  "oracle": {
+    "inputsFinite": true,
+    "diffDivM": "2",
+    "limitDivM": "3/2",
+    "expectedClose": false,
+    "implementationFloatDiff": "inf",
+    "implementationFloatLimit": "inf"
+  }
+}

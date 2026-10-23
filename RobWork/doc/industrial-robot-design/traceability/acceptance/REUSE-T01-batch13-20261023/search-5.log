@@ -1,0 +1,16 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt:123:    src/ChannelProtocol.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt:146:    src/ChannelProtocol.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:39:# ---- pugixml 接入（O-40——DTB §4 依赖登记，2026-09-22 所有者批次授权）----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:41:# vcpkg 经典模式安装 pugixml 1.15→1.16/x64-windows（版本以安装时 vcpkg
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:44:# <pugixml.hpp>，公共头不暴露 DOM 类型——消费者零感知）；DOM 有界性由 io
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:47:find_package(pugixml CONFIG REQUIRED)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:55:# gtest/pugixml：找不到即配置失败（不静默跳过插件目标）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:82:#                        pugixml DOM 解析——O-40 PRIVATE 依赖，§6.1～§6.7/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:85:#   src/XacroExpand.cpp  Xacro 受控展开语义（IXacroExpandService——属性/宏/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:87:#                        §9.4.9；pugixml 复用 T05 已登记依赖——O-40 不二
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:164:    src/XacroExpand.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:373:# pugixml：O-40 登记的 PRIVATE 第三方依赖（单独语句——不混入六条登记边的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:375:# pugixml 类型暴露）。本语句不在六边白名单守卫的 sdurws_ird_* 拦截范围
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:376:# （pugixml::pugixml 不匹配 ^sdurws_ird_/Qt/GTest 模式——配置期守卫不受影响）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:377:target_link_libraries(sdurws_ird_modeling PRIVATE pugixml::pugixml)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt:815:# 模式无框架目标，产品目标经 pugixml PRIVATE 链接面附带取得 vcpkg 根

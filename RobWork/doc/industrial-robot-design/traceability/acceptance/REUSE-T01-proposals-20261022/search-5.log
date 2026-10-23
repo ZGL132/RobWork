@@ -1,0 +1,17 @@
+RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp:18:#include <rwsim/dynamics/RigidDevice.hpp>
+RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp:133:        if (dynamic_cast< RigidDevice* > (dev.get ())) {
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:43:#include <rwsim/dynamics/RigidDevice.hpp>
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:338:		if( device.cast<RigidDevice>()!=NULL ){
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:339:			std::cout << "RigidDevice...." << std::endl;
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:341:			RigidDevice::Ptr fDev = device.cast<RigidDevice>();
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:435:						RW_WARN("Joint type not supported!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:453:			RW_WARN("Controller not supported!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:542:    RW_THROW ("BtSimulator (setEnabled): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:547:    RW_THROW ("BtSimulator (setDynamicsEnabled): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:562:    RW_THROW ("BtSimulator (emitPropertyChanged): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:585:void BtSimulator::addDevice (DynamicDevice::Ptr dev, State& nstate)
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:587:    RW_THROW ("BtSimulator (addDevice): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:652:        RW_THROW ("BtSimulator (addSensor): the type of sensor is not supported yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:658:    RW_THROW ("BtSimulator (removeSensor): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:663:    RW_THROW ("BtSimulator (attach): not implemented yet!");
+RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp:668:    RW_THROW ("BtSimulator (detach): not implemented yet!");

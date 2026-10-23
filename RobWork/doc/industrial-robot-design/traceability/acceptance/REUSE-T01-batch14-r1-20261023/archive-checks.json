@@ -1,0 +1,569 @@
+[
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "acceptance.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\acceptance.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "acceptance.md",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\acceptance.md",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "archive-checks.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\archive-checks.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "check-rework.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\check-rework.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "check-rework.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\check-rework.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "check-rework.py",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\check-rework.py",
+    "exists": true,
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "checkout.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\checkout.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "checkout.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\checkout.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "clone.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\clone.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "clone.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\clone.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "comparison-base.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\comparison-base.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "docs.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\docs.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "docs.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\docs.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "facts.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\facts.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "finalize.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\finalize.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "finalize.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\finalize.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "finalize.py",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\finalize.py",
+    "exists": true,
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "frozen-sha.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\frozen-sha.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "getter-source-evidence.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\getter-source-evidence.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "git-status-end.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\git-status-end.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "git-status-start.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\git-status-start.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "hash-checks.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\hash-checks.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "product-upstream-diff.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\product-upstream-diff.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "reuse.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\reuse.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "reuse.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\reuse.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "rework-search.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\rework-search.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "rework-search.stdout.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\rework-search.stdout.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "scoped-diff-check.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\scoped-diff-check.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "scoped-diff-check.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\scoped-diff-check.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "search-replay.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\search-replay.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "semantic-change.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\semantic-change.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "task.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\task.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch12-r2-20261023",
+    "file": "task.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b12-r2-20261023-005243-1428146295\\task.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "acceptance.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\acceptance.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "acceptance.md",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\acceptance.md",
+    "exists": true,
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "check-b13.ps1",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\check-b13.ps1",
+    "exists": true,
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "checkout.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\checkout.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "checkout.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\checkout.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "clone.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\clone.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "clone.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\clone.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "diff-check.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\diff-check.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "docs.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\docs.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "docs.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\docs.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "hash-checks.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\hash-checks.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "new-rows.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\new-rows.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "reuse.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\reuse.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "reuse.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\reuse.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-1.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-1.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-1.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-1.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-2.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-2.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-2.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-2.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-3.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-3.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-3.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-3.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-4.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-4.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-4.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-4.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-5.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-5.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-5.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-5.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-6.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-6.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-6.stderr.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-6.stderr.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "search-replay.json",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\search-replay.json",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "task.exit.txt",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\task.exit.txt",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "task.log",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\task.log",
+    "exists": true,
+    "rawMatch": true,
+    "newlineOnly": false,
+    "pass": true
+  },
+  {
+    "archive": "REUSE-T01-batch13-20261023",
+    "file": "write-report.ps1",
+    "source": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b13-e26aa5c7a08d4853bc745a9142615c69\\write-report.ps1",
+    "exists": true,
+    "rawMatch": false,
+    "newlineOnly": true,
+    "pass": true
+  }
+]

@@ -1,0 +1,12 @@
+
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\fixture\no-bom-lf.ps1:13 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+At C:\Users\zgl18\AppData\Local\Temp\reuse-t01-b29-acc-054fbe31\fixture\no-bom-lf.ps1:47 char:1
++ }
++ ~
+Unexpected token '}' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

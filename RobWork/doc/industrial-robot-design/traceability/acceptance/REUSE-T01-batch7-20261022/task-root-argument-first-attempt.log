@@ -1,0 +1,7 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\scripts\industrialrobot\validate-task.ps1:29
+Line |
+  29 |  … docBase)) { throw "repo root resolution failed: doc base not found un …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | repo root resolution failed: doc base not found under
+     | 'C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo/RobWork'（请用
+     | -RepoRoot 显式指定仓库根）

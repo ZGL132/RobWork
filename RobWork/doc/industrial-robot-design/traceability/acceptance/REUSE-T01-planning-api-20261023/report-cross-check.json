@@ -1,0 +1,34 @@
+[
+  {
+    "testId": "ReusePlanningAudit.ManhattanPathLengthPreservesSelectionMeaning",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "ReusePlanningAudit.StopCriteriaDelegatesCancellation",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "ReusePlanningAudit.UniformSamplerSharesSeededProcessSource",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  },
+  {
+    "testId": "ReusePlanningAudit.TrapezoidPrimitiveAllowsPerIntervalSteps",
+    "xmlStatus": "run",
+    "xmlResult": "completed",
+    "xmlFailures": 0,
+    "nativeOutcome": "passed",
+    "matches": true
+  }
+]

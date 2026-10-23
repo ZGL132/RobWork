@@ -1,0 +1,64 @@
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:86:        void setWorkCell (rw::core::Ptr< rw::models::WorkCell > wc);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:89:        rw::core::Ptr< rw::models::WorkCell > getWorkCell ();
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:244:        DrawableNode::Ptr addFrameAxis (const std::string& name, double size,
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:305:        DrawableNode::Ptr addRender (const std::string& name, rw::core::Ptr< rw::graphics::Render > render,
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:377:        bool removeDrawables (const rw::core::Ptr<rw::kinematics::Frame> f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:384:        bool removeDrawables (const std::string& name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:391:        bool removeDrawable (DrawableNode::Ptr drawable);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:399:        bool removeDrawable (DrawableNode::Ptr drawable, const rw::core::Ptr<rw::kinematics::Frame> f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:406:        bool removeDrawable (const std::string& name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.hpp:414:        bool removeDrawable (const std::string& name, const rw::core::Ptr<rw::kinematics::Frame> f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:134:    setWorkCell (NULL);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:158:void WorkCellScene::setWorkCell (rw::models::WorkCell::Ptr wc)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:186:                _scene->removeDrawables (it->second);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:240:rw::models::WorkCell::Ptr WorkCellScene::getWorkCell ()
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:253:            data.second->setTransform (data.first->getTransform (state));
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:483:            removeDrawable ("FrameAxis", f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:500:        removeDrawable ("FrameAxis", f);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:527:            removeDrawable ("FrameLabel", f.get ());
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:540:        removeDrawable ("FrameLabel", f.get ());
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:663:DrawableNode::Ptr WorkCellScene::addFrameAxis (const std::string& name, double size, rw::core::Ptr< Frame> frame,
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:729:DrawableNode::Ptr WorkCellScene::addRender (const std::string& name, Render::Ptr render,
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:779:bool WorkCellScene::removeDrawable (DrawableNode::Ptr drawable)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:805:    return _scene->removeDrawable (drawable);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:808:bool WorkCellScene::removeDrawables (const rw::core::Ptr< Frame> f)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:821:        return _scene->removeDrawables (it->second);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:824:bool WorkCellScene::removeDrawable (const std::string& name)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:850:    return _scene->removeDrawable (name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:853:bool WorkCellScene::removeDrawables (const std::string& name)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:887:    return _scene->removeDrawables (name);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:890:bool WorkCellScene::removeDrawable (DrawableNode::Ptr drawable, const rw::core::Ptr< Frame> f)
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:910:        return _scene->removeDrawable (drawable, it->second);
+RobWork/RobWork/src/rw/graphics/WorkCellScene.cpp:913:bool WorkCellScene::removeDrawable (const std::string& name, const rw::core::Ptr< Frame> f)
+RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp:106:    void setWorkCell (rw::models::WorkCell::Ptr workcell) { setWorkcell (workcell); }
+RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp:112:    void setWorkCell (std::string workcell_file) { openWorkCellFile (workcell_file.c_str ()); }
+RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp:144:    rw::models::WorkCell::Ptr getWorkCell () { return getWorkcell (); }
+RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp:162:    rw::graphics::WorkCellScene::Ptr getWorkCellScene () { return _view->getWorkCellScene (); }
+RobWork/RobWorkStudio/src/rws/RobWorkStudio.hpp:572:        getView ()->getSceneViewer ()->setTransform (nviewT3D);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:232:    _view->setWorldNode (_wcscene->getWorldNode ());
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:233:    _view->setWorkCellScene (_wcscene);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:246:    //_view->setWorldNode( _wcscene->getWorldNode() );
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:304:    _view->setWorldNode (_wcscene->getWorldNode ());
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:312:void RWStudioView3D::setWorkCell (rw::models::WorkCell::Ptr wc)
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:326:    _wcscene->setWorkCell (_wc);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:327:    _view->setWorldNode (_wcscene->getWorldNode ());
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:368:                _wcscene->addRender ("CamFrustrum", camFrustum, frame, DrawableNode::Virtual);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:500:        _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:508:        _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:516:        _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:523:        _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:744:    _wcscene->setWorkCell (_wc);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:746:    _view->setWorldNode (_wcscene->getWorldNode ());
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:817:        _view->setTransform (Transform3D<>::makeLookAt (Vector3D<> (v2c.norm2 () / sqrt (3.0),
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:824:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:828:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:832:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:836:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:840:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:844:        _view->setTransform (
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:907:                    _wcscene->addRender (name, camFrustum, frame, DrawableNode::Virtual);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:940:                _view->setTransform (_customViews[i].second);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:1035:    _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:1043:    _view->setTransform (newTview);
+RobWork/RobWorkStudio/src/rws/RWStudioView3D.cpp:1094:    _view->setTransform (
+RobWork/RobWork/src/rw/graphics/DrawableNode.hpp:207:        virtual void setTransform (const rw::math::Transform3D<>& t3d) = 0;

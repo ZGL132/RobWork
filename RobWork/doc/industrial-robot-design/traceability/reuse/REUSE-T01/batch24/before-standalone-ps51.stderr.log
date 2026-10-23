@@ -1,0 +1,7 @@
+Unable to find type [System.IO].
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\pipeline-lock.ps1:163 char:9
++ } catch [System.IO] {
++         ~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation: (System.IO:TypeName) [], RuntimeException
+    + FullyQualifiedErrorId : TypeNotFound
+ 

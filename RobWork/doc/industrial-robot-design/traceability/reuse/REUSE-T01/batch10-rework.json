@@ -1,0 +1,123 @@
+{
+  "taskId": "REUSE-T01",
+  "finding": "B10-P2-01",
+  "reason": "原提取枚举所有add_executable，未绑定ird_add_gtest实际调用；修为20单元精确调用清单，不改源码/门禁",
+  "affected": [
+    {
+      "unit": "dynamics",
+      "falseTargets": [
+        "sdurws_ird_dynamics_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_dynamics_test",
+        "sdurws_ird_dynamics_contract_test",
+        "sdurws_ird_dynamics_gui_test"
+      ]
+    },
+    {
+      "unit": "execution",
+      "falseTargets": [
+        "sdurws_ird_execution_worker"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_execution_test",
+        "sdurws_ird_execution_contract_test",
+        "sdurws_ird_execution_perf_test"
+      ]
+    },
+    {
+      "unit": "kinematics",
+      "falseTargets": [
+        "sdurws_ird_kinematics_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_kinematics_test",
+        "sdurws_ird_kinematics_gui_test",
+        "sdurws_ird_kinematics_contract_test"
+      ]
+    },
+    {
+      "unit": "modeling",
+      "falseTargets": [
+        "sdurws_ird_demo6r",
+        "sdurws_ird_modeling_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_modeling_test",
+        "sdurws_ird_modeling_gui_test",
+        "sdurws_ird_modeling_contract_test"
+      ]
+    },
+    {
+      "unit": "project",
+      "falseTargets": [
+        "sdurws_ird_project_openbench_worker"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_project_test",
+        "sdurws_ird_project_contract_test",
+        "sdurws_ird_project_perf_test"
+      ]
+    },
+    {
+      "unit": "requirements",
+      "falseTargets": [
+        "sdurws_ird_requirements_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_requirements_test",
+        "sdurws_ird_requirements_contract_test",
+        "sdurws_ird_requirements_gui_test"
+      ]
+    },
+    {
+      "unit": "selection",
+      "falseTargets": [
+        "sdurws_ird_selection_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_selection_test",
+        "sdurws_ird_selection_contract_test"
+      ]
+    },
+    {
+      "unit": "testkit",
+      "falseTargets": [
+        "sdurws_ird_testdata_lint",
+        "sdurws_ird_testkit_prochelper"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_testkit_test"
+      ]
+    },
+    {
+      "unit": "trajectory",
+      "falseTargets": [
+        "sdurws_ird_trajectory_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_trajectory_test",
+        "sdurws_ird_trajectory_contract_test"
+      ]
+    },
+    {
+      "unit": "ui",
+      "falseTargets": [
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_app"
+      ],
+      "actualConsumers": [
+        "sdurws_ird_ui_test",
+        "sdurws_ird_ui_contract_test",
+        "sdurws_ird_ui_perf_test",
+        "sdurws_ird_ui_largedata_perf_test",
+        "sdurws_ird_ui_gui_test"
+      ]
+    }
+  ],
+  "result": "实施自查20宏实际消费无多项/缺项，独立返工验收待执行",
+  "source": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+  }
+}

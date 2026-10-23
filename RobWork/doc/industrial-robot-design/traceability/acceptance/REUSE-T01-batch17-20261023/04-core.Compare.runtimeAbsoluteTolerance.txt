@@ -1,0 +1,19 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp
+sdurws::ird::core::runtimeAbsoluteTolerance
+69: std::optional<double> runtimeAbsoluteTolerance(QuantityKind k) noexcept
+70: {
+71:     // 附录 D C7 机械转写（D-06：core 是唯一转写点；修改只能随需求变更）。
+72:     switch (k) {
+73:     case QuantityKind::Angle:                 return 1e-12;
+74:     case QuantityKind::Length:                return 1e-12;
+75:     case QuantityKind::LinearVelocity:        return 1e-9;
+76:     case QuantityKind::AngularVelocity:       return 1e-9;
+77:     case QuantityKind::LinearAcceleration:    return 1e-9;
+78:     case QuantityKind::AngularAcceleration:   return 1e-9;
+79:     case QuantityKind::Torque:                return 1e-9;
+80:     case QuantityKind::Dimensionless:         return 1e-12;
+81:     // 附录 D 未声明默认的量纲：nullopt（"无默认且无配置来源的量不得引入产品侧
+82:     // 相对校验"——C7 原文语义；mass/time/force/inertia/power/voltage）。
+83:     default:                                  return std::nullopt;
+84:     }
+85: }

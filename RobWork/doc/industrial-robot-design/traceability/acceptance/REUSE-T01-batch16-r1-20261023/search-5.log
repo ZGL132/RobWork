@@ -1,0 +1,10 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp:430:    // j1/j2/j4/j5/j6；旧 joint-velocity-limit 未保留面随 schema 落位消亡）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenImportTest.cpp:439:                  static_cast<std::size_t>(jNum(*counts, "mappedVelocityCount")))
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json:97:      "path": "generate/make_import_expectations.mjs",
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json:103:    "script": "generate/make_import_expectations.mjs",
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json:104:    "invocation": "node generate/make_import_expectations.mjs",
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/manifest.json:111:      "change": "F01 期望面更新（WP-13-T25）：<limit velocity> 随 {1,1} schema 落位真实映射 joints[i].maxVelocity——unsupported 由 8（含 joint-velocity-limit×5）降为 3，新增 mappedVelocityCount=5 计数锚；其余计数不变。变更属产品契约演化（MDL-01），非夹具对账失败掩盖——期望面与新映射实现同批提交，测试断言同步钉住映射面。",
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate\make_import_expectations.mjs:32: * 重跑：node make_import_expectations.mjs（无时间戳/无随机源——产物与
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate\make_import_expectations.mjs:65:      { kind: 'joint-velocity-limit', count: 5 },
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected\import-report.json:58:    "mappedVelocityCount": 5,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/expected\import-report.json:59:    "mappedVelocityNote": "F01/{1,1}：<limit velocity> 真实映射 joints[i].maxVelocity（5 轴——j1/j2/j4/j5/j6）；旧 joint-velocity-limit 未保留面随 schema 落位消亡",

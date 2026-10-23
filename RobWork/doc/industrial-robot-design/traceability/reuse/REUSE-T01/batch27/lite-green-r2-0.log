@@ -1,0 +1,11 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+Exception: C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:23
+Line |
+  23 |  … ot $pass) { throw "$Name failed: exit=$code expected=$Expected; see $ …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | default-ignores-optional-index failed: exit=1 expected=0; see .cache/b27-lite-green-r2-0

@@ -1,0 +1,108 @@
+{
+  "reviewedCommit": "b4c03401e12400a095cc4639f9f9ecefff0a9dac",
+  "executed": 14,
+  "passed": 14,
+  "failed": 0,
+  "skipped": 0,
+  "notRun": 0,
+  "tests": [
+    {
+      "name": "probe-pending-pending",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state,loader,model,state operations=construct-model,mutate-model,write-state; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "probe-pending-proposal",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state,loader,model,state operations=construct-model,mutate-model,write-state; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "probe-proposal-pending",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state,loader,model,state operations=construct-model,mutate-model,write-state; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "probe-proposal-proposal",
+      "expected": "PASS",
+      "exitCode": 0,
+      "passed": true,
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state,loader,model,state operations=construct-model,mutate-model,write-state; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "probe-status-audited",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-decision-resolved",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-business-resolved",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-proposal-audited",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-changed-baseline",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp', LF will be replaced by CRLF the next time Git touches it\r\nREUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-new-source",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/AcceptanceProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-final-pending",
+      "expected": "REUSE-MIGRATION",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-MIGRATION : unresolved function acceptance.runtime.restricted\r\n"
+    },
+    {
+      "name": "probe-final-proposal",
+      "expected": "REUSE-MIGRATION",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-MIGRATION : unresolved function acceptance.runtime.restricted\r\n"
+    },
+    {
+      "name": "probe-frozen-changed",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "probe-frozen-new",
+      "expected": "REUSE-AD",
+      "exitCode": 1,
+      "passed": true,
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/AcceptanceProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    }
+  ]
+}

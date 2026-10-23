@@ -1,0 +1,174 @@
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:22: * @file PolynomialND.hpp
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:24: * \copydoc rw::math::PolynomialND
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:53:    template< typename Coef, typename Scalar = double > class PolynomialND
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:60:        explicit PolynomialND (std::size_t order) : _coef (std::vector< Coef > (order + 1)) {}
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:67:        PolynomialND (const std::vector< Coef >& coefficients) : _coef (coefficients) {}
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:73:        PolynomialND (const PolynomialND< Coef, Scalar >& p) :
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:83:        virtual ~PolynomialND () {}
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:168:        PolynomialND< Coef, Scalar > deflate (const Scalar& x) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:172:            PolynomialND< Coef, Scalar > res (no);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:186:        PolynomialND< Coef, Scalar > derivative (std::size_t n = 1) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:191:            PolynomialND< Coef, Scalar > der (no);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:285:        const PolynomialND< Coef, Scalar > operator* (Scalar s) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:287:            PolynomialND< Coef, Scalar > pol (order ());
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:299:        const PolynomialND< Coef, Scalar > operator/ (Scalar s) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:301:            PolynomialND< Coef, Scalar > pol (order ());
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:313:        PolynomialND< Coef, Scalar >& operator*= (Scalar s)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:326:        PolynomialND< Coef, Scalar >& operator/= (Scalar s)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:340:        friend const PolynomialND< Coef, Scalar > operator* (Scalar s,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:341:                                                             const PolynomialND< Coef, Scalar >& p)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:343:            PolynomialND< Coef, Scalar > pol (p.order ());
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:368:        const PolynomialND< Coef, Scalar > operator- (const PolynomialND< Coef, Scalar >& b) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:373:                PolynomialND< Coef, Scalar > pol (bOrder);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:383:                PolynomialND< Coef, Scalar > pol (thisOrder);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:399:        PolynomialND< Coef, Scalar >& operator-= (const PolynomialND< Coef, Scalar >& b)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:425:        const PolynomialND< Coef, Scalar > operator+ (const PolynomialND< Coef, Scalar >& b) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:430:                PolynomialND< Coef, Scalar > pol (bOrder);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:440:                PolynomialND< Coef, Scalar > pol (thisOrder);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:456:        PolynomialND< Coef, Scalar >& operator+= (const PolynomialND< Coef, Scalar >& b)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:488:        PolynomialND< OutCoef, Scalar > multiply (const PolynomialND< Coef2, Scalar >& b) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:491:            PolynomialND< OutCoef, Scalar > pol (ord);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:512:        PolynomialND< OutCoef, Scalar > multiply (const Coef2& b) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:514:            PolynomialND< OutCoef, Scalar > pol (order ());
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:525:        void operator= (const PolynomialND< Coef, Scalar >& b)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:540:        const PolynomialND< Coef, Scalar > operator- () const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:542:            PolynomialND< Coef, Scalar > pol (order ());
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:555:        friend std::ostream& operator<< (std::ostream& out, const PolynomialND< Coef, Scalar >& p)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:565:        TOSTRING (rw::math::PolynomialND< tmp >);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:573:        bool operator== (const PolynomialND< Coef, Scalar >& b) const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:592:    PolynomialND< Eigen::Vector3d > operator* (const PolynomialND< Eigen::Matrix3d >& A,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:593:                                               const PolynomialND< Eigen::Vector3d >& b);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:601:    PolynomialND< Eigen::Matrix< double, 1, 3 > >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:602:    operator* (const PolynomialND< Eigen::Matrix< double, 1, 3 > >& a,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:603:               const PolynomialND< Eigen::Matrix3d >& A);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:605:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix3d>&, const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:606:    //! PolynomialND<Eigen::Vector3d>&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:609:    PolynomialND< Eigen::Vector3d > operator* (const PolynomialND< Eigen::Matrix3d >& A,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:612:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix<double,1,3> >&, const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:613:    //! PolynomialND<Eigen::Matrix3d>&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:616:    PolynomialND< Eigen::Matrix< double, 1, 3 > >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:617:    operator* (const PolynomialND< Eigen::Matrix< double, 1, 3 > >& a, const Eigen::Matrix3d& A);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:620:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix3d>&, const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:621:    //! PolynomialND<Eigen::Vector3d>&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:624:    PolynomialND< Eigen::Vector3f, float >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:625:    operator* (const PolynomialND< Eigen::Matrix3f, float >& A,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:626:               const PolynomialND< Eigen::Vector3f, float >& b);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:628:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix<double,1,3> >&, const
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:629:    //! PolynomialND<Eigen::Matrix3d>&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:632:    PolynomialND< Eigen::Matrix< float, 1, 3 >, float >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:633:    operator* (const PolynomialND< Eigen::Matrix< float, 1, 3 >, float >& a,
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:634:               const PolynomialND< Eigen::Matrix3f, float >& A);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:636:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix3d>&, const Eigen::Vector3d&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:639:    PolynomialND< Eigen::Vector3f, float >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:640:    operator* (const PolynomialND< Eigen::Matrix3f, float >& A, const Eigen::Vector3f& b);
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:643:    //! @copydoc operator*(const PolynomialND<Eigen::Matrix<double,1,3> >&, const Eigen::Matrix3d&)
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:646:    PolynomialND< Eigen::Matrix< float, 1, 3 >, float >
+RobWork/RobWork/src/rw/math/PolynomialND.hpp:647:    operator* (const PolynomialND< Eigen::Matrix< float, 1, 3 >, float >& a,
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:20:#include <rwlibs/pathoptimization/pathlength/PathLengthOptimizer.hpp>
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:28:using rwlibs::pathoptimization::PathLengthOptimizer;
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:36:                // not checked in pathPruning algorithm
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:57:TEST(PathLengthOptimizer, pathPruning) {
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:67:    const PathLengthOptimizer optimizer(constraint, metric);
+RobWork/RobWork/gtest/pathoptimization\PathLengthOptimizerTest.cpp:74:    const QPath pathAfter = optimizer.pathPruning(path);
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:35:     * @brief The PathLengthOptimizer implements the 3 different path length optimizers
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:41:     * The simplest algorithm \b pathPruning runs through the path an tests if nodes with
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:46:     * powerful than pathPruning.
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:53:    class PathLengthOptimizer
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:57:        typedef rw::core::Ptr< PathLengthOptimizer > Ptr;
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:59:        typedef rw::core::Ptr< const PathLengthOptimizer > CPtr;
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:74:        PathLengthOptimizer (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:80:        virtual ~PathLengthOptimizer ();
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:85:           \b pathPruning runs through the path an tests if nodes with
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:90:        rw::trajectory::QPath pathPruning (const rw::trajectory::QPath& path) const;
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.hpp:171:        void pathPruning (QList& path) const;
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:18:#include "PathLengthOptimizer.hpp"
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:37:typedef PathLengthOptimizer::QList QList;
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:57:const std::string PathLengthOptimizer::PROP_LOOPCOUNT    = "LoopCount";
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:58:const std::string PathLengthOptimizer::PROP_MAXTIME      = "MaxTime";
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:59:const std::string PathLengthOptimizer::PROP_SUBDIVLENGTH = "SubDivideLength";
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:61:PathLengthOptimizer::PathLengthOptimizer (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:71:PathLengthOptimizer::~PathLengthOptimizer ()
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:74:PropertyMap& PathLengthOptimizer::getPropertyMap ()
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:83:void PathLengthOptimizer::pathPruning (QList& result) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:110:void PathLengthOptimizer::shortCut (QList& path) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:118:void PathLengthOptimizer::shortCut (QList& result, size_t maxcnt, double time,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:159:void PathLengthOptimizer::partialShortCut (QList& path) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:167:void PathLengthOptimizer::partialShortCut (QList& result, size_t maxcnt, double time,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:239:void PathLengthOptimizer::resamplePath (QList& path, double subDivideLength) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:251:QList::iterator PathLengthOptimizer::resample (QList::iterator it1, const Q& q2,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:275:bool PathLengthOptimizer::validPath (const Q& from, const Q& to, const bool testQStart,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:283:QPath PathLengthOptimizer::pathPruning (const QPath& path) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:286:    pathPruning (tmp);
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:290:QPath PathLengthOptimizer::shortCut (const QPath& path, size_t cnt, double time,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:301:QPath PathLengthOptimizer::shortCut (const QPath& path) const
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:308:QPath PathLengthOptimizer::partialShortCut (const QPath& path, size_t cnt, double time,
+RobWork/RobWork/src/rwlibs/pathoptimization\pathlength\PathLengthOptimizer.cpp:316:QPath PathLengthOptimizer::partialShortCut (const QPath& path) const
+RobWork/RobWork/src/rwlibs/pathoptimization\CMakeLists.txt:15:                  ./clearance/MinimumClearanceCalculator.cpp ./pathlength/PathLengthOptimizer.cpp)
+RobWork/RobWork/src/rwlibs/pathoptimization\CMakeLists.txt:18:                      ./clearance/MinimumClearanceCalculator.hpp ./pathlength/PathLengthOptimizer.hpp)
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:25:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:362:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:364:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:371:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:373:    EXPECT_THROW (CubicSplineFactory::makeNaturalSpline (path), rw::core::Exception);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:384:    auto traj = CubicSplineFactory::makeNaturalSpline (path);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:391:        auto traj2 = CubicSplineFactory::makeClampedSpline (path, this->start (), this->end ());
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:412:    auto traj = CubicSplineFactory::makeNaturalSpline (path);
+RobWork/RobWork/gtest/trajectory\CubicSplineTest.cpp:421:    traj     = CubicSplineFactory::makeClampedSpline (path, start, end);
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:25:#include <rw/trajectory/CubicSplineFactory.hpp>
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:236:        EXPECT_THROW( CubicSplineFactory::makeNaturalSpline(path), rw::core::Exception );
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:238:        EXPECT_THROW( CubicSplineFactory::makeNaturalSpline(path), rw::core::Exception );
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:255:        QTrajectory::Ptr traj = CubicSplineFactory::makeNaturalSpline(path);
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:272:        traj = CubicSplineFactory::makeClampedSpline(path, start, end);
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:305:        QTrajectory::Ptr traj = CubicSplineFactory::makeNaturalSpline(  path );
+RobWork/RobWork/gtest/trajectory\trajectory.cpp:322:        traj = CubicSplineFactory::makeClampedSpline(path, start, end);
+RobWork/RobWork/src/rw/trajectory\CMakeLists.txt:15:        CubicSplineFactory.cpp
+RobWork/RobWork/src/rw/trajectory\CMakeLists.txt:38:        CubicSplineFactory.hpp
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:22: * @file CubicSplineFactory.hpp
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:43:    class CubicSplineFactory
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:78:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:122:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:169:         * CubicSplineFactory::makeNaturalSpline(QPath::Ptr, double)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:308:        CubicSplineFactory ();
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:310:        virtual ~CubicSplineFactory ();
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:18:#include "CubicSplineFactory.hpp"
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:47:InterpolatorTrajectory< Q >::Ptr CubicSplineFactory::makeNaturalSpline (QPath::Ptr qpath,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:58:CubicSplineFactory::makeNaturalSpline (TimedQPath::Ptr tqpath)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:71:CubicSplineFactory::makeNaturalSpline (const QPath& qpath, const std::vector< double >& times)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:180:InterpolatorTrajectory< Q >::Ptr CubicSplineFactory::makeClampedSpline (QPath::Ptr qpath,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:193:CubicSplineFactory::makeClampedSpline (TimedQPath::Ptr tqpath, const rw::math::Q& dqStart,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:213:CubicSplineFactory::makeNaturalSpline (const Path< T >& path, double timeStep)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:224:CubicSplineFactory::makeNaturalSpline (const Path< Vector3D<> >& path, double timeStep);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:227:CubicSplineFactory::makeNaturalSpline (const Path< Transform3DVector<> >& path, double timeStep);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:230:CubicSplineFactory::makeNaturalSpline (const Path< Q >& path, double timeStep);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:233:CubicSplineFactory::makeNaturalSpline (const Path< Quaternion< double > >& path, double timeStep);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:239:CubicSplineFactory::makeNaturalSpline (const Path< Timed< T > >& path)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:253:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Vector3D<> > >& path);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:256:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Transform3DVector<> > >& path);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:259:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Q > >& path);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:262:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Quaternion< double > > >& path);
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:268:CubicSplineFactory::makeNaturalSpline (const Path< T >& path, const std::vector< double >& times)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:368:CubicSplineFactory::makeNaturalSpline (const Path< Vector3D<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:372:CubicSplineFactory::makeNaturalSpline (const Path< Transform3DVector<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:376:CubicSplineFactory::makeNaturalSpline (const Path< Quaternion<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:382:CubicSplineFactory::makeClampedSpline (const Path< T >& path, const T& dStart, const T& dEnd,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:394:CubicSplineFactory::makeClampedSpline (const Path< Transform3D<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:403:CubicSplineFactory::makeClampedSpline (const Path< Vector3D<> >& path, const Vector3D<>& dStart,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:407:CubicSplineFactory::makeClampedSpline (const Path< Q >& path, const Q& dStart, const Q& dEnd,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:411:CubicSplineFactory::makeClampedSpline (const Path< Transform3DVector<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:416:CubicSplineFactory::makeClampedSpline (const Path< Quaternion<> >& path, const Quaternion<>& dStart,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:423:CubicSplineFactory::makeClampedSpline (const Path< Timed< T > >& tpath, const T& dStart,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:437:CubicSplineFactory::makeClampedSpline (const Path< Timed< Vector3D<> > >& tpath,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:441:CubicSplineFactory::makeClampedSpline (const Path< Timed< Q > >& path, const Q& dStart,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:445:CubicSplineFactory::makeClampedSpline (const Path< Timed< Transform3DVector<> > >& tpath,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:450:CubicSplineFactory::makeClampedSpline (const Path< Timed< Quaternion<> > >& tpath,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:456:CubicSplineFactory::makeClampedSpline (const Path< T >& path, const std::vector< double >& times,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:563:CubicSplineFactory::makeClampedSpline (const Path< Vector3D<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:568:CubicSplineFactory::makeClampedSpline (const Path< Q >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:572:template InterpolatorTrajectory< Transform3DVector<> >::Ptr CubicSplineFactory::makeClampedSpline (
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:577:CubicSplineFactory::makeClampedSpline (const Path< Quaternion<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:586:CubicSplineFactory::makeNaturalSpline (const Path< Transform3D<> >& path, double timeStep)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:596:CubicSplineFactory::makeNaturalSpline (const Path< Timed< Transform3D<> > >& path)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:609:CubicSplineFactory::makeNaturalSpline (const Path< rw::math::Transform3D<> >& path,
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:624:CubicSplineFactory::makeSQUAD (const Path< rw::math::Quaternion<> >& path, double timeStep)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:633:CubicSplineFactory::makeSQUAD (const Path< Timed< rw::math::Quaternion<> > >& tpath)
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.cpp:645:CubicSplineFactory::makeSQUAD (const Path< rw::math::Quaternion<> >& path,

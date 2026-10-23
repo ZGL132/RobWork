@@ -1,0 +1,362 @@
+[
+  {
+    "id": "io.Json.Parser.parseObject",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseObject",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 995,
+    "endLine": 1074,
+    "hashMatches": true,
+    "actualSha": "6589d8d0760dfdda24bd03b077f36a1360ae30493e2d37c84499858d58089240",
+    "symbolOccurs": true,
+    "first": "    IoResult<JsonValue> parseObject(std::uint32_t depth, JsonPath& path, SourcePos begin)",
+    "last": "    }"
+  },
+  {
+    "id": "io.Json.Parser.parseObject",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.Parser.parseArray",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseArray",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 1077,
+    "endLine": 1121,
+    "hashMatches": true,
+    "actualSha": "4d126233401e13f4b9612934429316d6f984d86a93a24ab903b50db3f9768455",
+    "symbolOccurs": true,
+    "first": "    IoResult<JsonValue> parseArray(std::uint32_t depth, JsonPath& path, SourcePos begin)",
+    "last": "    }"
+  },
+  {
+    "id": "io.Json.Parser.parseArray",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.Parser.parseString",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 604,
+    "endLine": 720,
+    "hashMatches": true,
+    "actualSha": "c28ad910929974624aaafb5378cb37a355a54d44689a15369c066f349a7140c4",
+    "symbolOccurs": true,
+    "first": "    IoResult<JsonValue> parseString(JsonPath& path, SourcePos begin, bool countValue = true)",
+    "last": "    }"
+  },
+  {
+    "id": "io.Json.Parser.parseString",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.Parser.readHex4",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 644,
+    "endLine": 649,
+    "hashMatches": true,
+    "actualSha": "5dfc9b29865d536e0a5638763d0806dbad5440f66265a2c9cf6ae6a6d9ca9b50",
+    "symbolOccurs": true,
+    "first": "                    if (!readHex4(&cp, &hexErr)) {",
+    "last": "                    }"
+  },
+  {
+    "id": "io.Json.Parser.readHex4",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.Parser.appendUtf8",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::appendUtf8",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 750,
+    "endLine": 767,
+    "hashMatches": true,
+    "actualSha": "e1644c1c93726fec9ecaa8175edaf47f1e55d15dbef39261139a4269366b482b",
+    "symbolOccurs": true,
+    "first": "    static void appendUtf8(IoString& out, std::uint32_t cp)",
+    "last": "    }"
+  },
+  {
+    "id": "io.Json.Parser.appendUtf8",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.Parser.parseNumber",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseNumber",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 788,
+    "endLine": 907,
+    "hashMatches": true,
+    "actualSha": "73b5330fa4364a0aca0468b45cfc95877fef436330bbdb1dbe1da278f2103219",
+    "symbolOccurs": true,
+    "first": "    IoResult<JsonValue> parseNumber(JsonPath& path, SourcePos begin)",
+    "last": "    }"
+  },
+  {
+    "id": "io.Json.Parser.parseNumber",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Csv.DecodedStream.nextUtf8",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf8",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+    "startLine": 409,
+    "endLine": 447,
+    "hashMatches": true,
+    "actualSha": "5dbdd5467862949404855ccb30a8f2f1c5690a852bf1a9ad705c59c877c019c1",
+    "symbolOccurs": true,
+    "first": "    int nextUtf8()",
+    "last": "    }"
+  },
+  {
+    "id": "io.Csv.DecodedStream.nextUtf8",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Csv.DecodedStream.nextUtf16ToUtf8",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf16ToUtf8",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+    "startLine": 450,
+    "endLine": 516,
+    "hashMatches": true,
+    "actualSha": "282a7b3b5775f97ec3016764f0a3318450e9166a677905e8a83bb6d9a52bde9b",
+    "symbolOccurs": true,
+    "first": "    int nextUtf16ToUtf8()",
+    "last": "    }"
+  },
+  {
+    "id": "io.Csv.DecodedStream.nextUtf16ToUtf8",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Json.mapSystemError",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+    "startLine": 174,
+    "endLine": 190,
+    "hashMatches": true,
+    "actualSha": "92f048416d4ef1b633649541f8ab638c5519d98b2bb54eae394a9285a0d49ff9",
+    "symbolOccurs": true,
+    "first": "IoErrorCode mapSystemError(const std::error_code& ec)",
+    "last": "}"
+  },
+  {
+    "id": "io.Json.mapSystemError",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "io.Csv.mapSystemError",
+    "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+    "startLine": 1066,
+    "endLine": 1082,
+    "hashMatches": true,
+    "actualSha": "92f048416d4ef1b633649541f8ab638c5519d98b2bb54eae394a9285a0d49ff9",
+    "symbolOccurs": true,
+    "first": "IoErrorCode mapSystemError(const std::error_code& ec)",
+    "last": "}"
+  },
+  {
+    "id": "io.Csv.mapSystemError",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseObject",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseObject",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 164,
+    "endLine": 216,
+    "hashMatches": true,
+    "actualSha": "55dcf786fdb96bc23e7511287c686cf2f72bd77217230c42c1e09a170d730287",
+    "symbolOccurs": true,
+    "first": "    JsonValue parseObject(std::size_t depth)",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseObject",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseArray",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseArray",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 219,
+    "endLine": 253,
+    "hashMatches": true,
+    "actualSha": "24fa2d118b03a8c94d9e225e9cd766b764ec04dabd81ef164e4b88b251e3c211",
+    "symbolOccurs": true,
+    "first": "    JsonValue parseArray(std::size_t depth)",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseArray",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseString",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 256,
+    "endLine": 296,
+    "hashMatches": true,
+    "actualSha": "c7b6fae848c9fac6b6520a404e4dbecc8df3c548524fcafe2383636152a965dd",
+    "symbolOccurs": true,
+    "first": "    std::string parseString()",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseString",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseUnicodeEscape",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseUnicodeEscape",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 299,
+    "endLine": 318,
+    "hashMatches": true,
+    "actualSha": "766d644759b0703bf30c586165157cbc4980f516125feeabc412b7f73a1f1dd9",
+    "symbolOccurs": true,
+    "first": "    std::string parseUnicodeEscape()",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseUnicodeEscape",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseHex4",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseHex4",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 320,
+    "endLine": 335,
+    "hashMatches": true,
+    "actualSha": "bd193e045d5f12cf32774e6c2e6400d61d8f7f7d633cccebd99ded0c4282c239",
+    "symbolOccurs": true,
+    "first": "    unsigned parseHex4()",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseHex4",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.utf8Encode",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::utf8Encode",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 338,
+    "endLine": 357,
+    "hashMatches": true,
+    "actualSha": "059464e8b9e508029e24f8f68eadc8ca6fa0f20fadeab82538f8aa47f3844883",
+    "symbolOccurs": true,
+    "first": "    static std::string utf8Encode(unsigned cp)",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.utf8Encode",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseNumber",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::Parser::parseNumber",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 360,
+    "endLine": 418,
+    "hashMatches": true,
+    "actualSha": "433a9e58441bbdf824caab72f574356afbcfcc2b50c193b11273e1adbe3acb0a",
+    "symbolOccurs": true,
+    "first": "    JsonValue parseNumber()",
+    "last": "    }"
+  },
+  {
+    "id": "testkit.JsonLite.Parser.parseNumber",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.dumpEscaped",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::dumpEscaped",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 432,
+    "endLine": 455,
+    "hashMatches": true,
+    "actualSha": "9f9566bb881041fedf9c4c025233b3ea522f45ab419753136ca200546020567e",
+    "symbolOccurs": true,
+    "first": "void dumpEscaped(const std::string& s, std::string* out)",
+    "last": "}"
+  },
+  {
+    "id": "testkit.JsonLite.dumpEscaped",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.dumpNumber",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::dumpNumber",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 458,
+    "endLine": 466,
+    "hashMatches": true,
+    "actualSha": "0d4684aea96daa5f0abe6a5ae965a982b541f918895a91e669faca88eab596c8",
+    "symbolOccurs": true,
+    "first": "void dumpNumber(double v, std::string* out)",
+    "last": "}"
+  },
+  {
+    "id": "testkit.JsonLite.dumpNumber",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "testkit.JsonLite.dumpValue",
+    "qualifiedSymbol": "sdurws::ird::testkit::(anonymous namespace)::dumpValue",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+    "startLine": 469,
+    "endLine": 497,
+    "hashMatches": true,
+    "actualSha": "171697c28c83b07deec5b28c4f72da97c2fc613757541a91b8c36d8244f4935a",
+    "symbolOccurs": true,
+    "first": "void dumpValue(const JsonValue& v, std::string* out)",
+    "last": "}"
+  },
+  {
+    "id": "testkit.JsonLite.dumpValue",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+    "hashMatches": true
+  }
+]

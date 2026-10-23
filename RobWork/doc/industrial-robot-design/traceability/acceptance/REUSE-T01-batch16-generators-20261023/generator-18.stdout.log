@@ -1,0 +1,5 @@
+integrity 申报表（path / sizeBytes / sha256）：
+inputs/payload-events.json 5314 650e4b65d4c6ba2a7847778d155841084463f11e1a5823a64cf47e4ab6275ae1
+expected/payload-events-expected.json 4566 714b1decaa10dfa98bfdb28a0d566180f9a222d88b3b19204ba47881169eb956
+generate/make_payload_events_golden.mjs 4983 a92c1ffeb1c0365b6943a21eb3b38be98c2d692beef37c262aba825a52bb36e0
+expected 写出: C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\req-payload-events\1.0.0\expected\payload-events-expected.json

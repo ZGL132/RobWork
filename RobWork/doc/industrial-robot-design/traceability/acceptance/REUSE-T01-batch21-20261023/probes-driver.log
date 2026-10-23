@@ -1,0 +1,7 @@
+lite-before-ps7 exit=1
+lite-before-ps51 exit=1
+validate-invalid-branch exit=1
+verify-invalid-branch-dryrun exit=1
+verify-valid-dryrun exit=0
+verify-task-real exit=0
+commit-lint-frozen-range exit=0

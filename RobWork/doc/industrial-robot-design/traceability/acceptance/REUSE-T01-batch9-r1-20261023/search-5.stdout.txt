@@ -1,0 +1,6 @@
+88:        virtual void setQ (const rw::math::Q& q, rw::kinematics::State& state) const = 0;
+207:        rw::math::Transform3D< double > baseTframe (rw::core::Ptr<const rw::kinematics::Frame> f,
+290:         * By default the method forwards to baseJframe().
+324:         * By default the method forwards to baseJframes().
+326:        virtual rw::math::Jacobian baseJframe (rw::core::Ptr<const rw::kinematics::Frame> frame,
+338:        virtual rw::math::Jacobian baseJframes (const std::vector< rw::kinematics::Frame* >& frames,

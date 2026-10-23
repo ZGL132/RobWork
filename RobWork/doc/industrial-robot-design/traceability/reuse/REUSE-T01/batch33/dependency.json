@@ -1,0 +1,24 @@
+{
+  "source": "同渠道既有vcpkg installed/x64-windows，只读，未安装/联网",
+  "boostVersion": "1.92.0",
+  "target": "Boost::property_tree",
+  "files": [
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/version.hpp",
+      "rawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f"
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser.hpp",
+      "rawSha256": "e6dc0371dd810dbf3ef7d90fe10fb4c9b9d0e4354b666e88e0a559a8aa2fc51c"
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/read.hpp",
+      "rawSha256": "28c8e58052359047b9602435e05bab7c6d143e905d9ab40f5929d90b3528fb2b"
+    },
+    {
+      "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/boost/property_tree/json_parser/detail/parser.hpp",
+      "rawSha256": "cb6fe43252921c4e11eb726ac204b3a3fbb9c03621371203e2ff676c024948c7"
+    }
+  ],
+  "limitation": "公共read_json适用性探测；detail源码只绑定供给不接生产；不将外部安装文件冒充仓库跟踪的upstream"
+}

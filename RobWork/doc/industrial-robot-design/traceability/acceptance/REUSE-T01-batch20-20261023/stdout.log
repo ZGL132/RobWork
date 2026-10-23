@@ -1,0 +1,45 @@
+Note: Google Test filter = ReuseProjectBoundary.*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from ReuseProjectBoundary
+[ RUN      ] ReuseProjectBoundary.HealthyStoreRemainsVerified
+[       OK ] ReuseProjectBoundary.HealthyStoreRemainsVerified (57 ms)
+[ RUN      ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(24): error: Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected (53 ms)
+[ RUN      ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(34): error: Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+
+[  FAILED  ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected (57 ms)
+[ RUN      ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(46): error: Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+
+[  FAILED  ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass (82 ms)
+[ RUN      ] ReuseProjectBoundary.PublicOpenHealthyStoreSucceeds
+[       OK ] ReuseProjectBoundary.PublicOpenHealthyStoreSucceeds (64 ms)
+[ RUN      ] ReuseProjectBoundary.PublicOpenWrongHeadDigestMustBeRejected
+C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp(82): error: Failed
+摘要失配仍成功打开，headIntegrityVerified=true
+
+[  FAILED  ] ReuseProjectBoundary.PublicOpenWrongHeadDigestMustBeRejected (77 ms)
+[----------] 6 tests from ReuseProjectBoundary (392 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (401 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] ReuseProjectBoundary.WrongHeadManifestDigestMustBeRejected
+[  FAILED  ] ReuseProjectBoundary.ParseableManifestByteChangeMustBeRejected
+[  FAILED  ] ReuseProjectBoundary.NativeDiskFullMustKeepStableErrorClass
+[  FAILED  ] ReuseProjectBoundary.PublicOpenWrongHeadDigestMustBeRejected
+
+ 4 FAILED TESTS

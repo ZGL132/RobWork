@@ -1,0 +1,1064 @@
+{
+  "sourceSegments": [
+    {
+      "functionId": "core.convert",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        134,
+        152
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::convert",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Compare.closeWithin",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "range": [
+        18,
+        33
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::closeWithin",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.vector",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "range": [
+        35,
+        51
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const std::vector<double>&, const std::vector<double>&, Tolerance)",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Compare.allCloseWithin.Q",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "range": [
+        54,
+        66
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const rw::math::Q&, const rw::math::Q&, Tolerance)",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Compare.runtimeAbsoluteTolerance",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "range": [
+        69,
+        85
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Tolerance.make",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "range": [
+        57,
+        72
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Tolerance.operator==",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "range": [
+        74,
+        77
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.Tolerance.operator!=",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "range": [
+        78,
+        78
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitRow",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        24,
+        28
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::UnitRow",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.kUnitTable",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        31,
+        60
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::kUnitTable",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.fail",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        65,
+        68
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::fail",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.unitSymbolAt",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        74,
+        77
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::detail::unitSymbolAt",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.unitKindAt",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        78,
+        81
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::detail::unitKindAt",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.unitFactorAt",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        82,
+        85
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::detail::unitFactorAt",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.find",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        89,
+        100
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::find",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.symbol",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        102,
+        102
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::symbol",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.kind",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        103,
+        103
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::kind",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.siFactor",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        104,
+        104
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::siFactor",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.kindOf",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        107,
+        107
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::kindOf",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.siFactor",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        108,
+        108
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::siFactor",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.tryConvert",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        111,
+        132
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::tryConvert",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.siUnit",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        156,
+        176
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::siUnit",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.equal",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        70,
+        70
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::operator==",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.notEqual",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        71,
+        71
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::operator!=",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.UnitToken.isValid",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        73,
+        73
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::UnitToken::isValid",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.fromSi",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        113,
+        121
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::fromSi",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.tryFromSi",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        124,
+        130
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::tryFromSi",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.tryParse",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        138,
+        145
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::tryParse",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.siValue",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        148,
+        148
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::siValue",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.displayValueIn",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        154,
+        160
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::displayValueIn",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.equal",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        163,
+        165
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::operator==",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.notEqual",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        166,
+        166
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::operator!=",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.isFinite",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+      "range": [
+        169,
+        169
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<K>::isFinite",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.expectNearRel",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        30,
+        33
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::expectNearRel",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsConvert.KnownConversions_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        36,
+        53
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsConvert_KnownConversions_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsConvert.ModelingDerivativeDisplayUnits_UX05_T30",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        56,
+        70
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsConvert_ModelingDerivativeDisplayUnits_UX05_T30_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsConvert.DimensionMismatch_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        73,
+        87
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsConvert_DimensionMismatch_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        90,
+        105
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsConvert_NonFiniteAndOverflow_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsFind.UnknownSymbol_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        108,
+        117
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsFind_UnknownSymbol_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.UnitsRegistry.R1TableComplete_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        120,
+        143
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::UnitsRegistry_R1TableComplete_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.UnitsTest.QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+      "range": [
+        146,
+        179
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::QuantityTyped_TryParseKindMismatchAndDisplay_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.CompareFormula.C4Basic_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        29,
+        38
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::CompareFormula_C4Basic_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        41,
+        50
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::CompareFormula_ZeroReferenceDegradesToAbsolute_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        53,
+        61
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::CompareFormula_NonFiniteInputsFalse_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        64,
+        74
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::AllCloseWithin_ElementWiseNotSummed_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        77,
+        89
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::AllCloseWithin_LengthMismatchThrows_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.ToleranceMake.Validation_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        92,
+        105
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::ToleranceMake_Validation_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        108,
+        135
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::RuntimeAbsoluteTolerance_C7Transcription_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.CompareTest.AllCloseWithinQ.QOverloadSemantics_UT_UNIT",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "range": [
+        139,
+        149
+      ],
+      "qualifiedSymbol": "(anonymous namespace)::AllCloseWithinQ_QOverloadSemantics_UT_UNIT_Test::TestBody",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.kInvalidIndex",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        62,
+        62
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::(anonymous namespace)::kInvalidIndex",
+      "shaMatches": true,
+      "symbolPresent": true
+    },
+    {
+      "functionId": "core.audit-b31.Units.Quantity.instantiations",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+      "range": [
+        179,
+        192
+      ],
+      "qualifiedSymbol": "sdurws::ird::core::Quantity<QuantityKind::Length>",
+      "shaMatches": true,
+      "symbolPresent": true
+    }
+  ],
+  "allSourceSegmentsPassed": true,
+  "allInputAndEvidenceHashesPassed": true,
+  "catalogUpstream": [
+    {
+      "path": "RobWork/RobWork/src/rw/math/Constants.hpp",
+      "symbols": [
+        "Pi",
+        "Deg2Rad",
+        "Rad2Deg"
+      ],
+      "hashMatches": true,
+      "targetHashMatches": true,
+      "physicalSourceMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp",
+      "symbols": [
+        "getUnit"
+      ],
+      "hashMatches": true,
+      "targetHashMatches": true,
+      "physicalSourceMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp",
+      "symbols": [
+        "UnitMap",
+        "getUnit"
+      ],
+      "hashMatches": true,
+      "targetHashMatches": true,
+      "physicalSourceMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.hpp",
+      "symbols": [
+        "getUnit"
+      ],
+      "hashMatches": true,
+      "targetHashMatches": true,
+      "physicalSourceMatchesFrozen": true
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/core/DOMCoreBasisTypes.cpp",
+      "symbols": [
+        "UnitMap",
+        "DOMCoreBasisTypes::getUnit"
+      ],
+      "hashMatches": true,
+      "targetHashMatches": true,
+      "physicalSourceMatchesFrozen": true
+    }
+  ],
+  "allPhysicalUpstreamSourcesMatch": true,
+  "submittedRawManifest": {
+    "count": 23,
+    "allPassed": true,
+    "checks": [
+      {
+        "path": "b31-build.log",
+        "matches": true
+      },
+      {
+        "path": "b31-configure.log",
+        "matches": true
+      },
+      {
+        "path": "b31-run-vs.log",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-docs.exit.txt",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-docs.log",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-reuse.exit.txt",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-reuse.log",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-task.exit.txt",
+        "matches": true
+      },
+      {
+        "path": "b31-validate-task.log",
+        "matches": true
+      },
+      {
+        "path": "b31-vs.log",
+        "matches": true
+      },
+      {
+        "path": "CMakeLists.txt",
+        "matches": true
+      },
+      {
+        "path": "findings-prefix.json",
+        "matches": true
+      },
+      {
+        "path": "oracle-result.json",
+        "matches": true
+      },
+      {
+        "path": "oracle.py",
+        "matches": true
+      },
+      {
+        "path": "README.md",
+        "matches": true
+      },
+      {
+        "path": "run/exit.txt",
+        "matches": true
+      },
+      {
+        "path": "run/gtest.xml",
+        "matches": true
+      },
+      {
+        "path": "run/ird-test-report.json",
+        "matches": true
+      },
+      {
+        "path": "run/stdout.log",
+        "matches": true
+      },
+      {
+        "path": "search.json",
+        "matches": true
+      },
+      {
+        "path": "source-comparison.json",
+        "matches": true
+      },
+      {
+        "path": "UnitsSuitabilityTest.cpp",
+        "matches": true
+      },
+      {
+        "path": "verification.json",
+        "matches": true
+      }
+    ]
+  },
+  "searchRecords": [
+    {
+      "args": [
+        "rg",
+        "-n",
+        "-i",
+        "getUnit|UnitMap|Deg2Rad|Rad2Deg|isFinite|isNaN|isInf|isApprox|relative.*tolerance|absolute.*tolerance",
+        "RobWork/RobWork/src/rw/math",
+        "RobWork/RobWork/src/rw/core",
+        "RobWork/RobWork/src/rw/loaders/dom",
+        "RobWork/RobWorkSim/src",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.cpp"
+      ],
+      "exitCode": 0,
+      "stdoutLines": 297,
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "getUnit|DOMCoreBasisTypes|DOMBasisTypes|Deg2Rad|Rad2Deg|QOverload|QTest|MathTest",
+        "RobWork/RobWork/gtest",
+        "RobWork/RobWorkSim/gtest",
+        "RobWork/RobWork/example",
+        "RobWork/RobWork/doc",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.rst",
+        "-g",
+        "*.txt",
+        "-g",
+        "CMakeLists.txt"
+      ],
+      "exitCode": 2,
+      "stdoutLines": 33,
+      "stderr": "rg: RobWork/RobWork/doc: 系统找不到指定的文件。 (os error 2)\n"
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "getUnit|DOMCoreBasisTypes|DOMBasisTypes|Deg2Rad|Rad2Deg|QOverload|QTest|MathTest",
+        "RobWork/RobWork/gtest",
+        "RobWork/RobWorkSim/gtest",
+        "RobWork/RobWork/example",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp",
+        "-g",
+        "*.rst",
+        "-g",
+        "*.txt",
+        "-g",
+        "CMakeLists.txt"
+      ],
+      "exitCode": 0,
+      "stdoutLines": 33,
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "DOMCoreBasisTypes|Constants.hpp|DOMBasisTypes",
+        "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+        "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+        "RobWork/RobWork/src/rw/loaders/CMakeLists.txt"
+      ],
+      "exitCode": 0,
+      "stdoutLines": 5,
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "closeWithin|allCloseWithin|tryConvert|UnitToken::find|Quantity<",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+        "-g",
+        "*.cpp",
+        "-g",
+        "*.hpp"
+      ],
+      "exitCode": 0,
+      "stdoutLines": 523,
+      "stderr": ""
+    },
+    {
+      "args": [
+        "rg",
+        "-n",
+        "C4|C7|各一次|非有限|tryParse",
+        "RobWork/doc/industrial-robot-design/units/core.md"
+      ],
+      "exitCode": 0,
+      "stdoutLines": 35,
+      "stderr": ""
+    }
+  ],
+  "tests": {
+    "total": 22,
+    "passed": 19,
+    "failed": 3,
+    "skipped": 0,
+    "exitCode": 1,
+    "failedNames": [
+      "ReuseUnitsAudit.ScalarFiniteOverflowMustReject_CORE_T05",
+      "ReuseUnitsAudit.VectorFiniteOverflowMustReject_CORE_T05",
+      "ReuseUnitsAudit.QFiniteOverflowMustReject_CORE_T05"
+    ],
+    "original": 15,
+    "new": 7,
+    "suites": [
+      {
+        "name": "ReuseUnitsAudit",
+        "tests": "7",
+        "failures": "3",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "UnitsConvert",
+        "tests": "4",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "UnitsFind",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "UnitsRegistry",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "QuantityTyped",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "CompareFormula",
+        "tests": "3",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "AllCloseWithin",
+        "tests": "2",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "ToleranceMake",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "RuntimeAbsoluteTolerance",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      },
+      {
+        "name": "AllCloseWithinQ",
+        "tests": "1",
+        "failures": "0",
+        "disabled": "0",
+        "skipped": "0",
+        "errors": "0"
+      }
+    ]
+  },
+  "buildProjects": {
+    "ird_units_audit.vcxproj": {
+      "compileSources": [
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\batch31\\UnitsSuitabilityTest.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\UnitsTest.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\CompareTest.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\test\\TestMainReport.cpp"
+      ],
+      "includeDirectories": [
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include;C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include;%(AdditionalIncludeDirectories)",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include;C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\testkit\\include;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3;D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWork\\src;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include;%(AdditionalIncludeDirectories)"
+      ],
+      "linkDependencies": [
+        "parent-probe\\ird-core\\Debug\\sdurws_ird_core.lib;parent-probe\\ird-testkit\\Debug\\sdurws_ird_testkit.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\gtest.lib;parent-probe\\ird-core\\Debug\\sdurws_ird_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Debug\\sdurw_math.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Debug\\sdurw_common.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Debug\\sdurw_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_filesystem-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_thread-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_atomic-vc143-mt-gd-x64-1_92.lib;D:\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64\\synchronization.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_chrono-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_program_options-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_date_time-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_container-vc143-mt-gd-x64-1_92.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib",
+        "parent-probe\\ird-core\\MinSizeRel\\sdurws_ird_core.lib;parent-probe\\ird-testkit\\MinSizeRel\\sdurws_ird_testkit.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\gtest.lib;parent-probe\\ird-core\\MinSizeRel\\sdurws_ird_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\MinSizeRel\\sdurw_math.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\MinSizeRel\\sdurw_common.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\MinSizeRel\\sdurw_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_filesystem-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_thread-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_atomic-vc143-mt-gd-x64-1_92.lib;D:\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64\\synchronization.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_chrono-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_program_options-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_date_time-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_container-vc143-mt-gd-x64-1_92.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib",
+        "parent-probe\\ird-core\\RelWithDebInfo\\sdurws_ird_core.lib;parent-probe\\ird-testkit\\RelWithDebInfo\\sdurws_ird_testkit.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\gtest.lib;parent-probe\\ird-core\\RelWithDebInfo\\sdurws_ird_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\RelWithDebInfo\\sdurw_math.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\RelWithDebInfo\\sdurw_common.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\RelWithDebInfo\\sdurw_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_filesystem-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_thread-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_atomic-vc143-mt-gd-x64-1_92.lib;D:\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64\\synchronization.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_chrono-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_program_options-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_date_time-vc143-mt-gd-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\debug\\lib\\boost_container-vc143-mt-gd-x64-1_92.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib",
+        "parent-probe\\ird-core\\Release\\sdurws_ird_core.lib;parent-probe\\ird-testkit\\Release\\sdurws_ird_testkit.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\gtest.lib;parent-probe\\ird-core\\Release\\sdurws_ird_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_math.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_common.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_core.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_filesystem-vc143-mt-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_thread-vc143-mt-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_atomic-vc143-mt-x64-1_92.lib;D:\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64\\synchronization.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_chrono-vc143-mt-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_program_options-vc143-mt-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_date_time-vc143-mt-x64-1_92.lib;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_container-vc143-mt-x64-1_92.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib"
+      ]
+    },
+    "parent-probe/ird-core/sdurws_ird_core.vcxproj": {
+      "compileSources": [
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Core.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Identity.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Digest.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Provenance.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Units.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Compare.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Evaluation.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\DiagData.cpp",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\src\\Events.cpp"
+      ],
+      "includeDirectories": [
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include;%(AdditionalIncludeDirectories)",
+        "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\clone2\\RobWork\\RobWorkStudio\\src\\rwslibs\\industrialrobot\\core\\include;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\eigen3;D:\\10_Source_Repos\\21_robot\\RobWork\\RobWork\\RobWork\\src;D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include;%(AdditionalIncludeDirectories)"
+      ],
+      "linkDependencies": []
+    }
+  },
+  "scriptHashes": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+      "blobRawSha256": "396ccc1981bbcc5c41a0cb1d8a70e444ba8aa97f302f87f9a77e9b2d63d9796c",
+      "executedNormalizedSha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55",
+      "frozenNormalizedSha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+      "blobRawSha256": "aad3d7c723423c7c33f2a6ed558597a97d285b46b39e77fa7158e7538aef306c",
+      "executedNormalizedSha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511",
+      "frozenNormalizedSha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "blobRawSha256": "367ca6304b47481b8136a21021bd4ede4604296e468d68d90ba1277b2b0713bf",
+      "executedNormalizedSha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2",
+      "frozenNormalizedSha256": "44352b2a7aef9827ee1be8b78c3b89fdc75bde9fb17f9812e58890b0ec2a21e2"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "blobRawSha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3",
+      "executedNormalizedSha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4",
+      "frozenNormalizedSha256": "ca02c2160b9bde2b8887f42a150425743da3431171de1deabc34c545aca678e4"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/verify-task-scope.ps1",
+      "blobRawSha256": "8e8b28487656a1ad8b7ad194f94dbf694bb1b123e084cf628b140ee74b0cb08b",
+      "executedNormalizedSha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad",
+      "frozenNormalizedSha256": "f6f36be21526018f83846de5d8905711e089fa639104de0bf0e0d4ae489ad5ad"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
+      "blobRawSha256": "3fcab11e7d4132b8866e11ec3ffd6ee7185575e6f92b8dc2f1e0b6d689260436",
+      "executedNormalizedSha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24",
+      "frozenNormalizedSha256": "d682c0efeaf84c5abba222eccab94bac13344c2346279eda0520275c6b9a7d24"
+    }
+  ],
+  "actualReleaseLinkDependencies": [
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\gtest.lib",
+      "bytes": 323478,
+      "rawSha256": "cef969ac6eced27d5f450872747681ab55515b875fb6fe034bcab31226795448"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_math.lib",
+      "bytes": 25600474,
+      "rawSha256": "921ce4b54d96084ff8f6630f2872544031a08eda908465958e0c944f692abbba"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_common.lib",
+      "bytes": 4336660,
+      "rawSha256": "6e5724d1cb6d8d3ad85d6d90a1d6c98447a0decd2e93210480148a5a41fc6a33"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\build\\RobWork\\libs\\Release\\sdurw_core.lib",
+      "bytes": 11636326,
+      "rawSha256": "4c57ca914ea5594bdc39712aeba90498faae6c73c6ddd797c45bffb72014ab97"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_filesystem-vc143-mt-x64-1_92.lib",
+      "bytes": 71408,
+      "rawSha256": "9cde2344d3ebd0aecb6b07db915e2cb8ab5c90f8fb4574da47298748d75b0683"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_thread-vc143-mt-x64-1_92.lib",
+      "bytes": 29214,
+      "rawSha256": "e5ee53e53bd500acf06bcafde246d994153f9c87db87f88d7b005197a1b7d7b6"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_atomic-vc143-mt-x64-1_92.lib",
+      "bytes": 6808,
+      "rawSha256": "7e5143a4c069ad76eca33e5d9da2fcadba2d583748665d82dec296c105f1685d"
+    },
+    {
+      "path": "D:\\Windows Kits\\10\\Lib\\10.0.22621.0\\um\\x64\\synchronization.lib",
+      "bytes": 2642,
+      "rawSha256": "31d7ad2d661e6c1017a5607ee692800f1e729836ac79339f7151f444d228f50a"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_chrono-vc143-mt-x64-1_92.lib",
+      "bytes": 24832,
+      "rawSha256": "4466cfedc511d5681edb7262d2d4b4be9af6d4064df5e3504ba6002b303e07d0"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_program_options-vc143-mt-x64-1_92.lib",
+      "bytes": 440642,
+      "rawSha256": "0b17dc22294019e70e6cead6e9136b67bfd758474b39b4ad66c13cfa3bc84c35"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_date_time-vc143-mt-x64-1_92.lib",
+      "bytes": 2356,
+      "rawSha256": "76a60760b7a1bc50a36511db7d7782a8bc10a54bc991920fe8d1c2f39abfa059"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\lib\\boost_container-vc143-mt-x64-1_92.lib",
+      "bytes": 42790,
+      "rawSha256": "d9734d6650401d48ea974fec7ffc97438247a336241fb32360853503330f8729"
+    }
+  ],
+  "actualExe": {
+    "path": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-b31-accept-df453223\\build\\Release\\ird_units_audit.exe",
+    "rawSha256": "0bf50798dbdcebfc9634274fa0c42fab62cdd8ededae1106936ed9d608f26a5a"
+  },
+  "protectedSourceDiff": [],
+  "cloneStatusAfter": ""
+}

@@ -1,0 +1,17 @@
+diff --git a/RobWork/doc/industrial-robot-design/reuse/functions/io.json b/RobWork/doc/industrial-robot-design/reuse/functions/io.json
+index e0b0c181b..5d6da0a81 100644
+--- a/RobWork/doc/industrial-robot-design/reuse/functions/io.json
++++ b/RobWork/doc/industrial-robot-design/reuse/functions/io.json
+@@ -313,9 +313,9 @@
+           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+           "symbol": "readHex4",
+           "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
+-          "startLine": 644,
+-          "endLine": 649,
+-          "sha256": "5dfc9b29865d536e0a5638763d0806dbad5440f66265a2c9cf6ae6a6d9ca9b50"
++          "startLine": 723,
++          "endLine": 747,
++          "sha256": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100"
+         }
+       ],
+       "targets": [

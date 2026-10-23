@@ -1,0 +1,162 @@
+[
+  {
+    "functionId": "io.Json.Parser.parseObject",
+    "registeredStart": 995,
+    "registeredEnd": 1074,
+    "isCompleteDefinition": true,
+    "actualDefinition": "995-1074",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Json.Parser.parseArray",
+    "registeredStart": 1077,
+    "registeredEnd": 1121,
+    "isCompleteDefinition": true,
+    "actualDefinition": "1077-1121",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Json.Parser.parseString",
+    "registeredStart": 604,
+    "registeredEnd": 720,
+    "isCompleteDefinition": true,
+    "actualDefinition": "604-720",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Json.Parser.readHex4",
+    "registeredStart": 644,
+    "registeredEnd": 649,
+    "isCompleteDefinition": false,
+    "actualDefinition": "723-747",
+    "note": "registered section is parseString call/if, not Parser::readHex4 definition"
+  },
+  {
+    "functionId": "io.Json.Parser.appendUtf8",
+    "registeredStart": 750,
+    "registeredEnd": 767,
+    "isCompleteDefinition": true,
+    "actualDefinition": "750-767",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Json.Parser.parseNumber",
+    "registeredStart": 788,
+    "registeredEnd": 907,
+    "isCompleteDefinition": true,
+    "actualDefinition": "788-907",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Csv.DecodedStream.nextUtf8",
+    "registeredStart": 409,
+    "registeredEnd": 447,
+    "isCompleteDefinition": true,
+    "actualDefinition": "409-447",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Csv.DecodedStream.nextUtf16ToUtf8",
+    "registeredStart": 450,
+    "registeredEnd": 516,
+    "isCompleteDefinition": true,
+    "actualDefinition": "450-516",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Json.mapSystemError",
+    "registeredStart": 174,
+    "registeredEnd": 190,
+    "isCompleteDefinition": true,
+    "actualDefinition": "174-190",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "io.Csv.mapSystemError",
+    "registeredStart": 1066,
+    "registeredEnd": 1082,
+    "isCompleteDefinition": true,
+    "actualDefinition": "1066-1082",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseObject",
+    "registeredStart": 164,
+    "registeredEnd": 216,
+    "isCompleteDefinition": true,
+    "actualDefinition": "164-216",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseArray",
+    "registeredStart": 219,
+    "registeredEnd": 253,
+    "isCompleteDefinition": true,
+    "actualDefinition": "219-253",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseString",
+    "registeredStart": 256,
+    "registeredEnd": 296,
+    "isCompleteDefinition": true,
+    "actualDefinition": "256-296",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseUnicodeEscape",
+    "registeredStart": 299,
+    "registeredEnd": 318,
+    "isCompleteDefinition": true,
+    "actualDefinition": "299-318",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseHex4",
+    "registeredStart": 320,
+    "registeredEnd": 335,
+    "isCompleteDefinition": true,
+    "actualDefinition": "320-335",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.utf8Encode",
+    "registeredStart": 338,
+    "registeredEnd": 357,
+    "isCompleteDefinition": true,
+    "actualDefinition": "338-357",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.Parser.parseNumber",
+    "registeredStart": 360,
+    "registeredEnd": 418,
+    "isCompleteDefinition": true,
+    "actualDefinition": "360-418",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.dumpEscaped",
+    "registeredStart": 432,
+    "registeredEnd": 455,
+    "isCompleteDefinition": true,
+    "actualDefinition": "432-455",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.dumpNumber",
+    "registeredStart": 458,
+    "registeredEnd": 466,
+    "isCompleteDefinition": true,
+    "actualDefinition": "458-466",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  },
+  {
+    "functionId": "testkit.JsonLite.dumpValue",
+    "registeredStart": 469,
+    "registeredEnd": 497,
+    "isCompleteDefinition": true,
+    "actualDefinition": "469-497",
+    "note": "complete declaration/body and namespace/class scope read manually"
+  }
+]

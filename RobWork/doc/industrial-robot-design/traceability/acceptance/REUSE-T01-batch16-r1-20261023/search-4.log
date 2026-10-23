@@ -1,0 +1,31 @@
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:22: * @file RecursiveNewtonEuler.hpp
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:24: * \copydoc rwsim::util::RecursiveNewtonEuler
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:54:    class RecursiveNewtonEuler
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:58:        typedef rw::core::Ptr< RecursiveNewtonEuler > Ptr;
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:64:        RecursiveNewtonEuler (rw::core::Ptr< rwsim::dynamics::RigidDevice > device);
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:69:        virtual ~RecursiveNewtonEuler ();
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:175:        std::vector< rw::math::Wrench6D<> > solve (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:186:        std::vector< double > solveMotorTorques (const rw::kinematics::State& state,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:191:         * @brief Check if solver will work for the given device - if not an exception will be
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:192:         * thrown when trying to solve.
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp:193:         * @return true if solver works for the given device, false otherwise.
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:18:#include "RecursiveNewtonEuler.hpp"
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:32:RecursiveNewtonEuler::RecursiveNewtonEuler (RigidDevice::Ptr device) :
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:38:RecursiveNewtonEuler::~RecursiveNewtonEuler ()
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:41:Vector3D<> RecursiveNewtonEuler::getGravity () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:46:void RecursiveNewtonEuler::setGravity (const Vector3D<>& gravity)
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:51:Vector3D<> RecursiveNewtonEuler::getPayloadCOM () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:56:double RecursiveNewtonEuler::getPayloadMass () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:61:InertiaMatrix<> RecursiveNewtonEuler::getPayloadInertia () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:66:void RecursiveNewtonEuler::setPayload (const Vector3D<>& com, double payload,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:74:Wrench6D<> RecursiveNewtonEuler::getEnvironment () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:79:void RecursiveNewtonEuler::setEnvironment (const Wrench6D<>& wrench)
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:84:std::vector< RecursiveNewtonEuler::Motion >
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:85:RecursiveNewtonEuler::getBodyMotion (const State& state, const Q& dq, const Q& ddq) const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:154:RecursiveNewtonEuler::getBodyNetForces (const std::vector< RecursiveNewtonEuler::Motion >& motions,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:198:RecursiveNewtonEuler::getJointForces (const std::vector< Wrench6D<> >& forces,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:227:std::vector< Wrench6D<> > RecursiveNewtonEuler::solve (const State& state, const Q dq,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:237:std::vector< double > RecursiveNewtonEuler::solveMotorTorques (const State& state, const Q& dq,
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:263:bool RecursiveNewtonEuler::validate () const
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:283:std::string RecursiveNewtonEuler::invalidMsg ()
+RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.cpp:289:Vector3D<> RecursiveNewtonEuler::toVector3D (const EAA<>& eaa)

@@ -1,0 +1,1982 @@
+dynamics.PowerEnergy.PowerEnergyCalculator.compute
+60: // compute（公共头契约的实现——单遍扫描＋逐关节分项积分）。
+61: // =====================================================================
+62: 
+63: PowerEnergySummary PowerEnergyCalculator::compute(const DynamicsSeries& series) const
+64: {
+65:     // ---- 第 1 步：按关节分组 Ok 行并单遍推进累加链（NFR-COR-03：非
+66:     //      Ok 行不进积分；关节集合升序——输出行序稳定）----
+67:     std::vector<std::uint32_t> jointIds;        ///< 出现的关节集合（升序——输出序）
+68:     std::vector<JointAccumulator> accs;         ///< 与 jointIds 平行的累加链
+69:     for (std::size_t k = 0; k < series.samples.size(); ++k) {
+70:         const DynamicsSample& r = series.samples[k];
+71:         if (r.numericState != SampleNumericState::Ok) {
+72:             // 非 Ok 行（NonFiniteInput/Output/Overflow）不进积分；但它是
+73:             // 该关节的"缺口证据"——其所在关节若已有累加链，须标记"上一
+74:             // Ok 行之后出现缺口"（缺口区间零贡献，公共头契约"缺口不插
+75:             // 值、贡献 0"——audit F-589 修复；尚无累加链的关节无须标记：
+76:             // 其首个 Ok 行只是积分下界，下界之前的区间本就不积分）。
+77:             const auto it = std::lower_bound(jointIds.begin(), jointIds.end(), r.jointIndex);
+78:             if (it != jointIds.end() && *it == r.jointIndex) {
+79:                 accs[static_cast<std::size_t>(it - jointIds.begin())].gapSincePrevOk = true;
+80:             }
+81:             continue;
+82:         }
+83:         const std::uint32_t j = r.jointIndex;
+84:         auto it = std::lower_bound(jointIds.begin(), jointIds.end(), j);
+85:         if (it == jointIds.end() || *it != j) {
+86:             it = jointIds.insert(it, j);
+87:             accs.insert(accs.begin() + (it - jointIds.begin()), JointAccumulator{});
+88:         }
+89:         JointAccumulator& a = accs[static_cast<std::size_t>(it - jointIds.begin())];
+90:         a.rows.push_back(k);
+91: 
+92:         // 功率（W）——评估器已按 P=τ_total·q̇ 产出（§7.5）；本计算器
+93:         // 直读不重乘（重乘需要 τ_total×q̇ 两次舍入一致——行内值即权威）。
+94:         const double p = r.mechanicalPower;
+95: 
+96:         // 时间加权分项积分（§7.5）：E⁺ 用 max(P,0)、E⁻ 用 min(P,0)
+97:         // 分别梯形——正负功拆分的数学形态（ crest 因子：同一区间 P 换
+98:         // 号时两侧各取其半段贡献）。缺口区间例外：上一 Ok 行与当前 Ok
+99:         // 行之间存在本关节非 Ok 行时，该区间零贡献（无数据不插值——
+100:         // 假设 P 线性过渡属高估；缺口时长仍保留在分母 T_cycle 中，
+101:         // 保守低估，完整循环统计以 Complete 序列为准）。
+102:         if (!a.havePrev) {
+103:             a.firstT = r.t;      // 积分下界（首有效行）
+104:             a.havePrev = true;
+105:         } else if (a.gapSincePrevOk) {
+106:             // 缺口区间——E⁺/E⁻ 均不加梯形项（零贡献），只推进梯形状态。
+107:         } else {
+108:             const double dt = r.t - a.lastT;  // s（相邻有效行时差——正常采样区间）
+109:             a.positiveJ += 0.5 * (std::max(a.prevP, 0.0) + std::max(p, 0.0)) * dt;
+110:             a.negativeJ += 0.5 * (std::min(a.prevP, 0.0) + std::min(p, 0.0)) * dt;
+111:         }
+112:         a.prevP = p;
+113:         a.lastT = r.t;
+114:         a.gapSincePrevOk = false;  // 缺口证据已消费（首个 Ok 行亦在此清除）
+115: 
+116:         // 功率幅值峰值（首个达到者保留——严格大于才替换，确定性口径；
+117:         // 首行无条件捕获：NaN 位模式经此显性传播到峰值输出，不静默）。
+118:         const double absP = std::abs(p);
+119:         if (!a.havePeak || absP > a.peakAbsW) {
+120:             a.havePeak = true;
+121:             a.peakAbsW = absP;
+122:             a.peakRow = k;
+123:         }
+124:     }
+125: 
+126:     // ---- 第 2 步：装配摘要（无效语义显式 NaN——不伪造 0，§4.6）----
+127:     PowerEnergySummary out;
+128:     out.joints.reserve(accs.size());
+129:     bool topLevelSet = false;   ///< 顶层字段就绪位（首个可积分关节定标——见下）
+130:     for (JointAccumulator& a : accs) {
+131:         PowerEnergySummary::JointPowerEnergy row;
+132:         row.jointIndex = jointIds[&a - accs.data()];
+133: 
+134:         // 时间参数可用性（逐关节判定——单序列单时间轴，正常路径各关
+135:         // 节一致；行级 Ok 标记差异时以"首个可积分关节"定标顶层字段）。
+136:         const bool timeOk = a.rows.size() >= 2 && a.firstT != a.lastT;
+137:         row.positiveEnergyJ = timeOk ? a.positiveJ
+138:                                      : std::numeric_limits<double>::quiet_NaN();
+139:         row.negativeEnergyJ = timeOk ? a.negativeJ
+140:                                      : std::numeric_limits<double>::quiet_NaN();
+141:         row.netEnergyJ = timeOk ? (a.positiveJ + a.negativeJ)
+142:                                 : std::numeric_limits<double>::quiet_NaN();
+143:         const double cycleS = a.lastT - a.firstT;   // T_cycle（s；含驻留全程）
+144:         row.meanPowerW = timeOk ? (row.netEnergyJ / cycleS)
+145:                                 : std::numeric_limits<double>::quiet_NaN();
+146: 
+147:         // 功率峰值（含窗与段）：等值 run 在该关节时间序上扩展（同
+148:         // Envelope 口径——位等值无阈值；幅值并列取时间轴首个）。
+149:         const DynamicsSample& peakRow = series.samples[a.peakRow];
+150:         const std::size_t pos = static_cast<std::size_t>(
+151:             std::find(a.rows.begin(), a.rows.end(), a.peakRow) - a.rows.begin());
+152:         std::size_t lo = pos;
+153:         std::size_t hi = pos;
+154:         auto equalAt = [&](std::size_t rowsPos) {
+155:             return std::abs(series.samples[a.rows[rowsPos]].mechanicalPower)
+156:                    == a.peakAbsW;  // 幅值位等值——无容差（D-DYN-8）
+157:         };
+158:         while (lo > 0 && equalAt(lo - 1)) { --lo; }
+159:         while (hi + 1 < a.rows.size() && equalAt(hi + 1)) { ++hi; }
+160:         row.powerPeak.value = a.peakAbsW;                       // W（幅值形态）
+161:         row.powerPeak.tPeakS = peakRow.t;                       // s
+162:         row.powerPeak.segmentIndex = peakRow.segmentIndex;      // 所在轨迹段
+163:         row.powerPeak.windowStartS = series.samples[a.rows[lo]].t;  // 窗起点，s
+164:         row.powerPeak.windowEndS = series.samples[a.rows[hi]].t;    // 窗终点，s
+165:         row.powerPeak.conditionId = series.conditionId;         // 来源工况
+166: 
+167:         // 循环时长与驻留计入位（顶层字段＝序列级；由首个可积分关节
+168:         // 定标——时间可用即积分已按 [t₀,t_N] 全程执行，上游含驻留段
+169:         // 即自动计入；统计器无段类型信息、不做速度阈值判定）。
+170:         if (!topLevelSet && timeOk) {
+171:             out.timeParamAvailable = true;
+172:             out.cycleDurationS = cycleS;
+173:             out.includesDwell = true;
+174:             topLevelSet = true;
+175:         }
+176:         out.joints.push_back(std::move(row));
+177:     }
+178:     if (!topLevelSet) {
+179:         // 无任何可积分关节（空序列/单样本/零跨度）——顶层字段显式无效
+180:         //（NotProvided 语义，不伪造 0；§4.6"无时间参数"行同口径）。
+181:         out.timeParamAvailable = false;
+182:         out.cycleDurationS = std::numeric_limits<double>::quiet_NaN();
+183:         out.includesDwell = false;
+184:     }
+185:     return out;
+186: }
+187: 
+188: }  // namespace sdurws::ird::dynamics
+
+kinematics.Envelope.probeSeedFor
+60: /// (seed, probeSerial) 经 streamSeedFor 完整 64 位混合（A06——probeSerial
+61: /// 是全计算单调计数，天然覆盖方向/站点/二分三维序），输出直接作为该
+62: /// 探针的 makeInitialValues 种子。
+63: std::uint64_t probeSeedFor(std::uint64_t seed, std::uint64_t probeSerial)
+64: {
+65:     return streamSeedFor(seed, probeSerial);
+66: }
+67: 
+68: /// 调用方契约违约 fail-fast（§9.1——std::invalid_argument，不进结果对象）。
+69: [[noreturn]] void failCaller(const std::string& what)
+
+kinematics.Envelope.failCaller
+66: }
+67: 
+68: /// 调用方契约违约 fail-fast（§9.1——std::invalid_argument，不进结果对象）。
+69: [[noreturn]] void failCaller(const std::string& what)
+70: {
+71:     throw std::invalid_argument("kin-envelope：" + what);
+72: }
+73: 
+74: // =====================================================================
+75: // 位置存在性探针（§7.2 存在性口径的射线版——"存在 ≥1 有效解即达"）
+
+kinematics.Envelope.probeReachability
+124:  *
+125:  * 纯函数（除两个计数器推进）；确定性（同序号同初值集——NFR-COR-01）。
+126:  */
+127: ProbeVerdict probeReachability(double t,
+128:                                const rw::math::Vector3D<double>& direction,
+129:                                const IKinRuntimeView& view,
+130:                                const TcpRef& tcp,
+131:                                const EnvelopeQuery& query,
+132:                                const std::vector<JointInterval>& intervals,
+133:                                std::uint64_t& probeSerial,
+134:                                std::uint32_t& rayProbeCount,
+135:                                IkFacilityFailure* facilityOut)
+136: {
+137:     // 探针级取消检查（响应粒度第一层——每探针至少一次，§8.3 落值；
+138:     // 求解器内部的迭代级查询是第二层，经 cancellationProbe 透传生效）。
+139:     // 命中即返回且**不计数**——零 IK 调用，预算素材不虚增。
+140:     if (query.cancellationProbe && query.cancellationProbe()) {
+141:         return ProbeVerdict::Cancelled;
+142:     }
+143: 
+144:     // 初值集（确定性——本探针的序号派生种子；SeededRandom 下多初值
+145:     // 提升边界附近〔雅可比趋奇异〕的收敛稳健性）。
+146:     const std::vector<std::vector<double>> initialValues = makeInitialValues(
+147:         query.initialStrategy, query.initialValuesCount,
+148:         probeSeedFor(query.seed, probeSerial), intervals, query.referenceQ);
+149:     ++probeSerial;    // 全局序号推进（与本次 IK 调用一一对应）
+150:     ++rayProbeCount;  // 方向面计数同步（守恒式右端/左端同步推进）
+151: 
+152:     // IK 请求（位置存在性——KIN-P2/A02 起 taskSpace=PositionOnly：3 维
+153:     // 任务子空间，姿态误差不进目标函数，收敛判据只查位置残差；姿态容差
+154:     // 在该任务下不被消费，保持 IkRequest 默认合法值（1e-6 rad>0——请求
+155:     // 合法域载体；EnvelopeQuery 投影面刻意不含姿态容差字段——"不预建无
+156:     // 消费者条目"纪律，与旧 π 落值常量的裁剪同因）。旧"姿态无约束落值
+157:     // π"机制废除——kEnvelopePoseFreeTolerance 已随本迁移移除，π 方案下
+158:     // 姿态仍参与 6 维迭代会把位置可达探针点牵制出局〔审查 A02 同源〕。
+159:     // 身份面回填调用方绑定）。
+160:     IkRequest request;
+161:     request.targetInBase = rw::math::Transform3D<double>(
+162:         direction * t, rw::math::Rotation3D<double>(1, 0, 0, 0, 1, 0, 0, 0, 1));
+163:     request.positionTolerance = query.positionTolerance;
+164:     request.taskSpace = IkTaskSpace::PositionOnly;
+165:     request.modelView = &view;
+166:     request.tcp = tcp;
+167:     request.initialValues = initialValues;
+168:     request.iterationLimit = query.iterationLimit;
+169:     request.intervals = intervals;
+170:     request.dedupThresholdPerAxis = query.dedupThresholdPerAxis;
+171:     request.collisionSession = nullptr;  // KIN-10 无碰撞要求（Query 注）——
+172:                                          // 求解器按"未启用"跳过硬过滤③
+173:     request.cancellationProbe = query.cancellationProbe;
+174:     request.referenceQ = query.referenceQ;
+175:     // 结果绑定（纯服务直调面——pointOid 保留值合法；身份 seed/referenceQ
+176:     // 已由调用方经 query.identity 回填一致性由组装面保证）。
+177:     request.requestIdentity = query.identity;
+178:     request.requestIdentity.seed = query.seed;
+179:     request.requestIdentity.referenceQ = query.referenceQ;
+180: 
+181:     const IkOutcome outcome = query.solver ? query.solver->solve(request)
+182:                                            : IkSolver{}.solve(request);
+183: 
+184:     // 判读（按序——cancelled/设施失败优先，非终局形态上调）。
+185:     if (outcome.cancelled) {
+186:         return ProbeVerdict::Cancelled;
+187:     }
+188:     if (outcome.facilityFailure.has_value()) {
+189:         // 素材转载（不加工——底层 stage/detail 逐字上交，诊断链溯源保留
+190:         // 求解器侧定位；Sampling.cpp 设施失败 reason 转载 detail 同款）。
+191:         if (facilityOut != nullptr) {
+192:             *facilityOut = *outcome.facilityFailure;
+193:         }
+194:         return ProbeVerdict::Facility;
+195:     }
+196:     switch (outcome.outcomeKind) {
+197:     case IkOutcomeKind::SolutionsFound:
+198:     case IkOutcomeKind::PartialCollision:
+199:         return ProbeVerdict::Reached;
+200:     case IkOutcomeKind::MultiInitNoConvergence:
+201:     case IkOutcomeKind::AllCandidatesFiltered:
+202:     case IkOutcomeKind::AnalyticBoundExceeded:
+203:         // 2/3＝搜索未果（近似根源 2——当"不可达侧"使用）；5＝解析界限
+204:         // 超界，理论上仅在 ‖t·d‖>Rup 时出现，而本算法恒在 [0,Rup] 内
+205:         // 探测——若出现（数值边界）同轨按"不可达侧"处置，注释如实。
+206:         return ProbeVerdict::NotFound;
+207:     }
+208:     return ProbeVerdict::NotFound;  // 恒不可达（switch 全枚举兜底——编译器告警面）
+209: }
+210: 
+211: }  // namespace
+212: 
+
+kinematics.Envelope.computeApproximateEnvelope
+214: // computeApproximateEnvelope——主流程（头注算法四步的落值）
+215: // =====================================================================
+216: 
+217: Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
+218:                                                     const TcpRef& tcp,
+219:                                                     const EnvelopeQuery& query)
+220: {
+221:     // ---- 第 0 步：装配校验（fail-fast 轨——调用方错误，不进结果对象；
+222:     // 逐项独立可辨——消息定位字段，NFR-COR-03 拒绝不钳制）。----
+223:     // 设备自由度（可动关节链序——validateRegionCoverageQuery 同口径）。
+224:     std::size_t dof = 0;
+225:     for (const auto& j : view.model().chain().joints) {
+226:         if (j.type != runtime::JointType::Fixed) {
+227:             ++dof;
+228:         }
+229:     }
+230:     if (query.directionCount == 0U) {
+231:         failCaller("query.directionCount=0（方向数须 ≥1——KIN-10 默认 "
+232:                    "180）");
+233:     }
+234:     if (query.anchorProbesMax == 0U) {
+235:         failCaller("query.anchorProbesMax=0（内锚点探测步数须 ≥1）");
+236:     }
+237:     if (query.bisectIterationsMax == 0U) {
+238:         failCaller("query.bisectIterationsMax=0（二分迭代上限须 ≥1）");
+239:     }
+240:     if (query.seed == 0U) {
+241:         failCaller("query.seed=0（I-KIN-4：拒绝，不做 0→1 静默替换——"
+242:                    "NFR-COR-03；探针初值序列的唯一来源）");
+243:     }
+244:     if (query.initialValuesCount == 0U) {
+245:         failCaller("query.initialValuesCount=0（初值数量须 ≥1）");
+246:     }
+247:     if (query.iterationLimit == 0U) {
+248:         failCaller("query.iterationLimit=0（迭代上限须 ≥1）");
+249:     }
+250:     if (!std::isfinite(query.positionTolerance) || query.positionTolerance <= 0.0) {
+251:         failCaller("query.positionTolerance 非法（须有限且>0，单位 m）");
+252:     }
+253:     if (!std::isfinite(query.dedupThresholdPerAxis)
+254:         || query.dedupThresholdPerAxis <= 0.0) {
+255:         failCaller("query.dedupThresholdPerAxis 非法（须有限且>0，rad|m "
+256:                    "逐轴）");
+257:     }
+258:     if (query.referenceQ.size() != dof) {
+259:         failCaller("query.referenceQ 维度 " + std::to_string(query.referenceQ.size())
+260:                    + " != 设备自由度 " + std::to_string(dof)
+261:                    + "（D-KIN-4 显式输入契约）");
+262:     }
+263:     for (std::size_t k = 0; k < query.referenceQ.size(); ++k) {
+264:         if (!std::isfinite(query.referenceQ[k])) {
+265:             failCaller("query.referenceQ[" + std::to_string(k)
+266:                        + "] 非有限（NFR-COR-03：不置零）");
+267:         }
+268:     }
+269: 
+270:     // ---- 第 1 步：解析外括号（确定性上界——三角形不等式覆盖全部关节
+271:     // 角；NoDevice/NoTcp/FrameUnresolved 走 Expected 值面，环境/快照
+272:     // 事实不属调用方违约）。----
+273:     const Expected<AnalyticReachBound> bound =
+274:         computeAnalyticReachBound(view, tcp);
+275:     if (!bound.ok()) {
+276:         return Expected<EnvelopeResult>::err(bound.error());
+277:     }
+278:     const double reachUpper = bound.get().totalRadius;  // m（Rup——外括号）
+279: 
+280:     // ---- 结果骨架（恒近似标注——KIN-10/AT-26 的类型化落点；身份回填
+281:     // 中 seed/referenceQ 由实现从 query 覆写——防调用方两处不一致）。----
+282:     EnvelopeResult result;
+283:     result.precision = EnvelopePrecision::Approximate;
+284:     result.contractVersion = kEnvelopeContractVersion;
+285:     result.directionCount = query.directionCount;
+286:     result.reachUpperBound = reachUpper;
+287:     result.identity = query.identity;
+288:     result.identity.seed = query.seed;
+289:     result.identity.referenceQ = query.referenceQ;
+290: 
+291:     // 方向集（§7.2 黄金设施复用——斐波那契螺旋，黄金锁定；与 seed 无关
+292:     // ——方向离散是配置参数不是随机量）。
+293:     const std::vector<rw::math::Vector3D<double>> directions =
+294:         generateDirections(query.directionCount);
+295: 
+296:     // 逐自由度评价区间（evaluationIntervals 唯一实现点——初值生成与
+297:     // 限位评价同源，防两套真值；每计算一次，逐探针复用）。
+298:     const std::vector<JointInterval> intervals = evaluationIntervals(view);
+299: 
+300:     // 射线记录预置（方向生成序；NotRun 初值——取消/设施失败路径的
+301:     // 未开始方向即此初值的自然保留，RegionCoverage 槽位预置同款）。
+302:     result.rays.resize(query.directionCount);
+303:     for (std::uint32_t j = 0; j < query.directionCount; ++j) {
+304:         result.rays[j].directionIndex = j;
+305:         result.rays[j].direction = directions[j];
+306:     }
+307: 
+308:     // ---- 第 2 步：入口取消检查（取消已请求→零探测返回；全部方向
+309:     // NotRun——D-KIN-9 取消不是结局，partial 如实标记）。----
+310:     if (query.cancellationProbe && query.cancellationProbe()) {
+311:         result.cancelled = true;
+312:         for (EnvelopeRayRecord& ray : result.rays) {
+313:             ray.reason = "协作取消（入口检查——零探测返回；重跑同 seed 可复算）";
+314:         }
+315:         return Expected<EnvelopeResult>::ok(std::move(result));
+316:     }
+317: 
+318:     // ---- 第 3 步：逐方向射线边界（等差径向站点扫描＋外端区间二分
+319:     // 收敛——头注算法 2/3/4 步，KIN-P5/审查 A04 重构版；单线程顺序执行，
+320:     // 方向序＝生成序）。----
+321:     //
+322:     // 旧算法（内锚点几何序列 Rup·2⁻ᵏ＋hi=Rup 免探测）的两处缺陷（审查
+323:     // A04 反例驱动）：
+324:     //   ①上界点被当作"已证不可达"免探测——错误表述：三角形不等式取等
+325:     //     时（共线串联）上界点恰可达（六轴同轴链 TCP 距轴 1 m 的零位
+326:     //     构型精确到达 (1,0,0)），旧算法对这类方向系统性漏检整条射线；
+327:     //   ②几何序列在原点邻域过密、在 (Rup/2, Rup] 只有一个探测点——
+328:     //     窄环带（如 [0.4,0.5]·Rup）落在探测缝隙里即全灭，且全灭被并入
+329:     //     Computed 态输出 rMax=0 的"确定结论"，掩盖"没有找到"的事实。
+330:     // 新算法把预算改为 M＝anchorProbesMax 个等差站点 t_j＝Rup·j/M
+331:     // （分辨率 Rup/M 显式承载窄带检测能力），由外向内扫描——首个可达
+332:     // 站即外边界区间的内端（外端＝其外一站点，已探明不可达），二分只
+333:     // 收敛这一个区间；站点全灭→NoSampleFound 低置信态（诚实"未找到"）。
+334:     std::uint64_t probeSerial = 0;   // 全局探针单调计数（种子派生输入）
+335:     bool stopAll = false;            // 取消/设施失败后的全局停止旗标
+336:     IkFacilityFailure facility;      // 设施失败素材（转载自底层求解 outcome）
+337: 
+338:     for (std::uint32_t j = 0; j < query.directionCount && !stopAll; ++j) {
+339:         EnvelopeRayRecord& ray = result.rays[j];
+340: 
+341:         // ---- 3a. 等差站点扫描（由外向内；多锚点——上界点先行试探）。
+342:         // 扫描至首个可达站即止：其外站点已探明不可达（外端 hi 来源）、
+343:         // 其内站点不影响外边界下估计（内岛/空腔属近似根源 3 的登记边界
+344:         // ——本算法只承诺外边界）。----
+345:         bool anchored = false;       // 是否找到可达站
+346:         double lo = 0.0;             // 已证实可达的最远距离（m——外端区间内端）
+347:         double hi = 0.0;             // 外端区间外端（m——首个可达站外一站点；可达站为上界点时无语义）
+348:         for (std::uint32_t jj = query.anchorProbesMax; jj >= 1U; --jj) {
+349:             // 站点距离（m）：t＝Rup·jj/M——jj=M 即上界点 Rup（先行试探：
+350:             // 上界可可达——审查 A04 措辞修正的落点），jj=1 即最近原点站。
+351:             const double t = reachUpper * (static_cast<double>(jj)
+352:                 / static_cast<double>(query.anchorProbesMax));
+353:             if (t < kAnchorMinDistance) {
+354:                 // 浮点下限防护：更内侧站点只会更小——直接终止内扫。
+355:                 break;
+356:             }
+357:             const ProbeVerdict verdict =
+358:                 probeReachability(t, directions[j], view, tcp, query,
+359:                                   intervals, probeSerial, ray.probeCount,
+360:                                   &facility);
+361:             if (verdict == ProbeVerdict::Reached) {
+362:                 lo = t;
+363:                 anchored = true;
+364:                 break;  // 首个（最外侧）可达站——内扫即止
+365:             }
+366:             if (verdict == ProbeVerdict::Cancelled) {
+367:                 // 取消传播（D-KIN-9）：本方向标记后停止全部后续方向。
+368:                 ray.state = EnvelopeRayState::NotRun;
+369:                 ray.reason = "协作取消（径向站点扫描中断）";
+370:                 result.cancelled = true;
+371:                 stopAll = true;
+372:                 break;
+373:             }
+374:             if (verdict == ProbeVerdict::Facility) {
+375:                 // 设施失败（F-746③ 同族非终局）：停止全部，剩余方向
+376:                 // NotRun 如实标记；facility 已由探针转载底层 outcome
+377:                 // 素材（stage/detail 原值——不加工）。
+378:                 ray.state = EnvelopeRayState::NotRun;
+379:                 ray.reason = "求解设施失败（径向站点扫描中断——该方向证据缺失）";
+380:                 result.facilityFailure = facility;
+381:                 stopAll = true;
+382:                 break;
+383:             }
+384:             // NotFound：本站点探明不可达——记录为当前外端（后续可达站
+385:             // 的外边界区间即 [下一可达站, 本站]），继续内扫。
+386:             hi = t;
+387:         }
+388: 
+389:         if (stopAll) {
+390:             break;
+391:         }
+392: 
+393:         if (!anchored) {
+394:             // ---- 站点全灭：未找到可达样本（KIN-P5/审查 A04 诚实性
+395:             // 修复）。低置信观测而非确定结论：可能是真不可达，也可能
+396:             // 可达集窄于站点分辨率（Rup/M）或数值搜索未果（近似根源
+397:             // 2）。旧行为（Computed＋rMax=0 的"近似空确定结论"）废除
+398:             // ——"找到半径为零"与"没有找到"自此在状态词表分立。----
+399:             ray.state = EnvelopeRayState::NoSampleFound;
+400:             ray.rMax = 0.0;  // 占位——本态下 rMax 无语义（EnvelopeRayRecord 注）
+401:             ray.reason =
+402:                 "未找到可达样本（低置信——探测分辨率 Rup/"
+403:                 + std::to_string(query.anchorProbesMax)
+404:                 + " 内无命中；不构成该方向确定性不可达结论——搜索未果不作"
+405:                 "不可行证明，窄于分辨率的可达带亦可能被漏检）";
+406:             continue;
+407:         }
+408: 
+409:         // ---- 3b. 外端区间二分收敛（(lo, hi] 上对分——mid 可达则外推
+410:         // lo、不可达则内缩 hi；lo=hi（可达站＝上界点）时区间已空、循环
+411:         // 自然不进入。终止＝区间宽 ≤ positionTolerance（物理分辨率早停）
+412:         // 或迭代数耗尽（精度兜底）。rMax＝lo——"已证实可达的最远距离"
+413:         // 下估计。----
+414:         for (std::uint32_t it = 0;
+415:              it < query.bisectIterationsMax && (hi - lo) > query.positionTolerance;
+416:              ++it) {
+417:             const double mid = lo + (hi - lo) / 2.0;  // 中点（不越界形态）
+418:             const ProbeVerdict verdict =
+419:                 probeReachability(mid, directions[j], view, tcp, query,
+420:                                   intervals, probeSerial, ray.probeCount,
+421:                                   &facility);
+422:             if (verdict == ProbeVerdict::Reached) {
+423:                 lo = mid;  // 可达侧外推
+424:                 continue;
+425:             }
+426:             if (verdict == ProbeVerdict::Cancelled) {
+427:                 ray.state = EnvelopeRayState::NotRun;
+428:                 ray.reason = "协作取消（二分中断）";
+429:                 result.cancelled = true;
+430:                 stopAll = true;
+431:                 break;
+432:             }
+433:             if (verdict == ProbeVerdict::Facility) {
+434:                 ray.state = EnvelopeRayState::NotRun;
+435:                 ray.reason = "求解设施失败（二分中断——该方向证据缺失）";
+436:                 result.facilityFailure = facility;
+437:                 stopAll = true;
+438:                 break;
+439:             }
+440:             hi = mid;  // 不可达侧内缩（含搜索未果——近似根源 2）
+441:         }
+442: 
+443:         if (stopAll) {
+444:             break;
+445:         }
+446: 
+447:         // 方向完成：rMax＝已证实可达的最远距离（下估计——非精确边界，
+448:         // 标注随 result.precision/kEnvelopeApproximationNote 随行）。
+449:         ray.state = EnvelopeRayState::Computed;
+450:         ray.rMax = lo;
+451:     }
+452: 
+453:     // ---- 第 4 步：停止后的剩余方向收尾（取消/设施失败路径——未开始
+454:     // 方向保持 NotRun 初值，reason 补非空文案——ERR-01）。----
+455:     if (stopAll) {
+456:         for (std::uint32_t j = 0; j < query.directionCount; ++j) {
+457:             EnvelopeRayRecord& ray = result.rays[j];
+458:             if (ray.state != EnvelopeRayState::NotRun) {
+459:                 continue;  // 已完成/已标记方向如实保留
+460:             }
+461:             if (ray.reason.empty()) {
+462:                 ray.reason = result.facilityFailure.has_value()
+463:                                  ? "求解设施失败（未开始——partial 如实标记）"
+464:                                  : "协作取消（未开始——partial 如实标记）";
+465:             }
+466:         }
+467:     }
+468: 
+469:     // 探测总数（逐方向之和——守恒自检：实现缺陷即 logic_error，不静默）。
+470:     for (const EnvelopeRayRecord& ray : result.rays) {
+471:         result.probeCount += ray.probeCount;
+472:     }
+473:     if (result.probeCount != probeSerial) {
+474:         throw std::logic_error(
+475:             "kin-envelope：探测总数与探针序号计数不一致（实现缺陷——"
+476:             "不静默）；probeCount=" + std::to_string(result.probeCount)
+477:             + " serial=" + std::to_string(probeSerial));
+478:     }
+479: 
+480:     return Expected<EnvelopeResult>::ok(std::move(result));
+481: }
+482: 
+483: }  // namespace sdurws::ird::kinematics
+
+optimization.Pareto.slotValue
+27: 
+28: /// 激活目标槽位取值（FeasibleCandidate 八槽 → 指标值；越界/缺失由调用方
+29: /// 前置校验保证——本辅助不做校验，直接取 optional 载荷）。
+30: double slotValue(const FeasibleCandidate& c, MetricId id) noexcept
+31: {
+32:     return *c.metricValues[static_cast<std::size_t>(id)];
+33: }
+34: 
+35: /// "aᵢ 不劣于 bᵢ（按方向 dᵢ，容差 tᵢ）"（§7.4 定义式——min/max 对称展开；
+36: /// closeWithin 的参考元＝bᵢ，卡 §7.4 字面）。
+
+optimization.Pareto.notWorse
+34: 
+35: /// "aᵢ 不劣于 bᵢ（按方向 dᵢ，容差 tᵢ）"（§7.4 定义式——min/max 对称展开；
+36: /// closeWithin 的参考元＝bᵢ，卡 §7.4 字面）。
+37: bool notWorse(double a, double b, MetricDirection d, const core::Tolerance& t) noexcept
+38: {
+39:     if (d == MetricDirection::Minimize) {
+40:         // min 方向：a ≤ b 即不劣；近似相等（容差内）同样视为不劣——
+41:         // 零容差时 closeWithin 退化为 a == b（浮点全序，DOPT-5）。
+42:         return a <= b || core::closeWithin(a, b, t);
+43:     }
+44:     // max 方向：a ≥ b 即不劣（对称）。
+45:     return a >= b || core::closeWithin(a, b, t);
+46: }
+47: 
+48: /// "aᵢ 严格优于 bᵢ（按方向 dᵢ，容差 tᵢ）"——差异须**超出容差**的优
+49: /// （容差内的优不算严格优：保证"逐元素近似相等 ⇒ 互不支配"自洽）。
+
+optimization.Pareto.strictlyBetter
+47: 
+48: /// "aᵢ 严格优于 bᵢ（按方向 dᵢ，容差 tᵢ）"——差异须**超出容差**的优
+49: /// （容差内的优不算严格优：保证"逐元素近似相等 ⇒ 互不支配"自洽）。
+50: bool strictlyBetter(double a, double b, MetricDirection d,
+51:                     const core::Tolerance& t) noexcept
+52: {
+53:     if (d == MetricDirection::Minimize) {
+54:         return a < b && !core::closeWithin(a, b, t);
+55:     }
+56:     return a > b && !core::closeWithin(a, b, t);
+57: }
+58: 
+59: }  // namespace
+60: 
+
+optimization.Pareto.dominates
+62: // 支配判定（Pareto.hpp 契约——noexcept 纯函数）
+63: // =====================================================================
+64: 
+65: bool dominates(const FeasibleCandidate& a, const FeasibleCandidate& b,
+66:                const ObjectiveSet& objectives) noexcept
+67: {
+68:     // 第一步：∀i —— aᵢ 不劣于 bᵢ（任一目标劣即不支配——短路返回）。
+69:     for (const auto& entry : objectives.entries) {
+70:         // 方向经 metricDirectionOf 零分配取向（词表方向实现单点——
+71:         // 热路径友好；noexcept 函数内禁用会分配的 metricDefinitions()）。
+72:         const MetricDirection d = metricDirectionOf(entry.metricId);
+73:         if (!notWorse(slotValue(a, entry.metricId), slotValue(b, entry.metricId),
+74:                       d, entry.tolerance)) {
+75:             return false;
+76:         }
+77:     }
+78:     // 第二步：∃j —— aⱼ 严格优于 bⱼ（全不劣但无一严格优＝互不支配——
+79:     // 逐元素近似相等的候选对在此归为互不支配，§7.4 自洽性）。
+80:     for (const auto& entry : objectives.entries) {
+81:         const MetricDirection d = metricDirectionOf(entry.metricId);
+82:         if (strictlyBetter(slotValue(a, entry.metricId),
+83:                            slotValue(b, entry.metricId), d, entry.tolerance)) {
+84:             return true;
+85:         }
+86:     }
+87:     return false;
+88: }
+89: 
+90: // =====================================================================
+91: // buildFront（执行序见 Pareto.hpp——五步固定）
+
+optimization.Pareto.ParetoFrontBuilder.buildFront
+91: // buildFront（执行序见 Pareto.hpp——五步固定）
+92: // =====================================================================
+93: 
+94: ParetoFrontResult ParetoFrontBuilder::buildFront(
+95:     const std::vector<FeasibleCandidate>& candidates,
+96:     const ObjectiveSet& objectives) const
+97: {
+98:     // ---- 第 1 步：目标集与输入校验（调用方契约违约 fail-fast——§12.3；
+99:     //      错误归类：目标集/槽位形状/激活指标缺失或非有限＝调用方错误
+100:     //      OPT-INPUT-INVALID——"—"候选在管线侧排除，到达本面即违约，
+101:     //      文件头注④） ----
+102:     {
+103:         // 目标集自身合法性（空/重复/容差——与 Objective 侧同源口径：
+104:         // 这里以最小面复验，防绕过 makeObjectiveSet 的构造路径）。
+105:         if (objectives.entries.empty()) {
+106:             throw OptimizationError(kOptInputInvalid,
+107:                                     "buildFront: 激活目标集为空——无支配比较基础");
+108:         }
+109:         for (std::size_t i = 0; i < objectives.entries.size(); ++i) {
+110:             for (std::size_t j = i + 1; j < objectives.entries.size(); ++j) {
+111:                 if (objectives.entries[i].metricId
+112:                     == objectives.entries[j].metricId) {
+113:                     throw OptimizationError(
+114:                         kOptInputInvalid,
+115:                         "buildFront: 激活目标重复（"
+116:                             + std::string(toToken(objectives.entries[i].metricId))
+117:                             + "）");
+118:                 }
+119:             }
+120:             const core::Tolerance& t = objectives.entries[i].tolerance;
+121:             if (!std::isfinite(t.relative) || !std::isfinite(t.absolute)
+122:                 || t.relative < 0.0 || t.absolute < 0.0) {
+123:                 throw OptimizationError(
+124:                     kOptInputInvalid,
+125:                     "buildFront: 支配容差非法（须 ≥0 且有限，指标 "
+126:                         + std::string(toToken(objectives.entries[i].metricId))
+127:                         + "）");
+128:             }
+129:         }
+130:         // 逐候选形状与激活指标校验（输入序遍历——首错定位确定性）。
+131:         for (const auto& c : candidates) {
+132:             if (c.metricValues.size() != kMetricCount) {
+133:                 throw OptimizationError(
+134:                     kOptInputInvalid,
+135:                     "buildFront: 候选指标槽数须为八（MetricId 枚举序），实际 "
+136:                         + std::to_string(c.metricValues.size()) + "（候选 "
+137:                         + c.candidateId.toCanonical() + "）");
+138:             }
+139:             for (const auto& entry : objectives.entries) {
+140:                 const std::optional<double>& v =
+141:                     c.metricValues[static_cast<std::size_t>(entry.metricId)];
+142:                 if (!v.has_value()) {
+143:                     // 激活目标槽位缺失＝"—"候选未被管线侧排除（§7.4 缺失
+144:                     // 指标不参与支配比较的实现位置——@pre 防线）。
+145:                     throw OptimizationError(
+146:                         kOptInputInvalid,
+147:                         "buildFront: 激活目标指标缺失（not-computable）——"
+148:                         "候选 "
+149:                             + c.candidateId.toCanonical() + " 指标 "
+150:                             + std::string(toToken(entry.metricId))
+151:                             + "；'—'候选应在管线侧排除（DataInsufficient）");
+152:                 }
+153:                 if (!std::isfinite(*v)) {
+154:                     // 非有限值（NaN/Inf）＝上游指标评估缺陷（§7.2：该候选
+155:                     // 应已按评估失败处理）——不静默比较、不静默转 0。
+156:                     throw OptimizationError(
+157:                         kOptInputInvalid,
+158:                         "buildFront: 指标值非有限——候选 "
+159:                             + c.candidateId.toCanonical() + " 指标 "
+160:                             + std::string(toToken(entry.metricId))
+161:                             + "；上游应按评估失败处理（§7.2）");
+162:                 }
+163:             }
+164:         }
+165:     }
+166: 
+167:     // ---- 第 2 步：去重（CandidateId 相同 → 保留输入序首见，丢弃计数——
+168:     //      §7.4"重复 CandidateId → 去重为单候选（保留首次评估，dedupCount
+169:     //      计数入审计）"；同身份不同指标向量按同规去重——身份是内容寻址
+170:     //      权威，差异本身属上游一致性缺陷，计数如实暴露） ----
+171:     std::vector<const FeasibleCandidate*> unique;  ///< 去重后（保持首见序）
+172:     unique.reserve(candidates.size());
+173:     std::uint32_t dropped = 0;
+174:     for (const auto& c : candidates) {
+175:         bool seen = false;
+176:         for (const auto* u : unique) {
+177:             if (u->candidateId == c.candidateId) {
+178:                 seen = true;
+179:                 break;
+180:             }
+181:         }
+182:         if (seen) {
+183:             ++dropped;  // 重复丢弃——审计计数（不抛：同身份重复是合法输入
+184:                         // 形态——跨批合并的常态，§8.3 第 11 步）。
+185:             continue;
+186:         }
+187:         unique.push_back(&c);
+188:     }
+189: 
+190:     // ---- 第 3 步：非支配分层（逐层筛选——文件头注②；每轮在剩余集中
+191:     //      取"不被任何同轮候选支配"者为当前层；扫描序＝去重后首见序，
+192:     //      层内收集序＝首见序——两序都只是中间态，最终序由第 4 步全序
+193:     //      比较器定死，NFR-COR-02） ----
+194:     const std::size_t n = unique.size();
+195:     std::vector<std::size_t> rank(n, 0);     ///< 每候选非支配 rank（0 基）
+196:     std::vector<bool> assigned(n, false);    ///< 是否已入层
+197:     std::size_t remaining = n;               ///< 剩余未分层候选数
+198:     for (std::size_t currentRank = 0; remaining > 0; ++currentRank) {
+199:         // 当前层：未被层外剩余集中任何未分层候选支配的候选。
+200:         // O(剩余²) 支配判定——R1 预算 ≤256 候选（卡 §4.3 OptimizationBudget
+201:         // 默认），最坏 6.5 万次纯函数调用，无性能顾虑。
+202:         std::vector<std::size_t> front;
+203:         for (std::size_t i = 0; i < n; ++i) {
+204:             if (assigned[i]) {
+205:                 continue;  // 已入前序层——不再参与本轮筛选。
+206:             }
+207:             bool dominatedByAny = false;
+208:             for (std::size_t j = 0; j < n; ++j) {
+209:                 if (j == i || assigned[j]) {
+210:                     continue;  // 同候选/已分层候选不参与支配本轮。
+211:                 }
+212:                 if (dominates(*unique[j], *unique[i], objectives)) {
+213:                     dominatedByAny = true;
+214:                     break;
+215:                 }
+216:             }
+217:             if (!dominatedByAny) {
+218:                 front.push_back(i);
+219:             }
+220:         }
+221:         // front 非空恒成立（有限偏序下剩余集中至少一个极小元——若为空
+222:         // 属算法缺陷，fail-fast 不死循环）。
+223:         if (front.empty()) {
+224:             throw OptimizationError(kOptInputInvalid,
+225:                                     "buildFront: 非支配分层异常（空层）——"
+226:                                     "内部一致性缺陷");
+227:         }
+228:         for (const std::size_t i : front) {
+229:             rank[i] = currentRank;
+230:             assigned[i] = true;
+231:             --remaining;
+232:         }
+233:     }
+234: 
+235:     // ---- 第 4 步：稳定排序（三键全序——§7.4/DOPT-8；键②用**严格浮点
+236:     //      比较**，容差不进排序键——文件头注①：容差近似相等非传递，混入
+237:     //      即破坏全序；键③ CandidateId 字节字典序兜底——无巧合平局） ----
+238:     const std::vector<MetricDefinition> defs = metricDefinitions();  // 排序前
+239:     // 一次构建（比较器内查表——方向权威消费面；非热路径逐次构造）。
+240:     std::vector<std::size_t> order(n);
+241:     for (std::size_t i = 0; i < n; ++i) {
+242:         order[i] = i;
+243:     }
+244:     std::sort(order.begin(), order.end(),
+245:               [&](std::size_t lhs, std::size_t rhs) {
+246:                   // 键①：非支配 rank 升序（前沿层序——第一前沿最先）。
+247:                   if (rank[lhs] != rank[rhs]) {
+248:                       return rank[lhs] < rank[rhs];
+249:                   }
+250:                   // 键②：激活目标值依次按方向严格比较（目标次序＝
+251:                   // objectives 声明序——§7.4 稳定排序原文）。
+252:                   for (const auto& entry : objectives.entries) {
+253:                       const MetricDirection d =
+254:                           defs[static_cast<std::size_t>(entry.metricId)]
+255:                               .direction;
+256:                       const double vl = slotValue(*unique[lhs], entry.metricId);
+257:                       const double vr = slotValue(*unique[rhs], entry.metricId);
+258:                       if (vl < vr) {
+259:                           return d == MetricDirection::Minimize;
+260:                       }
+261:                       if (vr < vl) {
+262:                           return d == MetricDirection::Maximize;
+263:                       }
+264:                       // 相等（浮点严格相等）→ 下一目标键。
+265:                   }
+266:                   // 键③：CandidateId 字节字典序终键（全序保证——同指标
+267:                   // 向量候选由此定序，确定性无平局）。
+268:                   return unique[lhs]->candidateId < unique[rhs]->candidateId;
+269:               });
+270: 
+271:     // ---- 第 5 步：组装结果（entries 按稳定序；双集合＝rank 0 子集与
+272:     //      全体，均保持 entries 序——§7.4 双标记显式呈现） ----
+273:     ParetoFrontResult result;
+274:     result.duplicatesDropped = dropped;
+275:     result.entries.reserve(n);
+276:     result.nondominatedIds.reserve(n);
+277:     result.feasibleIds.reserve(n);
+278:     for (const std::size_t i : order) {
+279:         ParetoFrontEntry entry;
+280:         entry.candidateId = unique[i]->candidateId;
+281:         entry.isBaseline = unique[i]->isBaseline;
+282:         entry.nondominationRank = rank[i];
+283:         entry.paretoNondominated = (rank[i] == 0);  // 第一前沿＝非支配集
+284:         result.entries.push_back(entry);
+285:         result.feasibleIds.push_back(entry.candidateId);
+286:         if (entry.paretoNondominated) {
+287:             result.nondominatedIds.push_back(entry.candidateId);
+288:         }
+289:     }
+290:     return result;
+291: }
+292: 
+293: }  // namespace sdurws::ird::optimization
+
+optimization.Generator.SeededLhsGenerator.strategyId
+29: // 内置策略一：seeded-lhs 适配器（§8.2 表第一行）
+30: // =====================================================================
+31: 
+32: std::string SeededLhsGenerator::strategyId() const
+33: {
+34:     // token 常量原址在 EvaluatorPorts.hpp（WP-20-T06 落位点零迁移——
+35:     // canonical 黄金钉扎与既有测试引用不动）。
+36:     return std::string(kStrategySeededLhs);
+37: }
+38: 
+39: GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)
+40: {
+
+optimization.Generator.SeededLhsGenerator.generateNextBatch
+36:     return std::string(kStrategySeededLhs);
+37: }
+38: 
+39: GenerationBatch SeededLhsGenerator::generateNextBatch(const GenerationContext& ctx)
+40: {
+41:     // 取消位先行（§12.2 @cancellation——空批＋cancelled，不产出部分批；
+42:     // 生成批是不可分的确定性整体）。
+43:     if (ctx.cancellationRequested) {
+44:         GenerationBatch batch;
+45:         batch.cancelled = true;
+46:         return batch;
+47:     }
+48:     // 单批策略代序语义：第 0 代产出全部邻域/采样候选；>0 代已无候选
+49:     // （多代推进消费归 §8.5/WP-21-T03——本批不伪造"再来一代"的语义）。
+50:     if (ctx.generationIndex > 0U) {
+51:         GenerationBatch batch;
+52:         batch.exhausted = true;
+53:         return batch;
+54:     }
+55:     // 候选批逐字节委托 WP-20-T06 生成函数（单一实现点——splitmix64/层置换/
+56:     // 采样域收缩/基线恒首全部在其内，本类零算法复制零行为漂移）。
+57:     GenerationBatch batch;
+58:     batch.candidates = generateSeededLhsCandidates(ctx.config);
+59:     batch.exhausted = true;  // 全批一次产出——单批策略
+60:     return batch;
+61: }
+62: 
+63: // =====================================================================
+64: // 内置策略二：baseline-perturb 邻域扰动（§8.2 表第二行）
+
+optimization.Generator.validateBaselinePerturbParams
+64: // 内置策略二：baseline-perturb 邻域扰动（§8.2 表第二行）
+65: // =====================================================================
+66: 
+67: void validateBaselinePerturbParams(const BaselinePerturbParams& params)
+68: {
+69:     // 检查序固定（确定性首错）；全部不静默修正（NFR-COR-03）。消息含实际
+70:     // 值与合法域（ERR-01 比较型定位纪律）。
+71:     // ① 有限性：NaN/Inf 无配置意义（浮点比较失去序语义）。
+72:     if (!std::isfinite(params.perturbRatio)) {
+73:         throw OptimizationError(
+74:             kOptInputInvalid,
+75:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio 非有限（实际值 "
+76:                 + std::to_string(params.perturbRatio)
+77:                 + "）——扰动比例须为有限数");
+78:     }
+79:     // ② 下界：0＝无扰动（批退化为基线自身重复——无搜索语义），负值方向
+80:     //    语义颠倒；合法域自正数起。
+81:     if (params.perturbRatio <= 0.0) {
+82:         throw OptimizationError(
+83:             kOptInputInvalid,
+84:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio="
+85:                 + std::to_string(params.perturbRatio)
+86:                 + "（合法域 (0, 0.04]——0 无扰动语义，负值非法）");
+87:     }
+88:     // ③ 上界：4× 默认封顶（0.04——REQUIREMENTS 附录 C《P-04 冻结数值表》
+89:     //    表①"工程策略可放宽上界 ±4%（4×默认封顶）"冻结档位；超档位配置
+90:     //    不静默接受）。
+91:     if (params.perturbRatio > kBaselinePerturbMaxRatio) {
+92:         throw OptimizationError(
+93:             kOptInputInvalid,
+94:             "OPT-INPUT-INVALID: baseline-perturb perturbRatio="
+95:                 + std::to_string(params.perturbRatio) + "（合法域 (0, 0.04]——"
+96:                 "上界为附录 C 表①冻结放宽档位 4×默认封顶）");
+97:     }
+98: }
+99: 
+100: BaselinePerturbGenerator::BaselinePerturbGenerator(BaselinePerturbParams params)
+101:     : m_params(params)
+
+optimization.Generator.BaselinePerturbGenerator.strategyId
+102: {
+103: }
+104: 
+105: std::string BaselinePerturbGenerator::strategyId() const
+106: {
+107:     return std::string(kStrategyBaselinePerturb);
+108: }
+109: 
+110: GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)
+111: {
+
+optimization.Generator.BaselinePerturbGenerator.generateNextBatch
+107:     return std::string(kStrategyBaselinePerturb);
+108: }
+109: 
+110: GenerationBatch BaselinePerturbGenerator::generateNextBatch(const GenerationContext& ctx)
+111: {
+112:     // 第 1 步：防御复验（配置面＋策略参数面——生成器是两者共同的消费入口；
+113:     // 绕过 validateConfiguration 直调本接口也拦截——最后防线，与
+114:     // generateSeededLhsCandidates/canonicalizeRunConfiguration 同款纪律）。
+115:     validateConfiguration(ctx.config);
+116:     validateBaselinePerturbParams(m_params);
+117: 
+118:     // 第 2 步：取消位（空批＋cancelled——§12.2 取消语义）。
+119:     if (ctx.cancellationRequested) {
+120:         GenerationBatch batch;
+121:         batch.cancelled = true;
+122:         return batch;
+123:     }
+124: 
+125:     // 第 3 步：代序（单批策略——邻域在第 0 代完整枚举）。
+126:     if (ctx.generationIndex > 0U) {
+127:         GenerationBatch batch;
+128:         batch.exhausted = true;
+129:         return batch;
+130:     }
+131: 
+132:     // 第 4 步：扰动维度集＝未锁定且授权的连续/量化绑定（§8.2"锁定集外
+133:     // 扰动"/OPT-02——锁定绑定出现在补丁即拒绝，生成域预先排除）；枚举/
+134:     // 离散器件维度不在扰动域（无连续邻域语义——±Δ 无定义；登记于头文件
+135:     // 类注）；bindingId 字典序＝确定性维度序。
+136:     std::vector<const VariableBinding*> dims;
+137:     dims.reserve(ctx.config.variables.size());
+138:     for (const auto& b : ctx.config.variables) {
+139:         if (b.locked || !b.authorized) {
+140:             continue;  // 锁定/未授权维度不扰动（§5.4——出现在补丁即拒绝）
+141:         }
+142:         if (b.kind == VariableKind::Continuous || b.kind == VariableKind::Quantized) {
+143:             dims.push_back(&b);
+144:         }
+145:     }
+146:     std::sort(dims.begin(), dims.end(),
+147:               [](const VariableBinding* a, const VariableBinding* b) {
+148:                   return a->bindingId < b->bindingId;
+149:               });
+150: 
+151:     GenerationBatch batch;
+152: 
+153:     // 第 5 步：基线候选恒为批首元素（§8.2"基线候选……总是生成并参与
+154:     // 评估"/OPT-11——空补丁有确定身份，label 不参与身份 I-OPT-8）。
+155:     CandidatePatch baseline;
+156:     baseline.label = "baseline";
+157:     batch.candidates.push_back(std::move(baseline));
+158: 
+159:     // 第 6 步：预算与邻域规模。非基线候选上限 n＝maxCandidates−1（§8.2
+160:     // "生成器受 OptimizationBudget 约束"；maxCandidates≥1 已校验无下溢）；
+161:     // 邻域总量＝2m（m 维各 ±Δ 一点）。n==0（预算仅基线）或 m==0（无连续/
+162:     // 量化授权维度）均为合法退化——批＝仅基线，exhausted 如实置位。
+163:     const std::uint32_t n = ctx.config.budget.maxCandidates - 1U;
+164:     const std::size_t m = dims.size();
+165:     if (n == 0U || m == 0U) {
+166:         batch.exhausted = true;
+167:         return batch;
+168:     }
+169: 
+170:     // 第 7~8 步：OFAT ±Δ 确定性轮转调度——第 i 个邻域候选取维度 v＝i mod m、
+171:     // 方向 sign＝第 0 轮（i/m==0）正向、第 1 轮负向；调度上限 2m（全部
+172:     // (维度,方向) 对）。逐点做合法性预检（有限/界内/正性词表位），不合法
+173:     // 方向跳过不生成（邻域枚举语义即"合法邻点"——跳过是采样设计而非静默
+174:     // 纠错，登记于头文件算法第 7 步）；收集满 n 个或调度耗尽即止。
+175:     std::uint32_t collected = 0;
+176:     for (std::uint32_t i = 0; i < 2U * m && collected < n; ++i) {
+177:         const VariableBinding& b = *dims[i % m];
+178:         const int sign = (i < m) ? 1 : -1;  // 第 0 轮 +Δ、第 1 轮 −Δ（轮转序）
+179: 
+180:         // 单步扰动幅度 Δ_v（§8.2 表第二行"步长/比例入 config"）：
+181:         //   Quantized→绑定 step（网格邻点——步长字面承载于 config.opt
+182:         //   variables 内）；Continuous→perturbRatio×行程（比例承载于装配期
+183:         //   配置面 BaselinePerturbParams，默认 0.01＝附录 C 表①冻结值）。
+184:         // step 语义由 VariableBinding 契约保证：Quantized 恒 >0（Continuous
+185:         // 恒 0 不进本分支）；量化绑定的防御位（step≤0）属研究定义非法，
+186:         // 交由补丁构造/绑定校验面拒绝，此处不重复判定（单一职责）。
+187:         const double delta = (b.kind == VariableKind::Quantized)
+188:                                  ? b.step
+189:                                  : m_params.perturbRatio * (b.upperBound - b.lowerBound);
+190:         const double value = b.defaultValue + sign * delta;
+191: 
+192:         // 合法性预检（三查——任一不过即跳过该方向）：
+193:         //   a) 有限：defaultValue/界值异常（NaN/Inf）时扰动值无配置语义；
+194:         //   b) 界内：[lowerBound, upperBound] 闭区间（越界方向不是邻点）；
+195:         //   c) 正性词表位：valueMustBePositive（I-MDL-11 传动比等——需求
+196:         //      原文值域硬约束）维度候选值须 >0。该位定义在**词表条目**上
+197:         //      （VariableDefinition——绑定结构无此字段），经 matchDefinition
+198:         //      查表；未知绑定查不到条目时不预判正性（补丁构造随后按研究
+199:         //      定义非法 fail-fast——两道防线各司其职）。
+200:         const bool finite = std::isfinite(value);
+201:         const bool inBounds = value >= b.lowerBound && value <= b.upperBound;
+202:         const VariableDefinition* def
+203:             = matchDefinition(b.bindingId, ctx.config.stage);
+204:         const bool positive = def == nullptr || !def->valueMustBePositive
+205:                               || value > 0.0;
+206:         if (!finite || !inBounds || !positive) {
+207:             continue;  // 该方向无合法邻点——跳过（采样设计，非静默纠错）
+208:         }
+209: 
+210:         // 第 8 步：单项补丁构造（OFAT——候选恰含一个绑定项；补丁 canonical
+211:         // 唯一编码层，量化对齐/排序/规范化复用 T03 单点）。构造抛出（如
+212:         // defaultValue 本身越界/正性矛盾——研究定义非法）按调用方错误
+213:         // fail-fast 传播，不跳过不吞（与 seeded-lhs 生成期口径一致）。
+214:         PatchItem item;
+215:         item.bindingId = b.bindingId;
+216:         item.scalarValue = value;
+217:         CandidatePatch patch = makeCandidatePatch(
+218:             ctx.config.variables, ctx.config.stage, {item},
+219:             "perturb-" + std::to_string(collected));
+220:         batch.candidates.push_back(std::move(patch));
+221:         ++collected;
+222:     }
+223: 
+224:     // 第 9 步：耗尽位——收集数不足预算即邻域已全部枚举（2m 对耗尽），
+225:     // 调用方无须再请求下一代（单批策略恒 exhausted；预算恰好收满时同样
+226:     // 置位——邻域没有更多候选）。
+227:     batch.exhausted = true;
+228:     return batch;
+229: }
+230: 
+231: // =====================================================================
+232: // 内置词表聚合与分派单点
+
+optimization.Generator.builtInStrategyIds
+232: // 内置词表聚合与分派单点
+233: // =====================================================================
+234: 
+235: const std::vector<std::string_view>& builtInStrategyIds()
+236: {
+237:     // 词表序＝卡面 §8.2 表行序（确定性）；内部静态表——进程生存期只读共享。
+238:     // 每个 token 都有真实实现类（上方两个 generateNextBatch 实现）——契约
+239:     // 测试逐 token 经 generateWithBuiltInStrategy 解析钉住（NFR-MNT-04
+240:     // "不预建空占位"的机器可断言面）。
+241:     static const std::vector<std::string_view> kVocabulary {
+242:         kStrategySeededLhs,
+243:         kStrategyBaselinePerturb,
+244:     };
+245:     return kVocabulary;
+246: }
+247: 
+248: GenerationBatch generateWithBuiltInStrategy(const std::string& strategyId,
+249:                                             const GenerationContext& ctx,
+
+optimization.Generator.generateWithBuiltInStrategy
+245:     return kVocabulary;
+246: }
+247: 
+248: GenerationBatch generateWithBuiltInStrategy(const std::string& strategyId,
+249:                                             const GenerationContext& ctx,
+250:                                             const BaselinePerturbParams& perturbParams)
+251: {
+252:     // 词表核对（与 validateConfiguration 检查⑨同源——同一 builtInStrategyIds
+253:     // 单点）：未登记 token 在此同样拒绝（直调本函数绕过配置校验的防线），
+254:     // 消息含已实现词表全文（ERR-01 定位纪律）。
+255:     const auto& vocab = builtInStrategyIds();
+256:     const bool registered = std::find(vocab.begin(), vocab.end(), strategyId)
+257:                             != vocab.end();
+258:     if (!registered) {
+259:         std::string vocabText;
+260:         for (const auto& v : vocab) {
+261:             if (!vocabText.empty()) {
+262:                 vocabText += "／";
+263:             }
+264:             vocabText += std::string(v);
+265:         }
+266:         throw OptimizationError(
+267:             kOptInputInvalid,
+268:             "OPT-INPUT-INVALID: strategyId=\"" + strategyId + "\" 未登记（已实现"
+269:             "策略词表：" + vocabText
+270:                 + "——新策略按 OPT-10 扩展点注册：实现 ICandidateGenerator＋词表"
+271:                   "登记随单元卡增量修订留痕）");
+272:     }
+273: 
+274:     // 分派（token 逐一比对——词表规模小，直排比对即确定性唯一路径）。
+275:     if (strategyId == std::string(kStrategySeededLhs)) {
+276:         return SeededLhsGenerator{}.generateNextBatch(ctx);
+277:     }
+278:     // baseline-perturb：携带调用方策略配置面（缺省＝冻结比例 0.01）。
+279:     return BaselinePerturbGenerator{perturbParams}.generateNextBatch(ctx);
+280: }
+281: 
+282: }  // namespace sdurws::ird::optimization
+
+trajectory.Planner.cancellationRequested
+103:     /// 委托调用方取消信号（policy §6.6 样本边界轮询的对端；双重判空——
+104:     /// 指针非空且信号对象有目标：空 function＝"不可取消"而非"请求取消"
+105:     /// ——std::bad_function_call 防线）。
+106:     bool cancellationRequested() const override
+107:     {
+108:         return m_cancel != nullptr && static_cast<bool>(*m_cancel) && (*m_cancel)();
+109:     }
+110: 
+111:     /// 恒存活（会话与请求同生命周期——见类注）。
+112:     bool alive() const override { return true; }
+
+trajectory.Planner.alive
+109:     }
+110: 
+111:     /// 恒存活（会话与请求同生命周期——见类注）。
+112:     bool alive() const override { return true; }
+113: 
+114: private:
+115:     /// 取消信号源（借用；不接管所有权——AGENTS §2.5 所有权标注）。
+
+trajectory.Planner.doSetLog
+155:     /// @brief 日志句柄注入（QConstraint 纯虚的空实现——本适配器零日志
+156:     /// 面适配：诊断产出归 policy 会话与评估器组装面，规划约束层不重复
+157:     /// 记录；NFR-MNT-03 单一权威）。
+158:     void doSetLog(rw::core::Log::Ptr) override {}
+159: 
+160:     /// @brief 单构型碰撞判定（QConstraint 契约的实现点——适配语义见类注）。
+161:     bool doInCollision(const rw::math::Q& q) const override
+
+trajectory.Planner.doInCollision
+158:     void doSetLog(rw::core::Log::Ptr) override {}
+159: 
+160:     /// @brief 单构型碰撞判定（QConstraint 契约的实现点——适配语义见类注）。
+161:     bool doInCollision(const rw::math::Q& q) const override
+162:     {
+163:         // 第一步：装配 SingleState 查询（kind 与样本数匹配契约——恰 1 个
+164:         // 构型且 pathParameters 为空，policy §6.2；违约由 evaluate 入口
+165:         // fail-fast——本适配器保证不触雷）。
+166:         policy::CollisionQuery query;
+167:         query.kind = policy::CollisionQueryKind::SingleState;
+168:         query.configurations = {q};
+169:         // stopAtFirstFinding＝筛选/淘汰场景（§6.2 字段语义——单构型查询
+170:         // 的对逐对查询可在首个发现即停；输出仍带 coverage）。
+171:         query.stopAtFirstFinding = true;
+172: 
+173:         // 第二步：直穿会话评估（会话构造后只读——并发只读安全由会话
+174:         // backendQueryMutex 保证，policy §9.3；本适配器零额外同步）。
+175:         const policy::CollisionEvaluation evaluation = m_session->evaluate(query, m_ctx);
+176: 
+177:         // 第三步：三态映射（仅"Completed＋Applicable＋finalized"可采信）。
+178:         if (evaluation.status == policy::CollisionEvaluationStatus::Completed
+179:             && evaluation.finalized
+180:             && evaluation.applicability == policy::ScopeApplicability::Applicable) {
+181:             for (const policy::CollisionFinding& finding : evaluation.findings) {
+182:                 // 仅 Collision 种类构成碰撞（MarginViolation 非碰撞——§7.4）。
+183:                 if (finding.kind == policy::CollisionFindingKind::Collision) {
+184:                     return true;  // 碰撞→剪枝（§10.3 流程图"碰撞→剪枝"）
+185:                 }
+186:             }
+187:             return false;  // 无碰撞发现→扩展继续
+188:         }
+189:         // 不可采信（finalized=false / EmptyScope / DisabledByPolicy）——
+190:         // 保守"碰撞"＋观测计数（KIN-05：绝不视为无碰撞）。
+191:         ++untrustedObserved;
+192:         return true;
+193:     }
+194: 
+195: private:
+196:     /// 碰撞会话（共享只读——④端口唯一碰撞权威）。
+
+trajectory.Planner.parsePlannerSelection
+232:  * （D-TRJ-5 数值零自设纪律的规划器侧形态）；缺键＝配置不完整＝调用方
+233:  * 违约，拒绝而不是猜。
+234:  */
+235: PlannerTuning parsePlannerSelection(const std::string& familyToken,
+236:                                     const std::map<std::string, std::string>& params)
+237: {
+238:     // 1. family 词表（§10.2 封闭词表——词表外拒绝，不猜测）。
+239:     if (familyToken != kTrjPlannerFamilyRrtConnect) {
+240:         throw TrajectoryError("trajectory/planner/selection-family",
+241:                               "规划器 family 不在登记词表（当前唯一实现值 "
+242:                               "rrt-connect），实际值: " + familyToken);
+243:     }
+244:     // 2. 参数键白名单（未知键拒绝——键集合封闭，§10.2"逐键登记"）。
+245:     for (const auto& entry : params) {
+246:         if (entry.first != kTrjPlannerParamExtend
+247:             && entry.first != kTrjPlannerParamEdgeResolution
+248:             && entry.first != kTrjPlannerParamCandidateAttempts) {
+249:             throw TrajectoryError("trajectory/planner/selection-param-key",
+250:                                   "规划器参数键不在白名单（extend / edge-resolution / "
+251:                                   "candidate-attempts），实际键: " + entry.first);
+252:         }
+253:     }
+254:     // 3. 逐键取值与合法域（三键必备——缺键拒绝，不补默认）。
+255:     PlannerTuning tuning;
+256:     const auto readDouble = [&](const char* key) {
+257:         const auto it = params.find(key);
+258:         if (it == params.end()) {
+259:             throw TrajectoryError("trajectory/planner/selection-param-missing",
+260:                                   "规划器参数缺键（三键必填）: " + std::string{key});
+261:         }
+262:         try {
+263:             const std::string& text = it->second;
+264:             // std::stod 消费前缀——校验"整串可解析"（尾随非法字符拒绝）。
+265:             std::size_t consumed = 0;
+266:             const double value = std::stod(text, &consumed);
+267:             if (consumed != text.size()) {
+268:                 throw std::invalid_argument("trailing");
+269:             }
+270:             return value;
+271:         } catch (const std::exception&) {
+272:             throw TrajectoryError("trajectory/planner/selection-param-value",
+273:                                   "规划器参数值不是合法数值: " + std::string{key}
+274:                                       + " = " + it->second);
+275:         }
+276:     };
+277:     tuning.extend = readDouble(kTrjPlannerParamExtend);
+278:     tuning.resolution = readDouble(kTrjPlannerParamEdgeResolution);
+279:     if (!(tuning.extend > 0.0) || !std::isfinite(tuning.extend)) {
+280:         throw TrajectoryError("trajectory/planner/selection-param-value",
+281:                               "规划器扩展步长 extend 必须为有限正数（rad|m），实际: "
+282:                                   + std::to_string(tuning.extend));
+283:     }
+284:     if (!(tuning.resolution > 0.0) || !std::isfinite(tuning.resolution)) {
+285:         throw TrajectoryError("trajectory/planner/selection-param-value",
+286:                               "规划器边检查分辨率 edge-resolution 必须为有限正数"
+287:                               "（rad|m），实际: " + std::to_string(tuning.resolution));
+288:     }
+289:     const double attemptsRaw = readDouble(kTrjPlannerParamCandidateAttempts);
+290:     if (!(attemptsRaw >= 1.0) || attemptsRaw != std::floor(attemptsRaw)
+291:         || attemptsRaw > static_cast<double>(std::numeric_limits<std::uint32_t>::max())) {
+292:         throw TrajectoryError("trajectory/planner/selection-param-value",
+293:                               "规划器候选轮数 candidate-attempts 必须为正整数（≥1），"
+294:                               "实际: " + std::to_string(attemptsRaw));
+295:     }
+296:     tuning.attempts = static_cast<std::uint32_t>(attemptsRaw);
+297:     return tuning;
+298: }
+299: 
+300: /**
+301:  * @brief 构型对与评价区间的公共校验（适配器/编排层共用——同一违约同一
+
+trajectory.Planner.validateConfigPairAndBounds
+307:  * 素材的归口是 PTP 层端点守卫 §7.4/V-03，本层重复产码会破坏唯一判定点
+308:  * 纪律）。
+309:  */
+310: void validateConfigPairAndBounds(const rw::math::Q& fromQ, const rw::math::Q& toQ,
+311:                                  const rw::math::Q& lowerBoundQ,
+312:                                  const rw::math::Q& upperBoundQ,
+313:                                  const char* errorTokenPrefix)
+314: {
+315:     const std::size_t dof = fromQ.size();
+316:     if (toQ.size() != dof || lowerBoundQ.size() != dof || upperBoundQ.size() != dof) {
+317:         throw TrajectoryError(errorTokenPrefix, "起终点构型与评价区间维度不一致");
+318:     }
+319:     for (std::size_t i = 0; i < dof; ++i) {
+320:         if (!(lowerBoundQ[i] < upperBoundQ[i])) {
+321:             throw TrajectoryError(errorTokenPrefix,
+322:                                   "评价区间逐轴必须 lower<upper，轴 " + std::to_string(i)
+323:                                       + " 实际: [" + std::to_string(lowerBoundQ[i]) + ", "
+324:                                       + std::to_string(upperBoundQ[i]) + "]");
+325:         }
+326:     }
+327:     for (std::size_t i = 0; i < dof; ++i) {
+328:         if (!std::isfinite(fromQ[i]) || !std::isfinite(toQ[i])) {
+329:             throw TrajectoryError(errorTokenPrefix,
+330:                                   "端点构型含非有限分量（rad|m），轴 "
+331:                                       + std::to_string(i));
+332:         }
+333:         if (fromQ[i] < lowerBoundQ[i] || fromQ[i] > upperBoundQ[i]
+334:             || toQ[i] < lowerBoundQ[i] || toQ[i] > upperBoundQ[i]) {
+335:             throw TrajectoryError(errorTokenPrefix,
+336:                                   "端点构型越出评价区间（调用方前置违约——§15.1），轴 "
+337:                                       + std::to_string(i));
+338:         }
+339:     }
+340: }
+341: 
+342: // =====================================================================
+343: // 内部辅助——路径采样与 PathSequence 复核（§10.3 直连/候选共用通道）
+
+trajectory.Planner.sampleStraightPath
+357:     std::vector<double> pathParameters;       ///< 逐样本 s∈[0,1]（等长）
+358: };
+359: 
+360: SampledPath sampleStraightPath(const rw::math::Q& fromQ, const rw::math::Q& toQ,
+361:                                double resolution)
+362: {
+363:     // 欧氏长度（逐轴混合计量 rad|m——与规划器度量同源口径，§6.4）。
+364:     double length = 0.0;
+365:     for (std::size_t i = 0; i < fromQ.size(); ++i) {
+366:         const double delta = toQ[i] - fromQ[i];
+367:         length += delta * delta;
+368:     }
+369:     length = std::sqrt(length);
+370:     // 分段数＝ceil(长度/分辨率)，下限 1（零长/极短段至少 1 段——样本数
+371:     // ≥2，端点必含）；上限防病态小分辨率把样本数撑爆（分辨率来自显式
+372:     // 配置，调用方对采样规模负责；此处仅防溢出级灾难）。
+373:     const double segmentCountReal = std::ceil(length / resolution);
+374:     const auto segmentCount = static_cast<std::size_t>(
+375:         std::min(std::max(segmentCountReal, 1.0), 1.0e6));
+376:     SampledPath sampled;
+377:     sampled.configurations.reserve(segmentCount + 1);
+378:     sampled.pathParameters.reserve(segmentCount + 1);
+379:     for (std::size_t i = 0; i <= segmentCount; ++i) {
+380:         const double s = static_cast<double>(i) / static_cast<double>(segmentCount);
+381:         // 关节空间逐轴线性插值（§7.3 同一几何语义——复用 interpolateJoint-
+382:         // Linear 保证"同语义同一实现点"；s∈[0,1] 由构造保证不越界）。
+383:         sampled.configurations.push_back(interpolateJointLinear(fromQ, toQ, s));
+384:         sampled.pathParameters.push_back(s);
+385:     }
+386:     return sampled;
+387: }
+388: 
+389: /**
+390:  * @brief PathSequence 复核结论（域内三态——与 CandidateReviewStatus 对齐）。
+
+trajectory.Planner.reviewPathSequence
+416:     std::vector<CandidateCollisionRecord> records;  ///< 碰撞淘汰明细（Collision 态非空）
+417: };
+418: 
+419: ReviewResult reviewPathSequence(const policy::CollisionEvaluationSession& session,
+420:                                 const AdapterCallContext& ctx,
+421:                                 const std::vector<rw::math::Q>& configurations,
+422:                                 const std::vector<double>& pathParameters)
+423: {
+424:     // 查询装配（PathSequence 契约：构型非空＋pathParameters 等长；无
+425:     // baseState＝场景基准状态——policy evaluate 侧取 WC 默认态）。
+426:     policy::CollisionQuery query;
+427:     query.kind = policy::CollisionQueryKind::PathSequence;
+428:     query.configurations = configurations;
+429:     query.pathParameters = pathParameters;
+430:     query.stopAtFirstFinding = true;  // 淘汰场景——首个发现即停
+431:     query.requestMinDistance = false; // 二值后端无距离能力（P-POL-11），不请求
+432: 
+433:     const policy::CollisionEvaluation evaluation = session.evaluate(query, ctx);
+434: 
+435:     ReviewResult result;
+436:     // 只有"Completed＋Applicable＋finalized"是可采信终态（§6.3 状态机）。
+437:     if (evaluation.status == policy::CollisionEvaluationStatus::Completed
+438:         && evaluation.finalized
+439:         && evaluation.applicability == policy::ScopeApplicability::Applicable) {
+440:         bool collided = false;
+441:         for (const policy::CollisionFinding& finding : evaluation.findings) {
+442:             if (finding.kind != policy::CollisionFindingKind::Collision) {
+443:                 continue;  // MarginViolation＝间距不足非碰撞（§7.4）——不淘汰
+444:             }
+445:             collided = true;
+446:             CandidateCollisionRecord record;
+447:             record.objectA = finding.objectA;  // policy 规范序 A<B（NFR-COR-05）
+448:             record.objectB = finding.objectB;
+449:             record.sampleIndex = finding.sampleIndex;
+450:             record.pathParameter = finding.pathParameter;  // PathSequence 必填（TRJ-04）
+451:             result.records.push_back(std::move(record));
+452:         }
+453:         // coverage 完整性说明（§10.4"coverage 完整"）：段内样本的全对查询
+454:         // 事实由 policy coverage 记录承载；几何缺口（pairsWithGeometry<
+455:         // pairsInScope）policy 侧已以 POLICY-CLL-GEOMETRY-MISSING 显式化
+456:         // （走 Failed→DataInsufficient 分支），此处不重复判定。
+457:         result.outcome = collided ? ReviewOutcome::Collision : ReviewOutcome::Passed;
+458:         return result;
+459:     }
+460:     result.outcome = ReviewOutcome::DataInsufficient;  // 不可采信——KIN-05
+461:     return result;
+462: }
+463: 
+464: // =====================================================================
+465: // 内部辅助——稳定选择序四键（§10.4"延续性→裕量→路径长度→候选序号"）
+
+trajectory.Planner.maxAdjacentStep
+466: // =====================================================================
+467: 
+468: /// 相邻路点逐轴最大 |Δq|（延续性键——步进越平缓越好，升序；rad|m）。
+469: double maxAdjacentStep(const std::vector<rw::math::Q>& configurations)
+470: {
+471:     double maxStep = 0.0;
+472:     for (std::size_t i = 1; i < configurations.size(); ++i) {
+473:         for (std::size_t j = 0; j < configurations[i].size(); ++j) {
+474:             maxStep = std::max(maxStep, std::abs(configurations[i][j] - configurations[i - 1][j]));
+475:         }
+476:     }
+477:     return maxStep;
+478: }
+479: 
+480: /// 关节空间路径长度 Σ|Δq|（路径长度键——升序；rad|m 逐轴混合计量）。
+481: double pathJointLength(const std::vector<rw::math::Q>& configurations)
+
+trajectory.Planner.pathJointLength
+478: }
+479: 
+480: /// 关节空间路径长度 Σ|Δq|（路径长度键——升序；rad|m 逐轴混合计量）。
+481: double pathJointLength(const std::vector<rw::math::Q>& configurations)
+482: {
+483:     double length = 0.0;
+484:     for (std::size_t i = 1; i < configurations.size(); ++i) {
+485:         for (std::size_t j = 0; j < configurations[i].size(); ++j) {
+486:             length += std::abs(configurations[i][j] - configurations[i - 1][j]);
+487:         }
+488:     }
+489:     return length;
+490: }
+491: 
+492: /// 候选最小归一化关节裕量（裕量键——降序；有界轴 margin=2·min(q−lo, hi−q)/
+493: /// (hi−lo)∈[0,1]，无界轴跳过；全无界＝+∞ 取最大——D-KIN-6 同源口径）。
+
+trajectory.Planner.minNormalizedMargin
+491: 
+492: /// 候选最小归一化关节裕量（裕量键——降序；有界轴 margin=2·min(q−lo, hi−q)/
+493: /// (hi−lo)∈[0,1]，无界轴跳过；全无界＝+∞ 取最大——D-KIN-6 同源口径）。
+494: double minNormalizedMargin(const std::vector<rw::math::Q>& configurations,
+495:                            const rw::math::Q& lowerBoundQ, const rw::math::Q& upperBoundQ)
+496: {
+497:     double minimum = std::numeric_limits<double>::infinity();
+498:     for (const rw::math::Q& q : configurations) {
+499:         for (std::size_t j = 0; j < q.size(); ++j) {
+500:             const double range = upperBoundQ[j] - lowerBoundQ[j];
+501:             if (!(range > 0.0) || !std::isfinite(range)) {
+502:                 continue;  // 无界/退化轴不参与（全无界时 minimum 保持 +∞）
+503:             }
+504:             const double margin =
+505:                 2.0 * std::min(q[j] - lowerBoundQ[j], upperBoundQ[j] - q[j]) / range;
+506:             minimum = std::min(minimum, margin);
+507:         }
+508:     }
+509:     return minimum;
+510: }
+511: 
+512: /**
+513:  * @brief 候选选择序严格弱序（四键全序——见 makePathPlannerAdapter
+
+trajectory.Planner.candidatePreferred
+513:  * @brief 候选选择序严格弱序（四键全序——见 makePathPlannerAdapter
+514:  *        实现注；NFR-COR-02 全序可复现）。
+515:  */
+516: bool candidatePreferred(const PathCandidate& lhs, const PathCandidate& rhs,
+517:                         const rw::math::Q& lowerBoundQ, const rw::math::Q& upperBoundQ)
+518: {
+519:     // 键 1 延续性：maxAdjacentStep 升序。
+520:     const double stepL = maxAdjacentStep(lhs.configurations);
+521:     const double stepR = maxAdjacentStep(rhs.configurations);
+522:     if (stepL != stepR) { return stepL < stepR; }
+523:     // 键 2 裕量：minNormalizedMargin 降序（+∞ 优先）。
+524:     const double marginL = minNormalizedMargin(lhs.configurations, lowerBoundQ, upperBoundQ);
+525:     const double marginR = minNormalizedMargin(rhs.configurations, lowerBoundQ, upperBoundQ);
+526:     if (marginL != marginR) { return marginL > marginR; }
+527:     // 键 3 路径长度：升序。
+528:     const double lengthL = pathJointLength(lhs.configurations);
+529:     const double lengthR = pathJointLength(rhs.configurations);
+530:     if (lengthL != lengthR) { return lengthL < lengthR; }
+531:     // 键 4 候选序号：升序兜底（全序保证）。
+532:     return lhs.candidateIndex < rhs.candidateIndex;
+533: }
+534: 
+535: // =====================================================================
+536: // 内部辅助——失败素材构造（TRJ-06 定位载体；phase 恒 plan-avoid）
+
+trajectory.Planner.makeAvoidFailure
+540:  * @brief 构造避障失败素材（FailedSegmentRecord——ERR-01 字段齐备：中文
+541:  *        原因与建议动作必填；reasonToken 恒取 DiagCodes 在册常量）。
+542:  */
+543: FailedSegmentRecord makeAvoidFailure(std::uint32_t segmentIndex,
+544:                                      const std::string& reasonToken,
+545:                                      const std::string& cause,
+546:                                      const std::string& recommendedAction)
+547: {
+548:     FailedSegmentRecord record;
+549:     record.segmentIndex = segmentIndex;
+550:     record.phaseToken = kPhasePlanAvoid;  // §14.1.6 phase 词表（TrjTypes 常量）
+551:     record.reasonToken = reasonToken;
+552:     record.cause = cause;
+553:     record.recommendedAction = recommendedAction;
+554:     return record;
+555: }
+556: 
+557: // =====================================================================
+558: // §15.5 唯一产品实现——PathPlannerAdapterImpl（sdurw_pathplanners 消费）
+
+trajectory.Planner.search
+577:  */
+578: class PathPlannerAdapterImpl final : public IPathPlannerAdapter {
+579: public:
+580:     PlanSearchResult search(const PlannerSearchRequest& request) override
+581:     {
+582:         // ---------------------------------------------------------------
+583:         // 第一步：前置校验（调用方契约违约 fail-fast——§15.5 前置逐项）。
+584:         // ---------------------------------------------------------------
+585:         validateConfigPairAndBounds(request.fromQ, request.toQ, request.lowerBoundQ,
+586:                                     request.upperBoundQ,
+587:                                     "trajectory/planner/config-pair");
+588:         if (request.workCell == nullptr) {
+589:             throw TrajectoryError("trajectory/planner/view-missing",
+590:                                   "runtime 快照只读视图缺失（WorkCell/Device 零自建"
+591:                                   "——§10.1，调用方契约违约）");
+592:         }
+593:         if (request.deviceRuntimeName.empty()) {
+594:             throw TrajectoryError("trajectory/planner/device-name",
+595:                                   "设备运行时名为空（⑥端口解析产物透传——R-4）");
+596:         }
+597:         if (request.session == nullptr) {
+598:             throw TrajectoryError("trajectory/planner/session-missing",
+599:                                   "policy 碰撞会话缺失（R-5 唯一碰撞权威——适配器"
+600:                                   "恒要求会话，跳过检查的语义在编排层承载）");
+601:         }
+602:         if (!(request.timeBudgetS > 0.0) || !std::isfinite(request.timeBudgetS)) {
+603:             throw TrajectoryError("trajectory/planner/time-budget",
+604:                                   "时间预算必须为有限正数（s），实际: "
+605:                                       + std::to_string(request.timeBudgetS));
+606:         }
+607:         if (request.seed == 0) {
+608:             throw TrajectoryError("trajectory/planner/seed",
+609:                                   "规划种子必须为正（0 非法——I-KIN-4 同款拒绝，"
+610:                                   "NFR-COR-02 种子纪律）");
+611:         }
+612:         const PlannerTuning tuning =
+613:             parsePlannerSelection(request.plannerFamilyToken, request.plannerParams);
+614: 
+615:         // ---------------------------------------------------------------
+616:         // 第二步：种子化全局随机源（§15.5"种子化规划器"——rw 规划器的随机
+617:         // 性经进程级 Math::seed 约束；uint64 种子截断为 unsigned 的映射是
+618:         // 确定性的（同种子同截断），不破坏 NFR-COR-02；并发 search 的种
+619:         // 子互扰归装配面线程约束——评估器 SingleThread）。
+620:         // ---------------------------------------------------------------
+621:         rw::math::Math::seed(static_cast<unsigned>(request.seed));
+622: 
+623:         // ---------------------------------------------------------------
+624:         // 第三步：定位设备（只读视图查询——名称为⑥端口解析产物透传；
+625:         // 未命中＝调用方违约 fail-fast，不猜测名称——R-4/ARC-04）。
+626:         // ---------------------------------------------------------------
+627:         const rw::core::Ptr<const rw::models::SerialDevice> device =
+628:             request.workCell->findDevice(request.deviceRuntimeName);
+629:         if (device.isNull()) {
+630:             throw TrajectoryError("trajectory/planner/device-unresolved",
+631:                                   "设备在快照只读视图中不可解析: "
+632:                                       + request.deviceRuntimeName);
+633:         }
+634:         const std::size_t dof = device->getDOF();
+635:         if (request.fromQ.size() != dof) {
+636:             throw TrajectoryError("trajectory/planner/dof-mismatch",
+637:                                   "构型维度与设备自由度不一致：构型 "
+638:                                       + std::to_string(request.fromQ.size()) + "，设备 "
+639:                                       + std::to_string(dof));
+640:         }
+641: 
+642:         // ---------------------------------------------------------------
+643:         // 第四步：构造碰撞约束/采样器/规划器（装配序见类注；规划器局部
+644:         // 对象——每次 search 独立，无跨调用状态）。
+645:         // ---------------------------------------------------------------
+646:         const AdapterCallContext ctx(&request.cancel);
+647:         // policy 会话适配约束（rw::core::ownedPtr 接管生命周期；合并约束
+648:         // 持有其 Ptr——存活期覆盖规划器）。
+649:         rw::core::Ptr<PolicySessionQConstraint> policyConstraint =
+650:             rw::core::ownedPtr(new PolicySessionQConstraint(request.session, &request.cancel));
+651:         // 设备 bounds 约束（编译产物权威限位——构型守卫与采样盒同源）。
+652:         rw::core::Ptr<rw::pathplanning::QConstraint> boundsConstraint =
+653:             rw::pathplanning::QConstraint::makeBounds(device->getBounds());
+654:         // 合并（碰撞＋限位双约束——构型与边都受限）。
+655:         rw::core::Ptr<rw::pathplanning::QConstraint> mergedConstraint =
+656:             rw::pathplanning::QConstraint::makeMerged(policyConstraint, boundsConstraint);
+657:         // 逐轴欧氏度量（rad|m 混合计量——与本域路径长度/选择序同口径）。
+658:         const rw::math::QMetric::Ptr metric =
+659:             rw::math::MetricFactory::makeEuclidean<rw::math::Q>();
+660:         // 边约束（直线插值离散检查——分辨率＝edge-resolution，§10.2）。
+661:         const rw::pathplanning::QEdgeConstraint::Ptr edge =
+662:             rw::pathplanning::QEdgeConstraint::make(mergedConstraint, metric,
+663:                                                     tuning.resolution);
+664:         // 规划约束（构型＋边）。
+665:         const rw::pathplanning::PlannerConstraint plannerConstraint =
+666:             rw::pathplanning::PlannerConstraint::make(mergedConstraint, edge);
+667:         // 约束采样器（均匀采样设备 bounds，再经合并约束过滤——采样失败
+668:         // 返回空 Q，RRT 内部重试）。
+669:         const rw::pathplanning::QSampler::Ptr sampler =
+670:             rw::pathplanning::QSampler::makeConstrained(
+671:                 rw::pathplanning::QSampler::makeUniform(device->getBounds()),
+672:                 mergedConstraint);
+673:         // RRT-Connect 规划器（黄金算例锁定选型——词表注释）。
+674:         const rw::pathplanning::QToQPlanner::Ptr planner =
+675:             rwlibs::pathplanners::RRTPlanner::makeQToQPlanner(
+676:                 plannerConstraint, sampler, metric, tuning.extend,
+677:                 rwlibs::pathplanners::RRTPlanner::RRTConnect);
+678: 
+679:         // ---------------------------------------------------------------
+680:         // 第五步：K 轮候选循环（预算先到先停；取消轮边界轮询——§15.1）。
+681:         // 每轮：query 产出一条候选路径→立即 PathSequence 复核→收集。
+682:         // ---------------------------------------------------------------
+683:         PlanSearchResult result;
+684:         SearchExhaustedRecord exhaustedRecord;
+685:         // 墙钟账目：start/deadline 双锚——预算判定用 deadline，消耗账目
+686:         // 用 start（SearchExhaustedRecord.consumedBudgetS 的如实来源）。
+687:         const auto startClock = std::chrono::steady_clock::now();
+688:         const auto deadline = startClock
+689:             + std::chrono::duration_cast<std::chrono::steady_clock::duration>(
+690:                 std::chrono::duration<double>(request.timeBudgetS));
+691:         bool canceled = false;
+692:         bool plannerError = false;
+693:         std::string plannerErrorCause;
+694: 
+695:         for (std::uint32_t round = 0; round < tuning.attempts; ++round) {
+696:             // 取消轮询（轮边界——命中立即停止；取消不是错误，零错误素材）。
+697:             if (request.cancel && request.cancel()) {
+698:                 canceled = true;
+699:                 break;
+700:             }
+701:             // 剩余预算（多轮共享总预算——先到先停，§10.3 预算传递）。
+702:             const double remainingS =
+703:                 std::chrono::duration<double>(deadline - std::chrono::steady_clock::now())
+704:                     .count();
+705:             if (!(remainingS > 0.0)) {
+706:                 break;  // 预算耗尽——按搜索未果收尾
+707:             }
+708:             // 一轮规划（rw 异常就地转译——不吞、不逃逸，§15.5 错误行）。
+709:             rw::trajectory::QPath plannedPath;
+710:             bool found = false;
+711:             try {
+712:                 found = planner->query(request.fromQ, request.toQ, plannedPath, remainingS);
+713:             } catch (const rw::core::Exception& e) {
+714:                 // RT-ROBWORK-ERROR 转译登记（runtime translateRobWorkError
+715:                 // 同款不吞异常——本域归 TRJ 素材轨，原文入 cause）。
+716:                 plannerError = true;
+717:                 plannerErrorCause = e.getMessage().getText();
+718:                 break;
+719:             } catch (const std::exception& e) {
+720:                 plannerError = true;
+721:                 plannerErrorCause = e.what();
+722:                 break;
+723:             }
+724:             exhaustedRecord.attemptedCandidates = round + 1;
+725: 
+726:             if (!found || plannedPath.size() < 2) {
+727:                 continue;  // 本轮未产出（预算内未找到/退化输出）——下一轮
+728:             }
+729:             // 防御核对：首末点必须与请求端点一致（规划器契约；不一致的
+730:             // 输出按本轮无效丢弃——不进入复核，证据账目照实）。
+731:             const double endpointsEps = tuning.resolution;  // 分辨率量级容差
+732:             const rw::math::Q frontError = plannedPath.front() - request.fromQ;
+733:             const rw::math::Q backError = plannedPath.back() - request.toQ;
+734:             bool endpointsMatch = frontError.norm2() <= endpointsEps
+735:                                   && backError.norm2() <= endpointsEps;
+736:             if (!endpointsMatch) {
+737:                 continue;  // 丢弃本轮输出（鲁棒性守卫——不计为候选）
+738:             }
+739: 
+740:             // 候选复核采样协议：规划器输出路点全量（密度由 extend/edge-
+741:             // resolution 间接决定——进身份）；pathParameters 均匀 s=i/(n-1)
+742:             // （§10.3 等长约定）。
+743:             const std::size_t sampleCount = plannedPath.size();
+744:             std::vector<double> candidateParams(sampleCount);
+745:             for (std::size_t i = 0; i < sampleCount; ++i) {
+746:                 candidateParams[i] = sampleCount == 1
+747:                                          ? 0.0
+748:                                          : static_cast<double>(i)
+749:                                                / static_cast<double>(sampleCount - 1);
+750:             }
+751:             const ReviewResult review = reviewPathSequence(
+752:                 *request.session, ctx, plannedPath, candidateParams);
+753: 
+754:             // 候选入册（逐条结果入证据——§10.4"K 与逐条结果入证据"）。
+755:             PathCandidate candidate;
+756:             candidate.candidateIndex = static_cast<std::uint32_t>(result.candidates.size());
+757:             candidate.configurations = plannedPath;
+758:             candidate.pathParameters = candidateParams;
+759:             switch (review.outcome) {
+760:             case ReviewOutcome::Passed:
+761:                 candidate.reviewStatus = CandidateReviewStatus::Passed;
+762:                 break;
+763:             case ReviewOutcome::Collision:
+764:                 candidate.reviewStatus = CandidateReviewStatus::Collision;
+765:                 candidate.collisionRecords = review.records;
+766:                 exhaustedRecord.candidateRecords.insert(
+767:                     exhaustedRecord.candidateRecords.end(), review.records.begin(),
+768:                     review.records.end());
+769:                 break;
+770:             case ReviewOutcome::DataInsufficient:
+771:                 candidate.reviewStatus = CandidateReviewStatus::DataInsufficient;
+772:                 break;
+773:             }
+774:             result.candidates.push_back(std::move(candidate));
+775:         }
+776:         exhaustedRecord.consumedBudgetS =
+777:             std::chrono::duration<double>(std::chrono::steady_clock::now() - startClock)
+778:                 .count();
+779: 
+780:         // ---------------------------------------------------------------
+781:         // 第六步：结局归类（四态——PlanSearchResult 状态—字段联动契约）。
+782:         // ---------------------------------------------------------------
+783:         if (plannerError) {
+784:             result.status = PlanSearchStatus::PlannerError;
+785:             result.failure = makeAvoidFailure(
+786:                 0xFFFFFFFFu, std::string{kTrjNoPath},
+787:                 "避障搜索中规划器异常（rw 异常转译登记）: " + plannerErrorCause,
+788:                 "检查场景几何与策略配置后重试；若持续出现请登记诊断");
+789:             return result;
+790:         }
+791:         if (canceled) {
+792:             result.status = PlanSearchStatus::Canceled;  // 取消不是错误（UX-03）
+793:             if (!result.candidates.empty()) {
+794:                 result.exhausted = exhaustedRecord;  // 已消耗账目如实携带
+795:             }
+796:             return result;
+797:         }
+798:         // 稳定选择序：在通过候选中取最优（四键全序——选择序实现注）。
+799:         std::optional<std::size_t> adopted;
+800:         for (std::size_t i = 0; i < result.candidates.size(); ++i) {
+801:             if (result.candidates[i].reviewStatus != CandidateReviewStatus::Passed) {
+802:                 continue;
+803:             }
+804:             if (!adopted.has_value()
+805:                 || candidatePreferred(result.candidates[i], result.candidates[*adopted],
+806:                                       request.lowerBoundQ, request.upperBoundQ)) {
+807:                 adopted = i;
+808:             }
+809:         }
+810:         if (adopted.has_value()) {
+811:             result.status = PlanSearchStatus::Found;
+812:             result.adoptedIndex = adopted;
+813:             return result;
+814:         }
+815:         // 无通过候选——搜索未果（素材轨，不判不可行）。
+816:         result.status = PlanSearchStatus::BudgetExhausted;
+817:         result.exhausted = exhaustedRecord;
+818:         return result;
+819:     }
+820: };
+821: 
+822: }  // namespace
+
+trajectory.Planner.makePathPlannerAdapter
+825: // 唯一构造入口（§15.5 形态行——makePathPlannerAdapter）
+826: // =====================================================================
+827: 
+828: std::unique_ptr<IPathPlannerAdapter> makePathPlannerAdapter()
+829: {
+830:     return std::make_unique<PathPlannerAdapterImpl>();
+831: }
+832: 
+833: // =====================================================================
+834: // §10.4 避障重规划编排（planPtpWithObstacleAvoidance）
+
+trajectory.Planner.planPtpWithObstacleAvoidance
+834: // §10.4 避障重规划编排（planPtpWithObstacleAvoidance）
+835: // =====================================================================
+836: 
+837: AvoidancePlanResult planPtpWithObstacleAvoidance(const AvoidancePlanRequest& request,
+838:                                                  IPathPlannerAdapter& adapter)
+839: {
+840:     // ---------------------------------------------------------------
+841:     // 第一步：前置校验（fail-fast——AvoidancePlanRequest 前置逐项；选型
+842:     // 复用适配器同款解析器，保证两层错误面一致）。
+843:     // ---------------------------------------------------------------
+844:     validateConfigPairAndBounds(request.startQ, request.endQ, request.lowerBoundQ,
+845:                                 request.upperBoundQ, "trajectory/avoid/config-pair");
+846:     if (!(request.constraint.limitsScaleFactor > 0.0)
+847:         || request.constraint.limitsScaleFactor > 1.0
+848:         || !std::isfinite(request.constraint.limitsScaleFactor)) {
+849:         throw TrajectoryError("trajectory/avoid/constraint",
+850:                               "限值使用比例必须在 (0,1]，实际: "
+851:                                   + std::to_string(request.constraint.limitsScaleFactor));
+852:     }
+853:     if (!(request.constraint.cartesianSampleStep > 0.0)
+854:         || !std::isfinite(request.constraint.cartesianSampleStep)) {
+855:         throw TrajectoryError("trajectory/avoid/constraint",
+856:                               "采样步长必须为有限正数（m），实际: "
+857:                                   + std::to_string(request.constraint.cartesianSampleStep));
+858:     }
+859:     if (!request.tcpRef.isValid()) {
+860:         throw TrajectoryError("trajectory/avoid/tcp-ref",
+861:                               "tcpRef 必须为合法对象身份（§6.3 必填）");
+862:     }
+863:     if (request.endKind == WaypointKind::TaskPoint && !request.sourceTaskPoint.has_value()) {
+864:         throw TrajectoryError("trajectory/avoid/source-task-point",
+865:                               "endKind==TaskPoint 时 sourceTaskPoint 必填（NFR-COR-04）");
+866:     }
+867:     if (request.endKind != WaypointKind::TaskPoint && request.sourceTaskPoint.has_value()) {
+868:         throw TrajectoryError("trajectory/avoid/source-task-point",
+869:                               "endKind 非 TaskPoint 时 sourceTaskPoint 必须为空（防悬空"
+870:                               "附件——身份面同语义同字节纪律）");
+871:     }
+872:     if (request.startKind == WaypointKind::TaskPoint
+873:         && !request.startSourceTaskPoint.has_value()) {
+874:         throw TrajectoryError("trajectory/avoid/start-source-task-point",
+875:                               "startKind==TaskPoint 时 startSourceTaskPoint 必填");
+876:     }
+877:     if (request.startKind != WaypointKind::TaskPoint
+878:         && request.startSourceTaskPoint.has_value()) {
+879:         throw TrajectoryError("trajectory/avoid/start-source-task-point",
+880:                               "startKind 非 TaskPoint 时 startSourceTaskPoint 必须为空");
+881:     }
+882:     // 会话/视图一致性（collisionCheckApplicable 是唯一开关——带会话却
+883:     // 跳过检查（或反之）的双口径在结构上禁止）。
+884:     if (request.constraint.collisionCheckApplicable) {
+885:         if (request.policySession == nullptr || request.workCell == nullptr
+886:             || request.deviceRuntimeName.empty()) {
+887:             throw TrajectoryError("trajectory/avoid/collision-wiring",
+888:                                   "碰撞检查适用时 policy 会话/快照视图/设备名必须"
+889:                                   "齐备（R-5 唯一碰撞权威）");
+890:         }
+891:     } else if (request.policySession != nullptr || request.workCell != nullptr) {
+892:         throw TrajectoryError("trajectory/avoid/collision-wiring",
+893:                               "碰撞检查不适用时不得携带会话/视图（防双口径——唯一"
+894:                               "开关＝constraint.collisionCheckApplicable）");
+895:     }
+896:     if (!(request.timeBudgetS > 0.0) || !std::isfinite(request.timeBudgetS)) {
+897:         throw TrajectoryError("trajectory/avoid/time-budget",
+898:                               "时间预算必须为有限正数（s），实际: "
+899:                                   + std::to_string(request.timeBudgetS));
+900:     }
+901:     if (request.seed == 0) {
+902:         throw TrajectoryError("trajectory/avoid/seed",
+903:                               "规划种子必须为正（0 非法——I-KIN-4 同款拒绝）");
+904:     }
+905:     const PlannerTuning tuning =
+906:         parsePlannerSelection(request.plannerFamilyToken, request.plannerParams);
+907: 
+908:     AvoidancePlanResult outcome;
+909:     outcome.segment.segmentIndex = request.segmentIndex;
+910:     outcome.segment.spaceType = SegmentSpaceType::JointLinear;
+911:     outcome.segment.tcpRef = request.tcpRef;
+912:     outcome.segment.frameRef = request.frameRef;
+913:     outcome.segment.constraint = request.constraint;
+914:     outcome.segment.sourceTaskPoint = request.sourceTaskPoint;
+915: 
+916:     // ---------------------------------------------------------------
+917:     // 第二步：取消轮询（任何计算前——取消不是错误，零素材）。
+918:     // ---------------------------------------------------------------
+919:     if (request.cancel && request.cancel()) {
+920:         outcome.status = AvoidanceStatus::Canceled;
+921:         return outcome;
+922:     }
+923: 
+924:     // ---------------------------------------------------------------
+925:     // 第三步：碰撞检查不适用 → 直连采纳（V13-01 同款唯一开关语义：策略
+926:     // 未启用碰撞＝碰撞检查不在范围，非降级；段约束标记自明）。
+927:     // ---------------------------------------------------------------
+928:     if (!request.constraint.collisionCheckApplicable) {
+929:         outcome.status = AvoidanceStatus::Ok;
+930:         outcome.directPathAdopted = true;
+931:         // 几何构造：两端点路点（JointLinear 逐轴线性语义——§7.3；中间无
+932:         // Via 点）。
+933:         Waypoint start;
+934:         start.kind = request.startKind;
+935:         start.segmentIndex = request.segmentIndex;
+936:         start.q = request.startQ;
+937:         start.sourceTaskPoint = request.startSourceTaskPoint;
+938:         Waypoint end;
+939:         end.kind = request.endKind;
+940:         end.segmentIndex = request.segmentIndex;
+941:         end.q = request.endQ;
+942:         end.sourceTaskPoint = request.sourceTaskPoint;
+943:         outcome.segment.waypoints = {start, end};
+944:         double length = 0.0;
+945:         for (std::size_t i = 0; i < request.startQ.size(); ++i) {
+946:             length += std::abs(request.endQ[i] - request.startQ[i]);
+947:         }
+948:         outcome.segment.pathLengthJoint = length;
+949:         outcome.segment.pathLengthTcp = 0.0;  // FK 派生观察不计算——恒 0 不冒充
+950:         validateTrajectorySegment(outcome.segment);  // 段构造保证的自证
+951:         return outcome;
+952:     }
+953: 
+954:     // ---------------------------------------------------------------
+955:     // 第四步：直连候选筛查（§10.4 流程图第一分支——按 edge-resolution
+956:     // 均匀采样，一次 PathSequence 查询；与候选复核同一会话通道，AT-19）。
+957:     // ---------------------------------------------------------------
+958:     const AdapterCallContext ctx(&request.cancel);
+959:     const SampledPath direct = sampleStraightPath(request.startQ, request.endQ,
+960:                                                   tuning.resolution);
+961:     const ReviewResult directReview =
+962:         reviewPathSequence(*request.policySession, ctx, direct.configurations,
+963:                            direct.pathParameters);
+964:     if (directReview.outcome == ReviewOutcome::DataInsufficient) {
+965:         // 直连复核不可采信（含取消到达——policy 样本边界取消）→ 不当作
+966:         // 碰撞淘汰（KIN-05）；取消观测直接命中的情形归取消语义。
+967:         if (request.cancel && request.cancel()) {
+968:             outcome.status = AvoidanceStatus::Canceled;
+969:             return outcome;
+970:         }
+971:         // 非取消的不可采信（Failed/EmptyScope/禁用）——归 PlannerError 面
+972:         // （环境类失败素材；绝不当"无碰撞直连"采纳）。
+973:         outcome.status = AvoidanceStatus::PlannerError;
+974:         outcome.failure = makeAvoidFailure(
+975:             request.segmentIndex, std::string{kTrjRecheckDataInsufficient},
+976:             "直连路径筛查不可采信（碰撞评估未产生终态结论——证据缺失不当作"
+977:             "无碰撞，KIN-05）",
+978:             "检查策略启用状态与碰撞几何清单后重试");
+979:         return outcome;
+980:     }
+981: 
+982:     auto buildSegment = [&](const std::vector<rw::math::Q>& configurations) {
+983:         // 段几何：起点＋中间 Via 点＋终点（避障候选的中间路点为规划器
+984:         // 引入——WaypointKind::Via，非必经状态，C8 语义）。
+985:         outcome.segment.waypoints.clear();
+986:         Waypoint start;
+987:         start.kind = request.startKind;
+988:         start.segmentIndex = request.segmentIndex;
+989:         start.q = request.startQ;
+990:         start.sourceTaskPoint = request.startSourceTaskPoint;
+991:         outcome.segment.waypoints.push_back(start);
+992:         for (std::size_t i = 1; i + 1 < configurations.size(); ++i) {
+993:             Waypoint via;
+994:             via.kind = WaypointKind::Via;
+995:             via.segmentIndex = request.segmentIndex;
+996:             via.q = configurations[i];
+997:             outcome.segment.waypoints.push_back(via);
+998:         }
+999:         Waypoint end;
+1000:         end.kind = request.endKind;
+1001:         end.segmentIndex = request.segmentIndex;
+1002:         end.q = configurations.back();
+1003:         end.sourceTaskPoint = request.sourceTaskPoint;
+1004:         outcome.segment.waypoints.push_back(end);
+1005:         double length = 0.0;
+1006:         for (std::size_t i = 1; i < configurations.size(); ++i) {
+1007:             for (std::size_t j = 0; j < configurations[i].size(); ++j) {
+1008:                 length += std::abs(configurations[i][j] - configurations[i - 1][j]);
+1009:             }
+1010:         }
+1011:         outcome.segment.pathLengthJoint = length;
+1012:         outcome.segment.pathLengthTcp = 0.0;  // FK 派生观察不计算
+1013:     };
+1014: 
+1015:     if (directReview.outcome == ReviewOutcome::Passed) {
+1016:         // 直连无碰撞 → 采纳为该段路径（§10.4 流程图——不进搜索）。
+1017:         // 段几何只落两端点：JointLinear 段的几何＝逐轴线性（§7.3），筛查
+1018:         // 用的中间采样点只是碰撞检查的样本（不进段路点——共线冗余点会
+1019:         // 污染段结构语义与后续平滑/时间化的输入面）。
+1020:         outcome.status = AvoidanceStatus::Ok;
+1021:         outcome.directPathAdopted = true;
+1022:         buildSegment({direct.configurations.front(), direct.configurations.back()});
+1023:         validateTrajectorySegment(outcome.segment);
+1024:         return outcome;
+1025:     }
+1026: 
+1027:     // 直连检出碰撞 → 记录直连淘汰（C8 证据素材——"初始候选路径碰撞"是
+1028:     // AT-06 明文反例），进入避障搜索（重规划）。
+1029:     if (!directReview.records.empty()) {
+1030:         outcome.directCollision = directReview.records.front();  // 首发现（停机样本）
+1031:     }
+1032: 
+1033:     // ---------------------------------------------------------------
+1034:     // 第五步：避障搜索（K 轮候选＋逐条复核＋选择序——全部委托适配器；
+1035:     // 请求字段逐项投影——同源校验已在上面完成）。
+1036:     // ---------------------------------------------------------------
+1037:     PlannerSearchRequest searchRequest;
+1038:     searchRequest.fromQ = request.startQ;
+1039:     searchRequest.toQ = request.endQ;
+1040:     searchRequest.lowerBoundQ = request.lowerBoundQ;
+1041:     searchRequest.upperBoundQ = request.upperBoundQ;
+1042:     searchRequest.workCell = request.workCell;
+1043:     searchRequest.deviceRuntimeName = request.deviceRuntimeName;
+1044:     searchRequest.session = request.policySession;
+1045:     searchRequest.plannerFamilyToken = request.plannerFamilyToken;
+1046:     searchRequest.plannerParams = request.plannerParams;
+1047:     // 预算共享：直连筛查消耗未单独记账（两次会话查询，开销相对规划预算
+1048:     // 可忽略——账目口径＝搜索预算全归 search，如实登记）。
+1049:     searchRequest.timeBudgetS = request.timeBudgetS;
+1050:     searchRequest.seed = request.seed;
+1051:     searchRequest.cancel = request.cancel;
+1052:     const PlanSearchResult searchResult = adapter.search(searchRequest);
+1053: 
+1054:     switch (searchResult.status) {
+1055:     case PlanSearchStatus::Found: {
+1056:         const PathCandidate& adopted = searchResult.candidates[*searchResult.adoptedIndex];
+1057:         outcome.status = AvoidanceStatus::Ok;
+1058:         outcome.directPathAdopted = false;
+1059:         outcome.adoptedCandidateIndex = searchResult.adoptedIndex;
+1060:         buildSegment(adopted.configurations);
+1061:         validateTrajectorySegment(outcome.segment);  // 段构造保证的自证
+1062:         return outcome;
+1063:     }
+1064:     case PlanSearchStatus::BudgetExhausted:
+1065:         // 搜索未果 → SearchExhaustedRecord → DataInsufficient 素材——
+1066:         // **不判不可行**（§7.6 行 4/C8；任务级判定归 evidence）。
+1067:         outcome.status = AvoidanceStatus::SearchExhausted;
+1068:         outcome.searchRecord = searchResult.exhausted;
+1069:         outcome.failure = makeAvoidFailure(
+1070:             request.segmentIndex, std::string{kTrjNoPath},
+1071:             "避障搜索未果（直连路径碰撞且预算内全部候选淘汰——已试候选 "
+1072:                 + std::to_string(searchResult.exhausted->attemptedCandidates)
+1073:                 + " 轮；搜索未果不构成任务不可行证明）",
+1074:             "调整工况/障碍布局或放宽规划预算后重评；该段以数据不足素材进入"
+1075:             "证据汇总");
+1076:         return outcome;
+1077:     case PlanSearchStatus::PlannerError:
+1078:         outcome.status = AvoidanceStatus::PlannerError;
+1079:         outcome.failure = searchResult.failure;
+1080:         return outcome;
+1081:     case PlanSearchStatus::Canceled:
+1082:         outcome.status = AvoidanceStatus::Canceled;  // 取消透传——零错误素材
+1083:         return outcome;
+1084:     }
+1085:     // 词表封闭——不可达；fail-fast 兜底（实现缺陷显性化）。
+1086:     throw TrajectoryError("trajectory/avoid/status-exhausted",
+1087:                           "PlanSearchStatus 词表外取值（实现缺陷）");
+1088: }
+1089: 
+1090: }  // namespace sdurws::ird::trajectory

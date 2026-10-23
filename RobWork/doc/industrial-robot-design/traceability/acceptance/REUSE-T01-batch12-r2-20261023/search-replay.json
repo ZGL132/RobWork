@@ -1,0 +1,18 @@
+{
+  "arguments": [
+    "rg",
+    "-n",
+    "-i",
+    "CreateProcess|JobObject|fork\\s*\\(|popen|spawn|processrunner|QProcess",
+    "RobWork/RobWork/src",
+    "RobWork/RobWorkSim/src",
+    "RobWork/RobWork/gtest",
+    "RobWork/RobWorkSim/gtest"
+  ],
+  "exitCode": 0,
+  "recordedExitCode": 0,
+  "stdoutMatches": true,
+  "stderrMatches": true,
+  "hits": 2,
+  "correctForkPattern": true
+}

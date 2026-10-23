@@ -1,0 +1,35 @@
+[
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "calendar|currentTime",
+      "RobWork/RobWork/src/rw/common/TimerUtil.hpp"
+    ],
+    "exitCode": 0,
+    "stdout": "40:         * you should \\b not use it for getting the calendar time. It's really only meant for\n43:        static long long currentTimeMs ();\n49:         * you should \\b not use it for getting the calendar time. It's really only meant for\n54:        static long long currentTimeUs ();\n60:         * you should \\b not use it for getting the calendar time. It's really only meant for\n63:        static double currentTime ();\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "DateTimeOffset|TryParseExact|Test-NonNegativeInteger|Compare-Iso",
+      "RobWork/scripts/industrialrobot/validate-state.ps1"
+    ],
+    "exitCode": 0,
+    "stdout": "49:function Compare-Iso([string]$a, [string]$b) {\n50:  $left = [DateTimeOffset]::Parse($a, [Globalization.CultureInfo]::InvariantCulture)\n51:  $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::InvariantCulture)\n55:function Test-NonNegativeInteger([object]$value) {\n80:if (-not (Test-NonNegativeInteger $s.heartbeat.ticksNoProgress)) { $errors += \"heartbeat.ticksNoProgress must be an integer >= 0\" }\n81:if (-not (Test-NonNegativeInteger $s.tickCount)) { $errors += \"tickCount must be an integer >= 0（v1.4：锁内 tickId 的状态侧计数）\" }\n89:elseif (\"$($s.tickToken)\" -and -not [guid]::TryParseExact([string]$s.tickToken, 'D', [ref]$parsedTickToken)) { $errors += \"tickToken must be a GUID string, got '$($s.tickToken)'\" }\n99:  if (-not (Test-NonNegativeInteger $s.attempts.$k)) { $errors += \"attempts.$k must be an integer >= 0\" }\n121:  if (-not (Test-NonNegativeInteger $s.policy.$k)) { $errors += \"policy.$k must be an integer >= 0\" }\n127:elseif (-not (Test-NonNegativeInteger $s.policy.leaseMinutes.implement) -or -not (Test-NonNegativeInteger $s.policy.leaseMinutes.acceptance) -or $s.policy.leaseMinutes.implement -lt 1 -or $s.policy.leaseMinutes.acceptance -lt 1) { $errors += \"policy.leaseMinutes values must be >= 1\" }\n275:  if ($runStart -match $isoPattern -and $runLease -match $isoPattern -and ((Compare-Iso $runLease $runStart) -lt 0)) {\n281:  if ($runStart -and $heartbeatAt -and ((Compare-Iso $heartbeatAt $runStart) -lt 0)) { $errors += \"heartbeat.updatedAt ('$heartbeatAt') < run.startedAt ('$runStart')——状态被旧写入回退\" }\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "add_test|gtest_output",
+      "RobWork/RobWork/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "8:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)\n17:                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml\n",
+    "stderr": ""
+  }
+]

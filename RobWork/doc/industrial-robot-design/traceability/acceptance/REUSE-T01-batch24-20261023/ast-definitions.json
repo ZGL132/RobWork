@@ -1,0 +1,62 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "symbol": "Get-LockMutexName",
+    "startLine": 49,
+    "endLine": 62
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "symbol": "Invoke-InLockMutex",
+    "startLine": 64,
+    "endLine": 83
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "symbol": "Read-Lock",
+    "startLine": 85,
+    "endLine": 98
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "symbol": "Test-Fencing",
+    "startLine": 101,
+    "endLine": 109
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Assert-Equal",
+    "startLine": 22,
+    "endLine": 24
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Assert-ExitCode",
+    "startLine": 26,
+    "endLine": 28
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Invoke-Lock",
+    "startLine": 30,
+    "endLine": 38
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Get-LockMutexName",
+    "startLine": 40,
+    "endLine": 50
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Assert-LockActionWaitsOnMutex",
+    "startLine": 52,
+    "endLine": 83
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "symbol": "Invoke-StateValidation",
+    "startLine": 85,
+    "endLine": 96
+  }
+]

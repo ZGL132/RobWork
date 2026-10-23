@@ -1,0 +1,173 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp
+::wWinMain
+613: int APIENTRY wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
+614: {
+615:     // ---- 启动参数（失败＝装配面缺陷：退出码 10）----
+616:     const std::optional<StartupArgs> args = parseArgs();
+617:     if (!args.has_value()) {
+618:         return 10;
+619:     }
+620: 
+621:     // ---- 数据写面初始化（帧身份块来源＝启动绑定）----
+622:     DataWriter writer;
+623:     writer.handle = args->dataWrite;
+624:     writer.identity = args->identity;
+625: 
+626:     // ---- 命令读线程启动（阻塞读——主进程终结/关管道时退出）----
+627:     CommandQueue commands;
+628:     std::thread reader(commandReaderLoop, args->cmdRead, std::ref(commands));
+629: 
+630:     // ---- 心跳停止标志（线程启动前声明——收尾路径统一可先置位）----
+631:     std::atomic<bool> heartbeatOffHint{false};
+632: 
+633:     // ---- 线程收尾（每个退出路径共用——std::thread 析构于 joinable 态会
+634:     // std::terminate〔fail-fast 0xC0000409——把正常退出污染成崩溃分类〕；
+635:     // 读线程以 CancelIoEx 解阻塞后 join，心跳线程以停止标志后 join）----
+636:     std::thread heartbeat;  // 心跳线程在握手后启动——空实例先占位（收尾统一）
+637:     auto stopThreads = [&]() {
+638:         heartbeatOffHint.store(true);
+639:         ::CancelIoEx(args->cmdRead, nullptr);  // 解阻塞命令读线程（挂起 ReadFile 失败返回）
+640:         if (reader.joinable()) {
+641:             reader.join();
+642:         }
+643:         if (heartbeat.joinable()) {
+644:             heartbeat.join();
+645:         }
+646:     };
+647: 
+648:     // ---- 握手（§6.4：Hello〔协议版本＋manifest 摘要〕→等 HelloAck）----
+649:     HelloPayload hello;
+650:     hello.protoVersion = kChannelProtocolVersion;
+651:     hello.manifestDigestHex = manifestDigestHex(kStageAManifest);
+652:     const bool helloSent = writer.send(ChannelMsgType::Hello, encodeHello(hello));
+653:     if (!helloSent) {
+654:         stopThreads();
+655:         return 10;  // 通道即断——装配面失败
+656:     }
+657:     // 有界等待 HelloAck（60 s——主进程握手应在毫秒级；超时＝宿主异常）。
+658:     std::optional<HelloAckPayload> ack;
+659:     // 握手等待期到达的非 HelloAck 帧**保留**（主进程在 HelloAck 之后立即
+660:     // 写派发——同一批 drain 里同时出现两类帧是常态而非错乱；丢弃会让
+661:     // DispatchRequest 永久丢失）。
+662:     std::vector<ChannelFrame> preDispatch;
+663:     for (int waitedMs = 0; waitedMs < 60000 && !ack.has_value(); waitedMs += 20) {
+664:         for (ChannelFrame& frame : commands.drain()) {
+665:             if (frame.type == ChannelMsgType::HelloAck) {
+666:                 ack = decodeHelloAck(frame.payload);
+667:             } else {
+668:                 preDispatch.push_back(std::move(frame));
+669:             }
+670:         }
+671:         if (commands.isBroken()) {
+672:             break;
+673:         }
+674:         ::Sleep(20);
+675:     }
+676:     if (!ack.has_value() || !ack->accepted) {
+677:         // 拒绝（版本/manifest 失配——主进程不派发并就地终结本进程）或
+678:         // 断裂：装配失败退出码 10（§6.4 约定表"启动失败（依赖/装配错误）"）。
+679:         stopThreads();
+680:         return 10;
+681:     }
+682: 
+683:     // ---- 心跳线程启动（间隔＝HelloAck 下发值——两侧同源 D-06；停止标志
+684:     // ＝heartbeatOffHint，收尾路径统一经 stopThreads join）----
+685:     heartbeat = std::thread(heartbeatLoop, std::ref(writer), ack->heartbeatIntervalMs,
+686:                             std::ref(heartbeatOffHint));
+687: 
+688:     // ---- 等待派发（DispatchRequest——物化字节分帧续传；重组器横跨多次
+689:     // 轮询——分片可跨到达批，生命周期在等待循环之外。先消化握手期保留的
+690:     // preDispatch 帧〔可能与 HelloAck 同批到达〕，再轮询新帧）----
+691:     std::optional<DispatchRequestPayload> dispatch;
+692:     MessageReassembler reassembler;
+693:     // 帧消化（DispatchRequest 过滤＋换绑＋重组；lambda 捕获全部在途状态
+694:     // ——ack 保留帧与新到帧共用同一条消化路径；返回 true＝重组断裂）。
+695:     auto feedDispatchCandidate = [&](ChannelFrame&& frame) -> bool {
+696:         if (frame.type != ChannelMsgType::DispatchRequest || dispatch.has_value()) {
+697:             return false;  // 派发前的其他命令帧阶段 A 无消费语义；已派发后忽略
+698:         }
+699:         // 池化复用换绑：派发帧头身份即新绑定（此后全部帧携带它——
+700:         // worker 侧不持第二账本，绑定以主进程派发为准）。
+701:         {
+702:             std::lock_guard<std::mutex> lock(writer.mutex);
+703:             writer.identity = frame.identity;
+704:         }
+705:         bool broken = false;
+706:         std::vector<ChannelFrame> messages = reassembler.accept(std::move(frame), &broken);
+707:         for (ChannelFrame& message : messages) {
+708:             dispatch = decodeDispatchRequest(message.payload);
+709:         }
+710:         return broken;
+711:     };
+712:     for (ChannelFrame& frame : preDispatch) {
+713:         (void)feedDispatchCandidate(std::move(frame));
+714:     }
+715:     bool dispatchBroken = false;
+716:     for (int waitedMs = 0; waitedMs < 120000 && !dispatch.has_value() && !dispatchBroken;
+717:          waitedMs += 20) {
+718:         if (commands.isBroken()) {
+719:             break;
+720:         }
+721:         for (ChannelFrame& frame : commands.drain()) {
+722:             if (feedDispatchCandidate(std::move(frame))) {
+723:                 dispatchBroken = true;
+724:                 break;
+725:             }
+726:         }
+727:         ::Sleep(20);
+728:     }
+729:     if (!dispatch.has_value()) {
+730:         stopThreads();
+731:         return 11;  // 派发缺失/断裂＝宿主内部错误（§6.4 约定表 11 行）
+732:     }
+733: 
+734:     // ---- 身份核对（§6.5"worker 侧身份核对"：重算摘要与声明比对；不等
+735:     // 拒绝执行——runtime §9.2 同源纪律）----
+736:     if (!contentIdentityMatches(dispatch->snapshotBytes, dispatch->snapshotIdentity)
+737:         || !contentIdentityMatches(dispatch->modelBytes, dispatch->modelIdentity)) {
+738:         ErrorReportPayload report;
+739:         report.dev = false;
+740:         report.codeOrChannel = "EX-CHANNEL-PROTOCOL-ERROR";
+741:         report.message = "dispatch identity mismatch (materialized bytes digest)";
+742:         writer.send(ChannelMsgType::ErrorReport, encodeErrorReport(report));
+743:         stopThreads();
+744:         return 11;  // §6.4 约定表 11 行——宿主内部错误（装载错）
+745:     }
+746: 
+747:     // ---- 临时目录（§6.6：每尝试独立；worker 唯一的可写落点）----
+748:     const fs::path tempDir = workerTempDir(writer.identity);
+749:     std::error_code ec;
+750:     fs::create_directories(tempDir, ec);  // 失败不致命——write-temp 动作才需要它
+751: 
+752:     // ---- 派发受理确认（DispatchAccept——观测面）----
+753:     writer.send(ChannelMsgType::DispatchAccept, {});
+754: 
+755:     // ---- 替身评估器执行（脚本承载于"快照字节"文本）----
+756:     const std::string script(dispatch->snapshotBytes.begin(), dispatch->snapshotBytes.end());
+757:     ScriptContext ctx{writer,
+758:                       commands,
+759:                       heartbeatOffHint,
+760:                       tempDir,
+761:                       dispatch->snapshotIdentity,
+762:                       dispatch->modelIdentity,
+763:                       false,
+764:                       false,
+765:                       false};
+766:     const int scriptExit = runScript(script, ctx);
+767: 
+768:     // ---- 尝试终结：线程收尾＋临时目录 best-effort 清理（§6.6；失败→
+769:     // 开发诊断，不影响任务终态——EX-ARC-3 边界）----
+770:     stopThreads();
+771:     fs::remove_all(tempDir, ec);
+772:     if (ec) {
+773:         ErrorReportPayload report;
+774:         report.dev = true;
+775:         report.codeOrChannel = "execution/worker-temp";
+776:         report.message = "worker temp dir cleanup failed: " + ec.message();
+777:         writer.send(ChannelMsgType::ErrorReport, encodeErrorReport(report));
+778:     }
+779: 
+780:     // 退出码＝脚本结束码（0/12/20/21——全部在 §6.4 约定集内；崩溃/卡死
+781:     // 由强杀或 crash 动作的约定集外码承载，不经此路径）。
+782:     return scriptExit;
+783: }

@@ -1,0 +1,251 @@
+{
+  "count": 49,
+  "allDigestRefreshOnly": false,
+  "deltas": [
+    {
+      "path": "foundation-governance.pipeline-lock.Get-LockMutexName/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Get-LockMutexName/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Invoke-InLockMutex/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Invoke-InLockMutex/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Read-Lock/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Read-Lock/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Test-Fencing/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.Test-Fencing/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-Equal/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-Equal/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Invoke-Lock/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Invoke-Lock/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.root/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.root/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.actions/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.pipeline-lock.actions/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.root/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.root/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.regressions/auditEvidence/length",
+      "before": 4,
+      "after": 5
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.regressions/sources/0/sha256",
+      "before": "823bf6a476f5b0cc8b1ed6ad34aae893ba3ab92c0c4eca594356b43f8927481d",
+      "after": "a0e7985d95a8169905d5e0a629ba4789cacd77a1c80e5edc5725f0b30c472d5f"
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.regressions/sources/0/endLine",
+      "before": 270,
+      "after": 329
+    },
+    {
+      "path": "foundation-governance.test-pipeline-pipeline.regressions/inputs/1/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.Convert-ToIso/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.Compare-Iso/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.Test-NonNegativeInteger/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.root/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.schema/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.heartbeat/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.fencing-presence/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.attempts/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.policy/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.contract-index/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.queue/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.phase/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.acceptance/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.failure-record/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.run/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.history/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.docRefs/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.narrative-limit/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    },
+    {
+      "path": "foundation-governance.validate-state.verdict/inputs/2/sha256",
+      "before": "326abeb609a10d9dd594e0fa87727eed85c1f0efb8549912ba701f216941aff9",
+      "after": "8224ad1beecb196161112bba51c0fe4f9e8828374ca9c68064097211f0437e4f"
+    }
+  ]
+}

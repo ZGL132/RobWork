@@ -1,0 +1,31 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B29",
+  "source": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork",
+  "sourceBranch": "reuse-t01",
+  "head": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+  "base": "f2e65141259cd43ee5e63799514a733908440355",
+  "clone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone",
+  "cloneOptions": [
+    "--local",
+    "--no-hardlinks",
+    "--no-checkout"
+  ],
+  "autocrlf": false,
+  "longpaths": true,
+  "network": "NOT RUN",
+  "productBuilds": "NOT RUN",
+  "guiTests": "NOT RUN",
+  "deepEvidence": "NOT RUN",
+  "commands": [
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/test-governance-lite.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -OutputDir C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31/suite-ps7",
+    "powershell -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/test-governance-lite.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -OutputDir C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31/suite-ps51",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/validate-task.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -TaskFile C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/verify-task-scope.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -TaskFile C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base f2e65141259cd43ee5e63799514a733908440355 -Head fd194d51b586085e26adeae4a73b72a06cb5ce21",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/commit-lint.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -Range f2e65141259cd43ee5e63799514a733908440355..fd194d51b586085e26adeae4a73b72a06cb5ce21",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/scripts/industrialrobot/validate-reuse.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone -Head fd194d51b586085e26adeae4a73b72a06cb5ce21 -TaskFile C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone/RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31/audit-static.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone",
+    "pwsh -NoProfile -File C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31/independent-probes.ps1 -RepoRoot C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b29-acc-054fbe31\\clone"
+  ]
+}

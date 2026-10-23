@@ -1,0 +1,8 @@
+
+version case    exitCode expected passed
+------- ----    -------- -------- ------
+before  zero           0        0   True
+before  healthy        0        0   True
+after   zero           1        1   True
+after   healthy        0        0   True
+

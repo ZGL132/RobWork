@@ -1,0 +1,71 @@
+{
+  "expected": 7,
+  "executed": 7,
+  "passed": 4,
+  "failed": 3,
+  "skipped": 0,
+  "scriptSha256": "35878035BEC1A1EABBF507AD2AAFC70B7948D6F1772FC1D9CDE9019FA9D9A1E3",
+  "driverSha256": "7C7F9D0C65053E1900F48E9EA60DE48705A1F00303B40BEC15D896BE90816AD3",
+  "cases": [
+    {
+      "name": "missing",
+      "passed": true,
+      "expected": [
+        "<xml-missing>"
+      ],
+      "actual": [
+        "<xml-missing>"
+      ]
+    },
+    {
+      "name": "malformed",
+      "passed": true,
+      "expected": [
+        "<xml-unparsable>"
+      ],
+      "actual": [
+        "<xml-unparsable>"
+      ]
+    },
+    {
+      "name": "zero",
+      "passed": false,
+      "expected": [
+        "<xml-no-tests>"
+      ],
+      "actual": []
+    },
+    {
+      "name": "healthy",
+      "passed": true,
+      "expected": [],
+      "actual": []
+    },
+    {
+      "name": "failure",
+      "passed": true,
+      "expected": [
+        "S.Failed"
+      ],
+      "actual": [
+        "S.Failed"
+      ]
+    },
+    {
+      "name": "error",
+      "passed": false,
+      "expected": [
+        "S.Errored"
+      ],
+      "actual": []
+    },
+    {
+      "name": "all-skipped",
+      "passed": false,
+      "expected": [
+        "<xml-no-executed-tests>"
+      ],
+      "actual": []
+    }
+  ]
+}

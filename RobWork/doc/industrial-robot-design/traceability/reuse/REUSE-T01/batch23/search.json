@@ -1,0 +1,49 @@
+[
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "ADD_RW_GTEST|add_test|gtest_output|sdurw-gtest-main",
+      "RobWork/RobWork/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "7:macro(ADD_RW_GTEST target)\n8:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)\n17:                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml\n36:add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})\n37:target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})\n44:    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)\n57:    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)\n70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)\n132:    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}\n162:    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}\n179:    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}\n209:    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}\n260:    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)\n273:    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)\n289:    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)\n317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners\n333:    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}\n374:    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)\n387:    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "ADD_RWSIM_GTEST|add_test|gtest_output|sdurwsim-gtest-main",
+      "RobWork/RobWorkSim/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "5:macro(ADD_RWSIM_GTEST target)\n6:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)\n15:                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml\n25:endmacro(ADD_RWSIM_GTEST)\n31:add_library(sdurwsim-gtest-main STATIC TestEnvironment.cpp test-main.cpp)\n32:target_link_libraries(sdurwsim-gtest-main ${RW_BUILD_WITH_LIBRARIES_GTEST} RW::sdurw_core sdurwsim_test)\n38:    set(COMMON_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST})\n50:    set(DYNAMICS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim ${RW_BUILD_WITH_LIBRARIES_GTEST}\n65:    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}\n83:    set(PERFORMANCE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode\n101:    set(SENSORS_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}\n130:    set(TASKSIMULATION_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "InitGoogleTest|RUN_ALL_TESTS|AddGlobalTestEnvironment",
+      "RobWork/RobWork/gtest/test-main.cpp"
+    ],
+    "exitCode": 0,
+    "stdout": "23:\t::testing::InitGoogleTest(&argc, argv);\n24:    ::testing::AddGlobalTestEnvironment(TestEnvironment::make(argc,argv));\n25:\treturn RUN_ALL_TESTS();\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "rg",
+      "-n",
+      "flake|repeat|gtest_filter|no.tests",
+      "RobWork/RobWork/cmake",
+      "RobWork/RobWorkSim/cmake",
+      "RobWork/RobWork/gtest/CMakeLists.txt",
+      "RobWork/RobWorkSim/gtest/CMakeLists.txt"
+    ],
+    "exitCode": 0,
+    "stdout": "RobWork/RobWork/cmake\\Modules\\FindGTest.cmake:95:            add_test(${test_name} ${executable} --gtest_filter=${test_name} ${extra_args})\n",
+    "stderr": ""
+  }
+]

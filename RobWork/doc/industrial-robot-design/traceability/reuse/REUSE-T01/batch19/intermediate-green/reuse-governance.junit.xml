@@ -1,0 +1,10 @@
+<testsuite name="reuse-governance" tests="8" failures="0" skipped="0">
+  <testcase name="script-audit-no-fake-target" />
+  <testcase name="script-audit-reject-cmake-target" />
+  <testcase name="script-audit-reject-product-escape" />
+  <testcase name="script-audit-reject-other-directory" />
+  <testcase name="script-audit-reject-fake-migration" />
+  <testcase name="script-audit-require-own-context" />
+  <testcase name="script-audit-stale-context" />
+  <testcase name="script-audit-reject-production-disguise" />
+</testsuite>

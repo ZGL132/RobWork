@@ -1,0 +1,1 @@
+<testsuites><testsuite name="A"><testcase name="X"><skipped/></testcase><testcase name="Y" status="notrun"/></testsuite></testsuites>

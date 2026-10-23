@@ -1,0 +1,6 @@
+46:     * Notice that the tessellation is best when \f$ \delta\f$ is small.
+72:         * This uses #uniformDistributionSpherical and maps the spherical coordinates to Cartesian
+75:         * @param delta [in] the resolution.
+80:        std::vector< Eigen::VectorXd > uniformDistributionCartesian (double delta) const;
+88:         * @param delta [in] the resolution.
+93:        std::vector< Eigen::VectorXd > uniformDistributionSpherical (double delta) const;

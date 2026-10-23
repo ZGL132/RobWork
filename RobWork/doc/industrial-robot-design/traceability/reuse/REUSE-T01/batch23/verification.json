@@ -1,0 +1,37 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B23",
+  "parentCommit": "daf0dcd175fb76c956154fe0213f2d791dad8575",
+  "rows": 18,
+  "rawBeforeSha256": "35878035bec1a1eabbf507ad2aafc70b7948d6f1772fc1d9cde9019fa9d9a1e3",
+  "parserEach": {
+    "red": {
+      "executed": 7,
+      "passed": 4,
+      "failed": 3,
+      "skipped": 0
+    },
+    "green": {
+      "executed": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "governance": {
+    "executed": 5,
+    "passed": 5,
+    "failed": 0,
+    "skipped": 0
+  },
+  "notRun": [
+    "持续负载/竞态",
+    "GUI",
+    "全治理",
+    "全T01退出",
+    "T02"
+  ],
+  "testedRawAfterSha256": "78ad8b1b1b644b044b440cc6057941df70759735902c121defa69a5a237237bf",
+  "rawAfterSha256": "a9bf73af7820bf69705b121f403d17f5cdea783a0014dbfc97adf29fb924d3fc",
+  "lineEndingNote": "恢复原脚本LF，无语义变化；最终LF源在PS7/PS5.1原SelfTest各7passed，再次留痕。之前CRLF源测试原件保持不变。"
+}

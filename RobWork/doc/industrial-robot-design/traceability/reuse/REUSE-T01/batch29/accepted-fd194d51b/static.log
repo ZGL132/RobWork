@@ -1,0 +1,10 @@
+
+name                                            passed
+----                                            ------
+scope-count-and-no-production                     True
+only-three-byte-bom                               True
+95-raw-evidence-blobs-and-checkout                True
+original-before-snapshots-retained                True
+historical-real-counts-preserved                  True
+seven-existing-matrix-rows-bindings-and-regions   True
+

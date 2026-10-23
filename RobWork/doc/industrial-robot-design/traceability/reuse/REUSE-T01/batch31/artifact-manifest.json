@@ -1,0 +1,120 @@
+{
+  "batch": "B31",
+  "entries": [
+    {
+      "path": "b31-build.log",
+      "bytes": 1548,
+      "rawSha256": "d8eda6a5348d5b1db09355eb29c7df0b0f84cad967188bfa39c5066ac85a9896"
+    },
+    {
+      "path": "b31-configure.log",
+      "bytes": 2582,
+      "rawSha256": "4944195e8b4dba6bd92ffbc0cfa28f3fcd512de6400b947f53ed068871fb3958"
+    },
+    {
+      "path": "b31-run-vs.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b31-validate-docs.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b31-validate-docs.log",
+      "bytes": 2725,
+      "rawSha256": "14f7c9ffd8355b7a7698587d0eb8d98b05b3a94291f59572a469262bf06379ad"
+    },
+    {
+      "path": "b31-validate-reuse.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b31-validate-reuse.log",
+      "bytes": 2487,
+      "rawSha256": "5c06490326fa84b4afcfaa4338950b7a02f50e1e5246d529b3618613c6c40606"
+    },
+    {
+      "path": "b31-validate-task.exit.txt",
+      "bytes": 1,
+      "rawSha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "path": "b31-validate-task.log",
+      "bytes": 2518,
+      "rawSha256": "72e5a8d0aaa79b73420089aced50c7b706e25de318eb83cbd3ec7c789cabd204"
+    },
+    {
+      "path": "b31-vs.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1166,
+      "rawSha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+    },
+    {
+      "path": "findings-prefix.json",
+      "bytes": 144,
+      "rawSha256": "6fbf9936f014de1e6157cb6e5015a5bd07ca98f3c73d3add3856e45896afbb55"
+    },
+    {
+      "path": "oracle-result.json",
+      "bytes": 219,
+      "rawSha256": "9a2092f663d3a12338f3d59819fb71d0433c4481e7b6ff9dc867470767550522"
+    },
+    {
+      "path": "oracle.py",
+      "bytes": 366,
+      "rawSha256": "4755a208348664570880e408c760de6c1f989b8573b649cd3921d3f62d524925"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1823,
+      "rawSha256": "e720b8fa9a677a3632aa93b25814ddf205ddbee0731a72f2b811ceab13f1093e"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 1,
+      "rawSha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 10653,
+      "rawSha256": "7dc8315d38e15fc15ee98074f7c7b47091cacae6243ac7a89e00de84b1b7cb17"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 17172,
+      "rawSha256": "d56712a24d3c874830f38cbdaa5d962a9550e3aba617242f34057265671511c1"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 5100,
+      "rawSha256": "6786f5551e2e04b4b36b18942f416a8f0f87b68d9c0eb6afbf03bf76e8150ea0"
+    },
+    {
+      "path": "search.json",
+      "bytes": 144881,
+      "rawSha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
+    },
+    {
+      "path": "source-comparison.json",
+      "bytes": 219,
+      "rawSha256": "204359836d89344343655cdd64692141282df43ba5600073909d90a03bcf711f"
+    },
+    {
+      "path": "UnitsSuitabilityTest.cpp",
+      "bytes": 4464,
+      "rawSha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 843,
+      "rawSha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
+    }
+  ]
+}

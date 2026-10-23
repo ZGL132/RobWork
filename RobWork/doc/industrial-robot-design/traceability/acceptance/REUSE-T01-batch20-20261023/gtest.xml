@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="4" disabled="0" errors="0" time="0.401" timestamp="2026-10-23T02:43:26.443" name="AllTests">
+  <testsuite name="ReuseProjectBoundary" tests="6" failures="4" disabled="0" skipped="0" errors="0" time="0.392" timestamp="2026-10-23T02:43:26.444">
+    <testcase name="HealthyStoreRemainsVerified" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="13" status="run" result="completed" time="0.057" timestamp="2026-10-23T02:43:26.445" classname="ReuseProjectBoundary" />
+    <testcase name="WrongHeadManifestDigestMustBeRejected" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="18" status="run" result="completed" time="0.053" timestamp="2026-10-23T02:43:26.502" classname="ReuseProjectBoundary">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:24&#x0A;Value of: m_engine-&gt;scanForRecovery().headIntegrityVerified&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:24
+Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="ParseableManifestByteChangeMustBeRejected" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="27" status="run" result="completed" time="0.057" timestamp="2026-10-23T02:43:26.555" classname="ReuseProjectBoundary">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:34&#x0A;Value of: m_engine-&gt;scanForRecovery().headIntegrityVerified&#x0A;  Actual: true&#x0A;Expected: false&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:34
+Value of: m_engine->scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+]]></failure>
+    </testcase>
+    <testcase name="NativeDiskFullMustKeepStableErrorClass" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="37" status="run" result="completed" time="0.082" timestamp="2026-10-23T02:43:26.612" classname="ReuseProjectBoundary">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:46&#x0A;Expected equality of these values:&#x0A;  error.code()&#x0A;    Which is: 4-byte object &lt;07-00 00-00&gt;&#x0A;  StoreErrorCode::DiskFull&#x0A;    Which is: 4-byte object &lt;08-00 00-00&gt;&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:46
+Expected equality of these values:
+  error.code()
+    Which is: 4-byte object <07-00 00-00>
+  StoreErrorCode::DiskFull
+    Which is: 4-byte object <08-00 00-00>
+]]></failure>
+    </testcase>
+    <testcase name="PublicOpenHealthyStoreSucceeds" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="52" status="run" result="completed" time="0.064" timestamp="2026-10-23T02:43:26.695" classname="ReuseProjectBoundary" />
+    <testcase name="PublicOpenWrongHeadDigestMustBeRejected" file="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp" line="66" status="run" result="completed" time="0.077" timestamp="2026-10-23T02:43:26.759" classname="ReuseProjectBoundary">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:82&#x0A;Failed&#x0A;摘要失配仍成功打开，headIntegrityVerified=true&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-B20-accept-c9879b77baeb4cb884d2c0e3f1091277\repo-isolated\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r20\ProjectBoundaryTest.cpp:82
+Failed
+摘要失配仍成功打开，headIntegrityVerified=true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

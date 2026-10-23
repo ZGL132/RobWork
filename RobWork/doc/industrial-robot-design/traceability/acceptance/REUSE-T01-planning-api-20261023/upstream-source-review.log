@@ -1,0 +1,538 @@
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:85:            /** Total distance travelled in the x,y and z directions */
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:86:            rw::math::Vector3D<> distances;
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:128:            /** Construct ClearanceAnalysis struct with distances initialized to 0 */
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:155:         * @param metric [in] Metric to use for calculating the distance in joint space.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:164:         * The method calculates the Cartesian distance travelled by the speficied \b frame. It
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:165:         * provides the total distance travelled, the coordinate wise distances, and upper and lower
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:192:         * @param distanceCalculator [in] DistanceCalculator to be used in the analysis
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:197:            const rw::core::Ptr< const rw::proximity::DistanceCalculator >& distanceCalculator);
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:211:                The distance between adjacent element is measured by \b metric.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:214:        static double pathLength (It begin, It end,
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/pathplanning/PathAnalyzer.hpp:227:                result += metric.distance (*p, *q);
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:38:       @brief Manhattan distance metric for vector types.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:41:       metric on the Euclidean n-Plane. The Manhattan distance between two
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:70:       @brief Weighted Manhattan distance metric for vector types.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:73:       the distance between two points
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:113:       @brief Euclidean distance metric for vector types.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:115:       The distance between two points
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:145:       the distance between two points
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:185:       @brief Infinity norm distance metric for vector types.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:187:       InfinityMetric is a metric of the Euclidean n-Plane. The distance
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:218:       distance between two points
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:258:       @brief Mahalanobis distance metric for vector types.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:260:       The Mahalonabis distance between two vectors \f$\mathbf{a}\f$
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:308:     * @brief a distance metric over rotations. The distance between two rotations
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:327:     * @brief distance metrics between points in SE3.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:377:        inline static typename Metric< VectorType >::Ptr makeEuclidean ()
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:403:        inline static typename Metric< VectorType >::Ptr makeInfinity ()
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:441:        inline static typename Metric< VectorType >::Ptr makeManhattan ()
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:459:         * @brief Metric computing distance between two rotations.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:472:         * @brief Metric computing distance between two transformations
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/MetricFactory.hpp:474:         * The metric is defined as a weighted sum of the positional distance and the
+/********************************************************************************
+ * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include "QSampler.hpp"
+
+#include "QConstraint.hpp"
+#include "QIKSampler.hpp"
+#include "QNormalizer.hpp"
+
+#include <rw/math/Math.hpp>
+
+using namespace rw::math;
+using namespace rw::core;
+using namespace rw::models;
+using namespace rw::pathplanning;
+using namespace rw::kinematics;
+
+namespace {
+class EmptySampler : public QSampler
+{
+  private:
+    Q doSample () { return Q (); }
+    bool doEmpty () const { return true; }
+};
+
+class FixedSampler : public QSampler
+{
+  public:
+    FixedSampler (const Q& q) : _q (q) {}
+
+  private:
+    Q doSample () { return _q; }
+
+  private:
+    Q _q;
+};
+
+class FiniteSampler : public QSampler
+{
+  public:
+    FiniteSampler (const std::vector< Q >& qs) : _qs (qs.rbegin (), qs.rend ()) {}
+
+  private:
+    Q doSample ()
+    {
+        if (_qs.empty ())
+            return Q ();
+        else {
+            const Q result = _qs.back ();
+            _qs.pop_back ();
+            return result;
+        }
+    }
+
+    bool doEmpty () const { return _qs.empty (); }
+
+  private:
+    std::vector< Q > _qs;
+};
+
+class AbridgedSampler : public QSampler
+{
+  public:
+    AbridgedSampler (QSampler::Ptr sampler, int cnt) : _sampler (sampler), _cnt (0), _maxCnt (cnt)
+    {}
+
+  private:
+    Q doSample ()
+    {
+        if (_cnt++ < _maxCnt)
+            return _sampler->sample ();
+        else
+            return Q ();
+    }
+
+    bool doEmpty () const { return _cnt >= _maxCnt || _sampler->empty (); }
+
+  private:
+    QSampler::Ptr _sampler;
+    int _cnt;
+    int _maxCnt;
+};
+
+class BoundsSampler : public QSampler
+{
+  public:
+    BoundsSampler (const Device::QBox& bounds) : _bounds (bounds) {}
+
+  private:
+    Q doSample () { return Math::ranQ (_bounds.first, _bounds.second); }
+
+  private:
+    Device::QBox _bounds;
+};
+
+class NormalizedSampler : public QSampler
+{
+  public:
+    NormalizedSampler (QSampler::Ptr sampler, const QNormalizer& normalizer) :
+        _sampler (sampler), _normalizer (normalizer)
+    {}
+
+  private:
+    Q doSample ()
+    {
+        Q q = _sampler->sample ();
+        if (!q.empty ())
+            _normalizer.setToNormalized (q);
+        return q;
+    }
+
+  private:
+    QSampler::Ptr _sampler;
+    QNormalizer _normalizer;
+};
+
+class IKSampler : public QSampler
+{
+  public:
+    IKSampler (QIKSampler::Ptr sampler, const Transform3D<>& target) :
+        _sampler (sampler), _target (target)
+    {}
+
+  private:
+    Q doSample () { return _sampler->sample (_target); }
+
+    bool doEmpty () const { return _sampler->empty (); }
+
+  private:
+    QIKSampler::Ptr _sampler;
+    const Transform3D<> _target;
+/********************************************************************************
+ * Copyright 2009 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+ * Faculty of Engineering, University of Southern Denmark
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ********************************************************************************/
+
+#include "StopCriteria.hpp"
+
+#include <rw/common/Timer.hpp>
+#include <rw/core/macros.hpp>
+
+using namespace rw::pathplanning;
+using namespace rw::common;
+using namespace rw::core;
+
+namespace {
+class StopTime : public StopCriteria
+{
+  public:
+    StopTime (double time) : _end (time) {}
+
+  private:
+    bool doStop () const
+    {
+        const double time = _timer.getTime ();
+        if (time > _end)
+            return true;
+        else
+            return false;
+    }
+
+    StopCriteria::Ptr doInstance () const { return ownedPtr (new StopTime (_end)); }
+
+  private:
+    double _end;
+    Timer _timer;
+};
+
+class StopFixed : public StopCriteria
+{
+  public:
+    StopFixed (bool value) : _value (value) {}
+
+  private:
+    bool doStop () const { return _value; }
+
+    StopCriteria::Ptr doInstance () const { return ownedPtr (new StopFixed (_value)); }
+
+    bool _value;
+};
+
+typedef boost::function< bool () > BoostFunction;
+
+class StopByFun : public StopCriteria
+{
+  public:
+    StopByFun (BoostFunction fun) : _fun (fun) {}
+
+  private:
+    bool doStop () const { return _fun (); }
+
+    StopCriteria::Ptr doInstance () const { return ownedPtr (new StopByFun (_fun)); }
+
+  private:
+    BoostFunction _fun;
+};
+
+class StopByFlag : public StopCriteria
+{
+  public:
+    StopByFlag (bool* flag) : _flag (flag) { RW_ASSERT (flag); }
+
+  private:
+    bool doStop () const { return *_flag; }
+
+    StopCriteria::Ptr doInstance () const { return ownedPtr (new StopByFlag (_flag)); }
+
+  private:
+    bool* _flag;
+};
+
+class StopCnt : public StopCriteria
+{
+  public:
+    StopCnt (int cnt) : _maxCnt (cnt), _cnt (0) {}
+
+  private:
+    bool doStop () const { return ++_cnt > _maxCnt; }
+
+    StopCriteria::Ptr doInstance () const { return ownedPtr (new StopCnt (_maxCnt)); }
+
+  private:
+    int _maxCnt;
+    mutable int _cnt;
+};
+
+class StopEither : public StopCriteria
+{
+  public:
+    StopEither (const std::vector< StopCriteria::Ptr >& criteria) : _criteria (criteria) {}
+
+  private:
+    bool doStop () const
+    {
+        for (const StopCriteria::Ptr& stop : _criteria) {
+            if (stop->stop ())
+                return true;
+        }
+        return false;
+    }
+
+    StopCriteria::Ptr doInstance () const
+    {
+        std::vector< StopCriteria::Ptr > criteria;
+        for (const StopCriteria::Ptr& stop : _criteria) {
+            criteria.push_back (stop->instance ());
+        }
+        return ownedPtr (new StopEither (criteria));
+    }
+
+  private:
+    std::vector< StopCriteria::Ptr > _criteria;
+};
+}    // namespace
+
+//----------------------------------------------------------------------
+// StopCriteria
+
+bool StopCriteria::stop () const
+{
+    return doStop ();
+}
+
+StopCriteria::Ptr StopCriteria::instance () const
+{
+    return doInstance ();
+}
+
+//----------------------------------------------------------------------
+// Constructors
+
+StopCriteria::Ptr StopCriteria::stopAfter (double time)
+{
+    return ownedPtr (new StopTime (time));
+}
+
+StopCriteria::Ptr StopCriteria::stopNever ()
+{
+    return ownedPtr (new StopFixed (false));
+}
+
+StopCriteria::Ptr StopCriteria::stopNow ()
+{
+    return ownedPtr (new StopFixed (true));
+}
+
+StopCriteria::Ptr StopCriteria::stopByFlag (bool* stop)
+{
+    return ownedPtr (new StopByFlag (stop));
+}
+
+StopCriteria::Ptr StopCriteria::stopByFun (BoostFunction fun)
+{
+    return ownedPtr (new StopByFun (fun));
+}
+
+StopCriteria::Ptr StopCriteria::stopCnt (int cnt)
+{
+    return ownedPtr (new StopCnt (cnt));
+}
+
+StopCriteria::Ptr StopCriteria::stopEither (const std::vector< StopCriteria::Ptr >& criteria)
+{
+    return ownedPtr (new StopEither (criteria));
+}
+
+StopCriteria::Ptr StopCriteria::stopEither (const StopCriteria::Ptr& a, const StopCriteria::Ptr& b)
+{
+    std::vector< StopCriteria::Ptr > criteria;
+    criteria.push_back (a);
+    criteria.push_back (b);
+    return stopEither (criteria);
+}
+/*
+Copyright 2013 The Robotics Group, The Maersk Mc-Kinney Moller Institute,
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+*/
+
+#ifndef RWLIBS_SOFTBODY_TRAPMETHOD_HPP
+#define RWLIBS_SOFTBODY_TRAPMETHOD_HPP
+
+namespace rwlibs { namespace softbody {
+    /** @addtogroup softbody */
+    /*@{*/
+    /**
+     * @brief Implementation of the trapezoidal rule for integration
+     **/
+    class TrapMethod
+    {
+      public:
+        /**
+         * @brief routine for calculating a definite integral using the trapezoidal rule
+         *
+         * @param func the integrand as a function object
+         * @param M the limit in the integration
+         * @param h the stepsize
+         * @return the evaluated integral
+         **/
+        template< class T > static double inline trapezMethod (T& func, const int M, const double h)
+        {
+            const double f0 = func (0);
+            const double fL = func ((M - 1));
+
+            double sum = 0.0;
+            for (int i = 1; i < M - 1; i++)
+                sum += func (i);
+
+            return (h / 2.0) * (f0 + fL) + h * sum;
+        }
+    };
+    /*@}*/
+}}    // namespace rwlibs::softbody
+
+#endif    // TRAPMETHOD_HPP
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Random.cpp:31:boost::mt19937 generator;
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Random.cpp:36:boost::variate_generator< boost::mt19937&, dist_type >
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Random.cpp:52:    // VC++ can't select the correct seed() method without a cast here.
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Random.cpp:53:    generator.seed (static_cast< boost::mt19937::result_type > (seed));
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Math.cpp:74:Q Math::ranQ (const rw::math::Q& from, const rw::math::Q& to)
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Math.cpp:85:Q Math::ranQ (const std::pair< rw::math::Q, rw::math::Q >& bounds)
+C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWork\src/rw/math/Math.cpp:87:    return ranQ (bounds.first, bounds.second);
+set(SUBSYS_NAME sdurw_softbody)
+set(SUBSYS_DESC "Various simulations of soft bodies")
+set(SUBSYS_DEPS sdurw)
+
+set(build TRUE)
+set(DEFAULT FALSE)
+rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ${DEFAULT} DEPENDS ${SUBSYS_DEPS} ADD_DOC)
+
+if(build)
+    set(
+        SRC_FILES
+        ./numerics/TrapMethod.cpp
+        ./numerics/FdUtil.cpp
+        ./beam/BeamGeometry.cpp
+        ./beam/BeamGeometryCuboid.cpp
+        ./beam/ModRusselBeamBase.cpp
+        ./beam/RusselIntegrand.cpp
+        ./beam/EBBeam.cpp
+        ./beam/BeamObstaclePlane.cpp
+        ./beam/BeamStartGuess.cpp
+        ./beam/ModRussel_NLP.cpp
+        ./beam/ModRusselBeamIpopt.cpp
+    )
+
+    set(
+        SRC_FILES_HPP
+        ./numerics/TrapMethod.hpp
+        ./numerics/FdUtil.hpp
+        ./beam/BeamGeometry.hpp
+        ./beam/BeamGeometryCuboid.hpp
+        ./beam/ModRusselBeamBase.hpp
+        ./beam/RusselIntegrand.hpp
+        ./beam/EBBeam.hpp
+        ./beam/BeamObstaclePlane.hpp
+        ./beam/BeamStartGuess.hpp
+        ./beam/ModRussel_NLP.hpp
+        ./beam/ModRusselBeamIpopt.hpp
+    )
+
+    rw_add_library(${SUBSYS_NAME} ${SRC_FILES} ${SRC_FILES_HPP})
+    rw_add_includes(${SUBSYS_NAME} "rwlibs/softbody" ${SRC_FILES_HPP})
+    target_link_libraries(${SUBSYS_NAME} PUBLIC ${SUBSYS_DEPS})
+    target_include_directories(${SUBSYS_NAME}
+        PUBLIC
+        $<BUILD_INTERFACE:${RW_ROOT}/src> $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
+    )
+
+    set_target_properties(${SUBSYS_NAME} PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+
+endif()
+set(SUBSYS_NAME sdurw_pathplanning)
+set(SUBSYS_DESC "The pathplanning RobWork library!")
+set(SUBSYS_DEPS
+    PUBLIC sdurw_core sdurw_math sdurw_kinematics sdurw_proximity sdurw_models sdurw_trajectory
+    PRIVATE sdurw_invkin sdurw_common # FOR Swig
+)
+set(build TRUE)
+rw_subsys_option(build ${SUBSYS_NAME} ${SUBSYS_DESC} ON DEPENDS ${SUBSYS_DEPS})
+
+if(build)
+    set(FILES_CPP
+        PlannerConstraint.cpp
+        QEdgeConstraint.cpp
+        QEdgeConstraintIncremental.cpp
+        PathPlanner.cpp
+        QToQPlanner.cpp
+        QToTPlanner.cpp
+        QToQSamplerPlanner.cpp
+        PlannerUtil.cpp
+        StopCriteria.cpp
+        QConstraint.cpp
+        QNormalizer.cpp
+        QIKSampler.cpp
+        QSampler.cpp
+        StateConstraint.cpp
+        PathAnalyzer.cpp
+    )
+
+    set(FILES_HPP
+        PlannerConstraint.hpp
+        QEdgeConstraint.hpp
+        QEdgeConstraintIncremental.hpp
+        PathPlanner.hpp
+        QToQPlanner.hpp
+        QToTPlanner.hpp
+        QToQSamplerPlanner.hpp
+        PlannerUtil.hpp
+        StopCriteria.hpp
+        QConstraint.hpp
+        QNormalizer.hpp
+        QIKSampler.hpp
+        QSampler.hpp
+        StateConstraint.hpp
+        PathAnalyzer.hpp
+    )
+
+    rw_add_library(${SUBSYS_NAME} ${FILES_CPP} ${FILES_HPP})
+    rw_add_includes(${SUBSYS_NAME} "rw/pathplanning" ${FILES_HPP})
+    rw_add_includes(${SUBSYS_NAME} "rw" ../pathplanning.hpp)
+
+    target_link_libraries(${SUBSYS_NAME} PUBLIC ${Boost_LIBRARIES} ${SUBSYS_DEPS})
+
+    target_include_directories(
+        ${SUBSYS_NAME} PUBLIC ${Boost_INCLUDE_DIR} $<BUILD_INTERFACE:${RW_ROOT}/src>
+                              $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
+    )
+
+endif()

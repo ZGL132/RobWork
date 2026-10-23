@@ -1,0 +1,415 @@
+{
+  "added": 24,
+  "changed": 3,
+  "deleted": 0,
+  "total": 869,
+  "newAndChanged": [
+    {
+      "id": "foundation-governance.build-context-pack.root-and-task-map",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 14,
+      "end": 36,
+      "symbol": "$scriptDir",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.navigation-and-blockers",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 38,
+      "end": 58,
+      "symbol": "$readingPath",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.Get-BlobSha",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 64,
+      "end": 64,
+      "symbol": "Get-BlobSha",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.fingerprint-sources",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 65,
+      "end": 73,
+      "symbol": "Get-ContextFingerprintFiles",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.head-metadata",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 75,
+      "end": 79,
+      "symbol": "$headSha",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.markdown-assembly",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 81,
+      "end": 136,
+      "symbol": "$unitDir",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.build-context-pack.write-generated-pack",
+      "path": "RobWork/scripts/industrialrobot/build-context-pack.ps1",
+      "start": 138,
+      "end": 143,
+      "symbol": "$packsDir",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.root-and-pack-selection",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 18,
+      "end": 39,
+      "symbol": "$scriptDir",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.structure-and-contract-identity",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 41,
+      "end": 72,
+      "symbol": "$structural",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.pipeline-purity",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 73,
+      "end": 76,
+      "symbol": "foreach ($marker",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.fingerprint-rehash",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 77,
+      "end": 101,
+      "symbol": "$inTable",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.required-source-coverage",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 102,
+      "end": 107,
+      "symbol": "Get-ContextFingerprintFiles",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.validate-context-pack.drift-and-result",
+      "path": "RobWork/scripts/industrialrobot/validate-context-pack.ps1",
+      "start": 108,
+      "end": 121,
+      "symbol": "$packedStatus",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.context-pack-files.Get-ContextFingerprintFiles",
+      "path": "RobWork/scripts/industrialrobot/context-pack-files.ps1",
+      "start": 3,
+      "end": 17,
+      "symbol": "Get-ContextFingerprintFiles",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.root-and-shared-config",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 19,
+      "end": 32,
+      "symbol": "$scriptDir",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.Get-IndexedContent",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 33,
+      "end": 45,
+      "symbol": "Get-IndexedContent",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.task-and-open-reference-map",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 46,
+      "end": 62,
+      "symbol": "$taskStatus",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.Get-EvidenceKind",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 64,
+      "end": 85,
+      "symbol": "Get-EvidenceKind",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.ConvertTo-CanonicalTaskId",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 87,
+      "end": 91,
+      "symbol": "ConvertTo-CanonicalTaskId",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.Get-TaskIds",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 92,
+      "end": 103,
+      "symbol": "Get-TaskIds",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.git-tracked-inputs",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 110,
+      "end": 139,
+      "symbol": "$repoTop",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.entry-lifecycle-and-hash",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 140,
+      "end": 165,
+      "symbol": "$files",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.duplicate-summary",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 166,
+      "end": 175,
+      "symbol": "$dupGroups",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.index-evidence.emit-index",
+      "path": "RobWork/scripts/industrialrobot/index-evidence.ps1",
+      "start": 177,
+      "end": 201,
+      "symbol": "$index",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.test-governance-lite.environment",
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "start": 4,
+      "end": 10,
+      "symbol": "$ErrorActionPreference",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.test-governance-lite.Invoke-Probe",
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "start": 13,
+      "end": 25,
+      "symbol": "Invoke-Probe",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    },
+    {
+      "id": "foundation-governance.test-governance-lite.fixtures-and-report",
+      "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+      "start": 27,
+      "end": 120,
+      "symbol": "try {",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "permissionRef": "ARCH:3.6.4"
+    }
+  ],
+  "checked": {
+    "regions": 27,
+    "inputs": 156,
+    "auditEvidence": 153
+  },
+  "allStatus": {
+    "pending": 866,
+    "proposal": 3
+  },
+  "allDecision": {
+    "pending": 866,
+    "proposal": 3
+  },
+  "allRole": {
+    "adapter": 583,
+    "owner": 286
+  },
+  "allCapability": {
+    "NONE": 374,
+    "UTIL-UNITS": 1,
+    "TEST-HARNESS": 58,
+    "UTIL-LOG": 1,
+    "UTIL-THREAD": 22,
+    "MATH-SVD": 5,
+    "UTIL-BINARCHIVE": 170,
+    "DYN-RNE": 2,
+    "KIN-FK": 27,
+    "DYN-FD": 3,
+    "TRAJ-LINEAR": 3,
+    "MATH-STATS": 1,
+    "MATH-TRAPEZOID": 1,
+    "UTIL-TEXT": 28,
+    "KIN-IK": 7,
+    "MATH-ROT": 38,
+    "MATH-RANDOM": 12,
+    "GEOM-SPHERE-SAMPLING": 1,
+    "MATH-EIGEN": 4,
+    "MATH-INERTIA": 3,
+    "MATH-DH": 3,
+    "UTIL-XML": 18,
+    "COLLISION": 11,
+    "MODEL-BOUNDS": 1,
+    "UTIL-FILE": 20,
+    "TRAJ-SLERP": 1,
+    "MATH-POLYNOMIAL": 12,
+    "PATH-SIMPLIFY": 1,
+    "TRAJ-HIGH": 2,
+    "PATH-PLANNING": 13,
+    "MATH-METRIC": 3,
+    "HOST-SCENE": 11,
+    "HOST-LINES": 6,
+    "HOST-FRAME": 1,
+    "HOST-TEXT": 5
+  },
+  "targetsNonempty": 770,
+  "storedReports": {
+    "context-red/report.json": {
+      "executed": 16,
+      "passed": 8,
+      "failed": 8
+    },
+    "context-green/report.json": {
+      "executed": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "index/report.json": {
+      "executed": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "lite-green-r4-0/governance-lite-report.json": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0
+    },
+    "lite-green-r4-1/governance-lite-report.json": {
+      "executed": 17,
+      "passed": 17,
+      "failed": 0
+    }
+  },
+  "errors": []
+}

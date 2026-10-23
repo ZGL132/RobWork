@@ -1,0 +1,39 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B31",
+  "tests": {
+    "total": 22,
+    "passed": 19,
+    "failed": 3,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "originalTests": {
+    "total": 15,
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0
+  },
+  "newTests": {
+    "total": 7,
+    "passed": 4,
+    "failed": 3,
+    "skipped": 0
+  },
+  "qOverload": "编译期必须存在；审计构建将真实RW::sdurw_math公开供给core，产品CMake未改",
+  "productionChanges": false,
+  "dependencyInstall": false,
+  "independentAcceptance": "pending",
+  "remote": "not executed per owner",
+  "notRun": [
+    "C4生产修正",
+    "次正规数契约变更",
+    "全部消费者阈值来源",
+    "上游完整测试集",
+    "产品完整集成构建",
+    "全T01验收"
+  ]
+}

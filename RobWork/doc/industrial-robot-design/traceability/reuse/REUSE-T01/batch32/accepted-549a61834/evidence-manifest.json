@@ -1,0 +1,202 @@
+{
+  "selfReference": false,
+  "excludes": [
+    "repo/",
+    ".git/",
+    "build/",
+    "fixture/"
+  ],
+  "entries": [
+    {
+      "rawSha256": "8171d91a0cc4629fb26bd377f82cfc3d0a733cbea6d61743d9b1676822a3a59d",
+      "path": "acceptance.json",
+      "bytes": 6467
+    },
+    {
+      "rawSha256": "30f2e000950810ccef12d4d6057958cde340f5787faa5a9188b8c4d8d0142420",
+      "path": "acceptance.md",
+      "bytes": 2155
+    },
+    {
+      "rawSha256": "69a357f3624d61312e1f3fb1bbf4bcc9db371f7fce321c636235cc2875e59807",
+      "path": "static-audit.json",
+      "bytes": 48409
+    },
+    {
+      "rawSha256": "c278e8b9280f5fc0d89e79d3050fe67c5fbf05ead3df2a25eeace04ae2fa93ef",
+      "path": "source-excerpts.md",
+      "bytes": 26128
+    },
+    {
+      "rawSha256": "8de5a79aa7adfec2b0be3812c35eb1ea859b1953587996102547aab685a6d66c",
+      "path": "search-replay.json",
+      "bytes": 2602
+    },
+    {
+      "rawSha256": "f861a15664c4f5999a2c8afd4b35ebe1af92571c2e2dd04ffb938ad4f8dff6f5",
+      "path": "audit.ps1",
+      "bytes": 4755
+    },
+    {
+      "rawSha256": "eb3575a3ed9ecbe0007cb85a0bd99b632772b6f76a8b7999b6ad2b20c3f004fc",
+      "path": "replay.ps1",
+      "bytes": 1229
+    },
+    {
+      "rawSha256": "d94f89526fc4980cbd86d13b400ebc7d99f5abd6186ffd39b827ed2f0fa86ee1",
+      "path": "finalize.ps1",
+      "bytes": 7819
+    },
+    {
+      "rawSha256": "e7eb1081a4d99556d40e1530737c22747d51e104f603ed3754a69cf90a158726",
+      "path": "clone.log",
+      "bytes": 88
+    },
+    {
+      "rawSha256": "fbc0fb8b167c451023026c6c854107b3e2d4f0d8467ec356a634b115075afd50",
+      "path": "checkout.log",
+      "bytes": 88
+    },
+    {
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939",
+      "path": "vs-env.log",
+      "bytes": 242
+    },
+    {
+      "rawSha256": "20a6cd5d062959a5b85bc8f41156658618fb5368da67c3177be11d67c16c1d7e",
+      "path": "configure.log",
+      "bytes": 2586
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "configure.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "3008a2825b54fca808c9e9b66a44d4afabb600ed0616187f85ade94f9d50b074",
+      "path": "build.log",
+      "bytes": 2995
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "build.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "bd83658ef99179acdf0187e7db6e5f8e1963805e1b679936baa5bbf350983928",
+      "path": "task.log",
+      "bytes": 2518
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "task.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "eb6e618607f6857e0b384c5441bae44df9a8cb2899457c4227229240b8d1d7b4",
+      "path": "docs.log",
+      "bytes": 2725
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "docs.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "3dbafe0b3ccdcc68b4eb2aa335e6a006ebf2b492ddb1cf4673de998218f82b18",
+      "path": "reuse.log",
+      "bytes": 2487
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "reuse.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "c8ea771a4f48c2b3b1a7187551261fa13a9bf2deb0693a3153cceee04e07cb17",
+      "path": "commit-lint.log",
+      "bytes": 71
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "commit-lint.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "path": "diff-check.log",
+      "bytes": 0
+    },
+    {
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+      "path": "diff-check.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "51bb05ab4bbd444fb6fe4647c5b4b531e60b6fc61fd2c0d4c34eb84c6029bfc0",
+      "path": "diff-check-scope.txt",
+      "bytes": 1139
+    },
+    {
+      "rawSha256": "839ea86fd22d96f371a1d52761c723eacc3eff29ec412a8fa213dd6384a13468",
+      "path": "diff-check-all.log",
+      "bytes": 506
+    },
+    {
+      "rawSha256": "df4e26a04a444901b95afef44e4a96cfae34690fff2ad2c66389c70079cdff2b",
+      "path": "diff-check-all.exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "323af8c14eaaf502f6a891f49c0f85dbfc14f2cc45c0d431f8eab985ea42cfb4",
+      "path": "run/stdout.log",
+      "bytes": 4840
+    },
+    {
+      "rawSha256": "471182a8ddaeb3c007bb53f7ae78e7644b9c5787c15226d112d1f8cc7ca464fa",
+      "path": "run/gtest.xml",
+      "bytes": 10294
+    },
+    {
+      "rawSha256": "b7e8f23f730e13f1794e2ec5473458f319e775b15b2c808496f31b198d688609",
+      "path": "run/ird-test-report.json",
+      "bytes": 17860
+    },
+    {
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+      "path": "run/exit.txt",
+      "bytes": 3
+    },
+    {
+      "rawSha256": "fdcab80994219e97ea718a1cebcfc38e3e69d19990ea6b626f7cb365f3377538",
+      "path": "search-1.log",
+      "bytes": 4574
+    },
+    {
+      "rawSha256": "2606bb215b8118b207f185e162ec9568c29a71f2b2974cfe15a6059d6c0112af",
+      "path": "search-2.log",
+      "bytes": 6369
+    },
+    {
+      "rawSha256": "e954a6f50a5170251b7027faa29b43436321643925e99d2b90a891f85f9ea656",
+      "path": "search-3.log",
+      "bytes": 451
+    },
+    {
+      "rawSha256": "be1982dfa6fde4ab091a911f284b3d2d23d05423104f3c0eb2219036cca6655e",
+      "path": "search-4.log",
+      "bytes": 234
+    },
+    {
+      "rawSha256": "d4998d9614ea408dcc4c1a7995bde6cca10ee8f25f6a28c3698e179adda4d1f1",
+      "path": "search-5.log",
+      "bytes": 5561
+    },
+    {
+      "rawSha256": "160184a762d2e9bb4dfe8117fdc1f0b6795387fe018b4d502caa4e44e7f738cb",
+      "path": "search-6.log",
+      "bytes": 6260
+    }
+  ],
+  "schemaVersion": "ird-independent-evidence/1"
+}

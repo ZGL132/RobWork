@@ -1,0 +1,5 @@
+integrity 申报表（path / sizeBytes / sha256）：
+inputs/region-sampling.json 5902 40c441b187acb9915f973b54894c538089029a44143a4c2959ac1c6d565a582b
+expected/region-sampling-expected.json 2725 3bb75a3ce88ab5e873bf935e42760a81f22e1350b875ad95ea0b93bb1418d498
+generate/make_region_sampling_golden.mjs 5802 67947e02b5a8e87c10172f4d62ba899a96c592ec0f6f5fcd511bb42b5d6d22a2
+expected 写出: C:\Users\zgl18\AppData\Local\Temp\ird-accept-b16-generators-20261023-013420-1366906690\repo\.cache\b16-golden-replay\req-region-sampling\1.0.0\expected\region-sampling-expected.json

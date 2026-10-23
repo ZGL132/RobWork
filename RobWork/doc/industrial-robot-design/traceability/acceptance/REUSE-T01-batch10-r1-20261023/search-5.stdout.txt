@@ -1,0 +1,3 @@
+1033:  // the ownership of the listener (i.e. it will delete the listener when
+1035:  void Append(TestEventListener* listener);
+1040:  TestEventListener* Release(TestEventListener* listener);

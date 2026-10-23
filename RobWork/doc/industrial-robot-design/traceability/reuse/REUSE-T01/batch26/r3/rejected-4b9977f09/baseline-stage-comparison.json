@@ -1,0 +1,28 @@
+[
+  {
+    "command": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r2-acceptance-20261023\\baseline-with-parser-bom.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r2-acceptance-20261023\\fixtures-v3\\pwsh-missing-stage"
+    ],
+    "exitCode": 2,
+    "baseline": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+    "parserOnlyBomAdded": true
+  },
+  {
+    "command": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r2-acceptance-20261023\\baseline-with-parser-bom.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\reuse-t01-b26-r2-acceptance-20261023\\fixtures-v3\\powershell-missing-stage"
+    ],
+    "exitCode": 1,
+    "baseline": "d0fcb96f62a863684848161f7b8ecd93ef0be302",
+    "parserOnlyBomAdded": true
+  }
+]

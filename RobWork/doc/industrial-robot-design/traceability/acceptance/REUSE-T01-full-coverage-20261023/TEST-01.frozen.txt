@@ -1,0 +1,13 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp
+(global anonymous namespace)::makeCandidate
+78: FeasibleCandidate makeCandidate(unsigned char seed, double envelope,
+79:                                 double margin, bool isBaseline = false)
+80: {
+81:     FeasibleCandidate c;
+82:     c.candidateId = makeCid(seed);
+83:     c.isBaseline = isBaseline;
+84:     c.metricValues.assign(kMetricCount, std::nullopt);
+85:     c.metricValues[static_cast<std::size_t>(MetricId::Envelope)] = envelope;
+86:     c.metricValues[static_cast<std::size_t>(MetricId::MinJointMargin)] = margin;
+87:     return c;
+88: }

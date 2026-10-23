@@ -1,0 +1,68 @@
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:62:    QSampler::Ptr anyQ = QSampler::makeUniform (bounds);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:114:        res = line->query (from, linearToGood, path, 2);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:118:        res = line->query (from, linearToBad, path, 2);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:126:    QToQPlanner::Ptr rrtplanner                  = RRTPlanner::makeQToQPlanner (constraint, device);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:127:    QToQPlanner::Ptr arwplanner                  = ARWPlanner::makeQToQPlanner (constraint, device);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:128:    QToQPlanner::Ptr sblplanner                  = SBLPlanner::makeQToQPlanner (SBLSetup::make (
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:133:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:135:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:137:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:139:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:141:        constraint.getQConstraintPtr (), QSampler::makeUniform (*device), 0.01, *device, state));
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:181:        QSampler::Ptr cfreeQ = QSampler::makeConstrained (
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:182:            QSampler::makeUniform (device), constraint.getQConstraintPtr (), 1000);
+RobWork/RobWork/gtest/pathplanning\PathPlanningTest.cpp:197:                res = planner.second->query (from, to, path, 20);
+RobWork/RobWork/src/rw/pathplanning\PathAnalyzer.hpp:214:        static double pathLength (It begin, It end,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.cpp:31:QToQPlanner::Ptr RRTPlanner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.cpp:47:QToQPlanner::Ptr RRTPlanner::makeQToQPlanner (const PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.cpp:52:    return makeQToQPlanner (constraint,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.cpp:53:                            QSampler::makeUniform (device),
+RobWork/RobWork/src/rw/pathplanning\PathAnalyzer.cpp:53:    analysis.length = pathLength (path.begin (), path.end (), *metric);
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.hpp:108:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rwlibs/pathplanners/rrt\RRTPlanner.hpp:127:        makeQToQPlanner (const rw::pathplanning::PlannerConstraint& constraint,
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:67:        bool query (const From& from, To& to, Path& path, const StopCriteria& stop)
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:87:        bool query (const From& from, To& to, Path& path, double time)
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:89:            return query (from, to, path, *StopCriteria::stopAfter (time));
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:107:        bool query (const From& from, To& to, Path& path)
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:109:            return query (from, to, path, *StopCriteria::stopNever ());
+RobWork/RobWork/src/rw/pathplanning\PathPlanner.hpp:129:           @brief Subclass implementation of the query() method.
+RobWork/RobWork/src/rw/pathplanning\PlannerUtil.cpp:85:    QSampler::Ptr sampler = QSampler::makeUniform (device);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:93:        static QConstraint::Ptr makeBounds (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:113:        static QConstraint::Ptr makeMerged (const std::vector< QConstraint::Ptr >& constraints);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.hpp:119:        static QConstraint::Ptr makeMerged (const QConstraint::Ptr& ca, const QConstraint::Ptr& cb);
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.hpp:123:        makeMerged (const std::vector< QEdgeConstraint::Ptr >& constraints);
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.hpp:135:        static QEdgeConstraint::Ptr makeMerged (QEdgeConstraint::Ptr constraint1,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:143:QEdgeConstraint::makeMerged (const std::vector< QEdgeConstraint::Ptr >& constraints)
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:148:QEdgeConstraint::Ptr QEdgeConstraint::makeMerged (QEdgeConstraint::Ptr constraint1,
+RobWork/RobWork/src/rw/pathplanning\QEdgeConstraint.cpp:154:    return makeMerged (constraints);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:205:QConstraint::Ptr QConstraint::makeMerged (const std::vector< QConstraint::Ptr >& constraints)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:210:QConstraint::Ptr QConstraint::makeMerged (const QConstraint::Ptr& ca, const QConstraint::Ptr& cb)
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:215:    return makeMerged (cs);
+RobWork/RobWork/src/rw/pathplanning\QConstraint.cpp:236:QConstraint::Ptr QConstraint::makeBounds (const Device::QBox& bounds)
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:46:            _seed = QSampler::makeUniform (device);
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.cpp:137:QIKSampler::Ptr QIKSampler::makeConstrained (QIKSampler::Ptr sampler, QConstraint::Ptr constraint,
+RobWork/RobWork/src/rw/pathplanning\QIKSampler.hpp:114:        static QIKSampler::Ptr makeConstrained (QIKSampler::Ptr sampler,
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:114:        static QSampler::Ptr makeUniform (const rw::models::Device::QBox& bounds);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:119:        static QSampler::Ptr makeUniform (const rw::models::Device& device);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:124:        static QSampler::Ptr makeUniform (rw::models::Device::CPtr device);
+RobWork/RobWork/src/rw/pathplanning\QSampler.hpp:153:        static QSampler::Ptr makeConstrained (QSampler::Ptr sampler,
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:213:QSampler::Ptr QSampler::makeUniform (const Device::QBox& bounds)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:218:QSampler::Ptr QSampler::makeUniform (const Device& device)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:220:    return makeUniform (device.getBounds ());
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:223:QSampler::Ptr QSampler::makeUniform (Device::CPtr device)
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:225:    return makeUniform (device->getBounds ());
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:238:QSampler::Ptr QSampler::makeConstrained (QSampler::Ptr sampler, QConstraint::CPtr constraint,
+RobWork/RobWork/src/rw/pathplanning\QSampler.cpp:248:    return QSampler::makeUniform (dirBounds);
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.cpp:38:        return _planner->query (from, *QSampler::makeSingle (to), path, stop);
+RobWork/RobWork/src/rw/pathplanning\QToQPlanner.hpp:54:           configuration passed to the query() method.
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.hpp:67:           For each query(from, to) call, the planner extracts \b cnt samples
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:44:        return _planner->query (from, *QSampler::make (_ikSampler, baseTend), path, stop);
+RobWork/RobWork/src/rw/pathplanning\QToTPlanner.cpp:82:            return _planner->query (from, minQ, path, stop);
+RobWork/RobWork/src/rw/pathplanning\QToTrajPlanner.hpp:69:           For each query(from, to) call, the planner extracts \b cnt samples
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.hpp:103:        static StopCriteria::Ptr stopByFun (boost::function< bool () > fun);
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.hpp:113:        static StopCriteria::Ptr stopEither (const std::vector< StopCriteria::Ptr >& criteria);
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.hpp:118:        static StopCriteria::Ptr stopEither (const StopCriteria::Ptr& a,
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.cpp:173:StopCriteria::Ptr StopCriteria::stopByFun (BoostFunction fun)
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.cpp:183:StopCriteria::Ptr StopCriteria::stopEither (const std::vector< StopCriteria::Ptr >& criteria)
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.cpp:188:StopCriteria::Ptr StopCriteria::stopEither (const StopCriteria::Ptr& a, const StopCriteria::Ptr& b)
+RobWork/RobWork/src/rw/pathplanning\StopCriteria.cpp:193:    return stopEither (criteria);

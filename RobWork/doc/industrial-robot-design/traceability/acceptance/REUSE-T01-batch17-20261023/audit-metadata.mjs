@@ -1,0 +1,47 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import cp from 'node:child_process';
+import crypto from 'node:crypto';
+const out=path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Z]:)/,'$1'));
+const root=path.join(out,'repo'), design='RobWork/doc/industrial-robot-design/', evidence=design+'traceability/reuse/REUSE-T01/';
+const read=p=>fs.readFileSync(path.join(root,p),'utf8').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n');
+const load=p=>JSON.parse(read(p));
+const digest=s=>crypto.createHash('sha256').update(s.replace(/\n*$/,'\n')).digest('hex');
+const rawDigest=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+const write=(f,x)=>fs.writeFileSync(path.join(out,f),typeof x==='string'?x:JSON.stringify(x,null,2)+'\n');
+const check=(ok,m)=>{if(!ok)throw new Error(m)};
+const defs=load(evidence+'batch17-definitions.json');
+const current=['core','testkit'].flatMap(u=>load(design+'reuse/functions/'+u+'.json').functions);
+const parent=cp.execFileSync('git',['rev-parse','HEAD^'],{cwd:root,encoding:'utf8'}).trim();
+const old=['core','testkit'].flatMap(u=>JSON.parse(cp.execFileSync('git',['show',parent+':'+design+'reuse/functions/'+u+'.json'],{cwd:root,encoding:'utf8',maxBuffer:10e6})).functions);
+const oldIds=new Set(old.map(r=>r.functionId)), added=current.filter(r=>!oldIds.has(r.functionId));
+check(defs.length===39&&added.length===39,'B17 row count');
+check(new Set(defs.map(d=>d.functionId)).size===39,'duplicate definitions');
+const bindings=[];
+const reviewed=[];
+for(const d of defs){
+ const r=added.find(r=>r.functionId===d.functionId);check(r,'missing added row '+d.functionId);
+ check(r.sources.length===1&&JSON.stringify(r.sources[0])===JSON.stringify(d.source),'definition/matrix binding '+d.functionId);
+ const s=d.source,txt=read(s.path),lines=txt.split('\n'),section=lines.slice(s.startLine-1,s.endLine).join('\n');
+ check(digest(section)===s.sha256,'section hash '+d.functionId);
+ check(section.includes(s.symbol),'section symbol '+d.functionId);
+ check(r.inputs.some(x=>x.path===s.path),'full own-source input '+d.functionId);
+ for(const b of [...(r.inputs??[]),...(r.auditEvidence??[])]){check(digest(read(b.path))===b.sha256,'input/evidence hash '+d.functionId+' '+b.path);bindings.push(b.path);}
+ const file=String(defs.indexOf(d)+1).padStart(2,'0')+'-'+r.functionId.replace(/[^\w.-]/g,'_')+'.txt';
+ write(file,s.path+'\n'+s.qualifiedSymbol+'\n'+lines.slice(s.startLine-1,s.endLine).map((l,i)=>`${s.startLine+i}: ${l}`).join('\n')+'\n');
+ reviewed.push({functionId:r.functionId,ownerUnit:r.ownerUnit,source:s,sourceContextHash:digest(txt),firstLine:lines[s.startLine-1],lastLine:lines[s.endLine-1],decision:r.decision,status:r.status,capabilityId:r.capabilityId,usageRole:r.usageRole,permissionRef:r.permissionRef,requirements:r.requirements,targets:r.targets,inputs:r.inputs.map(x=>x.path),differences:r.differences,search:r.search,auditBoundary:r.auditBoundary,evidence:file});
+}
+const search=load(evidence+'batch17-search.json');
+const replay=search.results.map((s,i)=>{const [command,...args]=s.arguments;const r=cp.spawnSync(command,args,{cwd:root,encoding:'utf8',maxBuffer:10e6});const stdout=r.stdout??'';write('search-'+(i+1)+'.log',stdout+(r.stderr??''));const norm=t=>t.replace(/\r\n/g,'\n').trimEnd().split('\n').sort().join('\n');return {arguments:s.arguments,originalExitCode:s.exitCode,exitCode:r.status,error:r.error?.message??null,lineCount:stdout.trimEnd().split('\n').length,sameOutputAsFrozen:norm(stdout)===norm(s.stdout??''),log:'search-'+(i+1)+'.log'};});
+const environment=load(evidence+'probe-r17/environment-artifacts.json');
+const installed=environment.installedCandidates.map(b=>({...b,observedRawSha256:rawDigest(b.path),match:rawDigest(b.path)===b.rawSha256}));
+for(const b of environment.sources)check(digest(read(b.path))===b.sha256,'original probe source binding '+b.path);
+for(const run of environment.runs)for(const k of ['xml','report','stdout'])check(digest(read(run[k].path))===run[k].sha256,'original artifact '+run.name+' '+k);
+const f=load(design+'traceability/findings.json').findings.find(f=>f.id==='F-960');
+check(f?.status==='open','F-960 must remain open');
+const changed=cp.execFileSync('git',['diff-tree','--no-commit-id','--name-only','-r','HEAD'],{cwd:root,encoding:'utf8'}).trim().split('\n');
+check(!changed.some(f=>f.startsWith('RobWork/RobWorkStudio/src/')||f.startsWith('RobWork/RobWork/src/')||f.startsWith('vcpkg/')),'production/upstream mutation');
+const result={reviewedCommit:cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim(),parent,addedCount:added.length,core:added.filter(r=>r.ownerUnit==='core').length,testkit:added.filter(r=>r.ownerUnit==='testkit').length,definitions:reviewed,uniqueBindings:[...new Set(bindings)],searchReplay:replay,installedCandidateBindings:installed,finding:f,changedFiles:changed,checks:{all39DefinitionsBound:true,all39OwnFileInputsBound:true,allInputAndAuditEvidenceHashesMatch:true,originalArtifactHashesMatch:true,noProductOrUpstreamChange:true}};
+write('metadata-audit.json',result);
+console.log(JSON.stringify({addedCount:result.addedCount,core:result.core,testkit:result.testkit,uniqueBindings:result.uniqueBindings.length,searchReplay:replay.map(r=>({exitCode:r.exitCode,sameOutput:r.sameOutputAsFrozen})),installedCandidatesMatch:installed.every(x=>x.match),checks:result.checks},null,2));
+console.log(reviewed.map(r=>r.functionId+' | '+r.source.startLine+'-'+r.source.endLine+' | '+r.differences).join('\n'));

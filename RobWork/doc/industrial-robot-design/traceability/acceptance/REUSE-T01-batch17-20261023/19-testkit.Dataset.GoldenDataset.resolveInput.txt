@@ -1,0 +1,11 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::GoldenDataset::resolveInput
+488: std::filesystem::path GoldenDataset::resolveInput(std::string_view relPath) const
+489: {
+490:     const bool listed = std::any_of(manifest_.inputs.begin(), manifest_.inputs.end(),
+491:                                     [&](const std::string& s) { return s == relPath; });
+492:     if (!listed) {
+493:         failField("inputs", "相对路径不在清单 inputs 内: " + std::string{relPath});
+494:     }
+495:     return versionDir_ / std::filesystem::path{relPath};
+496: }

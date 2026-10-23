@@ -1,0 +1,36 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  sdurws_ird_core.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b32-build-prefix\parent-probe\ird-core\Release\sdurws_ird_core.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  sdurws_ird_testkit.vcxproj -> C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b32-build-prefix\parent-probe\ird-testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/CMakeLists.txt
+  EventLifetimeSuitabilityTest.cpp
+  EventBus.cpp
+  EventsTest.cpp
+  ProvenanceTest.cpp
+  TestMainReport.cpp
+  EventTest.cpp
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWork\src\rw\math\Q.hpp(30,10): error C1083: 无法打开包括文件: “Eigen/Core”: No such file or directory [C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\b32-build-prefix\ird_event_lifetime_audit.vcxproj]
+  (编译源文件“../../RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp”)
+  

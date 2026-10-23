@@ -1,0 +1,550 @@
+[
+  {
+    "id": "COV-01",
+    "title": "已有上游 RRT 适配及避障生产链未纳入逐功能矩阵",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 4,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+        "line": 161,
+        "symbol": "PolicySessionQConstraint::doInCollision",
+        "currentlyCoveringRows": [
+          "trajectory.Planner.doInCollision"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+        "line": 360,
+        "symbol": "sampleStraightPath",
+        "currentlyCoveringRows": [
+          "trajectory.Planner.sampleStraightPath"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+        "line": 828,
+        "symbol": "makePathPlannerAdapter",
+        "currentlyCoveringRows": [
+          "trajectory.Planner.makePathPlannerAdapter"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+        "line": 837,
+        "symbol": "planPtpWithObstacleAvoidance",
+        "currentlyCoveringRows": [
+          "trajectory.Planner.planPtpWithObstacleAvoidance"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-02",
+    "title": "Pareto 支配判定、容差 helper 与分层排序未登记",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 4,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+        "line": 37,
+        "symbol": "notWorse",
+        "currentlyCoveringRows": [
+          "optimization.Pareto.notWorse"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+        "line": 50,
+        "symbol": "strictlyBetter",
+        "currentlyCoveringRows": [
+          "optimization.Pareto.strictlyBetter"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+        "line": 65,
+        "symbol": "dominates",
+        "currentlyCoveringRows": [
+          "optimization.Pareto.dominates"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp",
+        "line": 94,
+        "symbol": "ParetoFrontBuilder::buildFront",
+        "currentlyCoveringRows": [
+          "optimization.Pareto.ParetoFrontBuilder.buildFront"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-03",
+    "title": "候选生成接口和邻域扰动链未由 LHS 随机 helper 条目覆盖",
+    "anchorCount": 3,
+    "currentlyReferencedAnchorCount": 3,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+        "line": 39,
+        "symbol": "SeededLhsGenerator::generateNextBatch",
+        "currentlyCoveringRows": [
+          "optimization.Generator.SeededLhsGenerator.generateNextBatch"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+        "line": 110,
+        "symbol": "BaselinePerturbGenerator::generateNextBatch",
+        "currentlyCoveringRows": [
+          "optimization.Generator.BaselinePerturbGenerator.generateNextBatch"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp",
+        "line": 248,
+        "symbol": "generateWithBuiltInStrategy",
+        "currentlyCoveringRows": [
+          "optimization.Generator.generateWithBuiltInStrategy"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-04",
+    "title": "功率能量梯形积分与无效区间归约未登记",
+    "anchorCount": 1,
+    "currentlyReferencedAnchorCount": 1,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
+        "line": 63,
+        "symbol": "PowerEnergyCalculator::compute",
+        "currentlyCoveringRows": [
+          "dynamics.PowerEnergy.PowerEnergyCalculator.compute"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-05",
+    "title": "可达包络探针与近似搜索编排未登记",
+    "anchorCount": 2,
+    "currentlyReferencedAnchorCount": 2,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+        "line": 127,
+        "symbol": "probeReachability",
+        "currentlyCoveringRows": [
+          "kinematics.Envelope.probeReachability"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+        "line": 217,
+        "symbol": "computeApproximateEnvelope",
+        "currentlyCoveringRows": [
+          "kinematics.Envelope.computeApproximateEnvelope"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-06",
+    "title": "Xacro 受控展开及隐藏输出转义未登记",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 4,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+        "line": 172,
+        "symbol": "escapeXmlText",
+        "currentlyCoveringRows": [
+          "modeling.XacroExpand.escapeXmlText"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+        "line": 191,
+        "symbol": "escapeXmlAttribute",
+        "currentlyCoveringRows": [
+          "modeling.XacroExpand.escapeXmlAttribute"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+        "line": 403,
+        "symbol": "substituteText",
+        "currentlyCoveringRows": [
+          "modeling.XacroExpand.substituteText"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/XacroExpand.cpp",
+        "line": 933,
+        "symbol": "XacroExpandService::expand",
+        "currentlyCoveringRows": [
+          "modeling.XacroExpand.XacroExpandService.expand"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-07",
+    "title": "Worker 通道字节原语、增量帧与消息重组链未登记",
+    "anchorCount": 5,
+    "currentlyReferencedAnchorCount": 5,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+        "line": 28,
+        "symbol": "putU32",
+        "currentlyCoveringRows": [
+          "execution.ChannelProtocol.putU16"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+        "line": 236,
+        "symbol": "FrameAssembler::feed",
+        "currentlyCoveringRows": [
+          "execution.ChannelProtocol.FrameAssembler.feed"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+        "line": 319,
+        "symbol": "FrameSequencer::accept",
+        "currentlyCoveringRows": [
+          "execution.ChannelProtocol.FrameSequencer.accept"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+        "line": 432,
+        "symbol": "fragmentMessage",
+        "currentlyCoveringRows": [
+          "execution.ChannelProtocol.fragmentMessage"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/ChannelProtocol.cpp",
+        "line": 470,
+        "symbol": "MessageReassembler::accept",
+        "currentlyCoveringRows": [
+          "execution.ChannelProtocol.MessageReassembler.accept"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-08",
+    "title": "项目 canonical JSON 引擎及实体编码未登记",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 3,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "line": 160,
+        "symbol": "JsonParser",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "line": 224,
+        "symbol": "JsonParser::parseValue",
+        "currentlyCoveringRows": [
+          "project.Codec.JsonParser.parseValue"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "line": 299,
+        "symbol": "JsonParser::parseString",
+        "currentlyCoveringRows": [
+          "project.Codec.JsonParser.parseString"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+        "line": 914,
+        "symbol": "codec::dump(ProjectStaticIdentity)",
+        "currentlyCoveringRows": [
+          "project.Codec.dump.ProjectStaticIdentity"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-09",
+    "title": "报告二进制 Writer/Reader 与摘要链未登记",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 3,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "line": 50,
+        "symbol": "Writer",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "line": 78,
+        "symbol": "Writer::f64",
+        "currentlyCoveringRows": [
+          "reporting.ReportCodec.Writer.f64"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "line": 1255,
+        "symbol": "ReportCodec::parseData",
+        "currentlyCoveringRows": [
+          "reporting.ReportCodec.public.ReportCodec.parseData"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp",
+        "line": 1327,
+        "symbol": "ReportCodec::parseFull",
+        "currentlyCoveringRows": [
+          "reporting.ReportCodec.public.ReportCodec.parseFull"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-10",
+    "title": "已有登记文件仍遗漏值分派与护栏 helper",
+    "anchorCount": 3,
+    "currentlyReferencedAnchorCount": 3,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+        "line": 78,
+        "symbol": "Parser::skipWs",
+        "currentlyCoveringRows": [
+          "testkit.JsonLite.skipWs"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+        "line": 113,
+        "symbol": "Parser::parseValue",
+        "currentlyCoveringRows": [
+          "testkit.JsonLite.parseValue"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/JsonLite.cpp",
+        "line": 153,
+        "symbol": "Parser::expectLiteral",
+        "currentlyCoveringRows": [
+          "testkit.JsonLite.expectLiteral"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-11",
+    "title": "断言辅助和真实进程运行设施未登记",
+    "anchorCount": 5,
+    "currentlyReferencedAnchorCount": 5,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+        "line": 44,
+        "symbol": "checkCloseWithin",
+        "currentlyCoveringRows": [
+          "testkit.Check.checkCloseWithin"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Check.cpp",
+        "line": 60,
+        "symbol": "checkAllCloseWithin",
+        "currentlyCoveringRows": [
+          "testkit.Check.checkAllCloseWithin"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+        "line": 65,
+        "symbol": "detail::quoteWindowsArg",
+        "currentlyCoveringRows": [
+          "testkit.ProcessRunner.quoteWindowsArg"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+        "line": 199,
+        "symbol": "buildEnvironmentBlock",
+        "currentlyCoveringRows": [
+          "testkit.ProcessRunner.buildEnvironmentBlock"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/ProcessRunner.cpp",
+        "line": 310,
+        "symbol": "TestProcessRunner::start",
+        "currentlyCoveringRows": [
+          "testkit.ProcessRunner.TestProcessRunner.start"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "COV-12",
+    "title": "测试夹具、解析期望与追溯辅助未按功能覆盖",
+    "anchorCount": 5,
+    "currentlyReferencedAnchorCount": 0,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+        "line": 78,
+        "symbol": "makeCandidate",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "line": 103,
+        "symbol": "expectNearRel",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+        "line": 113,
+        "symbol": "rowAt",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "line": 81,
+        "symbol": "digestOf",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+        "line": 90,
+        "symbol": "existingNodeFor",
+        "currentlyCoveringRows": []
+      }
+    ]
+  },
+  {
+    "id": "COV-13",
+    "title": "固定库存中的黄金生成脚本功能未登记",
+    "anchorCount": 4,
+    "currentlyReferencedAnchorCount": 0,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+        "line": 63,
+        "symbol": "trapezoid",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+        "line": 77,
+        "symbol": "rneaReference",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+        "line": 358,
+        "symbol": "dominates",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+        "line": 392,
+        "symbol": "buildFront",
+        "currentlyCoveringRows": []
+      }
+    ]
+  },
+  {
+    "id": "COV-14",
+    "title": "CMake 目标接线及门禁解析功能未登记",
+    "anchorCount": 5,
+    "currentlyReferencedAnchorCount": 0,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+        "line": 95,
+        "symbol": "ird_read_flat",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+        "line": 104,
+        "symbol": "ird_extract_blocks",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+        "line": 152,
+        "symbol": "ird_classify_target",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "line": 32,
+        "symbol": "find_package(GTest CONFIG REQUIRED)",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+        "line": 118,
+        "symbol": "if(TARGET sdurw_kinematics)",
+        "currentlyCoveringRows": []
+      }
+    ]
+  },
+  {
+    "id": "COV-15",
+    "title": "宿主预览已登记锚点/网格但未审实际渲染接线与清理",
+    "anchorCount": 2,
+    "currentlyReferencedAnchorCount": 0,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+        "line": 360,
+        "symbol": "HostView3DPreviewBackend::draw",
+        "currentlyCoveringRows": []
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+        "line": 506,
+        "symbol": "HostView3DPreviewBackend::clear",
+        "currentlyCoveringRows": []
+      }
+    ]
+  },
+  {
+    "id": "COV-16",
+    "title": "业务关闭监督生产链也需明确分类",
+    "anchorCount": 2,
+    "currentlyReferencedAnchorCount": 2,
+    "anchors": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+        "line": 55,
+        "symbol": "StoreCloseSupervisor::start",
+        "currentlyCoveringRows": [
+          "workflow.CloseSupervisor.StoreCloseSupervisor.start"
+        ]
+      },
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+        "line": 95,
+        "symbol": "StoreCloseSupervisor::superviseLoop",
+        "currentlyCoveringRows": [
+          "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop"
+        ]
+      }
+    ]
+  }
+]

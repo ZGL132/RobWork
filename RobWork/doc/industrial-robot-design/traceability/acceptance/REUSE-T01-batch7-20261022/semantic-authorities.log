@@ -1,0 +1,425 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:13: *     字节等值）、§5.2（编码规则表：magic IRDSLCE1/大端/长度前缀/presence
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:60: * == SliceCodec 字节布局（版本 1；定宽整型一律大端）==
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:106:namespace sdurws::ird::evidence {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:108:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:111:// 字节拼装/读取原语（§5.2：定宽整型大端、长度前缀、无填充——跨进程一致；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:121:/// 追加 16 位整型（大端——高位在前，跨端序一致）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:128:/// 追加 32 位整型（大端）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:137:/// 追加 64 位整型（大端——浮点位模式承载的整型通道）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:166:/// @throws EvidenceError(SliceIncomplete) 含 NUL 或超出 65535 字节
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:169:    if (s.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:170:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:174:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:184:/// @throws EvidenceError(SliceIncomplete) 超出 2^32-1 字节
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:189:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:201: * @throws EvidenceError(SliceIncomplete) 剩余字节不足/内容非法
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:204:struct Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:206:    std::size_t pos = 0;                   ///< 当前读取偏移（诊断定位用）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:209:    void need(std::size_t n)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:211:        if (data.size() - pos < n) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:213:                EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:214:                "编码截断（偏移 " + std::to_string(pos) + "：需 " + std::to_string(n)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:215:                    + " 字节，剩余 " + std::to_string(data.size() - pos) + "）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:222:        return data[pos++];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:228:        const std::uint16_t hi = data[pos];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:229:        const std::uint16_t lo = data[pos + 1];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:230:        pos += 2;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:239:            v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:241:        pos += 4;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:250:            v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:252:        pos += 8;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:260:        std::memcpy(out, data.data() + pos, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:261:        pos += n;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:285:        std::string s(reinterpret_cast<const char*>(data.data() + pos), len);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:286:        pos += len;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:287:        if (s.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:288:            throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:289:                                "字符串含 NUL（偏移 " + std::to_string(pos) + "）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:299:        std::vector<std::uint8_t> b(data.begin() + static_cast<std::ptrdiff_t>(pos),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:300:                                    data.begin() + static_cast<std::ptrdiff_t>(pos) + len);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:301:        pos += len;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:305:    /// 确认已消费至末尾（尾随字节＝形态混淆/拼接损坏，显式拒绝）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:308:        if (pos != data.size()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:309:            throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:310:                                "编码存在尾随字节（已消费 " + std::to_string(pos)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:344:/// @throws EvidenceError(SliceIncomplete) 字符串含 NUL/超长
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:356:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:422:/// @throws EvidenceError(SliceIncomplete) 截断/字符串含 NUL/载荷与 kind 不符
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:430:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:432:                                + "（偏移 " + std::to_string(r.pos - 1) + "）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:439:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:447:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:497:            throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:582:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:613:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:620:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:635:                    EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:653:            throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:676:                EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:698:                    EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:705:                throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:713:                throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:719:                        EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:724:                throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:737:            EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:788:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:791:    r.pos = kMagic.size();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:794:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:802:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:815:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:835:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:839:    // 全部支持平台的既定表示——runtime RT-Codec f64 同款），随后按大端
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:853:    // 大端重组位型→宿主 double（canonicalF64 的严格逆）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:863:        throw EvidenceError(EvidenceErrorCode::SliceIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp:869:}  // namespace sdurws::ird::evidence
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:12: *     的 SHA-256）、§5.2（编码规则：magic IRDSNAP1/大端/长度前缀/presence
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:37: *   I-6 parse 结构性非法（magic/版本/形态/截断/NUL/尾随字节）→
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:38: *       SnapshotIncomplete（detail 带偏移）；载荷摘要不符 → SnapshotIntegrity
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:49: * == SnapshotCodec 字节布局（版本 1；定宽整型一律大端）==
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:62: *   [4] 采样计划条数；每条（regionId 序）：[16 rid][32 planId][8 posSamples]
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:63: *       [8 poseSamples][32 sampleSetId]
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:82:namespace sdurws::ird::evidence {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:84:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:87:// 字节拼装/读取原语（§5.2：定宽整型大端、长度前缀、无填充——跨进程一致）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:96:/// 追加 16 位整型（大端——高位在前，跨端序一致）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:103:/// 追加 32 位整型（大端）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:112:/// 追加 64 位整型（大端）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:129:/// @throws EvidenceError(SnapshotIncomplete) 含 NUL 或超出 65535 字节
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:132:    if (s.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:133:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:137:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:147:/// @throws EvidenceError(SnapshotIncomplete) 超出 2^32-1 字节
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:151:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:163: * @throws EvidenceError(SnapshotIncomplete) 剩余字节不足/内容非法
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:166:struct Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:168:    std::size_t pos = 0;                   ///< 当前读取偏移（诊断定位用）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:171:    void need(std::size_t n)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:173:        if (data.size() - pos < n) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:175:                EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:176:                "编码截断（偏移 " + std::to_string(pos) + "：需 " + std::to_string(n)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:177:                    + " 字节，剩余 " + std::to_string(data.size() - pos) + "）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:184:        return data[pos++];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:190:        const std::uint16_t hi = data[pos];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:191:        const std::uint16_t lo = data[pos + 1];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:192:        pos += 2;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:201:            v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:203:        pos += 4;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:212:            v = (v << 8) | data[pos + static_cast<std::size_t>(i)];
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:214:        pos += 8;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:222:        std::copy_n(data.data() + pos, n, out);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:223:        pos += n;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:231:        std::string s(reinterpret_cast<const char*>(data.data() + pos), len);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:232:        pos += len;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:233:        if (s.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:234:            throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:235:                                "字符串含 NUL（偏移 " + std::to_string(pos) + "，§5.2）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:245:        std::vector<std::uint8_t> bytes(data.begin() + static_cast<std::ptrdiff_t>(pos),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:246:                                        data.begin() + static_cast<std::ptrdiff_t>(pos)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:248:        pos += len;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:314:    throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete, detail);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:323:    if (text.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:397:    // 采样计划（计数 u64 大端；身份原始字节）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:488:            throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:490:                                    + std::to_string(r.pos - 1) + "："
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:548:        if (r.data[r.pos + i]
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:550:            throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:554:    r.pos += SnapshotCodec::kMagic.size();
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:557:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:565:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:574:/// @throws SnapshotIncomplete（闭包外对象）/SnapshotIntegrity（摘要不符）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:585:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:599:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:787:        if (e.label.find('\0') != std::string::npos) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:900:    if (r.pos != encoding.size()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:901:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:902:                            "编码存在尾随多余字节（已读 " + std::to_string(r.pos)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:964:    if (r.pos != encoding.size()) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:965:        throw EvidenceError(EvidenceErrorCode::SnapshotIncomplete,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:966:                            "编码存在尾随多余字节（已读 " + std::to_string(r.pos)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp:977:}  // namespace sdurws::ird::evidence
+32:> **v1.13 修订记录（2026-09-09，签署稿：完成 Accepted 门禁；需求所有者指令签署）**：①**P-01 冻结**——新增 §25 附录 D《数值容差汇总表》（12 项：IK 残差/去重、编译链等价验证、DH 判定残差、物性断言数值容差、并行归约、解析对照、时间参数化校验、行程上限策略默认、名称精确等值；类别分固定／分析配置默认／工程策略默认；P-06 与 P-04 范围显式排除）；NFR-COR-01、MDL-10 改锚附录 D。②**P-05 冻结**——§8.1 增表 4《各评估域 RequiredEvidenceProfile》（通用必需项＋运动学/轨迹/动力学/选型/优化五域必需与建议证据项，必需项缺失→DataInsufficient）。③**P-04 正式延期登记**——决议延迟至 OPT-D 启用前产出（届时未冻结不得启用联合优化），按附录 C 前置条款登记延期。④**复审核验**——需求条目仍为 180 条（v1.11～v1.13 零新增/删除需求行，仅口径细化与定义补充）；门禁三项（P-01/P-05/P-04）在状态行与附录 C 的登记一致；交叉引用抽查通过。⑤**状态转 `Accepted`**（签署依据：需求所有者 2026-09-09 指令）；v1.7 遗留"F2/F3 修复已复核"发布检查表待登记项随签署闭环。本版不改变任何需求 ID、优先级与发布绑定；新增章节 §25（附录 D）。
+139:| CON-01 | P0 | 持久化对象使用统一身份/版本包络；分析从完整不可变快照运行 | A | R1 | WP-05 | WP-04 |
+143:| CON-05 | P0 | 评估输入切片与依赖清单：缓存、当前性与失效基于切片内容身份，不基于整个项目修订 | A | R1 | WP-05 | - |
+144:| CON-06 | P0 | 每个计算快照保存已解析的 `EngineeringPolicySet` 版本/内容身份和执行时 `RuntimeNameMap`；策略进入依赖切片与缓存键，运行时名称必须先反解为对象 ID 才能接纳结果；同一快照从不同插件入口调用同一评估器时对象解析和工程判定一致 | A/C | R1 | WP-05 | WP-06;WP-07 |
+194:**通用必需项**（全部 Verified 评估，任一缺失 → 整体 DataInsufficient）：完整 AnalysisSnapshot 身份（含已解析 `EngineeringPolicySet` 与 `RuntimeNameMap` 内容身份——CON-06）；必验工况覆盖矩阵（EVI-02）；评估模式与证据等级标识。
+204:| 优化 | 候选变量补丁与编译身份；硬约束执行记录（按 §15.0 阶段子集）；Quick/Verified 层级与审计计数（淘汰/缓存命中）；随机种子与线程配置（确定性复现要素，NFR-COR-02） | 灵敏度/鲁棒性复核（OPT-09——OPT-D 启用后转为必需）、候选模型包导出 |
+438:| NFR-COR-01 | P0 | 核心运动学、轨迹和动力学算法必须有解析算例或独立参考实现对照，并满足默认容差（默认容差以附录 D 汇总表为准——P-01 冻结产物，v1.13） | B～E | R1 | WP-02 | WP-23 |
+439:| NFR-COR-02 | P0 | 同一输入、软件版本、配置、线程数和随机种子产生等价候选集合与稳定排序；并行归约数值满足容差，不要求浮点文件逐字节相同 | B～E | R1 | WP-23 | WP-08 |
+440:| NFR-COR-03 | P0 | 非有限数、非法单位和引用缺失不得静默转换为 0 或默认通过 | B～E | R1 | WP-03 | WP-11;WP-23 |
+520:| AT-05 | 失效矩阵 | CON-05 | 电机成本变更不使运动学/轨迹失效；TCP 变更失效运动学及下游 |
+533:| AT-18 | 名称解析 | ARC-04、MDL-14、CON-06 | RuntimeNameMap 往返：对象 ID↔设备全名唯一解析，无漏/旧/双前缀 |
+557:> 逐项证据（RV-01/16）：每行＝旧功能＋来源文件＋对应需求＋验收＋处置。处置三分类：**等价承接**（R1 内等价实现）、**分期承接**（R2/子项，ID 确定）、**裁决排除**（内部机制或经决策取代，附理由）。台账登记的是**功能范围对应关系，不构成对旧实现正确性的背书**——旧代码存在已知缺陷（2026-09-09 用户明示），任何采纳须经契约对照与独立数值验证（NFR-COR-01）。**资产现状（v1.10 位置确认，2026-09-09）**：old/ 位于仓库根目录（src/plans/specs，共 523 文件，可读），本台账可现场查证；在从头构建口径（v1.9 确立）下，台账仅作功能范围对照，不作为实现继承或正确性依据。
+607:| 模型指纹 Current/Stale | RobotModelFingerprint | CON-02/CON-05 | AT-05 | 等价承接（去哈希，以修订＋当前性实现） |
+758:| ① | 有界公差验证模式——扰动幅度档位与采样数 | 扰动集＝**授权（未锁定）变量**；每变量扰动幅度默认 **±1%×该变量行程**（归一化 0.01——旋转轴按关节行程、移动轴按移动行程、连续结构量按参数允许区间）；工程策略可放宽上界 **±4%（4×默认封顶）**。采样＝**确定性非随机**：每授权变量正/负两方向各 1 点＋基线点复用候选本体（每候选 2n＋1 次评估，n＝授权变量数） | 扰动集＝授权集：OPT-02"改型项目默认锁定非授权参数"＋units/optimization.md §8.2 `opt.strategy.baseline-perturb` 行"锁定集外小步扰动，步长/比例入 config"（幅度归工程策略配置面，冻结值即其默认）。幅度数字 0.01 同源 RobWork 相邻模块惯例：`QEdgeConstraint::makeDefault` 边检查分辨率 0.01（RobWork/RobWork/src/rw/pathplanning/QEdgeConstraint.cpp:137），配合 `PlannerUtil::normalizingInfinityMetric` 按轴行程归一化（RobWork/RobWork/src/rw/pathplanning/PlannerUtil.cpp:67-69，length=1 加权无穷范数）——**分辨率数字移植为扰动幅度属惯例推定（检查步距≠扰动幅度，语义不同），待所有者确认**；4× 封顶结构循《P-06 冻结数值表》第 3/4/6 行先例（REQUIREMENTS 附录 C，2026-10-10 冻结）。采样形态：OFAT（单因子轮流扰动）确定性检查＝工程惯例推定；确定性可重放承 NFR-COR-02（§8.4 确定性承诺） |
+760:| ③ | 敏感度抽查模式——参数集选取规则与扰动方向数 | 参数集＝全部**授权（未锁定）连续/量化变量**逐参数抽查；**枚举与离散器件变量不进敏感度抽查**（无连续邻域语义；StageD 器件组合影响由①②模式在相应变量域覆盖，组合枚举语义不归本模式）。扰动方向数＝每变量 **±Δ 两方向**（Δ＝①默认幅度）＋基线复用；敏感度度量＝\|指标变化\|/Δ（归一化斜率），逐参数出敏感度排序供搜索聚焦反馈 | 参数集＝授权集：OPT-02＋§5.4 锁定语义＋units/optimization.md §8.2"锁定集外扰动"。枚举/器件排除：§8.2 变量编码（枚举＝下标、离散器件＝规范引用——无连续邻域）＋§8.2 `seeded-lhs` 行"枚举变量组合枚举上限保护"。方向数 2＝中心差分惯例推定（正/负向对称扰动估局部斜率），确定性可重放（NFR-COR-02）；敏感度排序消费面：§8.5"鲁棒性反馈仅作用于搜索聚焦，不改变已产出候选的历史结果（PA-2）"。敏感度度量形式（斜率/方差分解等）需求未规定——本草案取最简斜率口径，**属惯例推定，待所有者确认** |
+767:> - **测试对照容差**（第 4/5/8/9 项——对照解析算例/独立参考实现/归约基准）：ref＝参考值；导出量（时间/功率等）的 ε_abs 由黄金算例逐例声明，未声明即判"容差未定义"并报错，不静默通过（NFR-COR-03）；WP-02 黄金数据集必含零值、近零值与正负抵消样例。
+779:| 8 | 并行归约相对容差（按通用比较公式叠加 ε_abs——C4） | 1×10⁻¹² | — | NFR-COR-02 | 固定 | AT-09~11 |
+780:| 9 | 解析算例/独立参考实现对照容差（按通用比较公式叠加 ε_abs 与逐例声明——C4） | 标量相对 1×10⁻⁹（黄金算例可自带更严值并在数据集内声明） | — | NFR-COR-01 | 固定 | WP-02 黄金数据集 |
+783:| 12 | 名称与对象身份比较 | 精确等值（无容差） | — | ARC-04、CON-06 | 固定 | AT-18 |
+14:| 文档版本 | v1.3（EV-T12 文档与门禁同步——§15.3 九项状态实测同步＋P-EV-6 就地消账〔runtime P-RT-9 对账〕＋README 零偏差登记；v1.2＝EV-T11 测试替身与契约套件实现落位登记；v1.1＝EV-T10 评估器接口与注册表实现落位登记；v1.0＝EV-T09 缓存/检查点兼容判定实现落位登记；v0.9＝EV-T08 当前性纯投影实现落位登记；v0.8＝EV-T07 结果包络实现落位登记；v0.7＝EV-T06 五级汇总判定实现落位登记；v0.6＝EV-T05 证据与 Profile 承载实现落位登记；v0.5＝EV-T04 切片与身份实现落位登记；v0.4＝EV-T03 快照实现落位登记＋卡头版本链补全——F-057 消账；v0.3＝EV-T02 错误与依赖类型落位；v0.2＝FOUNDATION-CR-01 契约审查修正；v0.1＝首版草案；各版变更记录见 §15.4） |
+29:## 1. 文档信息、上游基线与设计目标
+31:### 1.1 文档定位
+33:本文是 evidence 单元的唯一详细设计：依据 `ARCHITECTURE.md` 分配给 evidence 的职责（§3.1 单元总表行；§7.6 横切管线 A"快照→切片→结果包络→当前性"；§7.2 ③评估器端口），把快照/切片/内容身份、证据 Profile 与工程判定汇总、ResultEnvelope 与结果生命周期、当前性、缓存与检查点兼容判定、评估器接口与注册表的数据类型、公共接口、不变量、跨单元调用流程、验证方案与阶段 A 任务拆分写到可直接实现的深度。
+37:**工程判定的所有权声明（贯穿全文）**：evidence **汇总**工程判定（实现 §8.1 表 2 的五级优先级与正式通过判定），但**领域证明由各评估器产生**（IK 收敛记录、碰撞证据、覆盖率计数、传动工作点等）；evidence 的汇总器对"确定性不可行证明"做**字段级校验**（类别/作用对象/前提/覆盖范围/输入身份/产生者，§6.4），**绝不**凭结果里的一个状态字段相信"已经证明不可行"。
+39:### 1.2 上游与磁盘现状登记（2026-09-09 实测）
+45:| `units/core.md` | 存在，v0.1，`Draft`（**未冻结**） | 协作输入。本文消费其身份/摘要/词表/诊断/事件契约（§3.2 逐项登记）；其 §10.3 已向 evidence 交接"切片 canonical 序列化、ResultEnvelope 构造校验器、RequiredEvidenceProfile 承载、证据等级词表（P-AR-3）"——本文 §4/§5/§6/§7 即该交接的承接答复；其 P-D-1 要求 evidence 侧交叉核对评估词表位置（本文 §3.4 回复） |
+52:| `old/` | **不存在于磁盘**（git 亦未跟踪） | 与 REQUIREMENTS v1.10 声明不符（core.md R-5 已登记）；对本文无输入。**附录 B 裁决排除"哈希/指纹校验链（九层复核、双指纹、12 指纹运行快照）"**——本文内容身份机制以 CON-05 明文授权的"切片内容身份"为唯一目标，不恢复任何多重指纹体系（§5.1） |
+54:### 1.3 设计目标
+57:2. **失效精准**（CON-05/SA-07）：缓存、当前性与失效基于**切片内容身份**，不基于整个项目修订——电机成本变更不失效运动学/轨迹，TCP 变更失效运动学及下游（AT-05 矩阵原文）；切片身份由**实际消费依赖**决定（§5.3 失效矩阵）。
+63:### 1.4 语言、标准库与构建约束（按仓库实测确认，与 core.md/project.md §1.4 同源）
+72:| JSON/序列化 | 无共享 JSON 库（vcpkg installed 实测无，testkit.md §1.4） | evidence 的 canonical 编码为**自有二进制编码**（SliceCodec/SnapshotCodec，§5.2）——不依赖 JSON，测试侧 JsonLite 不用于产品契约（testkit D-02 边界同精神） |
+76:## 2. 需求承接与职责边界
+78:### 2.1 拥有／消费／不拥有总表（本节先行给出，全文以此为准）
+86:| O-3 | 切片/快照内容身份与 canonical 编码（SliceCodec/SnapshotCodec） | CON-05、SA-07、core.md §4.2 责任边界 | §5.1、§5.2 |
+99:| evidence → core | 接口依赖（编译链接，**唯一** industrialrobot 边） | 身份类型全族、ContentVersion/ContentIdentity/ContentDigester、SourcedValue、Tolerance、EvaluationMode/TaskOutcome/EngineeringStatus 词表、DiagnosticRecord/ComparativeFields、IDomainEventBus（订阅方）、CoreError | ARCH §3.5 表 | core.md v0.1 **Draft 未冻结**（P-EV-1） |
+101:| evidence →（注入）policy / runtime 内容身份 | 值传递（core ContentIdentity） | 已解析 EngineeringPolicySet 内容身份、RuntimeNameMap 内容身份——由组装方随快照传入；evidence 不解析策略、不生成名称映射 | CON-06、ARCH §7.5/§7.4 | policy/runtime 详设未产出（§13 交接） |
+119:### 2.2 直接承接的需求（evidence 为实现责任方或数据契约责任方之一）
+127:| CON-05（切片与依赖清单；基于切片内容身份） | InputSlice、依赖清单、切片内容身份、失效矩阵语义、当前性按内容身份比较 | 各域"哪个评估实际消费哪些对象"的声明内容（评估器 descriptor 提供，域所有） |
+128:| CON-06（快照保存已解析策略与 RuntimeNameMap 内容身份；名称先反解后接纳；跨入口一致） | 快照字段与校验；证据/载荷引用 ObjectId 的契约（runtimeName 仅辅助显示）；同一快照→同一判定输入 | 策略解析（policy）；名称映射（runtime）；反解执行（接纳流程归 execution，经⑥端口） |
+130:| TASK-03（身份五元组；旧任务不得成为其他会话当前结果） | TaskIdentity 承载与有效性校验；当前性上下文绑定（项目/分支/方案） | 五元组核对与登记（execution §4.5） |
+134:| KIN-04 相关（样本冻结/分母/降级/零样本） | 采样计划引用与样本集身份、区域覆盖**证据表达**契约（分母完整性、零样本、降级标记）与契约检查 | 覆盖率算法与样本生成（kinematics） |
+135:| KIN-13（AnalysisConfiguration 进入运行身份与缓存身份；按依赖提示重算） | 配置经 Configuration 依赖条目进入切片身份；重算提示的数据来源（失效原因清单） | 配置 schema 与持久化（kinematics/PM-14） |
+139:| NFR-COR-02（同输入+版本+配置+种子+线程→等价结果） | 身份要素（软件/契约版本、种子、线程、配置）全部进入切片身份；确定性纯函数 | 端到端确定性（各域+execution） |
+142:### 2.3 明确不做（非目标，与 §2.1 不拥有表互为补充）
+144:不实现第二套数值容差或比较公式（core 唯一）；不引入被附录 B 裁决排除的多重指纹/九层复核体系（内容摘要只用于 CON-05 授权的切片/快照/证据内容身份）；不新增评估模式或证据等级（§8.1 表 1 之外不发明冻结枚举——实现承载词表的边界见 §6.2 与 P-EV-8）；不调整任何容差、阈值、工程判定优先级或发布范围（附录 D/表 2 为准）；不在评估器注册表内另建任务调度器、取消通道或进度设施（IEvaluationContext 仅是评估器调用约定的一部分，实现归 execution）；不创建任何"仅转发调用"的逐业务域包装器（NFR-MNT-04——域直接实现 IEngineeringEvaluator）；不伪造完整证据或预建空业务算法（阶段 B/C/D 才接入真实评估器）。
+148:## 3. 单元组成、依赖与公共头文件布局
+150:### 3.1 组成（公共头模块）
+167:| `src/`（实现，随 EV-T01 建） | canonical 编码器、快照/切片构建、汇总、注册表等非模板实现 | §4～§9 |
+169:### 3.2 依赖（含 core 契约消费状态登记）
+172:sdurws_ird_evidence ──► RWS::ird::core（PUBLIC：身份/摘要/词表/诊断数据/事件接口）
+183:| ObjectId/ProjectId/BranchId/RevisionId/RunId/AttemptId/TaskIdentity | 快照身份块、结果绑定、当前性上下文 | v0.1 §4.1/§5.1 |
+184:| ContentVersion/ContentIdentity/ContentDigester | 切片/快照/证据/Profile 内容身份（对"什么字节做摘要"归本文 SliceCodec/SnapshotCodec——core §4.2 责任边界的 evidence 侧承接） | v0.1 §4.2/§5.2 |
+191:### 3.3 对 project/policy/runtime 能力的注入边界（依赖白名单的实施形态）
+193:ARCH §3.5 依赖表**未登记** evidence→project/policy/runtime 边（这三者与 evidence 同属 L2/L3 且互为平级/上层），而快照组装客观上需要读取修订对象、策略内容身份与名称映射内容身份。解决方案＝**值传递＋最小注入接口**，与 project.md 对 runtime 的 `IModelCompilePort` 同一模式：
+212:- **策略与名称映射**：组装方经④/⑥端口取得**已解析**策略与 RuntimeNameMap 的内容身份（core ContentIdentity 值）后随快照条目传入；evidence 永不解析策略内容、永不拼接/剥离名称（R-4）。
+215:### 3.4 命名空间、目标与 CMake 集成
+224:## 4. AnalysisSnapshot 与 InputSlice
+226:### 4.1 AnalysisSnapshot
+228:#### 4.1.1 五个"输入/身份"概念的区别（先于字段表冻结）
+232:| 未应用草稿预览输入 | 域草稿内存态（modeling/requirements 等） | "如果应用这些修改会怎样" | 各业务域编辑器 | **不是** AnalysisSnapshot：Preview 模式不产生正式证据与结果对象（§8.1 表 1）；预览输入不进入修订闭包、无内容身份承诺，不得冒充快照 |
+233:| 正式分析快照 | `AnalysisSnapshot`（本节） | "本次正式评估消费的完整不可变输入闭包是什么" | 请求方组装、evidence 校验冻结 | 含修订身份＋对象引用闭包＋配置引用＋策略/名称映射内容身份＋工况集＋采样计划＋复现块 |
+234:| 规范模型引用 | CanonicalModel（runtime 编译产物） | "计算实际使用的 SE(3) 链" | runtime 自快照对象确定性编译（ARCH §7.3） | **瞬态派生**，不入快照存储；其内容身份＝`RuntimeSnapshot.modelIdentity`（runtime 计算，组成含对象闭包、编译器契约版本、编译器版本、RobWork 基线版本等——runtime.md §4.5/§9.1），由组装方值传递录入切片 Environment 条目 `runtime.model-identity` 参与 sliceId；evidence **不自行重算/重编码** CanonicalModel（CR-05 裁决，traceability/foundation-api-diff.md；ARC-03 确定性由 runtime 侧保证） |
+235:| 运行尝试身份 | `core::TaskIdentity` 五元组 | "哪一次派发/尝试" | execution（RunId/AttemptId 分配） | 快照不含 RunId——派发时绑定；同一切片可多次运行（重试新 attempt） |
+238:#### 4.1.2 字段表（`Snapshot.hpp`；全部字段构造后不可变，无 setter）
+242:| `project / branch / revision` | core::ProjectId / BranchId / RevisionId | 是 | — | 身份三元组；revision 是**唯一**对象解析锚（见下"防混入"） |
+243:| `revisionSeq` | std::uint64_t | 是 | — | 项目内修订序号（project 分配；仅展示/排序，不参与内容身份语义判断） |
+246:| `configurationRefs` | std::vector\<ConfigEntry\> | 是（可空集） | {} | 分析配置引用：{configKindToken, canonicalBytes, contentIdentity}——AnalysisConfiguration（KIN-13）等配置的**不透明**canonical 承载（schema 归 kinematics 等域）；内容身份由 evidence 计算 |
+247:| `policyRef` | PolicyRef | 是 | — | {policyContentIdentity}——已解析 EngineeringPolicySet 内容身份（CON-06；解析归 policy，组装方传入） |
+248:| `nameMapRef` | NameMapRef | 是 | — | {nameMapContentIdentity}——执行时 RuntimeNameMap 内容身份（CON-06；生成归 runtime） |
+251:| `reproduction` | ReproductionBlock | 是 | — | 复现要素：{productVersion, evidenceContractVersion, codecVersions, compilerContractVersion?（消费 CanonicalModel 的评估必填）, collisionBackendVersion?（策略启用碰撞的评估必填）}——"软件、算法或契约版本等必要复现信息"（NFR-COR-02/RPT-03）；这些版本作为 Environment 依赖进入切片身份（§5.3） |
+252:| `snapshotId` | core::ContentIdentity | 是 | — | 快照内容身份＝SHA-256 over SnapshotCodec(refs-only 形态)（§5.2）；由 builder 计算，非调用方申报 |
+254:合法实例：分支 tip 修订 r5 上组装、含 3 个启用必验工况、对象闭包全部 ∈ r5 修订清单、策略与名称映射内容身份非空、复现块完整——`snapshotId` 非零。
+255:非法实例（builder 拒绝，抛 EvidenceError）：对象引用 (oid,cv) 不属于 revision 的修订清单（混入其他修订数据）；policyRef/nameMapRef 内容身份为空（CON-06 违反）；caseSet 含重复工况 id；Verified 前置校验时存在 state==Recorded 的被消费外部资源（CON-03 阻断——以 `validateForMode(Verified)` 表达，见 §6.2）。
+257:#### 4.1.3 RequiredCaseSet（必验工况集合的冻结）
+262:| `requiredCaseSetId` | core::ContentIdentity | 是 | entries 规范编码摘要（冻结凭据：覆盖矩阵与此核对，§6.6） |
+264:#### 4.1.4 SamplingPlanRef（冻结采样计划与样本集表达）
+269:| `planContentIdentity` | core::ContentIdentity | 是 | 采样计划（区域定义+采样参数）canonical 内容身份 |
+271:| `sampleSetIdentity` | core::ContentIdentity | 是 | 样本集身份＝SHA-256 over (planContentIdentity ‖ 采样预算/种子参数 canonical)。样本集由采样计划确定性生成（KIN-04），**身份对计划参数计算而非对枚举列表**（确定性生成保证同计划同样本集；大样本集不枚举入快照） |
+273:语义：`sampleSetIdentity` 随快照冻结即"复评不得增删更换样本"的凭据——任何改变样本集的输入（区域、采样定义、预算、种子）都会改变该身份；EVI-02/RPT-04 的比较基准一致性检查消费它（§6.5）。**"同一冻结样本集"不等于"所有配置永远不允许改变"**：求解类配置（IK 初值策略、迭代上限）可改——它们改变切片身份（D-04：进入 sliceId、不进入 inputBaselineId），样本基准保持不变（§5.1 双层身份正是为此设计）。
+275:#### 4.1.5 组装、一致读取与冻结协议（谁组装/如何一致/何时冻结/如何验证/如何防混入）
+285: ②逐类录入：对象闭包（含类型 token）、工况集、配置引用、策略/名称映射内容身份、外部资源状态、
+287: ③冻结：build() 一次性计算 snapshotId（refs-only canonical 编码摘要）→ 返回不可变 AnalysisSnapshot；
+295:    两种形态的 snapshotId 相同（身份取 refs-only——载荷字节已由 contentVersion 承诺，物化不改变身份）。
+298:### 4.2 InputSlice 与依赖清单
+300:#### 4.2.1 依赖表达模型（对象级为主、字段语义经角色键承载）
+310:| `DependencyEntry`（切片条目，冻结结果） | {key, kind, …按 kind 的载荷…, applied: bool, notAppliedReason?} | 冻结进切片的实际条目；Conditional 条目记录解析结果（applied 与否）——**未适用的已声明条件依赖保留在切片中**（带 notAppliedReason），其条件输入仍在身份里 |
+318:| Configuration | (configKindToken, canonicalBytes, contentIdentity) | AnalysisConfiguration 的相关子集（IK 初值策略/数量、迭代上限、容差、去重阈值、采样预算与线程、随机种子、线程数）——**求解随机种子、线程配置与预算的身份归属＝Configuration 依赖条目**（KIN-13：进入运行身份与缓存身份；NFR-COR-02 确定性要素） |
+319:| Policy | policyContentIdentity | 已解析 EngineeringPolicySet 内容身份（CON-06：策略进入依赖切片与缓存键）——碰撞启用/阈值/行程上限等一切策略状态都包含在该身份内（KIN-13：分析配置不得覆盖策略，因此无需第二字段） |
+320:| NameMap | nameMapContentIdentity | RuntimeNameMap 内容身份（CON-06） |
+321:| SampleSet | sampleSetIdentity（+regionObjectId） | 冻结采样计划身份（§4.1.4） |
+322:| UpstreamResult | UpstreamResultRef | 上游结果切片身份（优化组合，ARCH §7.10） |
+323:| Environment | (token, valueToken) | 复现块的版本要素（产品版本/评估契约版本/编译器契约版本/碰撞后端版本/编码器版本）＋runtime 供给身份要素：`runtime.model-identity`（值＝RuntimeSnapshot.modelIdentity 规范文本）、`runtime.robwork-baseline`（值＝robworkBaselineVersion）——消费 CanonicalModel 的评估**必填**后两项（CR-05；经组装方值传递取得，evidence 不重算）；"算法/契约版本兼容"的载体（CON-04） |
+325:#### 4.2.2 InputSlice 字段表
+329:| `evaluationKey / evaluatorContractVersion` | EvaluationKey / uint32 | 是 | 切片绑定的评估器与契约版本（进入身份——同输入不同契约版本＝不同切片，CON-04） |
+331:| `sliceId` | core::ContentIdentity | 是 | 切片内容身份（§5.1）——缓存键与失效判据（CON-05） |
+332:| `inputBaselineId` | core::ContentIdentity | 是 | **输入基准身份**（§5.1 D-04）：仅模型/需求/工况集/冻结样本集条目参与，排除求解类配置——"同一冻结输入复评"（C5）与比较基准（EVI-02）的凭据 |
+335:#### 4.2.3 声明—解析—冻结协议与条件依赖
+340:        语义关系（N-5），只承载声明并计算身份。
+346:        快照在组装时冻结；运行身份在派发时绑定（五元组）。
+356:| 碰撞证据（KIN-05） | 策略启用碰撞 | `Policy` 条目（碰撞开关在策略内容身份内） | 启用→碰撞几何/负载几何为已消费依赖；禁用→碰撞证据项不适用（不缺失） |
+361:条件输入变化→其 ContentIdentity/内容身份变化→sliceId 变化→条件重新解析。**条件输入未入切片的声明在注册期即被拒绝**（闭包校验）——这是"漏声明导致错误复用"的系统性防线；残余风险（域声明遗漏本来就该消费的对象）登记 §15.2 R-3。
+363:### 4.2.4 修改求解预算后的复评（不冒充原运行）
+369:## 5. 内容身份和依赖声明
+371:### 5.1 身份的产生、比较与双层设计
+373:| 身份 | 计算对象 | 算法 | 比较语义 | 用途 |
+376:| `sliceId` | SliceCodec(全部冻结条目含 Environment 版本要素) | 同上 | 字节等值 | **缓存键与失效判据**（CON-05）；运行身份组成部分 |
+377:| `inputBaselineId` | SliceCodec 的**子集**（Object(task/region/case-set/model 类角色)＋SampleSet＋NameMap＋快照身份块；排除求解类 Configuration 与 Environment 中的非基准版本；`runtime.model-identity`/`runtime.robwork-baseline` 属**基准类要素、进入** inputBaselineId——跨基线/跨编译器比较被 EVI-02 拦截，CR-05） | 同上 | 字节等值 | 比较基准（EVI-02/RPT-04）；"同一冻结输入复评"凭据（C5） |
+378:| `evidenceManifest.digest` / `profile.contentIdentity` / `proof` 绑定身份 | 各自 canonical 编码 | 同上 | 字节等值 | 结果追溯与兼容判定（§6、§8.2） |
+384:| 字节相同 | 规范编码逐字节相等 → 摘要相等 | **内容身份的唯一等价关系**。摘要比较即字节比较的等价表达；比较用 core 精确等值（附录 D 第 12 项精神） |
+385:| 语义等价 | 不同字节但工程语义相同（如同一 TCP 值经不同编码路径） | **不参与身份**：canonical 编码的存在正是为了消除语义等价歧义（§5.2 归一化规则）；语义等价的对象重编码会产生新 ContentVersion→新身份（保守方向，可接受：宁可多算不可错复用） |
+386:| 数值容差内等价 | \|a−b\| ≤ ε_rel·\|ref\|＋ε_abs（附录 D C4） | **只用于数值校验断言**（各域/测试侧，经 core Compare）；**严禁**作为身份/哈希键等价关系——浮点"近似相等"无传递性，作为缓存键等价会导致错误复用（testkit.md §5.4.1 同源论证；EV-ID-2 用例钉住） |
+388:**身份纪律**：ObjectId（对象身份）、ContentVersion（对象内容版本）、RevisionId（修订身份）、ContentIdentity/摘要（集合内容身份）四者互不替代、互不转换（core §4.1.1 分界的本单元重申）：失效判定用**条目级 ContentVersion/内容身份对比**（哪个依赖条目变了），从不用"修订号变了"代替（CON-05：不基于整个项目修订）；重新打开项目不改变任何内容身份（身份只由内容决定）；项目显示名、会话姿态、显示单位不在任何切片条目中——展示名称变化/界面切换不可能造成失效（EV-CUR-1/EV-ID-3 用例）。
+390:**边界重申（附录 B 裁决排除项）**：内容摘要只用于上表既定目标（切片/快照/证据/Profile 内容身份，CON-04/05/06 明文授权）；不建立多重指纹体系、不做九层复核链、不把摘要暴露给用户界面（UX-02：界面不显示哈希——当前性以"过期＋原因"呈现）。
+392:### 5.2 canonical 编码（SliceCodec / SnapshotCodec）
+396:| 编码形态 | 确定性二进制：magic（`IRDSLCE1`/`IRDSNAP1`）＋条目按 (kind, key) 字典序＋每字段长度前缀；无填充、无端序歧义（大端） | 跨进程一致（worker/main 同身份，NFR-COR-02） |
+397:| 可选值 | presence 字节（0x00/0x01）显式编码——optional 缺失与空值不等价 | NFR-COR-03（缺失不伪造） |
+398:| 数值 | 整数十进制无关（定宽整型承载）；配置中的浮点以 IEEE754 双精度 8 字节大端**位模式**承载（round-trip 精确）；NaN/±Inf 在编码入口拒绝（抛 EvidenceError） | 位模式保证同值同字节；非有限拒绝 |
+400:| 字符串 | UTF-8、禁止 NUL；token 语法校验在构造入口 | 稳定排序与编码安全 |
+401:| 版本化 | codec 版本号写入编码并作为 Environment 条目进入 sliceId——**编码升版＝全体切片身份变化**（破坏性变更，走设计变更评审并同步缓存治理登记） | 身份可演化且留痕 |
+404:### 5.3 输入变化与失效矩阵（AT-05 承接；按实际消费关系，条件显式声明）
+406:矩阵读法：某输入变化→其新 ContentVersion/内容身份与切片条目比对；仅当该条目**在切片中且被消费**时失效（sliceId 变化→当前性 Superseded＋缓存不命中）。✓＝失效（需重算），✗＝不失效，◐＝条件失效（条件在"条件"列，条件输入已入切片）。
+415:| **目录能力曲线**（SEL-01/02 锁定版本） | ✗ | ✗ | ✗ | ✗（关节侧结果与传动无关，DYN-04） | ✓（工作点/淘汰条目） | ◐（OPT-D 器件联合启用后） | 目录版本锁定（SEL-08）经 Object 条目进选型切片；更新不静默改变历史结果（历史结果保持原切片身份） |
+416:| **工程策略**（碰撞规则/阈值/行程上限） | ◐（策略身份变化→凡声明 Policy 条目者失效；碰撞证据按启用条件） | ◐ | ◐（安全间距/复检阈值） | ◐（判定阈值消费） | ◐（判定阈值消费） | ◐ | 策略进入依赖切片（CON-06）；"实际依赖"由各评估器声明是否含 Policy 条目 |
+417:| **求解配置**（AnalysisConfiguration） | ◐（仅该域消费的参数：IK 参数→运动学；采样预算→覆盖样本基准） | ◐（采样预算/种子→**样本集身份变化**＝基准变化） | ◐ | ◐（线程数等） | ◐ | ◐ | KIN-13：进入运行身份与缓存身份；按实际输入依赖提示受影响结果重算（AT-27） |
+420:| 会话姿态（KIN-06 双击/动画/Home 复位） | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | 会话态不产生修订、不进缓存身份（AT-04） |
+421:| 项目显示名/界面切换/重开项目 | ✗ | ✗ | ✗ | ✗ | ✗ | ✗ | 身份只由内容决定（§5.1） |
+427:## 6. 证据 Profile、适用条件及证明契约
+429:### 6.1 RequiredEvidenceProfile 数据结构（EVI-01/§8.1 表 4 承载）
+448:    core::ContentIdentity contentIdentity;     // 注册时由 evidence 计算（canonical 编码摘要）
+456:| 通用必需项 | evidence 内建 `commonRequiredItems()`：①完整 AnalysisSnapshot 身份（含已解析策略与 RuntimeNameMap 内容身份——CON-06）；②必验工况覆盖矩阵（EVI-02）；③评估模式与证据等级标识。**任何 Verified 评估隐式附加**，域 Profile 不得重复登记（单一权威） | 表 4"通用必需项"原文 |
+458:| 替代关系 | substitutableByInfeasibility＝true 的 item（成功产物类：IK 解集、路径、工作点序列等）在存在**有效**不可行证明时按"因不可行而不适用"记录，不计缺失；＝false 的 item（通用身份/可追溯性/工况覆盖）**不豁免** | C2＋C6（v1.15）：替代豁免仅限"因不可行而无法生成的成功产物"；不可行证明自身的可追溯性先经通用证据门禁校验 |
+459:| Profile 版本与内容身份参与追溯/兼容 | envelope.evidence 绑定 profileId+version+contentIdentity；缓存/复用兼容判定比对 profile 身份（§8.2）；profile 内容变化→新 contentIdentity→旧结果对同 profile 请求不可直接复用 | EVI-01 全局唯一；CON-04 |
+462:### 6.2 证据项状态与证据清单
+472:EvidenceItem 字段：{itemId, status, artifactDigest?（Satisfied 必填）, caseScope?（工况范围——单工况证据逐工况记录）, subject?（对象范围，core::ObjectId）, notApplicableReason?（N/A 必填）, invalidReason?（Invalid 必填 DiagnosticRecord）}。**证据与快照绑定**：EvidenceManifest 记录 snapshotId/sliceId/profile 身份，逐项证据的 caseScope ⊆ 快照 caseSet、subject ∈ 快照 objectClosure（汇总器校验，防错误工况/对象引用——EV-COV-2）。**证据一律引用 ObjectId**；运行时名称仅作辅助显示字段（CON-06 反解口径）。
+476:### 6.3 确定性不可行证明契约（表 2 ③ / C5 / C8 承载）
+491:    std::string preconditions;              // 适用前提（证明成立所假设的需求/配置——绑定输入身份）
+494:    core::ContentIdentity snapshotId;       // 输入身份（证明针对哪个快照）
+508:### 6.4 工程判定汇总（表 2 五级优先级的可执行实现）
+510:#### 6.4.1 汇总决策表（自上而下首个命中生效；C2/C5/C6/C8 修订后口径）
+516:| ② 通用证据门禁 | 快照身份（含策略/名称映射内容身份、复现块、Verified 前置固化校验）缺失/无效 ∨ 工况覆盖矩阵缺失/无效（漏验/错误引用/重复）∨ 模式与证据等级标识缺失/无效 | DataInsufficient | 缺失项全量列出；**不可行证明自身的可追溯性同受此门禁**——证明绑定校验失败时不进入③（C6：不被替代规则豁免） |
+544:#### 6.4.2 必须区分的判定对（正/反例语义冻结）
+555:#### 6.4.3 汇总层级（单个域 → 任务点 → 工作区域 → 工况 → 整体方案）
+565:### 6.5 比较基准一致性检查（EVI-02/RPT-04/OPT 纯判定）
+571:    core::ContentIdentity requiredCaseSetId; // 必验工况集身份
+578:方案比较（RPT-04）、优化候选比较（OPT 内部 Pareto 比较）与报告变体章节共用本检查；样本集身份不等（如采样预算改变）→ 旧覆盖率/候选指标不可与新的直接比较（KIN-04 冻结样本集 + C5 复评规则的联合落地，EV-COV-4）。
+580:### 6.6 多工况覆盖与区域采样证据契约
+586:| `requiredCaseSetId` | core::ContentIdentity | 必须等于快照 caseSet 的身份（与计划核对——不同即 ② 级门禁失败） |
+605:## 7. ResultEnvelope 与结果生命周期
+607:### 7.1 数据结构与合法组合矩阵（表 3/S A-13）
+613:    std::vector<std::uint8_t> canonicalBytes;// 域 canonical 编码（编码契约归域）
+621:    // —— 身份与绑定 ——
+658:### 7.2 结果生命周期与资格（RPT-05 两类声明）
+679:## 8. 当前性、缓存复用和检查点兼容
+681:### 8.1 ResultCurrentness（纯投影）
+683:**输入**：{结果引用（envelope 或其身份摘要：task/evaluationKey/contractVersion/sliceId/inputBaselineId）, 目标上下文 CurrentnessTarget{projectId, branchId, scheme?, evaluationKey, 当前 AnalysisConfiguration 内容身份}, 依赖重建源（IRevisionClosureSource/IObjectBytesSource＋当前策略/名称映射身份＋注册表当前 descriptor）}。
+711:| 当前性相对什么计算 | (project, branch, evaluationKey, 当前配置内容身份)——方案/配置是上下文一部分；切换界面/方案视图**不改变**历史 payload，只改变"哪个上下文的当前性被查询" | CON-02/05 |
+716:### 8.2 缓存复用与检查点兼容（纯判定契约；存储/淘汰/恢复归 execution/project）
+735:// FullHit ⇔ 模式相等 ∧ sliceId 相等 ∧ 契约版本相等 ∧ profile 身份相等
+737://   ——策略/种子/线程/配置/样本/环境版本已含于 sliceId（D-01/D-11：身份要素完备性是 FullHit 的前提）
+760:## 9. 评估器接口与注册表（③评估器端口）
+762:### 9.1 端口定位与调度分离
+766:### 9.2 EvaluatorDescriptor 与依赖/能力声明
+780:### 9.3 IEngineeringEvaluator 与调用约定
+837:### 9.4 EvaluatorRegistry（注册表行为冻结）
+851:### 9.5 EvidenceProfileRegistry
+853:注册 RequiredEvidenceProfile（域按表 4 实例化）；重复 (profileId, version) 拒绝；contentIdentity 由 evidence 于注册时计算（canonical 编码摘要，域不可申报）；注册期校验 item 语法、条件闭包（referencedKeys ⊆ 域评估器声明键∪快照事实键——经注册顺序解耦：Profile 条件的 referencedKeys 语法校验在 Profile 注册时做，与评估器声明的交叉校验在评估器注册时做）、替代标志仅限非 Common 类。线程安全同 9.4。
+857:## 10. 跨单元调用流程
+859:### 10.1 主流程：快照→切片→评估→结果→当前性
+865:    │ ②取策略/名称映射内容身份 ──► (④policy/⑥runtime 端口，域自行调用)
+885:### 10.2 评估器注册与调用时序
+904:### 10.3 三轴正交关系表（CON-02 承载）
+914:### 10.4 关键场景走查（上游 S2/S3/S7 的 evidence 切面）
+916:- **S2 批量验证**：kinematics 组装快照→③端口注册的批量 IK 评估器→失效矩阵按切片传播（TCP 新修订→运动学切片身份变化→Superseded；电机成本变更→Current，AT-05）。
+918:- **S7 迟到结果**：execution 两段式接纳后，evidence 的当前性按原项目 A 当前 HEAD 切片计算（内容身份，不按修订号）；无论当前性如何，结果不进入新会话的"当前结果"（TASK-03——上下文匹配即 §8.1 步骤 1 的拦截）。
+922:## 11. 验证与反例矩阵
+928:| EV-ID-1 身份确定性 | CON-05/NFR-COR-02｜同内容切片构建两次｜build→比较 sliceId｜相等｜sliceId 逐字节相等；SnapshotCodec/SliceCodec 往返 parse(encode(x))==x |
+929:| EV-ID-2 无浮点近似等价 | §5.1｜两配置容差相差 1e-15（数值上"近似相等"）｜构建两切片比较｜sliceId **不等**（位模式编码）｜缓存/当前性判定不命中；文档断言：容差不进入身份 |
+932:| EV-VER-1 门禁优先 | EVI-01 §8.1 表 2 C6｜ScriptedEvaluator 返回不可行证明＋快照身份缺失（无策略内容身份）｜aggregateVerdict｜② 级命中→DataInsufficient（证明不豁免门禁）｜VerdictTrace 命中级次=②；missingItems 含快照身份项；证明未进入③ |
+947:| EV-CPA-2 契约版本 | CON-04｜同 sliceId、评估器 contractVersion 不同（模拟算法升级）｜judgeCacheHit/judgeCheckpointCompatibility｜Incompatible(contract-mismatch)｜sliceId 不变而契约条目变→身份含 Environment 条目的直接观测 |
+949:| EV-CUR-1 内容身份当前性 | CON-02/05、S7｜结果归档后 HEAD 前进（仅电机成本对象变化）｜computeCurrentness（运动学结果）｜Current｜reasons 为空；HEAD 修订号不参与判定 |
+961:## 12. 阶段 A 实现任务拆分
+970:| EV-T04 切片与身份 | §4.3、§5 | `Slice.hpp/.cpp`（builder/SliceCodec/双层身份） | EV-T03 | 同名文件 | EV-ID-1/2、EV-INV 前置（身份比较） | canonical 往返＋浮点位模式＋NaN 拒绝用例通过 |
+974:| EV-T08 当前性 | §8.1 | `Currentness.hpp/.cpp`（computeCurrentness/CurrentnessIndex） | EV-T04（重建切片）、EV-T07（结果引用） | 同名文件 | EV-CUR-1~4 | 内容身份/不可解析/跨上下文/不写回用例通过 |
+984:## 13. 后续阶段承接及接口交接清单
+988:| B·kinematics | 快照/切片/评估器接口/Profile 结构；KIN-04 覆盖证据契约 | `kin.batch-ik`/`kin.region-coverage` 评估器与依赖声明；kin Profile（表 4 运动学行）；覆盖率算法；AnalysisConfiguration schema 与 canonical 编码 | AT-03/05/27 |
+989:| B·modeling/requirements | 快照组装协议（请求方角色）；工况/任务点对象进快照的角色键约定 | 对象 canonical 编码登记（core §6.3 分工）；REQ-06 就绪校验实现（ReadinessSummary 数据源）；工况 schema（P-EV-7） | AT-01/02 |
+990:| B·optimization | 注册表（跨域组合）；UpstreamResult 依赖；比较基准检查；Quick/Verified 缓存判定 | OPT 评估器；候选补丁与编译身份（表 4 优化行）；审计计数消费 | AT-09/12/34 |
+995:| A·runtime/policy（协作） | 内容身份承载约定（ContentIdentity 值传递）；复现块的编译器/碰撞后端版本字段 | 策略与 RuntimeNameMap 的 canonical 序列化与内容身份计算（各自任务卡登记——跨单元身份可比的前提，core R-2 同源） | CON-06、AT-18/19 |
+1004:## 14. 需求—设计—验证追踪矩阵
+1011:| CON-04（缓存/检查点契约判定） | §8.2、§5.1 身份含契约版本 | EV-CPA-1~3、EV-ID-2 |
+1012:| CON-05（切片内容身份；非修订） | §4.2、§5.1/§5.3 | EV-ID-1~3、EV-INV、EV-CUR-1 |
+1013:| CON-06（策略/名称映射身份；跨入口一致） | §4.1.2 policyRef/nameMapRef、§9.4 manifest 比对、§6.2 ObjectId 引用契约 | EV-VER-1、EV-REG-2 |
+1025:| KIN-13（配置入运行/缓存身份；按依赖重算） | §4.2.1 Configuration、§5.1 双层身份、§8.1 reasons | EV-INV、EV-VER-2 |
+1030:| NFR-COR-02（确定性要素） | §5.1/§5.2（版本/种子/线程入身份） | EV-ID-1/2 |
+1032:| 附录 D 第 12 项（身份精确等值） | §5.1 字节等值比较 | EV-ID-2 |
+1038:## 15. 设计决策、风险、待裁决项与变更记录
+1040:### 15.1 设计决策登记（本文作出并说明理由的普通实现选择）
+1044:| D-01 | 切片身份对**依赖条目**（oid+cv+角色键+配置内容身份+策略/名称映射/样本/环境版本）计算，不对物化载荷字节计算 | 载荷字节已由 ContentVersion（对象侧）与各内容身份（集合侧）承诺；条目级身份免读全量对象、worker 物化不改变身份。备选（对载荷摘要）浪费且与对象库编址重复 |
+1045:| D-02 | 自有二进制 canonical 编码（SliceCodec/SnapshotCodec），不用 JSON | 无可用共享 JSON 库（实测）；编码版本化＋大端＋长度前缀保证跨进程逐字节一致；身份只依赖自身编码器（NFR-COR-02） |
+1047:| D-04 | 双层身份：sliceId（含求解配置/契约版本——缓存键）与 inputBaselineId（仅模型/需求/工况/样本基准）分离 | 同时满足 KIN-13"配置进入运行与缓存身份"与 C5"扩大初值后按同一冻结输入复评"、EVI-02 比较基准——两者对"输入"的界定不同，单一身份无法同时表达 |
+1049:| D-06 | 浮点配置值以 IEEE754 位模式入编码，NaN/Inf 拒绝 | 位模式保证同值同字节（身份可靠）；近似相等无传递性、严禁入身份（EV-ID-2） |
+1050:| D-07 | evidence→core 唯一编译依赖；project/policy/runtime 能力经 IObjectBytesSource/IRevisionClosureSource 注入＋内容身份值传递 | ARCH §3.5 依赖表未登记反向边；与 project.md IModelCompilePort 同一注入模式；适配器十行级、非转发包装器 |
+1053:| D-10 | 条件依赖的适用条件必须"条件输入入切片"（闭包校验注册期强制） | 漏声明导致错误复用的系统性防线；条件翻转→条件输入身份变→sliceId 变→重解析 |
+1054:| D-11 | Environment 依赖条目（产品/契约/编码器/编译器/碰撞后端版本）进入 sliceId | CON-04"算法/契约版本"兼容判定的载体；升版即全体缓存失效（保守正确方向） |
+1060:### 15.2 风险
+1065:| R-2 | 策略/RuntimeNameMap/域对象的 canonical 序列化归各所有者，若不一致或不稳定，切片身份跨单元不可比或全局漂移 | 缓存误判/大规模无关失效 | §13 交接强制各任务卡登记其 canonical 序列化；契约夹具数据集钉住编码；编码升版走设计变更（D-02） |
+1069:| R-6 | 大快照物化与序列化的性能（NFR-PERF-03 规模） | worker 派发延迟 | 身份不依赖物化（D-01：refs-only 计算身份）；物化仅限被评估切片；性能属 execution 通道治理 |
+1073:### 15.3 待裁决项（问题—依据—影响—建议—需要裁决者）
+1087:### 15.4 变更记录
+1091:| v0.1 | 2026-09-09 | 首版：基于 REQUIREMENTS v1.16（Accepted）与 ARCHITECTURE v0.11（Draft）、core/testkit/project 三份协作输入（均 Draft；project 当前正文 §1～§15 已齐备，联合接口复核待执行，P-EV-6 登记）完成 15 章详细设计；冻结快照/切片/双层内容身份、证据 Profile 承载与五级汇总决策表（C2/C5/C6/C8 口径）、ResultEnvelope 构造校验（SA-13）、当前性纯投影、缓存/检查点兼容判定、评估器接口与注册表；失效矩阵（AT-05）与验证反例矩阵 EV-* 24 组；实现任务 EV-T01～T12；待裁决 9 项（P-EV-1～9）。同日：`evidence/include/sdurws/ird/evidence/README.md` 的任务卡指向由"§9"修正为"§12"（与本文任务拆分章节号一致） |
+1092:| v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-05）：§4.1.1 规范模型身份由"f(对象闭包, 编译器契约版本) 推导"更正为"runtime 计算值传递"（modelIdentity 组成含编译器版本/基线版本，归 runtime）；§4.2.1 Environment 新增 `runtime.model-identity`/`runtime.robwork-baseline`（消费 CanonicalModel 的评估必填）；§5.1 该二条目划入基准类、进入 inputBaselineId（拦截跨基线比较）；§3.4/EV-T01 行 gtest 引用改指 development-task-breakdown §5.5 定稿。差异记录见 traceability/foundation-api-diff.md |
+1093:| v0.3 | 2026-09-12 | EV-T02 实现落位登记（DTB §5.4，错误与依赖类型＝`Errors.hpp/.cpp`＋`Dependency.hpp`，按 §12 EV-T02 行交付；验证留痕 traceability/builds/wp05-t02/）：①**EvidenceErrorCode 全表 9 值**（§3.1 组成表＋各抛错点原文承载——§3.5 缺位仍按 F-020 由所有者裁决）：7 值建议码与 §13 清单逐字对应，2 值为设计抛错点明文（§4.1.5④b snapshot-integrity、§4.2.3① 声明闭包拒绝）但 §13 未列建议码的**补登建议** EVI-SNAPSHOT-INTEGRITY/EVI-DECLARATION-INVALID（P-PR-6 同模式——建议值，码值权威归 StableCodeRegistry，登记 F-056 转 evidence 详设所有者＋diagnostics 所有者于注册时裁决）；token 命名取抛错点原文（snapshot-integrity/duplicate-evaluator）＋其余按 §13 建议码 kebab 派生，"evidence/" 前缀与 what() 消息约定同 runtime §3.4 先例；枚举/issue 码一经交付只允许表尾追加。②**Dependency.hpp（header-only，契约产物列无 .cpp）**：§4.2.1 七类 Kind 载荷值类型＋DependencyKey 语法闸门 `[a-z][a-z0-9.-]{2,63}`；实现侧 Kind 稳定名表 7 值（object/configuration/policy/name-map/sample-set/upstream-result/environment，kebab 化——canonical 编码单一权威序＝枚举声明序，EV-T04 SliceCodec 消费）；域 token（conditionToken/objectTypeToken/configKindToken/Environment 名值）只施加"非空＋无 NUL"编码安全下限（§5.2），不套用键字符集（词表归域，N-5）。③**校验器分轨**：声明闭包校验器（§4.2.3①——referencedKeys ⊆ 同 descriptor 已声明键 ∪ 快照事实键；事实键由注册方参数注入，evidence 不拥有其词表；另按声明语法收紧三条实现口径——同集键唯一拒绝、Conditional 必带条件/Required 必不带、引用键非空集）为非抛出纯函数＋require* fail-fast 原语（注册拒绝归 EvaluatorRegistry〔EV-T10〕消费）；条目语法校验器（§4.2.1 载荷行＋§4.2.2 (kind,key) 字典序稳定存储＋applied/notAppliedReason 配对 presence 语义）只交付非抛出轨——冻结拒绝的抛错时机与码面归 SliceBuilder（EV-T04）任务卡登记（§2.1 try* 分轨先例）。④测试组名 EV-ERR/EV-DEP 为实现侧组名（§11 矩阵未设 EV-T02 专项组，EV-BUILD 同例）；单元测试 22/22 两模式通过并留痕（EV-ERR-1～3＋EV-DEP-1～15，含 token 漂移探针失败能力自证） |
+1094:| v0.4 | 2026-09-12 | EV-T03 实现落位登记（DTB §5.4，快照＝`Snapshot.hpp/.cpp`——builder/校验/SnapshotCodec refs-only＋materialized，按 §12 EV-T03 行交付；验证留痕 traceability/builds/wp05-t03/）：①**值类型面**（§4.1.2 字段表全量承载）：ObjectRefEntry/ConfigEntry/PolicyRef/NameMapRef/CaseEntry＋RequiredCaseSet/SamplingPlanRef/ExternalResourceState（Recorded｜Solidified 两态＋presence 语义）/ReproductionBlock/AnalysisSnapshot（无 setter，冻结后按只读对待——builder 为唯一合法生产者）＋CaseId 语义别名（＝core::ObjectId，§4.1.3 原文）；§3.3 注入接口 IObjectBytesSource/IRevisionClosureSource 按原文签名落地（适配器归 L5/请求方）。②**SnapshotBuilder 冻结协议**（§4.1.5①～④a）：setter 纯累加、build() 单一确定性校验路径（校验顺序固定——同坏组装必报同一首错）；防混入＝全部 (oid,cv) 逐条经 IRevisionClosureSource 对锚定修订校验（混入反例→EvidenceError(SnapshotIncomplete)）；CON-06 策略/名称映射身份非空、工况 caseId 唯一、外部资源状态机 Recorded→Solidified 单向、复现块完整性（presence 语义）全部在 build() 即时验证。③**SnapshotCodec**（§5.2 规则表落点）：magic `IRDSNAP1`＋codec 版本＋形态字节；定宽大端/长度前缀/presence 字节/字符串禁 NUL；refs-only 与 materialized 双形态**同身份**（D-01——身份恒取 refs-only，§4.1.5⑤）；④b 载荷级校验（重算 SHA-256 比对 contentVersion）在物化（encodeMaterialized）与接收（parseMaterialized）双端执行，不符→EvidenceError(SnapshotIntegrity)；结构非法（截断/坏 magic/形态互混/版本不符/尾随字节）→SnapshotIncomplete。④**实现口径 I-1～I-7 登记**（实现细节精确化，语义与设计一致）：I-1 revisionSeq 不入编码与 snapshotId（§4.1.2"不参与内容身份语义判断"原文的机械落实——parse 恢复 0，往返等值断言排除该字段）；I-2 ObjectRefEntry.digest＝对象载荷字节 SHA-256 裸字节（与 contentVersion 同源——core §4.2），builder 校验二者一致（冗余承载的防错闸门）；I-3 builder 冻结时集合类成员规范化排序（closure/configurationRefs/caseSet/externalResources/samplingPlans，codecVersions 保序）＋同集重复键拒绝（objectId/configKindToken/resourceId/regionObjectId——EV-T02 声明键唯一同源口径）；I-4 requiredCaseSetId＝SHA-256 over "IRDCASE1"＋caseId 序条目规范串（"entries 规范编码摘要"的字节级定义，builder/parse 双端同函数）；I-5 编码含形态字节，snapshotId 恒按 form=0 计算；I-6 parse 结构非法→SnapshotIncomplete（带偏移）、载荷摘要不符→SnapshotIntegrity（④b 原文码面），双端④b；I-7 caseSet.entries 允许空集（P-EV-7 保守处置在汇总判定层，组装层不拒）、enabled/mandatory 字面承载不解释（O-14/P-EV-9 保守字面——契约 acceptance 3 编入）。⑤**范围边界**：§4.1.2"validateForMode(Verified) 的 Recorded 外部资源阻断"锚定 §6.2，其入口归证据清单任务 EV-T05，本任务未实现该函数（§4.1.2 原文指向关系不变）。⑥测试：新增 21 用例（EV-ID 3＋EV-SNAP 10＋EV-CASET 4＋EV-SNAPC 4，组名为实现侧组名——§11 矩阵 EV-T03 专项＝EV-ID-1/3＋混入反例，其余对照 §12 行"全部快照不变量用例"），43/43 两模式通过并留痕；防混入校验探针（短路注入→3 用例变红→恢复复绿）失败能力自证。⑦F-057 消账：卡头"文档版本/日期"随本次修订推进至 v0.4/2026-09-12 并补版本链；validate-docs 增加"卡头版本行＝§15.4 末行"机检维度的建议仍归治理脚本所有者（开放建议，非本卡辖域） |
+1095:| v0.5 | 2026-09-12 | EV-T04 实现落位登记（DTB §5.4，切片与身份＝`Slice.hpp/.cpp`——InputSlice/SliceBuilder/SliceCodec/双层身份 D-04，按 §12 EV-T04 行交付；验证留痕 traceability/builds/wp05-t04/）：①**InputSlice 值类型面**（§4.2.2 字段表全量承载）：evaluationKey/evaluatorContractVersion（进 sliceId——CON-04）＋entries（(kind,key) 字典序规范化存储，≥1）＋snapshotId（取自 build() 入参快照，非申报值）＋sliceId/inputBaselineId（builder 计算的双层身份）；§3.1 组成表概念名 SliceId/InputBaselineId 以语义别名落地（＝core::ContentIdentity——§4.2.2 原文类型，CaseId 同款先例，互不转换）；**实现口径 D-5**：evaluationKey 暂以 std::string 承载（isValidEvaluationKey 词形闸门＝§8.2 EvaluationKey 原文语法 `[a-z][a-z0-9-]{1,63}`——类型化归 Evaluator.hpp〔EV-T10〕，落地后按需替换）。②**SliceBuilder 冻结协议**（§4.2.3②）：setEvaluation/addEntry/setConsumesCanonicalModel 纯累加、build(snapshot) 单一确定性校验路径（校验顺序固定——评估键语法→快照冻结性→条目集排序→条目语法→Object 快照子集→CR-05 值形态→CR-05 必填；同坏组装必报同一首错）；**实现口径 D-4**：冻结时对 entries 规范化排序（"未排序"不是拒绝面，同内容任意添加序同身份），(kind,key) 重复/载荷非法/applied 配对矛盾仍拒绝；Object 条目对来源快照 objectClosure 做 (oid,cv) 精确子集校验（§4.2.2 防漏声明错配）；冻结拒绝码面＝EvidenceErrorCode **表尾追加 SliceIncomplete**（9→10 值，token evidence/slice-incomplete，建议码 EVI-SLICE-INCOMPLETE 补登——P-PR-6 同模式；ErrorsTest 全表锚定 9→10 值同步）。③**SliceCodec 双形态与双层身份**（§5.1/§5.2＋CR-02）：magic `IRDSLCE1`＋codec 版本＋形态字节（0=full〔sliceId 摘要对象、往返载体〕/1=baseline-projection〔inputBaselineId 摘要对象、非往返载体——parse 拒绝〕）；**实现口径 D-2**：双身份是编码的导出值不入编码载荷，摘要唯一经 core::ContentDigester（CR-02，单测以手工重算钉住）；canonical 浮点原语 canonicalF64/parseCanonicalF64（IEEE754 位模式大端 8 字节、NaN/±Inf 编码入口拒绝＋接收端非有限位型拒绝——runtime RT-Codec f64 双端纪律同款；§5.2 数值行在 evidence 侧的唯一实现点，EV-ID-2 的浮点面承载）。④**实现口径 D-1（基准投影参与集机械口径）**：进入＝全部 Object＋SampleSet＋NameMap＋Environment 基准类保留 token（CR-05 双条目，isBaselineEnvironmentToken 封闭白名单）＋快照身份块；排除＝Configuration（求解类——KIN-13/D-04）/Policy（§4.2.2"仅模型/需求/工况集/冻结样本集条目参与"＋§5.1 参与清单未列——策略属消费机制，经 sliceId 失效不构成输入基准差异）/UpstreamResult（同上未列）/Environment 非基准版本（§5.1 排除语）。Object 的"task/region/case-set/model 类角色"（§5.1 正向括注）机械化为**全量进入**——evidence 无域词表（N-5/N-9）按 key 前缀猜类即把域知识搬进 evidence；§5.1 排除语仅点名"求解类 Configuration 与 Environment 非基准版本"，Object 不在排除面；全量进入使碰撞几何/负载/目录等模型侧对象变化同样被 EVI-02 拦截（保守方向——宁可多算不可错复用）。⑤**CR-05 落地**：保留 token runtime.model-identity/runtime.robwork-baseline 常量＋isBaselineEnvironmentToken 封闭白名单；必填校验＝setConsumesCanonicalModel(true) 时双条目各恰一条（谁必填由组装方按评估器声明置位，evidence 不域判——与 compilerContractVersion 必填口径并列）；**实现口径 D-3 值形态闸门**（保留 token 条目恒久生效，不论必填开关）：model-identity 值须可被 core::ContentIdentity::fromCanonical 解析（cid-<64hex>——CR-05 裁决第 1 点）、baseline 值须非空无空白（RobWorkBaselineVersion 契约——RT-T09 断言 4 同款，空白判定显式六字符表无 locale 依赖）；与 RT-T09 共享样例的联合断言＝值传递全链逐字节透明（供给值→条目→编码→parse 零重编码——evidence 不重算 CanonicalModel 的切片侧等价断言面）＋CR-05 裁决第 2/3 点身份行为（改基线串→双身份均变；改求解配置→仅 sliceId 变）。⑥测试：新增 13 用例（EV-ID-1/2＋浮点位模式/NaN 拒绝＋EV-CR02 排除面＋EV-CR05 保留条目＋EV-SLICE 冻结拒绝＋EV-SLICEC 结构非法——组名为实现侧组名，§11 矩阵 EV-T04 专项＝"canonical 往返＋浮点位模式＋NaN 拒绝"对照 §12 行），56/56 两模式通过并留痕；CR-02 排除面探针（Policy 吸入投影注入→Cr02 用例变红→逐字还原复绿）失败能力自证；冒烟全量 394/394 零回归（core 61＋evidence 56＋policy 4＋runtime 176＋testkit 97）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注）零新增 |
+1096:| v0.6 | 2026-09-12 | EV-T05 实现落位登记（DTB §5.4，证据与 Profile 承载＝`Evidence.hpp/.cpp`——状态/清单/Profile/证明/搜索未果/覆盖证据校验，按 §12 EV-T05 行交付；验证留痕 traceability/builds/wp05-t05/）：①**值类型面**（§6.1～§6.3/§6.6 承载）：EvidenceItemStatus 五值（P-EV-8 实现承载词表）/EvidenceItem（presence 纪律：Satisfied 必带产物摘要、Invalid 必带原因诊断、NotApplicable 必带原因——ERR-01）/EvidenceManifest（snapshotId/sliceId/Profile 三元组绑定面）/EvidenceItemClass＋EvidenceProfileItem＋RequiredEvidenceProfile（**D-14：evidence 只内建 commonRequiredItems 三条通用必需项〔itemId 稳定键 common.snapshot-identity/common.case-coverage-matrix/common.mode-evidence-grade〕，五域明细行零复制——域按需求表 4 自行实例化注册**）/ProofCategory＋DeterministicInfeasibilityProof＋MandatoryStateDescriptor＋CollisionPair/SearchExhaustedRecord（FilteredSolution＋三值过滤原因）/CaseExecutionStatus＋CaseCoverageMatrix＋RegionCoverageEvidence。②**validateProof 字段级校验**（§6.3 五组校验清单全量承载，非抛出纯函数、全部问题一次列出、检查序固定）：类别三类词表→类别条件字段（AnalyticBound 界限/Contradiction 矛盾/MandatoryState 三要素＋碰撞对象对）→产生者注册与契约版本→快照/切片绑定→coverageClaim 句法；**实现口径 I-1～I-7**：I-1 Applicability 复用 ApplicabilityCondition 词形（无条件＝nullopt 即 Always）；I-2 stateKind 以域登记 token 承载（词表开放——evidence 只做非空＋无 NUL 下限，不私裁封闭枚举，O-13 保守字面）；I-3 CollisionPair 须双方非零、A≠B、判定为肯定（否定判定对不能支撑碰撞主张——不伪造）；I-4 coverageClaim 规范 token＝§6.3 原文短语逐字（kCoverageClaimAllAlternatives/kCoverageClaimMandatoryState 常量，按类别核对）；I-5 validateProof 第 4 参 expectedSliceId（"sliceId 与被汇总结果一致"的检查载体，必填不给默认——校验不可静默跳过）；I-6 IProducerRegistryView 最小只读注入端口（§3.3 注入先例——产生者注册检查面，EvaluatorRegistry〔EV-T10〕落地后适配，零跨单元编译依赖）；I-7 producer 以 std::string 承载（D-5 同款词形先行，类型化归 EV-T10）。③**Profile 注册期校验与内容身份**（§6.1 注册行＋§9.5 语法面——四组规则：item 语法/itemId 词形"<域>.<项>"两段 kebab〔I-8 实现口径〕/条件词形/替代标志与 itemClass 一致性＋Common 禁止域登记；与评估器声明的闭包交叉校验归 EV-T10）：computeProfileContentIdentity 对 canonical 身份投影编码（magic "IRDPRF1"＋codec 版本＋逐字段长度前缀大端＋required/suggested 各按 itemId 字典序规范化——**I-9**：非往返载体，SliceCodec baseline-projection 同款纪律；摘要唯一经 core::ContentDigester——CR-02；total 函数不做语义校验，垃圾入给出确定身份出、由注册门禁拦截）。④**证据清单校验与完备性核对**（§6.2）：validateEvidenceItems（presence 纪律）/validateEvidenceManifestBinding（caseScope ⊆ 快照必验集、subject ∈ 对象闭包——"防错误工况/对象引用"原文，EV-COV-2 同源）/checkEvidenceCompleteness（**I-10**：必需项 Satisfied＝满足、NotApplicable＝**不计缺失**〔EV-VER-7 判定面〕、Missing/Invalid/Unverified 全量列出不短路；建议项单独标注不阻断；通用必需项不在域核对——隐式附加归②级门禁 EV-T06）。⑤**Verified 模式前置校验**（§6.2，EV-T03 v0.4 ⑤ 预登记入口的兑现）：validateSnapshotForMode——Verified 强制外部资源全部 Solidified（CON-03/PM-01，逐条带下标）＋复现块版本要素完整（各模式通用面，对手工构造快照复核）；Quick/Preview 不强制固化。⑥**覆盖证据校验**（§6.6 字面——契约 acceptance 4 O-14 保守字面：分母＝快照冻结态必验工况集〔enabled∧mandatory 冻结标记，evidence 不解释标记，schema 权威归 requirements 卡 WP-14-T01〕）：validateCaseCoverageMatrix（与计划核对/重复拒绝/必验集外引用/NotApplicable 必填原因/漏验逐工况点名〔EV-COV-1 校验面〕；**I-11**：矩阵非法与覆盖不完备两面分离——EV-COV-2/EV-COV-1 判定面各自观测；**I-12**：CaseCoverageEntry 增补 notApplicableReason 载体——§6.6 约束行"必填原因"要求载体，字段表未列、约束行为权威）；validateRegionCoverageEvidence（样本集锚对快照冻结采样计划/分母完整性溢出安全求和/零样本暴露〔覆盖率不定义——裁定归 EV-T06〕/downgraded 单向强制——dataInsufficient>0 ⇒ true）。⑦测试：新增 27 用例（EV-PROOF 12＋EV-ITEM 1＋EV-COMPLETENESS 1＋EV-MANIFEST 1＋EV-PROFILE 3＋EV-COVM 4＋EV-COVR 2＋EV-MODE 2＋EV-SEARCH 1——组名为实现侧组名，§11 矩阵 EV-T05 专项＝EV-VER-6/7＋EV-COV-2/3＋validateProof 逐字段反例；EV-VER-1~5/8 与 EV-COV-1/4 用例体随 EV-T06/EV-T11 落地——§12 依赖序），83/83 两模式通过并留痕；validateProof 探针（CollisionPairsMissing 检查短路注入→变红→逐字恢复复绿，PROBE 零残留）失败能力自证；冒烟全量 421/421 零回归（core 61＋evidence 83＋policy 4＋runtime 176＋testkit 97）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注）零新增 |
+1097:| v0.7 | 2026-09-12 | EV-T06 实现落位登记（DTB §5.4，五级汇总判定＝`Verdict.hpp/.cpp`——决策表/VerdictTrace/资格/基准检查，按 §12 EV-T06 行交付；验证留痕 traceability/builds/wp05-t06/）：①**值类型面**（§6.4.1/§6.5/§7.2 承载）：ReadinessSummary/SnapshotGateResult（①②级调用方装配面——REQ-06 就绪结论与快照身份门禁）/DomainVerdictInputs＋DomainVerdictViolation（⑤级域判定输入——evidence 只汇总定级与透传，PA-1）/VerdictInput（伪代码字段逐字承载＋**I-2 增补三字段**：mode〔②级"模式与证据等级标识"组成＋§7.2 资格条件〕/regionCoverages〔§6.4.3 工作区域级汇总裁定输入——EV-COV-3〕/searchRecord〔§6.3 末透传入参〕）/VerdictLevel 六值（值即表行号）/VerdictLevelRecord/VerdictTrace（固定六槽完整决策路径——NFR-COR-04）/MissingItem {itemId,reason}（**I-3**：itemId 可定位稳定指称、reason 人读中文，机器判别走 hitLevel＋诊断码面）/VerdictResult（伪代码五成员逐字承载）/ComparisonBaseline＋BaselineDifferenceDimension 五值＋BaselineConsistencyResult＋EligibilityCheck。②**五级决策表 aggregateVerdict**（§6.4.1 字面顺序，自上而下首个命中生效；**knownPitfalls P-EV-3 处置**＝字面顺序：③命中即输出 EngineeringInfeasible、④/⑤不评估〔B 类无关缺失不阻断③——证明为任务级作用域〕）：⓪ outcome≠Completed→NotApplicable（执行轴与工程判定轴正交——TASK-02）；①输入非法→DataInsufficient（input-invalid 全量）；②通用证据门禁＝**固定检查序全量收集**（快照身份门禁→Verified 前置固化 validateSnapshotForMode〔I-2：CON-03 汇总器内执行〕→Profile 注册核对〔findProfile 精确 (profileId,version)＋内容身份三元组一致〕→清单绑定 validateEvidenceManifestBinding→覆盖矩阵 validateCaseCoverageMatrix→区域证据形状；任一命中即本级命中，缺失全量列出——acceptance 2；C6 证明不豁免门禁）；③证明只信 validateProof（**D-09/acceptance 3**：存在性≠有效性，expectedSliceId＝manifest.sliceId；③附加义务＝substitutable 成功产物类项按"因不可行而不适用"出具说明诊断，清单标记义务在评估器侧——**I-6**）；④数据不足判定五条件全量收集（gaps／证明无效〔Invalid 语义——EV-VER-6 反例半边〕／searchRecord 在场〔§6.3 末硬规则：附记录透传〕／区域零样本与降级〔**I-5 分流**：形状非法归②级、零样本与 downgradedRequired 归④级——EV-COV-3"整体 DataInsufficient"〕／**P-EV-7 空必验集保守处置**＝无 enabled∧mandatory 工况→④级 DataInsufficient＋"无启用必验工况"诊断，绝不输出正式通过；全不适用场景由 §6.6 覆盖判据字面在②级拦截不另设路径——**I-6**）；⑤Must 违例→EngineeringInfeasible／Should 违例→Feasible＋警告（verdictInputs 透传进诊断——EV-VER-8）。③**实现口径 I-1（签名落位）**：aggregateVerdict(input, snapshot, producers, profiles)——伪代码两注册表参数以最小只读投影承载（IProducerRegistryView 复用 EV-T05＋新增 **IProfileRegistryView**，EV-T10 注册表直接适配；快照为显式参数＝覆盖矩阵分母/清单与证明绑定/模式前置校验的事实面）；分母恒取快照冻结态 RequiredCaseSet（**acceptance 4/O-14 保守字面**——enabled∧mandatory 冻结标记字面消费，schema 权威归 requirements 卡 WP-14-T01）。④**资格检查**（§7.2 表两行逐条件——**I-7**）：checkFormalPassEligibility（五条件）/checkReviewRecordEligibility（五条件，"携带有效证明"必须字段级校验通过）；unmetConditions 稳定 token 词表冻结于函数注释。⑤**基准检查**（§6.5——**I-8**）：checkComparisonBaselinesConsistent 差异维度五值按枚举序去重输出；sampleSetIds 按序比较（快照冻结采样计划序）；空集/单条平凡通过。⑥**汇总诊断建议码**（**I-9**，P-PR-6/F-056 同模式——建议值，码值权威归 diagnostics StableCodeRegistry）：复用 §13 清单四值（EVI-SNAPSHOT-INCOMPLETE/EVI-CASE-COVERAGE-MISSING/EVI-EVIDENCE-MISSING/EVI-PROOF-INVALID）＋补登八值（EVI-OUTCOME-NOT-COMPLETED/EVI-INPUT-NOT-READY/EVI-MANIFEST-BINDING-INVALID/EVI-PROFILE-UNRESOLVED/EVI-INFEASIBILITY-SUBSTITUTION/EVI-SEARCH-EXHAUSTED/EVI-REGION-COVERAGE-DOWNGRADED/EVI-MUST-VIOLATION/EVI-SHOULD-VIOLATION——kDiag* 常量承载，登记转 diagnostics 所有者注册时裁决）。⑦测试：新增 24 用例（VerdictDecisionTable 2＋VerdictGate 1＋VerdictSearchExhausted 1＋VerdictConfigCollision 2＋VerdictPathCollision 1＋VerdictMandatoryProof 2＋VerdictNotApplicableItem 1＋VerdictMustShould 2＋VerdictCoverage 1＋VerdictBaseline 2＋VerdictMissingCompleteness 2＋VerdictD9 1＋VerdictPitfalls 2＋VerdictRegionCoverage 1＋VerdictEligibility 2＋VerdictDeterminism 1——组名为实现侧组名，§11 矩阵 EV-T06 专项＝EV-VER-1~8＋EV-COV-1/4 对照 §12 行；EV-VER-6 字段级校验半边与 EV-COV-2/3 校验器半边已随 EV-T05 落地——§12 依赖序），107/107 两模式通过并留痕；覆盖门禁探针（②级矩阵检查短路注入→EV-COV-1/acceptance 2 等 3 用例变红→逐字恢复复绿，PROBE 零残留）失败能力自证；冒烟全量 445/445 零回归（core 61＋evidence 107＋policy 4＋runtime 176＋testkit 97）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注）零新增 |
+1098:| v0.8 | 2026-09-12 | EV-T07 实现落位登记（DTB §5.4，结果包络＝`Envelope.hpp/.cpp`——Draft/make/validateCombination，按 §12 EV-T07 行交付；验证留痕 traceability/builds/wp05-t07/）：①**值类型面**（§7.1 注释逐字承载，未定名类型按注释原文最小成形）：DomainPayloadDraft/DomainPayload（正式结论载荷——摘要由 make 计算，非申报值）/PartialDataRef（reusable 恒 false——构造边界强制，EV-ENV-2 包络侧）/CaseScope/EvidenceProfileRef（profileId+version+contentIdentity 三元组绑定面）/ProducerProcess＋ProducerInfo（设计注释点名两字段，省略号字段待后续任务按需增补）/ResultEnvelopeDraft/ResultEnvelope。②**构造边界 make()**（SA-13）：唯一入口、非法组合抛 EvidenceError(EnvelopeIllegalCombination)（detail 逐条含字段名——EV-ENV-1"Draft 校验失败消息含字段"）；**EnvelopeIssueCode 21 值**＝表 3 逐格区分（Errors.hpp 该码注释登记的"逐条区分在 EV-T07 落地"兑现——异常轨仍单一稳定码、逐格区分由 issue 码＋消息承载）；检查序固定：Preview 无条件边界（表 3 行 4/表 1——排首位）→结构面（task 五元组/评估键词形/三身份非零/产出者版本/载荷 token/reusable 标记）→Completed 行（行 2 NotApplicable 拒绝＋行 1 证据清单与工况标识必含/清单项 presence 纪律复用 validateEvidenceItems/DataInsufficient 空缺失清单拒绝/Feasible 带缺失拒绝/EngineeringInfeasible 凭据）→非 Completed 行（状态必须 NotApplicable＋payload 空＋无 Satisfied 判定声明＋无 missingItems——行 3 及其反面）；**实现口径 E-1**："构造后不可变"由 make 唯一生产者纪律承载（公共成员无 setter，InputSlice 同款——不用 const 成员以保全值语义）。③**validateCombination 两段式**（§7.2"make/validateCombination 纯函数"＋"接纳侧 execution 复用同一校验器"）：单参上下文无关面＝make 的拒绝依据；三参快照绑定面＝caseScope ⊆ 快照冻结必验工况集（§7.1 caseScope 注释——越界 id 逐条点名）＋EngineeringInfeasible 且凭据为证明时 validateProof 字段级核对（表 3 行 1"有效证明（validateProof 通过）"——**D-09 存在性≠有效性**；expectedSliceId＝包络 sliceId）＋清单对快照绑定复核（§6.2——汇总段已挡一次、接纳段复检＝纵深防御）。④**实现口径 E-2～E-5**：E-2 payload 摘要＝make() 经 core::ContentDigester 对 canonicalBytes 重算（CR-02 摘要算法唯一；Draft 携带无摘要组装形态 DomainPayloadDraft——申报摘要可伪造，重算值才构成完整性凭据）；E-3 EngineeringInfeasible 凭据两段式＝在场（上下文无关面：证明在场或 Must 违例记录在场）＋有效（快照绑定面：validateProof 通过）；E-4 Must 违例记录识别面＝复用 EV-T06 kDiagMustViolation 码面（CR-01 同源纪律不私造 token，码值权威归 diagnostics）；E-5 清单—包络绑定一致性（manifest.snapshotId/sliceId 必须等于包络同名绑定——§6.2 记录面，防证据张冠李戴）；E-6 EvaluationKey/producer 暂以 std::string 承载（D-5 同款词形闸门 isValidEvaluationKey——类型化归 Evaluator.hpp/EV-T10）；ProducerInfo 词形闸门＝非空无 NUL 编码安全下限（O-13）。⑤**CR-01 acceptance 2**：新注册跨单元契约测试目标 `sdurws_ird_evidence_contract_test`（§11 测试目标分工——`_test` 单元内/`_contract_test` 跨单元——的首次落地；CMake 与 _test 同构）——EvidenceVocabularyContract 三防线：token 字面量与 core::toToken 输出逐一相等（11 值＋*FromToken 往返＋包络承载枚举回流钉住）/evidence 产品源码零词表本地定义扫描（include/＋src/）/Envelope.hpp include 面断言＋6 组 static_assert 钉死包络三轴字段类型＝core 词表类型。⑥测试：新增 31 用例（EnvelopeTest 26：EnvelopeMatrix 21＋EnvelopeSnapshotBound 3＋EnvelopeDeterminism 2；EnvelopeContractTest 5：EvidenceVocabularyContract 5——组名为实现侧组名，§11 矩阵 EV-T07 专项＝EV-ENV-1/2 对照 §12 行；EV-ENV-2 的 judgeCacheHit 判定面归 §8.2/EV-T09——§12 依赖序，本任务交付其包络侧数据面前提：partialData.reusable 恒 false 由构造边界强制），133/133＋5/5 两模式通过并留痕；探针失败能力自证（Preview 检查 'false &&' 短路注入→2 用例变红→逐字恢复复绿，PROBE 零残留）；冒烟全量 476/476 零回归（core 61＋evidence 133＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注，与 wp05-t06 基线 diff 逐项一致）零新增 |
+1099:| v0.9 | 2026-09-12 | EV-T08 实现落位登记（DTB §5.4，当前性纯投影＝`Currentness.hpp/.cpp`——computeCurrentness/CurrentnessIndex，按 §12 EV-T08 行交付；验证留痕 traceability/builds/wp05-t08/）：①**类型面**（§8.1 输入/输出原文承载）：ResultRef（结果引用身份摘要五要素——task/evaluationKey/contractVersion/sliceId/inputBaselineId；fromEnvelope 投影＝"envelope 或其身份摘要"的承接）、CurrentnessTarget（目标上下文——projectId/branchId/scheme?/evaluationKey/当前配置内容身份）、ICurrentnessFactSource（依赖重建事实源——声明→当前条目，nullopt＝不可解析；§3.3 值传递＋最小注入接口同款模式，适配器归 L5/请求方）、CurrentnessSources（重建源集合——目标快照＋事实源＋当前契约版本＋声明集＋CR-05 开关＋结果切片可选注入）、InvalidationKind/InvalidationReason、CurrentnessStatus 两持久态＋UnevaluableCause（cross-context/unresolved-dependency——§8.1 大括号标注的承载）＋CurrentnessResult 四字段（status: optional——**不可判定为计算形态非第三持久态**，P-EV-4；呈现口径归 ui/P-UI-2，本单元计算面不阻断）。②**computeCurrentness 五步算法**：步骤 1 上下文匹配（project∧branch——TASK-03/S7 拦截）→ 步骤 2 契约匹配（短路 Superseded{EvaluatorContractChanged}）→ 步骤 3 目标切片重建（逐声明解析——缺失全量列出诊断不在首错短路；任一无法解析→不可判定{unresolved-dependency}**不得默认 Current**；SliceBuilder 拒绝转译为不可判定＋原细节透出；事实源条目与声明键/Kind 不符＝实现违约 fail-fast）→ 步骤 4 比较 → 步骤 5 输出（evaluatedAgainst＝target 原样快照）。③**实现口径 I-1～I-8 登记**（实现细节精确化，语义与设计一致）：I-1 结果引用以身份摘要形态承载；I-2 "注册表当前 descriptor"在 EV-T10 落地前以值传递注入（currentContractVersion＋declarations＋consumesCanonicalModel——snapshotFactKeys 注入同款先例）；I-3 目标快照由请求方按 §10.1①~③同流程组装注入，目标条目校验与身份计算唯一经 SliceBuilder/SliceCodec（CR-02），**失效判定按条目级对比执行**（§5.1 身份纪律原文"失效判定用条目级 ContentVersion/内容身份对比，从不用修订号代替"——sliceId 全值编码含快照锚〔SliceCodec full 的 [32] snapshotId，EV-T04 布局〕，全值判定会让 HEAD 前进直接进入判定、违反 §8.1 步骤 4"HEAD 前进本身不出现在比较里"）；I-4 resultSlice 可选注入——在场输出条目级失效原因（设计主形态/KIN-13 提示数据源），缺席降级 sliceId 全值比较（跨修订恒 Superseded 保守方向）；I-5 InvalidationKind 词表＝步骤 4 列举值＋EvaluatorContractChanged（步骤 2 承载）＋EnvironmentChanged/SliceContentChanged（"…"两处保守扩展——Environment 变化与身份级兜底）；I-6 scheme 无 core Id 类型（六 Id128 无 SchemeId），以可选字符串承载且仅入 evaluatedAgainst 记录面；I-7 评估键并入上下文匹配（规则表行 1 四要素——跨评估键查询＝不可判定{cross-context}，诊断区分失配维度）；I-8 判据分层：sliceId 全值捷径→条目级对比主判据（Current ⇔ 条目集逐条相等）→身份摘要降级。④**CurrentnessIndex 会话态投影缓存**（§8.1 规则表行 3）：键＝(runId, targetContextId)、互斥量保护（事件线程×查询线程）、store 拒绝空串上下文标识/保留值 runId（CacheIncompatible fail-fast）、invalidateRun 按运行粒度失效（事件不携带数据 core D-09——保守正确）、判定本身不写缓存（EV-CUR-3"currentness 仅存在于投影索引"的结构性保证）；**纯投影承诺**：全部入参 const 引用、归档包络/快照/切片零修改（acceptance 2 的断言面）。⑤**诊断建议码**：kDiagCurrentnessCrossContext/kDiagCurrentnessUnresolvedDependency（EVI-* 建议值——码值权威归 StableCodeRegistry，P-PR-6 同模式；reporting 侧 RPT-CURRENTNESS-UNEVALUABLE 为其呈现面消费码）。⑥测试：新增 18 用例（EvidenceCurrentness 组——§11 矩阵 EV-T08 专项＝EV-CUR-1~4 对照 §12 行）：EV-CUR-1（无关 HEAD 前进仍 Current/被消费对象变化 Superseded＋旧→新 cv detail/新会话同内容）＋EV-CUR-2（缺失不默认 Current/多键全量列出/重冻结失败转译/事实源违约 fail-fast）＋EV-CUR-3（判定前后归档包络逐字段不变＋投影索引拷贝语义）＋EV-CUR-4（跨项目/跨分支/评估键失配）＋AT-05 载体（预算复评 Superseded＋ConfigurationChanged＋同快照双切片钉 inputBaseline 排除面——sliceId 变而基准不变＝复评不冒充原运行）＋契约短路（事实源零调用观测）＋条件翻转/条目消失＋身份摘要降级＋Index 行为＋重建源缺位 fail-fast；151/151＋5/5 两模式通过并留痕（既有 133＋5 零修改回归）；探针失败能力自证（unresolved 分支注入 'out.status = Current' 一行→2 用例变红→逐字恢复复绿，PROBE 零残留）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注，与 wp05-t07 基线计数逐项一致）零新增 |
+1100:| v1.0 | 2026-09-12 | EV-T09 实现落位登记（DTB §5.4，缓存/检查点兼容判定＝`Compatibility.hpp/.cpp`——judgeCacheHit/judgeCheckpointCompatibility 两套独立判定接口，按 §12 EV-T09 行交付；验证留痕 traceability/builds/wp05-t09/）：①**类型面**（§8.2 原文冻结代码逐字承载）：CachedResultSummary（被复用结果七字段摘要——mode/outcome/manifestFinalized/sliceId/evaluatorContractVersion/profileContentIdentity/inputBaselineId?；"从缓存条目/envelope 提取（不载入全载荷）"——判定只消费身份面与完成面，不读全载荷）、CacheHitQuery（请求身份面四要素——requestedMode/requestSliceId/requestContractVersion/requestProfileIdentity；两判定共用请求载体）、CacheMissReason 六值（§8.2 reasons 注释行 kebab 词表逐字——mode-mismatch/slice-mismatch/contract-mismatch/profile-mismatch/outcome-not-completed/manifest-incomplete；枚举序＝检查序，一经交付只允许表尾追加——EvidenceErrorCode 同款纪律）、CacheHitResult（verdict 三档嵌套枚举 FullHit/DiagnosticOnly/Incompatible＋reasons 全量清单）、CheckpointSummary（检查点登记头五字段——evaluatorKey/sliceId/evaluatorContractVersion/checkpointFormatVersion/integrityVerified；无 outcome/模式/Profile 面——**可恢复性与任务成败独立的类型级保证**，EV-CPA-3）、CheckpointCompatibilityResult（Resumeable/Incompatible 两档＋reasons 稳定 token 串〔std::vector<std::string>——§8.2 原文；检查点拒绝原因经 execution 通道跨进程透出〔D-15 错误码化的上游输入〕，词表五值冻结于契约头注释：evaluator-key-invalid/slice-mismatch/contract-mismatch/checkpoint-format-incompatible/integrity-not-verified〕）。②**judgeCacheHit 三档判定**（§8.2 判定式逐字）：FullHit ⇔ 模式相等∧sliceId 相等∧契约版本相等∧Profile 身份相等∧outcome==Completed∧manifestFinalized（策略/种子/线程/配置/样本/环境版本已含于 sliceId——D-01/D-11 身份要素完备性是 FullHit 的前提，一处相等覆盖全部输入要素）；DiagnosticOnly ⇔ 身份面四项全对齐∧(outcome≠Completed∨未 finalize)——部分/失败/取消结果**可读作诊断不得正式命中**（CON-04；EV-ENV-2 判定面兑现——EV-T07 v0.8 已交付其包络侧数据面前提 partialData.reusable 恒 false）；Incompatible＝其余一切（Quick 缓存对 Verified 请求与反方向**双向均 Incompatible**——D-13 模式是请求效力属性不升降级）。③**judgeCheckpointCompatibility 五条件**（§8.2 Resumeable 判定式逐字）：evaluatorKey 相等∧sliceId 相等∧契约版本相等∧checkpoint 格式版本兼容∧integrityVerified；**实现口径 C-1～C-5 登记**（实现细节精确化，语义与设计一致）：C-1 未满足条件**全量收集不首错短路**（reasons 按检查序＝枚举声明序——同失配必得同一清单，NFR-COR-02；verdict 裁决＝身份面任一失配→Incompatible／身份面全对齐且有结果面失配→DiagnosticOnly／全对齐→FullHit）；C-2 CheckpointSummary.evaluatorKey 暂以 std::string 承载（D-5 同款词形闸门 isValidEvaluationKey——InputSlice/Envelope 先例，类型化归 Evaluator.hpp〔EV-T10〕）＋"evaluatorKey 相等"的承载＝评估键进入切片身份（Slice.hpp"进 sliceId——CON-04"，sliceId 相等⇒键相等，请求侧无需另带键字段），显式字段做词形校验（词形非法＝损坏/伪造检查点头→evaluator-key-invalid 保守拒绝）；C-3 "checkpoint 格式版本兼容"＝落在本构建支持**闭区间**〔kCheckpointFormatVersionMin=1, kCheckpointFormatVersionMax=1〕（§8.2 标题括注存储归 execution/project——区间常量随其存储格式演进推进并留痕；区间外一律 Incompatible，读不懂的格式不得恢复）；C-4 requestedMode 与 requestProfileIdentity 不参与检查点判定（Resumeable 五条件无此二项——检查点恢复的是**运行进度**而非正式证据，续跑完成的结果仍要过包络构造边界与 judgeCacheHit，模式效力与 Profile 绑定在结果面把关）；C-5 判定函数为**非抛出纯函数**（§2.1 try 轨分轨——可恢复查询路径；Errors.hpp CacheIncompatible 注释"判定输出供调用方转译"：调用方对 Incompatible 按需转译 EvidenceErrorCode::CacheIncompatible／建议码 EVI-CACHE-INCOMPATIBLE，码值权威归 StableCodeRegistry——PA-1 本单元不注册）。④**四类复用严格区分**（§8.2 首行"四类复用严格区分"任务约束§五.9 的承载）：正式缓存命中（FullHit）/诊断性读取（DiagnosticOnly）/不兼容拒绝（Incompatible，含 Quick↔Verified 双向）/检查点恢复（Resumeable）——两套独立判定接口互不冒充（§15.5 自审行"是否对缓存与检查点采用了同一套错误门禁"→两套接口）。⑤P-EV-1 处置：core.md v0.1（Draft 未冻结）契约按卡内签名消费（EvaluationMode/TaskOutcome——core Evaluation.hpp；ContentIdentity——core Digest.hpp 字节精确等值），冻结时按 diff 增量同步；本任务未发现基线漂移。⑥测试：新增 22 用例（CompatibilityCacheHit 13＋CompatibilityCheckpoint 9——组名为实现侧组名，§11 矩阵 EV-T09 专项＝EV-CPA-1~3 对照 §12 行；EV-ENV-2 判定面在本任务兑现）：EV-CPA-1（Quick↔Verified 双向拒绝＋同身份同模式 FullHit 正例半边）＋EV-CPA-2（契约失配两判定面＋token 精确断言）＋EV-CPA-3（Failed 检查点仍 Resumeable＋无 outcome 字段类型级独立＋请求模式不参与＋integrity 未验证反面）＋acceptance 2（Canceled/Failed/Interrupted→DiagnosticOnly 非 FullHit＋reasons 含 outcome-not-completed；未封账反例；身份面＋结果面混合不降档；六项全失配全量收集按序）＋检查点五条件逐项与格式区间边界（0/1/2）＋两判定确定性；173/173＋5/5 两模式通过并留痕（既有 151＋5 零修改回归）；冒烟全量 516/516 零回归（core 61＋evidence 173＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）；探针失败能力自证（judgeCacheHit 模式检查短路注入 'if (false && …)' 一行→EV-CPA-1 两用例等 4 用例变红→逐字恢复＋touch 强制重编译复绿〔F-068 mtime 陷阱规避〕，PROBE 零残留）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注，与 wp05-t08 基线命中区块逐项一致）零新增 |
+1101:| v1.1 | 2026-09-12 | EV-T10 实现落位登记（DTB §5.4，评估器接口与注册表＝`Evaluator.hpp/.cpp`——descriptor/接口/两注册表/manifest，按 §12 EV-T10 行交付；验证留痕 traceability/builds/wp05-t10/）：①**类型与接口面**（§9.2/§9.3 原文承载）：ThreadSafety 三值词表（SingleThread/ConcurrentReadOnly/FullyThreadSafe）＋isKnownThreadSafety 位型防御面（诚构造不可能非法——检查是注册门禁对反序列化损坏/伪造 descriptor 的位型完整性防御）；EvaluationKey（**D-5 收敛**：语义别名＝std::string——§3.1 概念名落地，词形闸门维持 isValidEvaluationKey、捕获点固定在注册期与编码期；**不做强包装类型**的理由＝§9.4 明文把"key 语法"列为注册期校验项，词形非法值若构造期即不可存在将架空该拒绝面）；EvaluatorDescriptor 七字段（§9.2 字段表全量——**P-EX-7 处置**：不含任何执行期能力字段〔暂停/检查点粒度/强制终止代价〕，该面归 execution 侧注册表扩展声明承载，文件头登记处置方向、两侧均不私改对端口径；测试以结构化绑定钉死恰七成员与成员类型——字段面漂移即编译失败）；EvaluationRequest/EvaluationOutput（§9.3 逐字——envelope 由调用侧经 aggregateVerdict＋ResultEnvelope::make 组装，评估器只产出素材）；IEvaluationContext（取消查询/进度上报/物化对象读取——evidence **零实现**，宿主〔execution/主进程〕注入）；IEngineeringEvaluator/IEvaluatorFactory（§9.3 实现契约：同切片同环境等价输出/纯计算不派发不写项目/可重入性＝threadSafety/长评估周期性查询取消）。②**EvaluatorRegistry**（§9.4 行为冻结表逐行）：注册期单线程约定＋运行期 find/manifest 并发只读安全（std::shared_mutex——注册排他/查询共享/create 工厂调用锁外，锁序唯一无死锁面）；重复键注册拒绝、不覆盖、不静默（EvidenceError〔EvaluatorDuplicate〕——同键不同 contractVersion 同拒〔版本冲突行〕，换版本＝装配清单变更无运行期热替换）；未知键 find/create 返回 nullptr（查询非抛）；注册期校验＝requireValidEvaluatorRegistration（**检查序固定**：key 词形→契约版本>0→模式集非空无重复〔"子集"语义〕→threadSafety 合法→contentIdentity 保留值→Profile 解析→Profile 条件交叉校验→声明闭包；"任一失败即拒绝并指明字段"由 RegistrationIssue 字段名聚合承载——同坏注册必报同一首错，NFR-COR-02）；**码面分工**（EV-T02 预登记"注册拒绝归 EvaluatorRegistry 消费"契约兑现）：声明闭包问题→DeclarationInvalid、其余→EvaluatorDescriptorInvalid（表尾新增），两类并存按检查序首类优先；manifest()＝按 key 字典序 {key, contractVersion, profileIdentity} 清单及摘要（**IRDRGM1** 非往返身份投影编码——magic＋codec 版本＋条目数＋逐条目长度前缀/大端/32 字节身份；CON-06/AT-19 主/worker 比对面，同注册集恒同摘要）；**实现口径 R-1～R-4** 登记（R-1 create 未知键 nullptr 查询轨——装配不一致由 execution 摘要比对在派发前拦截；R-2 注册检查序＝空 factory→重复键→注册期校验→登记；R-3 descriptor.profile 复用 EvidenceProfileRef 三元组结构但只消费声明面 {profileId, version}——contentIdentity 域不可申报〔§9.5〕、申报非零即拒绝、manifest 恒取注册表权威值；R-4 Profile 注册检查序＝重复键→语法校验→身份覆盖计算→入库）。③**EvidenceProfileRegistry**（§9.5）：重复 (profileId, version) 拒绝（EvidenceError〔ProfileDuplicate〕——同域多版本共存，版本是键的一部分）；validateEvidenceProfile 语法面（EvidenceError〔ProfileInvalid〕——detail 逐条含 itemId）；contentIdentity 注册时由 evidence 计算、域申报值一律覆盖（"域不可申报"）；条件闭包经注册顺序解耦（Profile 注册查 referencedKeys 语法＝上半场、评估器注册做 referencedKeys ⊆ 声明键 ∪ 快照事实键交叉校验＝下半场）；**视图适配兑现**（EV-T05 I-6/EV-T06 I-1 预登记"EV-T10 注册表直接适配"）：EvaluatorRegistry 实现 IProducerRegistryView、EvidenceProfileRegistry 实现 IProfileRegistryView——注册表即视图本体，无需另建适配器。④**错误码表尾追加三值**（10→13 值）：EvaluatorDescriptorInvalid/ProfileDuplicate/ProfileInvalid（token evidence/evaluator-descriptor-invalid、evidence/profile-duplicate、evidence/profile-invalid——§9.4/§9.5 注册边界语义 kebab 派生；建议码 EVI-EVALUATOR-DESCRIPTOR-INVALID/EVI-PROFILE-DUPLICATE/EVI-PROFILE-INVALID 补登——P-PR-6/F-056 同模式，码值权威归 diagnostics StableCodeRegistry，登记转 diagnostics 所有者注册时裁决）；ErrorsTest 全表锚定同步 13 值（表尾序号 12 钉死）。⑤**D-12 调度分离**（acceptance 2）：两注册表与调用约定零调度设施（无调度器/队列/取消通道/进度设施——IEvaluationContext 只是接口、evidence 零实现）；NoSchedulerFacilitiesInEvaluatorSources 源码扫描钉死（Scheduler/TaskQueue/RunRegistry/std::queue/priority_queue 与执行能力字段词面零命中——P-EX-7 双保险）。⑥测试：新增 18 用例（EvidenceRegistrationBoundary 5＋EvidenceRegistrationManifest 3＋EvidenceRegistryViewAdapters 2＋EvidenceProfileRegistryBehavior 4＋EvidenceDescriptorFieldFace 1＋EvidenceEvaluationContract 2＋EvidenceRegistryNoScheduler 1——组名为实现侧组名，§11 矩阵 EV-T10 专项＝EV-REG-1/2 对照 §12 行；EV-REG-3 替身边界声明在测试文件头前置登记——完整 ScriptedEvaluator 契约替身与 EV-* 全量用例体归 EV-T11，§12 依赖序），191/191＋5/5 两模式通过并留痕（既有 173＋5 零修改回归）；探针失败能力自证（registerEvaluator 重复键检查短路注入→EV-REG-1 主例变红〔probe-red-run exit 1〕→逐字恢复＋touch 强制重编译复绿〔F-068 mtime 陷阱规避〕，PROBE 零残留）；冒烟全量 534/534 零回归（core 61＋evidence 191＋evidence_contract 5＋policy 4＋runtime 176＋testkit 97）；ird_gates 3 处命中均为既有（F-019 两项＋F-051 一项——按 findings.json 权威归属标注，与 wp05-t09 基线逐项一致）零新增 |
+1102:| v1.2 | 2026-09-12 | EV-T11 实现落位登记（DTB §5.4，测试替身与契约套件＝evidence/test/*＋testdata/golden/ev-slice-fixture/，按 §12 EV-T11 行交付；验证留痕 traceability/builds/wp05-t11/）：①**ScriptedEvaluator 规范替身**（§11 测试设施行承载，`evidence/test/EvidenceTestDoubles.hpp`——testdoubles 命名空间，runtime 先例同款）：脚本步骤回放（预设产出/EvidenceError 域自选抛出/取消抛出三轨——§9.3"抛 EvidenceError 或返回诊断，域自选"＋"观测到取消后自主选择退出路径"）；周期性取消查询＋进度上报＋对象读取三通道演练（ScriptedEvaluationContext 替身承载 IEvaluationContext——evidence 零实现的宿主面）；ScriptedEvaluatorFactory 经**真实** EvaluatorRegistry 注册（§9.4/§9.5 注册期校验全过——§11"注册于测试内 registry"的字面兑现）；descriptor＝makeScriptedKinDescriptor（key"kin-batch-ik"@7、两 Required 声明、profile 声明引用 contentIdentity 置保留值〔§9.5/R-3〕、模式集 {Quick,Verified}、SingleThread 与替身单线程行为一致）。②**EV-* 用例体端口路径补齐**（EvaluatorPortSuiteTest——与 EV-T06 VerdictTest 决策表直接装配互补的"经评估器端口"组合面）：EV-VER-1~5/8＋EV-VER-6 双例经 ScriptedEvaluator 产出→调用侧装配→aggregateVerdict（素材透传承接链：proof/searchRecord/verdictInputs/evidence 逐项不丢不变形）；§9.3 上下文契约演练（取消抛出经端口传播——D-15 不捕获域异常；对象读取/进度上报可观测）；EV-INV 显示单位子例（§5.3 KIN-12 行——显示单位切换→无任何 reason，补齐矩阵行观测点）；每用例 IRD_TEST_INFO 需求/AT 追溯（§11 登记要求）。③**EV-REG-3 替身边界声明两面**：文书面＝evidence/test/README.md（§1 全文声明＋§2 替身清单＋§3 §11 矩阵→测试文件落位映射全表）；机检面＝ScriptedDoubleBoundary 两用例（产品源码 src/＋include/ 替身符号零命中扫描＋README 声明在案断言——替身数据不冒充真实证据的机制面）。④**envelope 访问器特化**（testkit §10.2 evidence 行交接承接，EnvelopeAccessorContractTest 于 `_contract_test`）：五访问器面（outcome/engineeringStatus/hasEvidenceList/hasMissingItemsList/hasFormalConclusion）把 ResultEnvelope 喂入 testkit checkEnvelopeCombination 泛型谓词；合法组合双过、DataInsufficient 空缺失清单/Canceled×Feasible 双拒对账，Completed 空证据清单格如实登记两面分工（谓词面筛查 vs 产品构造边界绑定结构＋汇总④级完备性兜底）；特化定义在测试侧——产品库不引入 testkit 依赖（§3.2 红线）。⑤**切片契约夹具数据集**（testdata/golden/ev-slice-fixture/1.0.0，contract-fixture 类按 testkit manifest schema 登记）：inputs/slice.json＝切片语义描述（Object/Configuration〔内嵌 IEEE754 0.1 位模式〕/Policy 条件未适用三形态＋空必验集快照）；expected 由 generate/make_ev_slice_fixture.mjs 按 §5.2/编码布局规则**独立重实现**产出（snapshotId→sliceId→inputBaselineId 三身份＋双形态编码 hex）——与产品 C++ 编码器双实现互证（SliceFixtureContractTest：三身份/双形态编码逐字节对照＋parse(expected)==重建切片〔EV-ID-1 数据集载体〕＋重建确定性＋配置载荷自洽）；lint 通过（GoldenDataset::load 全链＋testdata_lint 工具全量扫描 3 数据集零违规）并随 CI 跑通（`_contract_test` 两模式）；随附容差档案 ev-slice（零宽容差条目＝字节级等值的档案化表达——EV-ID-2 反例面）。⑥CMake：evidence/CMakeLists.txt 两测试目标增列新用例文件；_test/_contract_test 链接 sdurws_ird_testkit（testkit §10.2 evidence 行消费面——测试侧依赖，产品目标链接面仍仅 core，红线守卫配置期断言通过）。⑦测试：`_test` 205/205＋`_contract_test` 14/14 两模式通过并留痕（既有 191＋5 零修改回归；新增 15＋9）；失败能力自证＝产品源码注入替身符号→ScriptedDoubleBoundary 主例如期变红→逐字恢复＋touch 强制重编译复绿（F-068 规避），PROBE 零残留；lint 工具 3 数据集零违规。⑧ird_gates 5 处命中＝3 既有（F-019 两项＋F-051 一项）＋**2 新增**（evidence _test/_contract_test→testkit 直链——F-051 同型：白名单 T-1 段明文允许而引擎 SUB 形态一对 →testkit 边未豁免；契约测试消费面＝本任务 §10.2 交接交付物本体、_test 链接＝§11 IRD_TEST_INFO 登记要求——已登记 **F-072**，处置归 WP-01 构建所有者） |
+1106:### 15.5 交付前自审记录（v0.1；自审≠实现测试≠正式验收）
+1110:| 是否重复 core/project/execution/runtime/policy 的职责 | ✔ 未重复：身份/摘要/词表/比较全经 core（§3.2）；磁盘/事务/锁归 project、调度/RunRegistry/取消归 execution、策略/碰撞归 policy、编译/名称归 runtime——均经注入或值传递（§2.1、§3.3、D-07） | §2、§3 |
+1115:| 是否用整个修订代替实际输入依赖 | ✔ 失效按切片条目内容身份；HEAD 前进不自动 Superseded（CON-05；EV-ID-3/EV-CUR-1） | §5.1、§5.3、§8.1 |
+1121:## AI 执行就绪补充
+1130:### 单元任务退出条件
+5:复用审计同时检查上游测试、夹具、模型、工具和构建目标；沿用 GTest/现有 testkit 报告机制，只补产品边界。独立 oracle 限测试，不发展为通用平行算法库，不添加生产追踪框架或测试专用公共 API。
+33:本文是 testkit 单元的唯一详细设计：依据 ARCHITECTURE §3.1 分配给 testkit 的职责（黄金数据集清单、容差档案、稳定集合断言、契约测试基座），把其数据类型、公共接口、不变量、夹具与故障注入设计、测试报告契约、阶段 A 实现任务拆分写到可直接实现的深度。
+58:5. **最小可落地**：阶段 A 交付数据清单、容差档案、基础断言、夹具生命周期、测试报告与 core 接入示例（§9）；进程测试等能力按消费者单元实际阶段需要交付（§6.5、§10）。
+101:8. 诊断码表、文案权威、用户可见诊断呈现（diagnostics/ui）；测试报告**不是**产品 ReviewReport、不依赖 reporting 单元（§7.4）；
+112:| io | 故障注入适配模板（其写入口的 fake 实现，§6.4） | 无（同上） | CSV 方言/转义、SafePath/BudgetGuard（归 io，core.md P-AR-1） |
+114:| reporting | 无（测试报告不经 reporting 生成，§7.4） | 无 | ReviewReport 渲染、证据包导出 |
+147:| `Report.hpp` | TestOutcome/ComparisonRecord/TestRecord、报告写出（ComparisonRecord 复用 `Check.hpp` 的 CompareDetail） | §7.2、§7.3 |
+150:| `gtest/RecordListener.hpp` | gtest 适配层：TestRecordListener（header-only，消费方 TU 编译；testkit 库本体零 gtest） | §7.3 |
+183:- **gtest 接入**（D-01；P-TK-1 已关闭——2026-09-10 随 development-task-breakdown v0.2 §5.5 定稿，本行同步更正先前失实记载）：googletest 经 vcpkg 安装（`vcpkg install gtest:x64-windows`，经典模式），industrialrobot 全部 `_test`/`_contract_test` 目标统一经 `find_package(GTest CONFIG REQUIRED)` 接入——失败即停（REQUIRED），不静默跳过、不回落；**不**消费 `RW::gtest`（实测：构建树 `USE_gtest=OFF`、`RobWork/cmake/gtestTargets.cmake` 从未生成——2026-09-10 CR-07 复核确认，先前"实测存在"记载失实）、不源码 vendor、不混用两份 gtest；测试 main 自持（`GTest::gtest_main` 或 RecordListener 适配）；沿用仓库宏先例（`ADD_RW_GTEST` 模式：`add_test`＋XML 报告目标），宏定义放各单元自己的 CMake。testkit 库本体**不**链接 gtest；`IRD_EXPECT_*` 宏展开为 `EXPECT_*`/`ADD_FAILURE_AT`，要求消费方 `_test` 目标已链 gtest（文档化前置条件）。vcpkg 安装动作与版本登记随 TK-T01（≙WP-02-T01）执行；`find_package` 失败 → TK-T01 转 `blocked`，不自行引入第二框架。
+235:**为何自带而不复用/引入**：(a) io 的 JSON 读写器是产品单元且未产出——依赖 io 违反 T-2；(b) vcpkg installed 实测无独立 JSON 库，引入新第三方依赖超出"不擅自增加"边界；(c) RobWork 侧无共享 JSON 头可借。**边界声明**：JsonLite 是测试工具，不构成产品持久化格式的第二个实现点（NFR-MNT-03 不受影响——单位/身份/比较的权威仍在 core/io），其输出只入 `testdata/` 与测试报告。若 development-task-breakdown 未来统一测试侧 JSON 机制，本文按增量修订对齐（登记于 §12.2）。
+312:| `unit` | string | 是 | core `UnitToken`（该字段参考值的声明单位；比较前经 core 唯一换算入口转 SI） |
+479:宏行为：失败时逐 CompareDetail 输出 `ADD_FAILURE_AT`（文件/行＋字段路径＋actual/expected/unit/容差/差值），并把详情写入本测试的 TestRecord（§7.3）；容差缺失/单位不匹配**不产生断言失败**而是抛 TestKitError（数据集非法级，由夹具转 EnvUnavailable/DatasetInvalid 结果，§7.2）——两类失败不得混淆。
+601:             ⑤ TempDir 建立 → ⑥ TestRecord 初始化（测试 ID/需求/AT/数据集引用登记）
+603:TearDown()   ⑦ TestRecord 定稿写出 → ⑧ TempDir 清理（失败保留，§6.2）→ ⑨ 环境复位
+625:struct ReproRecord {                    // 复现记录（§7.1；亦随 TestRecord 持久化）
+707:**接缝原则（依赖方向安全）**：生产代码**不包含** testkit 头、不加 `#ifdef TEST`；故障接缝＝生产代码本就要求的窄接口（ARCH §7.2 端口、io 写入口、execution 派发/通道接口）。fake 实现编译进**测试目标**，实现这些消费者自有接口：
+784:## 7. 确定性、重放与结果报告
+786:### 7.1 确定性与重放
+793:### 7.2 机器可读测试结果最小契约（TestRecord）
+822:### 7.3 与 gtest 的关系与追溯登记
+825:- `TestRecordListener : public ::testing::EmptyTestEventListener`——header-only 适配头（`gtest/RecordListener.hpp`），在消费方 TU 编译；提供 `installTestRecordListener(int& argc, char** argv)`（消费方 main 或 gtest main 替换处调用一次）；testkit 库本体因此保持零 gtest（§3.3）；
+826:- 追溯登记：`IRD_TEST_INFO("KIN-02", {"AT-03"}, datasetRef)`——在测试内首行声明，写入当前 TestRecord；不修改 gtest 注册机制、不发明参数化引擎；
+827:- **独立性**：报告生成不依赖 reporting 单元（ReviewReport 是产品对象，测试报告不是；两者数据契约无共享，§2.2 第 8 条）。
+829:### 7.4 与产品报告的边界复述
+833:### 7.5 CI 消费方式
+866:| TK-T01 构建落位与框架接入 | 骨架 CMakeLists、§3.3/§3.4、development-task-breakdown §5.5 定稿 | `sdurws_ird_testkit` 升级 STATIC（C++17、链 `RWS::ird::core`）；`sdurws_ird_testkit_test` 注册（gtest 按 §5.5：vcpkg 安装＋`find_package(GTest CONFIG REQUIRED)`，安装与版本登记随本任务；find_package 失败→本任务转 blocked）；`testdata/` 根＋`SDURWS_IRD_TESTDATA_DIR` 变量＋`TestPaths.hpp` | 无（与 CORE-T01 平行可做） | `industrialrobot/CMakeLists.txt`、`testkit/CMakeLists.txt`（新）、`testkit/include/.../TestPaths.hpp`、`testkit/test/*` | 独立冒烟＋集成构建配置成功；TK-BUILD 前两个用例 | 两模式构建零错误；数据根解析（env/默认/缺失三态）用例通过；gtest 版本登记于 breakdown §4.4 定稿行 |
+899:| project | FaultInterceptor（经 io 写入口）、TempDir、（按需）TestProcessRunner | 保存事务故障场景编写（io 写器 fake 实现）；AT-13 场景逻辑 | AT-11/13 |
+902:| policy | 断言、档案（engineering-policy-default 类条目） | 策略一致性三入口场景；碰撞判定数据集 | AT-19 |
+905:| io | FaultInterceptor 模板、JsonLite（不用于产品格式） | 写入口 fake；CSV 方言 roundtrip 用例 | AT-02/20 |
+948:| D-07 | 测试报告双轨：gtest XML（既有）＋ird-test-report.json（listener） | CI 与开发者既有工具链不破坏；追溯字段（需求/AT/数据集/容差/种子）gtest XML 不承载 |
+971:| P-TK-1 | **已关闭（2026-09-10，CR-07）**：gtest 接入机制定稿——vcpkg＋`find_package(GTest CONFIG REQUIRED)` 唯一机制，失败即停不回落 | development-task-breakdown v0.2 §5.5（O-05 实测：USE_gtest=OFF、gtestTargets.cmake 从未生成）；core.md P-ENV-2 同源关闭 | （已消除）原 TK-T01 落地方式悬空 | 按 §5.5 执行；安装＋版本登记随 TK-T01；find_package 失败→TK-T01 转 blocked | 构建约定所有者（已定稿） |
+986:| v0.2 | 2026-09-10 | FOUNDATION-CR-01 契约冻结审查修正（CR-06/CR-07）：§3.2 gtest 接入记载更正——`RW::gtest`"实测存在"系失实（CR-07 复核：gtestTargets.cmake 从未生成、USE_gtest=OFF），唯一定稿机制＝vcpkg＋`find_package(GTest CONFIG REQUIRED)`（development-task-breakdown §5.5），P-TK-1 关闭、R-2 消除；TK-T01 行更新（安装/版本登记随本任务、失败转 blocked）。CR-06 设计级 API diff 通过（core Compare ↔ Check 函数族），TK-T04/05 实现级门禁维持。差异记录见 traceability/foundation-api-diff.md |
+992:| v0.8 | 2026-09-11 | TK-T08（≙WP-02-T08）落位登记：①§6.2 TempDir（RAII——建立即存在/析构递归删除且删除失败只告警不抛；keepOnFailure 默认 true；目录名＝ird-test/<pid>-<tag>-<随机后缀> 并行隔离三要素）＋§6.3 ReproRecord（默认 seed=20260909/threadCount=1；toJson 键序固定确定性输出；fromJson 逐字段校验拒绝消息含 repro-json 前缀与字段路径，非整数/越界不静默截断）＋DeterministicEnv（记录按值持有＝唯一来源）按原文契约实现，接口零偏差；②增量接缝（实现细节级，非冻结变更）：TempDir::noteTestFailure(bool)——库本体零 gtest（D-06）无法观测 gtest 失败信号，由 gtest 侧 GoldenFixture::TearDown 以 HasFailure() 注入（TK-T01 detail::resolveDataRoot 同款处理）；③§6.1 GoldenFixture 置于 gtest/GoldenFixture.hpp（含 gtest 头，消费方 _test 目标专用——AssertMacros.hpp 同款分层先例），实现步骤①~⑤＋⑧⑨；步骤⑥⑦（TestRecord 初始化/定稿）与 ②③ 失败的正式结果分类（§7.2）为 TK-T10 交付面——本任务以注释接缝＋GTEST_SKIP 占位（"不进入测试体"语义钉住，TK-T10 接线后接口不变）；④IRD_GIT_COMMIT 编译期宏注入随 CI 通道接线（当前 ReproRecord.gitCommit 留空为合法值） |
+993:| v0.9 | 2026-09-11 | TK-T10（≙WP-02-T10）落位登记：①§7.2 Report.hpp/.cpp（TestRecord 字段表逐键/六类 Outcome token/ReportSummary.decisive＝§7.5 不可判定判据/聚合 Report.writeFile/TempDir 保留现场 artifacts 登记）按原文契约实现，接口零偏差；②§7.3 gtest/RecordListener.hpp（header-only）：installTestRecordListener(argc, argv)——解析 --ird_report=<path>（缺省＝工作目录 ird-test-report.json）、OnTestEnd 夹具预置 outcome 优先于 gtest 计算值（§7.2 分类不因跳过计为 skipped）、OnTestProgramEnd 聚合写盘（写盘失败 stderr 告警不掩盖测试结果）；③增量接缝（实现细节级）：TestRecordStore 栈式嵌套（单元测试 endAndTake 闭环与 listener endRecord 入册互不污染——NestedSessionIsolatesFromListener 钉住）；④TK-T08 预留接缝落地：GoldenFixture ⑥（bindFixtureContext）⑦（listener OnTestEnd 定稿）接线，②③失败按 §7.2 正式分类（envUnavailable/datasetInvalid＋GTEST_SKIP 保持"不进入测试体"）；⑤IRD_TEST_INFO 宏（AssertMacros.hpp，IRD_CHECK_REPORT_ 同步旁路 comparisons 进记录）；⑥core 接入示例（附录 A.1）以 testkit 侧 CoreIntegrationExampleTest.cpp 运行通过（core/test/** 不在契约 allowedFiles——core 侧正式接入按 A.1 样板复制，随 CORE-T04/T05 交付面登记）；⑦安装排除扫描脚本建议稿交付 tools/install-scan/ird-install-scan.ps1（§3.6 三项排除＋机器可判读退出码；门禁实施归 WP-01/WP-24）；⑧测试 main 自持切换：TestMain.cpp 替换 gtest_main（DTB §5.5"或 RecordListener 适配"形态），链接 GTest::gtest |
+1023:    const double y = core::convert(x, mm, m);      // 1.234 m（唯一换算入口）
+1030:    // 非有限反例：换算入口拒绝 NaN（NFR-COR-03）
+1108:### A.3 集合差异断言失败报告（ird-test-report.json 单条 TestRecord，示例数据为虚构演示）
+1162:重放流程（设计描述）：同 commit 构建 → 设 `SDURWS_IRD_TESTDATA_DIR` → 以 repro.json 内容配置被测求解入口（种子/线程经其显式参数传入）→ 运行对应测试 → `IRD_EXPECT_SET_EQ`＋`IRD_EXPECT_STABLE_ORDER`＋逐元素 CLOSE 断言全部通过即复现成立（AT-09 同种子确定性口径）。
+48:| Q1 | 可追溯 | 每项正式结论可定位到输入快照与证据 | CON-01~06、EVI-01/02、NFR-COR-04、RPT-01/03 |
+59:| PA-1 | 权威唯一 | 每类影响计算的语义只有一个所有者单元：修订与写路径→project；运动学真值→runtime；名称解析→runtime；共享策略→policy；评估协作→evidence；单位/指标/诊断文案→core/diagnostics；命令入口与快捷键→ui（§7.11） |
+60:| PA-2 | 不可变历史 | 修订只增不改；撤销/重做产生新修订（PM-18）；旧结果保留为原快照的历史证据（CON-02） |
+61:| PA-3 | 一切计算经快照 | 评估只消费完整不可变快照（CON-01），插件不直接读写对方的活对象 |
+101:│  平台内核与服务：core/project/evidence/runtime/policy/execution/io/diagnostics/reporting        │
+122:L2  计算内核层    core │ evidence │ policy │ runtime │ drivetrain(共享计算服务)
+144:| 横切管线 A：证据 | CON/EVI | 快照→切片→结果包络→当前性 | §7.6 |
+163:| evidence | 平台内核 | AnalysisSnapshot/InputSlice/ResultEnvelope/ResultCurrentness、评估器接口与注册表、证据契约 | CON-02~06、EVI-01/02、RPT-03 | A〔WP-05〕 |
+170:| reporting | 平台服务 | ReviewReport 对象（B/C 两级）、HTML/JSON/CSV 渲染、证据包导出、往返复算 | RPT-01~06、NFR-COR-04 | B/C〔WP-12〕 |
+185:依赖方向只允许"上层→下层"且不得跨层回指；同类层内部：平台内核间按 core←{evidence,policy,runtime} 方向、彼此不横向互链（drivetrain 只依赖 core/evidence）；平台服务可依赖全部平台内核，**同层依赖允许但必须落在 §3.5 单元依赖表的既有有向边上（无环）**；**业务域单元之间互链禁止**。
+223:| evidence / policy / runtime → core | 接口依赖 | 身份/版本包络、契约类型 |
+224:| drivetrain → core, evidence | 接口依赖 | 评估器接口、映射结果类型 |
+227:| execution → core, evidence, diagnostics, project | 接口依赖 | 任务身份类型、评估器调度、任务诊断、**results 存储端口** |
+229:| reporting → core, evidence, diagnostics, project | 接口依赖 | 查询端口（②）、结果引用、证据契约 |
+245:#### 3.6.1 使用形态与 owner
+252:| runtime owner | 编译/物化 WC、DWC、Device/Frame、名称映射及发布；各进程实例复用同一构造规则 | 不是全局共享可变 State；policy 仍拥有碰撞语义，execution 仍拥有调度与结果接纳 |
+256:`RuntimeSnapshot::workCellHandle()`（`runtime/include/sdurws/ird/runtime/Snapshot.hpp`）是已存在的非 const 上游兼容借持：仅按碰撞适配契约使用，必须由快照保活、禁止结构写入/跨进程传递/扩大暴露。不能因返回非 const 就整类判违规，也不能因外层方法为 const 就推定安全。收窄接口须经兼容设计与独立验收，不在本轮改产品接口。
+266:| HOST-COMPILE | ui/plugin/HostCompilePort | 调用 runtime 编译器/快照工厂/编译探针，衔接 project 查询与 io 资源 | 仅编排既有公共端口；不能在宿主另写 WC/DWC 构造规则 |
+271:#### 3.6.3 evidence / diagnostics 承重边界
+273:evidence 是 L2 计算承重边界，零 Qt、无项目写入、无调度/宿主副作用；业务按 `units/evidence.md` 的 `EvaluationOutput` 产出 evidence/proof/searchRecord/verdictInputs/payload/结构化 diagnostics 及 provenance，不限缩成只有 payload。结果统一经既有 `aggregateVerdict` / `ResultEnvelope::make`，禁止另造 envelope、状态归并或当前性规则。调用侧可按契约组装，不得重新实现该语义。
+289:| D：只有文件/关键词凭证，无操作权限与生产证据 | 检不出隐蔽工厂构造、调用后弃用结果和改名内核 |
+333:   Preparing → Canceling：丢弃组装中的快照/派发物 → Canceled

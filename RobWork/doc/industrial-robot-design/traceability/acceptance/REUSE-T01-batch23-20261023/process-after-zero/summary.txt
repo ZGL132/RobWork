@@ -1,0 +1,7 @@
+
+Run ExitCode Seconds Failed         Xml
+--- -------- ------- ------         ---                                                                                 
+  1        0    0.00 <xml-no-tests> C:\Users\zgl18\AppData\Local\Temp\REUSE-T01-batch23-accept-a887070b624e4eb7837db502…
+
+
+TOTAL=1 FAILED_RUNS=1

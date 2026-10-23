@@ -1,0 +1,46 @@
+{
+  "head": "7c263e78683a74b5532e6f99e7647a02b6f39ea7",
+  "detached": true,
+  "status": "",
+  "autocrlf": "false",
+  "longpaths": "true",
+  "changedFiles": 350,
+  "noProductFrameworkVcpkgChanges": true,
+  "scriptsChanged": [
+    "RobWork/scripts/industrialrobot/merge-findings-union.ps1",
+    "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1"
+  ],
+  "minimalGetStagePatch": true,
+  "beforeSourceExact": true,
+  "beforePipelineExact": true,
+  "oldArchivesUnchanged": {
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch23-20261023/": true,
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch24-20261023/": true,
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch25-20261023/": true
+  },
+  "oldArchiveR2VerifiedCounts": {
+    "B24": 173,
+    "B25": 159,
+    "B23": 136
+  },
+  "oldArchiveR2ReportSha256": "a214ffcd25c668032a7d5b47f9e83f2803f7abf7d37689e9abd9cdf19a3bcb06",
+  "firstFailFiles": 8,
+  "firstFailUnchanged": true,
+  "archiveSummary": {
+    "expectedManifestEntries": 327,
+    "manifestEntries": 327,
+    "expectedIncludingManifest": 328,
+    "gitEntries": 328,
+    "checked": 328,
+    "failed": 0,
+    "exactSet": true
+  },
+  "bindingSummary": {
+    "affectedRows": 43,
+    "sourceChecks": 43,
+    "bindingChecks": 497,
+    "failed": 0,
+    "allRemainPending": true,
+    "r3VerificationBound": 43
+  }
+}

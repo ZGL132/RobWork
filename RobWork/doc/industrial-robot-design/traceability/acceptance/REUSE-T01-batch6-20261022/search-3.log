@@ -1,0 +1,31 @@
+RobWork/RobWork/src/rw/math/Constants.hpp:40:    const double Deg2Rad = Pi / 180;
+RobWork/RobWork/src/rw/math/Constants.hpp:43:    const double Rad2Deg = 180 / Pi;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:255:struct UnitMap
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:258:    std::map< std::string, double > _map;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:260:    UnitMap ()
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:262:        _map["mm"]   = 1.0 / 1000.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:263:        _map["cm"]   = 1.0 / 100.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:264:        _map["m"]    = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:265:        _map["inch"] = 0.0254;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:267:        _map["deg"] = Deg2Rad;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:268:        _map["rad"] = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:270:        _map["m/s"]  = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:271:        _map["cm/s"] = 1.0 / 100.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:272:        _map["mm/s"] = 1.0 / 1000.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:274:        _map["m/s^2"]  = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:275:        _map["cm/s^2"] = 1.0 / 100.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:276:        _map["mm/s^2"] = 1.0 / 1000.0;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:278:        _map["deg/s"] = Deg2Rad;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:279:        _map["rad/s"] = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:281:        _map["deg/s^2"] = Deg2Rad;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:282:        _map["rad/s^2"] = 1;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:284:    UnitMap (const std::map< std::string, double >& map) : _map (map) {}
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:286:    ~UnitMap () {}
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:290:// const DOMBasisTypes::UnitMap DOMBasisTypes::_Units;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:291:const UnitMap _Units;
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:293:double DOMBasisTypes::getUnit (const std::string key)
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:295:    std::map< std::string, double >::const_iterator it = _Units._map.find (key);
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:296:    if (it == _Units._map.end ())
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp:306:        return DOMBasisTypes::getUnit (attrval);
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp:262:        static double getUnit (const std::string key);
+RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp:1063:        // static const UnitMap _Units;

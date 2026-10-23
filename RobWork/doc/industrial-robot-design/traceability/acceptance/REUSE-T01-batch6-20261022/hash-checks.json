@@ -1,0 +1,434 @@
+[
+  {
+    "kind": "source",
+    "id": "core.convert",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "core.convert",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/Envelope.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "dynamics.DynamicsEnvelopeCalculator.computeRms",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Writer.u16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Writer.u16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Writer.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Writer.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Writer.u64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Writer.u64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Writer.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Writer.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Writer.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Writer.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Reader.u16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Reader.u16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Reader.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Reader.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Reader.u64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Reader.u64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Reader.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Reader.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.rtcodec.Reader.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.rtcodec.Reader.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.snapshotcodec.ByteReader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.snapshotcodec.ByteReader.readU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.snapshotcodec.ByteReader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.snapshotcodec.ByteReader.readU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.snapshotcodec.ByteReader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.snapshotcodec.ByteReader.readU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.snapshotcodec.ByteReader.readString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.snapshotcodec.ByteReader.readString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.appendU16",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.appendU32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.appendU64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "runtime.appendString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "runtime.appendString",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteWriter.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteWriter.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteWriter.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteWriter.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteWriter.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteWriter.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteReader.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteReader.u32",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteReader.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteReader.f64",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteReader.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteReader.str",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.combinationCodec.ByteReader.u32At",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.combinationCodec.ByteReader.u32At",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "source",
+    "id": "selection.backfillCodec.ByteReader.u32At",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+    "matches": true
+  },
+  {
+    "kind": "input",
+    "id": "selection.backfillCodec.ByteReader.u32At",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/src/rw/common/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog-test",
+    "id": "UTIL-BINARCHIVE",
+    "path": "RobWork/RobWork/gtest/common/SerializationTest.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "MATH-STATS",
+    "path": "RobWork/RobWork/src/rw/math/Statistics.hpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "MATH-STATS",
+    "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog-test",
+    "id": "MATH-STATS",
+    "path": "RobWork/RobWork/gtest/math/StatisticsTest.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/math/Constants.hpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.hpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/loaders/dom/DOMBasisTypes.cpp",
+    "matches": true
+  },
+  {
+    "kind": "catalog",
+    "id": "UTIL-UNITS",
+    "path": "RobWork/RobWork/src/rw/loaders/CMakeLists.txt",
+    "matches": true
+  },
+  {
+    "kind": "ptp-evidence",
+    "id": "trajectory.interpolateJointLinear",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/ToolSuitabilityTest.cpp",
+    "matches": true
+  },
+  {
+    "kind": "ptp-evidence",
+    "id": "trajectory.interpolateJointLinear",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r7/gtest.xml",
+    "matches": true
+  }
+]

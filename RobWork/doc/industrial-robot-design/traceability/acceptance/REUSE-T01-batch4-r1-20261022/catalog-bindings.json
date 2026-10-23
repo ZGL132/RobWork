@@ -1,0 +1,13 @@
+[
+  {
+    "path": "RobWork/RobWork/src/rwlibs/pathoptimization/pathlength/PathLengthOptimizer.hpp",
+    "shaMatches": true,
+    "target": "sdurw_pathoptimization",
+    "targetFile": "RobWork/RobWork/src/rwlibs/pathoptimization/CMakeLists.txt",
+    "targetShaMatches": true
+  },
+  {
+    "path": "RobWork/RobWork/gtest/pathoptimization/PathLengthOptimizerTest.cpp",
+    "shaMatches": true
+  }
+]

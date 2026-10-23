@@ -1,8 +1,8 @@
 ﻿# 证据索引生成器（治理 Task 7，2026-10-17）。
 #
 # 职责：扫描 traceability/ 全部证据文件，生成**摘要索引** evidence-index.json——
-# Agent 检索证据的默认入口（按任务/单元/类型查路径，再按需打开原始文件），
-# 替代通读证据目录（上下文经济学：索引只存摘要，绝不嵌入文件内容）。
+# 按需检索证据的可选快照（context/README §5），允许滞后，不能替代当前任务原件。
+# 索引只存摘要，不嵌入文件内容；普通任务不需要先生成或加载全库索引。
 #
 # 每条索引：相对路径、类型（目录/扩展名映射）、关联任务 ID（文件名启发式）、
 # 字节数、SHA-256（仅 ≤512KB 文件——大文件跳过并在 summary 计数）、生命周期。
@@ -119,9 +119,9 @@ try {
 if (-not $trackedList.Count) { throw "git ls-files failed（证据枚举以 git 跟踪面为基准，不可用文件系统遍历替代）" }
 # 未跟踪新证据提示（F-929，2026-10-18 Agent-native 治理优化批）：
 # 上面的枚举基准是 git 跟踪面，所以 `git add` 之前新增的证据不会被收录——若此时
-# 提交，索引与干净检出就会失配（UI-T85 attempt 1 B-1：索引 6599 vs 实际 6605，
+# 做DeepEvidence审计，索引与干净检出就会失配（UI-T85 attempt 1 B-1：索引 6599 vs 实际 6605，
 # 实施树 PASS、验收 worktree 六条 missing entry）。这里给出可操作提示；硬门禁
-# 在 validate-docs.ps1 的同名段（traceability/ 下未跟踪文件即 exit 1）。
+# 在 validate-docs.ps1 -DeepEvidence（普通文档检查不强制刷新索引）。
 $untrackedFiles = @()
 try {
   $prevEncU = [Console]::OutputEncoding
@@ -134,7 +134,7 @@ try {
   }
 } catch { }
 if ($untrackedFiles.Count -gt 0) {
-  Write-Warning ("检测到 {0} 个未跟踪证据文件——它们不会进入索引（git ls-files 基准）。先 git add 再重跑本脚本；validate-docs 会拒绝未跟踪证据。" -f $untrackedFiles.Count)
+  Write-Warning ("检测到 {0} 个未跟踪证据文件——它们不会进入索引（git ls-files 基准）。索引审计前先 git add 再重跑；validate-docs -DeepEvidence 会拒绝未跟踪证据。" -f $untrackedFiles.Count)
   $untrackedFiles | Select-Object -First 10 | ForEach-Object { Write-Warning "  untracked: $_" }
 }
 $files = @($trackedList | Where-Object { $_ -ne "$traceRel/evidence-index.json" } | ForEach-Object { Get-Item -LiteralPath (Join-Path $repoTop $_) } | Sort-Object { $_.FullName })

@@ -44,8 +44,17 @@ function Convert-ToIso([object]$v) {
   if ($v -is [datetime]) { return $v.ToString("yyyy-MM-ddTHH:mm:sszzz") }
   return "$v"
 }
-# 同格式 ISO 字符串的字典序比较（秒精度＋同偏移写下，字典序即时间序；PS5.1/pwsh7 行为一致）
-function Compare-Iso([string]$a, [string]$b) { if ($a -lt $b) { -1 } elseif ($a -gt $b) { 1 } else { 0 } }
+# ISO输入允许不同偏移；用.NET时间类型比较绝对时刻，不假定文本序等于时间序。
+# PS7自动DateTime化与PS5.1保留字符串必须得到相同判定；无效日历抛错即拒绝。
+function Compare-Iso([string]$a, [string]$b) {
+  $left = [DateTimeOffset]::Parse($a, [Globalization.CultureInfo]::InvariantCulture)
+  $right = [DateTimeOffset]::Parse($b, [Globalization.CultureInfo]::InvariantCulture)
+  return $left.CompareTo($right)
+}
+# 与lastFailureRecord.attempt一致，JSON计数只接收整数；不将字符串或小数隐式转型。
+function Test-NonNegativeInteger([object]$value) {
+  return (($value -is [int] -or $value -is [long]) -and $value -ge 0)
+}
 # ISO 时间戳口径：秒精度＋可选本地偏移/Z（与 pipeline-lock.ps1 写入口径一致）
 $isoPattern = "^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)?$"
 $shaPattern = "^[0-9a-f]{40}$"
@@ -68,15 +77,16 @@ else {
     if ($hb -gt [DateTime]::Now.AddMinutes(5)) { $errors += "heartbeat.updatedAt is in the future (>5min skew): '$heartbeatAt'——写入者时钟异常或手写错值" }
   } catch { $errors += "heartbeat.updatedAt unparseable: '$heartbeatAt'" }
 }
-if ($null -eq $s.heartbeat.ticksNoProgress -or $s.heartbeat.ticksNoProgress -lt 0) { $errors += "heartbeat.ticksNoProgress must be an integer >= 0" }
-if ($null -eq $s.tickCount -or $s.tickCount -lt 0) { $errors += "tickCount must be an integer >= 0（v1.4：锁内 tickId 的状态侧计数）" }
+if (-not (Test-NonNegativeInteger $s.heartbeat.ticksNoProgress)) { $errors += "heartbeat.ticksNoProgress must be an integer >= 0" }
+if (-not (Test-NonNegativeInteger $s.tickCount)) { $errors += "tickCount must be an integer >= 0（v1.4：锁内 tickId 的状态侧计数）" }
 # fencing 侧写（v1.5）：每个写状态的 tick 须记录其锁 tickId（tickToken）——
 # 写入时的强校验靠 PIPE §0.1 纪律（仅持锁 tick 可写），本字段是事后检测的最低限度机器面；
 # in-flight 阶段的非空要求在 ⑥ 段（$needsTask 定义处）校验。
 # 注意：JSON 显式 null 与字段缺失在 ConvertFrom-Json 后同为 $null——用属性存在性区分。
+$parsedTickToken = [guid]::Empty
 $hasTickTokenProp = ($null -ne ($s.PSObject.Properties | Where-Object { $_.Name -eq "tickToken" }))
 if (-not $hasTickTokenProp) { $errors += "tickToken field is required（string GUID or null；paused/idle 可为 null——v1.5）" }
-elseif ("$($s.tickToken)" -and "$($s.tickToken)" -notmatch '^[0-9a-fA-F-]{36}$') { $errors += "tickToken must be a GUID string, got '$($s.tickToken)'" }
+elseif ("$($s.tickToken)" -and -not [guid]::TryParseExact([string]$s.tickToken, 'D', [ref]$parsedTickToken)) { $errors += "tickToken must be a GUID string, got '$($s.tickToken)'" }
 
 # 验收失败证据：失败分支不能以 acceptanceRecord 的名义进入 awaiting_merge，但返工工作者
 # 又必须能定位上一轮对抗验收结论。因此用独立字段保存不可变证据指针；显式检查属性存在性，
@@ -86,7 +96,7 @@ if (-not $hasFailureRecordProp) { $errors += "lastFailureRecord field is require
 
 # ---------- ③ attempts ----------
 foreach ($k in @("implement","fix","accept")) {
-  if ($null -eq $s.attempts.$k -or $s.attempts.$k -lt 0) { $errors += "attempts.$k must be an integer >= 0" }
+  if (-not (Test-NonNegativeInteger $s.attempts.$k)) { $errors += "attempts.$k must be an integer >= 0" }
 }
 
 # ---------- ④ policy 必备字段（PIPE §0.2：缺字段即状态损坏，不允许"默认隐含"） ----------
@@ -108,13 +118,13 @@ else {
   }
 }
 foreach ($k in @("noProgressLimit","maxImplementRestarts","maxFixCycles")) {
-  if ($null -eq $s.policy.$k -or $s.policy.$k -lt 0) { $errors += "policy.$k must be an integer >= 0" }
+  if (-not (Test-NonNegativeInteger $s.policy.$k)) { $errors += "policy.$k must be an integer >= 0" }
 }
 if ($s.policy.noProgressLimit -ne $null -and $s.policy.noProgressLimit -lt 1) { $errors += "policy.noProgressLimit must be >= 1" }
 if ($null -eq $s.policy.leaseMinutes -or $null -eq $s.policy.leaseMinutes.implement -or $null -eq $s.policy.leaseMinutes.acceptance) {
   $errors += "policy.leaseMinutes must contain implement & acceptance (minutes >= 1)"
 }
-elseif ($s.policy.leaseMinutes.implement -lt 1 -or $s.policy.leaseMinutes.acceptance -lt 1) { $errors += "policy.leaseMinutes values must be >= 1" }
+elseif (-not (Test-NonNegativeInteger $s.policy.leaseMinutes.implement) -or -not (Test-NonNegativeInteger $s.policy.leaseMinutes.acceptance) -or $s.policy.leaseMinutes.implement -lt 1 -or $s.policy.leaseMinutes.acceptance -lt 1) { $errors += "policy.leaseMinutes values must be >= 1" }
 
 # ---------- 构建契约索引（queue/history 引用一致性＋可领取性判定的数据源） ----------
 $taskMap = @{}

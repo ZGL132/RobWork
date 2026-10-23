@@ -1,0 +1,274 @@
+[
+  {
+    "shell": "pwsh",
+    "name": "union",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-union\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "pwsh",
+    "name": "same-new",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-same-new\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "pwsh",
+    "name": "theirs-modify",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-theirs-modify\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "pwsh",
+    "name": "both-modify",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-both-modify\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "pwsh",
+    "name": "deletion",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-deletion\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "pwsh",
+    "name": "note-diff",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-note-diff\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "pwsh",
+    "name": "note-case",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-note-case\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "pwsh",
+    "name": "schema-case",
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\pwsh-schema-case\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "powershell",
+    "name": "union",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-union\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "powershell",
+    "name": "same-new",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-same-new\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "powershell",
+    "name": "theirs-modify",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-theirs-modify\\repo"
+    ],
+    "exitCode": 0,
+    "expectedExit": 0,
+    "passed": true,
+    "rejectionPreservedWorkingFile": false,
+    "unmergedEntries": 0
+  },
+  {
+    "shell": "powershell",
+    "name": "both-modify",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-both-modify\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "powershell",
+    "name": "deletion",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-deletion\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "powershell",
+    "name": "note-diff",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-note-diff\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "powershell",
+    "name": "note-case",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-note-case\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  },
+  {
+    "shell": "powershell",
+    "name": "schema-case",
+    "argv": [
+      "powershell",
+      "-NoProfile",
+      "-File",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\scripts\\industrialrobot\\merge-findings-union.ps1",
+      "-RepoRoot",
+      "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b26-union-green\\powershell-schema-case\\repo"
+    ],
+    "exitCode": 1,
+    "expectedExit": 1,
+    "passed": true,
+    "rejectionPreservedWorkingFile": true,
+    "unmergedEntries": 3
+  }
+]

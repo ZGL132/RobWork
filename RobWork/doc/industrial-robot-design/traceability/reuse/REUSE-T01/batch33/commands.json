@@ -1,0 +1,47 @@
+{
+  "developerEnvironment": [
+    "D:/software/Microsoft Visual Studio/2022/Community/Common7/Tools/Launch-VsDevShell.ps1",
+    "-Arch",
+    "amd64",
+    "-HostArch",
+    "amd64",
+    "-SkipAutomaticLocation"
+  ],
+  "configure": [
+    "cmake",
+    "-S",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch33",
+    "-B",
+    ".cache/b33-build",
+    "-G",
+    "Visual Studio 17 2022",
+    "-A",
+    "x64",
+    "-DRobWork_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake",
+    "-DRWSIM_TARGETS_DIR=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkSim/cmake/targets",
+    "-DCMAKE_PREFIX_PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows;D:/software/Qt/6.11.1/msvc2022_64"
+  ],
+  "build": [
+    "cmake",
+    "--build",
+    ".cache/b33-build",
+    "--config",
+    "Release",
+    "--target",
+    "ird_diagnostic_schema_audit"
+  ],
+  "run": [
+    "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b33-build\\Release\\ird_diagnostic_schema_audit.exe",
+    "--gtest_output=xml:C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b33-run\\gtest.xml",
+    "--ird_report=C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\b33-run\\ird-test-report.json"
+  ],
+  "pathPrefix": [
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/libs/Release",
+    "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin"
+  ],
+  "configureExit": 0,
+  "buildExit": 0,
+  "runExit": 1,
+  "remote": "not executed"
+}

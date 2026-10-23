@@ -1,0 +1,135 @@
+[
+  {
+    "functionId": "dynamics.evalAcceleration",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+        "symbol": "evalAcceleration",
+        "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate::<lambda:evalAcceleration>",
+        "startLine": 509,
+        "endLine": 567,
+        "sha256": "1cf75638d8d84dbc64390349351dd15d1969d36c867772f2fc78dc37280bddda"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "DYN-FD",
+    "decision": "proposal",
+    "status": "proposal",
+    "search": {
+      "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "自持偏置h/质量M逐列提取及求解右端；优先现成PhysicsEngine的真实力控制后端，不把RNE多次调用当完整FD复用；事件采样保持/取消/非有限语义待核",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+    "proposal": {
+      "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+      "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+    },
+    "proposalHashMatches": true
+  },
+  {
+    "functionId": "dynamics.ForwardDynamicsValidator.validate.rk4Stages",
+    "ownerUnit": "dynamics",
+    "requirements": [
+      "DYN-05"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+        "symbol": "ForwardDynamicsValidator::validate",
+        "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsValidator::validate",
+        "startLine": 251,
+        "endLine": 874,
+        "sha256": "ebe207025ab78d83152f3d2460c5dd9516fd7a175176644b27798880af9f3960"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_dynamics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6",
+    "capabilityId": "DYN-FD",
+    "decision": "proposal",
+    "status": "proposal",
+    "search": {
+      "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+      "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+    },
+    "differences": "仅登记函数内部612-692四stage RK4功能；外层入口摘要不是整个入口已审。rwsim RK4Integrator面向RigidBody+State，非关节ODE通用接口；继续验证ODE力控制候选，不自行新写积分器",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+      }
+    ],
+    "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+    "auditedSections": [
+      {
+        "startLine": 612,
+        "endLine": 692,
+        "sha256": "b0d7ecb9176367ef348e484bb6d01c67b810f685054a33632505b679e6eeb9f5"
+      }
+    ],
+    "proposal": {
+      "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+      "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+    },
+    "proposalHashMatches": true
+  },
+  {
+    "functionId": "kinematics.constrainedDampedLeastSquaresStep",
+    "ownerUnit": "kinematics",
+    "requirements": [
+      "KIN-02"
+    ],
+    "sources": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "symbol": "constrainedDampedLeastSquaresStep",
+        "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+        "startLine": 336,
+        "endLine": 368,
+        "sha256": "50f918ccd6886abc35cb9b4448607e5d78b0ec1bc4ed026c37e872203609f6d1"
+      }
+    ],
+    "targets": [
+      "sdurws_ird_kinematics"
+    ],
+    "usageRole": "adapter",
+    "permissionRef": "ARCH:3.6.1",
+    "capabilityId": "KIN-IK",
+    "decision": "proposal",
+    "status": "proposal",
+    "search": {
+      "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+      "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+    },
+    "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
+    "inputs": [
+      {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
+      }
+    ],
+    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+    "proposal": {
+      "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-IK-01.md",
+      "sha256": "d13d1d45dadefa75acdf0acf91105b65ee4b2cf2029619ce700ec48aacf6ad28"
+    },
+    "proposalHashMatches": true
+  }
+]

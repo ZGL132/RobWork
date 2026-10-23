@@ -1,0 +1,205 @@
+{
+  "batch": "B35",
+  "entries": [
+    {
+      "path": "b35-build-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-build-final.log",
+      "bytes": 13633,
+      "rawSha256": "9aef29b9be0320ca3bd9a1ba7a7264f590d3729bd60276970bf9ca230dc35242"
+    },
+    {
+      "path": "b35-build-first-passing.log",
+      "bytes": 14253,
+      "rawSha256": "0f4d40a78e94fd3fb1cf619fd9eec514f550b0386c3965aaec7de6a6eae1f116"
+    },
+    {
+      "path": "b35-build-macro-first.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b35-build-macro-first.log",
+      "bytes": 14293,
+      "rawSha256": "566ed7999e98c3c83e5168df8b5f81299ac3c2ef784afe2abdd6c98abb1fd72f"
+    },
+    {
+      "path": "b35-build.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b35-build.log",
+      "bytes": 23035,
+      "rawSha256": "53dc1af3a598b57045630742e26712942734fe6d31aee3f0415211354aecea60"
+    },
+    {
+      "path": "b35-configure-final.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-configure-final.log",
+      "bytes": 2962,
+      "rawSha256": "7ef984284e6bb2f12a233703d33ad99492e545d3e6e4a8c929ea269d230b3f0c"
+    },
+    {
+      "path": "b35-configure-regenerate.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-configure-regenerate.log",
+      "bytes": 2962,
+      "rawSha256": "a36585b9582a98dee7297bc1824f7265dd8763414fcc0625a7313b653a04adc1"
+    },
+    {
+      "path": "b35-configure.exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "b35-configure.log",
+      "bytes": 3004,
+      "rawSha256": "c199f79e72d15ee2fe4327efc4c95413613fbdea37c3400524116b6e7c4a591f"
+    },
+    {
+      "path": "b35-docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-docs.log",
+      "bytes": 2725,
+      "rawSha256": "6e7cd2b2d2da48b778e82872b6ea802edf39e8ce8362dbf7ee238a6edf6ef43d"
+    },
+    {
+      "path": "b35-reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-reuse.log",
+      "bytes": 2487,
+      "rawSha256": "29ae2f8eceab2c4df265df495135d9381038810f9496807278a64cc40e453f92"
+    },
+    {
+      "path": "b35-task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "b35-task.log",
+      "bytes": 2518,
+      "rawSha256": "12a0b65b136b45be8eca7ae21a4bdb5953be5e294521362ffa83ad57d34f1cdd"
+    },
+    {
+      "path": "b35-vs-env-build.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b35-vs-env-final.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b35-vs-env-last.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b35-vs-env-rebuild.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "b35-vs-env.log",
+      "bytes": 242,
+      "rawSha256": "4e5cddcbb914ab004acb518e3ec0577e10fbf5a5375eb90e6d26abf98c702939"
+    },
+    {
+      "path": "CMakeLists.txt",
+      "bytes": 1366,
+      "rawSha256": "e24ab3072b951d0012a0a342648c2490481a17ef0fda3085986b7f8d8595e3c8"
+    },
+    {
+      "path": "commands.json",
+      "bytes": 1519,
+      "rawSha256": "5d935132615a7707631563d34f4fb42b716401ecc6544e38e0656254815c3296"
+    },
+    {
+      "path": "findings-prefix.json",
+      "bytes": 175,
+      "rawSha256": "d3c6e837d58f5c264029f030ee8db33497ac7b10898d10c781885a4243aa8be4"
+    },
+    {
+      "path": "LogFileSuitabilityTest.cpp",
+      "bytes": 6178,
+      "rawSha256": "b40c3fa9a4f4a92e235c25beb0485183af76b3414c44e3e8f62c1555c362f8dd"
+    },
+    {
+      "path": "run/exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "run/gtest.xml",
+      "bytes": 9581,
+      "rawSha256": "7c349df8a2ebba3b1cddf6bf944f3c430c11a877139385b56a1195ee197fa20a"
+    },
+    {
+      "path": "run/ird-test-report.json",
+      "bytes": 15103,
+      "rawSha256": "d8c0e06075a963f561c1239ddd45f1b2468a59befdf8a60ea6e0add6ae9935a6"
+    },
+    {
+      "path": "run/stdout.log",
+      "bytes": 4820,
+      "rawSha256": "0062c03ee560c7feef1a1ec2ab779c214549e7e59767cc304bb2608fa9dcc53d"
+    },
+    {
+      "path": "run-first/exit.txt",
+      "bytes": 3,
+      "rawSha256": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04"
+    },
+    {
+      "path": "run-first/gtest.xml",
+      "bytes": 9231,
+      "rawSha256": "21509c3d26e542b9af57cd82ae10020180bdcd129a769b08abde8572a5fc9b8c"
+    },
+    {
+      "path": "run-first/ird-test-report.json",
+      "bytes": 14326,
+      "rawSha256": "4904740f8bafef2cd8acd0fb254d9c5f7e95ac4c1b569ae716fdd6695f9b8e5b"
+    },
+    {
+      "path": "run-first/stdout.log",
+      "bytes": 4657,
+      "rawSha256": "603aacc8949473a9b3e4b431d13fcbfca3ad6bf796f57cdf394015aa63a39334"
+    },
+    {
+      "path": "search.json",
+      "bytes": 34546,
+      "rawSha256": "f88c8242c626a1e24fbd13d3c67a7239851c864b8cb3ddbe05bdf8e89dca9668"
+    },
+    {
+      "path": "verification.json",
+      "bytes": 756,
+      "rawSha256": "67f23faf5f4ae76ac0de8b7af4b74e7fcb95f24e47960a528f210d94aaebc7a8"
+    },
+    {
+      "path": "b35-reuse-corrected.log",
+      "bytes": 2487,
+      "rawSha256": "29ae2f8eceab2c4df265df495135d9381038810f9496807278a64cc40e453f92"
+    },
+    {
+      "path": "b35-reuse-corrected.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    }
+  ]
+}

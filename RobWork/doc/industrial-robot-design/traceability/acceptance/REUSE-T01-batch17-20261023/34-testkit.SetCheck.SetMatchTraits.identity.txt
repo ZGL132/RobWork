@@ -1,0 +1,3 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::SetMatchTraits<T>::identity
+91:     static std::optional<std::string> identity(const T&) { return std::nullopt; }

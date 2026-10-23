@@ -1,0 +1,76 @@
+{
+  "taskId": "REUSE-T01",
+  "scope": "第八批新增3项公开依赖API探测；原19项及r7三项本轮未运行",
+  "reviewedParentCommit": "7af7e86a18e34384677c2599a4f8812ad262908f",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
+      "sha256": "b9b3188b05fa74ce660031c4315f2c9ff5bbab74f2f1ca7c46dce8fb1c588dba"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "sha256": "dfad366b5008189b70f1b42d2d0fa3309dea51665f852b9215f5b6fb0992c3a5"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\version.hpp",
+      "rawSha256": "cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser.hpp",
+      "rawSha256": "e6dc0371dd810dbf3ef7d90fe10fb4c9b9d0e4354b666e88e0a559a8aa2fc51c"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\standard_callbacks.hpp",
+      "rawSha256": "dafae5990123f8b6e2072a9f7e77cb39f7b5d24ab56dfb5486d6ae7a4b1fccb6"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\property_tree\\json_parser\\detail\\narrow_encoding.hpp",
+      "rawSha256": "2470738ee46c9f2678bd7de85695354ed8ee0c55874db6eca64f26b6d38c7887"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\conversion.hpp",
+      "rawSha256": "30c0b4afd03bbb7cf12c710143af477cc476da86cf5063541c58854562ccaf13"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_load.hpp",
+      "rawSha256": "926d4093d47a6583352a09b322da92328430a67f5750aff880191b2d694503be"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\endian\\detail\\endian_store.hpp",
+      "rawSha256": "905befac4beb737aeb4d1e9dfec7ca3d791dc765cf9666e859ae2c92840a9693"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-config.cmake",
+      "rawSha256": "598cc4a24ad5ad4eb13cb1677a71da0c760541fcb4a78f59b2789d152e75b9da"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_endian\\boost_endian-targets.cmake",
+      "rawSha256": "6e90d2b0197afe9bce8efd6e8889929d4b05f22304d80dbacc14a5c386077c20"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-config.cmake",
+      "rawSha256": "82c522f025eeb438d1bdf31a6dc5fb96e66b328e539b17e0aa263198cd652835"
+    },
+    {
+      "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost_property_tree\\boost_property_tree-targets.cmake",
+      "rawSha256": "6f1c4dce46ef2448892e47ff16f0645a5cd353ac6b07b4b2b2466787991d9823"
+    }
+  ],
+  "commands": [
+    "VS x64: cmake --build .cache/t01-probe-export --config Release --target ird_reuse_audit_probe",
+    "C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\.cache\\t01-probe-export\\Release\\ird_reuse_audit_probe.exe --gtest_filter=ReuseDependencyAudit.* --gtest_output=xml:C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\probe-r8\\gtest.xml --ird_report=C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit\\RobWork\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\probe-r8\\ird-test-report.json"
+  ],
+  "results": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "limits": "只测试既有公开原语/限制，不是生产接线证据。旧probe-r6/r7环境摘要保持历史版本，不回写为当前CMake；依赖原始摘要只标识本机安装内容，不证明源码可复现来源。"
+}

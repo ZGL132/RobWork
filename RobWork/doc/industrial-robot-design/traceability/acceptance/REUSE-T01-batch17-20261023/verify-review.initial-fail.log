@@ -1,0 +1,12 @@
+file:///C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-B17-independent-7eb99134/verify-review.mjs:10
+const check=(ok,m)=>{if(!ok)throw new Error(m)};
+                                  ^
+
+Error: core.Tolerance.operator== excerpt
+    at check (file:///C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-B17-independent-7eb99134/verify-review.mjs:10:35)
+    at file:///C:/Users/zgl18/AppData/Local/Temp/REUSE-T01-B17-independent-7eb99134/verify-review.mjs:19:355
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.14.1

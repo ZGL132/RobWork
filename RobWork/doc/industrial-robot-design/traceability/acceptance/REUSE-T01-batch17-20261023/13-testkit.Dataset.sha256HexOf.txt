@@ -1,0 +1,16 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::(anonymous namespace)::sha256HexOf
+98: std::string sha256HexOf(const std::string& bytes)
+99: {
+100:     ContentDigester d;
+101:     d.update(bytes.data(), bytes.size());
+102:     const auto digest = d.finalize();
+103:     static constexpr char kHex[] = "0123456789abcdef";
+104:     std::string s;
+105:     s.reserve(64);
+106:     for (const auto b : digest) {
+107:         s.push_back(kHex[b >> 4]);
+108:         s.push_back(kHex[b & 0x0F]);
+109:     }
+110:     return s;
+111: }

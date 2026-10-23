@@ -1,0 +1,2 @@
+{"ok":true,"state":"took-over-stale","previousTickId":"ef3bebcf-e33f-4d62-aad0-5771a8785b7e"}
+{"workerId":"3da4b578-7e17-4d7c-be52-725b0faddf34","acquiredAt":"2026-10-23T04:47:08+08:00","tickId":"fa5e52a0-4e58-4be2-b42d-ce0fb9cd4e87","leaseExpiresAt":"2026-10-23T05:17:08+08:00"}

@@ -1,0 +1,32 @@
+[
+  {
+    "path": "run-probe.ps1",
+    "rawSha256": "7ad8b8591544d4fb773d430e02c808ac22c5f8815a8b34e36a51796ababd5e6e",
+    "bytes": 1976
+  },
+  {
+    "path": "environment.log",
+    "rawSha256": "ba490ca832c85024139229f19b0457d90fc9e96008141b8e620864e1d851bf77",
+    "bytes": 192
+  },
+  {
+    "path": "gtest.xml",
+    "rawSha256": "8deb3d57b3c482e6e3e6534b6a9d4765e343e088de3366d0314c7b02448612b2",
+    "bytes": 1501
+  },
+  {
+    "path": "ird-test-report.json",
+    "rawSha256": "d8ccf1f131633124061eb68b040782d7c1a0df98da3397db54a7c990050f53a1",
+    "bytes": 2579
+  },
+  {
+    "path": "build/Release/ird_reuse_audit_probe.exe",
+    "rawSha256": "913eb9678c2dfd21d875fd31e146660e3f3de471212c0a24573e23fae2e7a669",
+    "bytes": 557056
+  },
+  {
+    "path": "build/CMakeCache.txt",
+    "rawSha256": "d37cc1914d2a5b7aefff45bd153aced9070933b42bdd4447e9327680127c1809",
+    "bytes": 51222
+  }
+]

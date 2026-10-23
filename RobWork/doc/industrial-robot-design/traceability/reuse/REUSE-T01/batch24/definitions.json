@@ -1,0 +1,212 @@
+[
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "function",
+    "symbol": "Get-LockMutexName",
+    "startLine": 49,
+    "endLine": 62
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "function",
+    "symbol": "Invoke-InLockMutex",
+    "startLine": 64,
+    "endLine": 83
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "function",
+    "symbol": "Read-Lock",
+    "startLine": 85,
+    "endLine": 98
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "function",
+    "symbol": "Test-Fencing",
+    "startLine": 101,
+    "endLine": 109
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "$ErrorActionPreference = 'Stop'",
+    "startLine": 33,
+    "endLine": 33
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($LeaseMinutes -lt 1) { throw \"LeaseMinutes must be >= 1\" }",
+    "startLine": 34,
+    "endLine": 34
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (($Action -eq \"release\" -or $Action -eq \"renew\") -and -not $Token) { throw \"-Token (fencing token = acquire 返回的 tickId) is required for $Action\" }",
+    "startLine": 35,
+    "endLine": 35
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "$scriptDir = $PSScriptRoot",
+    "startLine": 36,
+    "endLine": 36
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }",
+    "startLine": 37,
+    "endLine": 37
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir \"..\\..\\..\")).Path }",
+    "startLine": 38,
+    "endLine": 38
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not (Test-Path (Join-Path $RepoRoot \".git\"))) { throw \"repo root resolution failed: .git not found under '$RepoRoot'\" }",
+    "startLine": 39,
+    "endLine": 39
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "$gitDir = & git -C $RepoRoot rev-parse --absolute-git-dir",
+    "startLine": 42,
+    "endLine": 42
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "if ($LASTEXITCODE -ne 0 -or -not $gitDir -or -not (Test-Path -LiteralPath $gitDir -PathType Container)) {",
+    "startLine": 43,
+    "endLine": 45
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "$lockPath = Join-Path $gitDir \"ird-pipeline-tick.lock\"",
+    "startLine": 46,
+    "endLine": 46
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "$fmt = \"yyyy-MM-ddTHH:mm:sszzz\"",
+    "startLine": 47,
+    "endLine": 47
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "kind": "entry-statement",
+    "symbol": "Invoke-InLockMutex {",
+    "startLine": 111,
+    "endLine": 176
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-Equal",
+    "startLine": 22,
+    "endLine": 24
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-ExitCode",
+    "startLine": 26,
+    "endLine": 28
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Invoke-Lock",
+    "startLine": 30,
+    "endLine": 38
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Get-LockMutexName",
+    "startLine": 40,
+    "endLine": 50
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Assert-LockActionWaitsOnMutex",
+    "startLine": 52,
+    "endLine": 83
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "function",
+    "symbol": "Invoke-StateValidation",
+    "startLine": 85,
+    "endLine": 96
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "Set-StrictMode -Version Latest",
+    "startLine": 11,
+    "endLine": 11
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$ErrorActionPreference = \"Stop\"",
+    "startLine": 12,
+    "endLine": 12
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "if (-not $RepoRoot) {",
+    "startLine": 14,
+    "endLine": 16
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$lockScript = Join-Path $RepoRoot \"RobWork/scripts/industrialrobot/pipeline-lock.ps1\"",
+    "startLine": 18,
+    "endLine": 18
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$stateScript = Join-Path $RepoRoot \"RobWork/scripts/industrialrobot/validate-state.ps1\"",
+    "startLine": 19,
+    "endLine": 19
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$sourceState = Join-Path $RepoRoot \"RobWork/doc/industrial-robot-design/traceability/pipeline/state.json\"",
+    "startLine": 20,
+    "endLine": 20
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "$tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) (\"ird-pipeline-regression-\" + [guid]::NewGuid().ToString(\"N\"))",
+    "startLine": 98,
+    "endLine": 98
+  },
+  {
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "kind": "entry-statement",
+    "symbol": "try {",
+    "startLine": 99,
+    "endLine": 240
+  }
+]

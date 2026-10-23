@@ -1,0 +1,5 @@
+RobWork/RobWork\CTestConfig.cmake.in
+RobWork/RobWork\cmake\CTestCustom.cmake.in
+RobWork/RobWorkSim\cmake\CTestCustom.cmake.in
+RobWork/RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\install-scan\ird-install-scan.ps1
+RobWork/RobWork\gtest\algorithms\RANSACTest.cpp

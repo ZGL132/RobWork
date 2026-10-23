@@ -1,0 +1,101 @@
+RobWork/RobWork/src/rw/math/Polynomial.hpp:130:        //! @copydoc PolynomialND<T,T>::evaluateDerivatives
+RobWork/RobWork/src/rw/math/Polynomial.hpp:131:        std::vector< T > evaluateDerivatives (const T& x, std::size_t n = 1) const
+RobWork/RobWork/src/rw/math/Polynomial.hpp:133:            return PolynomialND< T, T >::evaluateDerivatives (x, n);
+RobWork/RobWork/src/rw/math/Polynomial.hpp:152:        std::vector< T > evaluateDerivatives (const T& x, std::vector< ErrT >& err,
+RobWork/RobWork/src/rw/math/Quaternion.hpp:22: * @file Quaternion.hpp
+RobWork/RobWork/src/rw/math/Quaternion.hpp:42:     * @brief A Quaternion @f$ \mathbf{q}\in \mathbb{R}^4 @f$ a complex
+RobWork/RobWork/src/rw/math/Quaternion.hpp:46:     * Quaternions can be added and multiplied in a similar way as usual
+RobWork/RobWork/src/rw/math/Quaternion.hpp:47:     * algebraic numbers. Though there are differences. Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:51:    template< class T = double > class Quaternion : public rw::math::Rotation3DVector< T >
+RobWork/RobWork/src/rw/math/Quaternion.hpp:54:        typedef Eigen::Quaternion< T > EigenQuaternion;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:65:        Quaternion () : _q (0, 0, 0, 1) {}
+RobWork/RobWork/src/rw/math/Quaternion.hpp:68:         * @brief Creates a Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:74:        Quaternion (T qx, T qy, T qz, T qw) : _q (qw, qx, qy, qz) {}
+RobWork/RobWork/src/rw/math/Quaternion.hpp:77:         * @brief Creates a Quaternion from another Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:78:         * @param quat [in] Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:80:        Quaternion (const Quaternion< T >& quat) : _q (quat._q) {}
+RobWork/RobWork/src/rw/math/Quaternion.hpp:83:         * @brief Creates a Quaternion from another Rotation3DVector type
+RobWork/RobWork/src/rw/math/Quaternion.hpp:86:        Quaternion (const rw::math::Rotation3DVector< T >& rot)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:92:         * @brief Extracts a Quaternion from Rotation matrix using
+RobWork/RobWork/src/rw/math/Quaternion.hpp:96:        Quaternion (const rw::math::Rotation3D< T >& rot) { setRotation (rot); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:99:         * @brief Creates a Quaternion from a Eigen quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:102:        Quaternion (const Eigen::Quaternion< T >& r) : _q (r) {}
+RobWork/RobWork/src/rw/math/Quaternion.hpp:105:         * @brief Creates a Quaternion from vector_expression
+RobWork/RobWork/src/rw/math/Quaternion.hpp:110:        explicit Quaternion (const Eigen::MatrixBase< R >& r) :
+RobWork/RobWork/src/rw/math/Quaternion.hpp:144:         * @brief Returns reference to Quaternion element
+RobWork/RobWork/src/rw/math/Quaternion.hpp:160:         * @brief Returns reference to Quaternion element
+RobWork/RobWork/src/rw/math/Quaternion.hpp:176:         * @brief Returns reference to Quaternion element
+RobWork/RobWork/src/rw/math/Quaternion.hpp:192:         * @brief Returns reference to Quaternion element
+RobWork/RobWork/src/rw/math/Quaternion.hpp:246:        /** @brief Converts a Rotation3D to a Quaternion and saves the Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:324:         * @brief Convert to an Eigen Quaternion.
+RobWork/RobWork/src/rw/math/Quaternion.hpp:325:         * @return Eigen Quaternion representation.
+RobWork/RobWork/src/rw/math/Quaternion.hpp:327:        Eigen::Quaternion< T >& e () { return _q; }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:330:        const Eigen::Quaternion< T >& e () const { return _q; }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:345:        // ############ Quaternion Operations
+RobWork/RobWork/src/rw/math/Quaternion.hpp:350:        Quaternion< T > operator- () const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:352:            return Quaternion (-_q.x (), -_q.y (), -_q.z (), -_q.w ());
+RobWork/RobWork/src/rw/math/Quaternion.hpp:358:        Quaternion< T > operator+ () const { return Quaternion (*this); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:363:        inline const Quaternion< T > operator- (const Quaternion< T >& v)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:365:            return Quaternion< T > (
+RobWork/RobWork/src/rw/math/Quaternion.hpp:372:        inline Quaternion< T > operator* (const Quaternion< T >& r) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:374:            Quaternion q = Quaternion (_q * r.e ());
+RobWork/RobWork/src/rw/math/Quaternion.hpp:381:        inline const Quaternion< T > operator+ (const Quaternion< T >& v) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:383:            return Quaternion< T > (
+RobWork/RobWork/src/rw/math/Quaternion.hpp:392:        inline const Quaternion< T > operator* (T s) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:394:            return Quaternion< T > (_q.x () * s, _q.y () * s, _q.z () * s, _q.w () * s);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:400:        inline friend const Quaternion< T > operator* (T s, const Quaternion< T >& v)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:409:        inline const Quaternion< T > operator/ (T s) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:411:            return Quaternion< T > (_q.x () / s, _q.y () / s, _q.z () / s, _q.w () / s);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:419:        Quaternion< T > elemDivide (const T& lhs) const;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:444:         * @brief Calculates a slerp interpolation between \b this and \b v.
+RobWork/RobWork/src/rw/math/Quaternion.hpp:446:         * The slerp interpolation ensures a constant velocity across the interpolation.
+RobWork/RobWork/src/rw/math/Quaternion.hpp:451:        inline const Quaternion< T > slerp (const Quaternion< T >& v, const T t) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:453:            return Quaternion (_q.slerp (t, v.e ()));
+RobWork/RobWork/src/rw/math/Quaternion.hpp:457:         * @brief this will return the exponential of this quaternion \f$ e^Quaternion \f$
+RobWork/RobWork/src/rw/math/Quaternion.hpp:460:        Quaternion< T > exp () const;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:463:         * @brief Calculate the inverse Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:466:        Quaternion< T > inverse () const;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:472:        Quaternion< T > ln () const;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:477:         * @return \f$ Quaternion^power \f$
+RobWork/RobWork/src/rw/math/Quaternion.hpp:479:        Quaternion< T > pow (double power) const;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:486:         * @brief copy a boost quaternion to this Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:489:        inline void operator= (const Eigen::Quaternion< T >& r) { _q = r; }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:494:        inline const Quaternion< T > operator*= (T s)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:506:        inline const Quaternion< T > operator*= (const Quaternion< T >& r)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:515:        inline const Quaternion< T > operator+= (const Quaternion< T >& r)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:527:        inline const Quaternion< T > operator-= (const Quaternion< T >& r)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:540:        Quaternion< T >& operator= (const rw::math::Rotation3D<>& rhs)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:553:        inline bool operator== (const Quaternion< T >& r) const
+RobWork/RobWork/src/rw/math/Quaternion.hpp:562:        inline bool operator!= (const Quaternion< T >& r) const { return !((*this) == r); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:565:        TOSTRING (rw::math::Quaternion<T>);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:568:        Eigen::Quaternion< T > _q;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:574:       @relates Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:576:    template< class T > std::ostream& operator<< (std::ostream& out, const Quaternion< T >& v)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:578:        return out << "Quaternion {" << v (0) << ", " << v (1) << ", " << v (2) << ", " << v (3)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:587:    template< class T > Quaternion< T > ln (const Quaternion< T >& q) { return q.ln (); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:590:     * @brief this will return the exponential of this quaternion \f$ e^Quaternion \f$
+RobWork/RobWork/src/rw/math/Quaternion.hpp:594:    template< class T > Quaternion< T > exp (const Quaternion< T >& q) { return q.exp (); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:597:     * @brief Calculate the inverse Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:601:    template< class T > Quaternion< T > inverse (const Quaternion< T >& q) { return q.inverse (); }
+RobWork/RobWork/src/rw/math/Quaternion.hpp:607:     * @return \f$ Quaternion^power \f$
+RobWork/RobWork/src/rw/math/Quaternion.hpp:609:    template< class T > Quaternion< T > pow (const Quaternion< T >& q, double power)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:615:     * @brief Casts Quaternion<T> to Quaternion<Q>
+RobWork/RobWork/src/rw/math/Quaternion.hpp:617:     * @return Quaternion with type Q
+RobWork/RobWork/src/rw/math/Quaternion.hpp:620:    inline const Quaternion< Q > cast (const Quaternion< T >& quaternion)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:622:        return Quaternion< Q > (static_cast< Q > (quaternion (0)),
+RobWork/RobWork/src/rw/math/Quaternion.hpp:628:    extern template class rw::math::Quaternion< double >;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:629:    extern template class rw::math::Quaternion< float >;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:633:    SWIG_DECLARE_TEMPLATE (Quaternion_d, rw::math::Quaternion< double >);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:634:    ADD_DEFINITION (Quaternion_d, Quaternion,sdurw_math)
+RobWork/RobWork/src/rw/math/Quaternion.hpp:636:    SWIG_DECLARE_TEMPLATE (Quaternion, rw::math::Quaternion< double >);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:638:    SWIG_DECLARE_TEMPLATE (Quaternion_f, rw::math::Quaternion< float >);
+RobWork/RobWork/src/rw/math/Quaternion.hpp:640:    using Quaterniond = Quaternion< double >;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:641:    using Quaternionf = Quaternion< float >;
+RobWork/RobWork/src/rw/math/Quaternion.hpp:652:         * @relatedalso rw::math::Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:655:        void write (const rw::math::Quaternion< double >& sobject,
+RobWork/RobWork/src/rw/math/Quaternion.hpp:660:         * @relatedalso rw::math::Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:663:        void write (const rw::math::Quaternion< float >& sobject,
+RobWork/RobWork/src/rw/math/Quaternion.hpp:668:         * @relatedalso rw::math::Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:671:        void read (rw::math::Quaternion< double >& sobject, rw::common::InputArchive& iarchive,
+RobWork/RobWork/src/rw/math/Quaternion.hpp:676:         * @relatedalso rw::math::Quaternion
+RobWork/RobWork/src/rw/math/Quaternion.hpp:679:        void read (rw::math::Quaternion< float >& sobject, rw::common::InputArchive& iarchive,

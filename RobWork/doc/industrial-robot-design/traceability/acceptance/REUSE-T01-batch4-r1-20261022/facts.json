@@ -1,0 +1,29 @@
+{
+  "reviewedCommit": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+  "baseCommit": "f6ee77c91c36f40a4cd573a24335405afc06f68b",
+  "rows": 26,
+  "units": [
+    "dynamics",
+    "modeling",
+    "optimization",
+    "requirements",
+    "runtime",
+    "selection",
+    "trajectory"
+  ],
+  "allPending": true,
+  "failedBindingCount": 0,
+  "catalog": [
+    {
+      "path": "RobWork/RobWork/src/rwlibs/pathoptimization/pathlength/PathLengthOptimizer.hpp",
+      "shaMatches": true,
+      "target": "sdurw_pathoptimization",
+      "targetFile": "RobWork/RobWork/src/rwlibs/pathoptimization/CMakeLists.txt",
+      "targetShaMatches": true
+    },
+    {
+      "path": "RobWork/RobWork/gtest/pathoptimization/PathLengthOptimizerTest.cpp",
+      "shaMatches": true
+    }
+  ]
+}

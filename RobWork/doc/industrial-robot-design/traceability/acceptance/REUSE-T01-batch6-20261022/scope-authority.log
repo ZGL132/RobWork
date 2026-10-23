@@ -1,0 +1,129 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:38:namespace sdurws::ird::selection {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:40:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:186:class ByteReader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:476:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:834:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:878:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:1250:}  // namespace sdurws::ird::selection
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:50:namespace sdurws::ird::selection {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:51:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:242:class ByteReader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:678:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1259:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:1402:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:2183:}  // namespace sdurws::ird::selection
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:64:namespace sdurws::ird::runtime {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:68:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:70:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:77:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:158:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:164:namespace snapshotidentity {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:305:}  // namespace snapshotidentity
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:311:namespace snapshotcodec {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:313:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:317:class ByteReader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:475:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:623:}  // namespace snapshotcodec
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:829:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:852:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:939:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:956:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp:1221:}  // namespace sdurws::ird::runtime
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:37:namespace sdurws::ird::runtime::rtcodec {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:38:namespace {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:44:class Writer {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:120:class Reader {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:873:}  // namespace
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Codec.cpp:1388:}  // namespace sdurws::ird::runtime::rtcodec
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:132:    /// f64 定宽（IEEE754 位模式经 memcpy 取位后显式小端 8 字节；F-777：
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:138:        std::memcpy(&bits, &v, sizeof(bits));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:195:    void expectHeader(std::string_view magic, std::uint32_t version)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:202:        const std::uint32_t v = u32At(8);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:215:        std::memcpy(out, m_bytes.data() + m_pos, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:218:    std::uint32_t u32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:244:        std::memcpy(&v, &bits, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:332:    std::uint32_t u32At(std::size_t pos) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp:335:        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:189:    /// f64 定宽（IEEE754 位模式经 memcpy 取位后显式小端 8 字节；F-777）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:194:        std::memcpy(&bits, &v, sizeof(bits));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:251:    void expectHeader(std::string_view magic, std::uint32_t version)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:258:        const std::uint32_t v = u32At(8);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:270:        std::memcpy(out, m_bytes.data() + m_pos, n);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:273:    std::uint32_t u32()
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:299:        std::memcpy(&v, &bits, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:367:    std::uint32_t u32At(std::size_t pos) const
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:370:        std::memcpy(&v, m_bytes.data() + pos, sizeof(v));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CombinationCheck.cpp:759:            // 目录 schema 演进——卡 §4.1）。
+142:| CON-04 | P0 | 缓存和检查点按契约判断命中与兼容，部分/失败结果不得作为正式缓存命中 | A/D | R1/R2 | WP-08 | WP-05 |
+143:| CON-05 | P0 | 评估输入切片与依赖清单：缓存、当前性与失效基于切片内容身份，不基于整个项目修订 | A | R1 | WP-05 | - |
+269:| KIN-12 | P1 | 分析**显示单位**设置（长度 m/cm/mm，角度 deg/rad）：切换仅影响显示与导出格式，不改变 SI 真值、不产生设计修订、不触发重算；扩展单位（inch/grad/turn）为分期子项 KIN-12-S1（R2）。〔原与阈值混列一条，经 RV-15 拆分〕 | B | R1 | WP-15 | - |
+296:| DYN-03 | P0 | 输出每轴转角/位移、转速、加速度、类型化广义力（转动 N·m、移动 N）、机械功率、峰值和 RMS 包络；峰值必须报告持续时间窗和所在轨迹段，RMS 基于完整任务循环（含驻留） | C | R1 | WP-17 | WP-18 |
+310:| SEL-02 | P0 | 导入 CSV 目录包时校验文件清单、文件间引用、单位、必填字段、型号唯一性和数值范围；能力曲线采用分段线性插值，默认禁止外推 | C | R1 | WP-19 | WP-11 |
+311:| SEL-03 | P0 | 按连续/峰值转矩、转速、功率、过载持续时间、工作制、电压、温度降额、制动/保持和安全系数筛选电机 | C | R1 | WP-19 | - |
+312:| SEL-04 | P0 | 按额定/峰值转矩、允许输入转速、速比、效率、回程间隙、寿命、安装方向和允许外载荷筛选减速器 | C | R1 | WP-19 | - |
+313:| SEL-05 | P0 | 通过共享 `DriveTrainMappingEvaluator` 校核电机—减速器—负载惯量、组合兼容和每轴工作点；惯量比阈值为可配置工程规则，不作为普适固定硬约束 | C | R1 | WP-19 | WP-18 |
+318:| SEL-10 | P0 | 用户应用选型方案（电机＋减速器组合）经领域命令更新各轴 `DriveTrainDesign`，记录目录版本与安装关系；按明确参考系合成质量、质心和惯量，区分壳体质量与转子等效惯性，禁止重复计入；应用产生新修订并提示实际依赖结果（运动学/动力学/选型/优化指标）需复算，复核完成前不沿用原通过结论 | C | R1 | WP-19 | WP-04;WP-13;WP-17;WP-18 |
+398:| KIN-12-S1 | 扩展显示单位（inch/grad/turn） | P1 | R2 | 换算正确且不影响 SI 真值 |
+439:| NFR-COR-02 | P0 | 同一输入、软件版本、配置、线程数和随机种子产生等价候选集合与稳定排序；并行归约数值满足容差，不要求浮点文件逐字节相同 | B～E | R1 | WP-23 | WP-08 |
+440:| NFR-COR-03 | P0 | 非有限数、非法单位和引用缺失不得静默转换为 0 或默认通过 | B～E | R1 | WP-03 | WP-11;WP-23 |
+44:从需求 §1 产品定位（单位和输入清楚、过程可追溯、结果可解释、失败可恢复、批量计算不阻塞界面、常用操作路径短、报告可复核）与 NFR 家族提炼六个质量属性，作为全部架构决策的检验标准：
+52:| Q5 | 单一权威 | 同一语义（模型真值、名称、策略、单位、文案、命令入口）只有一个所有者 | ARC-01~05、NFR-MNT-03/07、UX-13（M-13） |
+59:| PA-1 | 权威唯一 | 每类影响计算的语义只有一个所有者单元：修订与写路径→project；运动学真值→runtime；名称解析→runtime；共享策略→policy；评估协作→evidence；单位/指标/诊断文案→core/diagnostics；命令入口与快捷键→ui（§7.11） |
+101:│  平台内核与服务：core/project/evidence/runtime/policy/execution/io/diagnostics/reporting        │
+122:L2  计算内核层    core │ evidence │ policy │ runtime │ drivetrain(共享计算服务)
+160:| core | 平台内核 | 对象身份/版本包络、值来源（ValueProvenance）、位姿语义、评估语义、单位换算唯一实现 | CON-01、NFR-COR-03、NFR-MNT-03 | A〔WP-03〕 |
+173:| kinematics | 业务域 | FK/IK/批量验证/区域覆盖、显示单位、求解配置 | KIN-01~14 | B〔WP-15〕 |
+185:依赖方向只允许"上层→下层"且不得跨层回指；同类层内部：平台内核间按 core←{evidence,policy,runtime} 方向、彼此不横向互链（drivetrain 只依赖 core/evidence）；平台服务可依赖全部平台内核，**同层依赖允许但必须落在 §3.5 单元依赖表的既有有向边上（无环）**；**业务域单元之间互链禁止**。
+217:依赖形态三类：**接口依赖**＝仅消费对方 `include/` 公共头与端口接口（构建体现为链接其库目标）；**实现链接**＝直接链接并调用实现（仅下层对更下层使用）；**运行时注入**＝实例由 L5 应用壳装配期注入，消费方只依赖 core 中的接口类型，无编译期依赖。
+219:**共享契约的位置**：跨单元共享的纯契约——领域事件接口（⑤端口）、端口数据类型、`DiagnosticRecord`/`ConfirmableFinding` 数据契约——定义于 **core**（L2），任何层都可依赖 core，避免同层契约所有权倒挂；注册表与设施实现归各自所有者单元（契约/实现分离）。
+223:| evidence / policy / runtime → core | 接口依赖 | 身份/版本包络、契约类型 |
+224:| drivetrain → core, evidence | 接口依赖 | 评估器接口、映射结果类型 |
+225:| diagnostics → core | 接口依赖 | 诊断契约基类型（实现归 diagnostics） |
+226:| project → core, diagnostics | 接口依赖 | ConfirmableFinding 注册/构造（§7.1）、身份类型 |
+227:| execution → core, evidence, diagnostics, project | 接口依赖 | 任务身份类型、评估器调度、任务诊断、**results 存储端口** |
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "CORE-T04",
+  "unit": "core",
+  "masterWp": "WP-B",
+  "title": "单位与量（Units）",
+  "status": "done",
+  "dependsOn": [
+    "CORE-T01"
+  ],
+  "requirements": [
+    "NFR-COR-03",
+    "KIN-12",
+    "DYN-03",
+    "SEL-02"
+  ],
+  "designRefs": [
+    "units/core.md#4.4",
+    "units/core.md#5.4",
+    "units/core.md#9"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/traceability/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md"
+  ],
+  "outputs": [
+    "implementation",
+    "unit-tests",
+    "traceability-update"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_core_test"
+  ],
+  "crRefs": [
+    "CR-06"
+  ],
+  "branch": "wp03-t04",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-06"

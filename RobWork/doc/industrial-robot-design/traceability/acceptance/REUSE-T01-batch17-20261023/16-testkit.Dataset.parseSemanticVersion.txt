@@ -1,0 +1,36 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::parseSemanticVersion
+138: void parseSemanticVersion(std::string_view v, std::string_view fieldPath,
+139:                           int* major, int* minor, int* patch)
+140: {
+141:     int vals[3] = {0, 0, 0};
+142:     std::size_t idx = 0;
+143:     std::size_t consumed = 0;
+144:     for (int part = 0; part < 3; ++part) {
+145:         std::size_t start = consumed;
+146:         while (consumed < v.size() && v[consumed] >= '0' && v[consumed] <= '9') { ++consumed; }
+147:         if (consumed == start) {
+148:             throw TestKitError(TestKitErrorKind::DatasetInvalid,
+149:                                std::string("dataset-invalid: ") + std::string(fieldPath)
+150:                                    + ": 语义化版本段缺失数字（期望 M.m.p）: " + std::string{v});
+151:         }
+152:         vals[part] = std::stoi(std::string{v.substr(start, consumed - start)});
+153:         if (part < 2) {
+154:             if (consumed >= v.size() || v[consumed] != '.') {
+155:                 throw TestKitError(TestKitErrorKind::DatasetInvalid,
+156:                                    std::string("dataset-invalid: ") + std::string(fieldPath)
+157:                                        + ": 版本分隔符缺失（期望 M.m.p）: " + std::string{v});
+158:             }
+159:             ++consumed;
+160:         }
+161:     }
+162:     if (consumed != v.size()) {
+163:         throw TestKitError(TestKitErrorKind::DatasetInvalid,
+164:                            std::string("dataset-invalid: ") + std::string(fieldPath)
+165:                                + ": 版本含尾随内容: " + std::string{v});
+166:     }
+167:     *major = vals[0];
+168:     *minor = vals[1];
+169:     *patch = vals[2];
+170:     (void)idx;
+171: }

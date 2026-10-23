@@ -1,0 +1,1 @@
+{"ok":false,"state":"not-owner","holder":"6f146f21-5c9c-4ed7-9f4d-98ae8852517b","message":"fencing token mismatch; this tick lost its lease and must not touch the lock (PIPE §0.1)"}

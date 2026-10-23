@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B15",
+  "reviewedCommit": "85e561539a4038e37231dcfcb506109a5a188151",
+  "comparisonBase": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "verdict": "FAIL",
+  "scope": "仅新增21+细化3关系、HOST-FRAME/TEXT与HOST-SCENE候选、说明/定义/搜索/允许文件及README；不授全UI或全T01 PASS。",
+  "findings": [
+    {
+      "id": "B15-P2-01",
+      "priority": 2,
+      "title": "QtText五条关系漏记ui_test真实同源编译目标",
+      "locations": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+          "line": 1837
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+          "line": 1902
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+          "line": 1967
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+          "line": 2032
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+          "line": 2097
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "line": 23
+        }
+      ],
+      "evidence": "ui/CMakeLists.txt:416-426的if(TARGET sdurws)块通过target_sources(sdurws_ird_ui_test PRIVATE ...)在425行直接编入plugin/QtTextBillboard.cpp；其五个完整定义均属于该TU，矩阵只列plugin/studio。",
+      "affectedFunctionIds": [
+        "ui.QtTextBillboard.QtTextBillboard",
+        "ui.QtTextBillboard.rasterizeAndUpload",
+        "ui.QtTextBillboard.drawBillboard",
+        "ui.QtTextBillboardRender.QtTextBillboardRender",
+        "ui.QtTextBillboardRender.draw"
+      ],
+      "impact": "本批重点为精确文件/编译目标/操作权限，遗漏该真实测试编译目标使QtText图形及Frame借持/wTf使用的待核范围不完整。治理门禁仅核目标存在，不能替代实际编译归属。此项为审计登记缺漏，不声称新增授权或产品GUI故障。",
+      "requestedCorrection": "将sdurws_ird_ui_test补入五条QtText关系的targets；在说明中记录if(TARGET sdurws)条件下的同源测试编译及精确权限仍待核。不得因此扩HOST清单或新增grant；若修改说明，同步24条关联auditEvidence摘要。无需改产品或为此跑C++/GUI。"
+    }
+  ],
+  "observations": [
+    {
+      "topic": "定义、作用域与摘要",
+      "result": "PASS",
+      "detail": "24条列明定义逐段实读且与batch15-definitions逐项一致，含单行析构、全部构造initializer list和跨行返回类型。anonymous namespace位于sdurws::ird::ui内；ensureSessionPreviewAnchor返回Ptr<WorkCell>、currentTcpPose返回optional<Transform3D<>>、rasterizeAndUpload返回QtTextBillboard::TextTexture。192项源码区段/inputs/auditEvidence规范化摘要全匹配。"
+    },
+    {
+      "topic": "真实目标",
+      "result": "FAIL",
+      "detail": "Preview相关定义确属plugin/studio；Gateway8定义确属plugin/studio及条件gui_test；均在if(TARGET sdurws)集成路径。QtText五定义另有ui_test同源编译，已列B15-P2-01，19/24目标集合匹配。未以代码同源传播权限。"
+    },
+    {
+      "topic": "预览与锚",
+      "result": "PASS",
+      "detail": "draw优先studio WC，空时复用scene WC，皆空才构造仅WORLD会话锚并setWorkCell/setWorldNode；不发布studio工程模型，不授计算模型构造。前置成功后先clear，再逐项addRender/addFrameAxis，只存名且不消费返回句柄；中途异常无回滚。clear逐名清当前scene，未找节点的上游removeDrawable(name)确返回true，产品false注释不正确但未修改。切场景残留只列待核，非复现。"
+    },
+    {
+      "topic": "Gateway8定义",
+      "result": "PASS",
+      "detail": "构造必需pick/selection/nameMap；handle按nameMap反解后分发和selectBusiness，返回true不依赖dispatch布尔。applyPresentation依赖void payload装配类型，先apply新对象再release旧；具体HostWorkCellPresentationObject::remove为空动作，未泛称清空WC。applyPreview仅draw true后更新缓存，onSceneCleared和removePreview对称清理。GuiTest的draw替身不足证明真实后端异常保旧。currentTcpPose真实用worldTframe；UiPlugin装配取JointDevice::getEnd与studio State，未证明工具TCP偏移/多TCP。"
+    },
+    {
+      "topic": "渲染候选与GL差异",
+      "result": "PASS",
+      "detail": "RenderFrame为公开Render，DrawableNode::setTransform是公开API且addRender返回DrawableNode，可组合任意位置轴，故不能以addFrameAxis帧原点限制排除复用。RenderFrame实体/线型GLU、palette、alpha/状态差异保留；RenderLines真实double转float，使用配置_alpha而非回调alpha，且GL_POINTS/逐点分色/选中圈不能整体当线集迁移。"
+    },
+    {
+      "topic": "QtText5定义",
+      "result": "PASS",
+      "detail": "Qt/QFont/QImage/QPainter/QString已提供字体栅格化；RenderText实际GLUT bitmap且受RW_HAVE_GLUT条件，不适合直接替换CJK。QtText调用上游inverse/Rotation，挂帧Render消费Frame::wTf；不是另写运动学。static map按context指针切换清理但不主动删除纹理，缓存预算/地址复用/上传失败/UNPACK与进入GL状态恢复未证。PreviewColorScope栈保存不自动覆盖独立挂帧QtText路径，这些均被说明为静态待核，未冒称已复现。"
+    },
+    {
+      "topic": "候选与权限边界",
+      "result": "PASS",
+      "detail": "HOST-FRAME/TEXT新增及HOST-SCENE扩展均保持candidate；7项上游/测试/CMake绑定匹配，5条检索独立重放exit0且命中集合/stderr一致。permissions.json与ARCH权威无diff，四项HOST封闭清单及grants=[]未改；QtText未列入例外而Frame操作明确待核，pending不授新文件/target/construct权限。"
+    },
+    {
+      "topic": "任务与范围",
+      "result": "PASS",
+      "detail": "任务仅增加3个B15产物允许路径；README明确21新增+3细化、pending不扩权限、GUI/GL未跑、不关闭T01。全部24关系pending；其余HOST和UiPlugin装配未借本批结项。"
+    }
+  ],
+  "checks": {
+    "newRelations": 21,
+    "refinedRelations": 3,
+    "definitions": 24,
+    "definitionManifestMatches": 24,
+    "bindings": 192,
+    "failedBindings": 0,
+    "catalogReferences": 7,
+    "searches": 5,
+    "searchMismatches": 0,
+    "targetSetsMatched": 19,
+    "targetSetsMissingUiTest": 5
+  },
+  "gates": {
+    "exitCodes": {
+      "task": 0,
+      "reuse": 0,
+      "docs": 0
+    },
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "治理结构/文档/任务，不代表语义/算法合规"
+  },
+  "sourceAndUpstreamDiffEmpty": true,
+  "authorityAndPermissionsUnchanged": true,
+  "checkoutClean": true,
+  "repositoryModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "wholeT01Pass": false,
+  "notRun": [
+    "C++构建/产品测试",
+    "GUI/GL/真实后端",
+    "数值/性能",
+    "上游测试执行",
+    "DeepEvidence",
+    "全T01退出",
+    "远程推送/CI"
+  ],
+  "remoteDelivery": {
+    "status": "NOT DELIVERED / NOT VERIFIED",
+    "detail": "根据委派说明远程443失败；本轮只本地冻结验收，未推送或独立重试远程，不称交付完成。"
+  },
+  "reportRoot": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b15-20261023-011204-150869384"
+}

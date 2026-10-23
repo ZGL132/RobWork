@@ -1,0 +1,502 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/01-core.Compare.closeWithin.txt",
+    "bytes": 993,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/02-core.Compare.allCloseWithin.vector.txt",
+    "bytes": 894,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/03-core.Compare.allCloseWithin.Q.txt",
+    "bytes": 589,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/04-core.Compare.runtimeAbsoluteTolerance.txt",
+    "bytes": 1122,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/05-core.Tolerance.make.txt",
+    "bytes": 878,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/06-core.Tolerance.operator__.txt",
+    "bytes": 280,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/07-core.Tolerance.operator__.txt",
+    "bytes": 217,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/08-testkit.Dataset.failField.txt",
+    "bytes": 368,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/09-testkit.Dataset.requireStringArray.txt",
+    "bytes": 895,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/10-testkit.Dataset.requireBool.txt",
+    "bytes": 403,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/11-testkit.Dataset.allCharsIn.txt",
+    "bytes": 340,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/12-testkit.Dataset.readFileBytes.txt",
+    "bytes": 515,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/13-testkit.Dataset.sha256HexOf.txt",
+    "bytes": 575,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/14-testkit.Dataset.toToken.txt",
+    "bytes": 595,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/15-testkit.Dataset.datasetKindFromToken.txt",
+    "bytes": 676,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/16-testkit.Dataset.parseSemanticVersion.txt",
+    "bytes": 1829,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/17-testkit.Dataset.DatasetManifest.operator__.txt",
+    "bytes": 1641,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/18-testkit.Dataset.GoldenDataset.load.txt",
+    "bytes": 16197,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/19-testkit.Dataset.GoldenDataset.resolveInput.txt",
+    "bytes": 605,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/20-testkit.Dataset.GoldenDataset.resolveExpected.txt",
+    "bytes": 619,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/21-testkit.Dataset.requireString.prefix.txt",
+    "bytes": 484,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/22-testkit.Dataset.requireString.plain.txt",
+    "bytes": 265,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/23-testkit.Dataset.ReferenceSource.operator__.txt",
+    "bytes": 419,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/24-testkit.Dataset.Producer.operator__.txt",
+    "bytes": 517,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/25-testkit.Dataset.Producer.operator__.txt",
+    "bytes": 224,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/26-testkit.Dataset.IntegrityEntry.operator__.txt",
+    "bytes": 325,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/27-testkit.Dataset.HistoryEntry.operator__.txt",
+    "bytes": 396,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/28-testkit.Dataset.HistoryEntry.operator__.txt",
+    "bytes": 233,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/29-testkit.Dataset.DatasetManifest.operator__.txt",
+    "bytes": 230,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/30-testkit.Dataset.GoldenDataset.manifest.txt",
+    "bytes": 223,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/31-testkit.Dataset.GoldenDataset.toleranceProfileRef.txt",
+    "bytes": 345,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/32-testkit.SetCheck.MatchPair.operator__.txt",
+    "bytes": 306,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/33-testkit.SetCheck.MatchPair.operator__.txt",
+    "bytes": 227,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/34-testkit.SetCheck.SetMatchTraits.identity.txt",
+    "bytes": 234,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/35-testkit.SetCheck.SetMatchTraits.numerics.txt",
+    "bytes": 227,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/36-testkit.SetCheck.compatible.txt",
+    "bytes": 1007,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/37-testkit.SetCheck.tryAugmentAt.txt",
+    "bytes": 1367,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/38-testkit.SetCheck.checkSetEquivalent.txt",
+    "bytes": 12441,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/39-testkit.SetCheck.checkStableOrder.txt",
+    "bytes": 2291,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/audit-metadata.mjs",
+    "bytes": 5507,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/build-probe.ps1",
+    "bytes": 1592,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/build-wiring.json",
+    "bytes": 815,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/build.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/build.log",
+    "bytes": 3136,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/check-test-evidence.log",
+    "bytes": 1707,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/check-test-evidence.ps1",
+    "bytes": 3128,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/checkout.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/checkout.log",
+    "bytes": 95,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/clone.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/clone.log",
+    "bytes": 100,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/configure.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/configure.log",
+    "bytes": 1644,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/definitions-review.tsv",
+    "bytes": 10417,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/docs.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/docs.log",
+    "bytes": 2564,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/frozen-sha.txt",
+    "bytes": 42,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/generated-CMakeCache.txt",
+    "bytes": 51108,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/generated-ird_reuse_audit_probe.vcxproj",
+    "bytes": 195866,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/generated-ird-core_sdurws_ird_core.vcxproj",
+    "bytes": 27247,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/generated-ird-testkit_sdurws_ird_testkit.vcxproj",
+    "bytes": 60571,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/git-status-end.txt",
+    "bytes": 0,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/metadata-audit.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/metadata-audit.json",
+    "bytes": 107344,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/metadata-audit.log",
+    "bytes": 5941,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/reuse.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/reuse.log",
+    "bytes": 2326,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/review-consistency-check.json",
+    "bytes": 410,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/review.json",
+    "bytes": 16872,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/review.md",
+    "bytes": 9576,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/run-environment.json",
+    "bytes": 299,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/run-probe.ps1",
+    "bytes": 1543,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/search-1.log",
+    "bytes": 14141,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/search-2.log",
+    "bytes": 1977,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/search-3.log",
+    "bytes": 2373,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/search-4.log",
+    "bytes": 6380,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/search-5.log",
+    "bytes": 11144,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/task.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/task.log",
+    "bytes": 2357,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/test-evidence-check.json",
+    "bytes": 2410,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/verify-review.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/verify-review.initial-fail.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/verify-review.initial-fail.log",
+    "bytes": 718,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/verify-review.log",
+    "bytes": 432,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/verify-review.mjs",
+    "bytes": 3738,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/vs-environment.json",
+    "bytes": 334,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/vs-run.log",
+    "bytes": 242,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/vs.log",
+    "bytes": 242,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/write-review.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/write-review.initial-fail.exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/write-review.initial-fail.log",
+    "bytes": 915,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/write-review.log",
+    "bytes": 420,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/write-review.mjs",
+    "bytes": 13608,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/candidates/exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/candidates/gtest.xml",
+    "bytes": 1068,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/candidates/ird-test-report.json",
+    "bytes": 1795,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/candidates/stdout.log",
+    "bytes": 710,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/core-red/exit.txt",
+    "bytes": 3,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/core-red/gtest.xml",
+    "bytes": 1407,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/core-red/ird-test-report.json",
+    "bytes": 1081,
+    "rawMatch": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch17-20261023/core-red/stdout.log",
+    "bytes": 1006,
+    "rawMatch": true
+  }
+]

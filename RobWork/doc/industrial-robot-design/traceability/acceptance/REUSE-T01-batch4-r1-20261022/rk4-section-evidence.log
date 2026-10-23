@@ -1,0 +1,81 @@
+612:         // RK4 子步循环（h＝min(maxStepS, 剩余时长)——不跨参考样本边界）。
+613:         while (tCur < tEnd) {
+614:             const double h = std::min(request.forwardCheck.maxStepS, tEnd - tCur);
+615:             // 数值防御：区间端点舍入残差（h 可能为 0——直接收口推进）。
+616:             if (!(h > 0.0)) {
+617:                 tCur = tEnd;
+618:                 break;
+619:             }
+620: 
+621:             // ---- RK4 四 stage（经典显式格式；全部 stage 共用区间起点
+622:             //      时刻 tBegin 提取变体——采样保持语义见文件头）----
+623:             bool cancelledNow = false;
+624:             bool singularNow = false;
+625:             std::string failReason;  // F-581：失败原因带出（奇异或 RNEA 部分产出）
+626: 
+627:             // k1 ＝ f(y_j)
+628:             std::vector<double> k1q = qd;  // q̇（状态一阶分量恒为速度）
+629:             if (!evalAcceleration(q, qd, tBegin, tauCtrl, cancelledNow, singularNow,
+630:                                   failReason)) {
+631:                 if (cancelledNow) { out.cancelled = true; break; }
+632:                 singular = true;
+633:                 anomalyDetail = failReason + "，RK4 stage 1";
+634:                 break;
+635:             }
+636:             const std::vector<double> k1qd = qdd;
+637: 
+638:             // k2 ＝ f(y_j + h/2·k1)
+639:             std::vector<double> q2(n), qd2(n);
+640:             for (std::size_t i = 0; i < n; ++i) {
+641:                 q2[i] = q[i] + 0.5 * h * k1q[i];
+642:                 qd2[i] = qd[i] + 0.5 * h * k1qd[i];
+643:             }
+644:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+645:                                   failReason)) {
+646:                 if (cancelledNow) { out.cancelled = true; break; }
+647:                 singular = true;
+648:                 anomalyDetail = failReason + "，RK4 stage 2";
+649:                 break;
+650:             }
+651:             const std::vector<double> k2q = qd2;
+652:             const std::vector<double> k2qd = qdd;
+653: 
+654:             // k3 ＝ f(y_j + h/2·k2)
+655:             for (std::size_t i = 0; i < n; ++i) {
+656:                 q2[i] = q[i] + 0.5 * h * k2q[i];
+657:                 qd2[i] = qd[i] + 0.5 * h * k2qd[i];
+658:             }
+659:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+660:                                   failReason)) {
+661:                 if (cancelledNow) { out.cancelled = true; break; }
+662:                 singular = true;
+663:                 anomalyDetail = failReason + "，RK4 stage 3";
+664:                 break;
+665:             }
+666:             const std::vector<double> k3q = qd2;
+667:             const std::vector<double> k3qd = qdd;
+668: 
+669:             // k4 ＝ f(y_j + h·k3)
+670:             for (std::size_t i = 0; i < n; ++i) {
+671:                 q2[i] = q[i] + h * k3q[i];
+672:                 qd2[i] = qd[i] + h * k3qd[i];
+673:             }
+674:             if (!evalAcceleration(q2, qd2, tBegin, tauCtrl, cancelledNow, singularNow,
+675:                                   failReason)) {
+676:                 if (cancelledNow) { out.cancelled = true; break; }
+677:                 singular = true;
+678:                 anomalyDetail = failReason + "，RK4 stage 4";
+679:                 break;
+680:             }
+681:             const std::vector<double> k4q = qd2;
+682:             const std::vector<double> k4qd = qdd;
+683: 
+684:             // 状态推进（加权组合 1/6·(k1+2k2+2k3+k4)——RK4 标准格式）。
+685:             for (std::size_t i = 0; i < n; ++i) {
+686:                 q[i] += (h / 6.0)
+687:                         * (k1q[i] + 2.0 * k2q[i] + 2.0 * k3q[i] + k4q[i]);
+688:                 qd[i] += (h / 6.0)
+689:                          * (k1qd[i] + 2.0 * k2qd[i] + 2.0 * k3qd[i] + k4qd[i]);
+690:             }
+691:             tCur += h;
+692:             ++out.integratorSteps;

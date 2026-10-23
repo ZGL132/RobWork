@@ -1,0 +1,242 @@
+{
+  "schemaVersion": "ird-independent-api-probe-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "api-r3",
+  "verdict": "pass",
+  "reviewedCommit": "4e142e485343e8bade52a8481eefbb447b017989",
+  "baseCommit": "dfc317f234d9253b2e07bdea89a9bb3028e6db9d",
+  "scope": "仅公共API探测4项增量及14项重建重跑、第二批FAIL/PASS归档原文保留；非T01全量验收或T02准入",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-api-r3-20261022-215503\\repo",
+  "trackedStatus": "",
+  "checks": {
+    "configure": {
+      "exitCode": 0,
+      "log": "configure.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "tests": {
+      "exitCode": 0,
+      "log": "tests.log"
+    },
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "diff-check": {
+      "exitCode": 2,
+      "log": "diff-check.log"
+    },
+    "active-diff-check": {
+      "exitCode": 0,
+      "log": "active-diff-check.log"
+    },
+    "inspect": {
+      "exitCode": 0,
+      "log": "inspect.log"
+    }
+  },
+  "tests": {
+    "total": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "semanticReview": {
+    "parallelIK": {
+      "tcpCircle": "p(q)=(cos(q),sin(q),0) m",
+      "distanceSquaredToTarget": "5-4*cos(q) >= 1",
+      "minimumDistanceMetres": 1,
+      "q0Jacobian": [
+        0,
+        1,
+        0
+      ],
+      "q0Residual": [
+        1,
+        0,
+        0
+      ],
+      "pseudoinverseStep": 0,
+      "meaning": "Unreachable target; zero tangential gradient leaves q=0 through both iterations; source returns in-bounds q after logging budget exhaustion."
+    },
+    "standardDH": {
+      "order": "Rz(theta)*Tz(d)*Tx(a)*Rx(alpha)",
+      "fourFactorMatrix": [
+        [
+          0.7648421872844885,
+          -0.5933637833613874,
+          0.2508701838500143,
+          0.22945265618534655
+        ],
+        [
+          0.644217687237691,
+          0.7044663052755917,
+          -0.2978435767000479,
+          0.1932653061713073
+        ],
+        [
+          0.0,
+          0.3894183423086505,
+          0.9210609940028851,
+          -0.2
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "explicitFormulaDifferenceNorm": 0.0,
+      "craigOrder": "Rx(alpha)*Tx(a)*Rz(theta)*Tz(d)",
+      "standardCraigDifferenceNorm": 0.40786629851938144
+    },
+    "antiparallel": {
+      "sourceBranch": "For z, idx=0 so axis=normalize(z cross x)=+y",
+      "upstreamRyPiDiagonal": [
+        -1,
+        1,
+        -1
+      ],
+      "productRxPiDiagonal": [
+        1,
+        -1,
+        -1
+      ],
+      "relativeRyPiInverseRxPiDiagonal": [
+        -1,
+        -1,
+        1
+      ],
+      "relativeAxis": "tool-local z",
+      "relativeAngleRad": 3.141592653589793,
+      "bothMapZToMinusZ": true
+    },
+    "polynomial": {
+      "definition": "p(u)=sum((i+1)*u^i,i=0..7)",
+      "oracle": "sum((i+1)*i!/(i-k)!*u^(i-k)), independently via exact Fraction arithmetic",
+      "normalizedLeft": [
+        1,
+        2,
+        6,
+        24
+      ],
+      "normalizedRight": [
+        36,
+        168,
+        756,
+        3024
+      ],
+      "physicalTimeDerivatives": [
+        {
+          "h": 0.5,
+          "u": 0,
+          "physicalTimeDerivatives0to3": [
+            1.0,
+            4.0,
+            24.0,
+            192.0
+          ]
+        },
+        {
+          "h": 0.5,
+          "u": 1,
+          "physicalTimeDerivatives0to3": [
+            36.0,
+            336.0,
+            3024.0,
+            24192.0
+          ]
+        },
+        {
+          "h": 2.0,
+          "u": 0,
+          "physicalTimeDerivatives0to3": [
+            1.0,
+            1.0,
+            1.5,
+            3.0
+          ]
+        },
+        {
+          "h": 2.0,
+          "u": 1,
+          "physicalTimeDerivatives0to3": [
+            36.0,
+            84.0,
+            189.0,
+            378.0
+          ]
+        }
+      ]
+    }
+  },
+  "archive": {
+    "files": 82,
+    "sameOriginalText": true,
+    "exactBytes": 78,
+    "lineEndingOnly": 4,
+    "reportsAndLogsExactBytes": true,
+    "details": "archive-review.json"
+  },
+  "pendingRelations": 95,
+  "closedFiles": 0,
+  "findings": [],
+  "nonBlockingObservations": [
+    "全差异git diff --check=2，仅归档的batch2-r2/inspect.py:21原件已有EOF空行；保留原文，活动文件diff检查=0。不把全差异检查声称通过。",
+    "4个归档Python脚本Git检出CRLF/LF转换，规范化换行后原文一致；acceptance.md/json及原始日志全部字节相同。",
+    "MSBuild提示临时目录可能影响增量构建(MSB8029)；本轮独立fresh构建成功。"
+  ],
+  "notRun": [
+    "Qt Widgets/GUI（探测仅模型/数值，无QApplication）",
+    "生产算法迁移/数值性能验收",
+    "完整上游测试集",
+    "140治理脚本自测",
+    "DeepEvidence全库索引深查",
+    "全20单元全功能语义审计及T01/T02准入",
+    "提交/推送/合入/远程CI"
+  ],
+  "sourceSha256": {
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp": "58a67e66bad798afeff007ef345cf616298d78aa8cbb1bae1c659f473b79c64a",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt": "0bbb59a4b0489854d44dcc3240a72118f51f7f5fbea62cdb6e913355eeb8dd6a",
+    "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.cpp": "ea96c38fb94f5fb8538cb0f60c7b0d85c53ee810e4f32d87a399830f538a53d3",
+    "RobWork/RobWork/src/rw/math/EAA.cpp": "e0f929449afac2edb410b0e3e7571043a957162ee3d00607052015b7d2c8e7f1",
+    "RobWork/RobWork/src/rw/math/Transform3D.cpp": "5899987aa6b01f518112ba4ced335e69c1f16c7b0a74f753f2d8d64c60b8496b",
+    "RobWork/RobWork/src/rw/math/PolynomialND.hpp": "c9e28c7ef5311049cb65ba60360dce8fae387f751c1ed01e9c9fbe706a0427ce",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp": "c384bc68bf7df7a9c5e2d41f51e87b4cf59745c62d1ed53f0f98eb425af586d7"
+  },
+  "evidenceSha256": {
+    "active-diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "archive-review.json": "176831129555d44f622551fa006e9639646dad589b6e4ae976b31edd0b89d6bc",
+    "build.log": "691b0d60d0cb150aae554a7ec46b9774cd3081aecee449e4d66abcf72b04535d",
+    "checkout.log": "8841783873fd8091667ceb4be678361d0bdfc45546fec1263f7e68ae3d1f84e5",
+    "clone.log": "d9e4b03c48628e7f5e422675f8c1cdbff3c5092c978358416f2f07592786cf3a",
+    "configure.log": "a31212bbf6512466cc473b710577007c2016f713e5af7d44647f452a44dda6a2",
+    "diff-check.log": "85c3bf666a9980314fd16d8333878afce7b600ca78d35ddbbb45c3142f3a849b",
+    "docs.log": "16d2754157b12e1d6a457d8d2ca4bd6b9f26dc4b4ebb0274bb50bd5b003aadb8",
+    "environment.log": "ba490ca832c85024139229f19b0457d90fc9e96008141b8e620864e1d851bf77",
+    "gtest.xml": "233b60e49d4c4540700f212bf614cab43415e50e76ce48058e5db72110d0f4a5",
+    "independent-review.json": "da3205f92052cc046f40ab052f2b1dabac40048d0e2ba35f85e43e620961249f",
+    "inspect.log": "5545413ba689f0b9426fbca6166dc88ef589669746e45dadfdfbbbe7a42faa75",
+    "ird-test-report.json": "c8203aae1f144c1965b35f89ec17ce6e8423712385eac5474bd2f3299fed4b85",
+    "reuse.log": "8f476e04357785d20dc5653e335caaee3e0258365049392e03979ab7367cb80f",
+    "run-probe.ps1": "f41f5b620eee4eea5b6b05fa013a0e778f86dbb6b8ceb75f3eee78a2574e2505",
+    "task.log": "a9bfb89e58d2ec6f3dc62abe958b5215e3a07af6730656bde538747b908b8557",
+    "tests.log": "996bf5a67934ca5a2d733e5ff029385812b9fd605582e5fce59b9f7f96b4b312"
+  }
+}

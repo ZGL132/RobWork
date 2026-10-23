@@ -1,0 +1,274 @@
+[
+  {
+    "functionId": "testkit.JsonLite.Parser",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.run",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.skipWs",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.expect",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.fail",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.parseValue",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.expectLiteral",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.eof",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.find",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.nonFinite",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.makeDetail",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.checkCloseWithin",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.checkAllCloseWithin",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.checkAtMost",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.Check.checkIdentical.int64",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.toWin32Wait",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.utf8ToWide",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "testkit.ProcessRunner.DestructorImpl",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  },
+  {
+    "functionId": "workflow.CloseSupervisor.running",
+    "recordedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "computedSha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10",
+    "match": true,
+    "decision": "pending",
+    "status": "pending"
+  }
+]

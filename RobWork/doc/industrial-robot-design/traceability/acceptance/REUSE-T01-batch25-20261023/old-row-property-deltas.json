@@ -1,0 +1,108 @@
+[
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "changedProperties": [
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "changedProperties": [
+      "sources",
+      "inputs",
+      "auditEvidence"
+    ]
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "args": [
+      "git",
+      "diff",
+      "--exit-code",
+      "f2e651412",
+      "--",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src"
+    ],
+    "exit": 0,
+    "changedFiles": 0
+  },
+  {
+    "args": [
+      "git",
+      "diff",
+      "--exit-code",
+      "f2e651412",
+      "--",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CoreIdentitySuitabilityTest.cpp"
+    ],
+    "exit": 0,
+    "changedFiles": 0
+  }
+]

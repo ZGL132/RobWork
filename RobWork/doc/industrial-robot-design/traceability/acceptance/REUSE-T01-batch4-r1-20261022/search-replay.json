@@ -1,0 +1,47 @@
+[
+  {
+    "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "stdoutSetMatches": true,
+    "diffCount": 0,
+    "stderrEmpty": true,
+    "diff": []
+  },
+  {
+    "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "stdoutSetMatches": true,
+    "diffCount": 0,
+    "stderrEmpty": true,
+    "diff": []
+  },
+  {
+    "command": "rg -n \"seed|generator|ranI|shuffle|Latin|latin|SplitMix\" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest",
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "stdoutSetMatches": true,
+    "diffCount": 0,
+    "stderrEmpty": true,
+    "diff": []
+  },
+  {
+    "command": "rg -n \"pathPruning|PathLengthOptimizer|CubicSplineFactory|PolynomialND\" RobWork/RobWork/src/rwlibs/pathoptimization RobWork/RobWork/src/rw/trajectory RobWork/RobWork/src/rw/math/PolynomialND.hpp RobWork/RobWork/gtest/pathoptimization RobWork/RobWork/gtest/trajectory",
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "stdoutSetMatches": true,
+    "diffCount": 0,
+    "stderrEmpty": true,
+    "diff": []
+  },
+  {
+    "command": "rg -n \"RK4|Integrator|step|initPhysics|addDevice\" RobWork/RobWorkSim/src/rwsim/rwphysics RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "stdoutSetMatches": true,
+    "diffCount": 0,
+    "stderrEmpty": true,
+    "diff": []
+  }
+]

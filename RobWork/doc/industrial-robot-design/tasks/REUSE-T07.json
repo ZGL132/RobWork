@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T07",
+  "unit": "modeling",
+  "masterWp": "WP-A",
+  "title": "耦合矩阵直接复用上游SVD并删除自写Jacobi",
+  "status": "ready",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-21",
+    "NFR-COR-02",
+    "ARC-02"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md",
+    "reuse/audit-contract.md",
+    "units/modeling.md#8.1",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/gates/TestCMakeComments.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t07-governance-independent",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CouplingReuseTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/modeling.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T07.json",
+    "RobWork/doc/industrial-robot-design/reuse/closures.json",
+    "RobWork/doc/industrial-robot-design/reuse/coupling-svd-migration.md",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/**",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "执行reuse/policy.md §1.1；在coupling-svd-migration.md定位保留/删除/适配/职责归属及上游适用依据；独验核对准确性、架构、简洁性与运行效果，包含实际冗余删除/必要保留理由和性能前后测量及应用预算；无依据退化不得自判可接受，单有上游调用不构成通过",
+    "CouplingMath真实生产链checkCouplingMatrix消费LinearAlgebra::svd，删除Jacobi轮转核及专用迭代常量，无运行时旧算法回退",
+    "保持行主序转换、数值缩放、奇异/病态阈值及现有公共接口/诊断；秩亏/病态/重构/阈值边界和原Parts/Readiness回归有效",
+    "真实上游对照和独立解析oracle通过；断开生产调用必须真实失败；受影响集成/必要独立冒烟/ird_gates与复用证据通过",
+    "完整冻结能力包由所有者独立会话验收；实施者不自签、不合入、不操作远程；GAP均未批准"
+  ],
+  "note": "所有者2026-10-23明确授权本能力首先交付；纯值rw::math不构造模型/State，无T02依赖。原MATH-SVD/CouplingMath审计为输入，实施时补本能力完整证据。全T01覆盖筛查继续；ready仅授权此精确范围实施，不表示已独验。 本包实际构建暴露AD把CMake #注释当模型操作的误报，精确修复CheckSourcePermission的CMake注释处理；不豁免真实对象/操作，不发模型grant；PS7/PS5.1正反回归纳入verify及完整能力独验。 全套治理自测改用已独验GOV-T22固定夹具提交，执行本工作树真实validator/helper的全部152正反例；与当前产品工作树的validate-reuse/ird_gates分开验证，不能互相替代。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T07.json"
+  },
+  "outputs": [
+    "上游SVD薄适配与删除的Jacobi核心",
+    "生产正向/真实断开/独立oracle/上游对照证据",
+    "受影响集成/独立冒烟与回归日志",
+    "冻结能力包待独立验收"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "cwd": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\repo",
+  "preparation": "创建空的 .cache 父目录；冻结脚本out.mkdir不创建父级，原脚本未改。",
+  "arguments": [
+    "C:\\Users\\zgl18\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+    "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-b16-generators-20261023-013420-1366906690\\repo\\RobWork\\doc\\industrial-robot-design\\traceability\\reuse\\REUSE-T01\\replay-generators.py"
+  ]
+}

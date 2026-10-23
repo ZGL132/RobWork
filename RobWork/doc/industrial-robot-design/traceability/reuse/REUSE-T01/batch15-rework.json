@@ -1,0 +1,21 @@
+{
+  "taskId": "REUSE-T01",
+  "findingId": "B15-P2-01",
+  "originalAcceptance": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch15-r1-20261023/acceptance.json",
+  "functions": [
+    "ui.QtTextBillboard.QtTextBillboard",
+    "ui.QtTextBillboard.rasterizeAndUpload",
+    "ui.QtTextBillboard.drawBillboard",
+    "ui.QtTextBillboardRender.QtTextBillboardRender",
+    "ui.QtTextBillboardRender.draw"
+  ],
+  "addedTarget": "sdurws_ird_ui_test",
+  "condition": "if(TARGET sdurws)",
+  "cmake": {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+  },
+  "grantsChanged": false,
+  "productChanged": false,
+  "fullStagePass": false
+}

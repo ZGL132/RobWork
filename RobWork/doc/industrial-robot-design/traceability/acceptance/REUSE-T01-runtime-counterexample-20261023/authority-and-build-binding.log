@@ -1,0 +1,47 @@
+322:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\src\CanonicalModel.cpp" />
+327:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\src\WorkCellCompiler.cpp" />
+328:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\src\DynamicWorkCellCompiler.cpp" />
+329:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\src\Snapshot.cpp" />
+383:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\runtime-probe\RuntimeOffsetAuditTest.cpp" />
+384:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\TestMainReport.cpp" />
+TEST(Joint, Prismatic) {
+	static const Transform3D<> T(Vector3D<>(1,2,3),RPY<>(10*Deg2Rad,20*Deg2Rad,30*Deg2Rad));
+	PrismaticJoint* const joint = new PrismaticJoint("TestJoint", Transform3D<>::identity());
+
+	EXPECT_EQ(1, joint->getDOF());
+	EXPECT_EQ(1, joint->size());
+	EXPECT_EQ("TestJoint", joint->getName());
+	EXPECT_TRUE(joint->getFixedTransform().equal(Transform3D<>::identity()));
+	joint->setFixedTransform(T);
+	EXPECT_TRUE(joint->getFixedTransform().equal(T));
+
+	StateStructure sstate;
+	sstate.addData(joint); // StateStructure takes ownership of the joint
+	State state = sstate.getDefaultState();
+
+	EXPECT_EQ(0, joint->getData(state)[0]);
+
+	double vals[1];
+	vals[0] = 0.1;
+	joint->setData(state,vals);
+
+	EXPECT_EQ(0.1, joint->getData(state)[0]);
+
+	EXPECT_TRUE(joint->getJointTransform(state).equal(Transform3D<>(Vector3D<>::z()*0.1)));
+	EXPECT_TRUE(joint->getTransform(state).equal(Transform3D<>(T.P()+T.R().getCol(2)*0.1,T.R())));
+	EXPECT_TRUE(joint->getJointTransform(state).equal(joint->getJointTransform(0.1)));
+	EXPECT_TRUE(joint->getTransform(state).equal(joint->getTransform(0.1)));
+
+	Transform3D<> multiplyTransform_res = T; // initial value should not influence result
+	joint->multiplyTransform(T, state, multiplyTransform_res);
+	EXPECT_TRUE(multiplyTransform_res.equal(T*joint->getTransform(state)));
+
+	Transform3D<> multiplyJointTransform_res = T; // initial value should not influence result
+	joint->multiplyJointTransform(T, Q(1,0.1), multiplyJointTransform_res);
+149:    /// 零位偏置：q_authoritative = q_zeroOffset + q_rw（RobWork 侧 q 从零起算）。
+151:    double zeroOffset = 0.0;
+59:| PA-1 | 权威唯一 | 每类影响计算的语义只有一个所有者单元：修订与写路径→project；运动学真值→runtime；名称解析→runtime；共享策略→policy；评估协作→evidence；单位/指标/诊断文案→core/diagnostics；命令入口与快捷键→ui（§7.11） |
+252:| runtime owner | 编译/物化 WC、DWC、Device/Frame、名称映射及发布；各进程实例复用同一构造规则 | 不是全局共享可变 State；policy 仍拥有碰撞语义，execution 仍拥有调度与结果接纳 |
+753:| SA-19 | 上游分形态使用、runtime owner、宿主精确例外、证据/诊断承重墙、worker 隔离；功能级复用与权限分别举证 | §3.6 | ARC-02/03/04/05、CON-04/05/06、NFR-MNT-01/02/03、H1—H6 | §3.6.5 B/C/D/E；不批准平行核心或通用二次框架 |
+857:| v0.15 | 2026-10-22 | 所有者最终复用方案的文档治理：新增 §3.6 / SA-19（分形态权限、runtime owner、四组宿主精确例外、evidence/diagnostics 与 worker 边界、B/C/D/E 被否备选）；链接逐功能审计/catalog/正向证据及待实现门禁契约。需求及依赖白名单不变，本轮不改产品代码/门禁实现，不批准新核心。 |
+dd27799a1afd6ba080c7ad7b4ec9d6db9da86e38

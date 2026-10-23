@@ -1,0 +1,16 @@
+{
+  "arguments": [
+    "rg",
+    "-n",
+    "-i",
+    "CreateProcess|JobObject|fork\\s*\\(|popen|spawn|processrunner|QProcess",
+    "RobWork/RobWork/src",
+    "RobWork/RobWorkSim/src",
+    "RobWork/RobWork/gtest",
+    "RobWork/RobWorkSim/gtest"
+  ],
+  "exitCode": 0,
+  "hits": 2,
+  "sameHitSet": true,
+  "note": "原记录fork正则双反斜杠，独立补查正确空白/左括号转义；仅核实补查命中，不据同名未命中宣告缺口。"
+}

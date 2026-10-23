@@ -1,0 +1,72 @@
+[
+  {
+    "name": "scope-valid",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "marker": "verify-task-scope: PASS",
+    "passed": true,
+    "arguments": [
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/verify-task-scope.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+      "-Base",
+      "cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7",
+      "-Head",
+      "daf0dcd175fb76c956154fe0213f2d791dad8575"
+    ]
+  },
+  {
+    "name": "scope-invalid-sha",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "marker": "cannot resolve base commit",
+    "passed": true,
+    "arguments": [
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/verify-task-scope.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\doc\\industrial-robot-design\\tasks\\REUSE-T01.json",
+      "-Base",
+      "B23_NO_SUCH_COMMIT",
+      "-Head",
+      "HEAD"
+    ]
+  },
+  {
+    "name": "scope-forbidden",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "marker": "\\[forbidden\\].*reuse/catalog.json",
+    "passed": true,
+    "arguments": [
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/verify-task-scope.ps1",
+      "-TaskFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\.cache\\b23-governance\\forbidden-task.json",
+      "-Base",
+      "cff60ddd4a05fdae399932d8b6a3ccb5b1cdada7",
+      "-Head",
+      "daf0dcd175fb76c956154fe0213f2d791dad8575"
+    ]
+  },
+  {
+    "name": "b1-valid",
+    "exitCode": 0,
+    "expectedExit": 0,
+    "marker": "validate-b1-batch: PASS",
+    "passed": true,
+    "arguments": [
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/validate-b1-batch.ps1"
+    ]
+  },
+  {
+    "name": "b1-order",
+    "exitCode": 1,
+    "expectedExit": 1,
+    "marker": "stage order must be contiguous",
+    "passed": true,
+    "arguments": [
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\RobWork\\scripts\\industrialrobot/validate-b1-batch.ps1",
+      "-BatchFile",
+      "C:\\Users\\zgl18\\AppData\\Local\\Temp\\REUSE-T01-batch23-accept-a887070b624e4eb7837db502b230cbb0\\repo\\.cache\\b23-governance\\invalid-batch.json"
+    ]
+  }
+]

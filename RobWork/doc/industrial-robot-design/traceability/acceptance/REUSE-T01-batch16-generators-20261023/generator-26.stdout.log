@@ -1,0 +1,18 @@
+integrity:
+  { "path": "inputs/valid/manifest.json", "sha256": "010bea460f6e16b4bf0f3743106d9b164ed23abc1a1198d8691c73c73280a410", "sizeBytes": 8202 },
+  { "path": "inputs/valid/motors.csv", "sha256": "f8f9c09dc3cdc7b8d3ae583d6cd7df7de01d3824b761a6c1333036f70d610563", "sizeBytes": 428 },
+  { "path": "inputs/valid/gearboxes.csv", "sha256": "5c67d2735e1e4b88198ad66d1503f516c14bd9fb5f33c714813de47ec922771b", "sizeBytes": 410 },
+  { "path": "inputs/valid/capability_curves.csv", "sha256": "e5490da0189727068789ad847366d10915ba57c008252ef12348a255c6deb2bc", "sizeBytes": 721 },
+  { "path": "inputs/valid/compatibility.csv", "sha256": "26fa841968c7646646fda6db90da8a20dce96f07634ebefb2d9d446235c54af2", "sizeBytes": 78 },
+  { "path": "inputs/valid/linear_drives.csv", "sha256": "170b7fcd2ed6247f606894431ed0855bf3fb1d1d50c16b1cc9a4f0b271ee85a7", "sizeBytes": 551 },
+  { "path": "inputs/invalid/range-linear.csv", "sha256": "59ce21178a6c9d64006f378df5f189947659c4f3583816a96e9d47a6560f802d", "sizeBytes": 549 },
+  { "path": "inputs/invalid/kind-linear.csv", "sha256": "26483ff3959d6a8a4a5ec4ce2bd8bf727ba85e27898f87a740f4ecc0e31dec10", "sizeBytes": 552 },
+  { "path": "inputs/invalid/dup-linear.csv", "sha256": "3a74949859f8988a486a138b4e426008b17e30fbaccc9786b03b694ec81e55f1", "sizeBytes": 632 },
+  { "path": "inputs/invalid/missing-linear.csv", "sha256": "56cc5847648111cbc4e2ff899d21f21ffb529e74de65c7711cd029b3cd328bd2", "sizeBytes": 547 },
+  { "path": "inputs/invalid/dangling-linear.csv", "sha256": "5f2c428dcf674816c97c8b90e11ddae2e61c9c6e230587ea8737aedefabe34bd", "sizeBytes": 552 },
+  { "path": "inputs/invalid/unit-curves-linear.csv", "sha256": "b5a7746fca12388b0982ca28d04bd0cbcaabf0f254ab20bf753a47d0bbebcf00", "sizeBytes": 723 },
+  { "path": "inputs/invalid/unordered-curves-linear.csv", "sha256": "8503df11ec53c34def9df6068cc6b722b33f66d4f7c46e9f49368b91e7f3e0b7", "sizeBytes": 721 },
+  { "path": "inputs/screening-inputs.json", "sha256": "868c04d7fbfc17122c50c67ecdda8f97f2470ecebce2f9cc268fdf853b96c7dd", "sizeBytes": 4584 },
+  { "path": "expected/linear-catalog-expected.json", "sha256": "ef06f69e6c7170a0122a31065caa58df7c89bbd213655dd6bf4d5543c6664b5b", "sizeBytes": 7218 },
+  { "path": "expected/linear-screening-expected.json", "sha256": "729e926950e86e8424a0a83c4ac89e4c6220366855c6ad0eecace37fb4965d7b", "sizeBytes": 8106 },
+done: expected/linear-catalog-expected.json + expected/linear-screening-expected.json

@@ -1,0 +1,303 @@
+[
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "sourceMatchesDefinition": true,
+    "start": "CandidateId makeCid(unsigned char seed)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeCid"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "sourceMatchesDefinition": true,
+    "start": "FeasibleCandidate makeCandidate(unsigned char seed, double envelope,",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeCandidate"
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "sourceMatchesDefinition": true,
+    "start": "ObjectiveSet makeTwoObjectives()",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeTwoObjectives"
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "sourceMatchesDefinition": true,
+    "start": "std::vector<CandidateId> idsOf(const ParetoFrontResult& r)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::idsOf"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "sourceMatchesDefinition": true,
+    "start": "std::vector<std::uint8_t> asBytes(const std::string& text)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::asBytes"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "sourceMatchesDefinition": true,
+    "start": "Digest256 digestOf(const std::string& text)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::digestOf"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "sourceMatchesDefinition": true,
+    "start": "ResourceNode existingNodeFor(const std::string& relPath, const std::string& content)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::existingNodeFor"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "sourceMatchesDefinition": true,
+    "start": "ResourceNode missingNode(const std::string& relPath)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::missingNode"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "sourceMatchesDefinition": true,
+    "start": "ResourceEdge includeEdge(const std::string& fromRel, const std::string& toRel)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::includeEdge"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "sourceMatchesDefinition": true,
+    "start": "ValidatedXacroSource makeXacroSource(",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeXacroSource"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "sourceMatchesDefinition": true,
+    "start": "std::string asText(const ExpandOutcome& outcome)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::asText"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "sourceMatchesDefinition": true,
+    "start": "std::size_t findDiag(const std::vector<sdurws::ird::core::DiagnosticRecord>& diags,",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::findDiag"
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "sourceMatchesDefinition": true,
+    "start": "ValidatedXacroSource makeBasicSource()",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeBasicSource"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "sourceMatchesDefinition": true,
+    "start": "void expectNearRel(double actual, double expected, const char* what)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::expectNearRel"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "sourceMatchesDefinition": true,
+    "start": "DynamicsSample rowAt(double t, std::uint32_t segment, std::uint32_t joint,",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::rowAt"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "sourceMatchesDefinition": true,
+    "start": "SeriesIdentity makeIdentity(const std::string& tag, std::size_t planned)",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makeIdentity"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "sourceMatchesDefinition": true,
+    "start": "double prismAxialForce() { return (kPrismMass + kRevMass) * kMixG; }",
+    "end": "double prismAxialForce() { return (kPrismMass + kRevMass) * kMixG; }",
+    "qualifiedSymbol": "(global anonymous namespace)::prismAxialForce"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "sourceMatchesDefinition": true,
+    "start": "double revTorque()",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::revTorque"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "sourceMatchesDefinition": true,
+    "start": "inline CanonicalModel makePrismRevModel()",
+    "end": "}",
+    "qualifiedSymbol": "(global anonymous namespace)::makePrismRevModel"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "sourceMatchesDefinition": true,
+    "start": "    bool cancellationRequested() const override { return mCancelled; }",
+    "end": "    bool cancellationRequested() const override { return mCancelled; }",
+    "qualifiedSymbol": "(global anonymous namespace)::FakeContext::cancellationRequested"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "sourceMatchesDefinition": true,
+    "start": "    void reportProgress(std::uint8_t, std::string_view) override {}",
+    "end": "    void reportProgress(std::uint8_t, std::string_view) override {}",
+    "qualifiedSymbol": "(global anonymous namespace)::FakeContext::reportProgress"
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "sourceMatchesDefinition": true,
+    "start": "    std::optional<std::vector<std::uint8_t>> tryObjectBytes(",
+    "end": "    }",
+    "qualifiedSymbol": "(global anonymous namespace)::FakeContext::tryObjectBytes"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.conditionIdHex",
+    "sourceMatchesDefinition": true,
+    "start": "function conditionIdHex(seed) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::conditionIdHex"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.trapezoid",
+    "sourceMatchesDefinition": true,
+    "start": "function trapezoid(ts, ys) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::trapezoid"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.rneaReference",
+    "sourceMatchesDefinition": true,
+    "start": "function rneaReference(m, gz, q, qd, qdd) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::rneaReference"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.statValue",
+    "sourceMatchesDefinition": true,
+    "start": "function statValue(row, token) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::statValue"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mapCase",
+    "sourceMatchesDefinition": true,
+    "start": "function mapCase(m, gz, cs, condHex) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::mapCase"
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mergeEnvelopeReference",
+    "sourceMatchesDefinition": true,
+    "start": "function mergeEnvelopeReference(caseIds, perCase) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::dyn-two-link-analytic::mergeEnvelopeReference"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.aabb",
+    "sourceMatchesDefinition": true,
+    "start": "function aabb(x0, x1, y0, y1, z0, z1) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::aabb"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.splitmixNext",
+    "sourceMatchesDefinition": true,
+    "start": "function splitmixNext(state) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::splitmixNext"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.unitFrom",
+    "sourceMatchesDefinition": true,
+    "start": "function unitFrom(u64) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::unitFrom"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.sha256Hex",
+    "sourceMatchesDefinition": true,
+    "start": "function sha256Hex(buf) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::sha256Hex"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.patchCanonicalBytes",
+    "sourceMatchesDefinition": true,
+    "start": "function patchCanonicalBytes(items) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::patchCanonicalBytes"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.candidateIdHex",
+    "sourceMatchesDefinition": true,
+    "start": "function candidateIdHex(oidCanonical, cvCanonical, patchIdHex) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::candidateIdHex"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.computeMetrics",
+    "sourceMatchesDefinition": true,
+    "start": "function computeMetrics(f) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::computeMetrics"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.generateBatch",
+    "sourceMatchesDefinition": true,
+    "start": "function generateBatch(cfg, vars) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::generateBatch"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.statusOf",
+    "sourceMatchesDefinition": true,
+    "start": "function statusOf(kind) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::statusOf"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.closeWithin",
+    "sourceMatchesDefinition": true,
+    "start": "function closeWithin(a, b, tol) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::closeWithin"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominates",
+    "sourceMatchesDefinition": true,
+    "start": "function dominates(a, b, objectives) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::dominates"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.bindObjectives",
+    "sourceMatchesDefinition": true,
+    "start": "function bindObjectives(list) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::bindObjectives"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.buildFront",
+    "sourceMatchesDefinition": true,
+    "start": "function buildFront(members, objectives) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::buildFront"
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominanceMatrix",
+    "sourceMatchesDefinition": true,
+    "start": "function dominanceMatrix(front, objectives) {",
+    "end": "}",
+    "qualifiedSymbol": "ESModule::opt-pareto-golden::dominanceMatrix"
+  },
+  {
+    "functionId": "foundation-governance.make_import_expectations.fixtureGeneration",
+    "sourceMatchesDefinition": true,
+    "start": "const importReport = {",
+    "end": "console.log('mdl-urdf-import: expected/import-report.json + expected/xacro-samples.json 已生成');",
+    "qualifiedSymbol": "ESModule::mdl-urdf-import::fixtureGeneration"
+  }
+]

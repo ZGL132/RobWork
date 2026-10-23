@@ -1,0 +1,25 @@
+{
+  "source": "C:/Users/zgl18/.codex/worktrees/reuse-audit/RobWork",
+  "destination": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-b33-accept-20261023-072024\\clone",
+  "cloneArguments": [
+    "-c",
+    "core.longpaths=true",
+    "clone",
+    "--local",
+    "--no-hardlinks",
+    "--no-checkout"
+  ],
+  "checkout": "--detach e5c58aa0b6b3958b90e3a22ef42c36e4c9a4dc7e",
+  "coreLongpaths": "true",
+  "alternatesPresent": false,
+  "sourceUntrackedAtStart": [
+    ".cache/"
+  ],
+  "sourceLaterUntrackedObserved": [
+    ".cache/",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch34/"
+  ],
+  "sharedSourceWritesPerformed": false,
+  "network": false,
+  "newAgentsSpawned": 0
+}

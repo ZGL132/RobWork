@@ -1,0 +1,47 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B28",
+  "baseline": "8593a2e4b25b098de00bfdbeb58f30f1c656d891",
+  "tests": {
+    "final-core": {
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "final-probe": {
+      "total": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    }
+  },
+  "initialLaunch": {
+    "exit": -1073741515,
+    "testsExecuted": false,
+    "cause": "PATH缺少RobWorkSim DLL目录；dumpbin列sdurwsim/sdurwsim_bullet，补PATH后真实执行"
+  },
+  "build": {
+    "probe": "PASS",
+    "core": "PASS via generated original vcxproj",
+    "firstCombined": "probe built; core test project not found in top solution; retained MSB1009"
+  },
+  "independentAcceptance": "pending",
+  "productionChanges": false,
+  "remoteSync": "not executed per owner",
+  "notRun": [
+    "产品迁移/算法修复",
+    "execution总线并发/重入/性能",
+    "上游完整测试集",
+    "全项目审计其余功能",
+    "远程CI"
+  ]
+}

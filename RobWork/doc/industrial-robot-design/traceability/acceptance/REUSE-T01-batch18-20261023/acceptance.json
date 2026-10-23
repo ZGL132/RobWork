@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "ird-independent-acceptance/1",
+  "taskId": "REUSE-T01",
+  "batch": "B18",
+  "reviewedCommit": "daee4f8905587b05cd1bab88bb570b8dc240097c",
+  "parentCommit": "3a8375eac74408d06ba8999013635428aa6c90e7",
+  "decision": "PASS",
+  "scope": "46条policy pending登记、COLLISION/MODEL-BOUNDS候选权限、诊断边界、F-961表述与原probe独立执行；非产品合规通过",
+  "findings": [],
+  "definitionCount": 46,
+  "contextAndEvidenceBindings": 506,
+  "candidateHashChecks": 19,
+  "originalEvidenceBindings": {
+    "passed": 9,
+    "failed": 0
+  },
+  "matrixDelta": {
+    "added": 46,
+    "existingRowsUnchanged": true
+  },
+  "searchReplay": {
+    "commands": 6,
+    "exitCodes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "sortedLineSetsMatch": true,
+    "note": "rg并行枚举前4组行序不同，逐行集合相同；后2组逐字一致。"
+  },
+  "build": {
+    "fresh": true,
+    "cmake": "original frozen probe-r18/CMakeLists.txt",
+    "generator": "Visual Studio 17 2022",
+    "arch": "x64",
+    "configureExit": 0,
+    "buildExit": 0,
+    "target": "ird_policy_boundary_audit"
+  },
+  "test": {
+    "filter": "ReusePolicyBoundary.*",
+    "passed": 1,
+    "failed": 1,
+    "skipped": 0,
+    "notRun": 0,
+    "exitCode": 1,
+    "verdict": "EXPECTED RED REPRODUCED",
+    "nativeXmlExitAgreement": true
+  },
+  "F-961": {
+    "status": "open",
+    "independentlyReproduced": true,
+    "impact": "公开setup产物规则不匹配原完整名；未证明碰撞数值漏检"
+  },
+  "gates": {
+    "verifyTaskExit": 0,
+    "machineCommands": 3,
+    "validateTask": "PASS",
+    "validateReuse": "PASS governance only",
+    "validateDocs": "PASS",
+    "DeepEvidence": "NOT RUN"
+  },
+  "notRun": [
+    "原policy完整套件（虽被注册）",
+    "Models::inBounds数值适用性",
+    "真实碰撞/距离数值",
+    "生命周期/并发/性能",
+    "诊断正式显示全链",
+    "GUI",
+    "全T01退出及T02迁移"
+  ],
+  "operationalEvents": [
+    "首次检出因Windows长路径失败；仅独立clone设core.longpaths后重新检出成功。",
+    "首次exe启动因框架DLL目录未入PATH返回-1073741515，未执行用例；保留原记录。按导出目标实际build/RobWork/bin/Release供DLL并沿用已固化PythonDir，VS x64下同exe真实运行2项。",
+    "初审脚本对无末换行native报告仅LF规范化产生假摘要差异；按仓库Digest统一末LF后9/9匹配，保留初审日志不登记虚假缺陷。"
+  ],
+  "productUpstreamChanges": false,
+  "cloneFinalGitClean": true,
+  "implementationTreeModified": false,
+  "commitPushMerge": false,
+  "artifactsRawSha256": {
+    "semantic-review.json": "be62719c6d698d8584d2d513a93ecf4dd402d9055561d588727753fc4c0f1055",
+    "definition-checks.json": "943d1b5c56d08f9092bfb38072e4039fd3148130f299018355a69a629e0f00c8",
+    "binding-checks.json": "93ede6f7dea0dfbe3253dbb54c3646556e18a46791fc2b6559af76094cb6a084",
+    "candidate-checks.json": "704f711d9b6e7cd174bf27c7ec92765bc4eb9cce6b7b174d397da3146768b27a",
+    "original-evidence-checks.json": "24c0aad406362231717e9a65f32d148755fcc372c717ff4a5e67d1b5507822d7",
+    "native-xml-exit-checks.json": "8d468b2ab2e55eec4a22a7ca616f41c6c0ea6d8b378df7db5e912152e49919eb",
+    "search-replay.json": "2b8e3ba4e5830a35627d7540fa404da044bf6f40327f5751eeba38e2943fc113",
+    "configure.log": "c95a41c9ca6738ae0a4acf14e4afa0191d6b18c75aeec22e812ff963de515867",
+    "build.log": "d33e7eba44b338952d81f2780cc1e399bd1cbc3438fb6b7ec903e90371f5e8d9",
+    "stdout.log": "6892ff0e04fafa41468858aa1afab80506d1f66f8e44ed22bdbc269a8fa00728",
+    "gtest.xml": "16f271da831099a3bcfeb176aba1b6955e03bcaf9b68a719ac4861e70f11c05a",
+    "ird-test-report.json": "32020543c38d58e8a4f16aaba3cbda7cccf239cf4ee584b76bf1e339fa8e8e6a",
+    "verify-task.log": "abf0ca57f0161d8bc420235e199161c30ec6f4ce94d76475b5aa0b63aa577a1f",
+    "run-executable.ps1": "14ae5350f023f8a811f017af45812970c1b29e40931193b82aea43b66f841412"
+  }
+}

@@ -1,0 +1,113 @@
+[
+  {
+    "index": 1,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "xacro|substitute|macro|escapeXml|XMLParser|DOMParser",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/gtest",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 376,
+    "actualLines": 376,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 2,
+    "arguments": [
+      "rg",
+      "-n",
+      "-i",
+      "endian|hexadecimal|toHex|fromHex|little_endian|little_to_native|isLittleEndian",
+      "RobWork/RobWork/src",
+      "RobWork/RobWorkSim/src",
+      "-g",
+      "*.hpp",
+      "-g",
+      "*.cpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 10,
+    "actualLines": 10,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 3,
+    "arguments": [
+      "rg",
+      "-n",
+      "BINArchive|writeValue|doWrite|doRead|sizeof",
+      "RobWork/RobWork/src/rw/common/BINArchive.hpp",
+      "RobWork/RobWork/src/rw/common/BINArchive.cpp",
+      "RobWork/RobWork/gtest/common"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 134,
+    "actualLines": 134,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 4,
+    "arguments": [
+      "rg",
+      "-n",
+      "encodeFrame|FrameAssembler|FrameSequencer|MessageReassembler|fragmentMessage|manifestDigestHex|XacroExpandService|escapeXml",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 160,
+    "actualLines": 160,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 5,
+    "arguments": [
+      "rg",
+      "-n",
+      "XacroExpand.cpp|pugixml|ChannelProtocol.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/CMakeLists.txt"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 16,
+    "actualLines": 16,
+    "matches": true,
+    "differences": []
+  },
+  {
+    "index": 6,
+    "arguments": [
+      "rg",
+      "-n",
+      "format_no_escapes|format_raw|void print|void save|load_buffer|class PUGIXML_CLASS xml_writer",
+      "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/pugixml.hpp"
+    ],
+    "expectedExit": 0,
+    "actualExit": 0,
+    "savedLines": 14,
+    "actualLines": 14,
+    "matches": true,
+    "differences": []
+  }
+]

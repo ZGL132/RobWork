@@ -1,0 +1,47 @@
+{
+  "taskId": "REUSE-T01",
+  "batch": "B29",
+  "frozenCommit": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+  "baseCommit": "f2e65141259cd43ee5e63799514a733908440355",
+  "result": "PASS",
+  "boundary": "B29局部独立本地验收，不授全T01/T02，不关闭B28",
+  "powershell7": {
+    "skipped": 0,
+    "exitCode": 0,
+    "failed": 0,
+    "passed": 21,
+    "notRun": 0
+  },
+  "powershell51": {
+    "skipped": 0,
+    "exitCode": 0,
+    "failed": 0,
+    "passed": 21,
+    "notRun": 0
+  },
+  "independentProbes": {
+    "skipped": 0,
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0
+  },
+  "staticChecks": {
+    "failed": 0,
+    "passed": 6
+  },
+  "requiredChecks": {
+    "reuseFrozenHead": 0,
+    "task": 0,
+    "commitLint": 0,
+    "docs": 0,
+    "scope": 0
+  },
+  "rawManifestEntries": 95,
+  "changedPaths": 101,
+  "matrixRows": 7,
+  "remote": "NOT RUN",
+  "implementation": "NOT PERFORMED",
+  "merge": "NOT RUN",
+  "sourceModified": false,
+  "timestamp": "2026-10-23T06:30:54.6851054+08:00"
+}

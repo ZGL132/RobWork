@@ -1,0 +1,4 @@
+RobWork/RobWorkSim\src\rwsim\util\PreshapeSampler.hpp
+RobWork/RobWorkSim\src\rwsim\util\PreshapeSampler.cpp
+RobWork/RobWorkSim\src\rwsim\util\PreshapeGraspStrategy.hpp
+RobWork/RobWorkSim\src\rwsim\util\PreshapeGraspStrategy.cpp

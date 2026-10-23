@@ -1,0 +1,1807 @@
+FUNCTION diagnostics.StableCodeRegistry.registerCode
+DIFF 稳定码词表/元数据注册是diagnostics权威；上游Log日志等级不能替代稳定码和文案契约。继续审查内部schema解析与摘要工具，不能整文件business-specific
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/DiagCodes.cpp 604-720
+void StableCodeRegistry::registerCode(const CodeDescriptor& descriptor)
+{
+    // 运行期（seal 后）调用＝装配期契约违约（§9.1"注册（装配期；运行期
+    // 调用抛 DiagnosticsError(Usage)）"——判据实现口径见类注释）。
+    if (m_sealed) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "运行期 registerCode（码 " + descriptor.code + "）——注册仅限装配期");
+    }
+
+    // ---- 注册期验证（§4.5"注册期验证"行；检查序固定如下，首错即停并
+    // 指明字段——detail 携带字段名，满足"任一失败即拒绝并指明字段"）----
+
+    // ①句法：^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64（异常文本/小写串在此拦截——
+    // DT-REG-4 的注册侧原语：字符串不经登记不可能成为码）。
+    if (!isValidDiagCodeSyntax(descriptor.code)) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 code 句法非法（^[A-Z0-9]+(-[A-Z0-9]+)*$ 且 ≤64）: "
+                               + descriptor.code);
+    }
+
+    // ②前缀-所有权一致：首段必须在 §4.5 前缀表内且与 ownerUnit 声明域一致
+    // （"前缀即所有权声明，跨前缀注册拒绝"——§9.1 将此场景归 CodeUnknown
+    // "前缀冲突"：该码不在其声称的所有权域内）。
+    const std::string_view* expectedOwner = expectedOwnerFor(descriptor.code);
+    if (expectedOwner == nullptr || *expectedOwner != descriptor.ownerUnit) {
+        throw DiagnosticsError(
+            DiagnosticsErrorCode::CodeUnknown,
+            "字段 ownerUnit 与码前缀所有权不符（码 " + descriptor.code + " 声明 ownerUnit="
+                + descriptor.ownerUnit + "）");
+    }
+
+    // ③paramSchema：必填＋受限 JSON 形＋参数名词形＋无重复（"非空且参数名
+    // 合法"——空数组 "[]" 是合法的显式"无参数"声明；完全缺省/空串＝违约，
+    // 因实例占位一致性校验（§9.2）需要明确的模式边界）。
+    if (const std::string schemaProblem = validateParamSchema(descriptor.paramSchema);
+        !schemaProblem.empty()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::ParamSchemaMismatch,
+                               "字段 paramSchema: " + schemaProblem);
+    }
+
+    // ④文案键（三步，检查序固定）：a) 非空（键体系为持久化契约——
+    // P-DIAG-9）；b) 跨码唯一（NFR-MNT-03 文案单一权威：一键多码使呈现端
+    // 无法分辨语义——重复定义＝DuplicateCode，同款注册边界拒绝）；c) 键形
+    // 命名约定（diag.<code-lower>.title/detail——P-DIAG-9 键体系冻结约定，
+    // 内置表经 derivedTextKey 单点派生全表合规；注册 API 的硬约束＝a/b，
+    // 键形偏离＝Usage 拒绝）。
+    if (descriptor.titleKey.empty() || descriptor.detailKey.empty()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 titleKey/detailKey 为空（键体系为持久化契约——P-DIAG-9）");
+    }
+    for (const std::string* key : {&descriptor.titleKey, &descriptor.detailKey}) {
+        if (m_textKeys.find(*key) != m_textKeys.end()) {
+            throw DiagnosticsError(DiagnosticsErrorCode::DuplicateCode,
+                                   "文案键重复（" + *key + "）——键随码表登记须注册期唯一");
+        }
+    }
+    if (descriptor.titleKey != derivedTextKey(descriptor.code, "title")
+        || descriptor.detailKey != derivedTextKey(descriptor.code, "detail")) {
+        throw DiagnosticsError(
+            DiagnosticsErrorCode::Usage,
+            "字段 titleKey/detailKey 偏离命名约定 diag.<code-lower>.title/detail（码 "
+                + descriptor.code + "）");
+    }
+
+    // ⑤确认不变量：confirmable ⇒ requiresComparison（SA-15"可确认必为
+    // 比较型"——core C-1 的注册表侧强化，§4.5 字段约束原文）。
+    if (descriptor.confirmable && !descriptor.requiresComparison) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：confirmable=true 要求 requiresComparison=true（SA-15）");
+    }
+
+    // ⑥Dev 码边界：userVisible/reportable/historical 强制 false（"瞬时开发
+    // 诊断不污染历史"——§4.5 字段约束原文；用户级/开发级分界）。
+    if (descriptor.severity == DiagnosticSeverity::Dev
+        && (descriptor.userVisible || descriptor.reportable || descriptor.historical)) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：Dev 码须 userVisible=reportable=historical=false（码 "
+                                   + descriptor.code + "）");
+    }
+
+    // ⑦迁移目标自引用（supersededBy==code＝无意义迁移——tombstone 语义面
+    // 自洽性校验；supersededBy 指向尚未注册的码允许：装配清单顺序自由，
+    // 迁移目标随清单其余码到位）。
+    if (descriptor.supersededBy.has_value() && *descriptor.supersededBy == descriptor.code) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段 supersededBy 自引用（码 " + descriptor.code + "）");
+    }
+
+    // ⑧重复注册拒绝（NFR-MNT-03：重复定义注册边界拒绝——不覆盖、不静默；
+    // §4.5 版本冲突行：同 code 不同 registryVersion 的并发注册＝同一拒绝
+    // 面。码是唯一键，元数据演进只能走装配清单修订，不走覆盖写）。
+    if (m_codes.find(descriptor.code) != m_codes.end()) {
+        throw DiagnosticsError(DiagnosticsErrorCode::DuplicateCode,
+                               "重复注册（码 " + descriptor.code + "）——不覆盖不静默（NFR-MNT-03）");
+    }
+
+    // ⑨级别-严重映射一致（F-618，2026-10-10 增列——追加于检查链尾，既有
+    // 检查序零变化）：severity 是映射唯一语义源，level 只允许机械派生值——
+    // severity==Error ⇔ level==Error、其余 severity ⇒ level==Warning。禁止
+    // 其他组合（如 severity=Warning 配 level=Error）＝两轴漂移的注册期拦截
+    // ——阻断轴级别驱动 runtime 发布拒绝（runtime §4.3.5），错标会改变
+    // "警告不阻断"承诺，必须在装配边界拒绝。
+    const core::DiagnosticLevel expectedLevel =
+        descriptor.severity == DiagnosticSeverity::Error ? core::DiagnosticLevel::Error
+                                                         : core::DiagnosticLevel::Warning;
+    if (descriptor.level != expectedLevel) {
+        throw DiagnosticsError(DiagnosticsErrorCode::Usage,
+                               "字段不变量违约：level 与 severity 映射不一致（码 "
+                                   + descriptor.code + "）——severity==Error ⇔ level==Error、"
+                                   "其余 severity ⇒ level==Warning（F-618）");
+    }
+
+    // 全部验证通过：登记（值拷贝入表——调用方此后修改 descriptor 与表无关）。
+    m_codes.emplace(descriptor.code, descriptor);
+    m_textKeys.emplace(descriptor.titleKey, descriptor.code);
+    m_textKeys.emplace(descriptor.detailKey, descriptor.code);
+}
+FUNCTION diagnostics.FileLogFileOps.appendLine
+DIFF 逐行开写关/写失败语义与上游LogWriter输出原语比较；锁与轮转不能未经验证换成全局Log
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp 369-373
+bool FileLogFileOps::appendLine(const std::filesystem::path& file, std::string_view line)
+{
+    std::lock_guard<std::mutex> lock(m_impl->mtx);
+    return m_impl->appendOne(file, line);
+}
+FUNCTION diagnostics.LoggingPipeline.log
+DIFF 日志线程排队候选；需核关闭排空、背压、配置顺序和worker批重放，队列API本身未证明全管线可替换
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp 1295-1300
+void LoggingPipeline::log(LogRecord record)
+{
+    validateRecordBasics(record);  // 结构性违约 fail-fast（环境面不抛——见实现注释）
+    m_impl->pushRecord(std::move(record), /*applyThrottle=*/true, /*applySampling=*/true,
+                       /*bounded=*/true);
+}
+FUNCTION evidence.aggregateVerdict
+DIFF 六级判定/工程与执行轴分离归evidence；不搬到适配层，不允许业务自行构造结果包络。需要继续核稳定诊断文案来源及全部输入消费者
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp 379-586
+VerdictResult aggregateVerdict(const VerdictInput& input,
+                               const AnalysisSnapshot& snapshot,
+                               const IProducerRegistryView& producers,
+                               const IProfileRegistryView& profiles)
+{
+    VerdictResult result;
+
+    // trace 预置固定六槽（⓪~⑤，level 升序）——evaluated/hit/note 随判定
+    // 推进填写；前级命中后未评估的级保留槽位（完整决策路径，NFR-COR-04）。
+    result.trace.records = {
+        {VerdictLevel::OutcomePrecheck, false, false, {}},
+        {VerdictLevel::InputReadiness, false, false, {}},
+        {VerdictLevel::CommonEvidenceGate, false, false, {}},
+        {VerdictLevel::InfeasibilityProof, false, false, {}},
+        {VerdictLevel::MissingEvidence, false, false, {}},
+        {VerdictLevel::EngineeringJudgement, false, false, {}},
+    };
+    VerdictLevelRecord* const records = result.trace.records.data();
+
+    // ============================ ⓪ 前置 ============================
+    // 执行轴与工程判定轴正交（CON-02）：取消/失败/中断没有工程判定可言
+    // （TASK-02）——envelope 侧强制 NotApplicable（§7），汇总器在此直接
+    // 短路，绝不把执行失败折算成不可行（§6.4.2 第一判定对）。
+    if (input.outcome != core::TaskOutcome::Completed) {
+        records[0] = {VerdictLevel::OutcomePrecheck, true, true,
+                      "任务结果非 Completed（取消/失败/中断）——执行轴问题无工程判定（TASK-02）"};
+        result.status = core::EngineeringStatus::NotApplicable;
+        result.trace.hitLevel = VerdictLevel::OutcomePrecheck;
+        result.diagnostics.push_back(makeVerdictDiag(
+            kDiagOutcomeNotCompleted, std::nullopt,
+            "任务结果非 Completed——不汇总工程判定（envelope 强制 NotApplicable）",
+            "处理执行轴问题（取消/失败/中断原因）后重新发起评估"));
+        return result;
+    }
+    records[0] = {VerdictLevel::OutcomePrecheck, true, false,
+                  "任务结果 Completed——进入工程判定链"};
+
+    // ============================ ① 输入非法 ============================
+    // REQ-06：任一启用 Must 条目非法＝输入未完成——评估不该被派发；若结果
+    // 对象仍产生（评估中检出），以此为由判数据不足（§6.4.1 ①行原文）。
+    if (!input.readiness.valid) {
+        records[1] = {VerdictLevel::InputReadiness, true, true,
+                      "输入未完成（REQ-06：存在非法的启用 Must 条目）——不运行正式评估"};
+        result.status = core::EngineeringStatus::DataInsufficient;
+        result.trace.hitLevel = VerdictLevel::InputReadiness;
+        // input-invalid 清单全量列出（不抽样——acceptance 2）。
+        for (const std::string& item : input.readiness.invalidMustItems) {
+            result.missingItems.push_back({item, "输入未完成（input-invalid）：启用 Must 条目非法"});
+        }
+        result.diagnostics.push_back(makeVerdictDiag(
+            kDiagInputNotReady, std::nullopt,
+            "输入未完成：非法的启用 Must 条目 " + std::to_string(input.readiness.invalidMustItems.size())
+                + " 项（全量见 missingItems）",
+            "在需求侧补全全部启用 Must 条目后重新发起评估"));
+        return result;
+    }
+    records[1] = {VerdictLevel::InputReadiness, true, false,
+                  "输入就绪（REQ-06 校验通过）"};
+
+    // ============================ ② 通用证据门禁 ============================
+    // C6 红线落点：不可行证明自身的可追溯性同受此门禁——本级命中即整体
+    // DataInsufficient，证明不进入③（调用序保证字面顺序）。
+    const CommonGateOutcome gate = collectCommonGateFailures(input, snapshot, profiles);
+    if (gate.failed) {
+        records[2] = {VerdictLevel::CommonEvidenceGate, true, true,
+                      "通用证据门禁失败（快照身份/固化/Profile 绑定/清单绑定/覆盖矩阵/区域证据形状）——"
+                      "证明不豁免门禁（C6）"};
+        result.status = core::EngineeringStatus::DataInsufficient;
+        result.trace.hitLevel = VerdictLevel::CommonEvidenceGate;
+        result.missingItems = std::move(gate.missingItems);
+        result.diagnostics = std::move(gate.diagnostics);
+        return result;
+    }
+    records[2] = {VerdictLevel::CommonEvidenceGate, true, false,
+                  "通用证据门禁通过（快照身份/固化/Profile 绑定/清单绑定/覆盖矩阵/区域证据形状）"};
+
+    // Profile 在②级已核实为已注册且内容身份一致——④级完备性核对直接取用
+    // （findProfile 二次查询：指针在②级分支未被存储，此处重新解析；同一
+    // 注册表同一键两次查询结果一致由实现方契约保证——只读注册表）。
+    const RequiredEvidenceProfile* profile =
+        profiles.findProfile(input.evidence.profileId, input.evidence.profileVersion);
+
+    // ============================ ③ 确定性不可行证明 ============================
+    // D-09（acceptance 3）：证明的字段级校验在此执行——存在性（optional
+    // 有值）绝不等于有效性；绑定一致性以快照与清单切片身份为事实面
+    // （expectedSliceId＝manifest.sliceId——"与被汇总结果一致"）。
+    std::vector<ProofIssue> proofIssues;
+    if (input.proof.has_value()) {
+        proofIssues = validateProof(*input.proof, producers, snapshot,
+                                    input.evidence.sliceId);
+    }
+
+    if (input.proof.has_value() && proofIssues.empty()) {
+        // ③命中：证明即该域必需产物——EngineeringInfeasible（P-EV-3 字面
+        // 顺序：即使他域/后续级存在缺失，本级先命中先输出）。
+        records[3] = {VerdictLevel::InfeasibilityProof, true, true,
+                      "存在有效确定性不可行证明（validateProof 字段级校验通过）——EngineeringInfeasible"};
+        result.status = core::EngineeringStatus::EngineeringInfeasible;
+        result.trace.hitLevel = VerdictLevel::InfeasibilityProof;
+        // §6.4.1 ③附加义务（I-6）：成功产物类证据按"因不可行而不适用"
+        // 记录——汇总器出具说明性诊断，列出 substitutable 项（清单本身的
+        // NotApplicable 标记义务在评估器侧，汇总器不重写清单；通用门禁类
+        // 〔substitutable==false〕不豁免——但本级命中后通用门禁已在②级
+        // 通过，无须再豁免）。
+        std::string substitutableIds;
+        if (profile != nullptr) {
+            const auto appendSubstitutable =
+                [&substitutableIds](const std::vector<EvidenceProfileItem>& items) {
+                    for (const EvidenceProfileItem& item : items) {
+                        if (item.substitutableByInfeasibility) {
+                            if (!substitutableIds.empty()) {
+                                substitutableIds += "、";
+                            }
+                            substitutableIds += item.itemId;
+                        }
+                    }
+                };
+            appendSubstitutable(profile->required);
+            appendSubstitutable(profile->suggested);
+        }
+        result.diagnostics.push_back(makeVerdictDiag(
+            kDiagInfeasibilitySubstitution,
+            input.proof->subject,
+            substitutableIds.empty()
+                ? "有效不可行证明成立——无 substitutable 成功产物类证据项需要豁免"
+                : "有效不可行证明成立——成功产物类证据按\"因不可行而不适用\"记录（substitutable 项："
+                      + substitutableIds + "）",
+            "按 RPT-05 评审记录资格呈现不可行结论及其原因（§7.2）"));
+        return result;
+    }
+    if (input.proof.has_value()) {
+        // 证明在场但无效：不输出不可行（D-09），落④级数据不足——无效
+        // 明细在④级统一列出（见下）。
+        records[3] = {VerdictLevel::InfeasibilityProof, true, false,
+                      "证明在场但字段级校验失败（" + std::to_string(proofIssues.size())
+                          + " 项问题）——无效证明不可采信（D-09），落④级数据不足"};
+    } else {
+        records[3] = {VerdictLevel::InfeasibilityProof, true, false,
+                      "无确定性不可行证明（搜索未果不是证明——C5/C8）"};
+    }
+
+    // ============================ ④ 必需证据缺失/数据不足 ============================
+    // 全量收集（不短路——acceptance 2）：gaps/无效证明/搜索未果/区域零样本
+    // 与降级/空必验集（P-EV-7）任一命中即 DataInsufficient，明细全量列出。
+    if (profile != nullptr
+        && collectDataInsufficient(input, snapshot, *profile,
+                                   input.proof.has_value(), proofIssues, result)) {
+        records[4] = {VerdictLevel::MissingEvidence, true, true,
+                      "必需证据缺失或数据不足（gaps/无效证明/搜索未果/区域零样本与降级/空必验集）"};
+        result.status = core::EngineeringStatus::DataInsufficient;
+        result.trace.hitLevel = VerdictLevel::MissingEvidence;
+        // 搜索未果记录透传（§6.3 末：附该记录——数据不足凭据，EV-VER-2/4）。
+        result.searchRecord = input.searchRecord;
+        return result;
+    }
+    // 防御：②级通过时 profile 必非空（未注册/错配已在②级拦截）——若注册
+    // 表实现违反"同一键查询稳定"契约导致此处为空，属于调用方违约，保守
+    // 判数据不足而非越级放行（宁可数据不足不可虚通过，P-EV-7 同向）。
+    if (profile == nullptr) {
+        records[4] = {VerdictLevel::MissingEvidence, true, true,
+                      "Profile 注册查询不稳定（②级通过后无法再次解析）——保守判数据不足"};
+        result.status = core::EngineeringStatus::DataInsufficient;
+        result.trace.hitLevel = VerdictLevel::MissingEvidence;
+        result.diagnostics.push_back(makeVerdictDiag(
+            kDiagProfileUnresolved, std::nullopt,
+            "Profile 注册查询不稳定：" + input.evidence.profileId + "@"
+                + input.evidence.profileVersion,
+            "检查 Profile 注册表实现（同一键查询必须稳定——只读契约）"));
+        return result;
+    }
+    records[4] = {VerdictLevel::MissingEvidence, true, false,
+                  "必需证据齐备（无 gaps/无效证明/搜索未果/区域降级，必验工况集非空）"};
+
+    // ============================ ⑤ 工程判定 ============================
+    // 证据齐备后的域判定汇总（REQ-06）：Must 违例→不可行（判定记录）；
+    // Should 违例→可行＋警告（不阻断）；否则可行。verdictInputs 透传进
+    // 诊断 cause（EV-VER-8 观测面——违例明细不丢失）。
+    records[5] = {VerdictLevel::EngineeringJudgement, true, true, {}};
+    result.trace.hitLevel = VerdictLevel::EngineeringJudgement;
+    if (!input.domain.mustViolations.empty()) {
+        records[5].note = "有效 Must 未满足 " + std::to_string(input.domain.mustViolations.size())
+                              + " 项——EngineeringInfeasible（REQ-06 判定记录）";
+        result.status = core::EngineeringStatus::EngineeringInfeasible;
+        for (const DomainVerdictViolation& violation : input.domain.mustViolations) {
+            result.diagnostics.push_back(makeVerdictDiag(
+                kDiagMustViolation, std::nullopt,
+                "Must 违例：" + violation.itemId + "——" + violation.detail,
+                "满足该 Must 条目或修订需求后重新评估"));
+        }
+        return result;
+    }
+    if (!input.domain.shouldViolations.empty()) {
+        // Should 未满足不阻断（REQ-06）——Feasible＋逐条警告诊断。
+        records[5].note = "Should 未满足 " + std::to_string(input.domain.shouldViolations.size())
+                              + " 项——Feasible＋警告诊断（不阻断，REQ-06）";
+        result.status = core::EngineeringStatus::Feasible;
+        for (const DomainVerdictViolation& violation : input.domain.shouldViolations) {
+            result.diagnostics.push_back(makeVerdictDiag(
+                kDiagShouldViolation, std::nullopt,
+                "Should 违例（警告，不阻断）：" + violation.itemId + "——" + violation.detail,
+                "评估是否满足该 Should 条目（工程建议——不阻断正式判定）"));
+        }
+        return result;
+    }
+    records[5].note = "证据齐备且无 Must/Should 违例——Feasible";
+    result.status = core::EngineeringStatus::Feasible;
+    return result;
+}
+FUNCTION execution.TaskScheduler.submit
+DIFF 双优先级、受理预算、状态机与身份属于execution编排；ThreadPool仅候选执行原语，不能抹掉Controller唯一写者/取消/终态
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp 163-237
+SubmitResult TaskScheduler::submit(TaskSubmission&& submission)
+{
+    // 主锁内完成"验证→分配→入队"整段（§4.3"提交（调度线程串行）"——
+    // 受理段的互斥即串行；并发提交各得唯一 TaskId＝互斥段内 generate()
+    // 各一次＋Id128 随机唯一，EX-SUB-1 的结构保证）。
+    std::lock_guard<std::mutex> lock(m_mutex);
+
+    // 关闭态拒新（§10.1 合法调用行"shutdown 后 submit→ExecutionError
+    // (ContextClosed)"——调用方违约走异常，非结构化拒绝：关闭后提交是
+    // 调用时序错误，不是提交内容问题）。m_drain.closed() 为幂等标志。
+    if (m_drain.closed()) {
+        throw ExecutionError(ExecutionErrorCode::ContextClosed,
+                             "execution/scheduler: submit after shutdown");
+    }
+
+    // V1~V3（形式/内容/权限——清单行序，首错即停）。结构化拒绝经
+    // diagnostics 不抛（§10.1 注）。
+    if (std::optional<core::DiagnosticRecord> diag = validateSubmission(submission)) {
+        return SubmitResult{false, std::nullopt, {*std::move(diag)}};
+    }
+
+    // V4 预算（等待队列容量——§6.1"提交期预算检查仅拒绝对列容量溢出"）。
+    if (!queueHasCapacity()) {
+        return SubmitResult{false, std::nullopt,
+                            {rejectionDiag("EX-TASK-REJECTED",
+                                           "等待队列已满（容量 "
+                                               + std::to_string(m_budget.queueCapacity)
+                                               + "）——提交被容量预算拒绝")}};
+    }
+
+    // ---- 受理段（§4.3 分配协议第一段：TaskId 分配在提交受理时完成） ----
+
+    // TaskId 全局唯一随机（thread_local 引擎——并发安全）；幂等性不按
+    // 提交内容承诺：同输入重复提交＝两个独立任务（§4.2 taskId 行）。
+    const TaskId taskId = TaskId::generate();
+
+    // 任务主记录（§4.2 字段默认值——state=Queued 由默认构造保证）。
+    // capability 在受理时即按注册表推导（§5.5"派发时查表推导"的归置：
+    // 注册表注册期＝L5 装配，先于一切提交，受理与派发间值不可能变化——
+    // 提前写入使 capability 的"此后不可变"纪律更早成立，登记 §15.4）。
+    TaskRecord record;
+    record.taskId = taskId;
+    record.submission = std::move(submission);
+    record.capability = m_collab.capabilities != nullptr
+        ? m_collab.capabilities->lookupOrMinimal(record.submission.evaluatorKey)
+        : TaskCapability{};
+
+    // T1：受理即 Queued（无 Created 态，P-EX-4）并同步发布
+    // TaskStatusChanged(Queued)——事件经 ITaskEventSink 适配（this）到
+    // 总线；总线未装配时以空 sink 构造（转移不发事件——合法装配）。
+    // "同任务事件 FIFO"的序基点：本事件是任务事件流的第一个元素
+    // （acceptance 1——同发布者 FIFO 的状态机侧保证点）。
+    auto machine = std::make_unique<TaskStateMachine>(
+        TaskStateMachine::forAcceptedSubmission(std::move(record),
+                                                m_eventBus != nullptr ? this : nullptr));
+    TaskStateMachine* machinePtr = machine.get();
+
+    // 登记进协议引擎（取消协议的受管面；attachTask 的"仅调度线程"约束
+    // 由主锁域＝调度串行域满足——头注模型）。TaskId 唯一性使重复登记
+    // 不可达（attachTask 的防御抛错＝受理段内部错误的显式暴露）。
+    m_controller.attachTask(std::move(machine));
+
+    // 入簿记与等待队列：双优先级（§6.1 队列排序行）——Interactive 全序
+    // 先于 Background，同级按提交序号 FIFO（单调递增排序键，D-04）。
+    const TaskPriority priority = machinePtr->record().submission.priority;
+    ScheduledTask entry;
+    entry.machine = machinePtr;
+    entry.priority = priority;
+    entry.submitSeq = m_nextSubmitSeq++;
+    m_tasks.emplace(taskId, entry);
+    (priority == TaskPriority::Interactive ? m_interactive : m_background)
+        .push_back(taskId);
+
+    return SubmitResult{true, taskId, {}};
+}
+FUNCTION execution.WorkerSupervisor.spawnNewWorker
+DIFF 当前使用Win32受控进程/作业对象及命名管道五元组；ThreadPool不提供这些隔离能力，不是可直接替代。继续核底层启动和IPC工具
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/WorkerSupervisor.cpp 264-344
+WorkerLaunchResult WorkerSupervisor::spawnNewWorker(const WorkerAssignment& assignment)
+{
+    // WorkerId 分配（单调自增；复用的进程沿用原 id——id 跟随记录不跟随任务）。
+    const WorkerId workerId{m_nextWorkerId.value++};
+
+    auto record = std::make_unique<WorkerRecord>(
+        workerId, m_clock,
+        m_config.channelSequencer);  // 序控参数经 Config 透传（窗口/缺口超时——实现参数）
+    record->identity = assignment.identity;
+    record->assignment = assignment;
+    record->tasksServed = 1;
+
+    // 管道名基底：主进程 pid＋worker id 保证全局唯一（跨监督器/跨会话
+    // 不冲突——命名管道是内核全局命名空间）。
+    const std::wstring baseName =
+        L"ird-exec-" + std::to_wstring(::GetCurrentProcessId()) + L"-"
+        + std::to_wstring(workerId.value);
+
+    // 绑定五元组命令行值（五个规范文本 '|' 连接——握手帧身份块的来源；
+    // 规范文本只含 [a-z0-9-]，'|' 作分隔符无歧义）。各段先落命名局部量
+    // ——迭代器对必须取自同一字符串实例，跨临时量取迭代器是未定义行为。
+    const std::string projCanon = assignment.identity.project.toCanonical();
+    const std::string brCanon = assignment.identity.branch.toCanonical();
+    const std::string revCanon = assignment.identity.revision.toCanonical();
+    const std::string runCanon = assignment.identity.run.toCanonical();
+    const std::string attCanon = assignment.identity.attempt.toCanonical();
+    const std::wstring identityArg =
+        std::wstring(projCanon.begin(), projCanon.end()) + L"|"
+        + std::wstring(brCanon.begin(), brCanon.end()) + L"|"
+        + std::wstring(revCanon.begin(), revCanon.end()) + L"|"
+        + std::wstring(runCanon.begin(), runCanon.end()) + L"|"
+        + std::wstring(attCanon.begin(), attCanon.end());
+
+    // 启动时序（见 ProcessLauncher.hpp：挂起→作业→Resume→关副本）。
+    win32::RealProcessOps ops;
+    win32::LaunchResult launched =
+        win32::launchWorkerProcess(m_executablePath, baseName, identityArg, ops, record->job);
+    if (!launched.ok || launched.channel == nullptr) {
+        // 启动失败：EX-WORKER-LAUNCH-FAILED（§6.4 退出码表 10 行的主进程
+        // 侧同源诊断——进程没起来，编排方 Preparing→Failed）。
+        WorkerLaunchResult failure;
+        failure.ok = false;
+        failure.diagnostics.push_back(launchFailedDiag(
+            "CreateProcessW/channel setup failed, win32 error " + std::to_string(launched.lastError)
+            + ", pipe base " + std::string(baseName.begin(), baseName.end())));
+        return failure;
+    }
+    record->pid = launched.pid;
+    record->processHandle = launched.processHandle;
+    record->channel = std::move(launched.channel);
+    record->handle = std::make_unique<HandleAdapter>(this, workerId);
+
+    // 心跳/活动时戳初始化为启动时刻（Booting 相不做失联判定——握手前
+    // worker 可能尚在装载运行时；失联判定只在 Running 相，EX-WKR-3 口径）。
+    const auto now = clockNow(m_clock);
+    record->lastHeartbeat = now;
+    record->lastActivity = now;
+
+    // 读线程启动（§6.2"通道读线程"——字节→帧→收件箱）。
+    WorkerRecord* raw = record.get();
+    raw->reader = std::thread([this, raw]() { readerLoop(*raw); });
+
+    // 状态投影（并发只读面——锁内镜像）。
+    {
+        std::lock_guard<std::mutex> lock(m_statusMutex);
+        WorkerStatus& view = m_statusView[workerId.value];
+        view.id = workerId;
+        view.pid = record->pid;
+        view.currentRun = assignment.identity.run;
+        view.phase = WorkerStatus::Phase::Booting;
+        view.lastHeartbeatUtc = std::chrono::system_clock::now();
+        view.tasksServed = record->tasksServed;
+    }
+
+    m_workers.emplace(workerId.value, std::move(record));
+
+    WorkerLaunchResult result;
+    result.ok = true;
+    result.worker = workerId;
+    return result;
+}
+FUNCTION modeling.zeroConfigFK
+DIFF 新发现零位验证自持链前向累计；优先runtime受控上游FK端口，禁止在modeling自建WorkCell；保留DH两描述等价性独立oracle与公差
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp 1780-1799
+std::vector<rw::math::Transform3D<double>> zeroConfigFK(const runtime::CanonicalModel& model)
+{
+    std::vector<rw::math::Transform3D<double>> frames;
+    const runtime::RobotChain& chain = model.chain();
+    frames.reserve(chain.joints.size());
+    rw::math::Transform3D<double> acc = model.world().T_world_base;
+    for (const runtime::CanonicalJoint& joint : chain.joints) {
+        // 零位旋转（轴角 Rodrigues——与 axisAngleRotation 同一实现，双方
+        // 同规；axis 为 S5 规格化单位向量）。
+        const rw::math::Rotation3D<double> zeroRot = axisAngleRotation(
+            joint.axis, joint.zeroOffset);
+        acc = transformMul(
+            transformMul(acc, rw::math::Transform3D<double>(joint.origin.P(),
+                                                            joint.origin.R())),
+            rw::math::Transform3D<double>(rw::math::Vector3D<double>(0.0, 0.0, 0.0),
+                                          zeroRot));
+        frames.push_back(acc);
+    }
+    return frames;
+}
+FUNCTION policy.RobWorkCollisionEvaluator.createSession
+DIFF 已有策略/互斥会话构造不是重复碰撞核心；继续审Scene来源、借持生命周期、State隔离与内置后端距离能力，保留唯一policy入口
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp 82-93
+RobWorkCollisionEvaluator::createSession(const EngineeringPolicySet& policy,
+                                         const CollisionScene& scene,
+                                         const IPolicyNameContext& names) const
+{
+    // 三步构建委托会话构造函数（单一实现——本类无第二套校验/展开逻辑；
+    // 后端实例与描述符取自本实例，保证 sessionIdentity 组成一致——§9.1
+    // "推荐取 evaluator->backend() 同源值"的机械落实；查询互斥为本实例
+    // 级单例——本评估器全部会话共享，跨会话并发安全）。
+    return std::make_shared<const CollisionEvaluationSession>(policy, scene, names,
+                                                              m_descriptor, m_strategy,
+                                                              m_queryMutex);
+}
+FUNCTION policy.CollisionEvaluationSession.evaluate
+DIFF 已有inCollision/distance结果消费，策略过滤与覆盖事实归policy；内置二值后端无distance时诚实Failed，需对照可用距离后端，不另写几何距离
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp 372-712
+CollisionEvaluationSession::evaluate(const CollisionQuery& q, const IPolicyCallContext& ctx) const
+{
+    // ---- ① 查询契约校验（唯一抛出点——调用方违约 fail-fast，§9.3）----
+    // 设备在评估半区装配恒非空（装配失败即无会话）；防御性判空仅为免于
+    // 假设（会话若以空设备存在则自由度按 0 处理——构型维度校验将拒绝）。
+    validateQueryShape(q, m_device.isNull() ? std::size_t{0} : m_device->getDOF());
+
+    // ---- 输出基座预填（全部出口共用——身份绑定＋静态覆盖事实，确定性）----
+    CollisionEvaluation out;
+    // 缺省态＝Failed（非终态）：任何提前出口不得虚标 Completed——逐出口显式覆写。
+    out.status = CollisionEvaluationStatus::Failed;
+    out.applicability = ScopeApplicability::Applicable;
+    out.finalized = false;
+    // 判定依据绑定（§8.4 素材——policy 只供给，任务级绑定归调用方/evidence）。
+    out.policyContentIdentity = m_policy.contentIdentity;
+    out.sceneIdentity = m_scene.sceneContentIdentity;
+    out.nameMapIdentity = m_nameMapIdentity;
+    // 静态覆盖事实（§6.2 计数语义——作用域展开产物的直接投影；pairsEvaluated
+    // 随评估推进如实累计，其余三计数为会话静态事实，Failed/Canceled 出口
+    // 也如实保留——"没检＝无碰撞"的防伪由显式计数承担，KIN-05）。
+    out.coverage.pairsInScope = static_cast<std::uint64_t>(m_scope.inScopePairCount());
+    out.coverage.pairsExcludedByRule = static_cast<std::uint64_t>(m_scope.excludedPairCount());
+    for (const ScopedPairEvaluation& p : m_evaluationPairs) {
+        if (p.bothEndsGeometry) {
+            ++out.coverage.pairsWithGeometry;
+        }
+    }
+    // 被过滤关系全量留痕（§7.2③——不因首个短路；规范序由 scope 保证；
+    // ruleOrigin＝§7.2②"规则引用＋理由"——显式排除对引用策略承载槽位并
+    // 附理由原文，默认相邻过滤为冻结字面量）。
+    for (const ScopedCollisionPair& p : m_scope.pairs) {
+        if (p.status == ScopePairStatus::ExcludedByRule) {
+            AppliedFilterRecord record;
+            record.objectA = p.objectA;
+            record.objectB = p.objectB;
+            record.ruleOrigin = "policy.excludedPairs[" + std::to_string(p.ruleIndex)
+                                    + "].reason=" + p.filterReason;
+            out.appliedFilters.push_back(std::move(record));
+        }
+        else if (p.status == ScopePairStatus::ExcludedByAdjacencyDefault) {
+            AppliedFilterRecord record;
+            record.objectA = p.objectA;
+            record.objectB = p.objectB;
+            record.ruleOrigin = "default.adjacent-links";
+            out.appliedFilters.push_back(std::move(record));
+        }
+    }
+
+    // ---- ② 迟到调用拒绝（§6.1/POL-LATE-1——输出永不入正式证据）----
+    if (!ctx.alive()) {
+        out.diagnostics.push_back(makeEvaluationDiagnostic(
+            kCodeContextExpired, std::nullopt, std::string{},
+            "调用上下文已失效（快照/运行已结束——迟到调用拒绝，POL-LATE-1）",
+            "重新发起携带存活上下文的评估；失效上下文的输出不得进入正式证据"));
+        return out;   // status=Failed，finalized=false
+    }
+
+    // ---- ③ 适用性判定（§6.2 ScopeApplicability——两者皆非"无碰撞"结论）----
+    if (!m_collisionEnabled) {
+        // 策略禁用被误调用（§4.3 总开关）——如实应答，finalized=true
+        // （"禁用"本身是已完成评估的确定性事实；消费方据 applicability
+        // 与空 coverage 识别，不得读作"无碰撞"）。
+        out.status = CollisionEvaluationStatus::Completed;
+        out.applicability = ScopeApplicability::CollisionDisabledByPolicy;
+        out.finalized = true;
+        return out;
+    }
+    if (m_evaluationPairs.empty()) {
+        // 作用域解析为空（域全禁/场景无对象/仅剩被过滤对）——§7.1 空作用
+        // 域行：EmptyScope≠"无碰撞"，KIN-05 口径由 coverage（全零在检
+        // 计数）表达。被过滤对的留痕（appliedFilters）仍全量输出。
+        out.status = CollisionEvaluationStatus::Completed;
+        out.applicability = ScopeApplicability::EmptyScope;
+        out.finalized = true;
+        return out;
+    }
+
+    // ---- ④ 距离能力核对（§6.3"检测器不可用"→Failed；KIN-05/P-POL-11）----
+    // 间距检查的激活条件＝策略 safetyClearance＞0（发布门保证 enabled 时
+    // 必有值，§5.2 行 5——nullopt 分支为防御；m=0 时间距检查退化为空，
+    // §7.4"m＝0"行）。距离查询的激活条件＝间距检查激活或调用方显式请求
+    // 最小距离（§6.2 requestMinDistance"间距检查需要时"）。需要而不可得
+    // →Failed＋DETECTOR-UNAVAILABLE：碰撞证据缺失归 DataInsufficient
+    // （消费方口径），绝不静默降级为"仅碰撞"输出。
+    const bool hasClearance = m_policy.collision.safetyClearance.has_value();
+    const double clearance = hasClearance ? m_policy.collision.safetyClearance->siValue() : 0.0;
+    const bool marginNeeded = hasClearance && clearance > 0.0;
+    const bool distanceNeeded = marginNeeded || q.requestMinDistance;
+    if (distanceNeeded && !m_distanceCapable) {
+        out.diagnostics.push_back(makeEvaluationDiagnostic(
+            kCodeDetectorUnavailable, std::nullopt, std::string{},
+            "注入后端无距离查询能力（DistanceStrategy 探测为否——内置二值碰撞后端；"
+            "间距检查" + std::string{marginNeeded ? "激活（safetyClearance＞0）" : "未激活"}
+                + "、最小距离请求" + std::string{q.requestMinDistance ? "是" : "否"}
+                + "——§6.3 检测器不可用/P-POL-11 登记口径）",
+            "以距离能力后端重建会话（待 WP-24 冻结 NFR-DEP-05 后端基线）或将查询改至"
+            "不依赖间距/最小距离的口径；本输出不入正式证据（KIN-05：缺检测器≠无碰撞）"));
+        return out;   // status=Failed，finalized=false
+    }
+
+    // ---- ⑤ 样本循环（§6.6 时序）----
+    if (q.requestMinDistance) {
+        out.minDistances = std::vector<SampleDistanceSummary>{};
+    }
+    // 查询缓存（每次评估独立持有——并发 evaluate 互不共享；碰撞与距离分
+    // 开两只：ProximityStrategyData 的缓存槽单所有者，混用会反复重建）。
+    rw::proximity::ProximityStrategyData collisionData;
+    rw::proximity::ProximityStrategyData distanceData;
+    // 逐对"已查询"标记（coverage.pairsEvaluated＝实际被后端查询过的对数
+    // ——至少查询一次即计入；stopAtFirstFinding/中途失败时如实反映）。
+    std::vector<char> pairQueried(m_evaluationPairs.size(), 0);
+    // 几何缺口对象的告知性诊断去重集（每对象每次评估至多一条——下标集）。
+    std::set<std::size_t> geometryMissingReported;
+
+    const std::size_t sampleCount = q.configurations.size();
+    for (std::size_t sample = 0; sample < sampleCount; ++sample) {
+        // 样本边界：协作取消检查点（§6.3 Canceled 行/TASK-02/UX-03）——
+        // 取消≠失败：部分 findings 保留、无错误诊断、finalized=false。
+        if (ctx.cancellationRequested()) {
+            out.status = CollisionEvaluationStatus::Canceled;
+            return out;
+        }
+
+        try {
+            // 基准态克隆→setState（§6.6：构型单位 rad；缺省基准态＝编译
+            // 产物默认态——§6.2 baseState"缺省=场景基准状态"）。
+            rw::kinematics::State state = q.baseState.has_value()
+                                              ? *q.baseState
+                                              : m_scene.workcell->getDefaultState();
+            m_device->setQ(q.configurations[sample], state);
+
+            // 逐对评估（遍历序＝作用域展开产物规范序——确定性；输出顺序
+            // 因此与生成序一致，最终仍经稳定排序兜底，§6.4）。
+            std::optional<double> sampleBestDistance;
+            std::optional<core::ObjectId> sampleBestA;
+            std::optional<core::ObjectId> sampleBestB;
+            bool sampleHasFinding = false;
+
+            for (std::size_t pairIndex = 0; pairIndex < m_evaluationPairs.size(); ++pairIndex) {
+                const ScopedPairEvaluation& pair = m_evaluationPairs[pairIndex];
+                const SceneObjectEvaluation& endA = m_evaluationObjects[pair.endAIndex];
+                const SceneObjectEvaluation& endB = m_evaluationObjects[pair.endBIndex];
+
+                // 几何缺口对：跳过（coverage.pairsWithGeometry 已显式缺口
+                // ——"没检≠无碰撞"由计数承担）；每对象至多一条告知性诊断
+                // （KIN-05：缺口是数据事实不是错误——不改变评估状态）。
+                if (!pair.bothEndsGeometry) {
+                    for (const std::size_t end : {pair.endAIndex, pair.endBIndex}) {
+                        const SceneObjectEvaluation& missing = m_evaluationObjects[end];
+                        if (missing.registeredGeometry
+                            || geometryMissingReported.find(end)
+                                   != geometryMissingReported.end()) {
+                            continue;   // 该端有几何（对级缺口的另一端）或已报告过
+                        }
+                        geometryMissingReported.insert(end);
+                        out.diagnostics.push_back(makeEvaluationDiagnostic(
+                            kCodeGeometryMissing, missing.object, missing.runtimeName,
+                            std::string{"作用域对象无有效碰撞几何（声明="}
+                                + (missing.declaredGeometry ? "有" : "无")
+                                + "，编译产物注册核对=" + (missing.declaredGeometry ? "无" : "-")
+                                + "）——该对象参与的对不计入已检（KIN-05）",
+                            "补全编译产物碰撞几何或将该对象移出碰撞域后重评；coverage 缺口"
+                            "由消费方按数据不足处理"));
+                    }
+                    continue;
+                }
+
+                // 当前样本下两端的世界变换（R_world_base 随编译产物内置
+                // ——MDL-22：policy 不做任何二次旋转，直接消费编译事实）。
+                const rw::math::Transform3D<> wTa =
+                    rw::kinematics::Kinematics::worldTframe(pair.frameA, state);
+                const rw::math::Transform3D<> wTb =
+                    rw::kinematics::Kinematics::worldTframe(pair.frameB, state);
+
+                // 碰撞检测（后端二值语义——含接触；§7.4"后端报告相交"行）。
+                bool colliding = false;
+                {
+                    std::lock_guard<std::mutex> lock(*m_backendQueryMutex);
+                    colliding = m_strategy->inCollision(pair.frameA, wTa, pair.frameB, wTb,
+                                                        collisionData);
+                }
+                if (pairQueried[pairIndex] == 0) {
+                    pairQueried[pairIndex] = 1;
+                    ++out.coverage.pairsEvaluated;
+                }
+
+                if (colliding) {
+                    // §7.4 行 4：碰撞发现——penetrationDepth 后端不可提供
+                    // ＝显式空（不伪造）；碰撞对不做距离查询（碰撞判定已由
+                    // 二值语义给出，穿透深度无二值后端来源）。
+                    CollisionFinding finding;
+                    finding.objectA = pair.objectA;
+                    finding.objectB = pair.objectB;
+                    finding.runtimeNameA = pair.runtimeNameA;
+                    finding.runtimeNameB = pair.runtimeNameB;
+                    finding.sampleIndex = sample;
+                    finding.pathParameter = (q.kind == CollisionQueryKind::PathSequence)
+                                                ? std::optional<double>(q.pathParameters[sample])
+                                                : std::nullopt;
+                    finding.kind = CollisionFindingKind::Collision;
+                    finding.measuredClearance = std::nullopt;
+                    finding.penetrationDepth = std::nullopt;
+                    finding.level = pair.level;
+                    out.findings.push_back(std::move(finding));
+                    sampleHasFinding = true;
+                    if (q.stopAtFirstFinding) {
+                        break;   // 提前终止（§6.2——筛选/淘汰场景；coverage 如实）
+                    }
+                }
+                else if (marginNeeded || q.requestMinDistance) {
+                    // 最小距离查询（d＝SI m；仅非碰撞对——见上）。
+                    double measured = 0.0;
+                    {
+                        std::lock_guard<std::mutex> lock(*m_backendQueryMutex);
+                        measured = m_distanceStrategy
+                                       ->distance(pair.frameA, wTa, pair.frameB, wTb,
+                                                  distanceData)
+                                       .distance;
+                    }
+                    // §7.4 行 5：d 为 NaN/±Inf → 评估失败（非有限实测值以
+                    // 原文保留；不伪造 0、不入 findings——NFR-COR-03）。
+                    // §7.5 行"NaN/±Inf 实测值"：该对评估 Failed＋诊断——
+                    // 评估级 Failed（继续评估将产出部分可信的间距判定）。
+                    if (!std::isfinite(measured)) {
+                        out.diagnostics.push_back(makeEvaluationDiagnostic(
+                            kCodeEvaluationFailed, std::nullopt, std::string{},
+                            "实测最小距离非有限（原文=" + formatRawDouble(measured)
+                                + "，SI m）: objA=" + pair.objectA.toCanonical()
+                                + ", objB=" + pair.objectB.toCanonical() + ", sample="
+                                + std::to_string(sample) + "——§7.4/§7.5 不伪造、不入 findings",
+                            "排查检测器数值状态与输入构型后重评；失败输出不入正式证据"));
+                        out.status = CollisionEvaluationStatus::Failed;
+                        return out;   // finalized=false
+                    }
+                    // §7.4 行 3：0 ≤ d ＜ m → 间距不足（非碰撞）；d＝m 边界
+                    // 含于安全侧（D-08 冻结——"安全间距"语义＝d ≥ m 即满足）。
+                    if (marginNeeded && measured < clearance) {
+                        CollisionFinding finding;
+                        finding.objectA = pair.objectA;
+                        finding.objectB = pair.objectB;
+                        finding.runtimeNameA = pair.runtimeNameA;
+                        finding.runtimeNameB = pair.runtimeNameB;
+                        finding.sampleIndex = sample;
+                        finding.pathParameter =
+                            (q.kind == CollisionQueryKind::PathSequence)
+                                ? std::optional<double>(q.pathParameters[sample])
+                                : std::nullopt;
+                        finding.kind = CollisionFindingKind::SafetyMarginViolation;
+                        finding.measuredClearance = measured;
+                        finding.penetrationDepth = std::nullopt;
+                        finding.level = pair.level;
+                        out.findings.push_back(std::move(finding));
+                        sampleHasFinding = true;
+                        if (q.stopAtFirstFinding) {
+                            break;
+                        }
+                    }
+                    // 逐样本最小距离追踪（仅 requestMinDistance——摘要承诺
+                    // 的是"已实测对"的最小，碰撞对未实测不参与）。
+                    if (q.requestMinDistance
+                        && (!sampleBestDistance.has_value() || measured < *sampleBestDistance)) {
+                        sampleBestDistance = measured;
+                        sampleBestA = pair.objectA;
+                        sampleBestB = pair.objectB;
+                    }
+                }
+            }
+
+            if (q.requestMinDistance) {
+                SampleDistanceSummary summary;
+                summary.sampleIndex = sample;
+                summary.minDistance = sampleBestDistance;
+                summary.nearestToA = sampleBestA;
+                summary.nearestToB = sampleBestB;
+                out.minDistances->push_back(std::move(summary));
+            }
+            if (sampleHasFinding && q.stopAtFirstFinding) {
+                break;   // 提前终止于样本边界（后续样本不评——coverage 如实）
+            }
+        }
+        // 异常捕获（§6.3：框架异常〔rw::common::Exception 及其他〕在
+        // 评估实现内必须捕获并转为 Failed＋诊断——不吞、不崩、异常不跨进
+        // 程边界"。捕获点在样本粒度：异常前已产出的 findings 为非终态部分
+        // 保留（§6.3 Failed 行）；pol::PolicyError 不可能自此抛出（查询
+        // 校验在循环外），std::logic_error 等替身边界违约同样转 Failed）。
+        catch (const rw::common::Exception& e) {
+            // cause 文案不含框架品牌子串（IRD-GATE-R4 启发式的字面量隔断
+            // ——与本单元唯一实现绑定 TU 的零字面量切分同动机；异常类型
+            // rw::common::Exception 在代码面自明）。
+            out.diagnostics.push_back(makeEvaluationDiagnostic(
+                kCodeEvaluationFailed, std::nullopt, std::string{},
+                std::string{"基线框架异常（rw::common::Exception，评估样本 "}
+                    + std::to_string(sample) + "）: " + e.what(),
+                "排查检测器/几何资源与输入构型后重评；失败输出不入正式证据"));
+            out.status = CollisionEvaluationStatus::Failed;
+            return out;   // finalized=false
+        }
+        catch (const std::exception& e) {
+            out.diagnostics.push_back(makeEvaluationDiagnostic(
+                kCodeEvaluationFailed, std::nullopt, std::string{},
+                std::string{"评估内部异常（样本 "} + std::to_string(sample) + "）: " + e.what(),
+                "排查检测器/几何资源与输入构型后重评；失败输出不入正式证据"));
+            out.status = CollisionEvaluationStatus::Failed;
+            return out;
+        }
+        catch (...) {
+            out.diagnostics.push_back(makeEvaluationDiagnostic(
+                kCodeEvaluationFailed, std::nullopt, std::string{},
+                std::string{"评估内部未知异常（样本 "} + std::to_string(sample)
+                    + "）——不吞、不崩，转稳定诊断",
+                "排查检测器/几何资源与输入构型后重评；失败输出不入正式证据"));
+            out.status = CollisionEvaluationStatus::Failed;
+            return out;
+        }
+    }
+
+    // ---- ⑥ 稳定排序＋终态化（§6.4——三入口跨进程逐字节一致，NFR-COR-05/
+    //      AT-19）----
+    // findings 键序：(sampleIndex 升序, objectA/objectB 对字典序, kind)——
+    // 生成序已与键序同向（样本升序×规范对序），stable_sort 为契约兜底
+    // （对同键重复元保持生成序——无同键重复的可能，防御性声明）。
+    std::stable_sort(out.findings.begin(), out.findings.end(),
+                     [](const CollisionFinding& l, const CollisionFinding& r) {
+                         if (l.sampleIndex != r.sampleIndex) {
+                             return l.sampleIndex < r.sampleIndex;
+                         }
+                         if (l.objectA != r.objectA) {
+                             return l.objectA < r.objectA;
+                         }
+                         if (l.objectB != r.objectB) {
+                             return l.objectB < r.objectB;
+                         }
+                         return static_cast<int>(l.kind) < static_cast<int>(r.kind);
+                     });
+    // minDistances 按样本序（生成序即升序——循环序保证）；appliedFilters
+    // 按对象对字典序（scope 展开产物规范序保证）——两者无第二排序点。
+    out.status = CollisionEvaluationStatus::Completed;
+    out.applicability = ScopeApplicability::Applicable;
+    out.finalized = true;
+    return out;
+}
+FUNCTION project.ObjectStore.publishObject
+DIFF 不可变CAS发布/同内容共享/冲突复验是project写权威；IOUtil仅底层工具候选，不提供publishNew原子协议，不能放宽fsync和防覆盖
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp 179-322
+core::ContentVersion ObjectStore::publishObject(const core::ObjectId& oid,
+                                                std::string_view payloadBytes)
+{
+    // ---- 调用方契约校验（fail-fast）：全零 ObjectId＝保留值，不是身份 ----
+    if (!oid.isValid()) {
+        throw std::invalid_argument(
+            "project/object-store: publishObject requires valid ObjectId");
+    }
+
+    // ---- 第 1 步：内容版本＝收到的字节经唯一哈希入口（CR-02/D-10） ----
+    // 先算 cv 再落盘：文件名即 cv，任何写入动作都必须已知编址目标。
+    const core::ContentVersion cv = codec::contentVersionOf(payloadBytes);
+    const std::filesystem::path target = objectFile(oid, cv);
+    const std::string targetName = target.string();
+
+    // ---- 第 2 步：确保对象区/对象目录/暂存区存在（§7.1 第 1 步口径） ----
+    // create_directories 对已存在目录＝无错误返回（幂等）；仅真实失败进
+    // 错误映射。三者都失败于同一个动作（mkdir），错误映射一致。
+    std::error_code ec;
+    fs::create_directories(m_objectsDir, ec);
+    if (ec && !fs::is_directory(m_objectsDir)) {
+        throw dirErrorToStoreError(ec, m_objectsDir.string());
+    }
+    fs::create_directories(m_stagingDir, ec);
+    if (ec && !fs::is_directory(m_stagingDir)) {
+        throw dirErrorToStoreError(ec, m_stagingDir.string());
+    }
+    fs::create_directories(objectDir(oid), ec);
+    if (ec && !fs::is_directory(objectDir(oid))) {
+        throw dirErrorToStoreError(ec, objectDir(oid).string());
+    }
+
+    // ---- 第 3 步：暂存写（持久性闸门——§7.1 第 2 步） ----
+    // 临时名含进程内单调序号：同批次多次发布互不冲突（publishNew 的 temp
+    // 不得撞名；序号为原子递增，跨线程唯一）。
+    const std::uint64_t seq =
+        m_tempSeq.fetch_add(1, std::memory_order_relaxed);
+    const std::string tempName = "ostore-" + std::to_string(seq) + "-"
+        + cv.toCanonical().substr(3) + ".tmp";
+    const std::filesystem::path temp = m_stagingDir / tempName;
+
+    win32::AtomicFile atomic;
+    // writeThrough＝写穿透＋flush 闸门：成功即数据已落盘，才允许进入
+    // 第 4 步可见性切换。失败时部分文件留暂存区（设计行为——恢复扫描
+    // 处置，AtomicFile.hpp 文件头"失败残留语义"），此处只映射错误上抛。
+    const char* data = payloadBytes.size() > 0 ? payloadBytes.data() : nullptr;
+    const win32::FileResult wr =
+        atomic.writeThrough(temp.wstring(), data, payloadBytes.size());
+    if (!wr.ok) {
+        throw writeOsErrorToStoreError(wr.osError, "staging-write",
+                                       temp.string());
+    }
+
+    // ---- 第 4 步：publishNew 只增发布（§7.1 第 4 步；有界重试 2 次） ----
+    // 重试只覆盖一种竞态：目标在 publishNew 报 EXISTS 之后、读回校验之前
+    // 被外部删除（读回得"不存在"）——此时重发一次；其余失败一律按原
+    // 语义立即传播，不做无限循环。
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        const win32::FileResult pub =
+            atomic.publishNew(temp.wstring(), target.wstring());
+        if (pub.ok) {
+            // 发布成功：不预热读取缓存——§4.6 缓存语义＝读取侧惰性加载
+            // （"首次加载执行 size＋SHA-256 校验"），预热会让发布后的首次
+            // 读取跳过校验，违背读校验语义；缓存只由读路径填充。
+            return cv;
+        }
+        if (pub.osError != ERROR_ALREADY_EXISTS) {
+            // 普通发布失败（权限/磁盘/路径）——§7.1 第 4 步 write-rejected
+            // 口径；已就位项保留语义归事务引擎，本原语只上抛。
+            throw writeOsErrorToStoreError(pub.osError, "publish",
+                                           targetName);
+        }
+
+        // ---- 目标已存在：同内容共享去重判定（§4.6 原文分支） ----
+        // 读回既有文件做 size＋SHA-256 校验（readVerified 内部含已校验集
+        // 免复检——但发布校验必须强制实算：此处判定的是"磁盘既有字节是否
+        // 等于本次待发布内容"，不能信任历史校验结论）。实现方式：构造
+        // 局部"绕过已校验集"的读回——直接读文件＋core 摘要比对。
+        std::optional<std::vector<std::uint8_t>> existing;
+        {
+            std::error_code szEc;
+            const auto existingSize = fs::file_size(target, szEc);
+            if (!szEc) {
+                std::ifstream in(target, std::ios::binary);
+                if (in) {
+                    std::vector<std::uint8_t> bytes{
+                        std::istreambuf_iterator<char>(in),
+                        std::istreambuf_iterator<char>()};
+                    if (bytes.size() == existingSize) {
+                        existing = std::move(bytes);
+                    }
+                }
+            }
+        }
+        if (!existing) {
+            // 既有文件消失/不可读——前者的重试窗口（attempt<1 时回到
+            // publishNew 重发）；后者视为目标态异常，按 publish 失败传播。
+            if (attempt == 0 && !fs::exists(target)) {
+                continue;  // EXISTS→消失竞态：有界重试一次
+            }
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             "project/object-store: publish-target-unreadable path="
+                                 + targetName);
+        }
+        // 摘要判定只经 core ContentDigester（CR-02）——对既有文件字节
+        // 重算并与编址名比对：一致＝同内容共享（磁盘零写入）；不一致＝
+        // 磁盘内容与编址不符（被外部篡改/损坏）→ store-corrupt，且既有
+        // 文件绝不被覆盖（只增不改的结构保证）。
+        const core::ContentVersion existingCv =
+            codec::contentVersionOf(std::string_view{
+                reinterpret_cast<const char*>(existing->data()),
+                existing->size()});
+        if (existingCv != cv) {
+            throw StoreError(StoreErrorCode::StoreCorrupt,
+                             "project/object-store: publish-target-digest-mismatch path="
+                                 + targetName);
+        }
+        // 共享成立：登记进"已校验集"（本上下文对该 (oid,cv) 的读盘免复检
+        // ——刚才已实算校验），尽力清除临时文件（失败仅残留，不抛——
+        // 暂存残留由恢复扫描处置，删除失败分支不值得新的错误语义）。
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_verified.insert(ObjectKey{oid, cv});
+        }
+        std::error_code rmEc;
+        fs::remove(temp, rmEc);  // 错误码吸收——残留无害（§7.1 第 7 步同口径）
+        if (m_sink != nullptr) {
+            // 开发诊断：同内容去重事件（运维观测共享命中率；非用户级——
+            // 用户可见文案归 diagnostics，§5.0）。
+            m_sink->reportDev("project/object-store",
+                              "publish-share oid=" + oid.toCanonical()
+                                  + " cv=" + cv.toCanonical());
+        }
+        auto bytes = std::make_shared<const std::vector<std::uint8_t>>(
+            payloadBytes.begin(), payloadBytes.end());
+        cacheInsert(ObjectKey{oid, cv}, std::move(bytes));
+        return cv;
+    }
+    // 不可达防御：2 次尝试均落入"EXISTS→消失"竞态的极端窗口。按写失败
+    // 传播（不做第三次——协议有界性优先，重试残留由恢复扫描处置）。
+    throw StoreError(StoreErrorCode::WriteRejected,
+                     "project/object-store: publish-retry-exhausted path="
+                         + targetName);
+}
+FUNCTION project.ObjectStore.readVerified
+DIFF 读取需按内容身份核摘要、缓存和预算；IOUtil::readFile只读全部字节，不提供这些契约。摘要继续单源core
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ObjectStore.cpp 328-389
+std::optional<std::vector<std::uint8_t>> ObjectStore::readVerified(
+    const core::ObjectId& oid, const core::ContentVersion& cv)
+{
+    const std::filesystem::path file = objectFile(oid, cv);
+
+    // ---- size 探测：不存在的对象在此分流为 nullopt（引用存在性语义） ----
+    std::error_code ec;
+    const auto fileSize = fs::file_size(file, ec);
+    if (ec) {
+        if (isNotFound(ec)) {
+            return std::nullopt;  // 对象文件不存在＝调用方自行决定语义
+        }
+        throw readErrorToStoreError(ec, file.string());
+    }
+
+    // ---- 全量读入：读得字节数必须等于探测 size（size 校验半边——部分读
+    //      /读中途截断在此暴露为损坏，而非静默短读） ----
+    std::ifstream in(file, std::ios::binary);
+    if (!in) {
+        throw StoreError(StoreErrorCode::AccessDenied,
+                         "project/object-store: open-failed path="
+                             + file.string());
+    }
+    std::vector<std::uint8_t> bytes{std::istreambuf_iterator<char>(in),
+                                    std::istreambuf_iterator<char>()};
+    if (bytes.size() != fileSize) {
+        // 读得字节数与目录项 size 不符＝读取不完整（介质/并发异常）——
+        // 数据侧拒绝（无法证明完整性，理由同 readErrorToStoreError）。
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/object-store: size-mismatch path="
+                             + file.string() + " expected="
+                             + std::to_string(fileSize) + " got="
+                             + std::to_string(bytes.size()));
+    }
+
+    // ---- 摘要校验：每上下文每键首次读盘实算（§4.6"首次加载执行 size＋
+    //      SHA-256 校验"）；已校验集命中则免复检（对象文件不可变是前提；
+    //      校验结论不随负载缓存逐出失效） ----
+    const ObjectKey key{oid, cv};
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        if (m_verified.count(key) > 0) {
+            return bytes;  // 免复检通道：直接交付读得字节
+        }
+    }
+    // 摘要计算在锁外（纯计算无共享状态；并发重复实算无害，结论幂等）。
+    const core::ContentVersion actual = codec::contentVersionOf(
+        std::string_view{reinterpret_cast<const char*>(bytes.data()),
+                         bytes.size()});
+    if (!(actual == cv)) {
+        // 篡改/位翻转＝磁盘字节与编址名不符——数据侧 store-corrupt（数据
+        // 错误按 AGENTS §2.5 走稳定码，绝不伪装成"不存在"）。
+        throw StoreError(StoreErrorCode::StoreCorrupt,
+                         "project/object-store: digest-mismatch path="
+                             + file.string());
+    }
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        m_verified.insert(key);
+    }
+    return bytes;
+}
+FUNCTION reporting.ReportArchiveCoordinator.publish
+DIFF 经产物sink/归档端口编排，需核project唯一写权与证据身份；IOUtil不等于归档事务，禁止另建对象库或越权直接写
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/Archive.cpp 226-512
+ArchiveOutcome ReportArchiveCoordinator::publish(const ReviewReport& report,
+                                                 const std::vector<RenderArtifact>& artifacts,
+                                                 const ReportArtifactManifest& manifest)
+{
+    // ---- 第 1 步：前置校验（Usage fail-fast——§9.6 前置行"报告已冻结、
+    // 一致性已通过"中可廉价验证的同源面；"一致性已通过"由导出服务编排序
+    // 保证——本层不重跑检查器，只校验输入自洽）。 ----
+    if (!report.contentIdentity().isValid()) {
+        throw ReportError(ReportErrorCode::Usage,
+                          "publish: 报告未冻结（contentIdentity 为零——须 ReviewReport::make 产出）");
+    }
+    if (artifacts.empty()) {
+        throw ReportError(ReportErrorCode::Usage, "publish: artifacts 为空（无工件可归档）");
+    }
+    for (const RenderArtifact& a : artifacts) {
+        // 同源前置：工件必须产自本报告（§9.4 前置行"artifacts 与 report/
+        // matrix 同源"的汇集座侧复核——防跨报告工件混入归档）。
+        if (!(a.sourceReportIdentity == report.contentIdentity())) {
+            throw ReportError(ReportErrorCode::Usage,
+                              "publish: 工件与报告不同源（sourceReportIdentity 不符）");
+        }
+    }
+    if (manifest.reportId != report.reportId() || !(manifest.project == report.project())
+        || !(manifest.contentIdentity == report.contentIdentity())) {
+        // manifest 与报告身份不一致＝调用方装配违约（manifest 是报告的持久
+        // 化事实——错链的 manifest 会让发布记录指向不存在的报告）。
+        throw ReportError(ReportErrorCode::Usage,
+                          "publish: manifest 身份列与报告不一致（reportId/project/contentIdentity）");
+    }
+    if (!manifest.reportId.isValid()) {
+        // 保留值纪律（§4.1：全零＝空）——零 reportId 无编址意义（reports/
+        // 目录键），fail-fast。
+        throw ReportError(ReportErrorCode::Usage, "publish: manifest.reportId 为零（保留值）");
+    }
+    if (manifest.artifacts.size() != artifacts.size()) {
+        // 清单与产物集必须一一对应（清单是发布事实的字节证据——缺项/多项
+        // 都会让 manifestDigest 与磁盘事实脱节）。
+        throw ReportError(ReportErrorCode::Usage,
+                          "publish: manifest 工件清单与产物集数量不一致（"
+                              + std::to_string(manifest.artifacts.size()) + " vs "
+                              + std::to_string(artifacts.size()) + "）");
+    }
+
+    // ---- 第 2 步：幂等预检（§7.4 流程图"sink.begin：同 reportId 已
+    // Finalized？"分支——经只读索引读磁盘事实，**零汇集座调用**：命中幂等
+    // 时不产生任何 begin/write/finalize 调用，零重写由"根本不写"保证——
+    // acceptance 1 的 sink 调用记录观测点）。 ----
+    const core::ContentIdentity digest = computeManifestDigest(manifest);
+    const std::optional<PublishedReportRecord> existing =
+        m_index->tryPublished(manifest.project, manifest.reportId);
+    if (existing.has_value()) {
+        if (existing->manifestDigest == digest) {
+            // 幂等成功（§7.4 行 1）：同 reportId 已 Finalized 且 manifest
+            // 摘要一致——零重写、不报错，返回既有记录原文（含原
+            // publishedAtUtc——不伪造发布时刻，落位偏差①的读取通道）。
+            ArchiveOutcome out;
+            out.status = ArchiveStatus::IdempotentHit;
+            out.record = existing;
+            return out;
+        }
+        // 冲突拒绝（§7.4 行 2）：摘要不一致——差异维度定位（acceptance 2①
+        // "身份/版本维度"）：contentIdentity 已变＝身份维度（报告内容不同
+        // ——评审演化/重建）；contentIdentity 相同而 manifestDigest 不同＝
+        // 版本/工件集维度（同内容、渲染器/模板版本或格式集不同——D-02
+        // 判定键的其余因子）。不覆盖（磁盘零调用——已 Finalized 内容不动）。
+        const bool identityDimension = !(existing->contentIdentity == manifest.contentIdentity);
+        const std::string dimText =
+            identityDimension
+                ? "身份维度（contentIdentity 不同——报告内容已变化）"
+                : "版本/工件集维度（contentIdentity 相同、manifest 摘要不同——"
+                  "渲染器/模板版本或格式集变化）";
+        ArchiveOutcome out = failedOutcome(
+            ReportErrorCode::ArchiveConflict,
+            "publish: 同 reportId 已 Finalized 且 manifest 摘要不一致（差异定位：" + dimText
+                + "）；不覆盖既有发布");
+        // 差异定位诊断（RPT-ARCHIVE-CONFLICT＝收编登记值——diagcodes 引用；
+        // 两摘要 canonical 文本入 cause 供人工比对——ERR-01 可定位）。
+        out.diagnostics.push_back(makeDiag(
+            std::string(diagcodes::kArchiveConflict), "报告归档冲突预检（RPT-01/§7.4）",
+            "报告 " + manifest.reportId.toCanonical() + " 已发布（现存 manifest 摘要 "
+                + existing->manifestDigest.toCanonical() + "），本次发布摘要 "
+                + digest.toCanonical() + "；差异定位：" + dimText,
+            "修改报告内容后以新 ReportId 发布，或核对渲染器/模板版本后重试（不覆盖既有发布）"));
+        return out;
+    }
+
+    // ---- 第 3 步：取消检查点（逐阶段检查点之一——§9.5"检查点密集"；此时
+    // 尚无会话，无需 abandon）。 ----
+    if (m_cancel != nullptr && m_cancel->isCancelled()) {
+        ArchiveOutcome out;
+        out.status = ArchiveStatus::Canceled;   // UX-03：正常取消非错误——全空形态
+        return out;
+    }
+
+    // ---- 第 4 步：begin（目录已建＝Staged——§7.3 状态图）。只读项目等
+    // 环境错误在此以异常轨上抛（sink 契约：begin 的环境错误抛 ReportError
+    // ——§9.9"StoreError 透传→ReportError"），协调器转译为 Failed 结果。 ----
+    ArtifactSessionRef session;
+    try {
+        ReportArtifactBeginRequest request;
+        request.reportId = manifest.reportId;
+        request.project = manifest.project;
+        request.contentIdentity = manifest.contentIdentity;
+        request.idempotencyCheckRequired = true;   // 幂等预检开关恒开（§9.6 缺省语义）
+        session = m_sink->begin(request);
+    } catch (const ReportError& e) {
+        // 环境错误（ReadOnlyStore/目录占用/上下文非 Active）——abandon 无从
+        // 调用（无会话），错误＋诊断直接随结果交付。
+        ArchiveOutcome out = failedOutcome(e.code(), std::string("publish: begin 失败——") + e.what());
+        if (e.code() == ReportErrorCode::ReadOnlyStore) {
+            // 只读项目两路径说明（acceptance 3/PM-07）：项目内发布拒绝≠导出
+            // 被禁——项目外用户选择路径允许（ui report.export readOnlyAllowed）。
+            // 码面引用单元卡 §7.4 表（RPT-READONLY-STORE——待收编，见文件头）。
+            out.diagnostics.push_back(makeDiag(
+                std::string(kDiagReadOnlyStore), "报告归档只读检查（PM-07/§7.4）",
+                "项目为只读状态，项目内 reports/ 发布被拒绝（writable 检查归 project §6.8）",
+                "两条路径：①解锁项目（获得写权威）后重试项目内发布；②将报告导出到"
+                "项目外用户选择路径（report.export 只读项目允许）"));
+        }
+        return out;
+    }
+
+    // ---- 第 5 步：逐工件写入（begin→write×N——编排顺序 §9.6；逐工件前后
+    // 取消检查点；只增幂等：续写同内容 IdempotentHit 按 Ok 继续——§9.6
+    // 合法调用行"重试续写：write 只增幂等"）。 ----
+    for (const RenderArtifact& a : artifacts) {
+        // 工件清单↔产物集的对位：以工件摘要为键在 manifest 工件清单中查
+        // relPath（摘要相等＝同一字节集——按下标假定同序是脆弱耦合；查不到
+        // ＝清单与产物集不对应，属调用方装配违约）。前置已校验数量相等与
+        // 逐项可对位，此处查找必然命中——防御性兜底仍保留。
+        const auto it = std::find_if(manifest.artifacts.begin(), manifest.artifacts.end(),
+                                     [&a](const ArtifactManifestEntry& e) {
+                                         return e.sha256 == a.digest;
+                                     });
+        if (it == manifest.artifacts.end()) {
+            m_sink->abandon(session, ReportEndReason::Failed);
+            throw ReportError(ReportErrorCode::Usage,
+                              "publish: 工件清单与产物集不对应（摘要无对位条目）");
+        }
+        // 写前取消检查点——取消→abandon(Canceled)→清理→目标不变。
+        if (m_cancel != nullptr && m_cancel->isCancelled()) {
+            m_sink->abandon(session, ReportEndReason::Canceled);
+            ArchiveOutcome out;
+            out.status = ArchiveStatus::Canceled;   // UX-03 全空形态（无诊断）
+            return out;
+        }
+        ArtifactWrite write;
+        write.relPath = it->relPath;
+        write.bytes = a.bytes;
+        const ArtifactStatus st = m_sink->writeArtifact(session, write);
+        if (st == ArtifactStatus::Ok || st == ArtifactStatus::IdempotentHit) {
+            continue;   // Ok＝新写成功；IdempotentHit＝目标已存在且摘要一致（跳过重写）
+        }
+        // 任一非 Ok→abandon（§9.6 编排行）——失败/取消两轨分流。
+        m_sink->abandon(session, ReportEndReason::Failed);
+        switch (st) {
+        case ArtifactStatus::Conflict:
+            // 写入期冲突（§9.6 finalize 注释的判定承载在 write 面提前命中
+            // ——如并发会话已 Finalized 同目录）。
+            return failedOutcome(ReportErrorCode::ArchiveConflict,
+                                 std::string("publish: 工件写入冲突（") + token(st).data()
+                                     + "：" + write.relPath + "）");
+        case ArtifactStatus::DiskFull: {
+            // 磁盘不足（§7.4 行 8）：abandon＋清理已完成（上行）＋可重试
+            // （失败保留选择与路径——§16 验收要点）。比较型诊断：所需侧＝
+            // 失败工件字节数（数值在位，来源＝派生只读——本进程事实）；
+            // 可用侧＝存储侧未提供（四态 NotProvided——汇集座四方法契约无
+            // 可用空间通道，精确值随 project 实现对齐补充，登记 §14.4）。
+            ArchiveOutcome out = failedOutcome(
+                ReportErrorCode::DiskFull,
+                std::string("publish: 磁盘不足（工件 ") + write.relPath + "，所需 "
+                    + std::to_string(write.bytes.size())
+                    + " 字节；已 abandon＋清理——保留选择与路径可重试）");
+            core::ComparativeFields comparison;
+            comparison.expected.quantity =
+                core::SourcedValue<double>::provided(
+                    static_cast<double>(write.bytes.size()),
+                    core::ValueProvenance::make(core::ProvenanceKind::DerivedReadOnly));
+            comparison.expected.unit = core::UnitToken{};   // 字节非 SI 量纲——句柄保持无效，
+                                                            // 单位语义以 cause 文本承载
+            comparison.actual.quantity = core::SourcedValue<double>::notProvided();
+            comparison.actual.unit = core::UnitToken{};
+            out.diagnostics.push_back(makeDiag(
+                std::string(kDiagDiskFull), "报告工件写入（RPT-DISK-FULL/§7.4 表）",
+                "磁盘空间不足：所需 " + std::to_string(write.bytes.size())
+                    + " 字节（工件 " + write.relPath + "）；可用空间存储侧未提供精确值",
+                "清理空间后重试（会话已 abandon＋清理临时——选择与路径保留）"));
+            out.diagnostics.back().comparison = comparison;
+            return out;
+        }
+        case ArtifactStatus::WriteRejected:
+        case ArtifactStatus::ContextClosed:
+        default:
+            // 环境类拒绝（只读写入/上下文关闭）——ExportFailed 面（保留
+            // 选择与路径可重试）；其余未枚举状态同轨兜底（不吞错——如实
+            // 报告状态 token）。
+            return failedOutcome(ReportErrorCode::ExportFailed,
+                                 std::string("publish: 工件写入被拒绝（") + token(st).data()
+                                     + "：" + write.relPath + "）");
+        }
+    }
+
+    // ---- 第 6 步：finalize 盖章与原子发布（manifest 原子发布＝唯一完整
+    // 标志 D-13；finalizedAtUtc 由协调器盖章——发布时刻是发布事实，不回填
+    // 报告对象〔PA-2：报告值不因发布回写〕）。 ----
+    if (m_cancel != nullptr && m_cancel->isCancelled()) {
+        m_sink->abandon(session, ReportEndReason::Canceled);
+        ArchiveOutcome out;
+        out.status = ArchiveStatus::Canceled;
+        return out;
+    }
+    ReportArtifactManifest stamped = manifest;
+    stamped.finalizedAtUtc = std::chrono::system_clock::now();
+    stamped.manifestDigest = digest;
+    const ArtifactStatus st = m_sink->finalize(session, stamped);
+    switch (st) {
+    case ArtifactStatus::Ok: {
+        // 新发布完成：构造发布事实（§7.3 PublishedReportRecord 六字段）。
+        // artifactRelPaths＝工件相对路径＋manifest 自身（report.json——发布
+        // 成功至少含清单内工件＋唯一完整标志文件）。
+        ArchiveOutcome out;
+        out.status = ArchiveStatus::Published;
+        PublishedReportRecord record;
+        record.reportId = manifest.reportId;
+        record.contentIdentity = manifest.contentIdentity;
+        record.archiveState = ReportArchiveState::Finalized;
+        record.manifestDigest = digest;
+        record.artifactRelPaths.reserve(manifest.artifacts.size() + 1);
+        for (const ArtifactManifestEntry& e : manifest.artifacts) {
+            record.artifactRelPaths.push_back(e.relPath);
+        }
+        record.artifactRelPaths.emplace_back(kManifestRelPath);
+        record.publishedAtUtc = stamped.finalizedAtUtc;
+        out.record = std::move(record);
+        return out;
+    }
+    case ArtifactStatus::IdempotentHit: {
+        // 并发幂等兜底（§9.6 finalize 注释）：预检后他人已完成同内容发布
+        // ——回查索引取既有记录原文；索引缺记录＝存储/索引不一致，如实
+        // 失败（不伪造 publishedAtUtc——NFR-COR-03 不静默）。
+        const std::optional<PublishedReportRecord> hit =
+            m_index->tryPublished(manifest.project, manifest.reportId);
+        if (hit.has_value()) {
+            ArchiveOutcome out;
+            out.status = ArchiveStatus::IdempotentHit;
+            out.record = hit;
+            return out;
+        }
+        return failedOutcome(
+            ReportErrorCode::ExportFailed,
+            "publish: finalize 幂等命中但发布清单缺记录（存储/索引不一致——如实失败）");
+    }
+    case ArtifactStatus::Conflict:
+        // finalize 冲突（预检后内容被他人以不同内容 Finalized）——abandon
+        // ＋ArchiveConflict（不覆盖已 Finalized 内容——零重写保证）。
+        m_sink->abandon(session, ReportEndReason::Failed);
+        return failedOutcome(ReportErrorCode::ArchiveConflict,
+                             "publish: finalize 冲突（同 reportId 已被不同内容发布——不覆盖）");
+    case ArtifactStatus::DiskFull:
+        // manifest 原子发布期磁盘不足——同写入期口径（abandon＋比较型诊断；
+        // 所需侧以 manifest 清单规模估算——精确值存储侧通道同前）。
+        m_sink->abandon(session, ReportEndReason::Failed);
+        {
+            ArchiveOutcome out = failedOutcome(
+                ReportErrorCode::DiskFull,
+                "publish: finalize 磁盘不足（report.json 原子发布失败；已 abandon＋清理"
+                "——保留选择与路径可重试）");
+            core::ComparativeFields comparison;
+            comparison.expected.quantity = core::SourcedValue<double>::notProvided();
+            comparison.expected.unit = core::UnitToken{};
+            comparison.actual.quantity = core::SourcedValue<double>::notProvided();
+            comparison.actual.unit = core::UnitToken{};
+            out.diagnostics.push_back(makeDiag(
+                std::string(kDiagDiskFull), "报告 manifest 发布（RPT-DISK-FULL/§7.4 表）",
+                "磁盘空间不足：report.json 原子发布失败（所需/可用精确值存储侧未提供）",
+                "清理空间后重试（会话已 abandon＋清理临时——选择与路径保留）"));
+            out.diagnostics.back().comparison = comparison;
+            return out;
+        }
+    case ArtifactStatus::WriteRejected:
+    case ArtifactStatus::ContextClosed:
+    default:
+        m_sink->abandon(session, ReportEndReason::Failed);
+        return failedOutcome(ReportErrorCode::ExportFailed,
+                             std::string("publish: finalize 被拒绝（") + token(st).data() + "）");
+    }
+}
+FUNCTION requirements.SamplingPlanBuilder.buildPlan
+DIFF 构造规范化采样计划，不执行随机/姿态采样；调用WorkRegionService而非复制生成器，不能按文件名误报重复采样核心
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp 35-83
+PlanOutcome SamplingPlanBuilder::buildPlan(const WorkRegion& region,
+                                           const SamplingPlanSpec& spec,
+                                           std::vector<core::DiagnosticRecord>& diags) const
+{
+    assertDiagsUntouched(diags);
+    PlanOutcome out;
+    // ①区域盒非退化（I-REQ-6——DegenerateRegion；m，三分量>0 有限）。
+    if (auto e = validateBoundingBox(region.box)) {
+        out.error = std::move(*e);
+        return out;
+    }
+    // ②区域形态核对（R1 仅 Box——§5.2"其他几何走需求变更，P-REQ-7 不
+    // 预留桩"；WorkRegion 值模型即 Box 形态——恒过；该分支为未来扩展
+    // 的拒绝面锚点，@错误 行 RegionNotBox 的承载点）。
+    // 注：WorkRegion 不携带几何种类字段（Box 是唯一登记形态），本核对
+    // 以"值模型形态"表达——一旦需求变更引入其他几何种类，此处即以
+    // RegionNotBox 拒绝（卡 §14.3 P-REQ-7 处置路径）。
+    // ③采样定义合法性（间距正有限——IllegalTolerance；姿态计数 ≥1——
+    // NegativeCount；由规范化入口与条目校验共同承载）。
+    // ④规范化（D-REQ-2——WorkRegionService::normalizeSampling 复用，
+    // 语义单源）。
+    const WorkRegionService regionService;
+    auto norm = regionService.normalizeSampling(spec.positionSampling, region.box.size, diags);
+    if (!norm.ok()) {
+        out.error = norm.error();
+        return out;
+    }
+    // 姿态计数 ≥1（§5.2——零样本仅位置侧表达；NegativeCount 承载）。
+    if (spec.orientationSampling.directionSamples < 1
+        || spec.orientationSampling.rollSamples < 1) {
+        RequirementError e;
+        e.code = RequirementErrorCode::NegativeCount;
+        e.params.emplace_back("field", "orientationSampling");
+        e.detail = "requirements/sampling: 姿态采样计数须 ≥1（§5.2——零样本仅"
+                   "位置侧 counts 乘积=0 表达，V-02）";
+        out.error = std::move(e);
+        return out;
+    }
+    // 装配计划条目（位置采样恒规范化 Grid 形态——validateSamplingPlan
+    // 的字节面前提；objectId＝spec 注入或临时句柄）。
+    out.ok = true;
+    out.plan.objectId = spec.planObjectId.has_value() ? *spec.planObjectId
+                                                      : core::ObjectId::generate();
+    out.plan.regionRef = region.objectId;
+    out.plan.positionSampling = norm.get().normalized;
+    out.plan.orientationSampling = spec.orientationSampling;
+    out.plan.note = spec.note;
+    return out;
+}
+FUNCTION requirements.SamplingPlanBuilder.digest
+DIFF 计划分母与codec字节身份；现调用core摘要器而非新SHA核心。饱和乘积/Random分母与零样本的消费者一致性仍待核
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/Sampling.cpp 85-130
+Expected<PlanDigest> SamplingPlanBuilder::digest(const SamplingPlan& plan,
+                                                 std::vector<core::DiagnosticRecord>& diags) const
+{
+    assertDiagsUntouched(diags);
+    // 计划形态复核（规范化 Grid＋姿态 ≥1＋区域引用有效——条目级校验单
+    // 源复用；违约即非法形态）。
+    if (auto e = validateSamplingPlan(plan)) {
+        return Expected<PlanDigest>::err(std::move(*e));
+    }
+    PlanDigest d;
+    // 分母面（KIN-04 判定的分母来源——evidence SamplingPlanRef 核对）：
+    // 位置按方法取值（★ 批34 评审 F7：Random 计划的分母＝randomCount，
+    // 不得按 Grid counts 乘积——A-18 放行 Random 计划形态后 counts 可能
+    // 是过期/零载荷，按乘积算即分母归零）；姿态＝方向×滚转（≥1）。
+    // uint64 乘积（uint32 三因子最大约 2^96——超出即饱和到 UINT64_MAX
+    // 并如实承载；黄金数据集内不触）。
+    const std::uint64_t maxU64 = 0xFFFFFFFFFFFFFFFFull;
+    auto satMul = [maxU64](std::uint64_t a, std::uint64_t b) {
+        if (a != 0 && b > maxU64 / a) { return maxU64; }
+        return a * b;
+    };
+    if (plan.positionSampling.method == PositionSamplingMethod::Random) {
+        d.positionSamples = static_cast<std::uint64_t>(plan.positionSampling.count);
+    } else {
+        const std::uint64_t cx = plan.positionSampling.counts[0];
+        const std::uint64_t cy = plan.positionSampling.counts[1];
+        const std::uint64_t cz = plan.positionSampling.counts[2];
+        d.positionSamples = satMul(satMul(cx, cy), cz);
+    }
+    d.orientationSamples = static_cast<std::uint64_t>(plan.orientationSampling.directionSamples)
+                         * static_cast<std::uint64_t>(plan.orientationSampling.rollSamples);
+    // canonical 摘要：计划条目编码字节（RequirementCodec——确定性字节）
+    // 的 SHA-256（同计划同摘要；计划变更即换摘要——§5.2 计划变更与当前
+    // 性行的本单元承载点）。
+    const RequirementCodec codec;
+    auto bytes = codec.encode(RequirementObjectVariant{PlanSet{
+                                  kReqPlanSetSchemaVersion, {plan}}},
+                              kCurrentRequirementFormatVersion);
+    if (!bytes.ok()) {
+        return Expected<PlanDigest>::err(bytes.error());
+    }
+    core::ContentDigester digester;
+    digester.update(bytes.get().data(), bytes.get().size());
+    d.planDigest = digester.finalize();
+    return Expected<PlanDigest>::ok(std::move(d));
+}
+FUNCTION selection.LinearCurveEvaluator.evaluate
+DIFF 底层标量分段线性插值候选LinearInterpolator<double>，保留禁止外推/有效区间/目录身份与单位，x不是时间但段参数可归一；不能让适配层接管淘汰原因
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/CapabilityCurve.cpp 52-137
+CurveQueryResult LinearCurveEvaluator::evaluate(const PerformanceCurve& curve,
+                                                double x) const
+{
+    // 第零步：调用方契约自检——查询横坐标必须有限（NFR-COR-03）。
+    // 非有限查询不属于"数据不足"（目录数据没有问题），而是查询方把坏值
+    // 传进了计算链——按卡 §14.0 错误二分走 fail-fast，不静默转成拒绝轨
+    // （静默会把上游计算链的污染伪装成目录数据缺口，破坏分轨语义）。
+    if (!std::isfinite(x)) {
+        throw std::invalid_argument(
+            "SEL-CURVE: 查询横坐标非有限（NaN/±Inf 拒绝——NFR-COR-03；"
+            "曲线 [" + curve.curveId + "]）");
+    }
+
+    // 第一步：曲线形态防御复核（构造入口 tryMakePerformanceCurve 应已拦；
+    // 此处为防御分支——形态坏的曲线按"数据不足"拒绝轨返回，不抛异常，
+    // 卡 §14.3 @return 注"空曲线/单点曲线按数据不足标记"）。
+    // 注意防御检查先做全点有限复核：构造入口拦 NONFINITE，若运行期收到
+    // 含非有限点的曲线（内部一致性破坏），按数据坏拒绝而非产出污染值。
+    if (curve.points.size() < 2) {
+        // 点数 < 2（含空/单点）＝区间不合法（单点能力值应走"固定额定值"
+        // 口径——卡 §6.4），数据不足类拒绝。
+        return makeRejected(curve, x, std::string{kSelCurveIntervalInvalid},
+                            "曲线点数不足 2（空/单点曲线不可插值——卡 §6.4 固定额定值口径）");
+    }
+    for (const CapabilityPoint& p : curve.points) {
+        if (!std::isfinite(p.x) || !std::isfinite(p.y)) {
+            return makeRejected(curve, x, std::string{kSelCurveNonfinite},
+                                "曲线含非有限点（构造入口应已拒绝——防御复核命中）");
+        }
+    }
+
+    const double xMin = curve.points.front().x;   // 有效区间下端（SI，单位 xUnit）
+    const double xMax = curve.points.back().x;    // 有效区间上端（SI，单位 xUnit）
+
+    // 第二步：外推判定——默认禁止外推（SEL-CURVE-EXTRAPOLATION-DENIED）。
+    // 闭区间 [x_min, x_max] 之外一律拒绝：不自动使用最近点、不静默外推
+    // （卡 §6.2 原文——外推会产出无目录依据的"能力值"，违反 NFR-COR-03
+    // 不静默纪律）。拒绝消息携带有效区间与单位，供比较型诊断的 expected
+    // 侧构造（ERR-01：实际输入点/有效区间/单位）。
+    if (x < xMin || x > xMax) {
+        CurveQueryResult r = makeRejected(
+            curve, x, std::string{kSelCurveExtrapolationDenied},
+            "查询点落在曲线有效区间 [x_min, x_max] 之外（默认禁止外推——卡 §6.2；"
+            "有效区间按 SI 单位 " + curve.xUnit + " 计）");
+        r.xLow = xMin;   // 有效区间随拒绝结果携带（比较型 expected 侧素材）
+        r.xHigh = xMax;
+        return r;
+    }
+
+    // 第三步：定位插值区间 [x_i, x_i+1]——线性扫描（点数为目录数据规模，
+    // 通常 < 数十点；扫描即确定性序，无需二分的规模理由）。循环不变量：
+    // xMin <= x <= xMax 已由第二步保证，故必有 i 使 points[i].x <= x。
+    // 边界点（x == xMin / xMax）落入首/末段端点——闭区间含端点（卡 §6.2），
+    // 由 t==0/t==1 的端点值自然承载。
+    for (std::size_t i = 0; i + 1 < curve.points.size(); ++i) {
+        const CapabilityPoint& p0 = curve.points[i];
+        const CapabilityPoint& p1 = curve.points[i + 1];
+
+        // 段定位：x 在本段闭区间 [p0.x, p1.x] 内才处理。因 x 已确认整体
+        // 在 [xMin, xMax] 内且点集严格升序（构造入口保证），本条件必在
+        // 某段命中；未命中即内部一致性破坏，循环走完后防御拒绝。
+        if (x < p0.x || x > p1.x) { continue; }
+
+        // 第四步：分段线性插值 y = y0 + t·(y1 − y0)，t ∈ [0,1] 为段内
+        // 线性参数（无量纲）。分母 p1.x − p0.x 因点集严格升序恒 > 0，
+        // 无除零风险（构造入口 DUP-X 已排除相等横坐标）。
+        const double t = (x - p0.x) / (p1.x - p0.x);   // 段内位置参数，无量纲 [0,1]
+        const double y = p0.y + t * (p1.y - p0.y);     // 插值结果（SI，单位 yUnit）
+
+        CurveQueryResult r;
+        r.outcome = CurveQueryResult::Outcome::Value;
+        r.value = y;
+        r.x = x;
+        r.xLow = p0.x;   // 插值区间随结果携带（NFR-COR-04——淘汰原因可定位到段）
+        r.xHigh = p1.x;
+        r.catalog = curve.catalog;
+        r.xUnit = curve.xUnit;
+        r.yUnit = curve.yUnit;
+        return r;
+    }
+
+    // 不可达防御：点集严格升序且 x∈[xMin,xMax] 时上方必命中段；
+    // 走到此处＝曲线内部序被破坏（应被构造入口拦下）——按数据坏拒绝。
+    return makeRejected(curve, x, std::string{kSelCurveUnordered},
+                        "曲线点集序内部一致性破坏（应被构造入口拒绝——防御复核命中）");
+}
+FUNCTION ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor
+DIFF 现有空WorkCell会话锚须按HOST-RENDER核查；只供场景WORLD，不是runtime计算模型，不因已有例外标签自动合法，不授予新构造路径
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp 471-504
+HostView3DPreviewBackend::ensureSessionPreviewAnchor(WorkCellScene& scene)
+{
+    // ①场景已挂 WorkCell＝原样复用（宿主装载/发布链/上次锚——幂等；
+    // 重复 setWorkCell 会无谓重建场景节点树并触发查看器世界节点再同步，
+    // 见下②注）。成员同步持有当前场景锚（可读性——所有权本身由场景
+    // 共享属主保证）。
+    if (!scene.getWorkCell().isNull()) {
+        m_sessionAnchor = scene.getWorkCell();
+        return m_sessionAnchor;
+    }
+    // ②新建会话预览锚 WC：仅含框架根帧的空 WorkCell（名＝ird 前缀族
+    // 约定——诊断可辨识；WC 名不入任何身份/缓存键，runtime §8.2 同口
+    // 径）。模型层隔离：studio->getWorkCell() 保持空——发布链"WorkCell
+    // 即编译产物本体"（HostPresentationAdapters INV-B4 宿主单入口）与
+    // TreeView 等订阅 studio 工作单元事件的宿主组件，对本锚零感知零干扰。
+    // 查看器先行校验（不半装）：世界节点重同步是装入的必要半区——查看
+    // 器缺位（headless 等装配降级）＝装了也渲染不出，如实返回空交调用
+    // 方按"锚不可得"处理；实践中 scene 可取得则查看器必在位（同一
+    // RWStudioView3D 持有），本分支为防御面。
+    if (m_studio->getView() == nullptr
+        || m_studio->getView()->getSceneViewer() == nullptr) {
+        return nullptr;
+    }
+    m_sessionAnchor = rw::core::ownedPtr(
+        new rw::models::WorkCell("ird-session-preview"));
+    scene.setWorkCell(m_sessionAnchor);
+    // 世界节点重同步（框架硬契约）：WorkCellScene::setWorkCell 会重建
+    // 场景世界节点（旧节点从根摘除、新节点按锚 WC 帧树生成），而查看器
+    // 缓存的是旧节点引用——框架自身路径（RWStudioView3D::setWorkCell/
+    // clear 尾段）都在装 WC 后补 setWorldNode，本直连场景的装配路径必须
+    // 同款补挂，否则新节点树不进渲染。
+    m_studio->getView()->getSceneViewer()->setWorldNode(scene.getWorldNode());
+    return m_sessionAnchor;
+}
+FUNCTION ui.HostView3DGateway.currentTcpPose
+DIFF 已调用Kinematics::worldTframe读取宿主会话位姿；返回是world坐标不能冒充base坐标，Frame/State由装配保活，HOST-GATEWAY不回灌工程真值
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp 120-135
+HostView3DGateway::currentTcpPose(const std::string& deviceName)
+{
+    // 双缝缺省/双取失败＝诚实降级（nullopt——调用方呈现失败原因）。
+    if (!m_deps.resolveTcpFrame || !m_deps.currentState) {
+        return std::nullopt;
+    }
+    const rw::kinematics::Frame* tcpFrame = m_deps.resolveTcpFrame(deviceName);
+    const rw::kinematics::State* state = m_deps.currentState();
+    if (tcpFrame == nullptr || state == nullptr) {
+        return std::nullopt;
+    }
+    // TCP 世界系位姿（worldTframe——宿主会话态只读，KIN-06：零修订、
+    // 不写设计模型；设备 base 即模型根布置时与 base→TCP 一致）。
+    const rw::core::Ptr<const rw::kinematics::Frame> frameView(tcpFrame);
+    return rw::kinematics::Kinematics::worldTframe(frameView, *state);
+}
+FUNCTION workflow.PureStageGateService.evaluate
+DIFF 七阶段门控消费投影与事件，不重算领域阈值。通用事件/状态工具仍需查，不能把整个workflow判业务专属
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp 134-297
+StageGatingState PureStageGateService::evaluate(const GateInputs& inputs) const
+{
+    // ---- 第 0 步：输入契约校验（调用方错误 fail-fast——不带病判定）----
+    // 七快照的 stage 字段必须与数组序位一致：组板错误会把 A 阶段投影当成
+    // B 阶段判定，属于必须暴露的装配缺陷（静默错位＝门控全错且不可观测）。
+    const std::vector<ui::StageId>& sequence = ui::stageIdSequence();
+    std::uint64_t maxEpoch = 0;  // 判定纪元＝七快照 epoch 最大值（I-WF-4 对齐面；uint64 无单位）
+    for (std::size_t i = 0; i < inputs.snapshots.size(); ++i) {
+        if (inputs.snapshots[i].stage != sequence[i]) {
+            throw WorkflowError("evaluate: 快照板序位 " + std::to_string(i)
+                                + " 的 stage 字段与冻结序不符（组板契约违约）");
+        }
+        // epoch 水位（I-WF-4）：任一快照低于上次判定水位＝旧投影——拒绝，
+        // 防止旧投影覆盖新事件（§5.3 步骤 2 的 workflow 侧兜底；适配层应
+        // 先自行丢弃，本校验是最后一道防线）。
+        if (inputs.snapshots[i].epoch < inputs.lastEpoch) {
+            throw WorkflowError("evaluate: 快照 epoch " 
+                                + std::to_string(inputs.snapshots[i].epoch)
+                                + " 低于水位 " + std::to_string(inputs.lastEpoch)
+                                + "（旧投影不得覆盖新事件——I-WF-4）");
+        }
+        if (inputs.snapshots[i].epoch > maxEpoch) {
+            maxEpoch = inputs.snapshots[i].epoch;
+        }
+    }
+
+    // ---- 第 1 步：事件窗口重放（结果事实——§5.2）----
+    const std::array<StageResultFact, 7> facts = replayEvents(inputs.events);
+
+    // ---- 第 2 步：七阶段序贯判定（前序链 I-WF-1 依赖前序判定结果——必须
+    //      按 StageId 冻结序推进，不可并行化判定顺序）----
+    StageGatingState state;
+    state.epoch = maxEpoch;
+    for (std::size_t i = 0; i < 7U; ++i) {
+        const ui::StageId stage = sequence[i];
+        const ui::StageReadinessSnapshot& snapshot = inputs.snapshots[i];
+        GateDecision decision;
+        decision.stage = stage;
+        decision.epoch = maxEpoch;  // 每条判定携带本轮纪元（消费方对齐用）
+
+        // 域就绪项按 §4.2 聚合域词表认领（域注册键 → 投影条目；有序映射
+        // ——遍历序确定，缺项拼接顺序稳定）。
+        std::map<std::string, const ui::DomainReadinessItem*> byKey;
+        for (const ui::DomainReadinessItem& item : snapshot.domains) {
+            byKey[item.domainKey] = &item;
+        }
+
+        // ---- 规则 1：前序链（I-WF-1）——存在 Blocked 前序 → NotStarted。
+        // §4.4 状态机：NotStarted ← 前序未过（"前序通过"是 Blocked 的前提
+        // ——§4.3 词表）。取**序位最小**的 Blocked 前序作为根因指位（提示
+        // 用户解锁最近的上游入口）。前序 Unavailable/NotStarted（I-WF-1
+        // 字面"非 Blocked"）不阻断本阶段独立判定——就绪权威在域投影（N1：
+        // 各域自报），门控不替域判断"上游产物是否真的够用"。
+        const GateDecision* blockedPrefix = nullptr;  // 借用指针——指向本函数局部 decisions，生命周期内有效
+        for (std::size_t p = 0; p < i; ++p) {
+            if (state.decisions[p].status == ui::StageViewStatus::Blocked) {
+                blockedPrefix = &state.decisions[p];
+                break;  // 取首个（序位最小）Blocked 前序——确定性
+            }
+        }
+        if (blockedPrefix != nullptr) {
+            // 锁定：前序未过。原因指向前序（not-reached），解锁条件＝前序
+            // 解锁——不在本阶段编造缺项（本域缺项事实可能尚未产生）。
+            decision.status = ui::StageViewStatus::NotStarted;
+            decision.unlocked = false;
+            decision.reasonKeys.push_back(gateNotReachedReasonKey(blockedPrefix->stage));
+            decision.unlockHintKey = gateUnlockHintKey(blockedPrefix->stage);
+            state.decisions[i] = std::move(decision);
+            continue;  // 本阶段判定完成——下游以上游状态为前序链输入
+        }
+
+        // ---- 规则 2：域未装配 → Unavailable（§4.3 词表"域未装配"；区别
+        // 于缺项 Blocked——WF-VER-103 观测点）。聚合域词表中任一域无投影
+        // 条目即未装配（§6.5：快照 domains 空＝该阶段无已注册域）。
+        std::vector<std::string> missingDomains;  // §4.2 词表序的缺失域清单
+        for (const std::string& domainKey : stageDomains(stage)) {
+            if (byKey.find(domainKey) == byKey.end()) {
+                missingDomains.push_back(domainKey);
+            }
+        }
+        if (!missingDomains.empty()) {
+            decision.status = ui::StageViewStatus::Unavailable;
+            decision.unlocked = false;
+            // 原因：基键（"域未装配"）＋逐域缺失键（定位缺哪个域插件）。
+            decision.reasonKeys.push_back(gateDomainUnavailableKey(stage));
+            for (const std::string& domainKey : missingDomains) {
+                decision.reasonKeys.push_back(missingDomainReasonKey(stage, domainKey));
+            }
+            decision.unlockHintKey = gateUnlockHintKey(stage);
+            state.decisions[i] = std::move(decision);
+            continue;
+        }
+
+        // ---- 规则 3：缺项锁定 → Blocked（§4.2"投影缺项"；§4.4 Blocked ←
+        // 前序通过＋投影缺项）。缺项事实完全采信域自报（inputComplete/
+        // missingItemKeys——I-WF-2 不重算不增删）；缺项清单按域序拼接
+        // （分组语义＝快照域注册序，NFR-COR-02 稳定序）。
+        bool anyIncomplete = false;             // 任一域 inputComplete==false
+        std::vector<ui::TextKey> missingItems;  // 域自报缺项键（透传拼接）
+        bool hasActiveTask = false;             // 任一域 hasActiveTask（规则 4 用）
+        for (const std::string& domainKey : stageDomains(stage)) {
+            const ui::DomainReadinessItem* item = byKey[domainKey];  // 规则 2 已保证在场
+            if (!item->inputComplete) { anyIncomplete = true; }
+            for (const ui::TextKey& key : item->missingItemKeys) {
+                missingItems.push_back(key);  // 透传（WF-VER-102：不增删）
+            }
+            if (item->hasActiveTask) { hasActiveTask = true; }
+        }
+        if (anyIncomplete || !missingItems.empty()) {
+            decision.status = ui::StageViewStatus::Blocked;
+            decision.unlocked = false;
+            decision.missingItemKeys = std::move(missingItems);  // 透传缺项清单
+            decision.reasonKeys.push_back(gateBlockedReasonKey(stage));
+            decision.unlockHintKey = gateUnlockHintKey(stage);
+            // 缺项与结果过期并存场景（§4.4 Completed→Blocked"输入回退"转移）：
+            // 事件重放发现本阶段曾有归档结果且已失效时，Blocked 判定**同时**
+            // 携带 staleHints——缺项（要修输入）与过期（历史结果不可信）是
+            // 两个独立事实，只报缺项会让用户误以为旧结果仍可用（UX-12
+            // "结果失效时级联提示"不因缺项而豁免）。
+            const StageResultFact& blockedFact = facts[i];
+            for (const auto& entry : blockedFact.staleHints) {
+                decision.staleHints.push_back(entry.second);
+            }
+            state.decisions[i] = std::move(decision);
+            continue;
+        }
+
+        // ---- 规则 4：计算中 → InProgress（§4.3 词表"有活动任务"；
+        // §4.4 Blocked→InProgress 前提"缺项修复"已由规则 3 保证）。注意
+        // ui 把 in-progress 词保留给"用户所在阶段"会话态（呈现合成）——
+        // 本判定是门控状态机的"计算中"态，映射归 P-WF-2 裁决后的适配器
+        // （GateDecision 类型注释已登记张力）。
+        if (hasActiveTask) {
+            decision.status = ui::StageViewStatus::InProgress;
+            decision.unlocked = true;  // 计算中＝入口可进入（查看任务进度）
+            state.decisions[i] = std::move(decision);
+            continue;
+        }
+
+        // ---- 规则 5：结果事实（事件重放——§5.2）。输入齐备、无活动任务
+        // 时按归档/失效事实定态：
+        //   有结果且未失效 → Completed（§4.4 Blocked→Completed"评估完成"）；
+        //   有结果但已失效 → Completed＋staleHints（§4.3"Completed＋
+        //     results-stale 并存呈现"——历史面板可打开，提示另行携带；
+        //     staleHints 中的重算建议**不自动执行**，D-WF-8）；
+        //   无结果 → NotStarted＋解锁（"可进入但评估未开始"——UX-10 语境
+        //     下的可计算态；下一步动作由建议引擎 R2 引导，§6.3）。
+        const StageResultFact& fact = facts[i];
+        decision.unlocked = true;  // 前序过＋缺项清——本阶段解锁（UX-12）
+        if (fact.hasResult) {
+            decision.status = ui::StageViewStatus::Completed;
+            if (!fact.staleHints.empty()) {
+                // 有序映射 → 向量（迭代序＝(阶段,域键) 字典序——确定性输出）。
+                for (const auto& entry : fact.staleHints) {
+                    decision.staleHints.push_back(entry.second);
+                }
+            }
+        } else {
+            decision.status = ui::StageViewStatus::NotStarted;  // 评估未开始（可进入）
+        }
+        state.decisions[i] = std::move(decision);
+    }
+    return state;
+}

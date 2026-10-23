@@ -1,0 +1,2081 @@
+[
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 49,
+    "end": 62,
+    "symbol": "Get-LockMutexName",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 64,
+    "end": 83,
+    "symbol": "Invoke-InLockMutex",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Invoke-InLockMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 85,
+    "end": 98,
+    "symbol": "Read-Lock",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Read-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 101,
+    "end": 109,
+    "symbol": "Test-Fencing",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.Test-Fencing",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 24,
+    "end": 26,
+    "symbol": "Assert-Equal",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-Equal",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 28,
+    "end": 30,
+    "symbol": "Assert-ExitCode",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-ExitCode",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 32,
+    "end": 40,
+    "symbol": "Invoke-Lock",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-Lock",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 42,
+    "end": 52,
+    "symbol": "Get-LockMutexName",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Get-LockMutexName",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 54,
+    "end": 85,
+    "symbol": "Assert-LockActionWaitsOnMutex",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Assert-LockActionWaitsOnMutex",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 87,
+    "end": 98,
+    "symbol": "Invoke-StateValidation",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.Invoke-StateValidation",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 33,
+    "end": 47,
+    "symbol": "$gitDir",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "start": 111,
+    "end": 176,
+    "symbol": "Invoke-InLockMutex",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.pipeline-lock.actions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 11,
+    "end": 22,
+    "symbol": "$lockScript",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "start": 100,
+    "end": 270,
+    "symbol": "$tempRoot",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/pipeline-lock.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/ThreadSafeQueue.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-lock-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch24/lock-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.test-pipeline-pipeline.regressions",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 42,
+    "end": 46,
+    "symbol": "Convert-ToIso",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Convert-ToIso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 49,
+    "end": 53,
+    "symbol": "Compare-Iso",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Compare-Iso",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 55,
+    "end": 57,
+    "symbol": "Test-NonNegativeInteger",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.Test-NonNegativeInteger",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 25,
+    "end": 38,
+    "symbol": "$docBase",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.root",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 58,
+    "end": 65,
+    "symbol": "$knownPhases",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.schema",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 67,
+    "end": 82,
+    "symbol": "$heartbeatAt",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.heartbeat",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 83,
+    "end": 95,
+    "symbol": "$hasTickTokenProp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.fencing-presence",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 97,
+    "end": 100,
+    "symbol": "$k",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.attempts",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 102,
+    "end": 127,
+    "symbol": "$policyBools",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.policy",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 129,
+    "end": 136,
+    "symbol": "$taskMap",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.contract-index",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 138,
+    "end": 183,
+    "symbol": "$claimability",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.queue",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 185,
+    "end": 205,
+    "symbol": "$needsTask",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.phase",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 207,
+    "end": 222,
+    "symbol": "$s.acceptanceRecord",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.acceptance",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 224,
+    "end": 256,
+    "symbol": "$failureAttempt",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.failure-record",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 258,
+    "end": 282,
+    "symbol": "$hasRun",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.run",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 284,
+    "end": 292,
+    "symbol": "$hi",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.history",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 294,
+    "end": 304,
+    "symbol": "$b1Manifest",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.docRefs",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 306,
+    "end": 307,
+    "symbol": "$s.pausedReason",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.narrative-limit",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "source",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "start": 309,
+    "end": 317,
+    "symbol": "$headLine",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-state.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "inputs",
+    "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "inputs",
+    "path": "RobWork/doc/industrial-robot-design/automation-pipeline.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "inputs",
+    "path": "RobWork/RobWork/src/rw/common/TimerUtil.hpp",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/governance-state-audit.md",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/search.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-red/report.json",
+    "passed": true
+  },
+  {
+    "id": "foundation-governance.validate-state.verdict",
+    "kind": "auditEvidence",
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch25/state-green/report.json",
+    "passed": true
+  }
+]

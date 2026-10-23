@@ -1,0 +1,266 @@
+{
+  "reviewedCommit": "98c97238fa3c34aad51330b3b196439844badb69",
+  "excluded": [
+    "clone/**",
+    ".git/**",
+    "build*/**",
+    "fixture*/**"
+  ],
+  "artifacts": [
+    {
+      "path": "changed-paths.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "changed-paths.log",
+      "bytes": 10411,
+      "rawSha256": "236f18feb18fba150e063b63612abdb11f7b50ec2e918df26d2e9adef7fcc0aa"
+    },
+    {
+      "path": "checkout-longpath-failed.exit.txt",
+      "bytes": 5,
+      "rawSha256": "d6a1e3465ed106cad3c49e17b247dec0b2737e0dea99ab406371fb53b22e93a7"
+    },
+    {
+      "path": "checkout-longpath-failed.log",
+      "bytes": 1995,
+      "rawSha256": "573c724c329ce7fc1e0825615e25c64aea9b3efd8f2081ad248f68896bd8c227"
+    },
+    {
+      "path": "checkout.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "checkout.log",
+      "bytes": 82,
+      "rawSha256": "0695a5d23174252a94a4b8aa9f4c025716ae8c519abaff3bbe59c9b57fe86498"
+    },
+    {
+      "path": "clone-final-status.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "clone-final-status.log",
+      "bytes": 0,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "clone.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "clone.log",
+      "bytes": 117,
+      "rawSha256": "87991f524f9095d13482a8920ceea022c875cf7659d5549eb7d479935bc4542d"
+    },
+    {
+      "path": "commit-lint-incomplete-checkout.exit.txt",
+      "bytes": 4,
+      "rawSha256": "a0ec0460fc75a1eea654e7a06b4b6addb3a2f8a4dfc8cd3ea9f2356d644ab44f"
+    },
+    {
+      "path": "commit-lint-incomplete-checkout.log",
+      "bytes": 1214,
+      "rawSha256": "cad4091b19728e05762e51d6c68a2bf4c38eb75803c032b4a8be8d398f3e74d8"
+    },
+    {
+      "path": "commit-lint.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "commit-lint.log",
+      "bytes": 71,
+      "rawSha256": "620f645c9623da08b9e40ca8683ae6f34b76479aebd927c5d6ed87bc36258303"
+    },
+    {
+      "path": "frozen-head.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "frozen-head.log",
+      "bytes": 42,
+      "rawSha256": "d666cccc14fce889099632a93fee044d823dd49c99e882ed800898ef679c2315"
+    },
+    {
+      "path": "gates.ps1",
+      "bytes": 994,
+      "rawSha256": "ca46e6bf563ea8fd73c31e25c203b7018b03be701be8685f0f616789b3ef5f5c"
+    },
+    {
+      "path": "independent-oracle.json",
+      "bytes": 852,
+      "rawSha256": "cb70adb2893150216ccd38f52f8a6b750a2ab611e385bb6388e159b79294424a"
+    },
+    {
+      "path": "make-report.py",
+      "bytes": 5129,
+      "rawSha256": "fd570427aa08ba54c960728aec97197eb58190e7a95262f6e86aa9a4af2bca5a"
+    },
+    {
+      "path": "oracle-review-first.log",
+      "bytes": 2363,
+      "rawSha256": "0ff10056f9f03c7f548829b90820e1165b9796a29f54cbb5da27588f2849f771"
+    },
+    {
+      "path": "oracle-review.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "oracle-review.log",
+      "bytes": 854,
+      "rawSha256": "f95a07d1589aa84c9620fddd0c182c7c03d7c422a2ba485e79dffd31b67d60e6"
+    },
+    {
+      "path": "oracle-review.py",
+      "bytes": 1657,
+      "rawSha256": "42faf6952ba3378ea95bdb7509f1f9a28652b62f56977951f926ac98feca0c13"
+    },
+    {
+      "path": "raw-review-first.log",
+      "bytes": 2569,
+      "rawSha256": "51d7eb1aedff225902f6801c47bbccddce2c2159b8495d21d81fce6a192d0673"
+    },
+    {
+      "path": "raw-review.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "raw-review.json",
+      "bytes": 2272,
+      "rawSha256": "52b1f28d79d35c6699e59f35e476458a73639b435f8aff49fc927792eabd7a36"
+    },
+    {
+      "path": "raw-review.log",
+      "bytes": 2460,
+      "rawSha256": "1fb2ee310d4b1f74f8aebd5b904d3682fb556d4af652b186aae79079ea2405c0"
+    },
+    {
+      "path": "raw-review.py",
+      "bytes": 5132,
+      "rawSha256": "472bce281b15567e2232395c485c0b1bcc46759e5280f1830ac77f7222b13c5b"
+    },
+    {
+      "path": "report.json",
+      "bytes": 7222,
+      "rawSha256": "521cc552b6da07e444be45d3670ca53b844ccd0e0d80325caff1c2e38f8bf9f8"
+    },
+    {
+      "path": "report.md",
+      "bytes": 803,
+      "rawSha256": "2483b5897dfe7f0d40d08311bff3ff4195e084a7652e1da065bc22b536b55e5b"
+    },
+    {
+      "path": "row-review.json",
+      "bytes": 77867,
+      "rawSha256": "39e58ab07e0d56d547ce96916fe07b781be0dd6c5686f5501cd6752c9efbf60d"
+    },
+    {
+      "path": "row-review.txt",
+      "bytes": 44004,
+      "rawSha256": "4a4ffdf8044fa6c8fbf410ae0203e9b52ed278c5483f7b2a5167161e3415d874"
+    },
+    {
+      "path": "semantic-row-review.json",
+      "bytes": 30223,
+      "rawSha256": "60a651d3a32a6bccc50c362fd2ebf65b242e2f0d8285f7092e901435d1ebdcd6"
+    },
+    {
+      "path": "source-comparison.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "source-comparison.log",
+      "bytes": 0,
+      "rawSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "validate-docs-incomplete-checkout.exit.txt",
+      "bytes": 4,
+      "rawSha256": "a0ec0460fc75a1eea654e7a06b4b6addb3a2f8a4dfc8cd3ea9f2356d644ab44f"
+    },
+    {
+      "path": "validate-docs-incomplete-checkout.log",
+      "bytes": 1216,
+      "rawSha256": "c447d5e659168cd20261fede0bb5f476ea74eb299661a2965d2f64802949cbe9"
+    },
+    {
+      "path": "validate-docs.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "validate-docs.log",
+      "bytes": 2724,
+      "rawSha256": "366f350bb2be43d7728989f3f964fceb5a6d70d0ec7c3867130381797f27cebd"
+    },
+    {
+      "path": "validate-reuse-incomplete-checkout.exit.txt",
+      "bytes": 4,
+      "rawSha256": "a0ec0460fc75a1eea654e7a06b4b6addb3a2f8a4dfc8cd3ea9f2356d644ab44f"
+    },
+    {
+      "path": "validate-reuse-incomplete-checkout.log",
+      "bytes": 1217,
+      "rawSha256": "b38470e68d94702d3a8ee3cca58be557f801d9969a29daf0632b4efc50de9ce8"
+    },
+    {
+      "path": "validate-reuse.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "validate-reuse.log",
+      "bytes": 2486,
+      "rawSha256": "5dd05f328925d29e81c2fa2dcdf4a622efce4bbeab97ea3459b4cf45baeed1f1"
+    },
+    {
+      "path": "validate-task-incomplete-checkout.exit.txt",
+      "bytes": 4,
+      "rawSha256": "a0ec0460fc75a1eea654e7a06b4b6addb3a2f8a4dfc8cd3ea9f2356d644ab44f"
+    },
+    {
+      "path": "validate-task-incomplete-checkout.log",
+      "bytes": 1216,
+      "rawSha256": "0f121401116f7413cf2638e78e6d05c5a5920a9e4c59bcede4af162833b8d9f0"
+    },
+    {
+      "path": "validate-task.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "validate-task.log",
+      "bytes": 2517,
+      "rawSha256": "a4a5515e2a55f244d2d46d4f9c622cd1350af234c3b7c7af40f3f892beeeafc6"
+    },
+    {
+      "path": "verify-task-scope-incomplete-checkout.exit.txt",
+      "bytes": 4,
+      "rawSha256": "a0ec0460fc75a1eea654e7a06b4b6addb3a2f8a4dfc8cd3ea9f2356d644ab44f"
+    },
+    {
+      "path": "verify-task-scope-incomplete-checkout.log",
+      "bytes": 1220,
+      "rawSha256": "641a484cbcf2e1bd7726e516b1b1c88b2f4dea02efed5a0225f165cf6d3b23b9"
+    },
+    {
+      "path": "verify-task-scope.exit.txt",
+      "bytes": 3,
+      "rawSha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+    },
+    {
+      "path": "verify-task-scope.log",
+      "bytes": 188,
+      "rawSha256": "0a6e8ab027bfb154cb748110d81e7668fa47839dad0163e2b1f0e7a17ee68604"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "testId": "ReuseTestHarnessAudit.ListenerCollectionOwnsAppendedListener",
+  "xmlStatus": "run",
+  "xmlResult": "completed",
+  "xmlFailures": 0,
+  "nativeOutcome": "passed",
+  "matches": true
+}

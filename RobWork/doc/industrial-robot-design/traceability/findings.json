@@ -9643,6 +9643,140 @@
       "title": "基线b12e8503完整GitHub CI模型测试10/47目标失败，后续边界与出包跳过；不得把治理门禁绿解释为全产品CI绿",
       "owner": "CI/相关单元验收所有者",
       "resolution": "基线运行39724444980在治理前已失败；本轮记录事实并保留required package阻断合入，不放宽测试、不修改算法。需后续单独调查环境/产品原因。"
+    },
+    {
+      "id": "F-957",
+      "source": "traceability/reuse/REUSE-T01/runtime-boundary-audit.md / runtime-probe/red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "runtime S6将移动关节m制zeroOffset编码成旋转且缺少平移，阻断相关上游FK适配",
+      "owner": "runtime / REUSE-T02",
+      "resolution": "真实原编译器独立重建2项1 passed1 failed、exit1，三轴复现。T02先在runtime owner修复最薄模型映射并回归；业务不得额外补偿，不是RobWork缺算法。原失败与独立复现有效验收保留。"
+    },
+    {
+      "id": "F-958",
+      "source": "traceability/reuse/REUSE-T01/test-build-audit.md / probe-r10",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "testkit静态监听器传给GTest Append，与其接管并delete对象的公开所有权契约冲突",
+      "owner": "testkit / REUSE-T05",
+      "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。"
+    },
+    {
+      "id": "F-959",
+      "source": "traceability/reuse/REUSE-T01/test-helpers-golden-audit.md / generator-replay.json",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "URDF导入黄金生成脚本未随速度限制F01映射更新，再生会回退正确黄金数据且缺消费字段",
+      "owner": "modeling/testdata / REUSE-T05",
+      "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。"
+    },
+    {
+      "id": "F-960",
+      "source": "traceability/reuse/REUSE-T01/compare-set-dataset-audit.md / probe-r17/core-red",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core C4比较在有限极值的diff与limit同时溢出时将超容差输入误判为接近",
+      "owner": "core / REUSE-T05",
+      "resolution": "原core目标真实编译调用v=M/ref=-M/relative=.5/absolute=M应拒绝（缩放oracle差2>阈值1.5），原实现inf<=inf返回true；1项真实failed、0 passed/skipped/notRun。保留原红证，T05保持C4/owner语义修数值边界，不放宽容差或另建比较平台。"
+    },
+    {
+      "id": "F-961",
+      "source": "traceability/reuse/REUSE-T01/policy-boundary-audit.md / probe-r18",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "policy会话将合法REGEX前缀完整名传入上游模式API，产出的排除规则无法匹配原对象名",
+      "owner": "policy / REUSE-T05",
+      "resolution": "原policy CMake目标和原会话夹具真实编译，新2项1passed/1failed。runtime合法字符集允许REGEXarm，ProximitySetupRule把REGEX前缀后的字符串当正则；setup规则原名匹配false。仅证实公开setup输出错误，evaluate当前按scope直接逐对query，不声称已复现碰撞误判。T05用既有模式接口的最小字面适配，保留名称真值和上游API，先补原会话回归；不改上游或另建规则引擎。"
+    },
+    {
+      "id": "F-962",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "project恢复扫描未核清单字节摘要，错误HEAD摘要可经公开工厂成功打开",
+      "owner": "project / REUSE-T05",
+      "resolution": "原project目标/原TxEngine夹具新增6项2passed4failed，错误HEAD摘要、合法清单时间字节变化均scan true；公共ProjectStoreFactory::open也接受错误摘要并报告完整，健康正例通过。T05复用codec::contentVersionOf/core摘要补实算比较与原测试，不改上游或新建持久化核心。未跑全project/崩溃矩阵/并发。"
+    },
+    {
+      "id": "F-963",
+      "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "project事务错误映射硬编码70，真实SDK磁盘满112误归WriteRejected",
+      "owner": "project / REUSE-T05",
+      "resolution": "原IFileOps夹具注入ERROR_DISK_FULL，commit拒绝且旧字节保持，但实际WriteRejected而非DiskFull；原F2注入同错误数字70掩盖缺陷。ObjectStore/StoreClone同常量仅静态同族待核，未跑这些路径。T05复用同单元Archive已采用的SDK常量映射方式收口，先补原回归，不另设数字表。"
+    },
+    {
+      "id": "F-964",
+      "source": "traceability/reuse/REUSE-T01/execution-admission-audit.md / probe-r22",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "execution拒绝Completed终结后登记半写，合法取消随后被拒",
+      "owner": "execution / REUSE-T05",
+      "resolution": "原目标/原RunRegistryAdmission夹具27项26passed1failed，原25项全通过；新增拒Completed后terminationCause仍Completed且Canceled再抛，健康取消正例通过。T05在原写入口先校验允许原因再赋值并落原回归，不新写登记/状态机。当前不改产品，不授全T01/T02。"
+    },
+    {
+      "id": "F-965",
+      "source": "reuse/core-identity-events-audit.md / batch28",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-23",
+      "title": "core身份FNV非空向量偏离约定，公开ObjectId散列继承偏差",
+      "owner": "core / REUSE-T05",
+      "resolution": "独立固定整数向量探测4项2通过2失败；原core64通过。addShifted/addMulSmall用已变更hi/lo计算后项，非一次乘FNV素数；公开ObjectId hash真实失败。六Id及ContentVersion/ContentIdentity静态同族，不声称内容SHA或持久化损坏。T01不修核心；后续先核成熟已有能力/消费者兼容性，无现成API则最小修正提案获批后实施。"
     }
+,
+{
+  "id": "F-966",
+  "source": "reuse/core-units-compare-audit.md / batch31",
+  "severity": "major",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "core C4有限极值中间溢出令标量与vector/Q公共比较误绿",
+  "owner": "core / REUSE-T05",
+  "resolution": "22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。"
+}
+,
+{
+  "id": "F-967",
+  "source": "reuse/core-event-lifetime-audit.md / batch32",
+  "severity": "major",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "ReferenceEventBus测试参考实现被UI生产装配且句柄析构不退订",
+  "owner": "core / execution / ui / REUSE-T01",
+  "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。"
+}
+,
+{
+  "id": "F-968",
+  "source": "reuse/diagnostics-schema-audit.md / batch33",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics受限模式解析失败保留部分names违反私有输出契约",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "43跑42passed1failed，原38例通过；四类已解析pid后的非法尾部均false且error非空但names未清空。注册表和工厂检查false即停止，未证公共对象污染。T01不改解析核心；保持单一私有解析点，后续先核冻结契约及两调用方，最小处置独立回归。"
+}
+,
+{
+  "id": "F-969",
+  "source": "reuse/diagnostics-log-file-audit.md / batch35",
+  "severity": "minor",
+  "status": "open",
+  "registeredAt": "2026-10-23",
+  "title": "diagnostics日志轮转未遵守含活动文件的保留总数边界",
+  "owner": "diagnostics / REUSE-T01",
+  "resolution": "真实日志器keep1额外保留.1；真实文件接缝从5代缩至2后.2/.3/.4仍在。19跑17passed2failed0skipped，原产品12与上游1全过；后续在既有文件接缝最小修正并核上游候选，T01不改产品或新写日志核心。"
+}
   ]
 }

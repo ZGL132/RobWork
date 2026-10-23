@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "ird-reuse-permissions/1",
+  "authority": "ARCH:3.6",
+  "modelOwner": "runtime",
+  "hostExceptions": [
+    {
+      "id": "HOST-RENDER",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-PRESENT",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostPresentationAdapters.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-COMPILE",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostCompilePort.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-GATEWAY",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
+    }
+  ],
+  "grants": []
+}

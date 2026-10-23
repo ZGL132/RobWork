@@ -1,0 +1,6 @@
+validate-context-pack: 1 pack(s), fresh=0, stale/drift=0, structural=1
+C:\Users\zgl18\AppData\Local\Temp\ird-b27-accept-1f6654c1f4\repo-copy\RobWork\scripts\industrialrobot\validate-context-
+pack.ps1 : validate-context-pack: pack missing required fingerprint: AGENTS.md (ACC-T01.md)
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-context-pack.ps1
+ 

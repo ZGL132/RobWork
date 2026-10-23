@@ -1,0 +1,63 @@
+[==========] Running 13 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from ReuseDigestAudit
+[ RUN      ] ReuseDigestAudit.CngKnownVectors_CORE_T02
+[       OK ] ReuseDigestAudit.CngKnownVectors_CORE_T02 (0 ms)
+[ RUN      ] ReuseDigestAudit.PaddingAndChunkBoundaries_CORE_T02
+[       OK ] ReuseDigestAudit.PaddingAndChunkBoundaries_CORE_T02 (6 ms)
+[ RUN      ] ReuseDigestAudit.CngDuplicateAndProductCopy_CORE_T02
+[       OK ] ReuseDigestAudit.CngDuplicateAndProductCopy_CORE_T02 (0 ms)
+[ RUN      ] ReuseDigestAudit.CanonicalTypesAndRejection_CORE_T02
+[       OK ] ReuseDigestAudit.CanonicalTypesAndRejection_CORE_T02 (0 ms)
+[ RUN      ] ReuseDigestAudit.ContentVersionPublicFnv_CORE_T02
+C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp(113): error: Expected equality of these values:
+  static_cast<std::size_t>(0xd84cf67ff3e90eeeULL)
+    Which is: 15586103439835860718
+  std::hash<ContentVersion>{}(value)
+    Which is: 3981071475404768780
+
+[  FAILED  ] ReuseDigestAudit.ContentVersionPublicFnv_CORE_T02 (0 ms)
+[ RUN      ] ReuseDigestAudit.ContentIdentityPublicFnv_CORE_T02
+C:\Users\zgl18\AppData\Local\Temp\ird-b30-accept-20261023-064215\clone\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch30\DigestSuitabilityTest.cpp(118): error: Expected equality of these values:
+  static_cast<std::size_t>(0xd84cf67ff3e90eeeULL)
+    Which is: 15586103439835860718
+  std::hash<ContentIdentity>{}(value)
+    Which is: 3981071475404768780
+
+[  FAILED  ] ReuseDigestAudit.ContentIdentityPublicFnv_CORE_T02 (0 ms)
+[----------] 6 tests from ReuseDigestAudit (7 ms total)
+
+[----------] 3 tests from Sha256KnownVectors
+[ RUN      ] Sha256KnownVectors.EmptyString_UT_ID_D
+[       OK ] Sha256KnownVectors.EmptyString_UT_ID_D (0 ms)
+[ RUN      ] Sha256KnownVectors.Abc_UT_ID_D
+[       OK ] Sha256KnownVectors.Abc_UT_ID_D (0 ms)
+[ RUN      ] Sha256KnownVectors.TwoBlock_UT_ID_D
+[       OK ] Sha256KnownVectors.TwoBlock_UT_ID_D (0 ms)
+[----------] 3 tests from Sha256KnownVectors (0 ms total)
+
+[----------] 2 tests from Sha256Determinism
+[ RUN      ] Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D
+[       OK ] Sha256Determinism.SameBytesSameDigestIndependentlyOfChunking_UT_ID_D (0 ms)
+[ RUN      ] Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D
+[       OK ] Sha256Determinism.DifferentBytesDifferentDigest_UT_ID_D (0 ms)
+[----------] 2 tests from Sha256Determinism (0 ms total)
+
+[----------] 1 test from Sha256Lifecycle
+[ RUN      ] Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D
+[       OK ] Sha256Lifecycle.FinalizeDisallowsFurtherUse_UT_ID_D (0 ms)
+[----------] 1 test from Sha256Lifecycle (0 ms total)
+
+[----------] 1 test from DigestCanonical
+[ RUN      ] DigestCanonical.RoundtripAndStrictParse_UT_ID_D
+[       OK ] DigestCanonical.RoundtripAndStrictParse_UT_ID_D (0 ms)
+[----------] 1 test from DigestCanonical (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 5 test suites ran. (7 ms total)
+[  PASSED  ] 11 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] ReuseDigestAudit.ContentVersionPublicFnv_CORE_T02
+[  FAILED  ] ReuseDigestAudit.ContentIdentityPublicFnv_CORE_T02
+
+ 2 FAILED TESTS

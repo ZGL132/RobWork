@@ -1,0 +1,475 @@
+[
+  {
+    "functionId": "optimization.ParetoTest.makeCid",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "symbol": "makeCid",
+      "qualifiedSymbol": "(global anonymous namespace)::makeCid",
+      "startLine": 68,
+      "endLine": 73,
+      "sha256": "66021aec4508062218551d680a485124ff27bdc3aabfb1faca68eb32113a0861"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeCandidate",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "symbol": "makeCandidate",
+      "qualifiedSymbol": "(global anonymous namespace)::makeCandidate",
+      "startLine": 78,
+      "endLine": 88,
+      "sha256": "2b64fd9a557f298fb9f83c808cd3d7efd262b05dc0f3ed3996c24478aa1126cf"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.makeTwoObjectives",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "symbol": "makeTwoObjectives",
+      "qualifiedSymbol": "(global anonymous namespace)::makeTwoObjectives",
+      "startLine": 91,
+      "endLine": 95,
+      "sha256": "bc1c9f29968f2bf448feb7fe149f5b7cf35500222ee7fbab46180c007286861e"
+    }
+  },
+  {
+    "functionId": "optimization.ParetoTest.idsOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/ParetoTest.cpp",
+      "symbol": "idsOf",
+      "qualifiedSymbol": "(global anonymous namespace)::idsOf",
+      "startLine": 98,
+      "endLine": 106,
+      "sha256": "1c04082a980a616d201f5d8578a6e2959561bf516a958c9fb3e88550b0ee4fef"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asBytes",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "asBytes",
+      "qualifiedSymbol": "(global anonymous namespace)::asBytes",
+      "startLine": 74,
+      "endLine": 77,
+      "sha256": "c3e69cbbdf74ab13395874142d4a367f2b96003acab2a31738549f11954d0b59"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.digestOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "digestOf",
+      "qualifiedSymbol": "(global anonymous namespace)::digestOf",
+      "startLine": 81,
+      "endLine": 86,
+      "sha256": "0a8e153e60b4f7fb89e9fbc3996feff7137620802bdf71baca7f1b01c979a2a6"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.existingNodeFor",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "existingNodeFor",
+      "qualifiedSymbol": "(global anonymous namespace)::existingNodeFor",
+      "startLine": 90,
+      "endLine": 102,
+      "sha256": "c94aabb4255acda5ee974d9b2f5dfa68f2a63f045c60ddae1fcefccb309b415b"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.missingNode",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "missingNode",
+      "qualifiedSymbol": "(global anonymous namespace)::missingNode",
+      "startLine": 105,
+      "endLine": 111,
+      "sha256": "2ff87e7ec6c851cf89042ffa86c5a45693b747f46f9adc666f18e775d23f92f3"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.includeEdge",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "includeEdge",
+      "qualifiedSymbol": "(global anonymous namespace)::includeEdge",
+      "startLine": 114,
+      "endLine": 121,
+      "sha256": "9599838f2c7dd0c5d7a0f1cf4798ac2d2bce9eac02d274c875e0101a4c94bdd0"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeXacroSource",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "makeXacroSource",
+      "qualifiedSymbol": "(global anonymous namespace)::makeXacroSource",
+      "startLine": 128,
+      "endLine": 158,
+      "sha256": "323e17d208da728ece6a12bae915a6dda7de5b4f4d7acdd20c378f8ee13fc05c"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.asText",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "asText",
+      "qualifiedSymbol": "(global anonymous namespace)::asText",
+      "startLine": 161,
+      "endLine": 165,
+      "sha256": "860e198d20bd28de3d4717bc583e6ed1b0539f6b51fd08cdd782c0bc4365ed22"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.findDiag",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "findDiag",
+      "qualifiedSymbol": "(global anonymous namespace)::findDiag",
+      "startLine": 168,
+      "endLine": 175,
+      "sha256": "16cd1f0ca10d7fa07240f9d121bd585687874e0db745157d275a99c8fe1eb13c"
+    }
+  },
+  {
+    "functionId": "modeling.XacroExpandTest.makeBasicSource",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/XacroExpandTest.cpp",
+      "symbol": "makeBasicSource",
+      "qualifiedSymbol": "(global anonymous namespace)::makeBasicSource",
+      "startLine": 202,
+      "endLine": 205,
+      "sha256": "ead0ecd371e75ca3ad81cee9c777e04b18677187c5d22a67ebc6934b38697ca2"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.expectNearRel",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "expectNearRel",
+      "qualifiedSymbol": "(global anonymous namespace)::expectNearRel",
+      "startLine": 103,
+      "endLine": 108,
+      "sha256": "fc5d00fd505bcb1d705377e65657812bfcc6440d1a4f94751dde59cfb6923b42"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.rowAt",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "rowAt",
+      "qualifiedSymbol": "(global anonymous namespace)::rowAt",
+      "startLine": 113,
+      "endLine": 139,
+      "sha256": "b3800c72aa96663e738d373ba193b038246138f097421a77e4170759d5da8e1f"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makeIdentity",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "makeIdentity",
+      "qualifiedSymbol": "(global anonymous namespace)::makeIdentity",
+      "startLine": 143,
+      "endLine": 159,
+      "sha256": "3977a4423f4565b3babc7cc84a7a17079e736079adc9115a12c004f6638e7e63"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.prismAxialForce",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "prismAxialForce",
+      "qualifiedSymbol": "(global anonymous namespace)::prismAxialForce",
+      "startLine": 192,
+      "endLine": 192,
+      "sha256": "6c362b2210f99d32ce01d2f57debd13235c1c6d361d71d8d2984693a78da0097"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.revTorque",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "revTorque",
+      "qualifiedSymbol": "(global anonymous namespace)::revTorque",
+      "startLine": 194,
+      "endLine": 197,
+      "sha256": "0b6fbec3da6fd95594e146da2844d1a1c1ffdc6bdeace83b26a78847e13c2802"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.makePrismRevModel",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "makePrismRevModel",
+      "qualifiedSymbol": "(global anonymous namespace)::makePrismRevModel",
+      "startLine": 201,
+      "endLine": 293,
+      "sha256": "7c2f873a8e9f0a679b292effbc6476ec54af86bdb658c9e64e8ebcad9da95e6b"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.cancellationRequested",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "cancellationRequested",
+      "qualifiedSymbol": "(global anonymous namespace)::FakeContext::cancellationRequested",
+      "startLine": 85,
+      "endLine": 85,
+      "sha256": "f4b9c4f82420e27285d19eb20fc072205551feb730af036bf53e9194a9c0b9f1"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.reportProgress",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "reportProgress",
+      "qualifiedSymbol": "(global anonymous namespace)::FakeContext::reportProgress",
+      "startLine": 86,
+      "endLine": 86,
+      "sha256": "46436c2625dfb6c1b5304831abd70ffc2db055018ba6d2c71f06c44b2a4149c9"
+    }
+  },
+  {
+    "functionId": "dynamics.StatisticsTest.tryObjectBytes",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
+      "symbol": "tryObjectBytes",
+      "qualifiedSymbol": "(global anonymous namespace)::FakeContext::tryObjectBytes",
+      "startLine": 87,
+      "endLine": 91,
+      "sha256": "cb679788050fa489b8bf24514f93a6ed86d786c9f490eafe0f4c777f01ba3a87"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.conditionIdHex",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "conditionIdHex",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::conditionIdHex",
+      "startLine": 57,
+      "endLine": 60,
+      "sha256": "fb886cef24ffe3f76a11fd7a8c961628947172e11a295be78e099c6b479e1e1a"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.trapezoid",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "trapezoid",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::trapezoid",
+      "startLine": 63,
+      "endLine": 69,
+      "sha256": "bb62fa285a9a4f6fe1a4f9577b12ec597e171231bb039d53e551ec4595b5b9c3"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.rneaReference",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "rneaReference",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::rneaReference",
+      "startLine": 77,
+      "endLine": 103,
+      "sha256": "b65fc96b5bfae78664437854a0c8d62453962771cfb768167bef4060624c6495"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.statValue",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "statValue",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::statValue",
+      "startLine": 106,
+      "endLine": 116,
+      "sha256": "dc5f32c24d5cf01d79e20118ade2e98c6858746713101b035f2757841857b04c"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mapCase",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "mapCase",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::mapCase",
+      "startLine": 119,
+      "endLine": 207,
+      "sha256": "2708715e3cb7ae0261db1f1d2642d8024df8731b3c344306ee0d8a36faa77594"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_dyn_two_link_golden.mergeEnvelopeReference",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/dyn-two-link-analytic/1.0.0/generate/make_dyn_two_link_golden.mjs",
+      "symbol": "mergeEnvelopeReference",
+      "qualifiedSymbol": "ESModule::dyn-two-link-analytic::mergeEnvelopeReference",
+      "startLine": 213,
+      "endLine": 260,
+      "sha256": "f191ecce578dd8da42765db667d3cb43ebfe3d8848c8e91b6d3153919fba1acc"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.aabb",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "aabb",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::aabb",
+      "startLine": 106,
+      "endLine": 108,
+      "sha256": "dcb0a2b2cf14920e4d26970f455db61109fca6303e919ef3a9664f3b8d0ff980"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.splitmixNext",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "splitmixNext",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::splitmixNext",
+      "startLine": 210,
+      "endLine": 217,
+      "sha256": "51f3f06699815e52e4e785a19110fa9eada006c9df26de60a44e67a700b95c9f"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.unitFrom",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "unitFrom",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::unitFrom",
+      "startLine": 219,
+      "endLine": 221,
+      "sha256": "4a55f06e7805aaade03f7b763fa08a45ca6ab6c4139b7c519c804f629b74bee2"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.sha256Hex",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "sha256Hex",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::sha256Hex",
+      "startLine": 223,
+      "endLine": 225,
+      "sha256": "e52449b983c4920fc085abb5991db2c1efa8875af9393c1615bc76c18105a3a4"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.patchCanonicalBytes",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "patchCanonicalBytes",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::patchCanonicalBytes",
+      "startLine": 227,
+      "endLine": 247,
+      "sha256": "483d7ffee12842bfa55cea66d3625c301c1963c23e8060a3853ddf380cc92f87"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.candidateIdHex",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "candidateIdHex",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::candidateIdHex",
+      "startLine": 250,
+      "endLine": 258,
+      "sha256": "310d084f094e52fc26711af84898e3ddf59a18bbd7a80b727bfd6b1e2ba870c9"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.computeMetrics",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "computeMetrics",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::computeMetrics",
+      "startLine": 261,
+      "endLine": 269,
+      "sha256": "1f766b90c36fa16dbaeb787af5519f8f10c9fa9669106644dd49bfeb326eebc4"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.generateBatch",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "generateBatch",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::generateBatch",
+      "startLine": 273,
+      "endLine": 310,
+      "sha256": "6fcae5c570eca0ded73b768740e2fce6c7b7a32f411f85b0e8cbb73480ae83e2"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.statusOf",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "statusOf",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::statusOf",
+      "startLine": 326,
+      "endLine": 331,
+      "sha256": "dc203f717ecf2f6569d1c77624802c4396565b49be3b3c49212eec9b51b81620"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.closeWithin",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "closeWithin",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::closeWithin",
+      "startLine": 353,
+      "endLine": 356,
+      "sha256": "7ecb2b70bc2f581d43f00aa556fe47fb4e2ddb7a53eeef61f0a21f4a96d1ceb1"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominates",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "dominates",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::dominates",
+      "startLine": 358,
+      "endLine": 378,
+      "sha256": "303711e793c1ed0fcbdd1a6198d306060dd84e7b253a2553e3892d1f4063a5fd"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.bindObjectives",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "bindObjectives",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::bindObjectives",
+      "startLine": 381,
+      "endLine": 388,
+      "sha256": "032920243479940beb7047d3232664716b016f97d58e99a975d9da49621fe126"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.buildFront",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "buildFront",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::buildFront",
+      "startLine": 392,
+      "endLine": 455,
+      "sha256": "05b7440521c72f80063f350a3aecba907d44f1b5432438ee0db834af6766d07f"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_opt_pareto_golden.dominanceMatrix",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/opt-pareto-golden/1.0.0/generate/make_opt_pareto_golden.mjs",
+      "symbol": "dominanceMatrix",
+      "qualifiedSymbol": "ESModule::opt-pareto-golden::dominanceMatrix",
+      "startLine": 474,
+      "endLine": 489,
+      "sha256": "ee367cec6ab4a0f67a33e9b42de8927d105d96f6982f2e6a135eab13c0533cf4"
+    }
+  },
+  {
+    "functionId": "foundation-governance.make_import_expectations.fixtureGeneration",
+    "source": {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs",
+      "symbol": "const importReport",
+      "qualifiedSymbol": "ESModule::mdl-urdf-import::fixtureGeneration",
+      "startLine": 42,
+      "endLine": 149,
+      "sha256": "ec5dc677788563e1a04ead0ff07706695438ae4674c48183eecc0af8010549fb"
+    }
+  }
+]

@@ -1,0 +1,43 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:31:    const auto t = Tolerance::make(0.01, 0.001);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:33:    EXPECT_TRUE(closeWithin(1.01, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:35:    EXPECT_FALSE(closeWithin(1.02, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:37:    EXPECT_TRUE(closeWithin(0.0009, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:43:    const auto t = Tolerance::make(0.5, 0.001);   // 相对项大也无用（参考为 0）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:44:    EXPECT_TRUE(closeWithin(0.0, 0.0, t));        // 精确零
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:45:    EXPECT_TRUE(closeWithin(0.0009, 0.0, t));     // |0.0009| ≤ abs(0.001)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:46:    EXPECT_FALSE(closeWithin(0.002, 0.0, t));     // 超 absolute
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:48:    EXPECT_TRUE(closeWithin(-0.0009, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:49:    EXPECT_FALSE(closeWithin(-0.002, 0.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:55:    const auto t = Tolerance::make(0.1, 0.1);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:56:    EXPECT_FALSE(closeWithin(qnan, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:57:    EXPECT_FALSE(closeWithin(1.0, qnan, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:58:    EXPECT_FALSE(closeWithin(inf, 1.0, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:59:    EXPECT_FALSE(closeWithin(1.0, -inf, t));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:60:    EXPECT_FALSE(closeWithin(qnan, qnan, t));     // NaN 对 NaN 也是 false（非有限）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:66:    const auto t = Tolerance::make(0.0, 0.001);   // 纯绝对小容差，结果只看逐元素
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:79:    const auto t = Tolerance::make(0.1, 0.1);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:94:    EXPECT_NO_THROW((void)Tolerance::make(0.0, 0.0));                 // 零合法
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:95:    EXPECT_THROW((void)Tolerance::make(-0.1, 0.0), CoreError);        // 负相对
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:96:    EXPECT_THROW((void)Tolerance::make(0.0, -1.0), CoreError);        // 负绝对
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:97:    EXPECT_THROW((void)Tolerance::make(qnan, 0.0), CoreError);        // NaN
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:98:    EXPECT_THROW((void)Tolerance::make(0.0, inf), CoreError);         // Inf
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:100:        (void)Tolerance::make(-0.1, 0.0);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp:141:    const auto t = Tolerance::make(0.0, 0.001);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp:161:        (void)GoldenDataset::load({id, version});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp:174:    const auto ds = GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/DatasetTest.cpp:271:        (void)GoldenDataset::load({"kin-fk-planar-2r", "1.0.0"});
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:67:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:81:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:93:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:105:    EXPECT_THROW(checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:115:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:120:    const auto r2 = checkSetEquivalent(expected, short1, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:135:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:145:    const auto same = checkStableOrder(expected, actual, SetMatchTraits<DemoElem>{},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:151:    const auto r = checkStableOrder(expected, flipped, SetMatchTraits<DemoElem>{},
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:156:    const auto setR = checkSetEquivalent(expected, flipped, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:166:    EXPECT_THROW(checkSetEquivalent(big, small, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:185:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp:200:    const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp:68:    // --root 经环境变量传导到 GoldenDataset::load 内部的 TestPaths 解析
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/testdata/main.cpp:102:                const GoldenDataset ds = GoldenDataset::load({dirName, version});

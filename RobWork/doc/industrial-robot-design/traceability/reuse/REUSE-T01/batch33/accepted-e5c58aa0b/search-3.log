@@ -1,0 +1,8 @@
+RobWork/RobWork/src/rw/core/CMakeLists.txt:35:        StringUtil.cpp
+RobWork/RobWork/src/rw/core/CMakeLists.txt:37:        DOMParser.cpp
+RobWork/RobWork/src/rw/core/CMakeLists.txt:42:        BoostXMLParser.cpp
+RobWork/RobWork/src/rw/core/CMakeLists.txt:71:        StringUtil.hpp
+RobWork/RobWork/src/rw/core/CMakeLists.txt:73:        DOMParser.hpp
+RobWork/RobWork/src/rw/core/CMakeLists.txt:78:        BoostXMLParser.hpp
+RobWork/RobWork/gtest/CMakeLists.txt:82:        core/StringUtilTest.cpp
+RobWork/RobWork/gtest/CMakeLists.txt:112:        common/StringUtilTest.cpp

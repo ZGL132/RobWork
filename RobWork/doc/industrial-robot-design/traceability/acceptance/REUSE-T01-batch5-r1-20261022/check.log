@@ -1,0 +1,35 @@
+newRows=25 failedBindings=0
+
+id                                        startLine endLine hashMatches first
+--                                        --------- ------- ----------- -----                                          
+drivetrain.ByteWriter.putU32                     54      59        True     void putU32(std::uint32_t v)
+drivetrain.ByteWriter.putU64                     61      66        True     void putU64(std::uint64_t v)
+drivetrain.ByteWriter.putF64                     69      75        True     void putF64(double v)
+drivetrain.ByteWriter.putString                  82      86        True     void putString(const std::string& s)
+drivetrain.ByteReader.getU32                    129     137        True     std::uint32_t getU32()
+drivetrain.ByteReader.getU64                    139     147        True     std::uint64_t getU64()
+drivetrain.ByteReader.getF64                    149     155        True     double getF64()
+drivetrain.ByteReader.getString                 179     196        True     std::string getString()
+dynamics.DynamicsReplayProjector.sampleAt       230     348        True std::optional<ReplaySample> DynamicsReplayProje
+                                                                        ctor::sampleAt(const ReplayData& data,
+kinematics.rodrigues                            380     397        True inline Mat4 rodrigues(double ax, double ay, dou
+                                                                        ble az, double angle)
+kinematics.mul4                                 408     419        True inline Mat4 mul4(const Mat4& a, const Mat4& b)
+kinematics.referenceFk                          429     518        True inline RefChainResult referenceFk(const rt::Can
+                                                                        onicalModel& model,
+policy.ByteWriter.u32                            88      94        True     void u32(std::uint32_t v)
+policy.ByteWriter.f64                           116     120        True     void f64(double value)
+policy.ByteWriter.lengthPrefixedText            103     113        True     void lengthPrefixedText(std::string_view te
+                                                                        xt)
+policy.ByteReader.u32                           168     179        True     std::uint32_t u32()
+policy.ByteReader.f64                           212     220        True     double f64()
+policy.ByteReader.text                          200     209        True     std::string text()
+selection.ByteWriter.u32                        123     129        True     void u32(std::uint32_t v)
+selection.ByteWriter.f64                        134     143        True     void f64(double v)
+selection.ByteWriter.str                        145     149        True     void str(const std::string& s)
+selection.ByteReader.u32                        218     227        True     std::uint32_t u32()
+selection.ByteReader.f64                        235     249        True     double f64()
+selection.ByteReader.str                        250     265        True     std::string str()
+ui.SampleGridRender.draw                        268     344        True     void draw(const DrawableNode::RenderInfo& i
+                                                                        nfo,
+

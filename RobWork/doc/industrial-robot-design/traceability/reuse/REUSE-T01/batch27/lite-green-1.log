@@ -1,0 +1,14 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+default-ignores-optional-index failed: exit=1 expected=0; see .cache/b27-lite-green-1
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:23 char
+:23
++ ... ot $pass) { throw "$Name failed: exit=$code expected=$Expected; see $ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (default-ignores...27-lite-green-1:String) [], RuntimeException
+    + FullyQualifiedErrorId : default-ignores-optional-index failed: exit=1 expected=0; see .cache/b27-lite-green-1
+ 

@@ -1,0 +1,81 @@
+﻿{
+    "expected":  7,
+    "executed":  7,
+    "passed":  7,
+    "failed":  0,
+    "skipped":  0,
+    "scriptSha256":  "78AD8B1B1B644B044B440CC6057941DF70759735902C121DEFA69A5A237237BF",
+    "driverSha256":  "7C7F9D0C65053E1900F48E9EA60DE48705A1F00303B40BEC15D896BE90816AD3",
+    "cases":  [
+                  {
+                      "name":  "missing",
+                      "passed":  true,
+                      "expected":  [
+                                       "\u003cxml-missing\u003e"
+                                   ],
+                      "actual":  [
+                                     "\u003cxml-missing\u003e"
+                                 ]
+                  },
+                  {
+                      "name":  "malformed",
+                      "passed":  true,
+                      "expected":  [
+                                       "\u003cxml-unparsable\u003e"
+                                   ],
+                      "actual":  [
+                                     "\u003cxml-unparsable\u003e"
+                                 ]
+                  },
+                  {
+                      "name":  "zero",
+                      "passed":  true,
+                      "expected":  [
+                                       "\u003cxml-no-tests\u003e"
+                                   ],
+                      "actual":  [
+                                     "\u003cxml-no-tests\u003e"
+                                 ]
+                  },
+                  {
+                      "name":  "healthy",
+                      "passed":  true,
+                      "expected":  [
+
+                                   ],
+                      "actual":  [
+
+                                 ]
+                  },
+                  {
+                      "name":  "failure",
+                      "passed":  true,
+                      "expected":  [
+                                       "S.Failed"
+                                   ],
+                      "actual":  [
+                                     "S.Failed"
+                                 ]
+                  },
+                  {
+                      "name":  "error",
+                      "passed":  true,
+                      "expected":  [
+                                       "S.Errored"
+                                   ],
+                      "actual":  [
+                                     "S.Errored"
+                                 ]
+                  },
+                  {
+                      "name":  "all-skipped",
+                      "passed":  true,
+                      "expected":  [
+                                       "\u003cxml-no-executed-tests\u003e"
+                                   ],
+                      "actual":  [
+                                     "\u003cxml-no-executed-tests\u003e"
+                                 ]
+                  }
+              ]
+}

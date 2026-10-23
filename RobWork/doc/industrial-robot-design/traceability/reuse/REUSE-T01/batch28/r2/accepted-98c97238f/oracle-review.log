@@ -1,0 +1,36 @@
+{
+  "freshIndependentOracle": true,
+  "vectors": [
+    {
+      "name": "empty",
+      "hex": "",
+      "hi": "6c62272e07bb0142",
+      "lo": "62b821756295c58d",
+      "fold": "0eda065b652ec4cf"
+    },
+    {
+      "name": "a",
+      "hex": "61",
+      "hi": "d228cb696f1a8caf",
+      "lo": "78912b704e4a8964",
+      "fold": "aab9e019215005cb"
+    },
+    {
+      "name": "zero16",
+      "hex": "00000000000000000000000000000000",
+      "hi": "f1f90b7bf705b5ef",
+      "lo": "1517163834145e4d",
+      "fold": "e4ee1d43c311eba2"
+    },
+    {
+      "name": "sequence16",
+      "hex": "000102030405060708090a0b0c0d0e0f",
+      "hi": "2f57eaee93cff23f",
+      "lo": "8177f0c93cb989fd",
+      "fold": "ae201a27af767bc2"
+    }
+  ],
+  "errors": [],
+  "originalR1TempArtifactsChecked": 78,
+  "originalR1TempArtifactErrors": []
+}

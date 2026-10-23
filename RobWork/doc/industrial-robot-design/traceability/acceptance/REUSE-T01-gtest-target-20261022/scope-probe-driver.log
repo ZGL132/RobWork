@@ -1,0 +1,8 @@
+rw-real-gtest-root: True
+sim-real-gtest-root: True
+rw-nested-gtest-rejected: True
+sim-nested-gtest-rejected: True
+gtest-suffix-dir-rejected: True
+studio-gtest-root-rejected: True
+cmake-suffix-rejected: True
+real-root-forged-target-rejected: True

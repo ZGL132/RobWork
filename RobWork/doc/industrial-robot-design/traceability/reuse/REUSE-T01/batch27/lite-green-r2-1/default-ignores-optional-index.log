@@ -1,0 +1,14 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+powershell.exe : REUSE-FRESHNESS : RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:17 char
+:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (REUSE-FRESHNESS...ne-pipeline.ps1:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-5e384c8d85454376b71abd7a9bce91e8\RobWork\scripts\industrialrobot\validat
+e-docs.ps1 : H1-H6 reuse governance failed
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+ 

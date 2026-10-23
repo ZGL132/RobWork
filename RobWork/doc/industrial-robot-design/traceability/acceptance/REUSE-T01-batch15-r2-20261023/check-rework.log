@@ -1,0 +1,19 @@
+{
+  "reviewedCommit": "a703b88225b1e094947b46723706b5be8af5159f",
+  "comparisonBase": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "correctedTargetRows": 5,
+  "relatedNoteRows": 24,
+  "noteDigest": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc",
+  "hashMismatches": 0,
+  "targetSetsMatched": 24,
+  "archiveFiles": 50,
+  "archiveRawMatches": 47,
+  "archiveNewlineOnly": 3,
+  "archiveMismatches": 0,
+  "originalFailPreserved": true,
+  "productAndUpstreamUnchanged": true,
+  "authorityAndPermissionsUnchanged": true,
+  "originalCMakeUnchanged": true,
+  "grants": 0,
+  "allRowsPending": true
+}

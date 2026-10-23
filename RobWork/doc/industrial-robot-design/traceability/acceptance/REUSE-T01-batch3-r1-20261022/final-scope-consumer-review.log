@@ -1,0 +1,23 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src\Screening.cpp:597:        const CurveQueryResult qr = evaluator.evaluate(*curve, omega);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src\Screening.cpp:1416:        const CurveQueryResult qr = evaluator.evaluate(*curve, speed);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:909:        m_services.fkEvaluator->evaluate(*m_services.modelView, tcp.tcp, q);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\plugin\KinematicsPanelWidget.cpp:1943:                const auto pose=m_services.fkEvaluator->evaluate(*m_services.modelView,tcp.tcp,solutions[index].q);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\src\StageNavigationModel.cpp:207:        const StageGateDecision decision = deps_.gate->evaluate(readinessSnapshot(stage));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\src\Export.cpp:342:        ArchiveOutcome outcome = coordinator.publish(report, artifacts, manifest);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp:8: *   - units/diagnostics.md §7.1～§7.6、§7.8、§9.6（ILogger 契约表——任意线程
+RobWork/doc/industrial-robot-design/reuse/catalog.json
+RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json
+RobWork/doc/industrial-robot-design/reuse/functions/evidence.json
+RobWork/doc/industrial-robot-design/reuse/functions/execution.json
+RobWork/doc/industrial-robot-design/reuse/functions/modeling.json
+RobWork/doc/industrial-robot-design/reuse/functions/policy.json
+RobWork/doc/industrial-robot-design/reuse/functions/project.json
+RobWork/doc/industrial-robot-design/reuse/functions/reporting.json
+RobWork/doc/industrial-robot-design/reuse/functions/requirements.json
+RobWork/doc/industrial-robot-design/reuse/functions/selection.json
+RobWork/doc/industrial-robot-design/reuse/functions/ui.json
+RobWork/doc/industrial-robot-design/reuse/functions/workflow.json
+RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/README.md
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch3-search.json
+dfc317f234d9253b2e07bdea89a9bb3028e6db9d

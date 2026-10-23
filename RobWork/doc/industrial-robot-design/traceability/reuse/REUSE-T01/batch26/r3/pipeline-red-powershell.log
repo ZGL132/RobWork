@@ -1,0 +1,18 @@
+state-boundary: fractional-count expected=1 actual=1
+state-boundary: string-count expected=1 actual=1
+state-boundary: fake-guid expected=1 actual=1
+state-boundary: offset-valid expected=0 actual=0
+state-boundary: offset-expired expected=1 actual=1
+state-boundary: bad-calendar expected=1 actual=1
+union-boundary: union actual=0
+union-boundary: note-case actual=1
+union-boundary: schema-case actual=1
+powershell.exe : git.exe : fatal: path 'RobWork/doc/industrial-robot-design/traceability/findings.json' is in the index
+, but not at stag
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-pipeline-pipeline.ps1:306 c
+har:22
++ ... nOutput = @(& $script:statePowerShell -NoProfile -File $unionScript - ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (git.exe : fatal...but not at stag:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -1,0 +1,5 @@
+scope-valid exit=0 passed=True
+scope-invalid-sha exit=1 passed=True
+scope-forbidden exit=1 passed=True
+b1-valid exit=0 passed=True
+b1-order exit=1 passed=True

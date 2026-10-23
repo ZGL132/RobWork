@@ -1,0 +1,31 @@
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:107:            //! @brief Constructor with all directions enabled initially.
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:111:                    enabled[i] = true;
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:125:                    enabled[i] = true;
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:130:             * directions are not \b enabled.
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:133:             * @param enabled [in] 6 values specifying if the x, y, z and EAA x, y, z directions
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:134:             * should be enabled.
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:138:                    const rw::math::VectorND< 6, bool >& enabled) :
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:140:                tcpFrame (frame), refTtcp (refTtcp), enabled (enabled)
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:144:             * @brief Get the number directions enabled.
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:145:             * @return number of directions enabled.
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:151:                    if (enabled[i])
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:168:            rw::math::VectorND< 6, bool > enabled;
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:207:      private:
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:208:        void updateDeltaX (
+RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp:214:        void updateJacobian (
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:48:     * enabled then this algorithm might contain joint values that are out of bounds.
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:93:     * enabled then this algorithm might contain joint values that are out of bounds.
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:169:        bool solveLocal (const rw::math::Transform3D<double>& bTed, double maxError, rw::kinematics::State& state,
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp:204:      private:
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:41:    setMaxIterations (15);
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:51:    int maxIterations = getMaxIterations ();
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:52:    double maxError   = getMaxError ();
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:63:            /* bool found = */ solveLocal (bTed_via, maxError * 1000, state, 5);
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:69:    if (solveLocal (bTed, maxError, state, maxIterations)) {
+RobWork/RobWork/src/rw/invkin/JacobianIKSolver.cpp:81:bool JacobianIKSolver::solveLocal (const Transform3D<>& bTed, double maxError, State& state,
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:76:        virtual void setMaxError (double maxError);
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:83:        virtual double getMaxError () const;
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:90:        virtual void setMaxIterations (int maxIterations);
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:95:        virtual int getMaxIterations () const;
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:125:      private:
+RobWork/RobWork/src/rw/invkin/IterativeIK.hpp:131:      private:

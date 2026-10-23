@@ -1,0 +1,65 @@
+[
+  {
+    "unit": "dynamics",
+    "targets": [
+      "sdurws_ird_dynamics_app"
+    ]
+  },
+  {
+    "unit": "execution",
+    "targets": [
+      "sdurws_ird_execution_worker"
+    ]
+  },
+  {
+    "unit": "kinematics",
+    "targets": [
+      "sdurws_ird_kinematics_app"
+    ]
+  },
+  {
+    "unit": "modeling",
+    "targets": [
+      "sdurws_ird_demo6r",
+      "sdurws_ird_modeling_app"
+    ]
+  },
+  {
+    "unit": "project",
+    "targets": [
+      "sdurws_ird_project_openbench_worker"
+    ]
+  },
+  {
+    "unit": "requirements",
+    "targets": [
+      "sdurws_ird_requirements_app"
+    ]
+  },
+  {
+    "unit": "selection",
+    "targets": [
+      "sdurws_ird_selection_app"
+    ]
+  },
+  {
+    "unit": "testkit",
+    "targets": [
+      "sdurws_ird_testdata_lint",
+      "sdurws_ird_testkit_prochelper"
+    ]
+  },
+  {
+    "unit": "trajectory",
+    "targets": [
+      "sdurws_ird_trajectory_app"
+    ]
+  },
+  {
+    "unit": "ui",
+    "targets": [
+      "sdurws_ird_ui_app",
+      "sdurws_ird_studio"
+    ]
+  }
+]

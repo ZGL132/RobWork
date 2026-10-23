@@ -1,0 +1,129 @@
+[
+  {
+    "index": 1,
+    "command": [
+      "rg",
+      "-n",
+      "makeQToQPlanner|makeConstrained|makeUniform|makeBounds|makeMerged|stopEither|stopByFun|query|pathLength",
+      "RobWork/RobWork/src/rw/pathplanning",
+      "RobWork/RobWork/src/rwlibs/pathplanners/rrt",
+      "RobWork/RobWork/gtest/pathplanning"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 68,
+    "stdoutMatchesRecorded": false,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 2,
+    "command": [
+      "rg",
+      "-n",
+      "makeManhattan|makeInfinity|makeEuclidean|dist1|dist2|distInf|seed|generator",
+      "RobWork/RobWork/src/rw/math/MetricFactory.hpp",
+      "RobWork/RobWork/src/rw/math/MetricUtil.hpp",
+      "RobWork/RobWork/src/rw/math/Random.cpp",
+      "RobWork/RobWork/gtest/math/MetricFactoryTest.cpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 29,
+    "stdoutMatchesRecorded": true,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 3,
+    "command": [
+      "rg",
+      "-n",
+      "-i",
+      "pareto|non.?domin|latin.?hyper|single.output|ResultType|FunctionType",
+      "RobWork/RobWork/src/sandbox/optimization",
+      "RobWork/RobWork/src/rwlibs/pathoptimization",
+      "RobWork/RobWorkSim/src",
+      "RobWork/RobWork/gtest"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 106,
+    "stdoutMatchesRecorded": false,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 4,
+    "command": [
+      "rg",
+      "-n",
+      "-i",
+      "trapezoid|trapezMethod|calcEnergy|BodyIntegrator|TrapMethod|sdurw_softbody",
+      "RobWork/RobWork/src/rwlibs/softbody",
+      "RobWork/RobWorkSim/src/rwsim/dynamics",
+      "RobWork/RobWorkSim/src/rwsim/simulator",
+      "RobWork/RobWork/gtest"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 35,
+    "stdoutMatchesRecorded": false,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 5,
+    "command": [
+      "rg",
+      "-n",
+      "planPtpWithObstacleAvoidance|makePathPlannerAdapter|computeApproximateEnvelope|PowerEnergyCalculator|generateWithBuiltInStrategy|buildFront",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 166,
+    "stdoutMatchesRecorded": false,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 6,
+    "result": "NOT REPLAYED",
+    "reason": "外部实施环境cache非冻结源码；默认OFF另由冻结CMake核对"
+  },
+  {
+    "index": 7,
+    "command": [
+      "rg",
+      "-n",
+      "RRT|QSampler|StopCriteria|pathLength|TrapMethod|Pareto",
+      "RobWork/RobWork/example",
+      "RobWork/RobWork/gtest",
+      "RobWork/RobWorkSim/example",
+      "-g",
+      "*.cpp",
+      "-g",
+      "*.hpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 28,
+    "stdoutMatchesRecorded": false,
+    "sortedHitsMatchRecorded": true
+  },
+  {
+    "index": 8,
+    "command": [
+      "rg",
+      "-n",
+      "PositionOnly|probeReachability|computeApproximateEnvelope|probeSeedFor|mechanicalPower|positiveJ|negativeJ|gapSincePrevOk",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp"
+    ],
+    "exitCode": 0,
+    "recordedExitCode": 0,
+    "lines": 23,
+    "stdoutMatchesRecorded": true,
+    "sortedHitsMatchRecorded": true
+  }
+]

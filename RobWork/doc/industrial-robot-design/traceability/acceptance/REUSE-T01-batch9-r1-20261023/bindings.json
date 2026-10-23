@@ -1,0 +1,344 @@
+[
+  {
+    "id": "kinematics.IKinRuntimeView",
+    "qualifiedSymbol": "sdurws::ird::kinematics::IKinRuntimeView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+    "startLine": 141,
+    "endLine": 154,
+    "hashMatches": true,
+    "actualSha": "7fd78d844eb5ddddfc6af9a5442155ffcd0f76552c3ec2f1bfa2d9937a269d37",
+    "symbolOccurs": true,
+    "first": "class IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "kinematics.IKinRuntimeView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.FrozenRuntimeView",
+    "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::FrozenRuntimeView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+    "startLine": 74,
+    "endLine": 91,
+    "hashMatches": true,
+    "actualSha": "5f174e300d8fccdd44a3282bfc17e29c459d8907949e52f69d2ea13193cf0d48",
+    "symbolOccurs": true,
+    "first": "class FrozenRuntimeView final : public IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "kinematics.FrozenRuntimeView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.TestView",
+    "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::TestView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+    "startLine": 337,
+    "endLine": 351,
+    "hashMatches": true,
+    "actualSha": "20b94b08c915a7304dc453e4216d9d93b7057232b91fb2f5e3546ca55ad115bc",
+    "symbolOccurs": true,
+    "first": "class TestView final : public IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "kinematics.TestView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.MidSolveDegradedView",
+    "qualifiedSymbol": "(anonymous namespace)::MidSolveDegradedView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+    "startLine": 241,
+    "endLine": 264,
+    "hashMatches": true,
+    "actualSha": "fc40f3bfb56e65951d04f50f51517e08eff36bb8f5afd8a3ecf8a2a16d4a2bfb",
+    "symbolOccurs": true,
+    "first": "class MidSolveDegradedView final : public kin::IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "kinematics.MidSolveDegradedView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "kinematics.RigView",
+    "qualifiedSymbol": "(anonymous namespace)::RigView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+    "startLine": 191,
+    "endLine": 202,
+    "hashMatches": true,
+    "actualSha": "51789a09bedb821c0ff650c0d3c6bac6cb9137b8b009a334bc0c33318c323265",
+    "symbolOccurs": true,
+    "first": "class RigView final : public kin::IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "kinematics.RigView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.WorkCellConstView.findFrame",
+    "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findFrame",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 990,
+    "endLine": 995,
+    "hashMatches": true,
+    "actualSha": "a8fc24e9bb60b40294fa464bb7b968e951e8279500e55a450d8cb72ab441bce7",
+    "symbolOccurs": true,
+    "first": "const rw::kinematics::Frame* WorkCellConstView::findFrame(std::string_view name) const noexcept",
+    "last": "}"
+  },
+  {
+    "id": "runtime.WorkCellConstView.findFrame",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.WorkCellConstView.findDevice",
+    "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::findDevice",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 998,
+    "endLine": 1003,
+    "hashMatches": true,
+    "actualSha": "a5b3c3534662a5d27bc8c7f5fcc8b2dbc6b48c92ea079564f58613869ea75556",
+    "symbolOccurs": true,
+    "first": "    WorkCellConstView::findDevice(std::string_view name) const noexcept",
+    "last": "}"
+  },
+  {
+    "id": "runtime.WorkCellConstView.findDevice",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.WorkCellConstView.defaultState",
+    "qualifiedSymbol": "sdurws::ird::runtime::WorkCellConstView::defaultState",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 1011,
+    "endLine": 1015,
+    "hashMatches": true,
+    "actualSha": "3a7405f0f2ad0a0b1e8aa8dfe91c44956f51e8072e477e733ff283d959fc9344",
+    "symbolOccurs": true,
+    "first": "rw::kinematics::State WorkCellConstView::defaultState() const",
+    "last": "}"
+  },
+  {
+    "id": "runtime.WorkCellConstView.defaultState",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCell",
+    "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::workCell",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "startLine": 753,
+    "endLine": 756,
+    "hashMatches": true,
+    "actualSha": "6c7afba055f17ca08111a72eb0ff75517f46f350c93d70ec61019a976a9684eb",
+    "symbolOccurs": true,
+    "first": "const WorkCellConstView& RuntimeSnapshot::workCell() const",
+    "last": "}"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCell",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.makeState",
+    "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::makeState",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "startLine": 811,
+    "endLine": 816,
+    "hashMatches": true,
+    "actualSha": "76031e32eca8f9be150bc952049632c034fd9fa4a4ed94cac8bc82f7c2e01422",
+    "symbolOccurs": true,
+    "first": "rw::kinematics::State RuntimeSnapshot::makeState() const",
+    "last": "}"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.makeState",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.tryDynamicWorkCell",
+    "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::tryDynamicWorkCell",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "startLine": 768,
+    "endLine": 784,
+    "hashMatches": true,
+    "actualSha": "1d7153ea98b5600ff9b8ae5e8683ef0da67fb85156499451087ca016321ab422",
+    "symbolOccurs": true,
+    "first": "Expected<DynamicWorkCellConstView, RuntimeError> RuntimeSnapshot::tryDynamicWorkCell() const",
+    "last": "}"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.tryDynamicWorkCell",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCellHandle",
+    "qualifiedSymbol": "sdurws::ird::runtime::RuntimeSnapshot::workCellHandle",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp",
+    "startLine": 758,
+    "endLine": 766,
+    "hashMatches": true,
+    "actualSha": "527e41a9afd59e8df2568707f1a455318b3363d54f56b62ae4737d517652117e",
+    "symbolOccurs": true,
+    "first": "rw::core::Ptr<rw::models::WorkCell> RuntimeSnapshot::workCellHandle() const",
+    "last": "}"
+  },
+  {
+    "id": "runtime.RuntimeSnapshot.workCellHandle",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "runtime.jointStaticTransform",
+    "qualifiedSymbol": "sdurws::ird::runtime::jointStaticTransform",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "startLine": 541,
+    "endLine": 553,
+    "hashMatches": true,
+    "actualSha": "3290ac5bbbc1fac433ac36ef73223e4effdea03d0399410e313839d75507f590",
+    "symbolOccurs": true,
+    "first": "rw::math::Transform3D<double> jointStaticTransform(",
+    "last": "}"
+  },
+  {
+    "id": "runtime.jointStaticTransform",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.SnapshotViewAdapter",
+    "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "startLine": 61,
+    "endLine": 80,
+    "hashMatches": true,
+    "actualSha": "d080d388547310b858c5bfdf6017d3de2f56c577e924a77550a826fabdec64f6",
+    "symbolOccurs": true,
+    "first": "class SnapshotViewAdapter final : public kinematics::IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "ui.SnapshotViewAdapter",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.KinSessionModelView",
+    "qualifiedSymbol": "sdurws::ird::ui::KinSessionModelView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+    "startLine": 108,
+    "endLine": 135,
+    "hashMatches": true,
+    "actualSha": "0c494ea6d5da2ec4e3f19e3a5e9302971bc4931ee37fa4fac3d20c6e20130a3b",
+    "symbolOccurs": true,
+    "first": "class KinSessionModelView final : public kinematics::IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "ui.KinSessionModelView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachSnapshot",
+    "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "startLine": 94,
+    "endLine": 111,
+    "hashMatches": true,
+    "actualSha": "7ee13cb1f92be65a94a134b04b25cecd74492c8a0104e46d6dbbba37bfb0f423",
+    "symbolOccurs": true,
+    "first": "void KinEvaluationExecutor::attachSnapshot(",
+    "last": "}"
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachSnapshot",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachView",
+    "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+    "startLine": 113,
+    "endLine": 139,
+    "hashMatches": true,
+    "actualSha": "062c9562039423014d223ba8b83d1069999ece782c48bfaee98d2c6b49eb73c6",
+    "symbolOccurs": true,
+    "first": "void KinEvaluationExecutor::attachView(",
+    "last": "}"
+  },
+  {
+    "id": "ui.KinEvaluationExecutor.attachView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.FixtureView",
+    "qualifiedSymbol": "(anonymous namespace)::FixtureView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "startLine": 79,
+    "endLine": 118,
+    "hashMatches": true,
+    "actualSha": "6a5ef46d1fd5e9c0276662292105f5c413deb368397db153891b0b1b3cbb9a53",
+    "symbolOccurs": true,
+    "first": "class FixtureView final : public IKinRuntimeView {",
+    "last": "};"
+  },
+  {
+    "id": "ui.FixtureView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  },
+  {
+    "id": "ui.ObservedView",
+    "qualifiedSymbol": "KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+    "startLine": 957,
+    "endLine": 971,
+    "hashMatches": true,
+    "actualSha": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002",
+    "symbolOccurs": true,
+    "first": "    class ObservedView final : public IKinRuntimeView {",
+    "last": "    };"
+  },
+  {
+    "id": "ui.ObservedView",
+    "kind": "input",
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+    "hashMatches": true
+  }
+]

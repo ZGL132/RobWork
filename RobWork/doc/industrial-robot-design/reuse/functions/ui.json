@@ -1,0 +1,2316 @@
+{
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "ui",
+  "functions": [
+    {
+      "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::ensureSessionPreviewAnchor",
+          "startLine": 470,
+          "endLine": 504,
+          "sha256": "f5697f4e6d1e50c93de811bc6485e6747f1e6654f8855e8c264c53759132bc04"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "先复用场景WC，缺位才建空WORLD锚，scene setWorkCell后重绑worldNode；仅场景呈现，不是runtime模型构造，权限尚待精确核查",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.currentTcpPose",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::currentTcpPose",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::currentTcpPose",
+          "startLine": 119,
+          "endLine": 135,
+          "sha256": "9befb21590e1e84c1248599609070ba858f1c4c4e60ef13b9f8b999f47431832"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "worldTframe真实消费Frame/State，只供呈现世界系；装配resolveTcpFrame用JointDevice::getEnd未证明选中工具TCP，不能称runtime TCP已适配",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.SampleGridRender.draw",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "draw",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SampleGridRender::draw",
+          "startLine": 268,
+          "endLine": 344,
+          "sha256": "05cf3428068c11a611fdde2d17c67ff256b686d523d365b466375a616d0689ad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "格线可候选RenderLines；逐点颜色/高亮圈与GL_POINTS不能整体按线渲染替代",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.SnapshotViewAdapter",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ARC-03",
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "symbol": "SnapshotViewAdapter",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
+          "startLine": 61,
+          "endLine": 80,
+          "sha256": "d080d388547310b858c5bfdf6017d3de2f56c577e924a77550a826fabdec64f6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "持shared_ptr<const RuntimeSnapshot>保活，现两转发；未来仅补真实编译视图消费，不重建WC",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.KinSessionModelView",
+      "ownerUnit": "ui",
+      "requirements": [
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+          "symbol": "KinSessionModelView",
+          "qualifiedSymbol": "sdurws::ird::ui::KinSessionModelView",
+          "startLine": 108,
+          "endLine": 135,
+          "sha256": "0c494ea6d5da2ec4e3f19e3a5e9302971bc4931ee37fa4fac3d20c6e20130a3b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "可换绑委托仅UI会话；后台必须捕获旧快照，不能跨线程读正在rebind的委托",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.KinEvaluationExecutor.attachSnapshot",
+      "ownerUnit": "ui",
+      "requirements": [
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "symbol": "KinEvaluationExecutor::attachSnapshot",
+          "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
+          "startLine": 94,
+          "endLine": 111,
+          "sha256": "7ee13cb1f92be65a94a134b04b25cecd74492c8a0104e46d6dbbba37bfb0f423"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "完整快照与数值视图入口分开；换绑清旧碰撞场景/账面，保留epoch和任务旧快照生命周期",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.KinEvaluationExecutor.attachView",
+      "ownerUnit": "ui",
+      "requirements": [
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+          "symbol": "KinEvaluationExecutor::attachView",
+          "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
+          "startLine": 113,
+          "endLine": 139,
+          "sha256": "062c9562039423014d223ba8b83d1069999ece782c48bfaee98d2c6b49eb73c6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "完整快照与数值视图入口分开；换绑清旧碰撞场景/账面，保留epoch和任务旧快照生命周期",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.FixtureView",
+      "ownerUnit": "ui",
+      "requirements": [
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "symbol": "FixtureView",
+          "qualifiedSymbol": "(anonymous namespace)::FixtureView",
+          "startLine": 79,
+          "endLine": 118,
+          "sha256": "6a5ef46d1fd5e9c0276662292105f5c413deb368397db153891b0b1b3cbb9a53"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.ObservedView",
+      "ownerUnit": "ui",
+      "requirements": [
+        "KIN-07",
+        "CON-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "symbol": "ObservedView",
+          "qualifiedSymbol": "(anonymous namespace)::KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
+          "startLine": 957,
+          "endLine": 971,
+          "sha256": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "612d8a870fc40ee0cdbb9230a6f2069874d1b9eeb3fbb6059de3fc1e0b8093ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
+    },
+    {
+      "functionId": "ui.contract_test.TestMainReport.main",
+      "ownerUnit": "ui",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/contract_test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 34,
+          "endLine": 50,
+          "sha256": "e68eb844e59b708bfcde5f7471a00b8292041eca7e03fd7b4ec240215c5d37ec"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。子进程分派先于GTest/Qt，不能抹平。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "ui.gui_test.TestMainReport.main",
+      "ownerUnit": "ui",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 33,
+          "endLine": 45,
+          "sha256": "d26c4503ad11f8171c38f86c3580c43438b38bbf979f5288626cf7fab540b3f3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "ui.test.TestMainReport.main",
+      "ownerUnit": "ui",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 36,
+          "endLine": 49,
+          "sha256": "eb48d3cb26026b31160a1e3ce91802290977a17137e0167d5514918d96a59e58"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "ui.CMake.ird_add_gtest",
+      "ownerUnit": "ui",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "qualifiedSymbol": "ird_add_gtest",
+          "startLine": 279,
+          "endLine": 291,
+          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test",
+        "sdurws_ird_ui_contract_test",
+        "sdurws_ird_ui_perf_test",
+        "sdurws_ird_ui_largedata_perf_test",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "HostView3DPreviewBackend::HostView3DPreviewBackend",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::HostView3DPreviewBackend",
+          "startLine": 356,
+          "endLine": 358,
+          "sha256": "27272b2e1b33c2240bf86c348794191bc9da4f6baff15ba690262c05ae10edd4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "studio非拥有，UI线程；场景每次现取，非模型owner",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DPreviewBackend.draw",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "HostView3DPreviewBackend::draw",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::draw",
+          "startLine": 360,
+          "endLine": 468,
+          "sha256": "daa46be93f2abbc9b37d247e67de01257cb037155ae8a8ce11330079929dc2f7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "真实调用scene addRender/addFrameAxis，消费当前宿主WC或空场景锚WORLD；clear后逐节点添加，异常中途原子性未证",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DPreviewBackend.clear",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "HostView3DPreviewBackend::clear",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DPreviewBackend::clear",
+          "startLine": 506,
+          "endLine": 520,
+          "sha256": "3da8549d55d3754d76af7839d184dea051573956512058fd07900c705c4f7d58"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "按当前场景逐名removeDrawable后清名单，返回值被忽略；上游未找到名返回true，原注释false不准确，未改产品",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.PreviewColorScope.constructor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "PreviewColorScope",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::PreviewColorScope",
+          "startLine": 71,
+          "endLine": 78,
+          "sha256": "a36581a6f78cbd7e046ed9b40569b8a5c21d9ec29ca602e750e17542b821b5f7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "GL属性保存/禁lighting和texture再恢复，仅回调栈上不拥有context",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.PreviewColorScope.destructor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "~PreviewColorScope",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::PreviewColorScope::~PreviewColorScope",
+          "startLine": 80,
+          "endLine": 80,
+          "sha256": "aa180918270074ba64b00a9fff41cc8bf7424238f305d56052bbf1c89c7bdf27"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "glPopAttrib恢复外层状态，不能覆盖QtText独立挂帧绘制未保存的状态",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.anonymous.applyCellColor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "applyCellColor",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::applyCellColor",
+          "startLine": 87,
+          "endLine": 103,
+          "sha256": "81d2a3c9f1ef6edc9cd9a297910f557579b6cce38ac362e75ba7eba5a4c365d4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "只把业务状态映射palette，不计算工程真值",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.anonymous.tintColor",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "tintColor",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::tintColor",
+          "startLine": 110,
+          "endLine": 132,
+          "sha256": "bfa6541ad8fdcc11440217dd62c0faced7e3a887385cf06246d737b5dea703f6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "缺省/None及三类tint返回palette，非第二政策判定",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.StationMarkerRender.draw",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "draw",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::StationMarkerRender::draw",
+          "startLine": 155,
+          "endLine": 186,
+          "sha256": "f1dc6d774da5884eab21b54592e75cbf8a5a6e5ebbba7bb0c4aab6a02d0795c5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-FRAME",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "手写三轴+标签，候选RenderFrame/Drawable transform可表达偏移；不得因addFrameAxis帧原点限制直接排除组合能力",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.RegionOutlineRender.draw",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp",
+          "symbol": "draw",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::RegionOutlineRender::draw",
+          "startLine": 211,
+          "endLine": 243,
+          "sha256": "2be633f3eb64c1d5665df034269f670377ea4ef6a8347b903dfce2924f0bcaf3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-LINES",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "二进制角序12边与tint，候选RenderLines已有；alpha/float降精/GL状态须验",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.hpp",
+          "sha256": "c6cefa961f4acc037c3702e5cef8322f9d90be5786aeeb96b1359e065d004c43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.HostView3DGateway",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::HostView3DGateway",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::HostView3DGateway",
+          "startLine": 17,
+          "endLine": 28,
+          "sha256": "066f70e537068e9e60ab40bcb1520fb4a48cfab79e48492e878d2cdb3a68ae39"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "pick/selection/nameMap必供，TCP/scene可降级，不创建计算模型",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::handleViewDoubleClick",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::handleViewDoubleClick",
+          "startLine": 34,
+          "endLine": 61,
+          "sha256": "84608e272a7858716d9a29bf985cd45f14e5960cdf6fa1598f3b9cf5d49f7d35"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "拾取帧名经同一nameMap反解后分发与selectBusiness；不拼剥前缀，不把域分发返回当全部成功依据",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.applyPresentation",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::applyPresentation",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::applyPresentation",
+          "startLine": 67,
+          "endLine": 103,
+          "sha256": "48237ea91625cdc48eab906cc2602a6d4ef3b9ff87a7599dfe24aab996b26dff"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "完整性/hostPayload契约别名，先apply新对象再remove旧；type correctness由装配保证非运行时动态验证",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.releasePresentation",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::releasePresentation",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::releasePresentation",
+          "startLine": 105,
+          "endLine": 113,
+          "sha256": "ff93f9d5649d969dd385e3a112d8340c51245b2303fbedb6ba2dbc0187cd800d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "remove再reset，底层HostWorkCellPresentationObject remove空动作不能泛称场景已清空",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.onSceneCleared",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::onSceneCleared",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::onSceneCleared",
+          "startLine": 141,
+          "endLine": 148,
+          "sha256": "354d2b5db55b8eec125a9dca032371c885d5a27bb447d79a1fa2946ea461a822"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "release呈现/remove预览，真实事件生命周期仍须消费链验证",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.applyPreview",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::applyPreview",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::applyPreview",
+          "startLine": 154,
+          "endLine": 169,
+          "sha256": "dbc3cbedb059fb8538456c3f4e54541f0a26ed5c6c35f7645771b87c5e402852"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "后端draw true才更新会话值；测试假draw失败不证明真实backend中途异常回滚",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.HostView3DGateway.removePreview",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp",
+          "symbol": "HostView3DGateway::removePreview",
+          "qualifiedSymbol": "sdurws::ird::ui::HostView3DGateway::removePreview",
+          "startLine": 171,
+          "endLine": 178,
+          "sha256": "e38dc647689a79936fd0b93a9642eb914bea7ef12a67a4d57ddb881af2337352"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-SCENE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "清后端与本地预览值，不写修订/结果",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.hpp",
+          "sha256": "882766953da8d05c2f42aaf28816d0a6847df4f152f8c5429c49a4341c76b7d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.QtTextBillboard.QtTextBillboard",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+          "symbol": "QtTextBillboard::QtTextBillboard",
+          "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::QtTextBillboard",
+          "startLine": 38,
+          "endLine": 41,
+          "sha256": "9196fe765005a8e36e38a0e69eeec823b145230acd3b1f67c03bb9c5982957b6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-TEXT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "只持冻结UTF8字符串，现有QImage/QPainter供CJK不是新文字算法",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+          "sha256": "4f5e2f3df5f78443cdf0317b5e780d94ff422c0456022761e13f2a3743eeaa3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+          "symbol": "QtTextBillboard::rasterizeAndUpload",
+          "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::rasterizeAndUpload",
+          "startLine": 43,
+          "endLine": 76,
+          "sha256": "41eeab187c898c017c2ae87cb8f143655059c3b0bfe379d04ec7c06bda12b1f0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-TEXT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "Qt字体栅格化/纹理上传，成熟工具已复用；UNPACK_ALIGNMENT/context/分配失败与缓存预算待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+          "sha256": "4f5e2f3df5f78443cdf0317b5e780d94ff422c0456022761e13f2a3743eeaa3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.QtTextBillboard.drawBillboard",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+          "symbol": "QtTextBillboard::drawBillboard",
+          "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboard::drawBillboard",
+          "startLine": 78,
+          "endLine": 143,
+          "sha256": "80a6be339191e5439c651efdd622eca37f9df685c739fc08785ef9e9c5dbb190"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-TEXT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "真实用inverse/Rotation构造相机朝向，RenderText候选CJK受限；静态map按context指针重置，不删纹理/无界文本缓存未证安全；GL进入状态恢复待核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+          "sha256": "4f5e2f3df5f78443cdf0317b5e780d94ff422c0456022761e13f2a3743eeaa3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+          "symbol": "QtTextBillboardRender::QtTextBillboardRender",
+          "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboardRender::QtTextBillboardRender",
+          "startLine": 149,
+          "endLine": 153,
+          "sha256": "cec9f0b4e7f7b02c5ac3499f015761f5fd9b4abf561894320985682c39ee4350"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-TEXT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "Frame Ptr为非owning借持，需场景WC保活，不可因此扩展四个HOST例外",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+          "sha256": "4f5e2f3df5f78443cdf0317b5e780d94ff422c0456022761e13f2a3743eeaa3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.QtTextBillboardRender.draw",
+      "ownerUnit": "ui",
+      "requirements": [
+        "UX-07",
+        "KIN-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.cpp",
+          "symbol": "QtTextBillboardRender::draw",
+          "qualifiedSymbol": "sdurws::ird::ui::QtTextBillboardRender::draw",
+          "startLine": 155,
+          "endLine": 171,
+          "sha256": "971b93150387ce5f26c68ef9b0a6edcc38418725f4752d05cbcc353edea68ad5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin",
+        "sdurws_ird_studio",
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.2",
+      "capabilityId": "HOST-TEXT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch15-search.json真实检索与公共API/实现全文审读",
+        "conclusion": "候选/真实接线已区分；pending不授予四个HOST例外外的文件或新target权限"
+      },
+      "differences": "m_frame::wTf当前RenderInfo State，向drawBillboard消费；受限Frame的精确文件/target权限需核，未授grant",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/QtTextBillboard.hpp",
+          "sha256": "4f5e2f3df5f78443cdf0317b5e780d94ff422c0456022761e13f2a3743eeaa3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/gui_test/HostView3DGatewayGuiTest.cpp",
+          "sha256": "eb54ac1ea92cfe93191492c1b8e1fd625da6b510f7227b13584e5984a0c41799"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/DefectPinningTest.cpp",
+          "sha256": "e8a1b520037a86a4d9d305b5ccae77ecf41fb318b5be451a7be9ee312d9ce93c"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch15-search.json",
+          "sha256": "5019634030f48d6d38f8ca285a5facd6a09fb3012df49f4ad2f561f14cdb82c6"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/host-preview-audit.md",
+          "sha256": "8f1be4fc6972e675e35a5071d54282963ec92d76c277167cabd685442f951edc"
+        }
+      ],
+      "auditBoundary": "明确渲染/网关与文本定义；生产真GL/异常/线程/完整宿主权限未验，非全UI结项"
+    },
+    {
+      "functionId": "ui.audit-b32.eventBus.productionWiring",
+      "ownerUnit": "ui",
+      "requirements": [
+        "SA-19",
+        "TASK-03",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "m_eventBus = std::make_shared<core::ReferenceEventBus>();",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 746,
+          "endLine": 756,
+          "sha256": "0c5777c781b21af4a932f376404e86e32ac9e199d2efa54e6a39ec47d652bd97"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "m_revisionSink =",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 823,
+          "endLine": 845,
+          "sha256": "f7f781f755f72c4059c77f4064197e704b98b9bcef6c2cb711b74f2a52070d7f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "class RequirementsRevisionSyncSink",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 850,
+          "endLine": 925,
+          "sha256": "3bdbcd40c2974035c470f74a94e83d7c8e841280431eb27923c348a77da9772f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "symbol": "contentDeps.wiring.eventBus = m_eventBus;",
+          "qualifiedSymbol": "sdurws::ird::ui::IrdWorkbenchHostPlugin::initialize",
+          "startLine": 1022,
+          "endLine": 1022,
+          "sha256": "902de7b05121fe5763706b7509430e92e35ce8e4d686551f97aa27da25e738a4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "CORE-EVENT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "batch32/search.json",
+        "conclusion": "详见core-event-lifetime-audit；上游Event原语与产品权威分开，既有execution总线优先但线程/退订差异阻断直接替换"
+      },
+      "differences": "F967句柄析构违约及生产参考总线越界待改；泛型noexcept终止仅观察，值契约/稳定码/evidence权威不下放，不批准新核心",
+      "inputs": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/units/core.md",
+          "sha256": "a4dbdbffdfd064662816544b85af3109a69ec4519a8653250dd0d4917801786d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/CMakeLists.txt",
+          "sha256": "2846b134386a062e13ad949c024769ca4677c1e943e37c83b041e048a6ec85ba"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/EventLifetimeSuitabilityTest.cpp",
+          "sha256": "f22aec21c9023f7cb07acc00fcf39679a5db4869da1ece6b2305c916cc08f23e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+          "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+          "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+          "sha256": "70acb5cfc8c0e540d19c8715857fff1898396888efe56ae75f49398403aaf374"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Events.hpp",
+          "sha256": "f7307d7400fdd65d13ae5079caf841ce00a722d90ba617b45668803f1ef47fc1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+          "sha256": "aa8b0c1c0150e278b0a4fe486c597c205baf65534fa65976f81ac341fd92a4f6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Evaluation.hpp",
+          "sha256": "5bcf9c507261c17c7063a6444f670697eefe330d6e671ccadae4ea0b41d8e036"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/EventsTest.cpp",
+          "sha256": "966587ae56aa5628815f048e744307f4a749d61f0c9c582716259e5082f65fda"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "11620067ba5f0c208977a36571af35bb664b98086ed25584a2cb96d51d400889"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/EventBus.cpp",
+          "sha256": "c817e0276136d9977ee982dfbe7cbc1d1e9b22eb199adbdce9ee4a1957758533"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp",
+          "sha256": "b6d9483ba746de2d0b7a828bc603073f0718f8d7502a37d9ddf4c0cef34feaaa"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/Event.hpp",
+          "sha256": "6f66c8dd30b36c0a3bf9946a8b38d71389d8f06adabdbcdfb3f60ea82b54ece6"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/core/EventTest.cpp",
+          "sha256": "98440bef94017790fc2ad62d6fd8d9b1c7c21e89326083a0d1d9cef27555b73d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/core/CMakeLists.txt",
+          "sha256": "8f9b03382ac8b546dfe7e99943fb04b40a0a9f98cde2c0033ccb22e5ea2af479"
+        },
+        {
+          "path": "RobWork/RobWork/gtest/CMakeLists.txt",
+          "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+          "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+          "sha256": "2a5f64a2976e0da725064f53f16a84bf982dfc301a2dfcfbe6b7abf147474636"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/units/execution.md",
+          "sha256": "ab7a4c3894b988be0fb7745daab50c8924ac679f8f24edfd2c7022d85f961a8f"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/core-event-lifetime-audit.md",
+          "sha256": "3906222209bb19cbc2bbf36c350de610b50a524f572989f4b81f615fa587b87f"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/search.json",
+          "sha256": "1c4570dffd56881224b85d0f0d7859dd3c3f4fc400f09de865b070aeafec2305"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/verification.json",
+          "sha256": "25bdbec7bbf5c881b50a576d0f7d8c220b199b3d4a9dda91cf8a9fe12bb66ab3"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/run/gtest.xml",
+          "sha256": "aa39fe33c2fd54f61317318a77a6c495470a856d9e16765210d7d0001be396b2"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch32/run/ird-test-report.json",
+          "sha256": "f45a624baae63f21a5c611c3f98b02251d22caf3c9562128924ba2ec14cec9d1"
+        }
+      ],
+      "auditBoundary": "23跑22passed1failed0skipped；生产装配仅静态源码链，未跑GUI/最终DLL/并发在投退订/全消费者，不关闭整文件或T01"
+    }
+  ]
+}

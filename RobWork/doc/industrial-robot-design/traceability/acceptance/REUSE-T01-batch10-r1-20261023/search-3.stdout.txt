@@ -1,0 +1,16 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:3: * @brief  TestRecordListener——gtest 事件到 TestRecord/ird-test-report.json 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:7: *   - units/testkit.md §7.2（记录契约）、§7.3（installTestRecordListener 签名、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:16: *   installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:44:class TestRecordListener : public ::testing::EmptyTestEventListener {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:51:    explicit TestRecordListener(std::filesystem::path reportPath)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:111: * @brief 安装 TestRecordListener（§7.3 原文签名；main 中调用一次）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:120:inline void installTestRecordListener(int& argc, char** argv)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:140:    static TestRecordListener listener{reportPath};
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp:141:    ::testing::UnitTest::GetInstance()->listeners().Append(&listener);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp:6: * 设计依据：units/testkit.md §7.3（installTestRecordListener——消费方 main
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp:22:char** g_irdTestArgv = nullptr;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp:27:    g_irdTestArgv = argv;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/TestMain.cpp:29:    ::sdurws::ird::testkit::installTestRecordListener(argc, argv);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp:40:extern char** g_irdTestArgv;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp:61:        if (g_irdTestArgv == nullptr || g_irdTestArgv[0] == nullptr) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ProcessRunnerTest.cpp:65:        return fs::path(g_irdTestArgv[0]).parent_path()

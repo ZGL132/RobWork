@@ -1,0 +1,232 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::checkSetEquivalent<T>
+163: SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
+164:                                   const std::vector<T>& actual,
+165:                                   const ToleranceProfile& profile,
+166:                                   const SetMatchTraits<T>& traits)
+167: {
+168:     SetCheckResult r;
+169:     constexpr std::size_t kMaxElements = 100000;
+170:     if (expected.size() > kMaxElements || actual.size() > kMaxElements) {
+171:         throw TestKitError(TestKitErrorKind::Usage,
+172:                            "usage: 元素数超规模护栏 100000（大规模数据按索引逐对或"
+173:                            "摘要比较——§5.4.2）");
+174:     }
+175:     const auto identityOf = [&traits](const T& e) { return traits.identity(e); };
+176: 
+177:     // ---- 阶段 0：重复检测 ----
+178:     // expected 身份键重复 → DatasetInvalid（参考集自相矛盾——调用期即拒）。
+179:     for (std::size_t i = 0; i < expected.size(); ++i) {
+180:         const auto id = identityOf(expected[i]);
+181:         if (!id.has_value()) { continue; }
+182:         for (std::size_t j = i + 1; j < expected.size(); ++j) {
+183:             if (identityOf(expected[j]) == id) {
+184:                 throw TestKitError(TestKitErrorKind::DatasetInvalid,
+185:                                    "dataset-invalid: expected 身份键重复（参考集"
+186:                                    "自相矛盾）: " + *id);
+187:             }
+188:         }
+189:     }
+190:     // actual 身份键重复 → 失败 reason=duplicate-identity（逐键列出）。
+191:     for (std::size_t i = 0; i < actual.size(); ++i) {
+192:         const auto id = identityOf(actual[i]);
+193:         if (!id.has_value()) { continue; }
+194:         for (std::size_t j = i + 1; j < actual.size(); ++j) {
+195:             if (identityOf(actual[j]) == id) {
+196:                 r.duplicates.push_back(*id);
+197:                 break;   // 同键只报一次
+198:             }
+199:         }
+200:     }
+201:     if (!r.duplicates.empty()) {
+202:         r.equivalent = false;
+203:         return r;
+204:     }
+205: 
+206:     // ---- 阶段 1：稳定身份匹配（O(n)；值超容差→identity-value-mismatch） ----
+207:     std::vector<bool> expectedMatched(expected.size(), false);
+208:     std::vector<bool> actualMatched(actual.size(), false);
+209:     {
+210:         std::vector<std::pair<std::string, std::size_t>> actualIds;
+211:         for (std::size_t i = 0; i < actual.size(); ++i) {
+212:             if (const auto id = identityOf(actual[i]); id.has_value()) {
+213:                 actualIds.emplace_back(*id, i);
+214:             }
+215:         }
+216:         for (std::size_t ei = 0; ei < expected.size(); ++ei) {
+217:             const auto id = identityOf(expected[ei]);
+218:             if (!id.has_value()) { continue; }
+219:             std::size_t found = actual.size();
+220:             for (const auto& [key, idx] : actualIds) {
+221:                 if (key == *id && !actualMatched[idx]) { found = idx; break; }
+222:             }
+223:             if (found == actual.size()) { continue; }   // 数值阶段再试
+224:             // 身份相等：数值字段须逐项满足容差，否则 identity-value-mismatch。
+225:             const auto ef = traits.numerics(expected[ei]);
+226:             const auto af = traits.numerics(actual[found]);
+227:             bool valueOk = ef.size() == af.size();
+228:             for (std::size_t k = 0; valueOk && k < ef.size(); ++k) {
+229:                 if (ef[k].fieldPath != af[k].fieldPath) { valueOk = false; break; }
+230:                 const auto tol = profile.resolve(ef[k].fieldPath).tolerance;
+231:                 if (!core::closeWithin(af[k].valueSi, ef[k].valueSi, tol)) {
+232:                     valueOk = false;
+233:                     r.mismatchedPairs.push_back(CompareDetail{
+234:                         std::string{ef[k].fieldPath}, k, true, af[k].valueSi,
+235:                         ef[k].valueSi, std::fabs(af[k].valueSi - ef[k].valueSi),
+236:                         std::string{}, tol});
+237:                 }
+238:             }
+239:             if (valueOk) {
+240:                 expectedMatched[ei] = true;
+241:                 actualMatched[found] = true;
+242:                 r.matched.push_back({ei, found});
+243:             } else {
+244:                 // identity-value-mismatch：期望/实际两侧均不计配对（等价已不可能）。
+245:                 expectedMatched[ei] = false;
+246:                 actualMatched[found] = false;
+247:                 r.missingExpected.push_back(ei);
+248:                 r.extraActual.push_back(found);
+249:                 r.equivalent = false;
+250:             }
+251:         }
+252:     }
+253: 
+254:     // ---- 阶段 2：数值一一匹配（剩余元素；最大匹配） ----
+255:     std::vector<std::size_t> expectedFreeIdx;
+256:     std::vector<std::size_t> actualFreeIdx;
+257:     for (std::size_t i = 0; i < expected.size(); ++i) {
+258:         if (!expectedMatched[i]) { expectedFreeIdx.push_back(i); }
+259:     }
+260:     for (std::size_t i = 0; i < actual.size(); ++i) {
+261:         if (!actualMatched[i]) { actualFreeIdx.push_back(i); }
+262:     }
+263: 
+264:     const std::size_t nL = expectedFreeIdx.size();
+265:     const std::size_t nR = actualFreeIdx.size();
+266:     // 最大匹配（Kuhn 增广路径；SIZE_MAX 哨兵＝未匹配）。
+267:     std::vector<std::size_t> matchL(nL, static_cast<std::size_t>(-1));
+268:     std::vector<std::size_t> matchR(nR, static_cast<std::size_t>(-1));
+269:     const auto edge = [&](std::size_t li, std::size_t ri) {
+270:         return detail::compatible(expected[expectedFreeIdx[li]],
+271:                                   actual[actualFreeIdx[ri]], profile, traits);
+272:     };
+273:     const auto tryAugment = [&](std::size_t li, std::vector<bool>& visited) {
+274:         return detail::tryAugmentAt(li, edge, nR, matchR, matchL, visited);
+275:     };
+276:     for (std::size_t li = 0; li < nL; ++li) {
+277:         if (matchL[li] != static_cast<std::size_t>(-1)) { continue; }
+278:         std::vector<bool> visited(nR, false);
+279:         (void)tryAugment(li, visited);
+280:     }
+281:     for (std::size_t li = 0; li < nL; ++li) {
+282:         if (matchL[li] == static_cast<std::size_t>(-1)) {
+283:             r.missingExpected.push_back(expectedFreeIdx[li]);
+284:         } else {
+285:             const auto ei = expectedFreeIdx[li];
+286:             const auto ai = actualFreeIdx[matchL[li]];
+287:             expectedMatched[ei] = true;
+288:             actualMatched[ai] = true;
+289:             r.matched.push_back({ei, ai});
+290:         }
+291:     }
+292:     for (std::size_t ri = 0; ri < nR; ++ri) {
+293:         if (matchR[ri] == static_cast<std::size_t>(-1)) {
+294:             r.extraActual.push_back(actualFreeIdx[ri]);
+295:         }
+296:     }
+297: 
+298:     // equivalent ⇔ 覆盖双方全部元素（阶段 1＋阶段 2 合计）。
+299:     for (std::size_t i = 0; i < expected.size() && r.equivalent; ++i) {
+300:         if (!expectedMatched[i]) { r.equivalent = false; }
+301:     }
+302:     for (std::size_t i = 0; i < actual.size() && r.equivalent; ++i) {
+303:         if (!actualMatched[i]) { r.equivalent = false; }
+304:     }
+305: 
+306:     // ---- 歧义检测（§5.4.4：逐配对移除后尝试再增广；首个替代即置位——确定性：
+307:     // 按 matched 记录序＝expected 索引序探测）----
+308:     if (r.equivalent && !r.matched.empty()) {
+309:         // 仅阶段 2 配对可能歧义（身份配对唯一，§5.4.4"身份匹配确定性"）。
+310:         for (std::size_t mi = r.matched.size(); mi-- > 0;) {
+311:             const auto& pair = r.matched[mi];
+312:             const bool inPhase2 =
+313:                 std::find(expectedFreeIdx.begin(), expectedFreeIdx.end(),
+314:                           pair.expectedIndex) != expectedFreeIdx.end();
+315:             if (!inPhase2) { continue; }
+316:             std::size_t li = 0, ri = 0;
+317:             bool foundPos = false;
+318:             for (li = 0; li < nL; ++li) {
+319:                 if (expectedFreeIdx[li] == pair.expectedIndex) { foundPos = true; break; }
+320:             }
+321:             for (ri = 0; foundPos && ri < nR; ++ri) {
+322:                 if (actualFreeIdx[ri] == pair.actualIndex) { break; }
+323:             }
+324:             if (!foundPos || ri >= nR) { continue; }
+325:             // F-594：歧义＝存在经过配对 (li,ri) 的 M-交错圈（等价于存在另
+326:             // 一个完美匹配——§5.4.4 歧义本义）。检测：从 li 沿"未匹配边
+327:             // (l→r，r≠ri)＋匹配边 (r→matchR[r])"做左点闭包；闭包内任一
+328:             // l'≠li 存在未匹配边 (l',ri) 即与 (li,ri) 构成交错圈（圈＝
+329:             // li→…→l'→ri→li）。原实现（移除配对后裸增广）方向性双错：
+330:             // 不屏蔽 ri 时 Kuhn 首扫原样配回恒 true（唯一匹配误报歧义）；
+331:             // 屏蔽 ri 后完美匹配下无自由右点、增广恒 false（2×2 全同值
+332:             // 交换形态的真歧义漏报）——两版都与歧义定义无关，改为交错圈
+333:             // 判定。本探测无副作用（不增广不回滚，配对保持原状）。
+334:             std::vector<bool> inClosure(nL, false);
+335:             inClosure[li] = true;
+336:             bool closureChanged = true;
+337:             while (closureChanged) {
+338:                 closureChanged = false;
+339:                 for (std::size_t l = 0; l < nL; ++l) {
+340:                     if (!inClosure[l]) { continue; }
+341:                     for (std::size_t r2 = 0; r2 < nR; ++r2) {
+342:                         if (r2 == ri || !edge(l, r2)) { continue; }
+343:                         const std::size_t lNext = matchR[r2];
+344:                         if (lNext != static_cast<std::size_t>(-1)
+345:                             && !inClosure[lNext]) {
+346:                             inClosure[lNext] = true;   // l —(r2 未匹配)— lNext
+347:                             closureChanged = true;
+348:                         }
+349:                     }
+350:                 }
+351:             }
+352:             bool alternative = false;
+353:             for (std::size_t l = 0; l < nL && !alternative; ++l) {
+354:                 if (l != li && inClosure[l] && edge(l, ri)) { alternative = true; }
+355:             }
+356:             if (alternative) {
+357:                 r.ambiguousMatch = true;
+358:                 break;   // 首个歧义配对即置位（确定性——matched 记录序）
+359:             }
+360:         }
+361:     }
+362: 
+363:     // mismatchedPairs 补齐：数值未匹配的最近对详情（missing×extra 数值距离和
+364:     // 最近——§5.4.2"最近对详情"；无相容边的 missing/extra 不配对详情）。
+365:     for (const auto ei : r.missingExpected) {
+366:         double best = -1.0;
+367:         std::size_t bestIdx = 0;
+368:         bool found = false;
+369:         for (const auto ai : r.extraActual) {
+370:             const auto ef = traits.numerics(expected[ei]);
+371:             const auto af = traits.numerics(actual[ai]);
+372:             if (ef.empty() || ef.size() != af.size()) { continue; }
+373:             double sum = 0.0;
+374:             for (std::size_t k = 0; k < ef.size(); ++k) {
+375:                 sum += std::fabs(af[k].valueSi - ef[k].valueSi);
+376:             }
+377:             if (!found || sum < best) { found = true; best = sum; bestIdx = ai; }
+378:         }
+379:         if (found) {
+380:             const auto ef = traits.numerics(expected[ei]);
+381:             const auto af = traits.numerics(actual[bestIdx]);
+382:             for (std::size_t k = 0; k < ef.size(); ++k) {
+383:                 r.mismatchedPairs.push_back(CompareDetail{
+384:                     std::string{ef[k].fieldPath}, k, true, af[k].valueSi,
+385:                     ef[k].valueSi, std::fabs(af[k].valueSi - ef[k].valueSi),
+386:                     std::string{}, profile.resolve(ef[k].fieldPath).tolerance});
+387:             }
+388:         }
+389:     }
+390: 
+391:     return r;
+392: }

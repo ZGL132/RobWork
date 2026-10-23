@@ -1,0 +1,16 @@
+{
+  "schemaVersion": "ird-findings/1",
+  "note": "same",
+  "findings": [
+    {
+      "id": "F-001",
+      "status": "open",
+      "title": "theirs"
+    },
+    {
+      "id": "F-003",
+      "status": "open",
+      "title": "对方新增"
+    }
+  ]
+}

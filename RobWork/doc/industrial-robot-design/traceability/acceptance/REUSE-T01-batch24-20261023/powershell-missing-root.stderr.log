@@ -1,0 +1,10 @@
+repo root resolution failed: .git not found under 'C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\fixtures\m
+issing'
+At C:\Users\zgl18\AppData\Local\Temp\ird-b24-accept-7d7d2502\repo\RobWork\scripts\industrialrobot\pipeline-lock.ps1:39 
+char:54
++ ... ".git"))) { throw "repo root resolution failed: .git not found under  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (repo root resol...xtures\missing':String) [], RuntimeException
+    + FullyQualifiedErrorId : repo root resolution failed: .git not found under 'C:\Users\zgl18\AppData\Local\Temp\ird 
+   -b24-accept-7d7d2502\fixtures\missing'
+ 

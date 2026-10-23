@@ -1,0 +1,40 @@
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T10
+\TestApprovedPatches.ps1:39 char:64
++ ... €呮槑纭壒鍑嗚绮剧‘鎵╁睍';date='2026-10-23';proposal=$proposalPath;proposalSha ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Unexpected token '鎵╁睍';date='2026-10-23';proposal=$proposalPath;proposalSha256=(Digest (ReadText $proposalPath));allowe
+dFiles=@($source)} | ConvertTo-Json -Depth 10
+Put $approvalPath $goodApproval
+$goodRegistry=@{schemaVersion='ird-approved-upstream-patches/1';patches=@(@{
+ taskId='REUSE-T10';proposal=@{path=$proposalPath;sha256=(Digest (ReadText $proposalPath))};
+ approval=@{path=$approvalPath;sha256=(Digest $goodApproval)};
+ patch=@{path=$patchPath;sha256=(Digest $goodPatch)};
+ files=@(@{path=$source;baselineBlob=(@(GitLines @('rev-parse',"${baseline}:$source"))[0]);sha256=(Digest $goodSource)}
+)
+})} | ConvertTo-Json -Depth 15
+function Restore-Fixture {
+ $script:Head=''
+ Put $source $goodSource;Put $patchPath $goodPatch;Put $approvalPath $goodApproval
+ Put $proposalPath "owner-reviewed precise proposal`n"
+ Put ($product+'patches/PATCHES.md') "0004-test.patch`n"
+ Put $registryPath $goodRegistry
+}
+function Save-Registry($r) { Put $registryPath ($r|ConvertTo-Json -Depth 20) }
+function Rebind-Approval($a,$r) {
+ $v=$a|ConvertTo-Json -Depth 15;Put $approvalPath $v;$r.patches[0].approval.sha256=Digest $v;Save-Registry $r
+}
+$cases=@(
+ @{name='exact' in expression or statement.
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T10
+\TestApprovedPatches.ps1:39 char:64
++ ... oodApproval=@{taskId='REUSE-T10';ownerQuote='鎵€鏈夎€呮槑纭壒鍑嗚绮剧‘鎵╁睍';dat ...
++                                                                  ~
+The hash literal was incomplete.
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T10
+\TestApprovedPatches.ps1:95 char:59
++ ... 'report.json'),($report|ConvertTo-Json -Depth 20),[Text.UTF8Encoding] ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The string is missing the terminator: '.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+ 

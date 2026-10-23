@@ -1,0 +1,18 @@
+{
+  "reviewedCommit": "a78b41ff29261b17fc8379ee27e4afb1933ab827",
+  "comparisonBase": "b83fa7a3fc8ff233e56736adabd53f11c914dbad",
+  "descriptionMatches": true,
+  "onlyExpectedMatrixChange": true,
+  "rowPending": true,
+  "hashChecks": 7,
+  "hashFailures": 0,
+  "reworkSourceMatches": true,
+  "archiveFiles": 44,
+  "archiveRawMatches": 40,
+  "archiveNewlineOnly": 4,
+  "archiveMismatches": 0,
+  "originalFailPreserved": true,
+  "scopedDiffCheckExit": 0,
+  "sourceDiffEmpty": true,
+  "clean": true
+}

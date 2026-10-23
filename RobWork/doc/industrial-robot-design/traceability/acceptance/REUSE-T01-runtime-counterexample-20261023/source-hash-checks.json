@@ -1,0 +1,38 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/CMakeLists.txt",
+    "expected": "0cef1b239d5218107262958f8b416012094442dd1903e22f3fc815bd506bf117",
+    "actual": "0cef1b239d5218107262958f8b416012094442dd1903e22f3fc815bd506bf117",
+    "matches": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/RuntimeOffsetAuditTest.cpp",
+    "expected": "153970dfa00e35e10f6ac657743cfdbadf6362f3ff842361374cfd0dc2fb28d4",
+    "actual": "153970dfa00e35e10f6ac657743cfdbadf6362f3ff842361374cfd0dc2fb28d4",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "expected": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3",
+    "actual": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",
+    "expected": "c9084f8e2dcbcef65ee3ea3897f89ab0976bf83014a93b95bbcfe263035d3c64",
+    "actual": "c9084f8e2dcbcef65ee3ea3897f89ab0976bf83014a93b95bbcfe263035d3c64",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
+    "expected": "8308aefe2d78ad609ce3c251963f0ee5c3fbf5dd45a040b467d64662cbfb1e48",
+    "actual": "8308aefe2d78ad609ce3c251963f0ee5c3fbf5dd45a040b467d64662cbfb1e48",
+    "matches": true
+  },
+  {
+    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+    "expected": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28",
+    "actual": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28",
+    "matches": true
+  }
+]

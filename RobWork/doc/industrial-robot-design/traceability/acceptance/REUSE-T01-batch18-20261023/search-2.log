@@ -1,0 +1,13 @@
+RobWork/RobWork/gtest/proximity/ProximitySetupRuleTest.cpp:38:        const ProximitySetupRule rule2 = ProximitySetupRule::makeInclude("A*", "B");
+RobWork/RobWork/gtest/proximity/ProximitySetupRuleTest.cpp:42:        const ProximitySetupRule rule = ProximitySetupRule::makeExclude("A*", "B");
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp:30:    if (ex.size () > 5 && ex.substr (0, 5) == "REGEX") {
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp:34:        return std::regex (StringUtil::patternToRegEx (ex));
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:79:            return (matchPatternA (str1) && matchPatternB (str2)) ||
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:80:                   (matchPatternA (str2) && matchPatternB (str1));
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:108:        bool matchPatternA (const std::string& str) const
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:116:        bool matchPatternB (const std::string& str) const
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:148:        makeExclude (const std::pair< std::string, std::string >& patterns)
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:156:        static rw::proximity::ProximitySetupRule makeExclude (const std::string& patternA,
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:166:        makeInclude (const std::pair< std::string, std::string >& patterns)
+RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp:174:        static rw::proximity::ProximitySetupRule makeInclude (const std::string& patternA,
+RobWork/RobWork/src/rw/core/StringUtil.cpp:283:std::string StringUtil::patternToRegEx (const std::string& pattern)

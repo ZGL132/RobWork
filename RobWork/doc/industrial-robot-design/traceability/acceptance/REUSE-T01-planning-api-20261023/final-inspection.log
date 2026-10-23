@@ -1,0 +1,93 @@
+a3cb564810b3eae8515ba11bfed9c37756d808f4
+387:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\PlanningSuitabilityTest.cpp" />
+388:    <ClCompile Include="C:\Users\zgl18\AppData\Local\Temp\ird-accept-planning-f8bd92c90dd245928f3f01895191d033\repo\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\TestMainReport.cpp" />
+       \f$ Q = (q_1, q_2, ..., q_n) \f$
+       is defined as
+       \f$ \sum_{i=1}^{n} |p_i - q_i| \f$
+
+       @relates Metric
+    */
+    template< class T > class ManhattanMetric : public Metric< T >
+    {
+      protected:
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& q) const
+        {
+            return MetricUtil::norm1 (q);
+        }
+
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& a,
+                    const typename Metric< T >::value_type& b) const
+        {
+            return MetricUtil::dist1 (a, b);
+        }
+    };
+
+    /**
+       @brief Weighted Manhattan distance metric for vector types.
+
+       Given a vector of weights \f$ \mathbf{\omega}\in\mathbb{R}^n \f$,
+       the distance between two points
+       \f$ P = (p_1, p_2, ..., p_n) \f$
+       and
+       \f$ Q = (q_1, q_2, ..., q_n) \f$
+       is defined as
+       \f$ \sum_{i=1}^{n} |\omega_i * (p_i - q_i)| \f$.
+
+       @relates Metric
+    */
+    template< class T > class WeightedManhattanMetric : public Metric< T >
+    {
+      public:
+        /**
+           @brief Weighted metric.
+           @param weights [in] Weights for the metric.
+        */
+        WeightedManhattanMetric (const typename Metric< T >::value_type& weights) :
+            _weights (weights)
+        {}
+
+      protected:
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& q) const
+        {
+            return MetricUtil::norm1Weighted (q, _weights);
+        }
+
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& a,
+                    const typename Metric< T >::value_type& b) const
+        {
+            return MetricUtil::dist1Weighted (a, b, _weights);
+        }
+
+        int doSize () const { return (int) _weights.size (); }
+
+        const typename Metric< T >::value_type _weights;
+    };
+
+    /**
+       @brief Euclidean distance metric for vector types.
+
+       The distance between two points
+       \f$ P = (p_1, p_2, ..., p_n) \f$
+       and
+       \f$ Q = (q_1, q_2, ..., q_n) \f$
+       is defined as
+       \f$ \sqrt{\sum_{i=1}^{n}(p_i - q_i)^2} \f$
+
+       @relates Metric
+    */
+    template< class T > class EuclideanMetric : public Metric< T >
+    {
+      protected:
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& q) const
+        {
+            return MetricUtil::norm2 (q);
+        }
+
+        typename Metric< T >::scalar_type
+        doDistance (const typename Metric< T >::value_type& a,
+                    const typename Metric< T >::value_type& b) const

@@ -1,0 +1,427 @@
+[
+  {
+    "path": "acceptance.json",
+    "bytes": 7259,
+    "sha256": "ae5252e92e814076d40c65a2c7906b0a09eb96a56f73390f9f137aa84fdcd414"
+  },
+  {
+    "path": "acceptance.md",
+    "bytes": 3979,
+    "sha256": "7715a254d64502ea07882eade0a9fb7003b43c53b86f0b1795a7f0e06da04231"
+  },
+  {
+    "path": "audit-originals.ps1",
+    "bytes": 6192,
+    "sha256": "4d70496a48c3437b72761e171c19961d1e29b48be843258abc6f0a3c6c201df2"
+  },
+  {
+    "path": "commit-lint.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "commit-lint.log",
+    "bytes": 71,
+    "sha256": "b4e6beafd60234ba4acce6004008c905c5071723008406309b20cdb6b27d1569"
+  },
+  {
+    "path": "diff-check.log",
+    "bytes": 285,
+    "sha256": "76a7a422d5633bc86da0927ac674f799d63fddcfb6180f409188e95693dfd156"
+  },
+  {
+    "path": "finalize.log",
+    "bytes": 151,
+    "sha256": "bdcba8ee14c0a86672e83dac446caa81ee564e5468a1e02eb3261f4c31c150d0"
+  },
+  {
+    "path": "focused-driver-ps51.ps1",
+    "bytes": 26893,
+    "sha256": "df960aa7d9904d01006e92eb0e7367b438f8602fcb5eb4e4f4dda8e5f0b81602"
+  },
+  {
+    "path": "focused-driver.ps1",
+    "bytes": 26890,
+    "sha256": "8fb2dbfdaa51c419aa7085953de85b0f2d15a7879672df867c9de45d22afec3e"
+  },
+  {
+    "path": "focused-ps51-driver.log",
+    "bytes": 1470,
+    "sha256": "f6eabfd20ae77708ae98b068274e8e8cf922fe2f95d25c373fd9842cd1e196ff"
+  },
+  {
+    "path": "focused-ps51-no-bom-attempt.log",
+    "bytes": 4065,
+    "sha256": "93f8f848ff65585e8587c4f0d51c23ba9d7fd15e07aabff78a0e1101ecc106ac"
+  },
+  {
+    "path": "focused-ps51.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "focused-ps51/independent-audited-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-business-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-capability-none-required.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-closed-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-final-pending-rejected.log",
+    "bytes": 74,
+    "sha256": "7b8f78e731aa0a9a2ac3ae8a6c6e388ed1fd784da84037e2c5baa700df64bd37"
+  },
+  {
+    "path": "focused-ps51/independent-frozen-ignores-dirty.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps51/independent-frozen-positive.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps51/independent-kind-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-owner-required.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/independent-proposal-positive.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps51/reuse-governance.junit.xml",
+    "bytes": 1183,
+    "sha256": "b56b9fb962d2c1bb5fda381b414280f845230812f940a08d63bb62560013774e"
+  },
+  {
+    "path": "focused-ps51/reuse-test-report.json",
+    "bytes": 19459,
+    "sha256": "34a86dc72f7a3705de828b79a9e2caca569c1c4a2325fd007e5b60b2c9807310"
+  },
+  {
+    "path": "focused-ps51/script-audit-no-fake-target.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps51/script-audit-reject-cmake-target.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-reject-fake-migration.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-reject-other-directory.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-reject-product-escape.log",
+    "bytes": 75,
+    "sha256": "478db9e894942572b9cd7143864076b8bc837916123446fe6f1212b0354acb48"
+  },
+  {
+    "path": "focused-ps51/script-audit-reject-production-disguise.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-require-own-context.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-require-real-entry-binding.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps51/script-audit-sourced-helper.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps51/script-audit-stale-context.log",
+    "bytes": 67,
+    "sha256": "1c90303187bbf2d7227dab7cc71e88be4b13238e5de7e97b611e3751e1374894"
+  },
+  {
+    "path": "focused-ps7-driver.log",
+    "bytes": 1470,
+    "sha256": "f6eabfd20ae77708ae98b068274e8e8cf922fe2f95d25c373fd9842cd1e196ff"
+  },
+  {
+    "path": "focused-ps7.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "focused-ps7/independent-audited-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-business-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-capability-none-required.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-closed-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-final-pending-rejected.log",
+    "bytes": 74,
+    "sha256": "7b8f78e731aa0a9a2ac3ae8a6c6e388ed1fd784da84037e2c5baa700df64bd37"
+  },
+  {
+    "path": "focused-ps7/independent-frozen-ignores-dirty.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps7/independent-frozen-positive.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps7/independent-kind-rejected.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-owner-required.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/independent-proposal-positive.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps7/reuse-governance.junit.xml",
+    "bytes": 1183,
+    "sha256": "b56b9fb962d2c1bb5fda381b414280f845230812f940a08d63bb62560013774e"
+  },
+  {
+    "path": "focused-ps7/reuse-test-report.json",
+    "bytes": 17145,
+    "sha256": "28883e7c63fed5e27809c94e6446b7828e69bfa4d3c973dbf17769be71bce1d7"
+  },
+  {
+    "path": "focused-ps7/script-audit-no-fake-target.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps7/script-audit-reject-cmake-target.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-reject-fake-migration.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-reject-other-directory.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-reject-product-escape.log",
+    "bytes": 75,
+    "sha256": "478db9e894942572b9cd7143864076b8bc837916123446fe6f1212b0354acb48"
+  },
+  {
+    "path": "focused-ps7/script-audit-reject-production-disguise.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-require-own-context.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-require-real-entry-binding.log",
+    "bytes": 44,
+    "sha256": "01c4612989a0767a5358ff8bcfb22f448dfbe7d4c46bddbb73fd2269763208d0"
+  },
+  {
+    "path": "focused-ps7/script-audit-sourced-helper.log",
+    "bytes": 2486,
+    "sha256": "a41a2fd0e103560e841fe080c3ae10bc3e913bfb7e25c7d47216e7cb452e6b79"
+  },
+  {
+    "path": "focused-ps7/script-audit-stale-context.log",
+    "bytes": 67,
+    "sha256": "1c90303187bbf2d7227dab7cc71e88be4b13238e5de7e97b611e3751e1374894"
+  },
+  {
+    "path": "frozen-source-diff.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "frozen-source-diff.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "hash-variants.log",
+    "bytes": 2454,
+    "sha256": "cd656fe189de1b79cd58e2f0c39f0e5bd47d30f9568285349a46b3db121f52bd"
+  },
+  {
+    "path": "hash-variants.ps1",
+    "bytes": 1213,
+    "sha256": "9c5db393badd06205f08f4356ca316aad711de5c918d662a6adaa706ddbe18e0"
+  },
+  {
+    "path": "helper-row-probe.ps1",
+    "bytes": 4457,
+    "sha256": "a66e9dc00b7c399606eabe23adb7a082e4550dc5aea8760311367783c83b9493"
+  },
+  {
+    "path": "helper-row-ps51.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "helper-row-ps51.json",
+    "bytes": 1411,
+    "sha256": "25a3a06e402d2092a18c9652ae6a9df1bf4d193ba51708092db369e8521fef30"
+  },
+  {
+    "path": "helper-row-ps51.json.closed-rejected.log",
+    "bytes": 50,
+    "sha256": "5f32b049392c0ce2056259e042a4d7200451eed2617b8ddacbb85606a86896ca"
+  },
+  {
+    "path": "helper-row-ps51.json.junit.xml",
+    "bytes": 207,
+    "sha256": "5f4fd40614b90e6bd7d8ae5c2d96bde5abd3052c180d7a8fd92d1332d13ddd86"
+  },
+  {
+    "path": "helper-row-ps51.json.pending-final-rejected.log",
+    "bytes": 70,
+    "sha256": "94fa7814b6dbc3e93c78628ffc89891d178c6a429c929bd5b5b794e59959da22"
+  },
+  {
+    "path": "helper-row-ps51.json.pending-positive.log",
+    "bytes": 117,
+    "sha256": "db465d556fb68de0664789a5974bfdb416306fb66e2158d1366f83b47119f0e5"
+  },
+  {
+    "path": "helper-row-ps51.log",
+    "bytes": 320,
+    "sha256": "1ace72c6169d9baa874c812b98ac6c56ebc5beca6e2cba8c8e7c802644049908"
+  },
+  {
+    "path": "helper-row-ps7.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "helper-row-ps7.json",
+    "bytes": 1081,
+    "sha256": "622577b9538de0aa0b04cd4aed48780e3dea01d71a8d0b551134820dfe8cd4da"
+  },
+  {
+    "path": "helper-row-ps7.json.closed-rejected.log",
+    "bytes": 50,
+    "sha256": "5f32b049392c0ce2056259e042a4d7200451eed2617b8ddacbb85606a86896ca"
+  },
+  {
+    "path": "helper-row-ps7.json.junit.xml",
+    "bytes": 207,
+    "sha256": "5f4fd40614b90e6bd7d8ae5c2d96bde5abd3052c180d7a8fd92d1332d13ddd86"
+  },
+  {
+    "path": "helper-row-ps7.json.pending-final-rejected.log",
+    "bytes": 70,
+    "sha256": "94fa7814b6dbc3e93c78628ffc89891d178c6a429c929bd5b5b794e59959da22"
+  },
+  {
+    "path": "helper-row-ps7.json.pending-positive.log",
+    "bytes": 117,
+    "sha256": "db465d556fb68de0664789a5974bfdb416306fb66e2158d1366f83b47119f0e5"
+  },
+  {
+    "path": "helper-row-ps7.log",
+    "bytes": 320,
+    "sha256": "1ace72c6169d9baa874c812b98ac6c56ebc5beca6e2cba8c8e7c802644049908"
+  },
+  {
+    "path": "original-evidence-audit.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "original-evidence-audit.json",
+    "bytes": 3424,
+    "sha256": "1269fd18f35ea33ce2f163c468a3e86a9be0a4b5a6d18baed84f764280f8af4f"
+  },
+  {
+    "path": "original-evidence-audit.log",
+    "bytes": 2028,
+    "sha256": "da6b3a82a623c2edde547ebe775559a38f25edb736f5333674c3b2e078fe74da"
+  },
+  {
+    "path": "scope.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "scope.log",
+    "bytes": 190,
+    "sha256": "f17c8d50263e294048e021e8c8435a1963f89bb934a1939f14a5b0e74a53c93f"
+  },
+  {
+    "path": "task-scope-additions.json",
+    "bytes": 86,
+    "sha256": "348ad1fea6fb92e7607c00bac7350e6b7b6a8c4beffbea26570dc25b68480943"
+  },
+  {
+    "path": "verify-task.exit.txt",
+    "bytes": 3,
+    "sha256": "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354"
+  },
+  {
+    "path": "verify-task.log",
+    "bytes": 13210,
+    "sha256": "14bc453e4c7ef90cadd367327e08b27c26d5389640affde151aaeaa8fc3b9811"
+  }
+]

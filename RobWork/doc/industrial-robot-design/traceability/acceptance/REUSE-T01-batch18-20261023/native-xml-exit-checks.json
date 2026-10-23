@@ -1,0 +1,38 @@
+[
+  {
+    "label": "original",
+    "summary": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xmlTests": {
+      "ReusePolicyBoundary.OrdinaryDottedNamesMatchLiterally": "passed",
+      "ReusePolicyBoundary.ProductionSessionRuleMustMatchRegexPrefixedLiteralName": "failed"
+    },
+    "exit": 1
+  },
+  {
+    "label": "independent",
+    "summary": {
+      "total": 2,
+      "passed": 1,
+      "failed": 1,
+      "skipped": 0,
+      "notRun": 0,
+      "envUnavailable": 0,
+      "datasetInvalid": 0,
+      "decisive": true
+    },
+    "xmlTests": {
+      "ReusePolicyBoundary.OrdinaryDottedNamesMatchLiterally": "passed",
+      "ReusePolicyBoundary.ProductionSessionRuleMustMatchRegexPrefixedLiteralName": "failed"
+    },
+    "exit": 1
+  }
+]

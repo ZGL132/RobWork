@@ -1,0 +1,429 @@
+{
+  "changedPathCount": 45,
+  "changedPaths": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/core-identity-events-audit.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CoreIdentitySuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/artifact-manifest.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-build-run.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-core-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-core-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-dependents.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-docs-r2.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-final-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-final-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-probe-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-probe-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-reuse-r2.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-task-r2.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-upstream-search.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/b28-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/commands.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/environment.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-core/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-core/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-core/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-core/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-probe/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-probe/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-probe/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/final-probe/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/fnv-oracle.py",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/fnv-vectors.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run-path/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run-path/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run-path/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run-path/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/run/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/verification.json"
+  ],
+  "productionUpstreamVcpkgChanged": [],
+  "qualifiedSymbolsWithDot": [
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.generate",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.generate",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 150
+    },
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.fromCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.fromCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 156
+    },
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.tryFromCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.tryFromCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 168
+    },
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.toCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.toCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 173
+    },
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.isValid",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.isValid",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 176
+    },
+    {
+      "functionId": "core.audit-b28.Identity.AttemptId.fromCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::AttemptId.fromCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 213
+    },
+    {
+      "functionId": "core.audit-b28.Identity.AttemptId.tryFromCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::AttemptId.tryFromCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 225
+    },
+    {
+      "functionId": "core.audit-b28.Identity.AttemptId.toCanonical",
+      "qualifiedSymbol": "sdurws::ird::core::AttemptId.toCanonical",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 235
+    },
+    {
+      "functionId": "core.audit-b28.Identity.TaskIdentity.isValid",
+      "qualifiedSymbol": "sdurws::ird::core::TaskIdentity.isValid",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 243
+    },
+    {
+      "functionId": "core.audit-b28.Identity.TaskIdentity.equal",
+      "qualifiedSymbol": "sdurws::ird::core::TaskIdentity.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 250
+    },
+    {
+      "functionId": "core.audit-b28.Identity.TaskIdentity.order",
+      "qualifiedSymbol": "sdurws::ird::core::TaskIdentity.order",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 257
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.toToken.ProvenanceKind",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.ProvenanceKind",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+      "startLine": 19
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.ValueProvenance.make",
+      "qualifiedSymbol": "sdurws::ird::core::ValueProvenance.make",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+      "startLine": 44
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.ValueProvenance.equal",
+      "qualifiedSymbol": "sdurws::ird::core::ValueProvenance.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Provenance.cpp",
+      "startLine": 88
+    },
+    {
+      "functionId": "core.audit-b28.Evaluation.toToken.EvaluationMode",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.EvaluationMode",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+      "startLine": 15
+    },
+    {
+      "functionId": "core.audit-b28.Evaluation.toToken.TaskOutcome",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.TaskOutcome",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+      "startLine": 34
+    },
+    {
+      "functionId": "core.audit-b28.Evaluation.toToken.EngineeringStatus",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.EngineeringStatus",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+      "startLine": 55
+    },
+    {
+      "functionId": "core.audit-b28.Evaluation.toToken.TaskState",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.TaskState",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Evaluation.cpp",
+      "startLine": 76
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.DiagnosticRecord.make",
+      "qualifiedSymbol": "sdurws::ird::core::DiagnosticRecord.make",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 39
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.DiagnosticRecord.equal",
+      "qualifiedSymbol": "sdurws::ird::core::DiagnosticRecord.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 71
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.ConfirmableFinding.make",
+      "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding.make",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 81
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.ConfirmableFinding.confirm",
+      "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding.confirm",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 93
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.ConfirmableFinding.reject",
+      "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding.reject",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 104
+    },
+    {
+      "functionId": "core.audit-b28.DiagData.ConfirmableFinding.equal",
+      "qualifiedSymbol": "sdurws::ird::core::ConfirmableFinding.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/DiagData.cpp",
+      "startLine": 114
+    },
+    {
+      "functionId": "core.audit-b28.Events.toToken.DomainEventKind",
+      "qualifiedSymbol": "sdurws::ird::core::toToken.DomainEventKind",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 17
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.make.RevisionCommitted",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.make.RevisionCommitted",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 38
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.make.DependencyInvalidated",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.make.DependencyInvalidated",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 48
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.make.TaskStatusChanged",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.make.TaskStatusChanged",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 58
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.make.ResultArchived",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.make.ResultArchived",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 68
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.asRevisionCommitted",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.asRevisionCommitted",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 79
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.asDependencyInvalidated",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.asDependencyInvalidated",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 88
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.asTaskStatusChanged",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.asTaskStatusChanged",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 97
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.asResultArchived",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.asResultArchived",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 106
+    },
+    {
+      "functionId": "core.audit-b28.Events.DomainEvent.equal",
+      "qualifiedSymbol": "sdurws::ird::core::DomainEvent.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 115
+    },
+    {
+      "functionId": "core.audit-b28.Events.ReferenceEventBus.publish",
+      "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus.publish",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 148
+    },
+    {
+      "functionId": "core.audit-b28.Events.ReferenceEventBus.subscribe",
+      "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus.subscribe",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 158
+    },
+    {
+      "functionId": "core.audit-b28.Events.ReferenceEventBus.removeSink",
+      "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus.removeSink",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 164
+    },
+    {
+      "functionId": "core.audit-b28.Events.ReferenceEventBus.subscriberCount",
+      "qualifiedSymbol": "sdurws::ird::core::ReferenceEventBus.subscriberCount",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Events.cpp",
+      "startLine": 171
+    },
+    {
+      "functionId": "core.audit-b28.Identity.IdMacro.value-comparisons",
+      "qualifiedSymbol": "sdurws::ird::core::IdMacro.value-comparisons",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "startLine": 81
+    },
+    {
+      "functionId": "core.audit-b28.Identity.AttemptId.value-comparisons",
+      "qualifiedSymbol": "sdurws::ird::core::AttemptId.value-comparisons",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "startLine": 126
+    },
+    {
+      "functionId": "core.audit-b28.Identity.TaskIdentity.notEqual",
+      "qualifiedSymbol": "sdurws::ird::core::TaskIdentity.notEqual",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "startLine": 154
+    },
+    {
+      "functionId": "core.audit-b28.Identity.std.hash.AttemptId",
+      "qualifiedSymbol": "sdurws::ird::core::std.hash.AttemptId",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "startLine": 186
+    },
+    {
+      "functionId": "core.audit-b28.Identity.std.hash.TaskIdentity",
+      "qualifiedSymbol": "sdurws::ird::core::std.hash.TaskIdentity",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+      "startLine": 193
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.ValueProvenance.notEqual",
+      "qualifiedSymbol": "sdurws::ird::core::ValueProvenance.notEqual",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 93
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.provided",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.provided",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 130
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.notProvided",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.notProvided",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 140
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.notApplicable",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.notApplicable",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 148
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.invalid",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.invalid",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 156
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.state",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.state",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 169
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.tryValue",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.tryValue",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 174
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.value",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.value",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 184
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.invalidRawInput",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.invalidRawInput",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 201
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.provenance",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.provenance",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 210
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.equal",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.equal",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 216
+    },
+    {
+      "functionId": "core.audit-b28.Provenance.SourcedValue.stateToken",
+      "qualifiedSymbol": "sdurws::ird::core::SourcedValue.stateToken",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Provenance.hpp",
+      "startLine": 232
+    }
+  ],
+  "detailNamespaceMissing": [
+    {
+      "functionId": "core.audit-b28.Identity.tryParseId128",
+      "qualifiedSymbol": "sdurws::ird::core::tryParseId128",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 28
+    },
+    {
+      "functionId": "core.audit-b28.Identity.formatId128",
+      "qualifiedSymbol": "sdurws::ird::core::formatId128",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 55
+    },
+    {
+      "functionId": "core.audit-b28.Identity.fnv1a128",
+      "qualifiedSymbol": "sdurws::ird::core::fnv1a128",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 71
+    },
+    {
+      "functionId": "core.audit-b28.Identity.generateId128Bytes",
+      "qualifiedSymbol": "sdurws::ird::core::generateId128Bytes",
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+      "startLine": 125
+    }
+  ],
+  "permissionRefs": [
+    "ARCH:3.6.4"
+  ],
+  "artifacts": [
+    {
+      "path": "build-prefix/Release/ird_reuse_audit_probe.exe",
+      "bytes": 657408,
+      "rawSha256": "03bf920512abeac0ed322ae4e03800e6ddb0331422fd08be377fe44650d2ce83"
+    },
+    {
+      "path": "build-prefix/ird-core/Release/sdurws_ird_core_test.exe",
+      "bytes": 762880,
+      "rawSha256": "a4bc5442a802a51f9b8b177ca7f21e90164be415ea5b5a4a6bc8df066a3ee7a9"
+    },
+    {
+      "path": "build-prefix/ird-core/Release/sdurws_ird_core.lib",
+      "bytes": 1743398,
+      "rawSha256": "fcaf8a512f5f491260500c506e2c350915a4c25b70e57bfa4bf8f1201b5d429a"
+    }
+  ]
+}

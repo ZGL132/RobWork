@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "taskId": "REUSE-T01",
+  "scope": "仅新增3项ReuseDependencyAudit公共依赖API适用性探测",
+  "frozenSha": "bb997f1cfb89c8d8eb24b457d2c82d4c0711af44",
+  "verdict": "PASS",
+  "findings": [],
+  "checkout": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-b3-r2-ef52d3896b3e4c699cfde3a6ef825e22\\repo",
+  "independentBuildDirectory": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-dependency-fd4c1915b0f04f66b39ef6b497a6919f\\build",
+  "checkoutClean": true,
+  "parentTreeModified": false,
+  "committed": false,
+  "pushed": false,
+  "merged": false,
+  "subagentsCreated": false,
+  "build": {
+    "configuration": "Release",
+    "generator": "Visual Studio 17 2022",
+    "target": "ird_reuse_audit_probe",
+    "VSDeveloperShell": "17.12.0",
+    "hostArch": "x64",
+    "targetArch": "x64",
+    "compiler": "MSVC 1942",
+    "configureExit": 0,
+    "buildExit": 0,
+    "runExit": 0,
+    "absoluteExePath": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-dependency-fd4c1915b0f04f66b39ef6b497a6919f\\build\\Release\\ird_reuse_audit_probe.exe",
+    "filter": "ReuseDependencyAudit.*",
+    "script": "run-probe.ps1",
+    "incrementalTempWarning": "MSB8029，独立全新构建完成，无编译/链接错误"
+  },
+  "dependencies": {
+    "version": "Boost 1.92.0",
+    "channel": "既有vcpkg/installed/x64-windows",
+    "endianConfigTarget": "Boost::endian INTERFACE IMPORTED",
+    "propertyTreeConfigTarget": "Boost::property_tree INTERFACE IMPORTED",
+    "configPackages": [
+      "boost_endian CONFIG REQUIRED",
+      "boost_property_tree CONFIG REQUIRED"
+    ],
+    "sourceDigestChecks": 2,
+    "installedRawDigestChecks": 11,
+    "digestMismatches": 0
+  },
+  "results": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "cases": [
+    {
+      "name": "ReuseDependencyAudit.EndianPublicLoadStorePreserveWireBits",
+      "outcome": "passed",
+      "meaning": "公开endian_store大端/小端u32逐字节期望成立，大端u32 load返值成立；大端u64的IEEE负零整数位型0x8000000000000000写入与读回保持",
+      "limits": "仅测所列整数位通道，不是浮点转换、有限性校验、长度预算、owner错误码或跨端生产适配验收"
+    },
+    {
+      "name": "ReuseDependencyAudit.PropertyTreePublicDomErasesTypesAndEmptyShapes",
+      "outcome": "passed",
+      "meaning": "公开read_json/ptree把数值1与字符串1、bool与同文字符串、null与同文字符串、空对象/空数组/空字符串混为相同子树；write_json把n重新写成字符串",
+      "limits": "已列输入的类型/空形状丢失证据，不证明全部JSON库或其他同渠道候选不适用"
+    },
+    {
+      "name": "ReuseDependencyAudit.PropertyTreePublicReaderAcceptsDuplicateKeysAndBom",
+      "outcome": "passed",
+      "meaning": "带UTF8 BOM且含两个x键的指定输入被接受，tree.count(x)=2",
+      "limits": "仅此合成输入；不等同于产品严格JSON profile、位置/预算/取消语义或全部BOM/重复键组合验收"
+    }
+  ],
+  "evidenceConsistency": {
+    "xmlNativeNamesAndOutcomesMatch": true,
+    "xmlTotal": 3,
+    "xmlFailures": 0,
+    "xmlErrors": 0,
+    "xmlSkipped": 0,
+    "nativeTotal": 3,
+    "nativePassed": 3,
+    "nativeFailed": 0,
+    "nativeSkipped": 0,
+    "nativeNotRun": 0,
+    "originalProbeR8NamesAndOutcomesMatch": true,
+    "originalManifestResultsMatch": true,
+    "manifestDigestsAllMatch": true
+  },
+  "inspected": [
+    "DependencySuitabilityTest.cpp全部3项断言与公开头入口",
+    "独立CMakeCache真实CONFIG解析路径与两个IMPORTED目标声明",
+    "PropertyTree标准回调的字符串data、空树与重复push_back存储、UTF8 BOM跳过逻辑",
+    "Boost Endian公开conversion.hpp与load/store已安装实现摘要",
+    "本次XML、原生JSON、命令日志与原probe-r8报告",
+    "产品/框架/vcpkg差异为空；旧19项/r7源码与历史probe-r6/r7未改"
+  ],
+  "notRun": [
+    "原19项ReuseAudit用例",
+    "r7新增3项工具用例",
+    "生产适配、数值/性能/完整codec回归",
+    "GUI/Widgets测试",
+    "全T01退出及第八批20条关系独立语义验收",
+    "task/docs/reuse治理门禁（本次仅公共API探测验收）"
+  ],
+  "limits": [
+    "仅新增3项公共依赖API探测PASS，不冒称25项全跑或生产接线完成，不批准新核心/上游扩展/迁移阶段。",
+    "构建从独立冻结源码出发，但链接既有D盘RobWork/RobWorkSim导出库及已安装vcpkg依赖；本机摘要标识实际安装内容，不证明上游完整源码可复现构建。",
+    "原生JSON内gitCommit字段为空，冻结身份通过本报告精确SHA、clean检出、独立构建路径和环境/产物摘要外部绑定；不回写原生报告。",
+    "本次未写回旧报告或父树。"
+  ],
+  "evidence": [
+    "acceptance.md",
+    "fetch.log",
+    "checkout.log",
+    "run-probe.ps1",
+    "driver.log",
+    "driver.exit.txt",
+    "environment.log",
+    "configure.log",
+    "configure.exit.txt",
+    "build.log",
+    "build.exit.txt",
+    "tests.log",
+    "tests.exit.txt",
+    "gtest.xml",
+    "ird-test-report.json",
+    "report-cross-check.json",
+    "environment-hash-checks.json",
+    "dependency-inspection.log",
+    "final-inspection.log",
+    "scoped-diff.log",
+    "scoped-diff.exit.txt",
+    "local-artifacts.json"
+  ]
+}

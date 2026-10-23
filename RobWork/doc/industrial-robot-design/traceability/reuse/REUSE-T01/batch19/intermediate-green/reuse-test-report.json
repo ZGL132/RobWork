@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "validatorSha256": "1CF30F2D07419BA21B8B7DA7C43331A190A3DC0E0B37C1CDE6110DD98E46A77F",
+  "helperSha256": "B2BFFD5F6A66F9CD7723A066A74FC232E09AD27E65AD1EED8BAE8EF3720D8AAE",
+  "driverSha256": "1280372559625AB0F7C6EA0E18FF436382D516A5A2459FDAB4B7BA759C51916A",
+  "expected": 8,
+  "executed": 8,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 8,
+  "skipped": 0,
+  "failed": 0,
+  "complete": true,
+  "tests": [
+    {
+      "name": "script-audit-no-fake-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state operations=construct-model,mutate-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted\r\nREUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=677 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "script-audit-reject-cmake-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-product-escape",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : source/entry/context must be identical exact script\r\n"
+    },
+    {
+      "name": "script-audit-reject-other-directory",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-fake-migration",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-require-own-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : source/entry/context must be identical exact script\r\n"
+    },
+    {
+      "name": "script-audit-stale-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/scripts/industrialrobot/commit-lint.ps1\r\n"
+    },
+    {
+      "name": "script-audit-reject-production-disguise",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    }
+  ]
+}

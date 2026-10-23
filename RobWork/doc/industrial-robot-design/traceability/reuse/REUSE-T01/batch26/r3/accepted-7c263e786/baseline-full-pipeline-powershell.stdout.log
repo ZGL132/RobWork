@@ -1,0 +1,9 @@
+state-boundary: fractional-count expected=1 actual=1
+state-boundary: string-count expected=1 actual=1
+state-boundary: fake-guid expected=1 actual=1
+state-boundary: offset-valid expected=0 actual=0
+state-boundary: offset-expired expected=1 actual=1
+state-boundary: bad-calendar expected=1 actual=1
+union-boundary: union actual=0
+union-boundary: note-case actual=1
+union-boundary: schema-case actual=1

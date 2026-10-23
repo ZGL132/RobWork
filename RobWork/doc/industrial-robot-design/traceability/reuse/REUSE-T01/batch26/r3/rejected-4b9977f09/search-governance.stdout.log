@@ -1,0 +1,23 @@
+RobWork/scripts/industrialrobot\build-context-pack.ps1:59:$findingsPath = Join-Path $base 'traceability/findings.json'
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:1:# findings.json 合并冲突确定性并集解算（治理脚本）。
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:4:# 合入代码"（git merge --no-ff <acceptedHead>）时，冲突文件仅为 traceability/findings.json
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:7:# 背景（F-204，PIPE v1.13）：findings.json 是实施端（任务分支自登记 ird_gates 命中等）与
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:16:#   以 merge-base(:1) 的条目集合为参照，对双方(:2 我方 / :3 对方)条目块（"    {"～"    },"
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:33:#   pwsh -File RobWork/scripts/industrialrobot/merge-findings-union.ps1
+RobWork/scripts/industrialrobot\merge-findings-union.ps1:37:  [string]$Path = "RobWork/doc/industrial-robot-design/traceability/findings.json"
+RobWork/scripts/industrialrobot\reuse-contract.ps1:157:    & git -C $RepoRoot merge-base --is-ancestor $a.reviewedCommit $tip
+RobWork/scripts/industrialrobot\reuse-contract.ps1:310:            $tip='HEAD'; if ($Head) { $tip=$Head }; & git -C $RepoRoot merge-base --is-ancestor $c.migrationCommit $tip
+RobWork/scripts/industrialrobot\index-evidence.ps1:54:  $fj = Get-Content (Join-Path $traceDir 'findings.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+RobWork/scripts/industrialrobot\test-pipeline-pipeline.ps1:274:    $findingPath = 'RobWork/doc/industrial-robot-design/traceability/findings.json'
+RobWork/scripts/industrialrobot\test-pipeline-pipeline.ps1:297:    & $env:ComSpec /d /c ('"git" -C "' + $unionRepo + '" update-index --index-info < "' + $indexInfoPath + '"')
+RobWork/scripts/industrialrobot\test-pipeline-pipeline.ps1:302:    $unionScript = Join-Path $RepoRoot 'RobWork/scripts/industrialrobot/merge-findings-union.ps1'
+RobWork/scripts/industrialrobot\validate-reuse.ps1:68:    & git -C $RepoRoot merge-base --is-ancestor $a.reviewedCommit $tip
+RobWork/scripts/industrialrobot\validate-docs.ps1:303:# findings.json 是验收/治理发现的唯一登记簿（ACC §5 强制转登），但此前只被装配
+RobWork/scripts/industrialrobot\validate-docs.ps1:314:$findingsPath = Join-Path $base 'traceability/findings.json'
+RobWork/scripts/industrialrobot\validate-docs.ps1:316:  $errors += 'missing traceability/findings.json'
+RobWork/scripts/industrialrobot\validate-docs.ps1:319:  try { $fjCheck = Get-Content $findingsPath -Raw -Encoding UTF8 | ConvertFrom-Json } catch { $errors += "findings.json is not valid JSON: $_" }
+RobWork/scripts/industrialrobot\validate-docs.ps1:337:    if ($findingCount -eq 0) { $errors += 'findings.json has no entries' }
+RobWork/scripts/industrialrobot\validate-docs.ps1:356:    try { $fsj = Get-Content (Join-Path $base 'traceability/findings.json') -Raw -Encoding UTF8 | ConvertFrom-Json; foreach ($fd in @($fsj.findings)) { $findingsStatus["$($fd.id)"] = "$($fd.status)" } } catch { $errors += 'findings.json unparsable (assembly waiver 联动需要)' }
+RobWork/scripts/industrialrobot\verify-task-scope.ps1:28:#   -Base 缺省＝git merge-base redesign-main HEAD（任务分支基点；检出树无该分支时
+RobWork/scripts/industrialrobot\verify-task-scope.ps1:88:  $baseSha = (& git -C $repoTop merge-base $baseRef $headSha 2>$null)
+RobWork/scripts/industrialrobot\verify-task-scope.ps1:89:  if (-not $baseSha) { throw "cannot compute merge-base between $baseRef and $headSha" }

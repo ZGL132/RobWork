@@ -1,0 +1,15 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+default-ignores-optional-index failed: exit=1 expected=0; see C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d1
+61\lite-before-ps51
+At C:\Users\zgl18\AppData\Local\Temp\ird-b21-accept-35dfa8d161\before\test-governance-lite.ps1:23 char:23
++ ... ot $pass) { throw "$Name failed: exit=$code expected=$Expected; see $ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (default-ignores...ite-before-ps51:String) [], RuntimeException
+    + FullyQualifiedErrorId : default-ignores-optional-index failed: exit=1 expected=0; see C:\Users\zgl18\AppData\Loc 
+   al\Temp\ird-b21-accept-35dfa8d161\lite-before-ps51
+ 

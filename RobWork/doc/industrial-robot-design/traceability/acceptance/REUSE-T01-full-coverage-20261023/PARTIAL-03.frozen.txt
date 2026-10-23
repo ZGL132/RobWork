@@ -1,0 +1,110 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Scheduler.cpp
+sdurws::ird::execution::TaskScheduler::dispatchOne
+538: void TaskScheduler::dispatchOne(std::unique_lock<std::mutex>& lock)
+539: {
+540:     // ---- 额度闸 1：并发上限（§6.1 maxConcurrentTasks，0＝自动
+541:     // min(4, 逻辑核/2) 下限 1——逻辑核查询失败〔返回 0〕按 1 核处理） ----
+542:     std::uint32_t maxConcurrent = m_budget.maxConcurrentTasks;
+543:     if (maxConcurrent == 0) {
+544:         const unsigned cores = std::thread::hardware_concurrency();
+545:         maxConcurrent = static_cast<std::uint32_t>(std::max(1u, cores / 2u));
+546:         maxConcurrent = std::min(maxConcurrent, 4u);
+547:     }
+548:     if (inFlightCount() >= maxConcurrent) {
+549:         return;   // 额度满——不抢占（D-04）：在途任务跑完自然腾位
+550:     }
+551: 
+552:     // ---- 额度闸 2：优先级选择（§6.1——Interactive 全序先于 Background，
+553:     // 同级 FIFO〔提交序号单调〕；双 deque 的队头即序首） ----
+554:     std::deque<TaskId>& queue =
+555:         !m_interactive.empty() ? m_interactive : m_background;
+556:     if (queue.empty()) {
+557:         return;   // 无等待任务
+558:     }
+559:     const TaskId head = queue.front();
+560:     const auto entryIt = m_tasks.find(head);
+561:     if (entryIt == m_tasks.end()) {
+562:         // 队列与簿记失步（stopDispatch 已移除簿记的路径不存在——防御
+563:         // 分支）：剔除坏队头并放弃本拍（正常路径不可达）。
+564:         queue.pop_front();
+565:         return;
+566:     }
+567:     ScheduledTask& entry = entryIt->second;
+568:     // F-576 防御半区：队头状态机已非 Queued（取消竞态残留——闸失效或
+569:     // 未覆盖的时序面）时不得对其申请 DispatchDequeued（转移表无
+570:     // （DispatchDequeued，非 Queued）行→ExecutionError 逃逸 tick）。剔除
+571:     // 坏队头放弃本拍，下一拍取后继队头；闸接线后 stopDispatch 已移除
+572:     // 被取消任务，本分支正常路径不可达——纯防御。
+573:     if (entry.machine->state() != TaskState::Queued) {
+574:         queue.pop_front();
+575:         return;
+576:     }
+577:     const TaskRecord& record = entry.machine->record();
+578: 
+579:     // ---- 额度闸 3：同项目正式任务上限（§6.1 防单项目独占；Preview 不
+580:     // 计入——不写 results/ 的轻任务不占正式额度）。队头阻塞语义：受限
+581:     // 任务挡住整个队列（严格 FIFO/优先级序可预测性优先于吞吐——D-04
+582:     // 排序键精神，登记 §15.4）。
+583:     if (record.submission.mode != core::EvaluationMode::Preview
+584:         && inFlightFormalFor(record.submission.snapshot.project)
+585:             >= m_budget.maxTasksPerProject) {
+586:         return;
+587:     }
+588: 
+589:     // ---- T2：出队（Queued→Preparing——§4.3 分配协议第二段的起点；
+590:     // 事件随转移同步发布）。出队即离队（等待队列容量因此释放）。
+591:     queue.pop_front();
+592:     entry.machine->request(TransitionTrigger::DispatchDequeued);
+593: 
+594:     // ---- 内联门槛（§6.3：可预测 <1 s 的轻任务调度线程内联——ARCH
+595:     // §4.1）：谓词注入＋执行体装配＋Preview 三者齐备才内联；否则停留
+596:     // Preparing 等待 EX-T06 派发链（worker 启动/登记段——登记完整性
+597:     // 优先，见 IInlineRunExecutor 归置边界）。
+598:     if (!inlineEligibleSubmission(m_config, record.submission)
+599:         || m_inlineExecutor == nullptr) {
+600:         return;   // 非 Preview 内联资格／无执行体＝普通派发形态（停留）
+601:     }
+602: 
+603:     // ---- 内联执行段（锁外——锁只保护簿记不覆盖计算，NFR-PERF-01 的
+604:     // 结构表达：调用方〔含 UI 线程的 submit/查询〕在执行体运行期间照常
+605:     // 前进）。锁外安全性：状态机唯一写者＝tick 线程（本线程），控制命令
+606:     // 只入 controller 队列、由本线程稍后的 poll 消费——record 在本段无
+607:     // 并发写者，const 访问安全（头注"调度线程模型"）。
+608:     const TaskRecord& inlineRecord = entry.machine->record();
+609:     lock.unlock();
+610:     InlineRunOutcome outcome;
+611:     try {
+612:         outcome = m_inlineExecutor->run(inlineRecord);
+613:     } catch (...) {
+614:         // 执行体抛出＝装配违约 escaping 契约面（InlineRunOutcome 已是
+615:         // 结构化应答面）——重锁后按 Failed 走链兜底，不让异常穿透 tick
+616:         // 打断调度循环；诊断以开发说明补记（原始异常信息不可跨契约
+617:         // 携带，终结原因承载 Failed）。
+618:         lock.lock();
+619:         entry.machine->request(TransitionTrigger::PrepareSucceeded);
+620:         entry.machine->appendDiagnostic(
+621:             rejectionDiag("EX-TASK-REJECTED", "内联执行体异常逸出（装配违约）"));
+622:         entry.machine->request(TransitionTrigger::RunFailed);
+623:         return;
+624:     }
+625:     lock.lock();
+626: 
+627:     // ---- 内联走链收尾（重锁——簿记域）：T5（Preparing→Running，无
+628:     // worker 派发段——§6.3"同一转移表"）→执行期诊断追加→T8/T9。
+629:     // cause 校验先行：非法值＝执行体装配违约，fail-fast（不带病终结——
+630:     // 任务停在 Running 由装配方处置，行为与中止的 tick 一致）。
+631:     if (outcome.cause != TerminationCause::Completed
+632:         && outcome.cause != TerminationCause::Failed) {
+633:         throw ExecutionError(ExecutionErrorCode::InvalidState,
+634:                              "execution/scheduler: inline executor returned illegal cause");
+635:     }
+636:     entry.machine->request(TransitionTrigger::PrepareSucceeded);
+637:     for (core::DiagnosticRecord& diag : outcome.diagnostics) {
+638:         entry.machine->appendDiagnostic(std::move(diag));
+639:     }
+640:     // 终态出口：Completed→T8；Failed→T9（执行失败不是调用方违约——
+641:     // 走状态机正常转移，诊断已随 outcome 追加）。
+642:     entry.machine->request(outcome.cause == TerminationCause::Completed
+643:                                ? TransitionTrigger::RunCompleted
+644:                                : TransitionTrigger::RunFailed);
+645: }

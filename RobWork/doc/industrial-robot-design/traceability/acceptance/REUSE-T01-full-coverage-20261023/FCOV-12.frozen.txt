@@ -1,0 +1,52 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Confirmable.cpp
+sdurws::ird::diagnostics::ConfirmableService::submitConfirmation
+498: ConfirmOutcome ConfirmableService::submitConfirmation(FindingId findingId,
+499:                                                       std::uint64_t callbackToken,
+500:                                                       core::ConfirmationCredential credential)
+501: {
+502:     std::lock_guard<std::mutex> lock(m_mutex);
+503: 
+504:     // ①存在性（§9.3 结果枚举：UnknownFinding——查询类前置走返回值不抛）。
+505:     const auto it = m_records.find(findingId);
+506:     if (it == m_records.end()) {
+507:         return ConfirmOutcome::UnknownFinding;
+508:     }
+509:     FindingRecord& record = it->second;
+510: 
+511:     // ②惰性过期（§5.4：expiresAtUtc 显式设置且到达——Expired 为终态，提交随
+512:     // 之无效；默认 nullopt 恒不触发，P-DIAG-6）。返回值取 InvalidState（当前
+513:     // 状态已不允许确认——契约结果枚举无 Expired 值，口径登记于单元卡）。
+514:     expireIfDue(record);
+515:     if (record.state != FindingState::Pending) {
+516:         // §9.3 非法调用行："Confirmed 后 submitConfirmation（InvalidState）"；
+517:         // Invalidated/Expired 同理——终态一律 InvalidState。
+518:         return ConfirmOutcome::InvalidState;
+519:     }
+520: 
+521:     // ③回调令牌一次性校验（§5.2 callbackToken 行"同一令牌仅一次提交有效"；
+522:     // §9.3 非法调用行"跨命令重用 callbackToken"）。不匹配＝调用方违约面，
+523:     // 但结果枚举优先（§9.3 注释"返回值与异常双轨：结果枚举优先"）——返回
+524:     // InvalidState 不抛。
+525:     if (record.callbackToken == 0 || callbackToken != record.callbackToken) {
+526:         return ConfirmOutcome::InvalidState;
+527:     }
+528: 
+529:     // ④绑定四元组复核（§5.3：确认提交时——ui 回调返回后、放行前；§9.3 后置
+530:     // "复核 binding 四元组（当前策略/命令/修订）"）。
+531:     std::string_view reason;
+532:     if (!verifyBinding(record, reason)) {
+533:         // 不符 ⇒ 确认凭据失效（§5.3）——Invalidated(reason)＋返回失败，不静默
+534:         // 沿用旧确认（§9.3 后置：不一致→Invalidated(binding-mismatch)——按不符
+535:         // 成员归类 reason：revision-changed/policy-changed/binding-mismatch，
+536:         // DT-CFM-4/5 观测点）。
+537:         finishTransition(record, FindingState::Invalidated, reason);
+538:         return ConfirmOutcome::BindingMismatch;
+539:     }
+540: 
+541:     // ⑤一致：Confirmed＋confirmation 写入（§9.3 后置）。core 投影同步推进
+542:     // （core C-2：Confirmed ⇔ 凭据在场——core confirm 自持不变量校验）。
+543:     record.finding.confirm(credential);
+544:     record.confirmation = credential;
+545:     finishTransition(record, FindingState::Confirmed, {});
+546:     return ConfirmOutcome::Confirmed;
+547: }

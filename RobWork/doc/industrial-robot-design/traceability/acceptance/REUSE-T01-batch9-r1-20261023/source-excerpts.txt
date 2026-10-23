@@ -1,0 +1,316 @@
+FUNCTION kinematics.IKinRuntimeView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp 141-154
+141: class IKinRuntimeView {
+142: public:
+143:     virtual ~IKinRuntimeView() = default;
+144: 
+145:     /// 规范模型只读真值（§4.2 消费面 model() 行——语义同
+146:     /// runtime::IRuntimeModelView::model()；返回引用所指对象须在视图
+147:     /// 存活期内稳定）。
+148:     virtual const runtime::CanonicalModel& model() const = 0;
+149: 
+150:     /// T_world_base（§4.2 消费面 worldToBase() 行——世界系→基座系读法
+151:     /// core §4.6；平移单位 m、旋转无量纲正交阵；前置：快照编译产物已过
+152:     /// 合法域校验）。
+153:     virtual rw::math::Transform3D<double> worldToBase() const = 0;
+154: };
+FUNCTION kinematics.FrozenRuntimeView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp 74-91
+74: class FrozenRuntimeView final : public IKinRuntimeView {
+75: public:
+76:     explicit FrozenRuntimeView(const IKinRuntimeView& source)
+77:         : m_model(source.model()), m_worldToBase(source.worldToBase())
+78:     {
+79:     }
+80: 
+81:     const runtime::CanonicalModel& model() const override { return m_model; }
+82: 
+83:     rw::math::Transform3D<double> worldToBase() const override
+84:     {
+85:         return m_worldToBase;
+86:     }
+87: 
+88: private:
+89:     runtime::CanonicalModel m_model;
+90:     rw::math::Transform3D<double> m_worldToBase;
+91: };
+FUNCTION kinematics.TestView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp 337-351
+337: class TestView final : public IKinRuntimeView {
+338: public:
+339:     explicit TestView(rt::CanonicalModel model)
+340:         : m_model(std::move(model)),
+341:           m_worldToBase(m_model.world().T_world_base)  // 初始化列表直构——不走默认构造
+342:     {
+343:     }
+344: 
+345:     const rt::CanonicalModel& model() const override { return m_model; }
+346:     rw::math::Transform3D<double> worldToBase() const override { return m_worldToBase; }
+347: 
+348: private:
+349:     rt::CanonicalModel m_model;                   ///< 值持有（替身自有副本）
+350:     rw::math::Transform3D<double> m_worldToBase;  ///< 取自模型 world 块（§4.2 唯一来源）
+351: };
+FUNCTION kinematics.MidSolveDegradedView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp 241-264
+241: class MidSolveDegradedView final : public kin::IKinRuntimeView {
+242: public:
+243:     MidSolveDegradedView(rt::CanonicalModel good, rt::CanonicalModel degraded)
+244:         : m_good(std::move(good)), m_degraded(std::move(degraded))
+245:     {
+246:     }
+247: 
+248:     const rt::CanonicalModel& model() const override
+249:     {
+250:         // 前 4 次读取＝FK 前置面（好模型）；第 5 次起＝FK 复算面（降级）。
+251:         const std::size_t call = m_calls.fetch_add(1) + 1;
+252:         return call <= 4U ? m_good : m_degraded;
+253:     }
+254: 
+255:     rw::math::Transform3D<double> worldToBase() const override
+256:     {
+257:         return m_good.world().T_world_base;   // 基座—世界只读自好模型（§4.2）
+258:     }
+259: 
+260: private:
+261:     rt::CanonicalModel m_good;       ///< 完整模型（二连杆——DOF 2）
+262:     rt::CanonicalModel m_degraded;   ///< 降级模型（三连杆——DOF 3）
+263:     mutable std::atomic<std::size_t> m_calls{0};   ///< model() 调用计数（const 面内）
+264: };
+FUNCTION kinematics.RigView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp 191-202
+191: class RigView final : public kin::IKinRuntimeView {
+192: public:
+193:     explicit RigView(const rt::CanonicalModel& model) : m_model(model) {}
+194:     const rt::CanonicalModel& model() const override { return m_model; }
+195:     rw::math::Transform3D<double> worldToBase() const override
+196:     {
+197:         return rw::math::Transform3D<double>::identity();  // 地面安装（恒等）
+198:     }
+199: 
+200: private:
+201:     const rt::CanonicalModel& m_model;
+202: };
+FUNCTION runtime.WorkCellConstView.findFrame RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 990-995
+990: const rw::kinematics::Frame* WorkCellConstView::findFrame(std::string_view name) const noexcept
+991: {
+992:     // 基线 findFrame 入参为 const std::string&（string_view 无隐式转换——
+993:     // 显式构造；未命中返回 nullptr，与基线语义一致）。
+994:     return m_workCell->findFrame(std::string(name));
+995: }
+FUNCTION runtime.WorkCellConstView.findDevice RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 998-1003
+998:     WorkCellConstView::findDevice(std::string_view name) const noexcept
+999: {
+1000:     // 基线 findDevice 返回可变 Ptr——视图面收敛为 const（§8.2 只读包装：
+1001:     // 调用方可查询设备结构，任何写路径在类型层不可达）。
+1002:     return m_workCell->findDevice(std::string(name)).template cast<const rw::models::SerialDevice>();
+1003: }
+FUNCTION runtime.WorkCellConstView.defaultState RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 1011-1015
+1011: rw::kinematics::State WorkCellConstView::defaultState() const
+1012: {
+1013:     // 值拷贝——调用方线程私有（State 是唯一可变工作区且线程私有，§8.7）。
+1014:     return m_workCell->getDefaultState();
+1015: }
+FUNCTION runtime.RuntimeSnapshot.workCell RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 753-756
+753: const WorkCellConstView& RuntimeSnapshot::workCell() const
+754: {
+755:     return m_workCellView;
+756: }
+FUNCTION runtime.RuntimeSnapshot.makeState RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 811-816
+811: rw::kinematics::State RuntimeSnapshot::makeState() const
+812: {
+813:     // 每线程 State 工厂（§8.7/§9.2——值拷贝，调用方线程私有；跨线程绝不
+814:     // 共享 State）。
+815:     return m_workCellView.defaultState();
+816: }
+FUNCTION runtime.RuntimeSnapshot.tryDynamicWorkCell RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 768-784
+768: Expected<DynamicWorkCellConstView, RuntimeError> RuntimeSnapshot::tryDynamicWorkCell() const
+769: {
+770:     // 无 DWC→错误＋定位能力项（§8.3 属性表"code 指向能力缺失，非崩溃"）：
+771:     // DWC 不在本快照＝解析目标缺失，取 UnknownObject（§7.4 同码语义——
+772:     // "解析目标不在本快照"）；detail 携状态与能力位定位（下游按 §9.6
+773:     // 能力声明处置——dynamics 的 DataInsufficient 域判定归 dynamics）。
+774:     if (m_dynamicWorkCell == nullptr) {
+775:         return Expected<DynamicWorkCellConstView, RuntimeError>::err(RuntimeError(
+776:             RuntimeErrorCode::UnknownObject,
+777:             std::string{"快照无 DynamicWorkCell（dynamicWorkCellState=SkippedNoPhysics"
+778:                         "，hasDynamicWorkCell="}
+779:                 + (m_model.capabilities().hasDynamicWorkCell ? "true" : "false")
+780:                 + "）——能力缺失未编译，见 §9.6 能力声明"));
+781:     }
+782:     return Expected<DynamicWorkCellConstView, RuntimeError>::ok(
+783:         DynamicWorkCellConstView(m_dynamicWorkCell));
+784: }
+FUNCTION runtime.RuntimeSnapshot.workCellHandle RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp 758-766
+758: rw::core::Ptr<rw::models::WorkCell> RuntimeSnapshot::workCellHandle() const
+759: {
+760:     // 非持有裸指针形态（rw Ptr 裸构造＝零所有权——析构不释放；生命周期
+761:     // 由本快照的 m_workCell 持有背书）。const_cast 只为满足
+762:     // CollisionDetector 的遗留非 const 构造签名——本快照消费纪律禁止经
+763:     // 该句柄写 WC（见头文件访问器注）。
+764:     return rw::core::Ptr<rw::models::WorkCell>(
+765:         const_cast<rw::models::WorkCell*>(m_workCell.get()));
+766: }
+FUNCTION runtime.jointStaticTransform RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp 541-553
+541: rw::math::Transform3D<double> jointStaticTransform(
+542:     const rw::math::Transform3D<double>& tParentJoint,
+543:     const rw::math::Vector3D<double>& axis,
+544:     double zeroOffset)
+545: {
+546:     // R_axis(offset)：绕权威轴转零位偏置（EAA＝轴角矢量——复用 RT-T06
+547:     // 换算单点）。offset＝0 时 Rodrigues 精确返回单位阵（sin 0＝cos 1）。
+548:     const rw::math::Rotation3D<double> rZeroOffset = rotationFromCustomEaa(axis * zeroOffset);
+549:     // R_align：Z 轴对齐权威轴（物理旋转轴由此确立）。
+550:     const rw::math::Rotation3D<double> rAlign = axisAlignmentRotation(axis);
+551:     // 平移取 T_parent_joint 原值（两旋转均为纯旋转，不动关节原点）。
+552:     return rw::math::Transform3D<double>(tParentJoint.P(), tParentJoint.R() * rZeroOffset * rAlign);
+553: }
+FUNCTION ui.SnapshotViewAdapter RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp 61-80
+61: class SnapshotViewAdapter final : public kinematics::IKinRuntimeView {
+62: public:
+63:     explicit SnapshotViewAdapter(
+64:         std::shared_ptr<const runtime::RuntimeSnapshot> snapshot)
+65:         : m_snapshot(std::move(snapshot))
+66:     {
+67:     }
+68:     const runtime::CanonicalModel& model() const override
+69:     {
+70:         return m_snapshot->model();
+71:     }
+72:     rw::math::Transform3D<double> worldToBase() const override
+73:     {
+74:         return m_snapshot->worldToBase();
+75:     }
+76: 
+77: private:
+78:     /// 快照存活期锚（任务闭包经 shared_ptr 捕获——存活到任务结束）。
+79:     std::shared_ptr<const runtime::RuntimeSnapshot> m_snapshot;
+80: };
+FUNCTION ui.KinSessionModelView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp 108-135
+108: class KinSessionModelView final : public kinematics::IKinRuntimeView {
+109: public:
+110:     /// 构造未绑定视图（委托空——快照发布前缝已注入的合法初始态；
+111:     /// 消费前置由面板空态判定保证——快照缺位不取模型）。
+112:     KinSessionModelView() = default;
+113: 
+114:     /// 换绑委托（会话换绑拍——UI 线程；地址稳定性由本对象保证）。
+115:     void rebind(std::shared_ptr<const kinematics::IKinRuntimeView> delegate)
+116:     {
+117:         m_delegate = std::move(delegate);
+118:     }
+119: 
+120:     /// 规范模型只读真值（纯转发——语义同委托 model()）。
+121:     const runtime::CanonicalModel& model() const override
+122:     {
+123:         return m_delegate->model();  // 未绑定调用＝装配缺陷（前置违约——
+124:                                      // 面板空态判定挡在消费之前）
+125:     }
+126:     /// T_world_base（世界系→基座系——纯转发，快照 §6.4 唯一读取点）。
+127:     rw::math::Transform3D<double> worldToBase() const override
+128:     {
+129:         return m_delegate->worldToBase();
+130:     }
+131: 
+132: private:
+133:     /// 当前委托（空＝未绑定——attachView 前的合法初始态）。
+134:     std::shared_ptr<const kinematics::IKinRuntimeView> m_delegate;
+135: };
+FUNCTION ui.KinEvaluationExecutor.attachSnapshot RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp 94-111
+94: void KinEvaluationExecutor::attachSnapshot(
+95:     std::shared_ptr<const runtime::RuntimeSnapshot> snapshot,
+96:     core::ContentIdentity snapshotId)
+97: {
+98:     // MA-02：同拍保留副本（真实碰撞设施源——与下方视图包同源同值；
+99:     // 空快照＝解绑态，碰撞设施随之不可用）。
+100:     // 产品路径：快照包进视图接口（每次换绑新包裹实例——"每请求构建"
+101:     // 语义的载体；旧实例随在途任务 shared_ptr 存活到任务结束）。
+102:     std::shared_ptr<const kinematics::IKinRuntimeView> view =
+103:         snapshot != nullptr
+104:             ? std::shared_ptr<const kinematics::IKinRuntimeView>(
+105:                 std::make_shared<SnapshotViewAdapter>(snapshot))
+106:             : nullptr;
+107:     attachView(std::move(view), std::move(snapshotId));
+108:     // attachView也供仅有数值视图的入口调用，必须先清旧碰撞场景；只有
+109:     // 本完整快照入口才在同一UI拍补回同源场景。禁止新视图借用旧项目几何。
+110:     m_runtimeSnapshot = std::move(snapshot);
+111: }
+FUNCTION ui.KinEvaluationExecutor.attachView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp 113-139
+113: void KinEvaluationExecutor::attachView(
+114:     std::shared_ptr<const kinematics::IKinRuntimeView> view,
+115:     core::ContentIdentity snapshotId)
+116: {
+117:     // 换绑语义（hpp 类注）：视图＋身份整体替换＋纪元推进＋账面清空。
+118:     // 纪元推进使在途任务的完成回执按旧纪元比对即"迟到"（L-K12——
+119:     // 跨快照结果不进新会话视图）；账面清空使旧快照结果对新快照不可
+120:     // 投影（PA 权威纪律的呈现侧镜像——非第二状态源）。缝地址稳定的
+121:     // 长命视图（m_sessionView）同拍 rebind——面板 modelView 缝消费。
+122:     m_snapshot = view;
+123:     m_runtimeSnapshot.reset(); // MA-03/CON-06：数值视图换绑时不能保留旧碰撞场景。
+124:     m_sessionView.rebind(std::move(view));
+125:     m_snapshotId = snapshotId;
+126:     ++m_epoch;
+127:     m_latestCoverage.reset();
+128:     m_latestSolve.reset(); // A-23：求解结果与覆盖/批量一致，策略/快照换绑必须同拍清账。
+129:     // ★ KIN-P4：批量账面同拍清空（与覆盖账面同一换绑纪律）＋在途任务
+130:     // 协作取消置位（真实取消路径——SessionSolve 求解探针/批量批间查询
+131:     // 消费后早停返回取消态，非结局如实呈现；替换全部标志为新代——
+132:     // 旧任务闭包持旧 shared_ptr，置位对其可见）。
+133:     m_latestBatch.clear();
+134:     m_latestBatchSnapshotId.reset();
+135:     m_latestBatchRender.reset();
+136:     for (const std::shared_ptr<std::atomic_bool>& flag : m_cancelFlags) {
+137:         flag->store(true, std::memory_order_release);
+138:     }
+139: }
+FUNCTION ui.FixtureView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp 79-118
+79: class FixtureView final : public IKinRuntimeView {
+80: public:
+81:     /// 缺省＝地面安装（T_world_base 恒等——既有用例语义不变）。
+82:     FixtureView()
+83:         : FixtureView(rw::math::Transform3D<double>::identity())
+84:     {
+85:     }
+86:     /// 指定基座安放（审查 A01 回归——平移/倒装/侧装三预设由用例注入）。
+87:     explicit FixtureView(rw::math::Transform3D<double> tWorldBase)
+88:         : m_model(twoLinkModel())
+89:         , m_tWorldBase(tWorldBase)
+90:     {
+91:     }
+92:     /**
+93:      * @brief 为姿态消费回归设置真实工具安装旋转，关节链仍为解析二连杆。
+94:      * @param tWorldBase [in] 基座在世界系的位姿（m、正交旋转）。
+95:      * @param tcpRotation [in] 法兰到TCP的旋转（无量纲）；TCP平移仍为0.7 m。
+96:      * 测试持有模型值，后台仅只读；builder非法输入抛出，不能伪造求解结果。
+97:      */
+98:     FixtureView(rw::math::Transform3D<double> tWorldBase,
+99:                 rw::math::Rotation3D<double> tcpRotation)
+100:         : m_model(makeModel(twoLinkModel().chain().joints,
+101:                             rw::math::Transform3D<double>(
+102:                                 rw::math::Vector3D<double>(0.7, 0, 0), tcpRotation)))
+103:         , m_tWorldBase(tWorldBase)
+104:     {
+105:     }
+106:     /** @brief A-15：测试端口持有真实builder模型值，不替代任何FK/IK计算。 */
+107:     explicit FixtureView(runtime::CanonicalModel model)
+108:         : m_model(std::move(model)), m_tWorldBase(rw::math::Transform3D<double>::identity()) {}
+109:     const runtime::CanonicalModel& model() const override { return m_model; }
+110:     rw::math::Transform3D<double> worldToBase() const override
+111:     {
+112:         return m_tWorldBase;  // 值语义＝T_world_base（runtime §6.4 接口注）
+113:     }
+114: 
+115: private:
+116:     runtime::CanonicalModel m_model;              // 值持有（构造一次——并发只读）
+117:     rw::math::Transform3D<double> m_tWorldBase;   // 基座安放真值（世界系→基座系读法 core §4.6）
+118: };
+FUNCTION ui.ObservedView RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp 957-971
+957:     class ObservedView final : public IKinRuntimeView {
+958:     public:
+959:         /// @brief 只读端口返回黄金模型；200微秒供数延迟仅控制测试调度。
+960:         const runtime::CanonicalModel& model() const override
+961:         {
+962:             calls.fetch_add(1, std::memory_order_relaxed);
+963:             std::this_thread::sleep_for(std::chrono::microseconds(200));
+964:             return data;
+965:         }
+966:         /// @brief 世界系与基座系重合；不替代任何数学变换。
+967:         rw::math::Transform3D<double> worldToBase() const override
+968:         { return rw::math::Transform3D<double>::identity(); }
+969:         runtime::CanonicalModel data = twoLinkModel(); ///< 夹具持有，不可变。
+970:         mutable std::atomic_uint calls{0}; ///< 唯一跨线程观察量。
+971:     };

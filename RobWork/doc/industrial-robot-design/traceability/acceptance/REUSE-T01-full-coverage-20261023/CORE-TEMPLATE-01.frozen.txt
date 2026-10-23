@@ -1,0 +1,32 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+sdurws::ird::testkit::detail::tryAugmentAt<EdgeFn>
+122: bool tryAugmentAt(std::size_t li, const EdgeFn& edge, std::size_t nR,
+123:                   std::vector<std::size_t>& matchR, std::vector<std::size_t>& matchL,
+124:                   std::vector<bool>& visited)
+125: {
+126:     constexpr std::size_t kNil = static_cast<std::size_t>(-1);
+127:     for (std::size_t ri = 0; ri < nR; ++ri) {
+128:         if (visited[ri] || matchR[ri] != kNil) { continue; }
+129:         if (!edge(li, ri)) { continue; }
+130:         visited[ri] = true;
+131:         matchL[li] = ri;
+132:         matchR[ri] = li;
+133:         return true;
+134:     }
+135:     for (std::size_t ri = 0; ri < nR; ++ri) {
+136:         if (visited[ri] || !edge(li, ri)) { continue; }
+137:         visited[ri] = true;
+138:         const auto prevL = matchR[ri];
+139:         matchR[ri] = li;
+140:         matchL[prevL] = kNil;
+141:         if (tryAugmentAt(prevL, edge, nR, matchR, matchL, visited)) {
+142:             matchL[li] = ri;
+143:             return true;
+144:         }
+145:         // 回滚：恢复原配对与本点未匹配态。
+146:         matchR[ri] = prevL;
+147:         matchL[prevL] = ri;
+148:         matchL[li] = kNil;
+149:     }
+150:     return false;
+151: }

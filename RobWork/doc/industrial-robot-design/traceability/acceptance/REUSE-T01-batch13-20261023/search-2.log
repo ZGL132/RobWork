@@ -1,0 +1,10 @@
+RobWork/RobWork/src\rw\core\IOUtil.hpp:105:         * @brief tests if this machine use little or big endian.
+RobWork/RobWork/src\rw\core\IOUtil.hpp:108:        static bool isLittleEndian ();
+RobWork/RobWork/src\rw\core\IOUtil.cpp:179:bool IOUtil::isLittleEndian ()
+RobWork/RobWork/src\rw\core\IOUtil.cpp:185:    } endianTest;
+RobWork/RobWork/src\rw\core\IOUtil.cpp:187:    endianTest.testWord = 1;
+RobWork/RobWork/src\rw\core\IOUtil.cpp:188:    if (endianTest.testByte[0] == 1) {
+RobWork/RobWork/src\rw\core\IOUtil.cpp:189:        // litle endian - least significant byte first
+RobWork/RobWork/src\rw\loaders\image\RGBLoader.cpp:109:    } endianTest;
+RobWork/RobWork/src\rw\loaders\image\RGBLoader.cpp:115:    endianTest.testWord = 1;
+RobWork/RobWork/src\rw\loaders\image\RGBLoader.cpp:116:    if (endianTest.testByte[0] == 1) {

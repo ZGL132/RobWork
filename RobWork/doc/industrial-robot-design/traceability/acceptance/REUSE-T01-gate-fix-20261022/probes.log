@@ -1,0 +1,16 @@
+probe-pending-pending passed=True exit=0 expected=PASS
+probe-pending-proposal passed=True exit=0 expected=PASS
+probe-proposal-pending passed=True exit=0 expected=PASS
+probe-proposal-proposal passed=True exit=0 expected=PASS
+probe-status-audited passed=True exit=1 expected=REUSE-AD
+probe-decision-resolved passed=True exit=1 expected=REUSE-AD
+probe-business-resolved passed=True exit=1 expected=REUSE-AD
+probe-proposal-audited passed=True exit=1 expected=REUSE-AD
+probe-changed-baseline passed=True exit=1 expected=REUSE-AD
+probe-new-source passed=True exit=1 expected=REUSE-AD
+probe-final-pending passed=True exit=1 expected=REUSE-MIGRATION
+probe-final-proposal passed=True exit=1 expected=REUSE-MIGRATION
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp', LF will be replaced by CRLF the next time Git touches it
+probe-frozen-changed passed=True exit=1 expected=REUSE-AD
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/AcceptanceProbe.cpp', LF will be replaced by CRLF the next time Git touches it
+probe-frozen-new passed=True exit=1 expected=REUSE-AD

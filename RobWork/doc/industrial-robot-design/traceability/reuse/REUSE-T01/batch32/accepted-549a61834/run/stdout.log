@@ -1,0 +1,93 @@
+[==========] Running 23 tests from 9 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from EventLifetimeAudit
+[ RUN      ] EventLifetimeAudit.ReferenceHandleDestructionMustUnsubscribe_UT_EVT
+C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp(47): error: Expected equality of these values:
+  bus.subscriberCount()
+    Which is: 1
+  0u
+    Which is: 0
+
+C:\Users\zgl18\AppData\Local\Temp\ird-b32-accept-549a618\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\batch32\EventLifetimeSuitabilityTest.cpp(49): error: Expected equality of these values:
+  sink.count
+    Which is: 1
+  0
+
+[  FAILED  ] EventLifetimeAudit.ReferenceHandleDestructionMustUnsubscribe_UT_EVT (2 ms)
+[ RUN      ] EventLifetimeAudit.ExistingExecutionHandleDestructionUnsubscribes_UT_EVT
+[       OK ] EventLifetimeAudit.ExistingExecutionHandleDestructionUnsubscribes_UT_EVT (0 ms)
+[ RUN      ] EventLifetimeAudit.DuplicateSubscriptionsHaveDifferentRemovalGranularity
+[       OK ] EventLifetimeAudit.DuplicateSubscriptionsHaveDifferentRemovalGranularity (0 ms)
+[ RUN      ] EventLifetimeAudit.ExistingExecutionChangesCallbackThread
+[       OK ] EventLifetimeAudit.ExistingExecutionChangesCallbackThread (0 ms)
+[----------] 4 tests from EventLifetimeAudit (2 ms total)
+
+[----------] 2 tests from SourcedValueLifetimeAudit
+[ RUN      ] SourcedValueLifetimeAudit.ThrowingCopyTerminatesAtNoexceptTryValue
+[       OK ] SourcedValueLifetimeAudit.ThrowingCopyTerminatesAtNoexceptTryValue (19 ms)
+[ RUN      ] SourcedValueLifetimeAudit.ThrowingComparisonTerminatesAtNoexceptEquality
+[       OK ] SourcedValueLifetimeAudit.ThrowingComparisonTerminatesAtNoexceptEquality (16 ms)
+[----------] 2 tests from SourcedValueLifetimeAudit (36 ms total)
+
+[----------] 2 tests from EventPayload
+[ RUN      ] EventPayload.KindConsistency_UT_EVT
+[       OK ] EventPayload.KindConsistency_UT_EVT (0 ms)
+[ RUN      ] EventPayload.AccessorGuardThrows_UT_EVT
+[       OK ] EventPayload.AccessorGuardThrows_UT_EVT (0 ms)
+[----------] 2 tests from EventPayload (0 ms total)
+
+[----------] 2 tests from EventValue
+[ RUN      ] EventValue.CopyMoveEquality_UT_EVT
+[       OK ] EventValue.CopyMoveEquality_UT_EVT (0 ms)
+[ RUN      ] EventValue.EmittedAtUtcParticipatesInEquality_F794
+[       OK ] EventValue.EmittedAtUtcParticipatesInEquality_F794 (0 ms)
+[----------] 2 tests from EventValue (0 ms total)
+
+[----------] 3 tests from ReferenceBus
+[ RUN      ] ReferenceBus.FifoDeliveryOrder_UT_EVT
+[       OK ] ReferenceBus.FifoDeliveryOrder_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT
+[       OK ] ReferenceBus.UnsubscribeStopsDelivery_UT_EVT (0 ms)
+[ RUN      ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT
+[       OK ] ReferenceBus.MultipleSubscribersAllReceive_UT_EVT (0 ms)
+[----------] 3 tests from ReferenceBus (0 ms total)
+
+[----------] 3 tests from ProvenanceMake
+[ RUN      ] ProvenanceMake.ValidConstructions_UT_MISS
+[       OK ] ProvenanceMake.ValidConstructions_UT_MISS (0 ms)
+[ RUN      ] ProvenanceMake.P1InvariantEnforced_UT_MISS
+[       OK ] ProvenanceMake.P1InvariantEnforced_UT_MISS (0 ms)
+[ RUN      ] ProvenanceMake.MethodTagSyntax_UT_MISS
+[       OK ] ProvenanceMake.MethodTagSyntax_UT_MISS (0 ms)
+[----------] 3 tests from ProvenanceMake (0 ms total)
+
+[----------] 1 test from ProvenanceTokens
+[ RUN      ] ProvenanceTokens.Roundtrip_UT_MISS
+[       OK ] ProvenanceTokens.Roundtrip_UT_MISS (0 ms)
+[----------] 1 test from ProvenanceTokens (0 ms total)
+
+[----------] 4 tests from SourcedValueStates
+[ RUN      ] SourcedValueStates.FourStateMatrix_UT_MISS
+[       OK ] SourcedValueStates.FourStateMatrix_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.MissingNeverBecomesZero_UT_MISS
+[       OK ] SourcedValueStates.MissingNeverBecomesZero_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.EmptyRawInputRejected_UT_MISS
+[       OK ] SourcedValueStates.EmptyRawInputRejected_UT_MISS (0 ms)
+[ RUN      ] SourcedValueStates.EqualitySemantics_UT_MISS
+[       OK ] SourcedValueStates.EqualitySemantics_UT_MISS (0 ms)
+[----------] 4 tests from SourcedValueStates (0 ms total)
+
+[----------] 2 tests from EventTest
+[ RUN      ] EventTest.GlobalCallbackFunctions
+[       OK ] EventTest.GlobalCallbackFunctions (0 ms)
+[ RUN      ] EventTest.EventListener
+[       OK ] EventTest.EventListener (0 ms)
+[----------] 2 tests from EventTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 9 test suites ran. (39 ms total)
+[  PASSED  ] 22 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] EventLifetimeAudit.ReferenceHandleDestructionMustUnsubscribe_UT_EVT
+
+ 1 FAILED TEST

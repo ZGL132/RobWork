@@ -1,0 +1,23 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:48:    bool gapSincePrevOk = false; ///< 前一 Ok 行之后是否出现过本关节非 Ok 行
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:50:    double positiveJ = 0.0;     ///< E⁺ 累加，J（∫max(P,0)dt）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:51:    double negativeJ = 0.0;     ///< E⁻ 累加，J（∫min(P,0)dt——恒 ≤0）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:79:                accs[static_cast<std::size_t>(it - jointIds.begin())].gapSincePrevOk = true;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:94:        const double p = r.mechanicalPower;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:105:        } else if (a.gapSincePrevOk) {
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:109:            a.positiveJ += 0.5 * (std::max(a.prevP, 0.0) + std::max(p, 0.0)) * dt;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:110:            a.negativeJ += 0.5 * (std::min(a.prevP, 0.0) + std::min(p, 0.0)) * dt;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:114:        a.gapSincePrevOk = false;  // 缺口证据已消费（首个 Ok 行亦在此清除）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:137:        row.positiveEnergyJ = timeOk ? a.positiveJ
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:139:        row.negativeEnergyJ = timeOk ? a.negativeJ
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:141:        row.netEnergyJ = timeOk ? (a.positiveJ + a.negativeJ)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp:155:            return std::abs(series.samples[a.rows[rowsPos]].mechanicalPower)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:63:std::uint64_t probeSeedFor(std::uint64_t seed, std::uint64_t probeSerial)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:98: * 形态满足——PositionOnly 任务不消费姿态误差）、taskSpace=PositionOnly
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:127:ProbeVerdict probeReachability(double t,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:148:        probeSeedFor(query.seed, probeSerial), intervals, query.referenceQ);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:152:    // IK 请求（位置存在性——KIN-P2/A02 起 taskSpace=PositionOnly：3 维
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:164:    request.taskSpace = IkTaskSpace::PositionOnly;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:214:// computeApproximateEnvelope——主流程（头注算法四步的落值）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:217:Expected<EnvelopeResult> computeApproximateEnvelope(const IKinRuntimeView& view,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:358:                probeReachability(t, directions[j], view, tcp, query,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp:419:                probeReachability(mid, directions[j], view, tcp, query,

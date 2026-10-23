@@ -1,0 +1,12 @@
+284:inline std::uint16_t load_little_u16( unsigned char const * p ) BOOST_NOEXCEPT
+294:inline std::uint16_t load_big_u16( unsigned char const * p ) BOOST_NOEXCEPT
+328:inline std::uint32_t load_little_u32( unsigned char const * p ) BOOST_NOEXCEPT
+338:inline std::uint32_t load_big_u32( unsigned char const * p ) BOOST_NOEXCEPT
+416:inline std::uint64_t load_little_u64( unsigned char const * p ) BOOST_NOEXCEPT
+426:inline std::uint64_t load_big_u64( unsigned char const * p ) BOOST_NOEXCEPT
+438:inline void store_little_u16( unsigned char * p, std::uint16_t v )
+448:inline void store_big_u16( unsigned char * p, std::uint16_t v )
+482:inline void store_little_u32( unsigned char * p, std::uint32_t v )
+492:inline void store_big_u32( unsigned char * p, std::uint32_t v )
+570:inline void store_little_u64( unsigned char * p, std::uint64_t v )
+580:inline void store_big_u64( unsigned char * p, std::uint64_t v )

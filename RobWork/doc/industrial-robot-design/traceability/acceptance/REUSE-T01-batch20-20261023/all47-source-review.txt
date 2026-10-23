@@ -1,0 +1,3814 @@
+
+=== project.TxEngine.osToStoreError ===
+{
+  "functionId": "project.TxEngine.osToStoreError",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "osToStoreError",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::osToStoreError",
+      "startLine": 44,
+      "endLine": 59,
+      "sha256": "3055b66bfb1e84f67a7c7444009ad398a6b28a6c97963063efb77446a9bcb7dc"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "Win32写错误映射自持70而非SDK ERROR_DISK_FULL=112，真实注入误归WriteRejected，F-963；同单元Archive用SDK常量的既有方式应复用，不另设数字表",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+41: /// §7.1 第 1 步"write-rejected/disk-full"、第 2/4 步同口径。目录创建与
+42: /// 删除的 error_code.value() 在 Windows（system 类别）同为 OS 原生码，
+43: /// 共用本表——分类逻辑单点，不在目录/文件两处重复）。
+44: StoreError osToStoreError(unsigned long osError, const std::string& what,
+45:                           const std::string& path)
+46: {
+47:     constexpr unsigned long kDiskFull = 70;        // ERROR_DISK_FULL
+48:     constexpr unsigned long kQuotaExceeded = 395;  // ERROR_DISK_QUOTA_EXCEEDED
+49:     constexpr unsigned long kAccessDenied = 5;     // ERROR_ACCESS_DENIED
+50:     const std::string detail = "project/tx-engine: " + what
+51:         + " path=" + path + " osError=" + std::to_string(osError);
+52:     if (osError == kDiskFull || osError == kQuotaExceeded) {
+53:         return StoreError(StoreErrorCode::DiskFull, detail);
+54:     }
+55:     if (osError == kAccessDenied) {
+56:         return StoreError(StoreErrorCode::AccessDenied, detail);
+57:     }
+58:     return StoreError(StoreErrorCode::WriteRejected, detail);
+59: }
+60: 
+61: /// ContentVersion → 64 hex 文件名形态（剥离 "cv-" tag——与 ObjectStore
+62: /// 同源同序，本地零第二格式化；失真属 core 契约破坏，logic_error fail-fast
+
+=== project.TxEngine.cvHex ===
+{
+  "functionId": "project.TxEngine.cvHex",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "cvHex",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::cvHex",
+      "startLine": 64,
+      "endLine": 72,
+      "sha256": "d4e94e2e16c3b12d3323e733b3670beea2ad2e9b9d1153d1760d61d9082e7af3"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "真实core ContentVersion::toCanonical验证cv-与67长度后剥tag，不自建哈希；与ObjectStore相同职责需单源消歧",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+61: /// ContentVersion → 64 hex 文件名形态（剥离 "cv-" tag——与 ObjectStore
+62: /// 同源同序，本地零第二格式化；失真属 core 契约破坏，logic_error fail-fast
+63: /// 优先于产生错误编址）。
+64: std::string cvHex(const core::ContentVersion& cv)
+65: {
+66:     const std::string canonical = cv.toCanonical();
+67:     if (canonical.size() != 67 || canonical.compare(0, 3, "cv-") != 0) {
+68:         throw std::logic_error("project/tx-engine: core ContentVersion "
+69:                                "canonical contract violated");
+70:     }
+71:     return canonical.substr(3);
+72: }
+73: 
+74: /// 二进制整读文件；文件不存在返回 nullopt（读失败的其他形态抛环境错误
+75: /// ——读路径无法证明内容时不得伪装成"读到空"，与 ObjectStore 同纪律）。
+
+=== project.TxEngine.readAllBytes ===
+{
+  "functionId": "project.TxEngine.readAllBytes",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "readAllBytes",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::readAllBytes",
+      "startLine": 76,
+      "endLine": 90,
+      "sha256": "e64c64c3b0eff0bb31b99366d9e517ce4ed4b9a382ea2eb96276ca75121df8d2"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "std filesystem存在性与ifstream整读，缺失/exists错误返回nullopt、打开失败AccessDenied；未检查读中途bad位。IOUtil候选长度/宽路径/异常差异不能忽略",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+73: 
+74: /// 二进制整读文件；文件不存在返回 nullopt（读失败的其他形态抛环境错误
+75: /// ——读路径无法证明内容时不得伪装成"读到空"，与 ObjectStore 同纪律）。
+76: std::optional<std::string> readAllBytes(const fs::path& file)
+77: {
+78:     std::error_code ec;
+79:     if (!fs::exists(file, ec) || ec) {
+80:         return std::nullopt;  // 不存在＝调用方语义分流（验证步按损坏处理）
+81:     }
+82:     std::ifstream in(file, std::ios::binary);
+83:     if (!in) {
+84:         throw StoreError(StoreErrorCode::AccessDenied,
+85:                          "project/tx-engine: open-failed path=" + file.string());
+86:     }
+87:     std::string bytes{std::istreambuf_iterator<char>(in),
+88:                       std::istreambuf_iterator<char>()};
+89:     return bytes;
+90: }
+91: 
+92: /**
+93:  * @brief 第 3 步单文件验证：重读＋size＋SHA-256 与期望值比对
+
+=== project.TxEngine.verifyStagedFile ===
+{
+  "functionId": "project.TxEngine.verifyStagedFile",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "verifyStagedFile",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::verifyStagedFile",
+      "startLine": 103,
+      "endLine": 132,
+      "sha256": "33d226f14d2bdcb307a608016ee4ac27b049b2e7b6b5a68475c00f03fcfa87ca"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "读回size与codec::contentVersionOf→core摘要核对，未新建哈希内核；不能以JSON可解析替代摘要",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+100:  * @throws StoreError StoreCorrupt（文件消失/size 不符/摘要不符——含路径
+101:  *         定位；§7.1 第 3 步"校验不符→Failed(store-corrupt)"）
+102:  */
+103: void verifyStagedFile(const fs::path& file, const std::string& expected,
+104:                       const core::ContentVersion& expectCv)
+105: {
+106:     // 读回（读不到＝暂存文件在闸门后消失——按损坏拒绝，不伪装成空）。
+107:     const auto readBack = readAllBytes(file);
+108:     if (!readBack) {
+109:         throw StoreError(StoreErrorCode::StoreCorrupt,
+110:                          "project/tx-engine: staged-file-missing path="
+111:                              + file.string());
+112:     }
+113:     // size 半边：读得字节数必须与内存副本一致（截断/多余尾巴都在此暴露
+114:     // ——部分写/介质异常的可观测面）。
+115:     if (readBack->size() != expected.size()) {
+116:         throw StoreError(StoreErrorCode::StoreCorrupt,
+117:                          "project/tx-engine: staged-size-mismatch path="
+118:                              + file.string() + " expected="
+119:                              + std::to_string(expected.size()) + " got="
+120:                              + std::to_string(readBack->size()));
+121:     }
+122:     // 摘要半边：只经 core ContentDigester（CR-02 唯一哈希入口）——对读回
+123:     // 字节实算并与期望内容版本比对。"对象字节→ContentVersion 名一致性"
+124:     // ＝对象文件的期望 cv 即其编址名；清单/命令的期望＝内存同源字节的
+125:     // 摘要。写后篡改/位翻转在本步被拒（F3）。
+126:     const core::ContentVersion actual = codec::contentVersionOf(*readBack);
+127:     if (!(actual == expectCv)) {
+128:         throw StoreError(StoreErrorCode::StoreCorrupt,
+129:                          "project/tx-engine: staged-digest-mismatch path="
+130:                              + file.string());
+131:     }
+132: }
+133: 
+134: /// 用户级诊断出口（sink 可空＝丢弃——§5.0 装配口径；StoreLock 先例）。
+135: void emitReport(IDiagnosticsSink* sink, const core::DiagnosticRecord& rec)
+
+=== project.TxEngine.emitReport ===
+{
+  "functionId": "project.TxEngine.emitReport",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "emitReport",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::emitReport",
+      "startLine": 135,
+      "endLine": 140,
+      "sha256": "1c11e11866b2f681a1cdde706948027fbe3b455893790616796d2332082e66de"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "可空IDiagnosticsSink既有出口，不自建诊断服务",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+132: }
+133: 
+134: /// 用户级诊断出口（sink 可空＝丢弃——§5.0 装配口径；StoreLock 先例）。
+135: void emitReport(IDiagnosticsSink* sink, const core::DiagnosticRecord& rec)
+136: {
+137:     if (sink != nullptr) {
+138:         sink->report(rec);
+139:     }
+140: }
+141: 
+142: /**
+143:  * @brief 构造 PRJ-RECOVERY-IGNORED-UNCOMMITTED 记录（码值＝diagnostics.md
+
+=== project.TxEngine.makeIgnoredUncommittedRecord ===
+{
+  "functionId": "project.TxEngine.makeIgnoredUncommittedRecord",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "makeIgnoredUncommittedRecord",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeIgnoredUncommittedRecord",
+      "startLine": 147,
+      "endLine": 168,
+      "sha256": "2e83ed195537775533132ce5a0ba065d0014879acc5b68893a11700814444d2c"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "稳定码直接字面+core DiagnosticRecord::make，中文context/cause/action仍需核diagnostics正式模板职责",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+144:  *        §4.6 收编清单；项目级事件，subject=∅——PRJ-LOCK-HELD 同口径）。
+145:  *        文案权威归 diagnostics/ui，此处文本是诊断载荷数据。
+146:  */
+147: core::DiagnosticRecord makeIgnoredUncommittedRecord(
+148:     const std::vector<std::string>& txIds)
+149: {
+150:     std::string names;
+151:     for (const std::string& id : txIds) {
+152:         if (!names.empty()) {
+153:             names += ",";
+154:         }
+155:         names += id;
+156:     }
+157:     return core::DiagnosticRecord::make(
+158:         std::string{"PRJ-RECOVERY-IGNORED-UNCOMMITTED"},
+159:         std::nullopt,  // subject：项目级事件（§8.2/§8.5 记法＝∅）
+160:         std::nullopt, std::nullopt,
+161:         "打开项目时发现 " + std::to_string(txIds.size())
+162:             + " 个未提交事务的暂存残留（" + names + "），已按未提交内容"
+163:             "忽略——不影响已提交历史",
+164:         "上次会话的事务在提交点（HEAD 切换）之前中断（崩溃/失败），"
+165:         ".staging 暂存目录残留（PM-08：启动扫描忽略＋恢复诊断）",
+166:         "无需处理：残留内容不属于任何已提交修订；如需排查中断原因，"
+167:         "可联系支持人员并保留 .staging 现场目录");
+168: }
+169: 
+170: /**
+171:  * @brief 构造 PRJ-STORE-CORRUPT 记录（码值＝diagnostics.md §4.6；定位
+
+=== project.TxEngine.makeStoreCorruptRecord ===
+{
+  "functionId": "project.TxEngine.makeStoreCorruptRecord",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "makeStoreCorruptRecord",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::makeStoreCorruptRecord",
+      "startLine": 174,
+      "endLine": 184,
+      "sha256": "b3691b1890f393a1905f6062967c9b448d688f776b84314da280f044a1770bd0"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "同上，cause携路径detail；不得将文字视作业务专属而豁免稳定码/渲染权威",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+171:  * @brief 构造 PRJ-STORE-CORRUPT 记录（码值＝diagnostics.md §4.6；定位
+172:  *        细节写入 cause——§7.4④"失败＝store-corrupt（定位到文件）"）。
+173:  */
+174: core::DiagnosticRecord makeStoreCorruptRecord(const std::string& detail)
+175: {
+176:     return core::DiagnosticRecord::make(
+177:         std::string{"PRJ-STORE-CORRUPT"},
+178:         std::nullopt,  // subject：项目级事件（同上口径）
+179:         std::nullopt, std::nullopt,
+180:         "项目存储完整性校验失败：HEAD 引用的已提交内容存在缺失或损坏",
+181:         detail,
+182:         "从最近的有效备份恢复项目，或联系支持人员；不要手工修改 "
+183:         "objects/revisions 目录（内容寻址校验会拒绝不一致的改动）");
+184: }
+185: 
+186: /// 元数据引用键的去重比较子（ObjectRefPair 只契约 operator==——std::set
+187: /// 需要严格弱序：按 oid/cv 的 core 规范文本字典序，仅用于扫描期去重，
+
+=== project.TxEngine.operator() ===
+{
+  "functionId": "project.TxEngine.operator()",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "operator()",
+      "qualifiedSymbol": "sdurws::ird::project::tx::(anonymous namespace)::MetadataRefLess::operator()",
+      "startLine": 191,
+      "endLine": 198,
+      "sha256": "23197d28944a41a7ad2308140a4ced2acb3ccad922fe27823dfeb8e23c0fe276"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "元数据引用按OID/CV规范文本构成std容器严格弱序，无第二身份/摘要权威",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+188: /// 语义面不进持久化格式）。
+189: struct MetadataRefLess
+190: {
+191:     bool operator()(const ObjectRefPair& a, const ObjectRefPair& b) const
+192:     {
+193:         if (!(a.objectId == b.objectId)) {
+194:             return a.objectId.toCanonical() < b.objectId.toCanonical();
+195:         }
+196:         return a.contentVersion.toCanonical()
+197:             < b.contentVersion.toCanonical();
+198:     }
+199: };
+200: 
+201: }  // namespace
+
+=== project.TxEngine.TxEngine.TxEngine ===
+{
+  "functionId": "project.TxEngine.TxEngine.TxEngine",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::TxEngine",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::TxEngine",
+      "startLine": 207,
+      "endLine": 228,
+      "sha256": "08440b970be7e8e6797ae85fee7beb525199a296c8f24c8ca387a760c5bda925"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "非owning fileOps/ObjectStore/RevisionIndex必需、bus/sink可空，构造不新建框架模型",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+204: // 构造与路径派生
+205: // =====================================================================
+206: 
+207: TxEngine::TxEngine(win32::IFileOps* fileOps,
+208:                    std::filesystem::path projectDir,
+209:                    objstore::ObjectStore* objects,
+210:                    revindex::RevisionIndex* index,
+211:                    core::IDomainEventBus* eventBus,
+212:                    IDiagnosticsSink* sink)
+213:     : m_fileOps(fileOps),
+214:       m_projectDir(std::move(projectDir)),
+215:       m_objects(objects),
+216:       m_index(index),
+217:       m_eventBus(eventBus),
+218:       m_sink(sink)
+219: {
+220:     // 装配契约 fail-fast（调用方错误）：三个必需部件任一为空＝装配违约，
+221:     // 在构造期拒绝而不是在首个事务中途崩溃（fail-fast 原则——错误暴露
+222:     // 点尽量靠近错误源）。eventBus/sink 可空（语义见头文件）。
+223:     if (m_fileOps == nullptr || m_objects == nullptr || m_index == nullptr) {
+224:         throw std::invalid_argument(
+225:             "project/tx-engine: fileOps/objects/index 注入不得为空"
+226:             "（装配契约——非 owning 指针，生存期由持有方保证）");
+227:     }
+228: }
+229: 
+230: std::filesystem::path TxEngine::stagingRoot() const
+231: {
+
+=== project.TxEngine.TxEngine.stagingRoot ===
+{
+  "functionId": "project.TxEngine.TxEngine.stagingRoot",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::stagingRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::stagingRoot",
+      "startLine": 230,
+      "endLine": 233,
+      "sha256": "f491ea8839532000346113b05907bfdb2205c89ffb5d2bf1295864c1e4512ebe"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "projectDir/.staging纯路径组合，非上游模型命名解析",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+227:     }
+228: }
+229: 
+230: std::filesystem::path TxEngine::stagingRoot() const
+231: {
+232:     return m_projectDir / ".staging";
+233: }
+234: 
+235: std::filesystem::path TxEngine::objectsRoot() const
+236: {
+
+=== project.TxEngine.TxEngine.objectsRoot ===
+{
+  "functionId": "project.TxEngine.TxEngine.objectsRoot",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::objectsRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectsRoot",
+      "startLine": 235,
+      "endLine": 238,
+      "sha256": "35ed2594233b67ea1aeb334c858c19e39215e9afb742b450de52608161c3dd8a"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "projectDir/objects纯路径组合，格式归project",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+232:     return m_projectDir / ".staging";
+233: }
+234: 
+235: std::filesystem::path TxEngine::objectsRoot() const
+236: {
+237:     return m_projectDir / "objects";
+238: }
+239: 
+240: std::filesystem::path TxEngine::revisionsRoot() const
+241: {
+
+=== project.TxEngine.TxEngine.revisionsRoot ===
+{
+  "functionId": "project.TxEngine.TxEngine.revisionsRoot",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::revisionsRoot",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionsRoot",
+      "startLine": 240,
+      "endLine": 243,
+      "sha256": "74bf435deb15601214a614e6e529569197ce761fddf1b9d55b5d14e9a9e5efe1"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "projectDir/revisions纯路径组合",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+237:     return m_projectDir / "objects";
+238: }
+239: 
+240: std::filesystem::path TxEngine::revisionsRoot() const
+241: {
+242:     return m_projectDir / "revisions";
+243: }
+244: 
+245: std::filesystem::path TxEngine::revisionDir(const RevisionId& id) const
+246: {
+
+=== project.TxEngine.TxEngine.revisionDir ===
+{
+  "functionId": "project.TxEngine.TxEngine.revisionDir",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::revisionDir",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::revisionDir",
+      "startLine": 245,
+      "endLine": 250,
+      "sha256": "74d0abaeef16c28719177e442aa9a16caaeab2b9d9d5db757899ab8dd7896743"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "RevisionId::toCanonical构目录，core身份事实唯一",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+242:     return m_projectDir / "revisions";
+243: }
+244: 
+245: std::filesystem::path TxEngine::revisionDir(const RevisionId& id) const
+246: {
+247:     // 目录名＝core 规范文本（"rev-<32hex>"，含 tag——§4.1 命名规则；
+248:     // 与 core 格式化同源，不经本地第二套拼接，P-PR-1 消费基线）。
+249:     return revisionsRoot() / id.toCanonical();
+250: }
+251: 
+252: std::filesystem::path TxEngine::objectFile(const core::ObjectId& oid,
+253:                                            const core::ContentVersion& cv) const
+
+=== project.TxEngine.TxEngine.objectFile ===
+{
+  "functionId": "project.TxEngine.TxEngine.objectFile",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::objectFile",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::objectFile",
+      "startLine": 252,
+      "endLine": 259,
+      "sha256": "4a46ec98e9c85501f43da2d82c18fc199175ad4477cb896c32ae2d905a090366"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "OID规范文本/CV hex编址，与ObjectStore重复薄路径派生需评估收口而不泛化文件门面",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+249:     return revisionsRoot() / id.toCanonical();
+250: }
+251: 
+252: std::filesystem::path TxEngine::objectFile(const core::ObjectId& oid,
+253:                                            const core::ContentVersion& cv) const
+254: {
+255:     // 与 ObjectStore::objectFile 同构：objects/<oid 规范文本>/<cv hex 64>
+256:     // （§4.1 命名规则"无 tag"）。两处编址派生都锚定 core toCanonical，
+257:     // 不存在漂移空间。
+258:     return objectsRoot() / oid.toCanonical() / cvHex(cv);
+259: }
+260: 
+261: std::string TxEngine::generateTxId()
+262: {
+
+=== project.TxEngine.TxEngine.generateTxId ===
+{
+  "functionId": "project.TxEngine.TxEngine.generateTxId",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::generateTxId",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::generateTxId",
+      "startLine": 261,
+      "endLine": 281,
+      "sha256": "08123319a65a8bcc81cc5408db501189295518abc63dc6d566c1f82d6ceb7134"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "MATH-RANDOM",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "std atomic单调+thread_local mt19937_64，两次各截32位组成16hex；不是确定性计算流，上游全局Random不等同并发隔离/残留防撞；不承诺绝无碰撞",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+258:     return objectsRoot() / oid.toCanonical() / cvHex(cv);
+259: }
+260: 
+261: std::string TxEngine::generateTxId()
+262: {
+263:     // §4.1 .staging 行："<tx-id>＝进程内单调＋随机后缀"。单调序号防同
+264:     // 进程内重复；随机后缀防跨进程/跨会话残留目录撞名（残留会被恢复
+265:     // 扫描忽略——撞名虽无害，但会让 ignoredStagingTxs 语义混淆）。随机
+266:     // 源＝random_device 播种的 mt19937_64（线程局部——generateTxId 可
+267:     // 并发进入而不共享 RNG 状态；引擎本身仍要求 commit 串行化）。
+268:     const std::uint64_t seq =
+269:         m_txSeq.fetch_add(1, std::memory_order_relaxed);
+270:     thread_local std::mt19937_64 rng{std::random_device{}()};
+271:     char hex[17];
+272:     for (int i = 0; i < 2; ++i) {
+273:         const std::uint64_t v = rng();
+274:         static const char* kDigits = "0123456789abcdef";
+275:         for (int j = 0; j < 8; ++j) {
+276:             hex[i * 8 + j] = kDigits[(v >> (j * 4)) & 0xF];
+277:         }
+278:     }
+279:     hex[16] = '\0';
+280:     return "tx-" + std::to_string(seq) + "-" + std::string{hex, 16};
+281: }
+282: 
+283: // =====================================================================
+284: // 七步提交协议（commit 的线性编排；各步注释标注 §7.1 步号）
+
+=== project.TxEngine.TxEngine.commit ===
+{
+  "functionId": "project.TxEngine.TxEngine.commit",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::commit",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit",
+      "startLine": 287,
+      "endLine": 797,
+      "sha256": "35aabcc8d00c06d9285cf7ba6954a02fc528df462bdd65bb2d6d3696019a6670"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "七段编排复用原语/索引/对象库/core摘要与bus；注册→验证→注册metadata后才武装幻影守卫；第5段只比较重读HEAD字段未重读清单算摘要，需F962关联，不宣称已覆盖全部故障",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+284: // 七步提交协议（commit 的线性编排；各步注释标注 §7.1 步号）
+285: // =====================================================================
+286: 
+287: CommitResult TxEngine::commit(const CommitPlan& plan,
+288:                               const HeadRecord& currentHead,
+289:                               const ProjectMetadataRecord& authoritative,
+290:                               const ObjectRefPair& authoritativeRef)
+291: {
+292:     // =================================================================
+293:     // 内存段（零磁盘副作用）：计划校验 → 身份/序号分配 → D-5 派生 →
+294:     // S6 注册＋发布边界校验 → 清单装配。全部可能失败的操作先于一切
+295:     // 发布动作（"顺序即原子性"的 D-09 前置精神：任何 here-doc 失败
+296:     // 都不留下磁盘痕迹）。
+297:     // =================================================================
+298: 
+299:     // ---- 调用方契约校验（fail-fast）：字段级违约在装配点暴露 ----
+300:     if (!plan.revisionId.isValid()) {
+301:         throw std::invalid_argument(
+302:             "project/tx-engine: commit requires valid plan.revisionId"
+303:             "（修订身份由调用方生成——单一分配点口径）");
+304:     }
+305:     if (!plan.branchId.isValid()) {
+306:         throw std::invalid_argument(
+307:             "project/tx-engine: commit requires valid branchId");
+308:     }
+309:     // tipUpdate 一致性提前校验：更新的 tip 必须恰为本计划的新修订
+310:     // （validateMetadataPublish 亦有同判据——分支_metadata-regression；
+311:     // 此处以 invalid_argument 前置给出更精确的调用方错误归类，二道
+312:     // 防线保留防绕过）。
+313:     if (plan.metadataDelta.tipUpdate.has_value()
+314:         && !(plan.metadataDelta.tipUpdate->newTip == plan.revisionId)) {
+315:         throw std::invalid_argument(
+316:             "project/tx-engine: tipUpdate.newTip 必须等于 plan.revisionId"
+317:             "（每次提交的活动分支 tip 恰推进到本次新修订——§4.5）");
+318:     }
+319:     if (plan.committedAtUtc.empty()) {
+320:         throw std::invalid_argument(
+321:             "project/tx-engine: commit requires committedAtUtc（ISO-8601 "
+322:             "UTC——时钟供给归调用方）");
+323:     }
+324:     if (plan.command.commandType.empty()) {
+325:         throw std::invalid_argument(
+326:             "project/tx-engine: commit requires commandType（命令留痕无"
+327:             "token＝历史浏览无法呈现——§4.4.4）");
+328:     }
+329:     if (!currentHead.projectId.isValid()) {
+330:         throw std::invalid_argument(
+331:             "project/tx-engine: currentHead.projectId 无效（须为磁盘 HEAD "
+332:             "的真实内容——readHead() 产出）");
+333:     }
+334:     if (plan.parentRevisionId.has_value()
+335:         && !plan.parentRevisionId->isValid()) {
+336:         throw std::invalid_argument(
+337:             "project/tx-engine: parentRevisionId 携带全零保留值（无父修订"
+338:             "应传 nullopt 而非空身份——§4.4.2）");
+339:     }
+340:     std::set<std::string> objectIds;  // 完整清单的 OID 唯一性（无单位，按规范文本比较）。
+341:     for (const PlannedObject& obj : plan.newObjects) {
+342:         // 域对象身份与类型 token 的合法性：全零 oid＝保留值不是身份；
+343:         // 空 token 会让修订清单的 objectRefs 违反 §4.4.2 非空约束。
+344:         if (!obj.oid.isValid() || obj.objectTypeToken.empty()) {
+345:             throw std::invalid_argument(
+346:                 "project/tx-engine: newObjects 含无效 oid 或空 "
+347:                 "objectTypeToken（oid 分配归 HandlerContext——§6.5）");
+348:         }
+349:     }
+350: 
+351:     // A-13：保留项是既有引用，不应经过新对象写入通道。先验证完整集合，
+352:     // 避免同一 OID 出现两个版本、旧元数据混入，或无效摘要流入已提交清单。
+353:     // 此处仅验证引用值，绝不读取/重写保留负载；负载读校验仍归 ObjectStore。
+354:     for (const PlannedObject& obj : plan.newObjects) {
+355:         if (!objectIds.insert(obj.oid.toCanonical()).second) {
+356:             throw std::invalid_argument("project/tx-engine: newObjects 含重复 oid");
+357:         }
+358:     }
+359:     for (const ObjectRef& ref : plan.retainedObjects) {
+360:         if (!ref.objectId.isValid() || !ref.contentVersion.isValid()
+361:             || ref.objectTypeToken.empty() || ref.objectTypeToken == kMetadataTypeToken
+362:             || ref.objectId == authoritativeRef.objectId
+363:             || ref.digest256 != cvHex(ref.contentVersion)
+364:             || !objectIds.insert(ref.objectId.toCanonical()).second) {
+365:             // 摘要必须恰等于合法 CV 的 64 位小写 hex，一并拒绝格式错误与身份不符。
+366:             // 计划畸形是调用方契约错误，在分配序号和任何磁盘副作用之前 fail-fast。
+367:             throw std::invalid_argument(
+368:                 "project/tx-engine: retainedObjects 含无效引用、元数据或重复 oid");
+369:         }
+370:     }
+371:     const core::ObjectId metadataOid = core::ObjectId::generate();
+372:     if (objectIds.count(metadataOid.toCanonical()) != 0) {
+373:         // 即使随机身份发生极小概率碰撞，也不能发布有歧义的完整清单。
+374:         throw std::invalid_argument("project/tx-engine: 元数据 oid 与业务对象重叠");
+375:     }
+376: 
+377:     // ---- 第 1 步（内存半边）：tx-id 与序号分配（§7.1 第 1 步"生成 tx-id；
+378:     //      ……；分配 RevisionId/seq（权威 HEAD seq+1）"）。修订身份由计划
+379:     //      带入（单一分配点＝命令服务 S6 计划装配，见 CommitPlan 登记），
+380:     //      本步骤消费该身份并分配序号。O-15 口径：序号在 S6（本事务）内
+381:     //      分配、失败不回收（进程内水位只进不退）；"S6 决策点"＝进入本
+382:     //      事务（S1～S5 命令阶段全部通过后），因此此处分配符合"决策点之后
+383:     //      调用"的时序契约。事务中途失败会留下已消费的水位——跨会话由
+384:     //      adoptHeadSeq 断点恢复，与崩溃残留序号同语义（§4.5.1 结论④：
+385:     //      不同在闭包即无歧义）。
+386:     const std::string txId = generateTxId();
+387:     const RevisionId& newRevId = plan.revisionId;
+388:     const std::uint64_t revSeq = m_index->allocateRevisionSeq();
+389: 
+390:     // ---- D-5 派生：以权威元数据为底本拷贝出候选（deriveNextMetadata 是
+391:     //      INV-M3 的机制化唯一入口——增量引用未知分支等在此 invalid_argument，
+392:     //      零磁盘副作用）。candidate 与计划分离＝PRJ-T06 的 S6 时序契约
+393:     //      （"提交时由事务引擎 derive＋validate"）。
+394:     const ProjectMetadataRecord candidate = revindex::RevisionIndex::
+395:         deriveNextMetadata(authoritative, authoritativeRef,
+396:                            plan.metadataDelta, newRevId);
+397: 
+398:     // ---- 元数据对象身份与编址：oid 由引擎生成（§13.2：对象分配落地点
+399:     //      归 project——元数据对象是 project 自有对象，不经 HandlerContext）；
+400:     //      负载＝候选元数据的 canonical 字节；cv＝CR-02 唯一哈希入口。
+401:     const std::string metadataPayload = codec::dump(candidate);
+402:     const core::ContentVersion metadataCv =
+403:         codec::contentVersionOf(metadataPayload);
+404:     const std::string metadataDigestHex = cvHex(metadataCv);
+405: 
+406:     // ---- 域对象编址预计算（内容寻址：文件名即摘要，写入前必须已知目标
+407:     //      ——与 ObjectStore::publishObject 第 1 步同纪律）。
+408:     struct StagedObject
+409:     {
+410:         core::ObjectId oid;
+411:         core::ContentVersion cv;
+412:         std::string payload;  ///< canonical 字节的稳定副本（验证步比对基准）
+413:     };
+414:     std::vector<StagedObject> staged;
+415:     staged.reserve(plan.newObjects.size() + 1);
+416:     for (const PlannedObject& obj : plan.newObjects) {
+417:         StagedObject s;
+418:         s.oid = obj.oid;
+419:         s.payload.assign(obj.payload.begin(), obj.payload.end());
+420:         s.cv = codec::contentVersionOf(
+421:             std::string_view{reinterpret_cast<const char*>(s.payload.data()),
+422:                              s.payload.size()});
+423:         staged.push_back(std::move(s));
+424:     }
+425: 
+426:     // ---- 修订清单装配（§4.4.2）：objectRefs＝完整引用集（≥1，含元数据
+427:     //      对象——元数据在前、保留对象按基线序、新对象按计划序）；introducedObjects＝本次新
+428:     //      就位对象（含元数据——残留识别/浏览辅助，§4.4.2 表）。
+429:     RevisionManifest manifest;
+430:     manifest.revisionId = newRevId;
+431:     manifest.revisionSeq = revSeq;
+432:     manifest.parentRevisionId = plan.parentRevisionId;
+433:     manifest.branchId = plan.branchId;
+434:     manifest.committedAtUtc = plan.committedAtUtc;
+435:     manifest.metadataRef = ObjectRefPair{metadataOid, metadataCv};
+436:     {
+437:         ObjectRef metaRef;
+438:         metaRef.objectId = metadataOid;
+439:         metaRef.contentVersion = metadataCv;
+440:         metaRef.objectTypeToken = kMetadataTypeToken;
+441:         metaRef.digest256 = metadataDigestHex;
+442:         manifest.objectRefs.push_back(metaRef);
+443:         manifest.introducedObjects.push_back(metadataCv);
+444:     }
+445:     // 已就位对象仅将引用复制进全量状态，不进入 staged 与 introducedObjects，
+446:     // 因此不增加负载 I/O、不污染“本次新引入版本”证据，历史文件亦保持不可变。
+447:     manifest.objectRefs.insert(manifest.objectRefs.end(),
+448:                                plan.retainedObjects.begin(), plan.retainedObjects.end());
+449:     for (std::size_t i = 0; i < staged.size(); ++i) {
+450:         const StagedObject& s = staged[i];
+451:         ObjectRef ref;
+452:         ref.objectId = s.oid;
+453:         ref.contentVersion = s.cv;
+454:         // 按索引对齐取计划里的类型 token（staged 与 plan.newObjects 同序
+455:         // 同长——上方装配循环保序）。
+456:         ref.objectTypeToken = plan.newObjects[i].objectTypeToken;
+457:         ref.digest256 = cvHex(s.cv);
+458:         manifest.objectRefs.push_back(ref);
+459:         manifest.introducedObjects.push_back(s.cv);
+460:     }
+461:     const std::string manifestBytes = codec::dump(manifest);
+462:     // HEAD.manifestDigest 的取值（§4.4.1"指向修订 manifest 的字节摘要"）：
+463:     // cv 的 hex 形态（SHA-256 hex 无 tag）——同一字节序列后续在第 3/5 步
+464:     // 重算比对，切换后自校验因此可复现（CR-02：摘要只经 core ContentDigester）。
+465:     const core::ContentVersion manifestCv =
+466:         codec::contentVersionOf(manifestBytes);
+467:     const std::string manifestDigestHex = cvHex(manifestCv);
+468: 
+469:     // ---- 命令留痕字节（§4.4.4；project 原样持久化——D-10）。
+470:     const std::string commandBytes = codec::dump(plan.command);
+471:     const core::ContentVersion commandCv =
+472:         codec::contentVersionOf(commandBytes);
+473: 
+474:     // ---- S6 注册＋发布边界校验（PRJ-T06 时序契约：先注册新修订后校验
+475:     //      ——祖先链/谱系单调判定以新修订已注册为前提）。二者任一失败
+476:     //      （BranchMetadataRegression/喂入失真的 invalid_argument）都发生在
+477:     //      暂存目录创建之前——零磁盘副作用。注意：校验失败时新修订已注册
+478:     //      进会话索引且无撤销入口——该修订从任何 HEAD 闭包都不可达（无
+479:     //      parent 指向它），对查询不可见，属无害的内存残迹；此时调用方
+480:     //      已处于不变量违约的编程错误态（fail-fast 语义优先）。
+481:     m_index->registerRevision(manifest);
+482:     const ObjectRefPair candidateRef{metadataOid, metadataCv};
+483:     m_index->validateMetadataPublish(authoritative, authoritativeRef,
+484:                                      candidate, candidateRef, newRevId);
+485:     // ---- S6 时序第三步"切换权威"：候选通过发布边界校验后注册为新权威
+486:     // 元数据版本——后续闭包行走（含本次新修订的 metadataRef）因此可达
+487:     // （validate 契约要求 candidateRef 此前未注册，故注册必须在校验之后）。
+488:     m_index->registerMetadata(candidateRef, candidate);
+489: 
+490:     // 幻影注册守卫（R3 审计 B6 修复，2026-10-15）：武装于注册后、解除于
+491:     // 唯一提交点（replaceExisting 成功）——其间的环境失败（暂存写/publish/
+492:     // head-switch）原本把本次注册留在会话索引：幻影修订可被 tryRevision/
+493:     // metadataAt 查到（PRJ-TX-9"闭包外不可见"被破坏）、assembleView 读从
+494:     // 未发布的 command.json 抛假 StoreCorrupt。析构时若仍武装即摘除本次
+495:     // 注册（单写者持锁、修订身份新铸造——摘除不影响任何既有闭包/读者）。
+496:     // 提交点之后的失败（自校验/事件/清理）不解除武装前的守卫已经失效——
+497:     // D-18"提交事实不回滚"语义保持。
+498:     struct PhantomRegistrationGuard {
+499:         revindex::RevisionIndex* index;
+500:         const RevisionId& revId;
+501:         const ObjectRefPair& ref;
+502:         bool armed = true;
+503:         ~PhantomRegistrationGuard()
+504:         {
+505:             if (armed) {
+506:                 index->rollbackCommitRegistration(revId, ref);
+507:             }
+508:         }
+509:     } phantomGuard{m_index, newRevId, candidateRef};
+510: 
+511:     // =================================================================
+512:     // 第 1 步（磁盘半边）：建 .staging/<tx-id>/（§7.1 第 1 步"建 .staging/
+513:     // <tx-id>/"）。失败→环境码；残留形态＝无或仅空目录（启动清理兜底，
+514:     // 这里尽力移除空壳——失败忽略，恢复扫描可识别空目录）。
+515:     // =================================================================
+516:     const fs::path txDir = stagingRoot() / txId;
+517:     {
+518:         const win32::FileResult cr = m_fileOps->createDirectories(txDir.wstring());
+519:         if (!cr.ok) {
+520:             // 尽力清理空壳目录（创建失败的目录通常不存在；存在则是半建
+521:             // 状态——removeTree 幂等，错误码吸收不做二次报错：本失败的
+522:             // 主因错误才是稳定诊断载体）。
+523:             std::error_code rmEc;
+524:             fs::remove_all(txDir, rmEc);
+525:             throw osToStoreError(cr.osError, "create-staging-dir",
+526:                                  txDir.string());
+527:         }
+528:     }
+529:     // tmp 子目录随事务建立（D-09：编译/非事务临时产物限 .staging/tmp——
+530:     // 事务期的临时落点即本目录；§7.1 第 7 步"删除 .staging/<tx-id>/（含
+531:     // tmp）"的清理对象在准备期即存在）。
+532:     {
+533:         const win32::FileResult cr =
+534:             m_fileOps->createDirectories((txDir / "tmp").wstring());
+535:         if (!cr.ok) {
+536:             std::error_code rmEc;
+537:             fs::remove_all(txDir, rmEc);
+538:             throw osToStoreError(cr.osError, "create-staging-tmp",
+539:                                  (txDir / "tmp").string());
+540:         }
+541:     }
+542: 
+543:     // =================================================================
+544:     // 第 2 步：暂存（§7.1"对象字节、manifest.json、command.json、新
+545:     // ProjectMetadata 全部写入 .staging/<tx-id>/"）。每文件走 writeThrough
+546:     // ＝FILE_FLAG_WRITE_THROUGH＋FlushFileBuffers 闸门（§7.2 行 1——写入
+547:     // 持久性保证）。暂存布局镜像目标树（objects/<oid>/<cv>、revision/
+548:     // manifest.json、revision/command.json），发布步 rename 时路径语义
+549:     // 一目了然。任何写失败：已写部分**有意残留**（§7.1 第 2 步"残留部分
+550:     // 文件于 .staging"——恢复扫描忽略＋诊断，PM-08），直接上抛不清理。
+551:     // =================================================================
+552:     win32::AtomicFile file{m_fileOps};  // 注入接缝（F2 注入边界在此链路）
+553:     {
+554:         // 元数据对象先行暂存（发布序＝对象先行；元数据对象是清单的首个
+555:         // 引用者）。
+556:         const fs::path stagedMeta =
+557:             txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+558:         const win32::FileResult dirCr = m_fileOps->createDirectories(
+559:             (txDir / "objects" / metadataOid.toCanonical()).wstring());
+560:         if (!dirCr.ok) {
+561:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+562:                                  stagedMeta.string());
+563:         }
+564:         const win32::FileResult wr = file.writeThrough(
+565:             stagedMeta.wstring(), metadataPayload.data(),
+566:             metadataPayload.size());
+567:         if (!wr.ok) {
+568:             throw osToStoreError(wr.osError, "stage-write",
+569:                                  stagedMeta.string());
+570:         }
+571:     }
+572:     for (const StagedObject& s : staged) {
+573:         const fs::path stagedPath =
+574:             txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv);
+575:         const win32::FileResult dirCr = m_fileOps->createDirectories(
+576:             (txDir / "objects" / s.oid.toCanonical()).wstring());
+577:         if (!dirCr.ok) {
+578:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+579:                                  stagedPath.string());
+580:         }
+581:         const char* data =
+582:             s.payload.empty() ? nullptr : s.payload.data();
+583:         const win32::FileResult wr = file.writeThrough(
+584:             stagedPath.wstring(), data, s.payload.size());
+585:         if (!wr.ok) {
+586:             throw osToStoreError(wr.osError, "stage-write",
+587:                                  stagedPath.string());
+588:         }
+589:     }
+590:     // 修订目录两文件（command 先于 manifest 暂存只是书写序；发布步保证
+591:     // manifest 最后就位）。
+592:     const fs::path stagedRevisionDir = txDir / "revision";
+593:     {
+594:         const win32::FileResult dirCr =
+595:             m_fileOps->createDirectories(stagedRevisionDir.wstring());
+596:         if (!dirCr.ok) {
+597:             throw osToStoreError(dirCr.osError, "stage-mkdir",
+598:                                  stagedRevisionDir.string());
+599:         }
+600:     }
+601:     const fs::path stagedManifest = stagedRevisionDir / "manifest.json";
+602:     const fs::path stagedCommand = stagedRevisionDir / "command.json";
+603:     {
+604:         const win32::FileResult wr =
+605:             file.writeThrough(stagedCommand.wstring(), commandBytes.data(),
+606:                               commandBytes.size());
+607:         if (!wr.ok) {
+608:             throw osToStoreError(wr.osError, "stage-write",
+609:                                  stagedCommand.string());
+610:         }
+611:     }
+612:     {
+613:         const win32::FileResult wr =
+614:             file.writeThrough(stagedManifest.wstring(), manifestBytes.data(),
+615:                               manifestBytes.size());
+616:         if (!wr.ok) {
+617:             throw osToStoreError(wr.osError, "stage-write",
+618:                                  stagedManifest.string());
+619:         }
+620:     }
+621: 
+622:     // =================================================================
+623:     // 第 3 步：验证（§7.1"重读暂存文件：size＋SHA-256 全量校验（含'对象
+624:     // 字节→ContentVersion 名一致性'）"）。失败→StoreCorrupt＋开发诊断
+625:     // （磁盘/内存错误怀疑——§7.1 第 3 步失败列）；残留同第 2 步。
+626:     // =================================================================
+627:     {
+628:         const fs::path stagedMetaPath = txDir / "objects"
+629:             / metadataOid.toCanonical() / cvHex(metadataCv);
+630:         try {
+631:             verifyStagedFile(stagedMetaPath, metadataPayload, metadataCv);
+632:             for (const StagedObject& s : staged) {
+633:                 verifyStagedFile(
+634:                     txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+635:                     s.payload, s.cv);
+636:             }
+637:             verifyStagedFile(stagedCommand, commandBytes, commandCv);
+638:             verifyStagedFile(stagedManifest, manifestBytes, manifestCv);
+639:         } catch (const StoreError& e) {
+640:             reportDev(std::string{"verify-failed（暂存校验不符——磁盘/内存"
+641:                                   "错误怀疑，F3 边界） detail="}
+642:                       + e.what());
+643:             throw;  // StoreCorrupt（含路径定位）原样上抛
+644:         }
+645:     }
+646: 
+647:     // =================================================================
+648:     // 第 4 步：内容发布（§7.1"`.staging` 内容就位正式路径……只增不改，
+649:     // 部分就位不破坏旧版本（HEAD 仍指旧内容）"）。顺序＝对象先行、修订
+650:     // 清单最后（"清单是内容的引用者，反向会出现'清单在而对象缺'的中间
+651:     // 可见态"；command.json 属修订目录内容，先于 manifest 就位）。任一
+652:     // rename 失败→环境码；已就位项保留（悬挂，不回滚——闭包外，§7.3）。
+653:     // =================================================================
+654:     {
+655:         // 对象品类：元数据对象→域对象（计划序）。共享判定（目标已存在）
+656:         // 复用 ObjectStore 读回校验通道——摘要不符抛 StoreCorrupt，与
+657:         // publishObject 的共享语义同源同码（实现口径登记见头文件）。
+658:         const fs::path stagedMetaPath =
+659:             txDir / "objects" / metadataOid.toCanonical() / cvHex(metadataCv);
+660:         publishOneObject(stagedMetaPath, metadataOid, metadataCv);
+661:         for (const StagedObject& s : staged) {
+662:             publishOneObject(
+663:                 txDir / "objects" / s.oid.toCanonical() / cvHex(s.cv),
+664:                 s.oid, s.cv);
+665:         }
+666:         // 修订目录：先建目录，command.json 次之，manifest.json 最后
+667:         // （§7.1"对象先行、修订清单最后"）。
+668:         const fs::path targetRevDir = revisionDir(newRevId);
+669:         const win32::FileResult dirCr =
+670:             m_fileOps->createDirectories(targetRevDir.wstring());
+671:         if (!dirCr.ok) {
+672:             throw osToStoreError(dirCr.osError, "publish-mkdir",
+673:                                  targetRevDir.string());
+674:         }
+675:         const win32::FileResult cmdPub = m_fileOps->publishNew(
+676:             stagedCommand.wstring(),
+677:             (targetRevDir / "command.json").wstring());
+678:         if (!cmdPub.ok) {
+679:             throw osToStoreError(cmdPub.osError, "publish-command",
+680:                                  (targetRevDir / "command.json").string());
+681:         }
+682:         const win32::FileResult manPub = m_fileOps->publishNew(
+683:             stagedManifest.wstring(),
+684:             (targetRevDir / "manifest.json").wstring());
+685:         if (!manPub.ok) {
+686:             throw osToStoreError(manPub.osError, "publish-manifest",
+687:                                  (targetRevDir / "manifest.json").string());
+688:         }
+689:     }
+690: 
+691:     // =================================================================
+692:     // 第 5 步：提交指针切换（§7.1"写 HEAD.new（完整 HeadRecord）→ flush →
+693:     // MoveFileExW(HEAD.new→HEAD, REPLACE_EXISTING|WRITE_THROUGH)——唯一
+694:     // 提交点；切换后重读 HEAD 自校验 manifestDigest"）。
+695:     // =================================================================
+696:     HeadRecord newHead;
+697:     newHead.schemaVersion = currentHead.schemaVersion;
+698:     newHead.projectId = currentHead.projectId;
+699:     newHead.revisionId = newRevId;
+700:     newHead.revisionSeq = revSeq;
+701:     newHead.branchId = plan.branchId;
+702:     newHead.manifestDigest = manifestDigestHex;
+703:     const fs::path stagedHead = txDir / "head.new";
+704:     {
+705:         const std::string headBytes = codec::dump(newHead);
+706:         const win32::FileResult wr =
+707:             file.writeThrough(stagedHead.wstring(), headBytes.data(),
+708:                               headBytes.size());
+709:         if (!wr.ok) {
+710:             throw osToStoreError(wr.osError, "stage-head",
+711:                                  stagedHead.string());
+712:         }
+713:     }
+714:     {
+715:         const fs::path headPath = m_projectDir / "HEAD";
+716:         // replaceExisting＝MoveFileExW(REPLACE_EXISTING|WRITE_THROUGH)（§7.2
+717:         // 行 3）。本调用成功即"唯一提交点"成立——此后本次修订视为已提交，
+718:         // 后续任何失败（第 6/7 步）不回滚（D-18）。失败→环境码；内容已
+719:         // 发布但 HEAD 未变＝第 4 步残留语义（闭包外可识别）。
+720:         const win32::FileResult rep =
+721:             m_fileOps->replaceExisting(stagedHead.wstring(),
+722:                                        headPath.wstring());
+723:         if (!rep.ok) {
+724:             throw osToStoreError(rep.osError, "head-switch", headPath.string());
+725:         }
+726:         // 唯一提交点已过——解除幻影守卫（本修订已是提交事实：此后自校验/
+727:         // 事件/清理失败均走 D-18 不回滚语义，索引注册必须保留）。
+728:         phantomGuard.armed = false;
+729:         // 自校验（§7.1 第 5 步"切换后重读 HEAD 自校验 manifestDigest"）：
+730:         // 重读+重解与内存事实逐字段比对。失败＝提交点内容异常的极端态
+731:         // （读失败/内容不符）——D-18 不回滚：抛 StoreCorrupt 硬错误，恢复
+732:         // 扫描④以磁盘 HEAD 实际内容为准兜底（§7.1"崩溃于切换前后以 HEAD
+733:         // 实际内容为准（字节级判定）"）。
+734:         const auto headBytes = readAllBytes(headPath);
+735:         bool selfCheckOk = headBytes.has_value();
+736:         if (selfCheckOk) {
+737:             try {
+738:                 selfCheckOk = (codec::parseHeadRecord(*headBytes) == newHead);
+739:             } catch (const StoreError&) {
+740:                 selfCheckOk = false;  // 重读内容解析失败＝自校验不过
+741:             }
+742:         }
+743:         if (!selfCheckOk) {
+744:             reportDev("head-selfcheck-failed（HEAD 切换后重读不符——提交点"
+745:                       "异常，恢复扫描④兜底） rev=" + newRevId.toCanonical());
+746:             throw StoreError(StoreErrorCode::StoreCorrupt,
+747:                              "project/tx-engine: head-selfcheck-failed path="
+748:                                  + (m_projectDir / "HEAD").string());
+749:         }
+750:     }
+751: 
+752:     // =================================================================
+753:     // 第 6 步：事件发布（§7.1"bus.publish(RevisionCommitted→
+754:     // DependencyInvalidated)（FIFO；失败重试一次＋开发诊断，不回滚——D-18）"）。
+755:     // 总线可空＝跳过（§5.1 装配口径）。失败不影响提交事实。
+756:     // =================================================================
+757:     if (m_eventBus != nullptr) {
+758:         core::RevisionCommittedPayload committed;
+759:         committed.project = currentHead.projectId;
+760:         committed.branch = plan.branchId;
+761:         committed.revision = newRevId;
+762:         committed.parent = plan.parentRevisionId;
+763:         publishEventWithRetry(core::DomainEvent::make(committed),
+764:                               "revision-committed");
+765:         // FIFO：失效通知严格在提交事件之后发布（订阅方先刷新视图再失效
+766:         // 依赖——§7.1 第 6 步"RevisionCommitted→DependencyInvalidated"序）。
+767:         core::DependencyInvalidatedPayload invalidated;
+768:         invalidated.project = currentHead.projectId;
+769:         invalidated.branch = plan.branchId;
+770:         invalidated.revision = newRevId;
+771:         publishEventWithRetry(core::DomainEvent::make(invalidated),
+772:                               "dependency-invalidated");
+773:     }
+774: 
+775:     // =================================================================
+776:     // 第 7 步：清理（§7.1"删除 .staging/<tx-id>/（含 tmp）；清理失败仅
+777:     // 开发诊断"——已提交状态不受影响，残留不参与任何读取路径）。
+778:     // =================================================================
+779:     {
+780:         const win32::FileResult rm = m_fileOps->removeTree(txDir.wstring());
+781:         if (!rm.ok) {
+782:             reportDev("cleanup-failed（.staging 清理失败——已提交状态不受"
+783:                       "影响，残留由下次启动扫描处置，F7 边界） dir="
+784:                           + txDir.string() + " osError="
+785:                           + std::to_string(rm.osError));
+786:         }
+787:     }
+788: 
+789:     // ---- 提交结果（供命令服务组装返回值/事件消费，PRJ-T10） ----
+790:     CommitResult result;
+791:     result.revisionId = newRevId;
+792:     result.revisionSeq = revSeq;
+793:     result.metadataRef = candidateRef;
+794:     result.manifestDigest = manifestDigestHex;
+795:     result.newHead = newHead;
+796:     return result;
+797: }
+798: 
+799: void TxEngine::publishOneObject(const fs::path& stagedPath,
+800:                                 const core::ObjectId& oid,
+
+=== project.TxEngine.TxEngine.publishOneObject ===
+{
+  "functionId": "project.TxEngine.TxEngine.publishOneObject",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::publishOneObject",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishOneObject",
+      "startLine": 799,
+      "endLine": 843,
+      "sha256": "0006f3285e84ca87dfada238e4fcd7434cd0b0979f7ea6f9805ffef423f7c079"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "原IFileOps只增rename与ObjectStore真实读校验共享判定，竞态有界2次，已发布不回滚；无第二CAS算法",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+796:     return result;
+797: }
+798: 
+799: void TxEngine::publishOneObject(const fs::path& stagedPath,
+800:                                 const core::ObjectId& oid,
+801:                                 const core::ContentVersion& cv)
+802: {
+803:     const fs::path target = objectFile(oid, cv);
+804:     const std::string targetName = target.string();
+805: 
+806:     // 确保对象目录存在（objects/<oid>/；§7.1 第 4 步发布在项目根内——
+807:     // 对象区目录已在 §4.1 白名单，创建失败按环境码上抛）。
+808:     const win32::FileResult dirCr =
+809:         m_fileOps->createDirectories((objectsRoot() / oid.toCanonical()).wstring());
+810:     if (!dirCr.ok) {
+811:         throw osToStoreError(dirCr.osError, "publish-mkdir", targetName);
+812:     }
+813: 
+814:     // 只增发布：publishNew 目标不存在→rename；有界重试只覆盖"EXISTS→
+815:     // 消失"竞态（与 ObjectStore::publishObject 同口径——其余失败一律按
+816:     // 原语义传播）。
+817:     for (int attempt = 0; attempt < 2; ++attempt) {
+818:         std::error_code existsEc;
+819:         if (!fs::exists(target, existsEc) || existsEc) {
+820:             // 目标不存在：publishNew 就位（F4 注入点——kth rename 失败在
+821:             // 此暴露；已就位的前序对象保留＝悬挂语义，不回滚）。
+822:             const win32::FileResult pub =
+823:                 m_fileOps->publishNew(stagedPath.wstring(), target.wstring());
+824:             if (pub.ok) {
+825:                 return;  // 就位成功
+826:             }
+827:             if (pub.osError == ERROR_ALREADY_EXISTS && attempt == 0) {
+828:                 continue;  // 竞态：目标刚出现——下一轮走共享判定
+829:             }
+830:             throw osToStoreError(pub.osError, "publish-rename", targetName);
+831:         }
+832:         // 目标已存在（同内容已发布＝共享去重）：读回既有对象校验——
+833:         // ObjectStore::object 对"摘要与编址不符"抛 StoreCorrupt（数据侧，
+834:         // §4.6 口径），一致则返回字节＝共享成立（磁盘零写入）。暂存件
+835:         // 不在此删除——第 7 步整目录清理统一处置，少一个失败面。
+836:         m_objects->object(oid, cv);
+837:         return;
+838:     }
+839:     // 不可达防御：2 次尝试均落入竞态窗口——按写失败传播（协议有界性）。
+840:     throw StoreError(StoreErrorCode::WriteRejected,
+841:                      "project/tx-engine: publish-retry-exhausted path="
+842:                          + targetName);
+843: }
+844: 
+845: void TxEngine::publishEventWithRetry(const core::DomainEvent& event,
+846:                                      const char* what)
+
+=== project.TxEngine.TxEngine.publishEventWithRetry ===
+{
+  "functionId": "project.TxEngine.TxEngine.publishEventWithRetry",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::publishEventWithRetry",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::publishEventWithRetry",
+      "startLine": 845,
+      "endLine": 865,
+      "sha256": "2673594666d7b54e61c26937da658cc16c24f0c1c0b76df3c07340e4b5e34acf"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "总线FIFO调用两次有界重试，捕std异常报告D18；总线合同归core，不自建消息队列",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+842:                          + targetName);
+843: }
+844: 
+845: void TxEngine::publishEventWithRetry(const core::DomainEvent& event,
+846:                                      const char* what)
+847: {
+848:     // 失败重试一次（§7.1 第 6 步"失败重试一次＋开发诊断"）：开发诊断
+849:     // 伴随每一次失败观测发出（首败即诊断——运维在重试成功时也能看到
+850:     // 抖动痕迹；重试再失败的诊断注明 D-18 不回滚）。两次都失败则放弃
+851:     // ——绝不抛出：事件非数据源（core D-09），订阅方可经②端口重读自愈，
+852:     // 提交事实不受影响（D-18）。
+853:     for (int attempt = 0; attempt < 2; ++attempt) {
+854:         try {
+855:             m_eventBus->publish(event);
+856:             return;
+857:         } catch (const std::exception& e) {
+858:             reportDev(std::string{"event-publish-failed（"}
+859:                       + (attempt == 0
+860:                              ? "首败——按协议重试一次"
+861:                              : "重试后仍失败——不回滚已提交修订，D-18")
+862:                       + "） event=" + what + " error=" + e.what());
+863:         }
+864:     }
+865: }
+866: 
+867: // =====================================================================
+868: // 恢复扫描（§7.3/§7.4①④⑤）
+
+=== project.TxEngine.TxEngine.scanForRecovery ===
+{
+  "functionId": "project.TxEngine.TxEngine.scanForRecovery",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::scanForRecovery",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::scanForRecovery",
+      "startLine": 871,
+      "endLine": 1142,
+      "sha256": "6024b4b64be7211d647b8d1c611013edec82dcbf6ee59bee2e404ef39b5c616c"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "tmp清理/未提交事务报告/局部索引闭包/对象校验/悬挂计数；清单仅parse未核HEAD摘要，F962真实反例；目录错误/残缺分类待回归",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+868: // 恢复扫描（§7.3/§7.4①④⑤）
+869: // =====================================================================
+870: 
+871: TxRecoveryScan TxEngine::scanForRecovery()
+872: {
+873:     TxRecoveryScan scan;
+874: 
+875:     // ---- ① `.staging` 残留扫描（§7.4①"忽略未提交内容＋恢复诊断"）。
+876:     // tx 目录＝未提交事务：记入清单＋用户级诊断，**忽略不删**（现场保留
+877:     // ——§4.1 .staging 行"启动扫描忽略"口径）；`.staging/tmp`＝启动清理
+878:     // （整树删除——§4.1 tmp 行"启动清理"，D-09 临时物不逸出该目录）。
+879:     std::error_code ec;
+880:     const fs::path stRoot = stagingRoot();
+881:     if (fs::exists(stRoot, ec) && !ec) {
+882:         std::vector<std::string> ignored;
+883:         for (fs::directory_iterator it(stRoot, ec), end; it != end && !ec;
+884:              it.increment(ec)) {
+885:             if (ec) {
+886:                 break;  // 迭代中途中错：停止扫描（已收集结果仍有效）
+887:             }
+888:             const std::string name = it->path().filename().string();
+889:             std::error_code typeEc;
+890:             if (!it->is_directory(typeEc) || typeEc) {
+891:                 continue;  // 非目录条目不属于事务残留（开发观测面之外——
+892:                            // 暂存区只应有目录条目，异常文件留给人工排查）
+893:             }
+894:             if (name == "tmp") {
+895:                 // tmp 清理（§4.1"启动清理"）：删除失败仅开发诊断——
+896:                 // 临时物残留无害（不参与任何读取路径）。
+897:                 const win32::FileResult rm =
+898:                     m_fileOps->removeTree(it->path().wstring());
+899:                 if (!rm.ok) {
+900:                     reportDev("tmp-cleanup-failed（.staging/tmp 启动清理"
+901:                               "失败——残留无害） osError="
+902:                                   + std::to_string(rm.osError));
+903:                 }
+904:                 continue;
+905:             }
+906:             ignored.push_back(name);
+907:         }
+908:         // 确定性排序（NFR-COR-02：directory_iterator 顺序未指定——报告
+909:         // 必须可复现，验收可逐元素比对）。
+910:         std::sort(ignored.begin(), ignored.end());
+911:         scan.ignoredStagingTxs = std::move(ignored);
+912:         if (!scan.ignoredStagingTxs.empty()) {
+913:             // 用户级恢复诊断（PRJ-RECOVERY-IGNORED-UNCOMMITTED——码值
+914:             // ＝diagnostics.md §4.6 收编清单，project 不私造码）。
+915:             emitReport(m_sink, makeIgnoredUncommittedRecord(
+916:                                    scan.ignoredStagingTxs));
+917:         }
+918:     }
+919: 
+920:     // ---- ④ HEAD 读取：缺失/损坏＝CorruptStoreDetected（§4.1 HEAD 行）
+921:     // ——报告位 false＋PRJ-STORE-CORRUPT（不抛：一次扫描产出完整清单）。
+922:     const fs::path headPath = m_projectDir / "HEAD";
+923:     const auto headBytes = readAllBytes(headPath);
+924:     if (!headBytes) {
+925:         reportDev("recovery-head-missing（HEAD 缺失——无法校验闭包）");
+926:         emitReport(m_sink, makeStoreCorruptRecord(
+927:                                "project/tx-engine: HEAD 文件缺失 path="
+928:                                    + headPath.string()));
+929:         return scan;  // headIntegrityVerified=false；①的发现已随行带回
+930:     }
+931:     HeadRecord head;
+932:     try {
+933:         head = codec::parseHeadRecord(*headBytes);
+934:     } catch (const StoreError& e) {
+935:         reportDev(std::string{"recovery-head-unreadable（HEAD 解析拒绝） "}
+936:                   + e.what());
+937:         emitReport(m_sink, makeStoreCorruptRecord(
+938:                                "project/tx-engine: HEAD 解析失败 detail="
+939:                                    + std::string(e.what())));
+940:         return scan;
+941:     }
+942: 
+943:     // ---- 装载磁盘修订清单入**临时索引**（不污染会话索引——§7.3：闭包
+944:     // 外修订对查询不可见的机制＝装载纪律只认闭包成员；扫描自持局部视图）。
+945:     // 损坏分流纪律（§7.4④的边界）：清单/元数据缺失或损坏只对**闭包成员**
+946:     // 构成 store-corrupt；闭包外目录的残缺＝未提交残留（§7.3"闭包外修订
+947:     // 目录与对象计入残留清单"——发布中途失败的修订目录可能无清单，F4
+948:     // 边界）。装载期失败先挂账，待闭包计算成功后统一归类。
+949:     revindex::RevisionIndex loader;
+950:     // 磁盘侧修订目录集（dirName→已注册的修订 id；清单完好者才入集）。
+951:     std::map<std::string, RevisionId> onDisk;
+952:     // 挂账的残缺目录（{目录名解析出的身份, 定位细节}）——闭包行走成功
+953:     // 即证明闭包成员清单全部完好，挂账目录必在闭包外＝残留。
+954:     std::vector<std::pair<RevisionId, std::string>> brokenDirs;
+955:     std::set<ObjectRefPair, MetadataRefLess> metadataRefs;  // 去重待装载集
+956:     // 元数据装载失败挂账（ref→细节）——仅闭包成员引用的失败置损坏，
+957:     // 残留清单引用的失败仅开发诊断。
+958:     std::map<ObjectRefPair, std::string, MetadataRefLess> failedMetaRefs;
+959:     bool broken = false;  // ④完整性结论（仅闭包相关失败置位）
+960:     std::string brokenDetail;
+961: 
+962:     {
+963:         std::error_code dirEc;
+964:         const fs::path revRoot = revisionsRoot();
+965:         const bool revRootOk = fs::exists(revRoot, dirEc) && !dirEc;
+966:         if (revRootOk) {
+967:             for (fs::directory_iterator it(revRoot, dirEc), end;
+968:                  it != end && !dirEc; it.increment(dirEc)) {
+969:                 if (dirEc) {
+970:                     break;
+971:                 }
+972:                 std::error_code isDirEc;
+973:                 if (!it->is_directory(isDirEc) || isDirEc) {
+974:                     continue;  // 非目录条目：不在修订命名规则内，跳过
+975:                 }
+976:                 const std::string dirName = it->path().filename().string();
+977:                 const auto rid = RevisionId::tryFromCanonical(dirName);
+978:                 if (!rid) {
+979:                     // 目录名非 rev- 规范文本：不合规条目（开发观测）——
+980:                     // 不计入磁盘集也不计入闭包（残缺命名不可能被 HEAD
+981:                     // 引用；§4.5 闭包规则只认身份可达性）。
+982:                     reportDev("recovery-malformed-revision-dir（目录名非"
+983:                               "规范文本，跳过） dir=" + dirName);
+984:                     continue;
+985:                 }
+986:                 const auto bytes =
+987:                     readAllBytes(it->path() / "manifest.json");
+988:                 if (!bytes) {
+989:                     // 清单缺失：挂账待闭包归类（残留或损坏）。
+990:                     brokenDirs.emplace_back(
+991:                         *rid, "project/tx-engine: manifest 缺失 path="
+992:                                   + (it->path() / "manifest.json").string());
+993:                     reportDev("recovery-manifest-missing path="
+994:                               + (it->path() / "manifest.json").string());
+995:                     continue;
+996:                 }
+997:                 try {
+998:                     const RevisionManifest manifest =
+999:                         codec::parseRevisionManifest(*bytes);
+1000:                     loader.registerRevision(manifest);
+1001:                     onDisk[dirName] = manifest.revisionId;
+1002:                     metadataRefs.insert(manifest.metadataRef);
+1003:                 } catch (const StoreError& e) {
+1004:                     // 清单字节非法（截断/字段违约/版本拒绝）：同缺失挂账。
+1005:                     brokenDirs.emplace_back(
+1006:                         *rid, "project/tx-engine: manifest 解析失败 path="
+1007:                             + (it->path() / "manifest.json").string()
+1008:                             + " detail=" + std::string(e.what()));
+1009:                     reportDev("recovery-manifest-corrupt path="
+1010:                               + (it->path() / "manifest.json").string()
+1011:                               + " detail=" + std::string(e.what()));
+1012:                 }
+1013:             }
+1014:         }
+1015:     }
+1016: 
+1017:     // ---- 元数据记录装载（闭包通道二需要 supersedes/committedBy 链）。
+1018:     for (const ObjectRefPair& ref : metadataRefs) {
+1019:         try {
+1020:             // 经 ObjectStore 读回校验通道：缺失/摘要不符＝StoreCorrupt
+1021:             //（§4.6 读校验语义；闭包内引用缺失按数据侧拒绝——§5.2 表）。
+1022:             const auto payloadBytes = m_objects->object(ref.objectId,
+1023:                                                         ref.contentVersion);
+1024:             const std::string payload{
+1025:                 reinterpret_cast<const char*>(payloadBytes.data()),
+1026:                 payloadBytes.size()};
+1027:             const ProjectMetadataRecord record =
+1028:                 codec::parseMetadataRecord(payload);
+1029:             loader.registerMetadata(ref, record);
+1030:         } catch (const StoreError& e) {
+1031:             // 挂账不置损：是否构成闭包损坏待闭包归类（仅闭包成员引用的
+1032:             // 失败置位——残留清单引用悬空只做开发诊断）。
+1033:             failedMetaRefs.emplace(
+1034:                 ref, "project/tx-engine: metadata 装载失败 oid="
+1035:                     + ref.objectId.toCanonical() + " cv="
+1036:                     + ref.contentVersion.toCanonical() + " detail="
+1037:                     + std::string(e.what()));
+1038:         }
+1039:     }
+1040: 
+1041:     // ---- 闭包计算（§7.4④"校验 HEAD 引用闭包完整性"）：起点缺失/悬挂
+1042:     // 引用＝损坏（RevisionIndex 契约）——捕获置位，不中断扫描。
+1043:     bool closureOk = false;
+1044:     revindex::CommittedClosure closure;
+1045:     try {
+1046:         closure = loader.committedClosure(head.revisionId);
+1047:         closureOk = true;
+1048:     } catch (const StoreError& e) {
+1049:         broken = true;
+1050:         brokenDetail = "project/tx-engine: 闭包行走失败 detail="
+1051:             + std::string(e.what());
+1052:         reportDev(std::string{"recovery-closure-failed "} + e.what());
+1053:     }
+1054: 
+1055:     if (closureOk) {
+1056:         // ---- 闭包行走成功 ⇒ 闭包成员的清单全部完好；挂账残缺目录必在
+1057:         // 闭包外＝未提交残留（§7.3；F4 边界的"有目录无清单"形态）。
+1058:         for (const auto& [rid, detail] : brokenDirs) {
+1059:             scan.uncommittedRevisions.push_back(rid);
+1060:             reportDev("recovery-uncommitted-broken-dir（闭包外目录清单残缺"
+1061:                       "——按残留归类） detail=" + detail);
+1062:         }
+1063: 
+1064:         // ---- §7.3 识别：磁盘修订目录集 ＼ 闭包集 ＝ 已发布但未提交
+1065:         //（对查询/历史浏览不可见——装载纪律只认闭包成员；这里产出其
+1066:         // 清单供恢复诊断与 PRJ-TX-9 断言）。
+1067:         std::set<std::string> inClosure;
+1068:         for (const RevisionId& id : closure.revisions) {
+1069:             inClosure.insert(id.toCanonical());
+1070:         }
+1071:         for (const auto& [dirName, rid] : onDisk) {
+1072:             if (inClosure.count(dirName) == 0) {
+1073:                 scan.uncommittedRevisions.push_back(rid);
+1074:             }
+1075:         }
+1076:         // 残留清单统一排序（map/挂账序均按规范文本有序，排序收敛两种
+1077:         // 来源——NFR-COR-02 确定性）。
+1078:         std::sort(scan.uncommittedRevisions.begin(),
+1079:                   scan.uncommittedRevisions.end());
+1080: 
+1081:         // ---- ④ 后半：闭包内全部对象引用做 size＋SHA-256 校验（§7.4④
+1082:         // "校验 HEAD 引用闭包完整性（对象/清单哈希）"——全量档）。清单
+1083:         // 哈希半边＝装载期 parse 拒绝（上文），对象半边在此。
+1084:         std::vector<objstore::ObjectKey> references;
+1085:         references.reserve(closure.revisions.size());
+1086:         for (const RevisionId& rid : closure.revisions) {
+1087:             const auto manifest = loader.tryRevision(rid);
+1088:             if (!manifest) {
+1089:                 continue;  // 不可达防御（闭包成员必已注册）
+1090:             }
+1091:             // 闭包成员引用的元数据若在挂账集中＝闭包损坏（定位细节随
+1092:             // 用户诊断 cause 上报——§7.4④"定位到文件"）。
+1093:             const auto failedMeta = failedMetaRefs.find(manifest->metadataRef);
+1094:             if (failedMeta != failedMetaRefs.end()) {
+1095:                 broken = true;
+1096:                 brokenDetail = failedMeta->second;
+1097:                 reportDev("recovery-closure-metadata-failed "
+1098:                           + failedMeta->second);
+1099:             }
+1100:             for (const ObjectRef& ref : manifest->objectRefs) {
+1101:                 references.push_back(objstore::ObjectKey{ref.objectId,
+1102:                                                          ref.contentVersion});
+1103:             }
+1104:         }
+1105:         const objstore::ObjectScanReport objReport =
+1106:             m_objects->scanObjects(references, true);
+1107:         if (!objReport.missingReferenced.empty()
+1108:             || !objReport.corruptReferenced.empty()) {
+1109:             broken = true;
+1110:             brokenDetail = "project/tx-engine: 闭包对象完整性失败 missing="
+1111:                 + std::to_string(objReport.missingReferenced.size())
+1112:                 + " corrupt="
+1113:                 + std::to_string(objReport.corruptReferenced.size());
+1114:             reportDev("recovery-object-integrity-failed missing="
+1115:                       + std::to_string(objReport.missingReferenced.size())
+1116:                       + " corrupt="
+1117:                       + std::to_string(objReport.corruptReferenced.size()));
+1118:         }
+1119:         // ---- ⑤ 悬挂对象计数（只读不删——GC 范围外，§4.1 objects 行）。
+1120:         scan.danglingObjectCount = objReport.danglingOnDisk.size();
+1121:         if (scan.danglingObjectCount > 0) {
+1122:             reportDev("recovery-dangling-objects count="
+1123:                       + std::to_string(scan.danglingObjectCount)
+1124:                       + "（闭包外对象——只读计数，不删除）");
+1125:         }
+1126:     } else {
+1127:         // 闭包不可计算：挂账元数据失败无法归类为"闭包内/外"——全部按
+1128:         // 开发诊断交底（损坏结论已由闭包失败承载，用户诊断单发不重复）。
+1129:         for (const auto& [ref, detail] : failedMetaRefs) {
+1130:             reportDev("recovery-metadata-load-failed " + detail);
+1131:         }
+1132:     }
+1133: 
+1134:     if (broken) {
+1135:         scan.headIntegrityVerified = false;
+1136:         // 用户级损坏诊断（PRJ-STORE-CORRUPT；定位细节随 record.cause）。
+1137:         emitReport(m_sink, makeStoreCorruptRecord(brokenDetail));
+1138:     } else {
+1139:         scan.headIntegrityVerified = true;
+1140:     }
+1141:     return scan;
+1142: }
+1143: 
+1144: HeadRecord TxEngine::readHead() const
+1145: {
+
+=== project.TxEngine.TxEngine.readHead ===
+{
+  "functionId": "project.TxEngine.TxEngine.readHead",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::readHead",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::readHead",
+      "startLine": 1144,
+      "endLine": 1158,
+      "sha256": "8776cd4cfcac5d5c0b4179a9634e9a02d1df9f50517c9cb8c36bb1b26e3573fa"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "readAllBytes+唯一codec parse，缺失StoreCorrupt，版本语义透传；不会自行核清单摘要",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+1141:     return scan;
+1142: }
+1143: 
+1144: HeadRecord TxEngine::readHead() const
+1145: {
+1146:     const auto bytes = readAllBytes(m_projectDir / "HEAD");
+1147:     if (!bytes) {
+1148:         // §4.1 HEAD 行"损坏/缺失＝CorruptStoreDetected（PM-02 读校验）"
+1149:         // ——缺失与损坏同落 store-corrupt（§4.4.8 token），不伪装成
+1150:         // "空项目"（新建项目走 createNew，不以缺 HEAD 形态存在）。
+1151:         throw StoreError(StoreErrorCode::StoreCorrupt,
+1152:                          "project/tx-engine: head-missing path="
+1153:                              + (m_projectDir / "HEAD").string());
+1154:     }
+1155:     // 解析拒绝（format-legacy/schema-future/store-corrupt）原样传播
+1156:     // ——版本判定语义归 Codec（§8.11），本层不重复实现。
+1157:     return codec::parseHeadRecord(*bytes);
+1158: }
+1159: 
+1160: // =====================================================================
+1161: // 诊断出口
+
+=== project.TxEngine.TxEngine.reportDev ===
+{
+  "functionId": "project.TxEngine.TxEngine.reportDev",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "TxEngine::reportDev",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::reportDev",
+      "startLine": 1164,
+      "endLine": 1171,
+      "sha256": "640a31e31b3fe99f53cdd4866194b52100c4c89b0201be8ea1eca077537a3576"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "IDiagnosticsSink开发通道project/tx-engine，不另造稳定码",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+1161: // 诊断出口
+1162: // =====================================================================
+1163: 
+1164: void TxEngine::reportDev(const std::string& message) const
+1165: {
+1166:     if (m_sink != nullptr) {
+1167:         // 通道 token 约定前缀 "project/"（§5.0——diagnostics 侧分流/脱敏
+1168:         // 路由依据）。
+1169:         m_sink->reportDev("project/tx-engine", message);
+1170:     }
+1171: }
+1172: 
+1173: }  // namespace sdurws::ird::project::tx
+
+=== project.TxEngine.~PhantomRegistrationGuard ===
+{
+  "functionId": "project.TxEngine.~PhantomRegistrationGuard",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "symbol": "~PhantomRegistrationGuard",
+      "qualifiedSymbol": "sdurws::ird::project::tx::TxEngine::commit::PhantomRegistrationGuard::~PhantomRegistrationGuard",
+      "startLine": 503,
+      "endLine": 508,
+      "sha256": "cb879faeffa285048174f10a41b676d3120eecaa0dc14b7b2f974244d59674c8"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "commit局部RAII只在HEAD切换前失败摘本次索引登记；未处理武装前异常的行为不能由注释推断",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+500:         const RevisionId& revId;
+501:         const ObjectRefPair& ref;
+502:         bool armed = true;
+503:         ~PhantomRegistrationGuard()
+504:         {
+505:             if (armed) {
+506:                 index->rollbackCommitRegistration(revId, ref);
+507:             }
+508:         }
+509:     } phantomGuard{m_index, newRevId, candidateRef};
+510: 
+511:     // =================================================================
+
+=== project.win32.AtomicFile.handleToResult ===
+{
+  "functionId": "project.win32.AtomicFile.handleToResult",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "handleToResult",
+      "qualifiedSymbol": "sdurws::ird::project::win32::handleToResult",
+      "startLine": 40,
+      "endLine": 56,
+      "sha256": "526edbeb87685f2133a02ecd24abea695643a383860e39df4163d07fd129181d"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "真实句柄INVALID_HANDLE_VALUE失败置null、GetLastError；成功显式0",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+37:  *               误用残留栈值）
+38:  * @return ok＝raw 是否为有效句柄；失败时 osError＝GetLastError()
+39:  */
+40: FileResult handleToResult(HANDLE raw, HANDLE* handle)
+41: {
+42:     if (raw == INVALID_HANDLE_VALUE) {
+43:         // 失败路径：句柄出参归零——调用方（含 RAII 守卫）无须再判断
+44:         // 哨兵值，"handle 仅在 ok==true 时有效"的契约得以成立。
+45:         *handle = nullptr;
+46:         FileResult r;
+47:         r.ok = false;
+48:         r.osError = ::GetLastError();
+49:         return r;
+50:     }
+51:     *handle = raw;
+52:     FileResult r;
+53:     r.ok = true;
+54:     r.osError = 0;  // 成功态错误码恒 0（FileResult 契约，消除残留歧义）
+55:     return r;
+56: }
+57: 
+58: /** @brief 由"API 是否成功"与 GetLastError 组装 FileResult（各步骤通用）。 */
+59: FileResult boolToResult(BOOL okFlag)
+
+=== project.win32.AtomicFile.boolToResult ===
+{
+  "functionId": "project.win32.AtomicFile.boolToResult",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "boolToResult",
+      "qualifiedSymbol": "sdurws::ird::project::win32::boolToResult",
+      "startLine": 59,
+      "endLine": 67,
+      "sha256": "eeab487bb23eabc51075787313d24f0a14c9d2d60ae4f80ef22dd7094bb973e1"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "只失败读取GetLastError，成功错误码归0，薄返回值适配",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+56: }
+57: 
+58: /** @brief 由"API 是否成功"与 GetLastError 组装 FileResult（各步骤通用）。 */
+59: FileResult boolToResult(BOOL okFlag)
+60: {
+61:     FileResult r;
+62:     r.ok = (okFlag != FALSE);
+63:     // 仅失败时读取 GetLastError：成功态显式置 0——GetLastError 在成功
+64:     // 路径上的返回值是未定义的残留（Win32 契约"仅失败时有意义"）。
+65:     r.osError = r.ok ? 0UL : static_cast<unsigned long>(::GetLastError());
+66:     return r;
+67: }
+68: 
+69: }  // namespace
+70: 
+
+=== project.win32.AtomicFile.Win32FileOps.openWriteThrough ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.openWriteThrough",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::openWriteThrough",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::openWriteThrough",
+      "startLine": 76,
+      "endLine": 91,
+      "sha256": "7b6549177a7bd2cefa298cb66a6984309c6fc2dd1170712c23a33bd3a8d93d7d"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "CreateFileW宽路径/独占/CREATE_ALWAYS/WRITE_THROUGH；仅暂存，不能由普通IOUtil替代持久化",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+73: // 各方法可并发调用——共享的只有 OS 句柄表，由句柄本身保证隔离）。
+74: // ---------------------------------------------------------------------
+75: 
+76: FileResult Win32FileOps::openWriteThrough(const std::wstring& path,
+77:                                           HANDLE* handle)
+78: {
+79:     // 固定打开形态（§7.2 行 1）：GENERIC_WRITE＋CREATE_ALWAYS＋
+80:     // FILE_FLAG_WRITE_THROUGH。FILE_FLAG_WRITE_THROUGH＝写穿透：系统
+81:     // 缓存旁路、写请求直达介质（Microsoft Learn：CreateFileW 的
+82:     // dwFlagsAndAttributes 说明）；它是 flush 闸门之外的持久性半边——
+83:     // 两者并用才构成 §7.1 第 2 步的完整暂存写持久化。
+84:     // 不附加 FILE_FLAG_OVERLAPPED：同步 I/O 模型，句柄不设事件语义。
+85:     HANDLE raw = ::CreateFileW(path.c_str(), GENERIC_WRITE, 0 /*不共享——
+86:                                暂存写独占打开，防并发读者见半文件*/,
+87:                                nullptr /*默认安全属性*/, CREATE_ALWAYS,
+88:                                FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH,
+89:                                nullptr /*无模板文件*/);
+90:     return handleToResult(raw, handle);
+91: }
+92: 
+93: FileResult Win32FileOps::writeChunk(HANDLE handle, const char* data,
+94:                                     std::size_t length)
+
+=== project.win32.AtomicFile.Win32FileOps.writeChunk ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.writeChunk",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::writeChunk",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::writeChunk",
+      "startLine": 93,
+      "endLine": 123,
+      "sha256": "aa7d54c246a5827fb9b33fc47bd9b781691acdecca63e09b9fd4c15f46922ccc"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "WriteFile同步DWORD长度，空块成功、短写失败；部分写时GetLastError残留风险需核，未实测",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+90:     return handleToResult(raw, handle);
+91: }
+92: 
+93: FileResult Win32FileOps::writeChunk(HANDLE handle, const char* data,
+94:                                     std::size_t length)
+95: {
+96:     if (length == 0) {
+97:         // 空块＝调用方边界（空文件暂存）：直接成功，不发起 WriteFile
+98:         // （WriteFile 对 0 长度行为不作为持久性口径依赖）。
+99:         FileResult r;
+100:         r.ok = true;
+101:         return r;
+102:     }
+103:     // Win32 WriteFile 以 DWORD 计数（32 位上限 4 GiB-1）：kWriteChunkSize
+104:     // 分块保证单次调用量恒小于该上限，length 参数无需再分段。
+105:     DWORD written = 0;
+106:     const BOOL okFlag = ::WriteFile(handle, data,
+107:                                     static_cast<DWORD>(length), &written,
+108:                                     nullptr /*同步 I/O，无 OVERLAPPED*/);
+109:     if (okFlag == FALSE || written != length) {
+110:         // 部分写（written < length 且无错误码）按失败处理：暂存写的
+111:         // 契约是"flush 前 n 个字节全部在介质上"，部分写无法对 flush
+112:         // 语义作出承诺——保守报错（§7.2 行 1 使用口径）。此时
+113:         // GetLastError 可能为 NO_ERROR（部分写无错误码），透传 0 并
+114:         // 以 ok=false 表达失败，事务层按写失败归类。
+115:         FileResult r;
+116:         r.ok = false;
+117:         r.osError = static_cast<unsigned long>(::GetLastError());
+118:         return r;
+119:     }
+120:     FileResult r;
+121:     r.ok = true;
+122:     return r;
+123: }
+124: 
+125: FileResult Win32FileOps::flush(HANDLE handle)
+126: {
+
+=== project.win32.AtomicFile.Win32FileOps.flush ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.flush",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::flush",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::flush",
+      "startLine": 125,
+      "endLine": 131,
+      "sha256": "61675f86a008761ecc5fdd8ba53f4a4ae5b76f25d88ae49c590aecd8b0255ada"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "直接FlushFileBuffers薄适配，调用失败透传",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+122:     return r;
+123: }
+124: 
+125: FileResult Win32FileOps::flush(HANDLE handle)
+126: {
+127:     // FlushFileBuffers："将指定文件的缓冲区刷写到磁盘"（Microsoft Learn）
+128:     // ——持久性闸门（§7.2 行 1）；对写穿透句柄仍需调用：写穿透旁路的是
+129:     // 写路径缓存，flush 承诺的是"本句柄此前全部写入已落盘"。
+130:     return boolToResult(::FlushFileBuffers(handle));
+131: }
+132: 
+133: FileResult Win32FileOps::closeHandle(HANDLE handle)
+134: {
+
+=== project.win32.AtomicFile.Win32FileOps.closeHandle ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.closeHandle",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::closeHandle",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::closeHandle",
+      "startLine": 133,
+      "endLine": 136,
+      "sha256": "13150d8037b51c112d9ceb4df2430dba3993fdff6eb6e40e821135ab19815dd6"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "直接CloseHandle薄适配",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+130:     return boolToResult(::FlushFileBuffers(handle));
+131: }
+132: 
+133: FileResult Win32FileOps::closeHandle(HANDLE handle)
+134: {
+135:     return boolToResult(::CloseHandle(handle));
+136: }
+137: 
+138: FileResult Win32FileOps::publishNew(const std::wstring& tempPath,
+139:                                     const std::wstring& targetPath)
+
+=== project.win32.AtomicFile.Win32FileOps.publishNew ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.publishNew",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::publishNew",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::publishNew",
+      "startLine": 138,
+      "endLine": 146,
+      "sha256": "359461fb0ede4c76b4218600efdebe670bc436478b2e380fac8970c68b204fd3"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "MoveFileExW无替换标志，目标在则拒绝；同卷由调用方保证",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+135:     return boolToResult(::CloseHandle(handle));
+136: }
+137: 
+138: FileResult Win32FileOps::publishNew(const std::wstring& tempPath,
+139:                                     const std::wstring& targetPath)
+140: {
+141:     // 只增发布（§7.2 行 2）：MoveFileExW 不带 MOVEFILE_REPLACE_EXISTING
+142:     // ——目标已存在时失败（ERROR_ALREADY_EXISTS），绝不覆盖；同卷 rename
+143:     // 为文件系统元数据操作，对其他进程呈现原子可见（旧名或新名，无中间态）。
+144:     return boolToResult(::MoveFileExW(tempPath.c_str(), targetPath.c_str(),
+145:                                       0 /*无标志＝不替换，只增*/));
+146: }
+147: 
+148: FileResult Win32FileOps::replaceExisting(const std::wstring& tempPath,
+149:                                          const std::wstring& targetPath)
+
+=== project.win32.AtomicFile.Win32FileOps.replaceExisting ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.replaceExisting",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::replaceExisting",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::replaceExisting",
+      "startLine": 148,
+      "endLine": 159,
+      "sha256": "542a1ed94e931e3541f3311c7fe3a0c866e888a93fd20c4596c6ed28cc0d6a28"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "MoveFileExW REPLACE_EXISTING|WRITE_THROUGH；不超诺同卷断电后必新值",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+145:                                       0 /*无标志＝不替换，只增*/));
+146: }
+147: 
+148: FileResult Win32FileOps::replaceExisting(const std::wstring& tempPath,
+149:                                          const std::wstring& targetPath)
+150: {
+151:     // 原子替换（§7.2 行 3）：REPLACE_EXISTING＝目标存在则整体替换；
+152:     // WRITE_THROUGH＝"函数在文件实际移动到磁盘后才返回"（Microsoft Learn：
+153:     // MoveFileEx）——覆盖以复制＋删除方式执行时的刷盘承诺。同卷 NTFS
+154:     // rename 自身的崩溃原子性依赖 NTFS 元数据日志，本层不超诺宣称
+155:     // （残余窗口由 §7 恢复协议兜底——PM-08）。
+156:     return boolToResult(
+157:         ::MoveFileExW(tempPath.c_str(), targetPath.c_str(),
+158:                       MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH));
+159: }
+160: 
+161: FileResult Win32FileOps::createDirectories(const std::wstring& path)
+162: {
+
+=== project.win32.AtomicFile.Win32FileOps.createDirectories ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.createDirectories",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::createDirectories",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::createDirectories",
+      "startLine": 161,
+      "endLine": 182,
+      "sha256": "8d8405b204a3e537bbc5e711ea66de31118cd8014c9343ffe4ee23b3c21e6df4"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "std filesystem error_code薄适配，幂等建父目录，不自写遍历器",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+158:                       MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH));
+159: }
+160: 
+161: FileResult Win32FileOps::createDirectories(const std::wstring& path)
+162: {
+163:     // 目录动作不走 Win32 API 而走 std::filesystem：递归补建（含缺失父级）
+164:     // 与跨平台错误码语义由标准库承载，本实现只做"失败即带码返回"的薄
+165:     // 封装（故障注入经接口接缝，见 IFileOps.hpp kCreateDirectories 登记）。
+166:     // 幂等：目标已存在＝无错误成功（create_directories 契约）。
+167:     std::error_code ec;
+168:     std::filesystem::create_directories(std::filesystem::path(path), ec);
+169:     if (ec) {
+170:         // error_code.value() 在 Windows（system 类别）＝OS 原生码
+171:         // （如 ERROR_ACCESS_DENIED＝5）——与 FileResult.osError 的
+172:         // "GetLastError 原始码"口径同源，事务层映射表可复用。
+173:         FileResult r;
+174:         r.ok = false;
+175:         r.osError = static_cast<unsigned long>(ec.value());
+176:         return r;
+177:     }
+178:     FileResult r;
+179:     r.ok = true;
+180:     r.osError = 0;
+181:     return r;
+182: }
+183: 
+184: FileResult Win32FileOps::removeTree(const std::wstring& path)
+185: {
+
+=== project.win32.AtomicFile.Win32FileOps.removeTree ===
+{
+  "functionId": "project.win32.AtomicFile.Win32FileOps.removeTree",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "Win32FileOps::removeTree",
+      "qualifiedSymbol": "sdurws::ird::project::win32::Win32FileOps::removeTree",
+      "startLine": 184,
+      "endLine": 200,
+      "sha256": "1bf3d7a7af561c0f14a207a033f32dee1aec718b148e0c8ef7fd170c69c6de08"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "std filesystem remove_all，临时清理幂等，非项目GC",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+181:     return r;
+182: }
+183: 
+184: FileResult Win32FileOps::removeTree(const std::wstring& path)
+185: {
+186:     // remove_all：递归删除目录树；目标不存在＝返回 0 且不置错误（幂等
+187:     // 清理语义——第 7 步清理与恢复扫描 tmp 清理都依赖"重复调用安全"）。
+188:     std::error_code ec;
+189:     std::filesystem::remove_all(std::filesystem::path(path), ec);
+190:     if (ec) {
+191:         FileResult r;
+192:         r.ok = false;
+193:         r.osError = static_cast<unsigned long>(ec.value());
+194:         return r;
+195:     }
+196:     FileResult r;
+197:     r.ok = true;
+198:     r.osError = 0;
+199:     return r;
+200: }
+201: 
+202: // ---------------------------------------------------------------------
+203: // AtomicFile——门面编排（唯一职责：把接口调用编排成"失败即中止、闸门
+
+=== project.win32.AtomicFile.AtomicFile.writeThrough ===
+{
+  "functionId": "project.win32.AtomicFile.AtomicFile.writeThrough",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::writeThrough",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough",
+      "startLine": 226,
+      "endLine": 294,
+      "sha256": "d656394b7d99482f4bf972bf1ed0602734b57ae490618c564c76b59c9f8bea7f"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "64KiB来源为既有头常量，开→分块写→flush→显式close；任一失败保留部分暂存，守卫不泄漏句柄",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+223:     }
+224: }
+225: 
+226: FileResult AtomicFile::writeThrough(const std::wstring& path,
+227:                                     const char* data, std::size_t length)
+228: {
+229:     // ---- 第 1 步：打开（故障点 open；失败即无文件，调用方路径上无残留）。
+230:     HANDLE handle = nullptr;
+231:     const FileResult openResult = m_ops->openWriteThrough(path, &handle);
+232:     if (!openResult.ok) {
+233:         return openResult;  // 打开失败：错误码透传，无任何半写（连文件都没有）
+234:     }
+235: 
+236:     // ---- RAII 句柄守卫：后续任何步骤失败/提前返回都必须关句柄。
+237:     // closeHandle 的返回值在守卫内被记住：若 flush 已成功而关闭失败，
+238:     // 整体仍报失败（保守方向——数据可能已落盘但本原语不作成功承诺，
+239:     // 调用方按失败处置＝放弃发布，安全侧出错；不会出现"报成功但句柄
+240:     // 异常"的误导性成功）。
+241:     struct HandleGuard {
+242:         IFileOps* ops;
+243:         HANDLE handle;
+244:         FileResult closeResult{};
+245:         bool dismissed = false;  // 正常收尾时抑制重复关闭
+246:         ~HandleGuard()
+247:         {
+248:             if (!dismissed && handle != nullptr) {
+249:                 closeResult = ops->closeHandle(handle);
+250:             }
+251:         }
+252:     } guard{m_ops, handle, {}, false};
+253: 
+254:     // ---- 第 2 步：分块写出全部字节（故障点 write-chunk——F2 写中途失败
+255:     // 的注入边界；块大小见 kWriteChunkSize 注释）。
+256:     std::size_t offset = 0;
+257:     while (offset < length) {
+258:         // 尾块不足 kWriteChunkSize 时取剩余量（min 手写避免 windows.h
+259:         // 的 min/max 宏与本编译单元内 STL 头的交互）。
+260:         const std::size_t chunk =
+261:             (length - offset < kWriteChunkSize) ? (length - offset)
+262:                                                 : kWriteChunkSize;
+263:         const FileResult writeResult =
+264:             m_ops->writeChunk(handle, data + offset, chunk);
+265:         if (!writeResult.ok) {
+266:             // 写中途失败：直接返回（守卫关句柄）。已写入部分**有意留在
+267:             // 磁盘上**＝暂存残留语义（§7.1 第 2 步"残留部分文件"）——
+268:             // 由启动恢复扫描忽略＋报告，本原语不删除（删除是新的失败面）。
+269:             return writeResult;
+270:         }
+271:         offset += chunk;
+272:     }
+273: 
+274:     // ---- 第 3 步：持久性闸门（故障点 flush）——FlushFileBuffers 成功
+275:     // 才允许调用方进入发布/替换（原子/持久性分离的时序表达：闸门失败
+276:     // 绝不进入可见性切换）。
+277:     const FileResult flushResult = m_ops->flush(handle);
+278:     if (!flushResult.ok) {
+279:         return flushResult;  // 闸门失败：字节已在文件里但未承诺持久——按失败处置
+280:     }
+281: 
+282:     // ---- 第 4 步：正常收尾关闭（守卫抑制，取真实关闭结果参与成败判定）。
+283:     guard.dismissed = true;
+284:     const FileResult closeResult = m_ops->closeHandle(handle);
+285:     if (!closeResult.ok) {
+286:         // flush 后关闭失败：极异常环境（句柄表损坏类），保守报失败——
+287:         // 事务层按暂存失败处置（残留被恢复扫描忽略），不会误提交。
+288:         return closeResult;
+289:     }
+290: 
+291:     FileResult r;
+292:     r.ok = true;
+293:     return r;
+294: }
+295: 
+296: FileResult AtomicFile::publishNew(const std::wstring& tempPath,
+297:                                   const std::wstring& targetPath)
+
+=== project.win32.AtomicFile.AtomicFile.publishNew ===
+{
+  "functionId": "project.win32.AtomicFile.AtomicFile.publishNew",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::publishNew",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::publishNew",
+      "startLine": 296,
+      "endLine": 303,
+      "sha256": "9e74836fa87776d176fc8b84de937ffb5335cb76b22e829d727cd3360f1a3690"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "委托唯一IFileOps::publishNew，业务共享判定归ObjectStore",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+293:     return r;
+294: }
+295: 
+296: FileResult AtomicFile::publishNew(const std::wstring& tempPath,
+297:                                   const std::wstring& targetPath)
+298: {
+299:     // 直通接口（§7.2 行 2 语义全部在实现与接口注释中）；不校验同卷——
+300:     // 发布发生在项目根内的同卷约束由调用方协议承担（§7.1 第 4 步），
+301:     // 跨卷时 MoveFileExW 返回失败并透传错误码，同样安全（不覆盖目标）。
+302:     return m_ops->publishNew(tempPath, targetPath);
+303: }
+304: 
+305: FileResult AtomicFile::replaceFile(const std::wstring& tempPath,
+306:                                    const std::wstring& targetPath)
+
+=== project.win32.AtomicFile.AtomicFile.replaceFile ===
+{
+  "functionId": "project.win32.AtomicFile.AtomicFile.replaceFile",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::replaceFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::replaceFile",
+      "startLine": 305,
+      "endLine": 311,
+      "sha256": "86c4478dfd1057740bd116db5f903de1b87cb5eb4926fc2d2e31503ac5f1d0ca"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "委托IFileOps::replaceExisting，提交点由上层指定",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+302:     return m_ops->publishNew(tempPath, targetPath);
+303: }
+304: 
+305: FileResult AtomicFile::replaceFile(const std::wstring& tempPath,
+306:                                    const std::wstring& targetPath)
+307: {
+308:     // 直通接口（§7.2 行 3）；本调用成功即调用方协议中的"唯一提交点"
+309:     // 成立——门面不加任何额外动作，保证提交点语义的单一性。
+310:     return m_ops->replaceExisting(tempPath, targetPath);
+311: }
+312: 
+313: }  // namespace sdurws::ird::project::win32
+
+=== project.AtomicFile.ctor.default ===
+{
+  "functionId": "project.AtomicFile.ctor.default",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::AtomicFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+      "startLine": 207,
+      "endLine": 214,
+      "sha256": "37289d62f5c8b1a4d3eb5890586cbc49bb99302ac470a97185b57732dec2e79f"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "生产构造引用函数级静态无状态Win32FileOps，非owning，C++11初始化线程安全",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+204: // 先行"的时序；所有业务语义见头文件各方法注释）。
+205: // ---------------------------------------------------------------------
+206: 
+207: AtomicFile::AtomicFile()
+208:     : m_ops(nullptr)
+209: {
+210:     // 函数级静态：无状态实现对象的进程级共享实例（C++11 magic static
+211:     // 保证并发初始化安全）；m_ops 在此装配，绕过非静态成员初始化次序问题。
+212:     static Win32FileOps sharedRealOps;
+213:     m_ops = &sharedRealOps;
+214: }
+215: 
+216: AtomicFile::AtomicFile(IFileOps* ops) : m_ops(ops)
+217: {
+
+=== project.AtomicFile.ctor.injected ===
+{
+  "functionId": "project.AtomicFile.ctor.injected",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "AtomicFile::AtomicFile",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::AtomicFile",
+      "startLine": 216,
+      "endLine": 224,
+      "sha256": "063780cb253cfe351e8547e5b267347acc967fab5f642f8037d959e38146e905"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "注入构造拒null，由注入方保活，无第二文件后端",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+213:     m_ops = &sharedRealOps;
+214: }
+215: 
+216: AtomicFile::AtomicFile(IFileOps* ops) : m_ops(ops)
+217: {
+218:     // 空接缝＝调用方契约违约（测试装配错误），fail-fast 而非空指针解引用。
+219:     // 项目诊断码体系面向环境错误；本分支属编程错误，直接异常终止。
+220:     if (ops == nullptr) {
+221:         throw std::invalid_argument(
+222:             "AtomicFile: IFileOps 注入不得为空（接缝契约——testkit.md D-10）");
+223:     }
+224: }
+225: 
+226: FileResult AtomicFile::writeThrough(const std::wstring& path,
+227:                                     const char* data, std::size_t length)
+
+=== project.win32.AtomicFile.~HandleGuard ===
+{
+  "functionId": "project.win32.AtomicFile.~HandleGuard",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/win32/AtomicFile.cpp",
+      "symbol": "~HandleGuard",
+      "qualifiedSymbol": "sdurws::ird::project::win32::AtomicFile::writeThrough::HandleGuard::~HandleGuard",
+      "startLine": 246,
+      "endLine": 251,
+      "sha256": "7991d73a0efd283814abfcbc6076510b6c7994bc324c142e702b94a122dcf2c3"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "writeThrough提前返回时真实关句柄，正常close前dismiss；析构写closeResult不传播首次失败，保留主要错误",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+243:         HANDLE handle;
+244:         FileResult closeResult{};
+245:         bool dismissed = false;  // 正常收尾时抑制重复关闭
+246:         ~HandleGuard()
+247:         {
+248:             if (!dismissed && handle != nullptr) {
+249:                 closeResult = ops->closeHandle(handle);
+250:             }
+251:         }
+252:     } guard{m_ops, handle, {}, false};
+253: 
+254:     // ---- 第 2 步：分块写出全部字节（故障点 write-chunk——F2 写中途失败
+
+=== project.CommandServiceImpl.CommandServiceImpl.submit ===
+{
+  "functionId": "project.CommandServiceImpl.CommandServiceImpl.submit",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/CommandServiceImpl.cpp",
+      "symbol": "CommandServiceImpl::submit",
+      "qualifiedSymbol": "sdurws::ird::project::CommandServiceImpl::submit",
+      "startLine": 169,
+      "endLine": 221,
+      "sha256": "0b4fd5b8104be7f2d89951ff1a84ce05d62e5214a494ed07b1fc11074a7ec006"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "命令槽串行，acquireInFlight在try前，随后S1/S2/executePlan；仅StoreError值化，其他异常透传；排队关闭并发未跑，不假设提交/算法归runtime",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+166: // submit——S1～S7 线性编排（§6.1 生命周期原文的逐步落地）
+167: // =====================================================================
+168: 
+169: CommandResult CommandServiceImpl::submit(const CommandEnvelope& envelope,
+170:                                          ICommandInteraction* interaction)
+171: {
+172:     // ---- 命令执行槽（§6.1"每存储上下文一个命令执行槽（互斥）"）：
+173:     //      全程持锁——S3～S6 的处理器代码、确认等待与编译都在槽内；
+174:     //      并发 submit 在此排队（PRJ-TX-1"第二个等待"）。
+175:     std::lock_guard<std::mutex> slotGuard(m_slot);
+176: 
+177:     // ---- 在途票据（§9.7 引用持有者清单）：本命令在途期间 requestClose
+178:     //      的排空等待不完成——票据析构（本函数任何返回路径）释放引用并
+179:     //      可能触发排空收尾。票据在槽内获取、随栈帧析构——生命周期与
+180:     //      命令严格同界。
+181:     std::shared_ptr<void> inFlight = m_host.acquireInFlight();
+182: 
+183:     CommandResult result;
+184:     ICommandHandler* handler = nullptr;
+185:     RevisionView baseView;
+186: 
+187:     // ---- StoreError 的统一映射面（私有头实现口径②）：S1～S6 的查询/
+188:     //      门卫/事务失败在此收敛——ContextClosed＝执行中被关闭（§6.7
+189:     //      排空中止）；其余环境/数据侧码＝Failed 透传。处理器与 core 的
+190:     //      非 StoreError 异常不捕获（处理器缺陷＝调用方错误 fail-fast——
+191:     //      §5.3.2 契约"不吞不改"）。
+192:     try {
+193:         // [S1] 形式校验（type→payload 版本→branch→writable）。
+194:         if (!runFormChecks(envelope, interaction, handler, result)) {
+195:             return result;
+196:         }
+197:         // [S2] 基线解析与并发校验（expectedRevision vs tip——§6.2）。
+198:         if (!resolveBaseline(envelope, baseView, result)) {
+199:             return result;
+200:         }
+201:         // [S3] prepare ／ [S4] 确认放行 ／ [S5] 双编译 ／ [S6] 事务提交
+202:         // （S7 事件发布在事务第 6 步内——TxEngine，D-18 口径）。
+203:         executePlan(envelope, *handler, baseView, interaction, result);
+204:         return result;
+205:     } catch (const StoreError& e) {
+206:         // 失败重建结果（半填充的中间态不外泄——Result 四态互斥）。
+207:         result = CommandResult{};
+208:         if (e.code() == StoreErrorCode::ContextClosed) {
+209:             // 执行中排空（门卫拒绝）＝中止而非拒绝：命令已过 S1 形式
+210:             // 校验、被会话关闭打断（§6.7"context-closing 路径"）。
+211:             // error 保留原码供开发定位（Aborted 面附 error＝实现口径②）。
+212:             result.status.kind = CommandStatus::Kind::Aborted;
+213:             result.status.abort = CommandStatus::Abort::ContextClosing;
+214:             result.error = e;
+215:             return result;
+216:         }
+217:         result.status.kind = CommandStatus::Kind::Failed;
+218:         result.error = e;
+219:         return result;
+220:     }
+221: }
+222: 
+223: // =====================================================================
+224: // S1 形式校验（§6.1 步 1；§6.3 前两行的拒绝落点）
+
+=== project.QueryPortImpl.QueryPortImpl.branchTips ===
+{
+  "functionId": "project.QueryPortImpl.QueryPortImpl.branchTips",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+      "symbol": "QueryPortImpl::branchTips",
+      "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchTips",
+      "startLine": 322,
+      "endLine": 345,
+      "sha256": "7a668dcabc3da7e3589adfd6e4f8ab9cbcb2c3e10a63be24e9ac5b620a28b2c3"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "writer锁内权威metadata快照，锁外投影保留branches磁盘序，非WorkCell视图",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+319:     return result;
+320: }
+321: 
+322: std::vector<BranchTip> QueryPortImpl::branchTips() const
+323: {
+324:     requireOpen();
+325:     // 锁内快照权威元数据，锁外投影分支表（BranchTip 是纯值投影，
+326:     // 不再触碰存储）。
+327:     ProjectMetadataRecord authoritative;
+328:     {
+329:         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+330:         authoritative = m_host.m_authoritative;
+331:     }
+332:     // 保持权威元数据 branches 数组的磁盘序：该序由 deriveNextMetadata
+333:     // 逐字继承（D-5），随提交稳定，同磁盘状态必得同输出（NFR-COR-02）。
+334:     std::vector<BranchTip> tips;
+335:     tips.reserve(authoritative.branches.size());
+336:     for (const BranchRecord& b : authoritative.branches) {
+337:         BranchTip tip;
+338:         tip.id = b.branchId;
+339:         tip.label = b.label;
+340:         tip.base = b.baseRevisionId;
+341:         tip.tip = b.tipRevisionId;  // 权威版本的 tip（INV-M3——不取自历史元数据）
+342:         tips.push_back(std::move(tip));
+343:     }
+344:     return tips;
+345: }
+346: 
+347: std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
+348:                                                        std::uint32_t maxCount) const
+
+=== project.QueryPortImpl.QueryPortImpl.branchHistory ===
+{
+  "functionId": "project.QueryPortImpl.QueryPortImpl.branchHistory",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/QueryPortImpl.cpp",
+      "symbol": "QueryPortImpl::branchHistory",
+      "qualifiedSymbol": "sdurws::ird::project::QueryPortImpl::branchHistory",
+      "startLine": 347,
+      "endLine": 394,
+      "sha256": "e3b54e863655e0253cb14db62c6a958c682108270fe6e5eb77de1b6278453940"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "从权威tip锁外沿不可变parent读，maxCount0空、unknown invalid_argument、悬挂StoreCorrupt；reserve(maxCount)资源上限/索引访问并发需原回归",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+344:     return tips;
+345: }
+346: 
+347: std::vector<RevisionView> QueryPortImpl::branchHistory(core::BranchId branch,
+348:                                                        std::uint32_t maxCount) const
+349: {
+350:     requireOpen();
+351: 
+352:     // 第一步（一致性窗口内）：自权威元数据取该分支 tip（§5.2 表前置
+353:     // "分支存在于权威元数据"；INV-M3——tip 一律取自 HEAD 引用版本，
+354:     // 禁止经历史修订的元数据重建）。分支不存在＝调用方违约 → fail-fast
+355:     // （实现口径 3：封闭集无对应稳定码，不私扩）。
+356:     core::RevisionId tip{};
+357:     {
+358:         std::lock_guard<std::mutex> writerLock(m_host.m_writerMutex);
+359:         const auto found = revindex::RevisionIndex::branchTip(m_host.m_authoritative,
+360:                                                               branch);
+361:         if (!found.has_value()) {
+362:             throw std::invalid_argument(
+363:                 "project/query: unknown branch branch=" + branch.toCanonical()
+364:                 + "（§5.2 表：未知分支抛——调用方契约违约）");
+365:         }
+366:         tip = *found;
+367:     }
+368: 
+369:     // 平凡请求：maxCount==0 → 空列表（字面语义"最多 0 条"；实现口径）。
+370:     std::vector<RevisionView> history;
+371:     if (maxCount == 0) {
+372:         return history;
+373:     }
+374: 
+375:     // 第二步（锁外沿链）：自 tip 沿 parent 逐级回溯至首修订或凑满
+376:     // maxCount。已提交修订一经索引注册永在且不可变（PA-2——索引只增
+377:     // 无删除），锁外查索引安全；分支 tip 维度的 parent 语义保证只含
+378:     // 本分支提交（§4.5——其他分支的提交不在本链上）。
+379:     history.reserve(maxCount);
+380:     std::optional<core::RevisionId> current = tip;
+381:     while (current.has_value() && history.size() < maxCount) {
+382:         const auto manifest = m_host.m_index->tryRevision(*current);
+383:         if (!manifest.has_value()) {
+384:             // parent 链悬挂＝装载不完整/存储损坏——数据侧（打开闭包
+385:             // 校验正常不可达，防御性拒绝）。
+386:             throw StoreError(StoreErrorCode::StoreCorrupt,
+387:                              "project/query: branch history dangling parent revision="
+388:                                  + current->toCanonical());
+389:         }
+390:         history.push_back(assembleView(*manifest));
+391:         current = manifest->parentRevisionId;
+392:     }
+393:     return history;
+394: }
+395: 
+396: // =====================================================================
+397: // 对象读取（§4.6——惰性＋缓存＋首读校验；预算随打开请求注入）
+
+=== project.ArchiveServiceImpl.readSmallFile ===
+{
+  "functionId": "project.ArchiveServiceImpl.readSmallFile",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "readSmallFile",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::readSmallFile",
+      "startLine": 70,
+      "endLine": 89,
+      "sha256": "5b9bc44a49afe2689049f69d06f2f62050cd2a622b32177a50262d91586d4dce"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "UTIL-FILE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "std ifstream二进制整读，exists/open/bad返回nullopt，空文件合法，和其他读helper有重复但错误语义不同；IOUtil候选要核宽路径/int长度/异常",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+67:  * @param file [in] 目标文件路径
+68:  * @return 文件字节；I/O 失败＝nullopt
+69:  */
+70: std::optional<std::string> readSmallFile(const std::filesystem::path& file)
+71: {
+72:     std::error_code ec;
+73:     // 存在性先行：ifstream 打开失败无法区分"不存在"与"权限拒绝"，两
+74:     // 者对校验流程的处置一致（＝该候选不可用），合并为 nullopt。
+75:     if (!std::filesystem::exists(file, ec) || ec) {
+76:         return std::nullopt;
+77:     }
+78:     std::ifstream in(file, std::ios::binary);
+79:     if (!in) {
+80:         return std::nullopt;
+81:     }
+82:     std::string bytes{std::istreambuf_iterator<char>(in),
+83:                       std::istreambuf_iterator<char>()};
+84:     if (in.bad()) {
+85:         // 读中途 I/O 错误（网络盘抖动等）——半截内容不能当完整文件用。
+86:         return std::nullopt;
+87:     }
+88:     return bytes;
+89: }
+90: 
+91: /**
+92:  * @brief Win32 原始错误码 → 稳定错误码映射（归档 I/O 面）。
+
+=== project.ArchiveServiceImpl.mapOsError ===
+{
+  "functionId": "project.ArchiveServiceImpl.mapOsError",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "mapOsError",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::mapOsError",
+      "startLine": 103,
+      "endLine": 112,
+      "sha256": "da1756e15411897ebc4c80e938e6c6a0a0e01ca17faef3e8681be6f8dd784269"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "真实SDK ERROR_DISK_FULL/ACCESS_DENIED映射，可供错误数字表收口候选；当前无quota单列，需保留精确码语义",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+100:  * @param osError [in] FileResult / std::error_code 携带的 Win32 原始码
+101:  * @return 稳定错误码
+102:  */
+103: StoreErrorCode mapOsError(unsigned long osError)
+104: {
+105:     if (osError == ERROR_DISK_FULL) {
+106:         return StoreErrorCode::DiskFull;
+107:     }
+108:     if (osError == ERROR_ACCESS_DENIED) {
+109:         return StoreErrorCode::AccessDenied;
+110:     }
+111:     return StoreErrorCode::WriteRejected;
+112: }
+113: 
+114: /**
+115:  * @brief Windows 保留设备名判定（relPath 末分量防线之一——写入 "CON"
+
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.finalize ===
+{
+  "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.finalize",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::finalize",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::finalize",
+      "startLine": 853,
+      "endLine": 1065,
+      "sha256": "9d364b4a1c6b6a5ae7074f1d7ebc11a8156243440180db58b64bc721d763979c"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "task/manifest/写权→canonical摘要→writer锁内终局复核/幂等→文件size+core摘要→原子manifest→终结事件票据；writerGuard仍在作用域，锁外注释非锁序证明",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+850: // finalize——manifest 原子发布＝完整判据（D-13；D-14 幂等/冲突）
+851: // =====================================================================
+852: 
+853: ArchiveStatus ArchiveServiceImpl::finalize(ArchiveSessionRef session,
+854:                                            const RunManifest& manifest)
+855: {
+856:     // 会话解析（空/未知/已终结＝fail-fast）＋调用方契约校验：
+857:     const std::shared_ptr<ArchiveSessionState> state
+858:         = resolveActiveSession(session);
+859:     // taskIdentity 与会话五元组一致（会话绑定 begin 登记事实——finalize
+860:     // 不得改写；不符＝调用方契约违约）。
+861:     if (!(manifest.taskIdentity == state->task)) {
+862:         throw std::invalid_argument(
+863:             "project/archive: manifest.taskIdentity 与会话五元组不一致");
+864:     }
+865:     validateManifestFields(manifest);
+866: 
+867:     // 失权防护（§9.6②——同 writeBatch）。
+868:     if (!requireWriteAuthority("finalize")) {
+869:         return ArchiveStatus{
+870:             false,
+871:             StoreError{StoreErrorCode::WriteRejected,
+872:                        "project/archive: write authority check failed"
+873:                        "（finalize——句柄已释放或已失权）"}};
+874:     }
+875: 
+876:     // ---- 第 1 步（锁外，纯 CPU）：manifestDigest 计算（实现口径③——
+877:     // 编码归 project，§4.8；调用方该字段不参与）。摘要同时用于发布
+878:     // 字节与幂等判定；canonical 编码的 UTF-8 契约违约（runKind 等
+879:     // 理论上 ASCII——防御面）在此抛 invalid_argument 透传。
+880:     RunManifest out = manifest;
+881:     out.manifestDigest = computeManifestDigestHex(manifest);
+882:     const std::string canonical = codec::dump(out);
+883: 
+884:     // ---- writer 互斥段（§9.8——磁盘核验与发布原子于互斥内：并发
+885:     // finalize/abandon/批次写在互斥外排队，终局以本段为准）。
+886:     const std::lock_guard<std::mutex> writerGuard(m_host.m_writerMutex);
+887: 
+888:     // F-805：终局仲裁复核（锁内——abandon 已同取本锁，两终局路径自此
+889:     // 串行化）：会话若已被 abandon 终结（登记摘除），finalize 失去发布
+890:     // 资格——诚实走 not-ok 值轨，不再为已终结会话发布 manifest（「先到
+891:     // 者定终局」自注释承诺变锁内事实；修复前本复核缺席，abandon 先至时
+892:     // 本函数仍继续发布＝已弃运程变完整运程）。
+893:     {
+894:         std::lock_guard<std::mutex> guard(m_sessionsMutex);
+895:         if (m_sessions.find(state.get()) == m_sessions.end()) {
+896:             return ArchiveStatus{
+897:                 false,
+898:                 StoreError{StoreErrorCode::WriteRejected,
+899:                            "project/archive: 会话已终结（abandon 先至定终局"
+900:                            "——finalize 失去发布资格，F-805）"}};
+901:         }
+902:     }
+903: 
+904:     // 第 2 步：同 run 已有 manifest 的 D-14 摘要比对（§10.1"重投递幂等
+905:     // 与内容冲突"行）。比对先于磁盘核验（顺序语义）：manifest 在＝该
+906:     // 运行已完整（D-13），重投递只与"已发布事实"比对——摘要一致＝幂等、
+907:     // 不一致＝冲突；磁盘核验仅把守发布路径（无 manifest 时才需要——
+908:     // 否则"声明了未写入文件"的分歧重投递会被误判为 store-corrupt 而非
+909:     // archive-conflict）。
+910:     const std::filesystem::path manifestFile
+911:         = state->runDir / std::string{kManifestFileName};
+912:     std::error_code ec;
+913:     if (std::filesystem::exists(manifestFile, ec) && !ec) {
+914:         const auto bytes = readSmallFile(manifestFile);
+915:         if (!bytes.has_value()) {
+916:             return ArchiveStatus{
+917:                 false,
+918:                 StoreError{StoreErrorCode::StoreCorrupt,
+919:                            "project/archive: 既有 manifest 不可读 path="
+920:                                + manifestFile.string()}};
+921:         }
+922:         RunManifest existing;
+923:         try {
+924:             existing = codec::parseRunManifest(*bytes);
+925:         } catch (const StoreError& e) {
+926:             return ArchiveStatus{
+927:                 false,
+928:                 StoreError{StoreErrorCode::StoreCorrupt,
+929:                            "project/archive: 既有 manifest 解析拒绝 path="
+930:                                + manifestFile.string() + " detail="
+931:                                + e.what()}};
+932:         }
+933:         // 幂等判据＝既有摘要 vs 本次重算摘要（同一摘要函数下等价于
+934:         // "内容全同"）。一致＝幂等成功：不重写磁盘、不重复发布事件
+935:         // （实现口径⑥——进程内总线恰一次），会话终结释放引用。
+936:         if (existing.manifestDigest == out.manifestDigest) {
+937:             reportDev("project/archive",
+938:                       "finalize idempotent（D-14 摘要一致——不重写） run="
+939:                           + state->task.run.toCanonical());
+940:             endSession(state, true);
+941:             return ArchiveStatus{true, std::nullopt};
+942:         }
+943:         // 不一致＝冲突拒绝＋PRJ-ARCHIVE-CONFLICT（数据分歧不掩盖，既有
+944:         // manifest 不覆盖）；会话不终结（调用方按任务状态机处置）。
+945:         if (m_host.m_sink != nullptr) {
+946:             try {
+947:                 m_host.m_sink->report(diagrec::makeArchiveConflict(
+948:                     "project/archive: manifest 摘要冲突 run="
+949:                         + state->task.run.toCanonical()));
+950:             } catch (...) {
+951:             }
+952:         }
+953:         return ArchiveStatus{
+954:             false,
+955:             StoreError{StoreErrorCode::ArchiveConflict,
+956:                        "project/archive: 同 attempt 重投递 manifest 内容"
+957:                        "不一致（D-14 冲突拒绝） run="
+958:                            + state->task.run.toCanonical()}};
+959:     }
+960:     if (ec) {
+961:         return ArchiveStatus{
+962:             false,
+963:             StoreError{mapOsError(static_cast<unsigned long>(ec.value())),
+964:                        "project/archive: stat manifest failed path="
+965:                            + manifestFile.string() + " osError="
+966:                            + std::to_string(ec.value())}};
+967:     }
+968: 
+969:     // 第 3 步：items 逐条对照磁盘（实现口径④——manifest 是"完整"的
+970:     // 声明（D-13），不发布与磁盘不符的声明（O-12 完整性发布义务）；
+971:     // 不符＝StoreCorrupt（数据侧），会话不终结（调用方可修复后重试或
+972:     // abandon）。仅发布路径到达此处（manifest 缺席——第 2 步已分流）。
+973:     for (const RunManifestItem& item : out.items) {
+974:         const std::filesystem::path file
+975:             = state->runDir / relPathToPath(item.relPath);
+976:         const auto bytes = readSmallFile(file);
+977:         if (!bytes.has_value()) {
+978:             reportDev("project/archive",
+979:                       "finalize verify failed（批次文件缺失/不可读） relPath="
+980:                           + item.relPath);
+981:             return ArchiveStatus{
+982:                 false,
+983:                 StoreError{StoreErrorCode::StoreCorrupt,
+984:                            "project/archive: manifest 条目缺失或不可读"
+985:                            " relPath=" + item.relPath}};
+986:         }
+987:         if (bytes->size() != item.sizeBytes) {
+988:             reportDev("project/archive",
+989:                       "finalize verify failed（size 不符） relPath="
+990:                           + item.relPath + " disk="
+991:                           + std::to_string(bytes->size()) + " declared="
+992:                           + std::to_string(item.sizeBytes));
+993:             return ArchiveStatus{
+994:                 false,
+995:                 StoreError{StoreErrorCode::StoreCorrupt,
+996:                            "project/archive: manifest 条目 size 与磁盘不符"
+997:                            " relPath=" + item.relPath}};
+998:         }
+999:         const core::ContentVersion diskDigest
+1000:             = codec::contentVersionOf(*bytes);
+1001:         // 声明 hex 与磁盘字节实算摘要比对（cv- 前缀剥离后逐字符——
+1002:         // CR-02：声明的摘要只透传不重算，实算对象是磁盘字节）。
+1003:         if (diskDigest.toCanonical().substr(3) != item.sha256) {
+1004:             reportDev("project/archive",
+1005:                       "finalize verify failed（sha256 不符） relPath="
+1006:                           + item.relPath);
+1007:             return ArchiveStatus{
+1008:                 false,
+1009:                 StoreError{StoreErrorCode::StoreCorrupt,
+1010:                            "project/archive: manifest 条目 sha256 与磁盘不符"
+1011:                            " relPath=" + item.relPath}};
+1012:         }
+1013:     }
+1014: 
+1015:     // 第 4 步：原子发布（§4.1 results 行"manifest 原子替换"；§7.2 行 3
+1016:     // ——write-through 暂存→replaceFile 原子就位＝D-13 提交点：发布前
+1017:     // 目录"不完整"、发布后"完整"，读者只见其一）。失败即返回环境错误，
+1018:     // 会话不终结（manifest 缺失＝仍不完整——失败不产生"假完整"）。
+1019:     const std::wstring temp = tempPathOf(manifestFile);
+1020:     const auto written
+1021:         = m_file.writeThrough(temp, canonical.data(), canonical.size());
+1022:     if (!written.ok) {
+1023:         std::error_code rmEc;
+1024:         std::filesystem::remove(temp, rmEc);
+1025:         reportDev("project/archive",
+1026:                   "finalize temp cleanup after write-failure file="
+1027:                       + manifestFile.string() + " osError="
+1028:                       + std::to_string(written.osError));
+1029:         return ArchiveStatus{
+1030:             false,
+1031:             StoreError{mapOsError(written.osError),
+1032:                        "project/archive: manifest writeThrough failed"}};
+1033:     }
+1034:     const auto published
+1035:         = m_file.replaceFile(temp, manifestFile.wstring());
+1036:     if (!published.ok) {
+1037:         std::error_code rmEc;
+1038:         std::filesystem::remove(temp, rmEc);
+1039:         reportDev("project/archive",
+1040:                   "finalize publish failed file=" + manifestFile.string()
+1041:                       + " osError=" + std::to_string(published.osError));
+1042:         return ArchiveStatus{
+1043:             false,
+1044:             StoreError{mapOsError(published.osError),
+1045:                        "project/archive: manifest 原子发布失败"}};
+1046:     }
+1047: 
+1048:     // ---- 第 5 步：终结→事件→票据释放（§10.2 流程序：manifest 发布＝
+1049:     // 完成事实→ResultArchived 事件→引用释放→（排空归零则）Closed）。
+1050:     // 锁内置态摘登记（幂等面收敛），事件在终结态下发布（观察者看到的
+1051:     // 已是"已归档"事实），票据最后锁外释放（排空触发点——锁序纪律）。
+1052:     {
+1053:         std::lock_guard<std::mutex> guard(m_sessionsMutex);
+1054:         state->finalized = true;
+1055:         state->ended = true;
+1056:         m_sessions.erase(state.get());
+1057:     }
+1058:     reportDev("project/archive",
+1059:               "finalize ok run=" + state->task.run.toCanonical()
+1060:                   + " manifest=" + manifestFile.string());
+1061:     publishResultArchived(state->task);
+1062:     state->inFlight.reset();  // 锁外释放（§9.7——排空归零的触发点之一）
+1063: 
+1064:     return ArchiveStatus{true, std::nullopt};
+1065: }
+1066: 
+1067: // =====================================================================
+1068: // abandon——全路径责任终结（§10.1"不存在永久等待"）
+
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.endSession ===
+{
+  "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.endSession",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::endSession",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::endSession",
+      "startLine": 455,
+      "endLine": 470,
+      "sha256": "173a438b768cde359221d64ecddba797f7b1e83e0d204fdac2af487c0d61068e"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "sessions锁内置态摘登记并移动ticket，sessions锁外reset；调用者可能仍持writer锁，不宣称所有锁已释放",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+452:     }
+453: }
+454: 
+455: void ArchiveServiceImpl::endSession(
+456:     const std::shared_ptr<ArchiveSessionState>& state, bool finalized)
+457: {
+458:     // 终结收尾（ArchiveServiceImpl.hpp 契约）：锁内置态＋摘登记，锁外
+459:     // 释放票据——删除器可能使宿主排空归零并完成关闭（PRJ-TX-8 的
+460:     // "完成后才 Closed"触发点），该路径不得在本类锁内发生（锁序纪律）。
+461:     std::shared_ptr<void> ticket;
+462:     {
+463:         std::lock_guard<std::mutex> guard(m_sessionsMutex);
+464:         state->finalized = finalized;
+465:         state->ended = true;
+466:         m_sessions.erase(state.get());
+467:         ticket = std::move(state->inFlight);
+468:     }
+469:     ticket.reset();  // 释放＝引用归零（排空完成的触发点之一，§9.7）
+470: }
+471: 
+472: void ArchiveServiceImpl::publishResultArchived(
+473:     const core::TaskIdentity& task) const noexcept
+
+=== project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived ===
+{
+  "functionId": "project.ArchiveServiceImpl.ArchiveServiceImpl.publishResultArchived",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ArchiveServiceImpl.cpp",
+      "symbol": "ArchiveServiceImpl::publishResultArchived",
+      "qualifiedSymbol": "sdurws::ird::project::ArchiveServiceImpl::publishResultArchived",
+      "startLine": 472,
+      "endLine": 500,
+      "sha256": "9dbf0fd9135572072720e5d0ea94fa4179123acb9f7d310407bd98124db0ac1c"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "core事件payload只带TaskIdentity，无路径；既有bus两次重试，noexcept但事件make在try前需审异常保证",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+469:     ticket.reset();  // 释放＝引用归零（排空完成的触发点之一，§9.7）
+470: }
+471: 
+472: void ArchiveServiceImpl::publishResultArchived(
+473:     const core::TaskIdentity& task) const noexcept
+474: {
+475:     // 总线可空＝跳过事件步（§5.1 装配口径——测试/无装配场景）。
+476:     if (m_host.m_eventBus == nullptr) {
+477:         return;
+478:     }
+479:     // ResultArchived 载荷只携五元组（core §4.9：事件不携路径——消费方
+480:     // 经登记记录/端口取数）。make 工厂补 id/emittedAtUtc（core 契约——
+481:     // P-PR-1 消费基线 v0.1，零 core 修改）。
+482:     core::ResultArchivedPayload payload;
+483:     payload.task = task;
+484:     const core::DomainEvent event = core::DomainEvent::make(payload);
+485:     // 失败重试一次＋开发诊断（D-18 同源口径——事件非数据源，归档完成
+486:     // 事实不受影响；首败即诊断，重试再败注明不回滚）。绝不抛出。
+487:     for (int attempt = 0; attempt < 2; ++attempt) {
+488:         try {
+489:             m_host.m_eventBus->publish(event);
+490:             return;
+491:         } catch (const std::exception& e) {
+492:             reportDev("project/archive",
+493:                       std::string{"event-publish-failed（"}
+494:                           + (attempt == 0 ? "首败——按协议重试一次"
+495:                                           : "重试后仍失败——不影响归档完成，"
+496:                                             "D-18")
+497:                           + "） event=result-archived error=" + e.what());
+498:         }
+499:     }
+500: }
+501: 
+502: // =====================================================================
+503: // begin——归档预留与运行目录创建（§5.6 校验清单＋§4.1 results 行）
+
+=== project.ProjectStoreImpl.loadCommittedState ===
+{
+  "functionId": "project.ProjectStoreImpl.loadCommittedState",
+  "ownerUnit": "project",
+  "requirements": [
+    "CON-01",
+    "CON-05",
+    "PM-08",
+    "NFR-REL-01"
+  ],
+  "sources": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/ProjectStoreImpl.cpp",
+      "symbol": "loadCommittedState",
+      "qualifiedSymbol": "sdurws::ird::project::(anonymous namespace)::loadCommittedState",
+      "startLine": 519,
+      "endLine": 632,
+      "sha256": "c09cbc34f7f354f220cdd6fc81bb1d269ce5c5d8c32cd8e96b299ea2f6415c4d"
+    }
+  ],
+  "targets": [
+    "sdurws_ird_project"
+  ],
+  "usageRole": "owner",
+  "permissionRef": "ARCH:3.6",
+  "capabilityId": "NONE",
+  "decision": "pending",
+  "status": "pending",
+  "search": {
+    "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
+    "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
+  },
+  "differences": "scan预检后真实装载修订/metadata，核projectId/schema/format；没有HEAD manifestDigest校验，公共open已复现漏检F962，非只静态调用推断",
+  "auditBoundary": "新增6探测2passed/4failed，公共open确认错误HEAD摘要仍成功；F962/963 open；原全套及并发/性能未跑，无产品修改或T01退出"
+}
+516:  * @throws StoreError StoreCorrupt（跨文件不一致——§4.1"projectId 与
+517:  *         HEAD 不一致＝CorruptStoreDetected"；或扫描后竞态损坏）
+518:  */
+519: void loadCommittedState(tx::TxEngine& engine,
+520:                         objstore::ObjectStore& objects,
+521:                         revindex::RevisionIndex& index,
+522:                         const tx::TxRecoveryScan& scan,
+523:                         const core::ProjectId& projectId,
+524:                         int schemaVersion,
+525:                         IDiagnosticsSink* sink,
+526:                         HeadRecord& outHead,
+527:                         ProjectMetadataRecord& outAuthoritative,
+528:                         ObjectRefPair& outAuthoritativeRef)
+529: {
+530:     // HEAD 读取（scan 已确认存在且可解析——此处失败只可能是竞态改写）。
+531:     const HeadRecord head = engine.readHead();
+532: 
+533:     // 跨文件一致性（§4.1 project.json/HEAD 行——打开协议 PRJ-T08 的明确
+534:     // 义务；PersistenceFormat.hpp HeadRecord 注释同口径）。
+535:     if (!(head.projectId == projectId) || head.schemaVersion != schemaVersion
+536:         || head.formatId != std::string{kFormatId}) {
+537:         const std::string detail
+538:             = "project/open: project.json 与 HEAD 跨文件不一致 projectId(json)="
+539:               + projectId.toCanonical() + " projectId(head)="
+540:               + head.projectId.toCanonical() + " schemaVersion(json)="
+541:               + std::to_string(schemaVersion) + " schemaVersion(head)="
+542:               + std::to_string(head.schemaVersion);
+543:         if (sink != nullptr) {
+544:             sink->report(makeOpenCorruptRecord(detail));
+545:         }
+546:         throw StoreError(StoreErrorCode::StoreCorrupt, detail);
+547:     }
+548: 
+549:     // 闭包外名单（§7.3：已发布但未提交——装载跳过，"查询不可见"的
+550:     // 结构性保证，PRJ-TX-9）。
+551:     std::set<std::string> uncommitted;
+552:     for (const RevisionId& rid : scan.uncommittedRevisions) {
+553:         uncommitted.insert(rid.toCanonical());
+554:     }
+555: 
+556:     // ---- 清单搬运装载（跳过闭包外；遇到失败＝竞态损坏，防御性抛）。
+557:     std::set<ObjectRefPair, MetadataRefLess> metadataRefs;
+558:     RevisionManifest headManifest;
+559:     bool headManifestSeen = false;
+560:     std::error_code ec;
+561:     const std::filesystem::path revRoot
+562:         = std::filesystem::path(engine.projectDir()) / "revisions";
+563:     if (std::filesystem::exists(revRoot, ec) && !ec) {
+564:         for (std::filesystem::directory_iterator it(revRoot, ec), end;
+565:              it != end && !ec; it.increment(ec)) {
+566:             std::error_code dirEc;
+567:             if (!it->is_directory(dirEc) || dirEc) {
+568:                 continue;
+569:             }
+570:             const std::string dirName = it->path().filename().string();
+571:             if (!core::RevisionId::tryFromCanonical(dirName).has_value()) {
+572:                 continue;  // 不合规目录名（scan 已开发观测——搬运侧跳过）
+573:             }
+574:             if (uncommitted.count(dirName) != 0) {
+575:                 continue;  // 闭包外＝未提交残留——不装载（PRJ-TX-9）
+576:             }
+577:             const auto bytes = readAllBytes(it->path() / "manifest.json");
+578:             if (!bytes) {
+579:                 throw StoreError(StoreErrorCode::StoreCorrupt,
+580:                                  "project/open: manifest 缺失（扫描后竞态"
+581:                                  "损坏） path="
+582:                                      + (it->path() / "manifest.json").string());
+583:             }
+584:             RevisionManifest manifest;
+585:             try {
+586:                 manifest = codec::parseRevisionManifest(*bytes);
+587:             } catch (const StoreError& e) {
+588:                 throw StoreError(StoreErrorCode::StoreCorrupt,
+589:                                  "project/open: manifest 解析失败（扫描后"
+590:                                  "竞态损坏） path="
+591:                                      + (it->path() / "manifest.json").string()
+592:                                      + " detail=" + std::string(e.what()));
+593:             }
+594:             if (manifest.revisionId == head.revisionId) {
+595:                 headManifest = manifest;  // HEAD 修订清单（权威引用来源）
+596:                 headManifestSeen = true;
+597:             }
+598:             index.registerRevision(manifest);
+599:             metadataRefs.insert(manifest.metadataRef);
+600:         }
+601:     }
+602:     if (!headManifestSeen) {
+603:         // HEAD 指向的修订不在磁盘（scan 闭包行走已验证过——到达这里＝
+604:         // 目录被并发移除的竞态）。防御性损坏。
+605:         throw StoreError(StoreErrorCode::StoreCorrupt,
+606:                          "project/open: HEAD 引用的修订目录缺失（扫描后"
+607:                          "竞态损坏） revision="
+608:                              + head.revisionId.toCanonical());
+609:     }
+610: 
+611:     // ---- 元数据装载（经 ObjectStore 校验读通道——闭包内引用缺失/篡改
+612:     // 在此被 store-corrupt 拒绝；§5.2 错误表"引用缺失＝store-corrupt"）。
+613:     std::map<ObjectRefPair, ProjectMetadataRecord, MetadataRefLess>
+614:         loaded;
+615:     for (const ObjectRefPair& ref : metadataRefs) {
+616:         const auto payloadBytes = objects.object(ref.objectId,
+617:                                                 ref.contentVersion);
+618:         const std::string payload{
+619:             reinterpret_cast<const char*>(payloadBytes.data()),
+620:             payloadBytes.size()};
+621:         ProjectMetadataRecord record = codec::parseMetadataRecord(payload);
+622:         index.registerMetadata(ref, record);
+623:         loaded.emplace(ref, std::move(record));
+624:     }
+625: 
+626:     // 序号水位断点恢复（D-06/O-15——只升不降；会话提交的 seq 起点）。
+627:     index.adoptHeadSeq(head.revisionSeq);
+628: 
+629:     outHead = head;
+630:     outAuthoritativeRef = headManifest.metadataRef;
+631:     outAuthoritative = loaded.at(outAuthoritativeRef);  // 权威底本（D-5）
+632: }
+633: 
+634: }  // namespace
+635: 

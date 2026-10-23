@@ -1,0 +1,194 @@
+[
+  {
+    "id": "KIN-FK",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/models/Device.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "KIN-IK",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/invkin/JacobianIKSolver.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "KIN-IK",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/invkin/ParallelIKSolver.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "KIN-IK",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/models/ParallelDevice.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "KIN-IK",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/invkin/ParallelIKSolverTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-SVD",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-SVD",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "DYN-RNE",
+    "kind": "upstream",
+    "path": "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "DYN-FD",
+    "kind": "upstream",
+    "path": "RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "DYN-FD",
+    "kind": "tests",
+    "path": "RobWork/RobWorkSim/gtest/simulator/PhysicsEngineTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-ROT",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "TRAJ-SLERP",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "TRAJ-LINEAR",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "TRAJ-LINEAR",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "TRAJ-HIGH",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/trajectory/CubicSplineFactory.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "TRAJ-HIGH",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/trajectory/LloydHaywardBlend.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "COLLISION",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-EIGEN",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-EIGEN",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-EIGEN",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/math/LinearAlgebraTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-INERTIA",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-POLYNOMIAL",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/Polynomial.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-POLYNOMIAL",
+    "kind": "upstream",
+    "path": "RobWork/RobWork/src/rw/math/PolynomialND.hpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  },
+  {
+    "id": "MATH-POLYNOMIAL",
+    "kind": "tests",
+    "path": "RobWork/RobWork/gtest/math/PolynomialTest.cpp",
+    "hashMatches": true,
+    "versionMatches": true,
+    "symbolsPresent": true
+  }
+]

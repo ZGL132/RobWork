@@ -1,0 +1,15 @@
+PASS short-doc
+PASS free-body
+PASS no-prefix
+PASS generic-title
+PASS empty-title
+PASS unknown-prefix
+PASS b1-lf-valid
+b1-lf-invalid failed: exit=1 expected=1; see .cache/b29-green-powershell
+At C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\scripts\industrialrobot\test-governance-lite.ps1:23 char
+:23
++ ... ot $pass) { throw "$Name failed: exit=$code expected=$Expected; see $ ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (b1-lf-invalid f...reen-powershell:String) [], RuntimeException
+    + FullyQualifiedErrorId : b1-lf-invalid failed: exit=1 expected=1; see .cache/b29-green-powershell
+ 

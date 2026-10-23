@@ -1,0 +1,294 @@
+{
+  "schemaVersion": "ird-independent-api-probe-acceptance/1",
+  "taskId": "REUSE-T01",
+  "attempt": "api-r6",
+  "verdict": "pass",
+  "reviewedCommit": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
+  "baseCommit": "c7e1469b40ca7c1dbba55a3b6bd8a443fc6086c5",
+  "scope": "仅5项新增公共API探测、既有19项独立重建实跑、r4/r5/r6证据计数及新增auditEvidence/环境摘要；不含第四批其余引用修正及全T01/生产准入",
+  "independentClone": "C:\\Users\\zgl18\\AppData\\Local\\Temp\\ird-accept-t01-api-r6-20261022-222243\\repo",
+  "trackedStatus": "",
+  "checks": {
+    "configure": {
+      "exitCode": 0,
+      "log": "configure.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "build.log"
+    },
+    "tests": {
+      "exitCode": 0,
+      "log": "tests.log"
+    },
+    "task": {
+      "exitCode": 0,
+      "log": "task.log"
+    },
+    "reuse": {
+      "exitCode": 0,
+      "log": "reuse.log"
+    },
+    "docs": {
+      "exitCode": 0,
+      "log": "docs.log"
+    },
+    "diff-check": {
+      "exitCode": 0,
+      "log": "diff-check.log"
+    },
+    "inspect": {
+      "exitCode": 0,
+      "log": "inspect.log"
+    }
+  },
+  "tests": {
+    "total": 19,
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "envUnavailable": 0,
+    "datasetInvalid": 0,
+    "decisive": true
+  },
+  "historicalSnapshots": [
+    {
+      "attempt": "r4",
+      "xmlTotal": 18,
+      "native": {
+        "total": 18,
+        "passed": 17,
+        "failed": 1,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    },
+    {
+      "attempt": "r5",
+      "xmlTotal": 18,
+      "native": {
+        "total": 18,
+        "passed": 18,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    },
+    {
+      "attempt": "r6",
+      "xmlTotal": 19,
+      "native": {
+        "total": 19,
+        "passed": 19,
+        "failed": 0,
+        "skipped": 0,
+        "notRun": 0,
+        "envUnavailable": 0,
+        "datasetInvalid": 0,
+        "decisive": true
+      },
+      "allActuallyRan": true
+    }
+  ],
+  "semanticOracles": {
+    "rpy": [
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -1.5707963167948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          -1.5707963167948966,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.47942553860420295
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -0.4,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          -0.4,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.5722038400512371
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          0.4,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          0.4,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.6905486081804492
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          1.5707963167948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0.7,
+          1.5707963167948966,
+          -0.2
+        ],
+        "maxMatrixDifference": 0.0,
+        "sourceR12": -0.7833269096274833
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          -1.5707963267948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0,
+          -1.5707963267948966,
+          0.5
+        ],
+        "maxMatrixDifference": 5.551115123125783e-17,
+        "sourceR12": -0.47942553860420295
+      },
+      {
+        "originalYawPitchRoll": [
+          0.7,
+          1.5707963267948966,
+          -0.2
+        ],
+        "equivalentYawPitchRoll": [
+          0,
+          1.5707963267948966,
+          -0.9
+        ],
+        "maxMatrixDifference": 2.220446049250313e-16,
+        "sourceR12": -0.7833269096274833
+      }
+    ],
+    "positiveGimbal": "r12=R(0,1)=sin(roll-yaw)=-sin(0.9); yaw=0,roll=-0.9 is same rotation, not an upstream bug",
+    "negativeGimbal": "yaw=0,roll=roll+yaw=0.5 at pitch=-pi/2 is same rotation",
+    "mixedScaleDiagonal": {
+      "minimumExact": "1/202402253307310618352495346718917307049556649764142118356901358027430339567995346891960383701437124495187077864316811911389808737385793476867013399940738509921517424276566361364466907742093216341239767678472745068562007483424692698618103355649159556340810056512358769552333414615230502532186327508646006263307707741093494784",
+      "middle": 1,
+      "maximum": 1e+300,
+      "strictSPD": true,
+      "spectralResult": "actual API returns minimum zero, contradicting exact positive diagonal oracle"
+    },
+    "unitBlockBoundary": [
+      {
+        "off": 0.9999999999999999,
+        "minimumEigenvalueExact": "1/9007199254740992",
+        "maximumEigenvalueExact": "18014398509481983/9007199254740992",
+        "strictlyPositiveDefinite": true
+      },
+      {
+        "off": 1.0,
+        "minimumEigenvalueExact": "0",
+        "maximumEigenvalueExact": "2",
+        "strictlyPositiveDefinite": false
+      },
+      {
+        "off": 1.0000000000000002,
+        "minimumEigenvalueExact": "-1/4503599627370496",
+        "maximumEigenvalueExact": "9007199254740993/4503599627370496",
+        "strictlyPositiveDefinite": false
+      }
+    ],
+    "rankOneDecimalBlock": {
+      "storedEntryExact": "6338253001141147/633825300114114700748351602688",
+      "spectrumExact": [
+        "0",
+        "6338253001141147/316912650057057350374175801344",
+        "1"
+      ],
+      "nullVector": [
+        1,
+        -1,
+        0
+      ],
+      "strictSPD": false,
+      "reason": "First two columns are exactly equal binary64 values, so determinant zero independent of decimal rounding"
+    }
+  },
+  "auditEvidence": {
+    "bindings": 11,
+    "allNormalizedHashesMatch": true,
+    "details": "independent-review.json"
+  },
+  "environmentArtifacts": {
+    "allRawHashesAndBytesMatch": true,
+    "artifacts": [
+      {
+        "path": "D:/10_Source_Repos/21_robot/RobWork/build/RobWork/bin/Release/sdurw_math.dll",
+        "sha256": "964c44d6dc84f48e8783ffdda5aafd1e057325e582fa6a987ecf99f88029793c",
+        "bytes": 6078976,
+        "matches": true
+      },
+      {
+        "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Cholesky/LLT.h",
+        "sha256": "b1652b57639abaef484a92d0baf9c7899522b45c0db7a5fc9b85e4626049b41d",
+        "bytes": 18532,
+        "matches": true
+      }
+    ],
+    "sourceAndCmakeNormalizedHashesMatch": true,
+    "r6SourceSnapshotMatchesFrozenSource": true,
+    "limitation": "仅记录现有安装DLL/头文件身份；不证明上游DLL由冻结源可复现构建。历史r5无源码快照，不把XML行号/构建日志当完整源码来源证明。"
+  },
+  "pendingRelations": 121,
+  "closedFiles": 0,
+  "prior14CasesUnchanged": true,
+  "findings": [],
+  "observations": [
+    "MSBuild MSB8029临时目录增量构建告警；本次独立fresh构建通过。",
+    "RPY r4是假设错误，不是上游RPY缺陷；失败源及报告仍保留。",
+    "新增auditEvidence由本轮独立逐条核摘要，不宣称校验器已经实现其语义验证。"
+  ],
+  "notRun": [
+    "重跑历史r4错误假设或r5旧源码（核保留原件计数，本次实跑冻结r6全部19项）",
+    "完整上游测试/生产迁移/全工况数值性能验收",
+    "全20单元全功能审计或T01/T02准入",
+    "第四批其他引用修正的独立验收",
+    "Qt Widgets/GUI（本探测无QApplication）",
+    "140治理自测/DeepEvidence/远程CI",
+    "提交/推送/合入"
+  ],
+  "evidenceSha256": {
+    "build.log": "c1b24aecced1dad6ab1f3cb264500ff8e5f7e7d755869e97b39cf699a36e906c",
+    "checkout.log": "eb0a5d5f29c1beb17798fd083a236692f0bef2c37a00586c4ca7faac8ca6e339",
+    "clone.log": "2c7d451f965b54d8fc7e26b0dcdf7237513ccc6372a881902565d691da10731e",
+    "configure.log": "9b03423db2ddbcdc0a7732143bee297fca7a1f1586079f667243cb7f2955a342",
+    "diff-check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "docs.log": "1d1dfb23c7e21fb5bd6c3117c57dae2f255e5cdbe4d9846c9c91ed20b358e0c3",
+    "environment.log": "ba490ca832c85024139229f19b0457d90fc9e96008141b8e620864e1d851bf77",
+    "gtest.xml": "a7b46b6bc80446ae2f9afa9533af12b2f7125684e3bbe85b07ae4e782854ef5a",
+    "independent-review.json": "42f793a826f3e5d5dacec641505b34bd1ccfc54bcf83a35583017a33ca831df3",
+    "inspect.log": "e7e1779605cb789ad89b44a51f9748211a7bb2b98fd1f00133dc68aa5fe9789e",
+    "ird-test-report.json": "c7beedd4581f72193e0179553722a993ceab7134ad3ec0253f3a8c33d8f79e9a",
+    "reuse.log": "68faa44d375f5bae7acdf59dbc0238ab28041179a16136a32922f8d4f16d13e1",
+    "run-probe.ps1": "f41f5b620eee4eea5b6b05fa013a0e778f86dbb6b8ceb75f3eee78a2574e2505",
+    "task.log": "33434427ef13eeffac98a52872d8ee13726c90b8c2d4352f2b5f63c0f1168cbb",
+    "tests.log": "9992b6e944fbcb0660a7232ab4bbcac73730cec7153dfbe24aa2e711aa414896"
+  }
+}

@@ -1,0 +1,77 @@
+8a7174945a8f280f674a40ec46a512b5b5f1b414
+reviewedProductIsAncestor=0
+16:#include <rw/math/RPY.hpp>
+51:TEST(ReuseAudit, SingleLegMaskedPositionOnExistingFrames) {
+181:TEST(ReuseAudit, EulerMaskCannotBeSubstitutedByEaaRows) {
+183:    // RobWork RPY 参数顺序是 yaw/pitch/roll，产品字段顺序是 roll/pitch/yaw。
+185:    const auto actual = RPY<>(0.7, 0.4, 0.6).toRotation3D();
+186:    const auto desired = RPY<>(0.7, 0.4, 1.2).toRotation3D();
+187:    const RPY<> actualAngles(actual), desiredAngles(desired);
+195:TEST(ReuseAudit, JacobianSolverHalfTurnNeedsIndependentValidation) {
+210:    // 夹具只有绕 Z 的关节；绕 X 半周不可达，不能把 RPY 首参误当 roll。
+211:    const Transform3D<> target(RPY<>(0, 0, rw::math::Pi).toRotation3D());
+214:    const EAA<> actualResidual(inverse(device->baseTend(state).R()) * target.R());
+215:    EXPECT_NEAR(rw::math::Pi, actualResidual.angle(), 1e-12);
+219:TEST(ReuseAudit, ParallelSolverBudgetExhaustionStillReturnsCandidate) {
+257:    const auto composition = Transform3D<>(RPY<>(theta, 0, 0).toRotation3D())
+260:        * Transform3D<>(RPY<>(0, 0, alpha).toRotation3D());
+271:    const auto productConvention = RPY<>(0, 0, Pi).toRotation3D();
+274:    EXPECT_NEAR(Pi, EAA<>(inverse(aligned) * productConvention).angle(), 1e-12);
+300:    for (double pitch : {-Pi / 2 + 1e-8, -0.4, 0.4, Pi / 2 - 1e-8}) {
+301:        const auto original = RPY<>(0.7, pitch, -0.2).toRotation3D();
+302:        const auto recovered = RPY<>(original, 1e-12).toRotation3D();
+312:    const auto original = RPY<>(0.7, Pi / 2, -0.2).toRotation3D();
+313:    const RPY<> recoveredRpy(original, 1e-12);
+322:    const auto negative = RPY<>(0.7, -Pi / 2, -0.2).toRotation3D();
+323:    const auto negativeRecovered = RPY<>(negative, 1e-12).toRotation3D();
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:2:<testsuites tests="10" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-22T21:25:03.926" name="AllTests">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:3:  <testsuite name="ReuseAudit" tests="10" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-22T21:25:03.926">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:4:    <testcase name="SymmetricEigenvaluesAcrossScales" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.926" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:5:    <testcase name="SingleLegMaskedPositionOnExistingFrames" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="47" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.926" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:6:    <testcase name="LloydBlendRestToRestQuintic" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="78" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.926" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:7:    <testcase name="PrismaticWrenchProjectionAgainstNewtonLaw" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="93" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.926" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:8:    <testcase name="ExistingPolynomialSepticWithThirdDerivative" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="130" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:9:    <testcase name="PublicSvdSingularAndWellConditioned" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="144" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:10:    <testcase name="PrincipalInertiaFromGeometryUtil" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="160" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:11:    <testcase name="BulletDynamicDeviceInsertionIsNotImplemented" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="169" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:12:    <testcase name="EulerMaskCannotBeSubstitutedByEaaRows" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="177" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r2/gtest.xml:13:    <testcase name="JacobianSolverHalfTurnNeedsIndependentValidation" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="191" status="run" result="completed" time="0." timestamp="2026-10-22T21:25:03.927" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:2:<testsuites tests="14" failures="0" disabled="0" errors="0" time="0.001" timestamp="2026-10-22T21:52:12.947" name="AllTests">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:3:  <testsuite name="ReuseAudit" tests="14" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-22T21:52:12.947">
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:4:    <testcase name="SymmetricEigenvaluesAcrossScales" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.947" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:5:    <testcase name="SingleLegMaskedPositionOnExistingFrames" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="49" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.947" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:6:    <testcase name="LloydBlendRestToRestQuintic" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="80" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:7:    <testcase name="PrismaticWrenchProjectionAgainstNewtonLaw" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:8:    <testcase name="ExistingPolynomialSepticWithThirdDerivative" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="132" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:9:    <testcase name="PublicSvdSingularAndWellConditioned" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="146" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:10:    <testcase name="PrincipalInertiaFromGeometryUtil" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="162" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:11:    <testcase name="BulletDynamicDeviceInsertionIsNotImplemented" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="171" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.948" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:12:    <testcase name="EulerMaskCannotBeSubstitutedByEaaRows" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="179" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:13:    <testcase name="JacobianSolverHalfTurnNeedsIndependentValidation" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="193" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:14:    <testcase name="ParallelSolverBudgetExhaustionStillReturnsCandidate" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="217" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:15:    <testcase name="StandardDhMatchesOrderedRigidTransforms" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="250" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:16:    <testcase name="AntiparallelAlignmentNeedsExplicitRollConvention" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="264" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r3/gtest.xml:17:    <testcase name="PolynomialNonzeroEndpointDerivativesWithTimeScale" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\UpstreamSuitabilityTest.cpp" line="276" status="run" result="completed" time="0." timestamp="2026-10-22T21:52:12.949" classname="ReuseAudit" />
+259:| KIN-02 | P0 | 对单个目标执行多初值 IK；先过滤不满足残差/关节/碰撞硬条件的解，再按**关节空间逐轴距离**去重（去重对象为关节构型而非末端位姿——同末端位姿、不同关节构型的解均须保留，附录 D 第 3 项——C1，v1.14），随后按裕量、可操作度、当前距离和稳定编号排序 | B | R1 | WP-15 | - |
+270:| KIN-13 | P1 | 分析**求解配置**（AnalysisConfiguration）：初值策略与数量、迭代上限、求解容差、IK 关节空间去重阈值（附录 D 第 3 项）、区域采样预算（及采样线程数等求解域参数）；独立于用户级设置（PM-14）持久化，进入运行身份与缓存身份；修改后按实际输入依赖提示受影响结果需重算（高级参数折叠并提示新旧结果不可直接比较）。**碰撞启用状态不由本条拥有**：只读引用快照中已解析的 `EngineeringPolicySet`（ARC-05/WP-07 权威），分析配置不得覆盖策略——如预览模式允许缺少碰撞证据，按评估模式/证据规则（EVI-01）表达，不作为覆盖策略的开关。工程**判定阈值**（近限位比、奇异值/条件数警告、有限限位行程上限〔MDL-06 ④，M-10〕等）同属工程策略，权威归 ARC-05/WP-07，不在本条 | B | R1 | WP-15 | WP-05 |
+298:| DYN-05 | P0 | 使用明确控制输入、初始状态、步长和容差的 RobWorkSim 正动力学场景进行响应一致性检查和异常检测 | C | R1 | WP-17 | - |
+415:| UX-03 | P0 | 每个失败提示至少包含对象/上下文、原因和建议动作；**比较型校验**（限位、容差、裕量、预算等数值判定）额外包含实际值、要求值和单位；不适用字段显式标记"不适用"，不伪造数值；正常用户取消不属于错误、不产生错误诊断（仅取消失败/异常中断走错误路径）（RV-17 修订＋F 复核勘误 3；字段规范见 ERR-01） | B～E | R1 | WP-09 | WP-10;WP-22 |
+1054:    resetScene (state);
+2590:void ODESimulator::resetScene (rw::kinematics::State& state)
+85:        virtual void load (rw::core::Ptr< rwsim::dynamics::DynamicWorkCell > dwc) = 0;
+1:set(SUBSYS_NAME sdurwsim)
+295:    rw_add_library(${SUBSYS_NAME} ${FILES_CPP} ${FILES_HPP})
+if(TARGET sdurwsim_ode)
+
+    set(ODE_TEST_LIBRARIES sdurwsim-gtest-main sdurwsim sdurwsim_ode ${RW_BUILD_WITH_LIBRARIES_GTEST}
+                           RW::sdurw_models RW::sdurw_kinematics RW::sdurw_math
+    )
+
+    set(ODE_TEST_SRC ode/ODEControlTest.cpp ode/ODESimpleTest)
+
+    add_executable(sdurwsim_ode-gtest ${ODE_TEST_SRC})
+    target_link_libraries(sdurwsim_ode-gtest ${ODE_TEST_LIBRARIES})
+    add_rwsim_gtest(sdurwsim_ode-gtest)
+
+False
+False

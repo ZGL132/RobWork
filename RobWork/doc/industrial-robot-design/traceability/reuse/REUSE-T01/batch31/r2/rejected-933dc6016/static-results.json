@@ -1,0 +1,303 @@
+{
+  "base": "0900751718849863af1190ece61c8ddb1f1cf547",
+  "head": "933dc6016c078b7d674fea68af19c038e0388979",
+  "scopeCount": 29,
+  "scope": [
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
+    "RobWork/doc/industrial-robot-design/traceability/findings.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/README.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/artifact-manifest.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-configure.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-run-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-validate-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/b31-vs.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/findings-prefix.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle.py",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/exit.txt",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/stdout.log",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/source-comparison.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json"
+  ],
+  "newCount": 43,
+  "changedCount": 8,
+  "newIds": [
+    "core.audit-b31.Units.UnitRow",
+    "core.audit-b31.Units.kUnitTable",
+    "core.audit-b31.Units.fail",
+    "core.audit-b31.Units.unitSymbolAt",
+    "core.audit-b31.Units.unitKindAt",
+    "core.audit-b31.Units.unitFactorAt",
+    "core.audit-b31.Units.UnitToken.find",
+    "core.audit-b31.Units.UnitToken.symbol",
+    "core.audit-b31.Units.UnitToken.kind",
+    "core.audit-b31.Units.UnitToken.siFactor",
+    "core.audit-b31.Units.kindOf",
+    "core.audit-b31.Units.siFactor",
+    "core.audit-b31.Units.tryConvert",
+    "core.audit-b31.Units.siUnit",
+    "core.audit-b31.Units.UnitToken.equal",
+    "core.audit-b31.Units.UnitToken.notEqual",
+    "core.audit-b31.Units.UnitToken.isValid",
+    "core.audit-b31.Units.Quantity.fromSi",
+    "core.audit-b31.Units.Quantity.tryFromSi",
+    "core.audit-b31.Units.Quantity.tryParse",
+    "core.audit-b31.Units.Quantity.siValue",
+    "core.audit-b31.Units.Quantity.displayValueIn",
+    "core.audit-b31.Units.Quantity.equal",
+    "core.audit-b31.Units.Quantity.notEqual",
+    "core.audit-b31.Units.Quantity.isFinite",
+    "core.audit-b31.UnitsTest.expectNearRel",
+    "core.audit-b31.UnitsTest.UnitsConvert.KnownConversions_UT_UNIT",
+    "core.audit-b31.UnitsTest.UnitsConvert.ModelingDerivativeDisplayUnits_UX05_T30",
+    "core.audit-b31.UnitsTest.UnitsConvert.DimensionMismatch_UT_UNIT",
+    "core.audit-b31.UnitsTest.UnitsConvert.NonFiniteAndOverflow_UT_UNIT",
+    "core.audit-b31.UnitsTest.UnitsFind.UnknownSymbol_UT_UNIT",
+    "core.audit-b31.UnitsTest.UnitsRegistry.R1TableComplete_UT_UNIT",
+    "core.audit-b31.UnitsTest.QuantityTyped.TryParseKindMismatchAndDisplay_UT_UNIT",
+    "core.audit-b31.CompareTest.CompareFormula.C4Basic_UT_UNIT",
+    "core.audit-b31.CompareTest.CompareFormula.ZeroReferenceDegradesToAbsolute_UT_UNIT",
+    "core.audit-b31.CompareTest.CompareFormula.NonFiniteInputsFalse_UT_UNIT",
+    "core.audit-b31.CompareTest.AllCloseWithin.ElementWiseNotSummed_UT_UNIT",
+    "core.audit-b31.CompareTest.AllCloseWithin.LengthMismatchThrows_UT_UNIT",
+    "core.audit-b31.CompareTest.ToleranceMake.Validation_UT_UNIT",
+    "core.audit-b31.CompareTest.RuntimeAbsoluteTolerance.C7Transcription_UT_UNIT",
+    "core.audit-b31.CompareTest.AllCloseWithinQ.QOverloadSemantics_UT_UNIT",
+    "core.audit-b31.Units.kInvalidIndex",
+    "core.audit-b31.Units.Quantity.instantiations"
+  ],
+  "changedIds": [
+    "core.convert",
+    "core.Compare.closeWithin",
+    "core.Compare.allCloseWithin.vector",
+    "core.Compare.allCloseWithin.Q",
+    "core.Compare.runtimeAbsoluteTolerance",
+    "core.Tolerance.make",
+    "core.Tolerance.operator==",
+    "core.Tolerance.operator!="
+  ],
+  "pending": true,
+  "changedRowFields": {
+    "core.convert": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "designRefs",
+      "auditBoundary",
+      "permissionRef"
+    ],
+    "core.Compare.closeWithin": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Compare.allCloseWithin.vector": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Compare.allCloseWithin.Q": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Compare.runtimeAbsoluteTolerance": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Tolerance.make": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Tolerance.operator==": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ],
+    "core.Tolerance.operator!=": [
+      "inputs",
+      "sources",
+      "auditEvidence",
+      "search",
+      "differences",
+      "requirements",
+      "auditBoundary"
+    ]
+  },
+  "originalManifest": {
+    "count": 23,
+    "checks": [
+      {
+        "path": "b31-build.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-configure.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-run-vs.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-docs.exit.txt",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-docs.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-reuse.exit.txt",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-reuse.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-task.exit.txt",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-validate-task.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "b31-vs.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "CMakeLists.txt",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "findings-prefix.json",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "oracle-result.json",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "oracle.py",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "README.md",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "run/exit.txt",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "run/gtest.xml",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "run/ird-test-report.json",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "run/stdout.log",
+        "blobMatches": true,
+        "rawMatches": true
+      },
+      {
+        "path": "search.json",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "source-comparison.json",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "UnitsSuitabilityTest.cpp",
+        "blobMatches": true,
+        "rawMatches": false
+      },
+      {
+        "path": "verification.json",
+        "blobMatches": true,
+        "rawMatches": false
+      }
+    ],
+    "allPassed": false
+  },
+  "findingsPrefix": {
+    "bytes": 1288469,
+    "sha256": "31b5b222d04a1c71b657571259c2d6585fad1d9d54eeafcb2bddb5d97830065c",
+    "expected": "31b5b222d04a1c71b657571259c2d6585fad1d9d54eeafcb2bddb5d97830065c",
+    "equal": true,
+    "basePrefixHashMatches": true,
+    "oldTail": "  ]\r\n}\r\n",
+    "newTail": ",\n{\n  \"id\": \"F-966\",\n  \"source\": \"reuse/core-units-compare-audit.md / batch31\",\n  \"severity\": \"major\",\n  \"status\": \"open\",\n  \"registeredAt\": \"2026-10-23\",\n  \"title\": \"core C4有限极值中间溢出令标量与vector/Q公共比较误绿\",\n  \"owner\": \"core / REUSE-T05\",\n  \"resolution\": \"22跑19passed3failed，原15例全过。DBL_MAX与-DBL_MAX、relative1.5绝对0的精确C4为2>1.5应拒；diff/limit双Inf使三个入口true。独立Fraction oracle冻结。T01不改数值核心；先查成熟既有能力与消费者兼容性，必要最小修正提案批准后实施，不改为范数/对称比较、不降低需求。\"\n}\n  ]\r\n}\r\n"
+  },
+  "newFindingIds": [
+    "F-966"
+  ]
+}

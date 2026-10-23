@@ -10,7 +10,7 @@
 # tickId 核对：不匹配（典型场景＝旧 tick 租约过期被接管后复活，试图释放/续租新 tick 的锁）
 # 一律拒绝（退出码 4），绝不删除他人锁。失去租约的旧 tick 不得再写状态或释放锁。
 #
-# 锁文件位置：<repo>/.git/ird-pipeline-tick.lock——放 .git 内部：天然不进 git status、
+# 锁文件位置：Git解析的管理目录/ird-pipeline-tick.lock（普通clone为.git，worktree为专属目录）：
 # 不污染工作树"脏"判定，且生命周期与仓库绑定（clone 后自然不存在）。
 #
 # 租约语义：锁内容含 acquiredAt/leaseExpiresAt。acquire 遇到已有锁时：
@@ -30,13 +30,20 @@ param(
   [string]$Token = "",
   [string]$RepoRoot = ""
 )
+$ErrorActionPreference = 'Stop'
 if ($LeaseMinutes -lt 1) { throw "LeaseMinutes must be >= 1" }
 if (($Action -eq "release" -or $Action -eq "renew") -and -not $Token) { throw "-Token (fencing token = acquire 返回的 tickId) is required for $Action" }
 $scriptDir = $PSScriptRoot
 if (-not $scriptDir -or -not (Test-Path $scriptDir)) { $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path }
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $scriptDir "..\..\..")).Path }
 if (-not (Test-Path (Join-Path $RepoRoot ".git"))) { throw "repo root resolution failed: .git not found under '$RepoRoot'" }
-$lockPath = Join-Path $RepoRoot ".git/ird-pipeline-tick.lock"
+# Git负责解析普通clone目录与linked worktree的gitfile；禁止自己解析指向文件，
+# 否则FileStream把.git当目录打开失败，原错误catch甚至会造成exit0无token。
+$gitDir = & git -C $RepoRoot rev-parse --absolute-git-dir
+if ($LASTEXITCODE -ne 0 -or -not $gitDir -or -not (Test-Path -LiteralPath $gitDir -PathType Container)) {
+  throw "cannot resolve Git administrative directory under '$RepoRoot'"
+}
+$lockPath = Join-Path $gitDir "ird-pipeline-tick.lock"
 $fmt = "yyyy-MM-ddTHH:mm:sszzz"   # 与 state.json ISO 口径一致（秒精度＋本地偏移）
 
 function Get-LockMutexName([string]$repoPath) {
@@ -160,7 +167,7 @@ try {
     $bytes = [System.Text.Encoding]::UTF8.GetBytes($payload)
     $fs.Write($bytes, 0, $bytes.Length)
   } finally { $fs.Close() }
-} catch [System.IO] {
+} catch [System.IO.IOException] {
   Write-Output '{"ok":false,"state":"lost-race","message":"another tick acquired the lock concurrently"}'
   exit 3
 }

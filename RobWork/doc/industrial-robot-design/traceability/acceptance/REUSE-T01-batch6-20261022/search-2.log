@@ -1,0 +1,69 @@
+RobWork/RobWork/gtest/math/StatisticsTest.cpp:20:#include <rw/math/Statistics.hpp>
+RobWork/RobWork/gtest/math/StatisticsTest.cpp:24:TEST(Statistics, Double) {
+RobWork/RobWork/gtest/math/StatisticsTest.cpp:25:	Statistics<double> stats;
+RobWork/RobWork/gtest/math/StatisticsTest.cpp:47:TEST(Statistics, Float) {
+RobWork/RobWork/gtest/math/StatisticsTest.cpp:48:	Statistics<float> stats;
+RobWork/RobWork/src/rw/math/Statistics.hpp:19:    template< class T > class Statistics
+RobWork/RobWork/src/rw/math/Statistics.hpp:105:            return std::make_pair (my, Statistics::variance (data, my));
+RobWork/RobWork/src/rw/math/Statistics.hpp:114:            return std::make_pair (my, Statistics::angularVariance (data, my));
+RobWork/RobWork/src/rw/math/Statistics.hpp:170:        T mean () const { return Statistics::mean (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:178:        T angularMean () const { return Statistics::angularMean (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:186:        T median () const { return Statistics::median (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:193:        T variance () const { return Statistics::variance (_data, Statistics::mean (_data)); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:203:            return Statistics::angularVariance (_data, Statistics::angularMean (_data));
+RobWork/RobWork/src/rw/math/Statistics.hpp:209:         * See documentation of Statistics::mean() and Statistics::variance()
+RobWork/RobWork/src/rw/math/Statistics.hpp:212:        std::pair< T, T > meanAndVariance () const { return Statistics::meanAndVariance (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:217:         * See documentation of Statistics::angularMean() and Statistics::angularVariance()
+RobWork/RobWork/src/rw/math/Statistics.hpp:222:            return Statistics::angularMeanAndVariance (_data);
+RobWork/RobWork/src/rw/math/Statistics.hpp:230:        T minValue () const { return Statistics::minValue (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:237:        T maxValue () const { return Statistics::maxValue (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:244:        std::pair< T, T > minAndMaxValue () const { return Statistics::minAndMaxValue (_data); }
+RobWork/RobWork/src/rw/math/Statistics.hpp:265:         * @param statistics [in] Statistics to output
+RobWork/RobWork/src/rw/math/Statistics.hpp:268:        friend std::ostream& operator<< (std::ostream& os, const Statistics< T >& statistics)
+RobWork/RobWork/src/rw/math/Statistics.hpp:280:        TOSTRING (rw::math::Statistics< T >);
+RobWork/RobWork/src/rw/math/Statistics.hpp:289:    SWIG_DECLARE_TEMPLATE (Statistics_d, rw::math::Statistics< double >);
+RobWork/RobWork/src/rw/math/Statistics.hpp:290:    ADD_DEFINITION (Statistics_d, Statistics,sdurw_geometry)
+RobWork/RobWork/src/rw/math/Statistics.hpp:292:    SWIG_DECLARE_TEMPLATE (Statistics, rw::math::Statistics< double >);
+RobWork/RobWork/src/rw/math/Statistics.hpp:294:    SWIG_DECLARE_TEMPLATE (Statistics_f, rw::math::Statistics< float >);
+RobWork/RobWork/src/rw/math\CMakeLists.txt:41:        Statistics.cpp
+RobWork/RobWork/src/rw/math\CMakeLists.txt:82:        Statistics.hpp
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:51:         * * The spline forms a continuous function over [a,b].
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:52:         * * The spline forms a smooth function.
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:93:         * * The spline forms a continuous function over [a,b].
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:94:         * * The spline forms a smooth function.
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:138:         * * The spline forms a continuous function over [a,b].
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:139:         * * The spline forms a smooth function.
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:269:         * The SQUAD forms a continuous function over [a,b].
+RobWork/RobWork/src/rw/trajectory\CubicSplineFactory.hpp:270:         * The SQUAD forms a smooth function.
+RobWork/RobWork/src/rw/math\LinearAlgebra.hpp:55:         * @brief Performs a singular value decomposition (SVD)
+RobWork/RobWork/src/rw/math\Math.cpp:110: * @brief Returns a weighted random direction in \b dim dimensions.
+RobWork/RobWork/src/rw/math\Math.cpp:116: * @param length [in] Length of return vector when weights are applied as weighted Euclidean metric.
+RobWork/RobWork/src/rw/math\Math.hpp:317:         * @brief Returns a weighted random direction in \b dim dimensions using the standard normal
+RobWork/RobWork/src/rw/math\Math.hpp:324:         * @param length [in] Length of return vector when weights are applied as weighted Euclidean
+RobWork/RobWork/src/rw/math\MetricFactory.hpp:474:         * The metric is defined as a weighted sum of the positional distance and the
+RobWork/RobWork/src/rw/math\PolynomialSolver.hpp:57:     * 1. Remove terms that are small compared to \f$\epsilon\f$: \f$ x^7 + 2 x^6 - x^4 - 2x^3 =
+RobWork/RobWork/src/rw/math\Rotation3D.hpp:262:         * Performs an element wise comparison. Two elements are considered equal if the difference
+RobWork/RobWork/src/rw/math\Statistics.hpp:19:    template< class T > class Statistics
+RobWork/RobWork/src/rw/math\Statistics.hpp:105:            return std::make_pair (my, Statistics::variance (data, my));
+RobWork/RobWork/src/rw/math\Statistics.hpp:114:            return std::make_pair (my, Statistics::angularVariance (data, my));
+RobWork/RobWork/src/rw/math\Statistics.hpp:170:        T mean () const { return Statistics::mean (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:178:        T angularMean () const { return Statistics::angularMean (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:186:        T median () const { return Statistics::median (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:193:        T variance () const { return Statistics::variance (_data, Statistics::mean (_data)); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:203:            return Statistics::angularVariance (_data, Statistics::angularMean (_data));
+RobWork/RobWork/src/rw/math\Statistics.hpp:209:         * See documentation of Statistics::mean() and Statistics::variance()
+RobWork/RobWork/src/rw/math\Statistics.hpp:212:        std::pair< T, T > meanAndVariance () const { return Statistics::meanAndVariance (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:217:         * See documentation of Statistics::angularMean() and Statistics::angularVariance()
+RobWork/RobWork/src/rw/math\Statistics.hpp:222:            return Statistics::angularMeanAndVariance (_data);
+RobWork/RobWork/src/rw/math\Statistics.hpp:230:        T minValue () const { return Statistics::minValue (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:237:        T maxValue () const { return Statistics::maxValue (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:244:        std::pair< T, T > minAndMaxValue () const { return Statistics::minAndMaxValue (_data); }
+RobWork/RobWork/src/rw/math\Statistics.hpp:265:         * @param statistics [in] Statistics to output
+RobWork/RobWork/src/rw/math\Statistics.hpp:268:        friend std::ostream& operator<< (std::ostream& os, const Statistics< T >& statistics)
+RobWork/RobWork/src/rw/math\Statistics.hpp:280:        TOSTRING (rw::math::Statistics< T >);
+RobWork/RobWork/src/rw/math\Statistics.hpp:289:    SWIG_DECLARE_TEMPLATE (Statistics_d, rw::math::Statistics< double >);
+RobWork/RobWork/src/rw/math\Statistics.hpp:290:    ADD_DEFINITION (Statistics_d, Statistics,sdurw_geometry)
+RobWork/RobWork/src/rw/math\Statistics.hpp:292:    SWIG_DECLARE_TEMPLATE (Statistics, rw::math::Statistics< double >);
+RobWork/RobWork/src/rw/math\Statistics.hpp:294:    SWIG_DECLARE_TEMPLATE (Statistics_f, rw::math::Statistics< float >);
+RobWork/RobWork/src/rw/math\Statistics.cpp:1:#include "Statistics.hpp"
+RobWork/RobWork/src/rw/math\Transform3D.hpp:297:         * Performs an element wise comparison. Two elements are considered equal if the difference

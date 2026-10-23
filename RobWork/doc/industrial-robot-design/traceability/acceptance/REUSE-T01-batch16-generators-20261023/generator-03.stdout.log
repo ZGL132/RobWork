@@ -1,0 +1,8 @@
+生成完成：expected/slice-identity.json
+  snapshotId      = cid-279fb3c8f3ea127b17563f86b515e65f6d3306de0b7d3cd78ee3abbf867a5988
+  sliceId         = cid-f165b1376f8d3f6f5e7c818f9c122f5c68a844cc505640496b309df3f027ebb0
+  inputBaselineId = cid-c6980240417d68fe9b5b53511063d4f8ee95a8ba11c2329e25faef6a1204cd7b
+manifest integrity 申报表（manifest.json 登记用）：
+    { "path": "inputs/slice.json", "sha256": "cb3ae90419c8e8d4d82e73b5bed52331c923ce95ebc1c751b83566e1ce418adf", "sizeBytes": 3530 }
+    { "path": "expected/slice-identity.json", "sha256": "5a0a64270b71bdedf1ee47feee9067628d3296ca13231e932fdef56be24763fd", "sizeBytes": 1824 }
+    { "path": "generate/make_ev_slice_fixture.mjs", "sha256": "637062f6db9c132e82891b9887e176cc5308e7923b57416e661c5149e42cad2f", "sizeBytes": 13450 }

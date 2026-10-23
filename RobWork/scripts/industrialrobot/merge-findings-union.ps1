@@ -1,4 +1,4 @@
-# findings.json 合并冲突确定性并集解算（治理脚本）。
+﻿# findings.json 合并冲突确定性并集解算（治理脚本）。
 #
 # 职责：automation-pipeline.md（PIPE）§4.7③ v1.13 唯一例外的执行面——收尾"按 acceptedHead
 # 合入代码"（git merge --no-ff <acceptedHead>）时，冲突文件仅为 traceability/findings.json
@@ -56,8 +56,14 @@ $absPath = Join-Path $RepoRoot ($Path -replace '/', '\')
 
 # ---------- ① 读取三方暂存条目（仅合并冲突现场存在 :1/:2/:3，否则视为调用错误） ----------
 function Get-StageLines([string]$stage) {
-  $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$null)
-  if ($LASTEXITCODE -ne 0) { return $null }
+  # PS5.1会把Git stderr提升为终止错误；局部按退出码判断缺stage，保持调用错误exit2。
+  $savedPreference = $ErrorActionPreference
+  try {
+    $ErrorActionPreference = 'Continue'
+    $lines = @(& git -C $RepoRoot show ("{0}:{1}" -f $stage, $Path) 2>$null)
+    $gitExit = $LASTEXITCODE
+  } finally { $ErrorActionPreference = $savedPreference }
+  if ($gitExit -ne 0) { return $null }
   return ,@($lines)
 }
 $baseLines = Get-StageLines ":1"
@@ -121,10 +127,11 @@ if ($ours.Order.Count -eq 0) { Fail 1 "我方侧未扫得任何条目块——�
 $oursJson = (($oursLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
 $theirsJson = (($theirsLines -join "`n") -replace "^\uFEFF", "") | ConvertFrom-Json
 if (-not $oursJson.findings -or -not $theirsJson.findings) { Fail 1 "任一侧缺 findings 数组" }
-if ("$($oursJson.schemaVersion)" -ne "$($theirsJson.schemaVersion)") {
+# 顶层契约与条目正文一样逐字比较；大小写差异也必须交所有者裁决。
+if ("$($oursJson.schemaVersion)" -cne "$($theirsJson.schemaVersion)") {
   Fail 1 "顶层 schemaVersion 双方不一致——超出自动解算范围"
 }
-if ("$($oursJson.note)" -ne "$($theirsJson.note)") {
+if ("$($oursJson.note)" -cne "$($theirsJson.note)") {
   Fail 1 "顶层 note 双方不一致——超出自动解算范围"
 }
 

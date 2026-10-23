@@ -1,0 +1,35 @@
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:18:#include <rw/math/FunctionWithNumericalDerivative.hpp>
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:19:#include <rw/math/FirstDifferences.hpp>
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:176:	FunctionType::Ptr function = new FunctionWithNumericalDerivative<double, Q,
+RobWork/RobWork/src/sandbox/optimization\example_optimization.cpp:177:			Q>(tfunction, new FirstDifferences<double, Q, Q>(0.01));
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:2: * Function1DiffFirstDifferences.hpp
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:11:#include "NumericalDerivative.hpp"
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:27:GRAD_T doFirstDifferences(typename Function<RES_T, ARG_T>::Ptr func, ARG_T q,
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:48:double doFirstDifferences<double, double, double>(typename Function<>::Ptr func,
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:67:class FirstDifferences: public NumericalDerivative<RES_T, ARG_T, GRAD_T> {
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:70:	typedef rw::core::Ptr<FirstDifferences> Ptr;
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:79:	FirstDifferences(double step = 1.0) :
+RobWork/RobWork/src/sandbox/optimization\FirstDifferences.hpp:88:		GRAD_T gradient = doFirstDifferences<RES_T, ARG_T, GRAD_T>(function, x,
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:13:#include "NumericalDerivative.hpp"
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:25:class FunctionWithNumericalDerivative: public rw::math::Function1Diff<RES_T,
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:29:	typedef rw::core::Ptr<FunctionWithNumericalDerivative> Ptr;
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:37:	FunctionWithNumericalDerivative(
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:39:			typename NumericalDerivative<RES_T, ARG_T, GRAD_T>::Ptr derivative) :
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:44:	virtual ~FunctionWithNumericalDerivative() {
+RobWork/RobWork/src/sandbox/optimization\FunctionWithNumericalDerivative.hpp:70:	typename NumericalDerivative<RES_T, ARG_T, GRAD_T>::Ptr _derivative;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:8:#include "FunctionWithNumericalDerivative.hpp"
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:19:		typename NumericalDerivativeType::Ptr numericalDerivative) :
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.cpp:29:		function = new FunctionWithNumericalDerivative<ResultType, VectorType,
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:11:#include "NumericalDerivative.hpp"
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:12:#include "FirstDifferences.hpp"
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:22:typedef typename rw::math::NumericalDerivative<ResultType, VectorType,
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:23:		GradientType> NumericalDerivativeType;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:26:typedef typename rw::math::FirstDifferences<ResultType, VectorType, GradientType> FirstDifferencesMethod;
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:53:			typename NumericalDerivativeType::Ptr numericalDerivative =
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:54:					rw::core::ownedPtr(new FirstDifferencesMethod(0.01)));
+RobWork/RobWork/src/sandbox/optimization\GradientOptimizer.hpp:66:	typename NumericalDerivativeType::Ptr _numericalDerivative;
+RobWork/RobWork/src/sandbox/optimization\NumericalDerivative.hpp:2: * NumericalDerivative.hpp
+RobWork/RobWork/src/sandbox/optimization\NumericalDerivative.hpp:19:class NumericalDerivative {
+RobWork/RobWork/src/sandbox/optimization\NumericalDerivative.hpp:22:	typedef rw::core::Ptr<NumericalDerivative> Ptr;
+RobWork/RobWork/src/sandbox/optimization\NumericalDerivative.hpp:26:	NumericalDerivative() {
+RobWork/RobWork/src/sandbox/optimization\NumericalDerivative.hpp:30:	virtual ~NumericalDerivative() {

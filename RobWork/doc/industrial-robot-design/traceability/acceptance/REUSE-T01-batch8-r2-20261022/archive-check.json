@@ -1,0 +1,254 @@
+[
+  {
+    "name": "acceptance.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "acceptance.md",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "bindings.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "catalog-bindings.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "check.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "check.ps1",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "checkout.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "checkout.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "clone.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "clone.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "docs.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "docs.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "evidence-bindings.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "facts.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "new-rows.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "readHex4-actual-definition.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "readHex4-expected-sha.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "replay-search.ps1",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "replay.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "reuse.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "reuse.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-1.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-1.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-2.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-2.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-3.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-3.stdout.txt",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-4.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-4.stdout.txt",
+    "exists": true,
+    "byteEqual": false,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-5.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-5.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-6.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-6.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-7.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-7.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-8.stderr.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-8.stdout.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "search-results.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "semantic-boundaries.json",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "source-excerpts.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "task.exit.txt",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  },
+  {
+    "name": "task.log",
+    "exists": true,
+    "byteEqual": true,
+    "normalizedContentEqual": true
+  }
+]

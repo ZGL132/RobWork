@@ -1,0 +1,8 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:48:    src/JsonLite.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:52:    src/Check.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:53:    src/ContractCheck.cpp
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:56:    src/ProcessRunner.cpp)   # TK-T11：Windows API 全部限定在本 TU 内（testkit.md §1.4）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt:116:    test/ProcessRunnerTest.cpp   # TK-T11：四态 outcome＋EventWatch 双路径用例
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt:116:    src/CloseSupervisor.cpp)   # L5 关闭控制器（project §9.7 兜底义务——
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt:312:                                # StoreCloseSupervisor 监督循环／P-SEL-9 编排核
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt:507:                                                  # 新修订〕＋StoreCloseSupervisor 兜底

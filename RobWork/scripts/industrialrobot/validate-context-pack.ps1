@@ -22,7 +22,12 @@ $base = Join-Path $RepoRoot 'doc/industrial-robot-design'
 if (-not (Test-Path $base)) { throw "repo root resolution failed: doc base not found under '$RepoRoot'（请用 -RepoRoot 显式指定 RobWork 目录）" }
 $repoTop = Split-Path -Parent $RepoRoot
 $packsDir = Join-Path $base 'context/packs'
-if (-not (Test-Path $packsDir)) { Write-Output 'validate-context-pack: no packs dir (nothing to validate)'; exit 0 }
+if (-not (Test-Path $packsDir)) {
+  # 可选缓存允许全量模式无包；显式指定任务则必须有可验证的包，不能提前误绿。
+  if ($TaskId) { Write-Error "validate-context-pack: pack not found for TaskId: $TaskId"; exit 1 }
+  Write-Output 'validate-context-pack: no packs dir (nothing to validate)'; exit 0
+}
+. (Join-Path $scriptDir 'context-pack-files.ps1')
 
 if ($TaskId) { $packs = @(Get-Item (Join-Path $packsDir "$TaskId.md") -ErrorAction SilentlyContinue) }
 else { $packs = @(Get-ChildItem $packsDir -Filter '*.md' -ErrorAction SilentlyContinue) }
@@ -72,13 +77,14 @@ foreach ($p in $packs) {
   # ② 新鲜度：解析指纹表（| 相对路径 | git blob SHA |），逐行重算——指纹用
   # git hash-object（经 clean 过滤，行尾无关）：字节级哈希在 core.autocrlf 下
   # 随检出行尾漂移，干净树上全量误报 STALE（演练验收 F-909 教训）
-  $inTable = $false; $rowSeen = 0
+  $inTable = $false; $rowSeen = 0; $fingerprintPaths = @()
   foreach ($line in ($t -split '\r?\n')) {
     if ($line -match '^\|\s*源文件\s*\|') { $inTable = $true; continue }
     if ($inTable -and $line -match '^\|\s*---') { continue }
     if ($inTable -and $line -match '^\|\s*([^|]+?)\s*\|\s*([0-9a-fA-F]{40})\s*\|\s*$') {
       $rel = $Matches[1].Trim(); $oldSha = $Matches[2].ToLowerInvariant()
       $rowSeen++
+      $fingerprintPaths += $rel
       $abs = Join-Path $repoTop $rel
       if (-not (Test-Path -LiteralPath $abs)) { $stale += "MISSING source: $rel (pack $($p.Name))——重跑 build-context-pack.ps1 -TaskId $tid 刷新"; $packHasStale = $true; continue }
       $newSha = (git -C $repoTop hash-object $abs 2>$null | Select-Object -First 1)
@@ -93,6 +99,12 @@ foreach ($p in $packs) {
     }
   }
   if ($rowSeen -eq 0) { $structural += "pack fingerprint table empty/unparsable: $($p.Name)" }
+  # 不能由包自己声明核验面：复用生成器同一清单，删除权威输入行必须报结构错。
+  if ($cxPack) {
+    foreach ($required in @(Get-ContextFingerprintFiles $cxPack $contractFile[0].FullName $repoTop)) {
+      if ($fingerprintPaths -notcontains $required) { $structural += "pack missing required fingerprint: $required ($($p.Name))" }
+    }
+  }
   # ③ 契约状态漂移：状态行缺失已在 ① 报结构错；两者齐备时比对（复用 ① 的 $cxPack）
   if ($cxPack -and $statusMatch.Success) {
     $packedStatus = $statusMatch.Groups[1].Value

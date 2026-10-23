@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-23T02:08:52.733" name="AllTests">
+  <testsuite name="ReusePolicyBoundary" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T02:08:52.733">
+    <testcase name="OrdinaryDottedNamesMatchLiterally" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r18\PolicyBoundaryTest.cpp" line="11" status="run" result="completed" time="0." timestamp="2026-10-23T02:08:52.733" classname="ReusePolicyBoundary" />
+    <testcase name="ProductionSessionRuleMustMatchRegexPrefixedLiteralName" file="C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r18\PolicyBoundaryTest.cpp" line="20" status="run" result="completed" time="0." timestamp="2026-10-23T02:08:52.733" classname="ReusePolicyBoundary">
+      <failure message="C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r18\PolicyBoundaryTest.cpp:42&#x0A;Value of: rules.front().match(names.byId.at(ids.link1), names.byId.at(ids.link2))&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[C:\Users\zgl18\AppData\Local\Temp\ird-accept-b18-20261023-020423-1105365130\repo\RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T01\probe-r18\PolicyBoundaryTest.cpp:42
+Value of: rules.front().match(names.byId.at(ids.link1), names.byId.at(ids.link2))
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

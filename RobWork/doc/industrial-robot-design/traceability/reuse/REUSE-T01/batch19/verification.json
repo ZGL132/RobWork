@@ -1,0 +1,60 @@
+{
+  "ps7": {
+    "expected": 152,
+    "executed": 152,
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "exitCode": 0,
+    "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot <this-worktree> -OutputDir .cache/b19-ps7"
+  },
+  "ps51": {
+    "expected": 152,
+    "executed": 152,
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "exitCode": 0,
+    "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -RepoRoot <this-worktree> -OutputDir .cache/b19-ps51"
+  },
+  "schemaVersion": "ird-reuse-format-verification/1",
+  "taskId": "REUSE-T01",
+  "parentCommit": "eddb82a8e29f91660b048a69f4ec90c3d0a0e63a",
+  "newCases": 10,
+  "oldCases": 142,
+  "scope": "只验证治理待审计结构表达及既有拒绝规则，不授脚本语义/迁移关闭/全T01/T02",
+  "red": {
+    "expected": 8,
+    "executed": 8,
+    "passed": 0,
+    "failed": 8,
+    "skipped": 0,
+    "notRun": 0,
+    "helperParent": "daee4f8905587b05cd1bab88bb570b8dc240097c"
+  },
+  "intermediateGreen": {
+    "expected": 8,
+    "executed": 8,
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "scope": "中间helper的聚焦结果，不充作当前helper最终结果"
+  },
+  "rawInputs": [
+    {
+      "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+      "sha256": "1cf30f2d07419ba21b8b7da7c43331a190a3dc0e0b37c1cde6110dd98e46a77f"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+      "sha256": "60dd850a9a4e7fe736c4952e5790b68cf7ff70749e04971c0933ef2a050180a3"
+    },
+    {
+      "path": "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+      "sha256": "bb1ce6a78600f492f52e4e9ea171622ed5e2d0a1e517a58a378e6ed82088f249"
+    }
+  ]
+}

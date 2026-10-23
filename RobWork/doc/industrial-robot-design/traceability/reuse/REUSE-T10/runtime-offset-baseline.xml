@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-23T09:09:30.309" name="AllTests">
+  <testsuite name="RuntimeOffset" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-23T09:09:30.309">
+    <testcase name="PrismaticTranslation_MDL11_REUSE_T09" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t09-probe-src\Probe.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-23T09:09:30.309" classname="RuntimeOffset">
+      <failure message="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t09-probe-src\Probe.cpp:25&#x0A;The difference between pose.P()[2] and 0.4 is 0.40000000000000002, which exceeds 1e-9, where&#x0A;pose.P()[2] evaluates to 0,&#x0A;0.4 evaluates to 0.40000000000000002, and&#x0A;1e-9 evaluates to 1.0000000000000001e-09.&#x0A;移动关节零偏单位为m，应向Z平移，不得变成旋转&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t09-probe-src\Probe.cpp:25
+The difference between pose.P()[2] and 0.4 is 0.40000000000000002, which exceeds 1e-9, where
+pose.P()[2] evaluates to 0,
+0.4 evaluates to 0.40000000000000002, and
+1e-9 evaluates to 1.0000000000000001e-09.
+移动关节零偏单位为m，应向Z平移，不得变成旋转
+]]></failure>
+    </testcase>
+    <testcase name="UpstreamPrismaticTransform_MDL11_REUSE_T09" file="C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\.cache\t09-probe-src\Probe.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-23T09:09:30.310" classname="RuntimeOffset" />
+  </testsuite>
+</testsuites>

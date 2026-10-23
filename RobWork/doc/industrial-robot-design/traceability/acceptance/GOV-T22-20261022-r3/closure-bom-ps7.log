@@ -1,0 +1,3 @@
+independent-closure-no-bom-control : True (exit=0 expected=PASS)
+independent-closure-bom-same-accepted-bytes : True (exit=0 expected=PASS)
+reuse selftests: passed=2 skipped=0 failed=0

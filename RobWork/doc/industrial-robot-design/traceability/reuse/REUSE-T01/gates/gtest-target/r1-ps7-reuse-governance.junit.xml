@@ -1,0 +1,104 @@
+<testsuite name="reuse-governance" tests="31" failures="23" skipped="0" errors="1">
+  <testcase name="01-clean">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="02-fixed-baseline" />
+  <testcase name="03-all-units" />
+  <testcase name="04-missing-source" />
+  <testcase name="05-stale-source" />
+  <testcase name="06-missing-symbol" />
+  <testcase name="07-inventory-omission">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="08-forged-blob">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="09-inventory-duplicate">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="10-inventory-unit">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="11-new-source">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="12-stale-change-hash">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="13-core-even-business">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="14-cpp-not-governance">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="15-missing-approval">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="16-unknown-capability">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="17-path-traversal">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="18-missing-task-proof">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="19-task-scope">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="20-forbidden-scope">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="21-stage-not-approved">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="22-final-debt-rejected">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="23-governance-not-algorithm-approval">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="24-upstream-readonly">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="25-missing-record-file" />
+  <testcase name="26-deletion-undeclared">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="27-forged-debt-closure">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="28-arbitrary-task-ready">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="29-planned-not-executable">
+    <failure>REUSE-MISSING : RobWork/RobWork/gtest/test-main.cpp
+</failure>
+  </testcase>
+  <testcase name="30-forged-build-target" />
+  <testcase name="driver-completion">
+    <error>driverFailure=Exception calling "ReadAllText" with "1" argument(s): "Could not find a part of the path 'C:\Users\zgl18\AppData\Local\Temp\ird-reuse-0439029eeb7f45c5821f74238819d121\RobWork\RobWork\gtest\test-main.cpp'."; notRun=112</error>
+  </testcase>
+</testsuite>

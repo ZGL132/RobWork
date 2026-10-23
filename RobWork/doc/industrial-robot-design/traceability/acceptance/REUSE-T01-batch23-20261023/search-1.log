@@ -1,0 +1,19 @@
+7:macro(ADD_RW_GTEST target)
+8:    add_test(NAME ${target} COMMAND $<TARGET_FILE:${target}>)
+17:                --gtest_output=xml:$<TARGET_FILE_DIR:${target}>/gtest_reports/${target}.xml
+36:add_library(sdurw-gtest-main STATIC ${RWMAIN_TEST_SRC})
+37:target_link_libraries(sdurw-gtest-main ${RWMAIN_TEST_LIBRARIES})
+44:    set(ALGORITHMS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_algorithms)
+57:    set(CALIBRATION_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_calibration)
+70:    set(CORE_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_core)
+132:    set(GEOMETRY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+162:    set(GRAPHICS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES}
+179:    set(INVKIN_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+209:    set(LOADERS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+260:    set(MATHEMATICA_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_mathematica)
+273:    set(MODELS_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_models sdurw_loaders)
+289:    set(OPENGL_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_opengl)
+317:    set(PATHPLANNING_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_pathplanners
+333:    set(PROXIMITY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES}
+374:    set(TASK_TEST_LIBRARIES sdurw-gtest-main ${GTEST_LIBRARIES} sdurw_task)
+387:    set(TRAJECTORY_TEST_LIBRARIES sdurw-gtest-main ${GTEST_BOTH_LIBRARIES} sdurw_trajectory sdurw_loaders sdurw_control)

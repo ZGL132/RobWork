@@ -1,0 +1,2 @@
+Write-Error: run.leaseExpiresAt must be >= run.startedAt
+Write-Error: heartbeat.updatedAt ('2020-01-01T08:30:00+08:00') < run.startedAt ('2020-99-99T10:00:00+00:00')——状态被旧写入回退

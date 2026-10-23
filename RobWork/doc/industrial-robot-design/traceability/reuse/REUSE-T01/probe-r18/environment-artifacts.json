@@ -1,0 +1,54 @@
+{
+  "taskId": "REUSE-T01",
+  "sources": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/CMakeLists.txt",
+      "sha256": "b8cd86f3377e3880694c4309cf917176e837425ca39a762d087eca779e571226"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/PolicyBoundaryTest.cpp",
+      "sha256": "de411837867b4566b366215d025889a17a8e944b05ae8c1720fb7b8393ad6d13"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+      "sha256": "662e1dafbe54bdf9db044b8c996c28fa33e188812bd53348d83181fc2b9e630a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp",
+      "sha256": "7ae1a949e31437b506359835d97e17d9df46eccef4ef9b8605497010950953ac"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+      "sha256": "152e35ac0ab3821924d7e789e11c0921d3fca57b97af40ab05ee5a200dbaea53"
+    }
+  ],
+  "commands": [
+    "VS2022 x64 developer shell; cmake -S traceability/reuse/REUSE-T01/probe-r18 -B .cache/b18-policy -G Visual Studio 17 2022 -A x64 with installed RobWork_DIR/CMAKE_PREFIX_PATH (configure.log)",
+    "cmake --build .cache/b18-policy --config Release --target ird_policy_boundary_audit",
+    "absolute .cache/b18-policy/Release/ird_policy_boundary_audit.exe --gtest_filter=ReusePolicyBoundary.* --gtest_output=xml:<probe-r18/gtest.xml> --ird_report=<probe-r18/ird-test-report.json>"
+  ],
+  "configureExit": 0,
+  "buildExit": 0,
+  "runExit": 1,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "notRun": 0,
+  "xml": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/gtest.xml",
+    "sha256": "5ed05a6596b518aa00dab13b6ba5e0380cb8ea13335e5fe7490b15de50d115b5"
+  },
+  "report": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/ird-test-report.json",
+    "sha256": "c8d235251b3a8f53eb194ddf9f3c02d90eac51c484fbc85b2bda05848b66fe42"
+  },
+  "stdout": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r18/stdout.log",
+    "sha256": "82565f11f100cb1b7b1bb0ed23b7cfe6749861f04f2c557e629a66be545a7aa1"
+  },
+  "scope": "真实原policy目标/原会话夹具；仅过滤新增2项，原注册用例NOT RUN。一个普通点号API正例passed，一个生产会话规则反例failed；不证明实际碰撞数值查询误判。"
+}

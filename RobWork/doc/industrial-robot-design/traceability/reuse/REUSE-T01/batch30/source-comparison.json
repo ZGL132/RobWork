@@ -1,0 +1,12 @@
+{
+  "base": "bb283be1d",
+  "protected": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot",
+    "RobWork/RobWork/src",
+    "RobWork/RobWorkSim/src",
+    "vcpkg"
+  ],
+  "changed": [],
+  "newCoreImplementation": false,
+  "remote": "not executed"
+}

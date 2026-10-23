@@ -1,0 +1,62 @@
+RobWork/RobWorkSim/src/rwsim/CMakeLists.txt:145:        rwphysics/BodyIntegrator.cpp
+RobWork/RobWorkSim/src/rwsim/CMakeLists.txt:155:        rwphysics/EulerIntegrator.cpp
+RobWork/RobWorkSim/src/rwsim/CMakeLists.txt:269:        rwphysics/BodyIntegrator.hpp
+RobWork/RobWorkSim/src/rwsim/CMakeLists.txt:279:        rwphysics/EulerIntegrator.hpp
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:58:     * The general step looks like this:;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:97:         * @brief Performs a step and updates the state
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:99:        virtual void step (double dt, rw::kinematics::State& state) = 0;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:110:        virtual void initPhysics (rw::kinematics::State& state) = 0;
+RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp:181:        virtual void addDevice (rw::core::Ptr< rwsim::dynamics::DynamicDevice > device,
+RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp:188:            // in the next timestep will match that of the other joint
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.cpp:1:#include "BodyIntegrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:12:     * during a timestep
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:14:    class BodyIntegrator
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:17:        BodyIntegrator (){};
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:24:        virtual ~BodyIntegrator (){};
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:27:         * @brief integrates velocity over timestep h to update the position of the body
+RobWork/RobWorkSim/src/rwsim/rwphysics\BodyIntegrator.hpp:32:         * @brief integrates forces over timestep h to update the velocity of the body
+RobWork/RobWorkSim/src/rwsim/rwphysics\ConstraintSolver.hpp:23:        SolverInfo (double timestep) : dt (timestep) {}
+RobWork/RobWorkSim/src/rwsim/rwphysics\ContactModel.hpp:49:         * @brief this call will be made prior to any other calls in a timestep.
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.cpp:1:#include "EulerIntegrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.cpp:8:EulerIntegrator::EulerIntegrator (RWBody* body) : _body (body)
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.cpp:11:void EulerIntegrator::updatePosition (double h, rw::kinematics::State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.cpp:30:void EulerIntegrator::updateVelocity (double h, rw::kinematics::State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:4:#include "BodyIntegrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:13:    class EulerIntegrator : public BodyIntegrator
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:19:        EulerIntegrator (RWBody* body);
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:22:        virtual ~EulerIntegrator (){};
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:24:        //!@copydoc BodyIntegrator::updatePosition
+RobWork/RobWorkSim/src/rwsim/rwphysics\EulerIntegrator.hpp:27:        //!@copydoc BodyIntegrator::updateVelocity
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:2: * RK4Integrator.hpp
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:8:#ifndef RK4INTEGRATOR_HPP_
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:9:#define RK4INTEGRATOR_HPP_
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:11:#include "BodyIntegrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:19:    class RK4Integrator : public BodyIntegrator
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:22:        RK4Integrator (dynamics::RigidBody* body);
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:24:        virtual ~RK4Integrator (){};
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.hpp:36:#endif /* RK4INTEGRATOR_HPP_ */
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.cpp:2: * RK4Integrator.hpp
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.cpp:8:#include "RK4Integrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.cpp:33:RK4Integrator::RK4Integrator (RigidBody* body) : _body (body)
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.cpp:36:void RK4Integrator::updatePosition (double h, rw::kinematics::State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\RK4Integrator.cpp:55:void RK4Integrator::updateVelocity (double h, rw::kinematics::State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:7:#include "EulerIntegrator.hpp"
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:82:void RWSimulator::initPhysics (State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:104:            _integrators.push_back (new EulerIntegrator (rwbody));
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:168:void RWSimulator::step (double dt, State& state)
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:187:    RW_DEBUG ("* Internal step");
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:240:        for (BodyIntegrator* integrator : _integrators) {
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:254:        for (BodyIntegrator* integrator : _integrators) {
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:402:    // calculate new timestep
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.cpp:421:    std::cout << "* Adjust timestep to: " << _dt << std::endl;
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:30:    class BodyIntegrator;
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:56:         * @copydoc PhysicsEngine::initPhysics
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:58:        void initPhysics (rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:61:         * @copydoc PhysicsEngine::step
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:63:        void step (double dt, rw::kinematics::State& state);
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:100:        void addDevice (rw::core::Ptr< rwsim::dynamics::DynamicDevice > dev,
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:121:         * @brief a step of dt if no penetrating collision occour, else a
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:122:         * step until the collision occour.
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:123:         * @param dt [in] the step to take.
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:125:         * @return the actual time step dt that was taken
+RobWork/RobWorkSim/src/rwsim/rwphysics\RWSimulator.hpp:146:        std::vector< BodyIntegrator* > _integrators;

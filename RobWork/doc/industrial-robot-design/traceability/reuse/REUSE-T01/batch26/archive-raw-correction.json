@@ -1,0 +1,18 @@
+{
+  "rejectedCommit": "aa31f6d99744b71b6efef221b98ec45a159286f2",
+  "reason": "Initial git add used core.autocrlf and converted archival original CRLF bytes in Git objects; local worktree comparison alone was insufficient.",
+  "correction": "git -c core.autocrlf=false add --renormalize on exact B24/B25 archive directories; no global git config change",
+  "indexRawVerification": [
+    {
+      "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch24-20261023",
+      "files": 173,
+      "failures": []
+    },
+    {
+      "archive": "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-batch25-20261023",
+      "files": 159,
+      "failures": []
+    }
+  ],
+  "newReviewedCommit": "next local correction commit; not preclaimed pass"
+}

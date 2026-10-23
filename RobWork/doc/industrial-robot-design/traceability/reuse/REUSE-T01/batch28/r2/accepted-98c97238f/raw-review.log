@@ -1,0 +1,66 @@
+{
+  "head": "98c97238fa3c34aad51330b3b196439844badb69",
+  "base": "fd194d51b586085e26adeae4a73b72a06cb5ce21",
+  "rejected": "f2e65141259cd43ee5e63799514a733908440355",
+  "changedPaths": 89,
+  "manifests": [
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/artifact-manifest.json",
+      "count": 37
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/artifact-manifest.json",
+      "count": 84
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch28/r2/rejected-f2e651412/safe-manifest.json",
+      "count": 78
+    }
+  ],
+  "original11Unchanged": true,
+  "rows": 69,
+  "inputBindingsBefore": 615,
+  "inputBindingsAfter": 502,
+  "historicalFindingsSemanticPrefix": true,
+  "historicalFindingsRawPrefix": true,
+  "f965": {
+    "id": "F-965",
+    "source": "reuse/core-identity-events-audit.md / batch28",
+    "severity": "major",
+    "status": "open",
+    "registeredAt": "2026-10-23",
+    "title": "core����FNV�ǿ�����ƫ��Լ��������ObjectIdɢ�м̳�ƫ��",
+    "owner": "core / REUSE-T05",
+    "resolution": "�����̶���������̽��4��2ͨ��2ʧ�ܣ�ԭcore64ͨ����addShifted/addMulSmall���ѱ��hi/lo��������һ�γ�FNV����������ObjectId hash��ʵʧ�ܡ���Id��ContentVersion/ContentIdentity��̬ͬ�壬����������SHA��־û��𻵡�T01���޺��ģ������Ⱥ˳�����������/�����߼����ԣ����ֳ�API����С�����᰸������ʵʩ��"
+  },
+  "sourceChangesFromRejected": [],
+  "recordedIndependentTests": [
+    {
+      "run": "core",
+      "total": 64,
+      "passed": 64,
+      "failed": 0,
+      "skipped": 0,
+      "failedTests": [],
+      "recordedExit": "0"
+    },
+    {
+      "run": "probe",
+      "total": 6,
+      "passed": 4,
+      "failed": 2,
+      "skipped": 0,
+      "failedTests": [
+        "ReuseCoreAudit.FnvNonemptyMatchesFixedVectors_CORE_T02",
+        "ReuseCoreAudit.PublicHashConsumesFnvResult_CORE_T02"
+      ],
+      "recordedExit": "1"
+    }
+  ],
+  "permissionCounts": {
+    "ARCH:3.6.1": 22,
+    "ARCH:3.6.3": 31,
+    "ARCH:3.6": 16
+  },
+  "errors": []
+}

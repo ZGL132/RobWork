@@ -1,0 +1,14 @@
+[
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/TestHarnessSuitabilityTest.cpp",
+    "ok": true
+  },
+  {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+    "ok": true
+  },
+  {
+    "path": "D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include/gtest/gtest.h",
+    "ok": true
+  }
+]

@@ -1,0 +1,292 @@
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Dataset.cpp
+sdurws::ird::testkit::GoldenDataset::load
+197: GoldenDataset GoldenDataset::load(const DatasetRef& ref)
+198: {
+199:     // 引用合法性（datasetId 句法——与目录名一致的前提）。
+200:     if (ref.datasetId.size() < 3 || ref.datasetId.size() > 64
+201:         || !allCharsIn(ref.datasetId, "abcdefghijklmnopqrstuvwxyz0123456789-")) {
+202:         failField("datasetId", "引用句法非法（[a-z0-9-]{3,64}）: " + ref.datasetId);
+203:     }
+204:     const std::filesystem::path versionDir =
+205:         goldenDataRoot() / "golden" / ref.datasetId / ref.version;
+206:     const auto manifestPath = versionDir / "manifest.json";
+207:     if (!std::filesystem::exists(manifestPath)) {
+208:         throw TestKitError(TestKitErrorKind::DatasetInvalid,
+209:                            "dataset-invalid: manifest 不存在: " + manifestPath.string());
+210:     }
+211: 
+212:     // 第一步：解析（TK-T02 JsonLite——行列错误已含定位）。
+213:     const auto text = readFileBytes(manifestPath);
+214:     const JsonValue root = parseJson(text);
+215:     if (!root.isObject()) {
+216:         failField("$", "manifest 顶层须为对象");
+217:     }
+218: 
+219:     GoldenDataset out;
+220:     out.versionDir_ = versionDir;
+221:     DatasetManifest& m = out.manifest_;
+222: 
+223:     // ---- 顶层必填串字段（§4.2.2 表逐行） ----
+224:     m.schemaVersion = requireString(root, "schemaVersion");
+225:     static constexpr char kSchemaPrefix[] = "ird-golden-manifest/";
+226:     if (m.schemaVersion.rfind(kSchemaPrefix, 0) != 0) {
+227:         failField("schemaVersion", "前缀须为 ird-golden-manifest/: " + m.schemaVersion);
+228:     }
+229:     {
+230:         // schema 后缀仅主版本段（"ird-golden-manifest/1"）——非 M.m.p 形态，单段整数校验。
+231:         const std::string majorStr = m.schemaVersion.substr(sizeof(kSchemaPrefix) - 1);
+232:         if (majorStr.empty() || !std::all_of(majorStr.begin(), majorStr.end(),
+233:             [](char c) { return c >= '0' && c <= '9'; })) {
+234:             failField("schemaVersion", "主版本段须为整数: " + m.schemaVersion);
+235:         }
+236:         if (std::stoi(majorStr) != 1) {
+237:             failField("schemaVersion", "未知主版本（当前支持 1）: " + m.schemaVersion);
+238:         }
+239:     }
+240:     m.datasetId = requireString(root, "datasetId");
+241:     if (m.datasetId.size() < 3 || m.datasetId.size() > 64
+242:         || !allCharsIn(m.datasetId, "abcdefghijklmnopqrstuvwxyz0123456789-")) {
+243:         failField("datasetId", "句法非法（[a-z0-9-]{3,64}）: " + m.datasetId);
+244:     }
+245:     // datasetId 与目录名一致（§4.2.2 + lint 口径）。
+246:     if (m.datasetId != ref.datasetId) {
+247:         failField("datasetId", "与目录名不一致: " + m.datasetId + " != " + ref.datasetId);
+248:     }
+249:     {
+250:         int maj = 0, mi = 0, pa = 0;
+251:         m.version = requireString(root, "version");
+252:         parseSemanticVersion(m.version, "version", &maj, &mi, &pa);
+253:         if (ref.version != m.version) {
+254:             failField("version", "与版本目录名不一致: " + m.version + " != " + ref.version);
+255:         }
+256:     }
+257: 
+258:     // kind（五 token 白名单）。
+259:     const auto kindToken = requireString(root, "kind");
+260:     const auto kind = datasetKindFromToken(kindToken);
+261:     if (!kind.has_value()) {
+262:         failField("kind", "未知数据集类别: " + kindToken);
+263:     }
+264:     m.kind = *kind;
+265: 
+266:     m.scenarioCategory = requireString(root, "scenarioCategory");
+267:     if (m.scenarioCategory.empty() || m.scenarioCategory.size() > 64
+268:         || !allCharsIn(m.scenarioCategory, "abcdefghijklmnopqrstuvwxyz0123456789-/")) {
+269:         failField("scenarioCategory", "句法非法（[a-z0-9-]{1,64}，域前缀建议带 /）: "
+270:                                        + m.scenarioCategory);
+271:     }
+272: 
+273:     // coveredRequirements（≥1；lint 对字典逐项校验在 lint 工具——装载层仅句法）。
+274:     m.coveredRequirements = requireStringArray(root, "coveredRequirements", 1);
+275:     m.coveredAt = requireStringArray(root, "coveredAt", 0);
+276: 
+277:     // toleranceProfile（{id,version}）。
+278:     const JsonValue* tp = root.find("toleranceProfile");
+279:     if (tp == nullptr || !tp->isObject()) {
+280:         failField("toleranceProfile", "必填对象字段缺失");
+281:     }
+282:     m.toleranceProfileId = requireString(*tp, "id", "toleranceProfile.");
+283:     m.toleranceProfileVersion = requireString(*tp, "version", "toleranceProfile.");
+284: 
+285:     m.inputs = requireStringArray(root, "inputs", 1);
+286:     m.expected = requireStringArray(root, "expected", 1);
+287: 
+288:     // parameters（对象，域自有 schema——装载层存 JSON 原文）。
+289:     if (const JsonValue* p = root.find("parameters"); p != nullptr && p->isObject()) {
+290:         m.parametersJson = dumpJson(*p, false);
+291:     } else {
+292:         failField("parameters", "必填对象字段缺失");
+293:     }
+294: 
+295:     // units：field→UnitToken（token 须在 core 单位表注册——装载时校验）。
+296:     if (const JsonValue* u = root.find("units"); u != nullptr && u->isObject()) {
+297:         for (const auto& kv : u->members) {
+298:             const auto tok = core::UnitToken::find(kv.second.text);
+299:             if (!u->members.empty() && !kv.second.isString()) {
+300:                 failField("units." + kv.first, "单位须为注册 token 字符串");
+301:             }
+302:             if (!tok.has_value()) {
+303:                 failField("units." + kv.first, "单位未注册（core 单位表无此 token）: "
+304:                                                + kv.second.text);
+305:             }
+306:             m.units.emplace_back(kv.first, kv.second.text);
+307:         }
+308:     } else {
+309:         failField("units", "必填对象字段缺失");
+310:     }
+311: 
+312:     // frames：至少 base（涉及 world/tcp 时必含——交叉校验）。
+313:     if (const JsonValue* fr = root.find("frames"); fr != nullptr && fr->isObject()) {
+314:         bool hasBase = false;
+315:         for (const auto& kv : fr->members) {
+316:             if (!kv.second.isString()) { failField("frames." + kv.first, "须为字符串"); }
+317:             if (kv.first == "base") { hasBase = true; }
+318:             m.frames.emplace_back(kv.first, kv.second.text);
+319:         }
+320:         if (!hasBase) { failField("frames", "至少含 base（§4.2.2）"); }
+321:     } else {
+322:         failField("frames", "必填对象字段缺失");
+323:     }
+324: 
+325:     // referenceSource：analytic-case/reference-impl 必填且独立=true；regression 必填 =false。
+326:     if (const JsonValue* rs = root.find("referenceSource"); rs != nullptr && rs->isObject()) {
+327:         m.referenceSourcePresent = true;
+328:         m.referenceSource.method = requireString(*rs, "method", "referenceSource.");
+329:         static const char* kMethods[] = {"closed-form", "textbook", "independent-program",
+330:                                          "production-snapshot", "hand-built", "measured"};
+331:         bool methodOk = false;
+332:         for (const auto* mm : kMethods) {
+333:             if (m.referenceSource.method == mm) { methodOk = true; }
+334:         }
+335:         if (!methodOk) {
+336:             failField("referenceSource.method", "未知方法: " + m.referenceSource.method);
+337:         }
+338:         m.referenceSource.scope = requireString(*rs, "scope", "referenceSource.");
+339:         m.referenceSource.independentOfProductionImpl =
+340:             requireBool(*rs, "independentOfProductionImpl");
+341:         m.referenceSource.description = requireString(*rs, "description", "referenceSource.");
+342: 
+343:         const bool needIndependent =
+344:             (m.kind == DatasetKind::AnalyticCase || m.kind == DatasetKind::ReferenceImpl);
+345:         if (needIndependent && !m.referenceSource.independentOfProductionImpl) {
+346:             failField("referenceSource.independentOfProductionImpl",
+347:                       "analytic-case/reference-impl 必须独立于生产实现");
+348:         }
+349:         if (m.kind == DatasetKind::Regression && m.referenceSource.independentOfProductionImpl) {
+350:             failField("referenceSource.independentOfProductionImpl",
+351:                       "regression 的来源是生产实现快照，必须 =false");
+352:         }
+353:     } else if (m.kind == DatasetKind::AnalyticCase
+354:                || m.kind == DatasetKind::ReferenceImpl
+355:                || m.kind == DatasetKind::Regression) {
+356:         failField("referenceSource", "该 kind 下必填");
+357:     }
+358: 
+359:     // producer（必填）。
+360:     if (const JsonValue* pr = root.find("producer"); pr != nullptr && pr->isObject()) {
+361:         m.producerPresent = true;
+362:         m.producer.softwareVersion = requireString(*pr, "softwareVersion", "producer.");
+363:         m.producer.algorithmId = requireString(*pr, "algorithmId", "producer.");
+364:         if (const JsonValue* sc = pr->find("solverConfig"); sc != nullptr && sc->isObject()) {
+365:             m.producer.solverConfigJson = dumpJson(*sc, false);
+366:         }
+367:         if (const JsonValue* sd = pr->find("seed"); sd != nullptr && !sd->isNull()) {
+368:             if (!sd->isNumber() || sd->number < 0) {
+369:                 failField("producer.seed", "seed 须为非负整数或 null");
+370:             }
+371:             m.producer.seedPresent = true;
+372:             m.producer.seed = static_cast<std::uint64_t>(sd->number);
+373:         }
+374:         if (const JsonValue* tc = pr->find("threadCount"); tc != nullptr && tc->isNumber()) {
+375:             m.producer.threadCount = static_cast<int>(tc->number);
+376:             if (m.producer.threadCount < 1) { failField("producer.threadCount", "须 ≥1"); }
+377:         }
+378:         m.producer.generatedAtUtc = requireString(*pr, "generatedAtUtc", "producer.");
+379:     } else {
+380:         failField("producer", "必填对象字段缺失");
+381:     }
+382: 
+383:     // edgeCases：analytic-case/reference-impl 必填且三布尔全 true（附录 D C4 lint 强制）。
+384:     if (const JsonValue* ec = root.find("edgeCases"); ec != nullptr && ec->isObject()) {
+385:         m.edgeCasesPresent = true;
+386:         m.edgeCases.zeroValue = requireBool(*ec, "zeroValue");
+387:         m.edgeCases.nearZero = requireBool(*ec, "nearZero");
+388:         m.edgeCases.signCancellation = requireBool(*ec, "signCancellation");
+389:         m.edgeCases.sampleRefs = requireStringArray(*ec, "sampleRefs", 0);
+390:         if (m.kind == DatasetKind::AnalyticCase || m.kind == DatasetKind::ReferenceImpl) {
+391:             if (!m.edgeCases.zeroValue || !m.edgeCases.nearZero
+392:                 || !m.edgeCases.signCancellation) {
+393:                 failField("edgeCases", "analytic-case/reference-impl 三布尔必须全 true"
+394:                                        "（附录 D C4 黄金数据集必含零值/近零值/正负抵消样例）");
+395:             }
+396:         }
+397:     } else if (m.kind == DatasetKind::AnalyticCase || m.kind == DatasetKind::ReferenceImpl) {
+398:         failField("edgeCases", "analytic-case/reference-impl 必填");
+399:     }
+400: 
+401:     // integrity（≥1；覆盖 inputs+expected+generate 全部文件——装载期先校验结构，
+402:     // 全量文件校验在下方 integrity 段执行）。
+403:     if (const JsonValue* ig = root.find("integrity"); ig != nullptr && ig->isArray()) {
+404:         if (ig->items.empty()) { failField("integrity", "至少 1 条"); }
+405:         for (const auto& item : ig->items) {
+406:             if (!item.isObject()) { failField("integrity", "条目须为对象"); }
+407:             IntegrityEntry e;
+408:             e.path = requireString(item, "path", "integrity.");
+409:             e.sha256Hex = requireString(item, "sha256", "integrity.");
+410:             const JsonValue* sz = item.find("sizeBytes");
+411:             if (sz == nullptr || !sz->isNumber() || sz->number < 0) {
+412:                 failField("integrity.sizeBytes", "须为非负整数");
+413:             }
+414:             e.sizeBytes = static_cast<std::uint64_t>(sz->number);
+415:             if (e.sha256Hex.size() != 64
+416:                 || !allCharsIn(e.sha256Hex, "0123456789abcdef")) {
+417:                 failField("integrity.sha256", "须为 64 位小写十六进制: " + e.sha256Hex);
+418:             }
+419:             m.integrity.push_back(std::move(e));
+420:         }
+421:     } else {
+422:         failField("integrity", "必填数组字段缺失");
+423:     }
+424: 
+425:     // generator（必填）。
+426:     if (const JsonValue* gn = root.find("generator"); gn != nullptr && gn->isObject()) {
+427:         m.generatorPresent = true;
+428:         m.generatorScript = requireString(*gn, "script", "generator.");
+429:         m.generatorInvocation = requireString(*gn, "invocation", "generator.");
+430:         m.generatorCommitted = requireBool(*gn, "committed");
+431:     } else {
+432:         failField("generator", "必填对象字段缺失");
+433:     }
+434: 
+435:     // history（≥1；首版也登记）。
+436:     if (const JsonValue* hi = root.find("history"); hi != nullptr && hi->isArray()
+437:                                                    && !hi->items.empty()) {
+438:         for (const auto& item : hi->items) {
+439:             if (!item.isObject()) { failField("history", "条目须为对象"); }
+440:             HistoryEntry h;
+441:             h.version = requireString(item, "version", "history.");
+442:             h.date = requireString(item, "date", "history.");
+443:             h.change = requireString(item, "change", "history.");
+444:             h.reReviewedBy = requireString(item, "reReviewedBy", "history.");
+445:             if (const JsonValue* sb = item.find("supersededBy");
+446:                 sb != nullptr && sb->isString()) {
+447:                 h.supersededBy = sb->text;
+448:             }
+449:             m.history.push_back(std::move(h));
+450:         }
+451:     } else {
+452:         failField("history", "必填数组字段缺失或为空（首版也须登记）");
+453:     }
+454: 
+455:     // ---- 完整性校验（§4.5：size＋SHA-256 逐文件；任何不符→DatasetInvalid） ----
+456:     // 完整性清单须覆盖 inputs+expected（generate 声明 committed 时亦覆盖）。
+457:     for (const auto& rel : m.inputs) {
+458:         const bool covered = std::any_of(
+459:             m.integrity.begin(), m.integrity.end(),
+460:             [&](const IntegrityEntry& e) { return e.path == rel; });
+461:         if (!covered) { failField("integrity", "inputs 文件未登记完整性: " + rel); }
+462:     }
+463:     for (const auto& rel : m.expected) {
+464:         const bool covered = std::any_of(
+465:             m.integrity.begin(), m.integrity.end(),
+466:             [&](const IntegrityEntry& e) { return e.path == rel; });
+467:         if (!covered) { failField("integrity", "expected 文件未登记完整性: " + rel); }
+468:     }
+469:     for (const auto& e : m.integrity) {
+470:         const auto filePath = versionDir / e.path;
+471:         const std::string bytes = readFileBytes(filePath);      // 缺失→EnvUnavailable
+472:         if (bytes.size() != e.sizeBytes) {
+473:             failField("integrity." + e.path,
+474:                       "size 不符（期望 " + std::to_string(e.sizeBytes) + "，实际 "
+475:                           + std::to_string(bytes.size()) + "）");
+476:         }
+477:         const std::string actualHex = sha256HexOf(bytes);
+478:         if (actualHex != e.sha256Hex) {
+479:             failField("integrity." + e.path,
+480:                       "SHA-256 不符（期望 " + e.sha256Hex + "，实际 " + actualHex + "）——"
+481:                       "文件被篡改或损坏");
+482:         }
+483:     }
+484: 
+485:     return out;
+486: }
