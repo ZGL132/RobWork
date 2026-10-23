@@ -28,8 +28,12 @@
 #include <sdurws/ird/kinematics/Evaluators.hpp>
 #include <sdurws/ird/kinematics/Fk.hpp>
 #include <sdurws/ird/kinematics/KinTypes.hpp>
+#include <sdurws/ird/runtime/Adapter.hpp>
 #include <sdurws/ird/runtime/CanonicalModel.hpp>
 #include <sdurws/ird/runtime/Description.hpp>
+#include <sdurws/ird/runtime/Errors.hpp>
+#include <sdurws/ird/runtime/NameMap.hpp>
+#include <sdurws/ird/runtime/Snapshot.hpp>
 #include <sdurws/ird/runtime/Sources.hpp>
 
 #include <gtest/gtest.h>
@@ -334,6 +338,93 @@ inline rt::CanonicalModel marginModel()
 // IKinRuntimeView 的最小实现，模型值持有、T_world_base 可设。
 // =====================================================================
 
+/**
+ * @brief REUSE-T17 测试锚——IRuntimeModelView 的值面替身。
+ *
+ * 仅承载值面（model/worldToBase）与锚身份（多次取用同源）；workCell/
+ * makeState/nameResolver 等编译产物依赖成员按替身契约显式抛错（当前
+ * 评估器不消费；Device/State FK 替换包落地时由真实编译快照承载，替身
+ * 不伪造编译能力）。测试专用——不进入生产目标，不授予模型构造权限。
+ */
+class TestAnchor final : public rt::IRuntimeModelView {
+public:
+    TestAnchor(const rt::CanonicalModel& model, rw::math::Transform3D<double> worldToBase)
+        : m_model(model), m_worldToBase(std::move(worldToBase))
+    {
+    }
+
+    const rt::CanonicalModel& model() const override { return m_model; }
+    const rt::RuntimeNameMap& nameMap() const override
+    {
+        static const rt::RuntimeNameMap empty;
+        return empty;
+    }
+    const rt::RuntimeCapability& capabilities() const override
+    {
+        static const rt::RuntimeCapability none;
+        return none;
+    }
+    const rt::WorkCellConstView& workCell() const override
+    {
+        // 替身契约：无编译产物——消费即测试缺陷（fail-fast，不伪造）。
+        throw rt::RuntimeError(rt::RuntimeErrorCode::RobWorkError,
+                               "TestAnchor: 无编译产物 WorkCell（值面替身）");
+    }
+    rt::Expected<rt::DynamicWorkCellConstView, rt::RuntimeError>
+    tryDynamicWorkCell() const override
+    {
+        return rt::Expected<rt::DynamicWorkCellConstView, rt::RuntimeError>::err(
+            rt::RuntimeError(rt::RuntimeErrorCode::RobWorkError,
+                             "TestAnchor: 无编译产物 DWC（值面替身）"));
+    }
+    rw::math::Transform3D<double> worldToBase() const override { return m_worldToBase; }
+    rw::math::Transform3D<double> baseToWorld() const override
+    {
+        // 正交 ⇒ 逆＝转置（rw Rotation3D::inverse 头内 inline——BaseWorldTransform 同款）。
+        rw::math::Rotation3D<double> rInv = m_worldToBase.R();
+        rInv.inverse();
+        return rw::math::Transform3D<double>(rInv * (-m_worldToBase.P()), rInv);
+    }
+    rw::math::Vector3D<double> gravityWorld() const override { return {0, 0, -9.81}; }
+    rw::math::Vector3D<double> gravityBase() const override
+    {
+        return m_worldToBase.R() * rw::math::Vector3D<double>(0, 0, -9.81);
+    }
+    rw::kinematics::State makeState() const override
+    {
+        throw rt::RuntimeError(rt::RuntimeErrorCode::RobWorkError,
+                               "TestAnchor: 无编译产物 State（值面替身）");
+    }
+    const rt::IRuntimeNameResolver& nameResolver() const override
+    {
+        // 查询轨替身：恒解析失败（空映射语义——消费即测试缺陷）。
+        struct NullResolver final : public rt::IRuntimeNameResolver
+        {
+            rt::Expected<rt::ObjectRef, rt::RuntimeResolveError>
+            resolveRuntimeName(rt::RuntimeNameView) const override
+            {
+                return rt::Expected<rt::ObjectRef, rt::RuntimeResolveError>::err(
+                    rt::RuntimeResolveError{rt::RuntimeErrorCode::UnknownObject,
+                                            "TestAnchor 空映射", ""});
+            }
+            rt::Expected<rt::RuntimeName, rt::RuntimeNameError>
+            resolveObjectId(core::ObjectId id) const override
+            {
+                return rt::Expected<rt::RuntimeName, rt::RuntimeNameError>::err(
+                    rt::RuntimeNameError{rt::RuntimeErrorCode::UnknownObject,
+                                         "TestAnchor 空映射", id});
+            }
+            core::ContentIdentity nameMapIdentity() const override { return {}; }
+        };
+        static const NullResolver resolver;
+        return resolver;
+    }
+
+private:
+    const rt::CanonicalModel& m_model;  ///< 引用宿主视图的模型（替身不复制）
+    rw::math::Transform3D<double> m_worldToBase;
+};
+
 class TestView final : public IKinRuntimeView {
 public:
     explicit TestView(rt::CanonicalModel model)
@@ -345,9 +436,21 @@ public:
     const rt::CanonicalModel& model() const override { return m_model; }
     rw::math::Transform3D<double> worldToBase() const override { return m_worldToBase; }
 
+    // REUSE-T17 锚能力替身：懒构造缓存，多次调用同源（同一模型值的稳定
+    // 锚视图）——提交面冻结语义的测试驱动入口。
+    std::shared_ptr<const rt::IRuntimeModelView> runtimeModelView() const override
+    {
+        if (!m_anchor) {
+            m_anchor = std::make_shared<TestAnchor>(m_model, m_worldToBase);
+        }
+        return m_anchor;
+    }
+
 private:
     rt::CanonicalModel m_model;                   ///< 值持有（替身自有副本）
     rw::math::Transform3D<double> m_worldToBase;  ///< 取自模型 world 块（§4.2 唯一来源）
+    mutable std::shared_ptr<const rt::IRuntimeModelView>
+        m_anchor;  ///< 锚缓存（REUSE-T17——懒构造，同源复用）
 };
 
 /// evidence 上下文替身（§11 测试设施口径——只验证契约形状）。

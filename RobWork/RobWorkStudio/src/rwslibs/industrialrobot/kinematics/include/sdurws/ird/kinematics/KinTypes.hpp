@@ -38,6 +38,7 @@
 
 #include <cstdint>
 #include <array>
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -48,6 +49,10 @@
 #include <sdurws/ird/core/Evaluation.hpp>    // EvaluationMode（模式词表——入结果身份）
 #include <sdurws/ird/core/Identity.hpp>      // ObjectId（工具对象稳定身份）
 #include <sdurws/ird/runtime/CanonicalModel.hpp>  // runtime::CanonicalModel（只读模型真值）
+
+// runtime::IRuntimeModelView 仅前置声明（REUSE-T17 锚能力入口的返回类型；
+// 公共头零新依赖——完整类型随消费/实现侧持有的 runtime 公共头可达）。
+namespace sdurws::ird::runtime { class IRuntimeModelView; }
 
 namespace sdurws::ird::kinematics {
 
@@ -136,7 +141,10 @@ struct TcpRef {
  * 追加**纯虚成员并同步登记单元卡（不重排既有成员——虚表序进入二进制
  * 契约）；T03 的最小面＝上列两成员（位姿指标无重力相关量，gravityBase()
  * 随首个重力消费任务追加——§4.5"重力相关量仅经 gravityBase"的约束在
- * 消费出现时生效）。
+ * 消费出现时生效）。REUSE-T17（2026-10-23，接口契约版本 /2——所有者
+ * 批准方案二）：表尾追加 runtimeModelView() 可域能力入口（带缺省体，
+ * 见成员注）；全体实现者已同步，虚表序＝~IKinRuntimeView, model,
+ * worldToBase, runtimeModelView。
  */
 class IKinRuntimeView {
 public:
@@ -151,6 +159,25 @@ public:
     /// core §4.6；平移单位 m、旋转无量纲正交阵；前置：快照编译产物已过
     /// 合法域校验）。
     virtual rw::math::Transform3D<double> worldToBase() const = 0;
+
+    /**
+     * @brief 已编译运行时模型视图锚（REUSE-T17 可域能力——§4.2 消费面
+     *        增补行；方案二，所有者 2026-10-23 批准）。
+     *
+     * 返回的视图实际 owner 为 runtime::RuntimeSnapshot（shared_ptr 深拷贝
+     * 持真实引用计数——禁止无所有权包装/no-op deleter 伪造保活）；同视图
+     * 多次调用返回同源锚；锚存活期覆盖 model()/worldToBase() 的合法消费。
+     * 空返回＝纯值视图（无编译产物）：调用方按既有两分错误轨显式处置
+     * （KIN-NO-DEVICE 族，params 标注"无编译产物视图"来源）——**禁止回退
+     * 旧手写链作为隐藏 fallback**。缺省实现返回空，保证既有实现者 source
+     * 兼容（错误注入/纯数值替身零改动）；生产快照包装视图必须覆盖。
+     *
+     * 线程：并发只读安全（同 §9.4 行）；不缓存跨请求。
+     */
+    virtual std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const
+    {
+        return nullptr;
+    }
 };
 
 // =====================================================================

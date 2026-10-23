@@ -25,3 +25,14 @@
   唯一阻断＝REUSE-TASK-STATE "execution needs ready/done contract"——
   阶段纪律按设计生效：planned 草案被挡在执行门禁外，无其他 schema 报错；
   所有者确认接口形态、契约转 ready 后同门禁复检放行。
+
+## 2026-10-23 T17 实施轮追加
+
+- `reuse-t17-ready-gate.log`：T17 转 ready 并实施后，validate-reuse -TaskFile
+  [T17] PASS（exit 0；changed=37 含本包 7 个变更文件的全量区段覆盖与
+  business-specific/migrated 行翻转）。
+- `batch-docs-t13-t15-t16-t17.log`：四契约批次 validate-docs PASS（validate-reuse
+  PASS / validate-task PASS×4 / validate-docs PASS；全库证据索引 NOT RUN 按需）。
+- permissions.json 新增两笔精确 grant（REUSE-T17-KinFkFixture.hpp state/query
+  runtime-borrow；REUSE-T17-KinEvaluationChannelTest.cpp model+state/write-state
+  task-private）——变更测试文件真实上游使用的 IRD-GATE-AD 登记，T13 先例同款。

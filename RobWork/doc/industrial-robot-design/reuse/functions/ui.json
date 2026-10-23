@@ -210,9 +210,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
           "symbol": "SnapshotViewAdapter",
           "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::SnapshotViewAdapter",
-          "startLine": 61,
-          "endLine": 80,
-          "sha256": "d080d388547310b858c5bfdf6017d3de2f56c577e924a77550a826fabdec64f6"
+          "startLine": 1,
+          "endLine": 1765,
+          "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
         }
       ],
       "targets": [
@@ -221,13 +221,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
       },
-      "differences": "持shared_ptr<const RuntimeSnapshot>保活，现两转发；未来仅补真实编译视图消费，不重建WC",
+      "differences": "REUSE-T17：持shared_ptr<const RuntimeSnapshot>保活，现三成员（model/worldToBase/runtimeModelView锚转发——同源真实引用计数）；未来Device/State FK消费锚，不重建WC",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -252,6 +252,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -265,9 +269,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
           "symbol": "KinSessionModelView",
           "qualifiedSymbol": "sdurws::ird::ui::KinSessionModelView",
-          "startLine": 108,
-          "endLine": 135,
-          "sha256": "0c494ea6d5da2ec4e3f19e3a5e9302971bc4931ee37fa4fac3d20c6e20130a3b"
+          "startLine": 1,
+          "endLine": 693,
+          "sha256": "40a76ed6819feb2ca99044ae02088a52a3a360b6eeb484346bbc311f208b0178"
         }
       ],
       "targets": [
@@ -276,13 +280,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
       },
-      "differences": "可换绑委托仅UI会话；后台必须捕获旧快照，不能跨线程读正在rebind的委托",
+      "differences": "REUSE-T17：可换绑委托仅UI会话；新增runtimeModelView()纯转发（值委托缺省空＝能力缺席如实传递）；后台必须捕获旧快照，不能跨线程读正在rebind的委托",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
@@ -307,6 +311,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp",
+        "sha256": "40a76ed6819feb2ca99044ae02088a52a3a360b6eeb484346bbc311f208b0178"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -320,8 +328,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
           "symbol": "KinEvaluationExecutor::attachSnapshot",
           "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachSnapshot",
-          "startLine": 94,
-          "endLine": 111,
+          "startLine": 101,
+          "endLine": 118,
           "sha256": "7ee13cb1f92be65a94a134b04b25cecd74492c8a0104e46d6dbbba37bfb0f423"
         }
       ],
@@ -331,8 +339,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -362,6 +370,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -375,8 +387,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
           "symbol": "KinEvaluationExecutor::attachView",
           "qualifiedSymbol": "sdurws::ird::ui::KinEvaluationExecutor::attachView",
-          "startLine": 113,
-          "endLine": 139,
+          "startLine": 120,
+          "endLine": 146,
           "sha256": "062c9562039423014d223ba8b83d1069999ece782c48bfaee98d2c6b49eb73c6"
         }
       ],
@@ -386,8 +398,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -417,6 +429,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp",
+        "sha256": "8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -430,9 +446,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
           "symbol": "FixtureView",
           "qualifiedSymbol": "(anonymous namespace)::FixtureView",
-          "startLine": 79,
-          "endLine": 118,
-          "sha256": "6a5ef46d1fd5e9c0276662292105f5c413deb368397db153891b0b1b3cbb9a53"
+          "startLine": 85,
+          "endLine": 124,
+          "sha256": "a3fc89d786d9e8d38b7ca0d8bb2f76dc548b84c8c2cdeb3714da0aff2ca77e9d"
         }
       ],
       "targets": [
@@ -441,8 +457,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -472,6 +488,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -486,9 +506,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
           "symbol": "ObservedView",
           "qualifiedSymbol": "(anonymous namespace)::KinEvaluationChannel_CoverageProgressAndDetachStopRealComputation_MA03_Test::TestBody()::ObservedView",
-          "startLine": 957,
-          "endLine": 971,
-          "sha256": "dc426020186569c97c501bcd3b1dabddd3f62e5bfacc13c74b8b6305a94c7002"
+          "startLine": 963,
+          "endLine": 977,
+          "sha256": "09379396ef3020c0cda4d58618369ce02795f6a00510a393bd016fc95be37578"
         }
       ],
       "targets": [
@@ -497,8 +517,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -528,6 +548,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -2311,6 +2335,47 @@
         }
       ],
       "auditBoundary": "23跑22passed1failed0skipped；生产装配仅静态源码链，未跑GUI/最终DLL/并发在投退订/全消费者，不关闭整文件或T01"
+    },
+    {
+      "functionId": "ui.AnchorCaptureExecutorTest",
+      "ownerUnit": "ui",
+      "requirements": [
+        "ARC-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+          "symbol": "RebindKeepsOldTaskModelAndLifetime_REUSE_T17",
+          "qualifiedSymbol": "sdurws::ird::ui::(anonymous namespace)::RebindKeepsOldTaskModelAndLifetime_REUSE_T17",
+          "startLine": 1,
+          "endLine": 1929,
+          "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_ui_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"runtimeModelView|AnchorCapture\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test",
+        "conclusion": "REUSE-T17锚语义executor级用例承载面；仅测试目标，不授予生产权限"
+      },
+      "differences": "REUSE-T17 executor级锚语义用例（真实编译快照：同源转发/换绑解绑不动旧任务/两任务State隔离/锚释放可析构）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+          "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+        }
+      ],
+      "auditBoundary": "仅本测试文件的锚语义用例；替身不授予生产模型权限",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+        "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+      }
     }
   ]
 }

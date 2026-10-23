@@ -795,8 +795,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
           "symbol": "rodrigues",
           "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
-          "startLine": 380,
-          "endLine": 397,
+          "startLine": 483,
+          "endLine": 500,
           "sha256": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01"
         }
       ],
@@ -806,8 +806,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
         "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
@@ -819,6 +819,10 @@
           "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
+      },
       "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
       "designRefs": [
         "reuse/audit-contract.md §6"
@@ -836,8 +840,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
           "symbol": "mul4",
           "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
-          "startLine": 408,
-          "endLine": 419,
+          "startLine": 511,
+          "endLine": 522,
           "sha256": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4"
         }
       ],
@@ -847,8 +851,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
         "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
@@ -860,6 +864,10 @@
           "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
+      },
       "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
       "designRefs": [
         "reuse/audit-contract.md §6"
@@ -877,8 +885,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
           "symbol": "referenceFk",
           "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
-          "startLine": 429,
-          "endLine": 518,
+          "startLine": 532,
+          "endLine": 621,
           "sha256": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7"
         }
       ],
@@ -888,8 +896,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
         "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
@@ -901,6 +909,10 @@
           "sha256": "e27e348552932b7fd504b7ff444bc3a7e861e01b97bbcfa658f05f7f9a6f4e19"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
+      },
       "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
       "designRefs": [
         "reuse/audit-contract.md §6"
@@ -918,9 +930,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
           "symbol": "IKinRuntimeView",
           "qualifiedSymbol": "sdurws::ird::kinematics::IKinRuntimeView",
-          "startLine": 141,
-          "endLine": 154,
-          "sha256": "7fd78d844eb5ddddfc6af9a5442155ffcd0f76552c3ec2f1bfa2d9937a269d37"
+          "startLine": 1,
+          "endLine": 491,
+          "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
         }
       ],
       "targets": [
@@ -929,8 +941,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -960,10 +972,14 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+        "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
-      "functionId": "kinematics.FrozenRuntimeView",
+      "functionId": "kinematics.AnchorRuntimeView",
       "ownerUnit": "kinematics",
       "requirements": [
         "CON-06",
@@ -972,11 +988,11 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
-          "symbol": "FrozenRuntimeView",
-          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::FrozenRuntimeView",
-          "startLine": 74,
-          "endLine": 91,
-          "sha256": "5f174e300d8fccdd44a3282bfc17e29c459d8907949e52f69d2ea13193cf0d48"
+          "symbol": "AnchorRuntimeView",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::AnchorRuntimeView",
+          "startLine": 1,
+          "endLine": 2355,
+          "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
         }
       ],
       "targets": [
@@ -985,8 +1001,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -1016,6 +1032,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+        "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
@@ -1029,9 +1049,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
           "symbol": "TestView",
           "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::TestView",
-          "startLine": 337,
-          "endLine": 351,
-          "sha256": "20b94b08c915a7304dc453e4216d9d93b7057232b91fb2f5e3546ca55ad115bc"
+          "startLine": 1,
+          "endLine": 642,
+          "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
         }
       ],
       "targets": [
@@ -1040,8 +1060,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
         "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
@@ -1071,6 +1091,10 @@
           "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
         }
       ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51"
+      },
       "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
