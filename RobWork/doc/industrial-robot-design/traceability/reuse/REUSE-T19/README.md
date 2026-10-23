@@ -43,3 +43,17 @@ q_auth→q_rw 全库检索：dynamics 为快照透传不参与计算、runtime �
 
 - T13 独验 PASS 前不集成、不关债务；本包验收由所有者授权的独立会话执行（智能体A不自签）。
 - 冒烟树环境回归（RobWork 导出包解析）需所有者裁决：修复主 checkout RobWork 构建树/导出，或登记冒烟基线快照。
+
+## 2026-10-24 所有者裁决与本地集成结果
+
+本节是本包的最新交付状态；前文及冻结验收记录保留其实施/验收时点事实，不回写历史 PASS/FAIL。
+
+- 所有者本轮原话：“授权 A 本地合入，上述 T13 前置门按照你的建议进行裁决”。协调者据此作有界裁决：T13 的 runtime 实现已经存在于主线 `691cbd42e`，本次 A 增量未修改 runtime、core 或治理脚本，允许已独验的 T17/T19 增量进行本次本地集成；本节明确替代此前“T13 独验 PASS 前不集成”的本次合入限制。T13 独验仍为 NOT RUN，未自签 PASS、未关闭债务，仍约束其自身结项与最终交付；不据此批准后续能力包、新核心或上游扩展，也不豁免 GOV-T21/GOV-T22 阶段门。
+- 合入前复核：主线 `691cbd42e3f9ac951539f01edfafe99afd7055d1`，A 交付 `0a6b1cde0d22a5de35079cee02558f98812ca903`，两工作树干净，主线为 A 祖先，A 领先 12、落后 0。12 提交范围为治理补充/C4 R2 提案与实验（未实施产品提案）、T17 锚接口及独验、T19 FK/Jacobian 迁移及独验、编号修正、主线同步和复核归档；复核冻结 `8babc8d7068a44ae2b7818b7526406f73de7cdae` 到交付仅新增复核记录，产品内容未变。
+- 本地合并命令：`git merge --no-ff codex/reuse-foundation`；合并 SHA＝`37a07c80922a4f818785ed02ce7464d629a31536`。第一父＝上述主线，第二父＝上述 A 交付；合并树与 A 交付树均为 `74ec91472d558b2cfa4c948e8090f0e8afc9e0d9`。无冲突、无 rebase/squash/cherry-pick，未操作远程。
+- 使用主工作树现有 `build` 集成缓存（`RWS_BUILD_INDUSTRIALROBOT=ON`），未手工重新配置全库。VS2022 x64 下执行 `cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test sdurws_ird_kinematics_gui_test sdurws_ird_ui_test sdurws_ird_ui_plugin ird_gates`；CMake 自动更新既有构建文件，前五个受影响目标均完成构建，整体命令因末尾门禁失败返回 1，不能报告为构建/门禁整体 PASS。原件：[a-build.log](integration-20261024/a-build.log)。
+- **新增集成阻断：ird_gates FAIL**。`IRD-GATE-LIB` 三项分别是 `${_ird_kin_rw_math}`、`${_ird_kin_rw_kinematics}`、`${_ird_kin_rw_models}`。来源为 T19 的 kinematics/CMakeLists.txt 三个局部目标选择变量：集成分支均解析为现有 `sdurw_math/sdurw_kinematics/sdurw_models`，实际编译链接成功；静态扫描按字面 token 判断，未解析这些变量。该问题在 A 冻结交付中已存在，本轮首次实际集成门禁检出；此前复核的 validate-reuse/validate-docs PASS 不能替代 ird_gates。门禁在此停止，内嵌 validate-reuse 未执行。本轮不修改冻结产品/CMake、不扩白名单或跳过扫描；由 A 返工修正并完成受影响验证/独立复核，协调者不自签消除此阻断。
+- 主线 T17 锚接线定向回归（`sdurws_ird_ui_test.exe --gtest_filter=KinSessionAnchor.*:KinAnchorCapture.*`）：passed=2、skipped=0、failed=0，exit 0；VS2022 x64、`QT_QPA_PLATFORM=windows`、绝对路径、单进程。该程序是 QCoreApplication 模型测试，不冒充 Widgets 点验。日志/XML/per-exe 报告：[a-ui-anchor.log](integration-20261024/a-ui-anchor.log)、[a-ui-anchor.xml](integration-20261024/a-ui-anchor.xml)、[a-ui-anchor-report.json](integration-20261024/a-ui-anchor-report.json)。
+- 数值/业务证据按相同产品输入直接引用：T19 原报告 291 passed、1 envUnavailable、0 failed；契约 57 passed、0 skipped、0 failed；断开实验 7 项预期失败；T17 Widgets 48 项通过，原 ui 全套既有 F-560 失败继续保留。生产 normal XML 仅含定向 FK 20 项，不能将该 XML 冒称全量 291 项原件。主机冒烟配置故障仍未修复，本轮冒烟测试 NOT RUN，不标 PASS。
+- 文档、T17/T19 契约与全量复用检查使用 `validate-docs.ps1 -TaskFile` 数组批次执行，实际结果及退出码保留于 `integration-20261024/a-docs.log`；不另行重复其包含的 validate-task/validate-reuse。
+- 当前结论：**A 已本地合入，但集成门禁存在明确阻断，非整体准入 PASS**。允许 B 仅同步最新本地主线并补 kinematics 消费者回归，同时继承并保留该阻断；不在本轮合入 B。T18＝监听器、T19＝本包、T20＝SetCheck 固定，历史编号映射保留。A/B 分支、工作树与构建缓存保留；两包收口前不叠加新能力包，新任务号由协调者统一预登记。
