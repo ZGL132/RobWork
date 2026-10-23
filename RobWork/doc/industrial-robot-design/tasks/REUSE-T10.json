@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T10",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "按已批准方案最小修正上游EAA微小角精度",
+  "status": "ready",
+  "branch": "reuse-t01",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-11",
+    "MDL-22",
+    "NFR-COR-01",
+    "ARC-03"
+  ],
+  "designRefs": [
+    "reuse/extensions/GAP-EAA-01.md",
+    "reuse/policy.md",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/TestApprovedPatches.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T10.json",
+    "git apply --reverse --check --ignore-space-change RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t10-governance-independent"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWork/src/rw/math/EAA.cpp",
+    "RobWork/RobWork/gtest/math/EAATest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/PATCHES.md",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T10.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T10.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/**",
+    "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+    "RobWork/scripts/industrialrobot/reuse-contract.ps1",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/upstream-patches.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "所有者方案A批准/SA-02登记和完整patch先于框架源码变更；仅原EAA扩展点，无新产品核/接口/依赖，保持axis()旧行为",
+    "先红再绿：新增精度断言须在旧上游真实失败；原上游EAA/RPY/Quaternion与近零/pi/双向量/float回归通过，无放宽容差",
+    "核对准确性、架构、简洁性、性能/确定性/线程/错误行为；无预算的退化不得自行接受；核对受影响modeling/runtime集成及必要冒烟",
+    "完整冻结范围独立验收；不自签、不关闭迁移债务、不合入或同步远程",
+    "精确SA-02机读登记以实际Git diff逐字核验，拒绝无批准/错范围/过期摘要/额外文件/篡改patch；新门禁连同本能力独立验收后才可放行依赖"
+  ],
+  "note": "2026-10-23所有者明确批准GAP-EAA-01方案A。T08适用性历史保留。本包只修上游EAA；后续产品适配另包实施，ready不等于独验完成。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "登记补丁及原扩展点精度修正",
+    "上游/产品真实回归及前后耗时",
+    "冻结实施包待独验"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T10.json"
+  }
+}

@@ -449,3 +449,45 @@ TEST (EAA, MathOperators)
     EXPECT_EQ (test5, test1);
     EXPECT_EQ (test6, test2);
 }
+
+// REUSE-T08A / GAP-EAA-01：保持原容差，不以trace舍入或axis()显示阈值丢弃有效旋转。
+TEST (EAA, SmallAngleMatrixPrecision_REUSE_T08A)
+{
+    for (const double theta : {1e-12, 1e-8, 1e-7, 3.741657386773941e-6, 1e-3}) {
+        const Rotation3D<> expected (cos (theta), -sin (theta), 0,
+                                     sin (theta), cos (theta), 0, 0, 0, 1);
+        const EAA<> value (expected);
+        EXPECT_NEAR (value[2], theta, 1e-15) << "theta=" << theta;
+        const Rotation3D<> actual = value.toRotation3D ();
+        for (size_t i = 0; i < 3; ++i)
+            for (size_t j = 0; j < 3; ++j)
+                EXPECT_NEAR (actual (i, j), expected (i, j), 1e-12);
+    }
+}
+
+TEST (EAA, SmallAngleVectorConversion_REUSE_T08A)
+{
+    for (const double theta : {0., 1e-12, 1e-8, 1e-7}) {
+        const Rotation3D<> actual = EAA<> (0, 0, theta).toRotation3D ();
+        EXPECT_NEAR (actual (1, 0), sin (theta), 1e-15);
+        EXPECT_NEAR (actual (0, 1), -sin (theta), 1e-15);
+        EXPECT_NEAR (actual (2, 2), 1., 1e-15);
+    }
+}
+
+TEST (EAA, NearlyParallelVectors_REUSE_T08A)
+{
+    const Vector3D<> z (0, 0, 1);
+    for (const double theta : {1e-12, 1e-8, 1e-7, 1e-4, Pi - 1e-8}) {
+        const Vector3D<> expected (sin (theta), 0, cos (theta));
+        const Vector3D<> actual = EAA<> (z, expected).toRotation3D () * z;
+        EXPECT_NEAR ((actual - expected).normInf (), 0., 1e-12) << "theta=" << theta;
+    }
+}
+
+TEST (EAA, SmallFloatAngle_REUSE_T08A)
+{
+    const float theta = 1e-7f;
+    const Rotation3D<float> actual = EAA<float> (0, 0, theta).toRotation3D ();
+    EXPECT_NEAR (actual (1, 0), sin (theta), 1e-12f);
+}

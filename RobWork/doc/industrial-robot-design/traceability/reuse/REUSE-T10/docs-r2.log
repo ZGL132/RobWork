@@ -1,0 +1,4 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+warning: in the working copy of 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/PATCHES.md', LF will be replaced by CRLF the next time Git touches it
+REUSE-UNDECLARED : new product file type requires governance registration: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch
+Write-Error: H1-H6 reuse governance failed

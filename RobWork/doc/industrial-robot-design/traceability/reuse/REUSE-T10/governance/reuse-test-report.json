@@ -1,0 +1,1081 @@
+{
+  "schemaVersion": "ird-reuse-tests/1",
+  "fixtureCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6",
+  "validatorSha256": "C291C86760BC8353549D78ACA1750E027A5A41A2870B9692DE4B3A6F416039A1",
+  "helperSha256": "6B77DFF078CC201B6661B57DA295D85E69136FD1D86776410C58C0506E5D0E93",
+  "driverSha256": "C5F1B8CF297781329386A9DA8A587322742274755C1FAFA81193B53F91D838E2",
+  "expected": 152,
+  "executed": 152,
+  "notRun": 0,
+  "driverFailure": "",
+  "passed": 152,
+  "skipped": 0,
+  "failed": 0,
+  "complete": true,
+  "tests": [
+    {
+      "name": "script-audit-no-fake-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "script-audit-sourced-helper",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "script-audit-require-real-entry-binding",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-cmake-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-product-escape",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : source/entry/context must bind exact governance scripts\r\n"
+    },
+    {
+      "name": "script-audit-reject-other-directory",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-reject-fake-migration",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-require-own-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "script-audit-stale-context",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/scripts/industrialrobot/commit-lint.ps1\r\n"
+    },
+    {
+      "name": "script-audit-reject-production-disguise",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-EXECUTION",
+      "output": "REUSE-EXECUTION : fixture.governance.entry\r\n"
+    },
+    {
+      "name": "01-clean",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "02-fixed-baseline",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-BASELINE",
+      "output": "REUSE-BASELINE : fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)\r\n"
+    },
+    {
+      "name": "03-all-units",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNITS",
+      "output": "REUSE-UNITS : all 20 units required\r\n"
+    },
+    {
+      "name": "04-missing-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/RobWork/src/rw/missing.hpp\r\n"
+    },
+    {
+      "name": "05-stale-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-HASH",
+      "output": "REUSE-UPSTREAM-HASH : RobWork/RobWork/src/rw/models/Device.hpp\r\n"
+    },
+    {
+      "name": "06-missing-symbol",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-SYMBOL",
+      "output": "REUSE-UPSTREAM-SYMBOL : RobWork/RobWork/src/rw/models/Device.hpp: NoSuchSymbol123\r\n"
+    },
+    {
+      "name": "07-inventory-omission",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : coverage 1400/1401\r\n"
+    },
+    {
+      "name": "08-forged-blob",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "09-inventory-duplicate",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "10-inventory-unit",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : classification/unit/task: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "11-new-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cpp : 82f1518a4af50c7fe93f885f2f3718d31a2d4c56d6edff010d919a743bcb34cd\r\n"
+    },
+    {
+      "name": "12-stale-change-hash",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : b20e5033d853b4688afc9a51bbf05f3a77511d4e6a40402506904eed32eac421\r\n"
+    },
+    {
+      "name": "13-core-even-business",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-DUPLICATE",
+      "output": "REUSE-DUPLICATE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Duplicate.cpp\r\n"
+    },
+    {
+      "name": "14-cpp-not-governance",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MODE",
+      "output": "REUSE-MODE : governance cannot cover algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/WrongMode.cpp\r\n"
+    },
+    {
+      "name": "15-missing-approval",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-PATH : \r\n"
+    },
+    {
+      "name": "16-unknown-capability",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CAPABILITY",
+      "output": "REUSE-CAPABILITY : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt : NONE\r\n"
+    },
+    {
+      "name": "17-path-traversal",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PATH",
+      "output": "REUSE-PATH : ../outside.cpp\r\n"
+    },
+    {
+      "name": "18-missing-task-proof",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "REUSE-TASK : RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json\r\n"
+    },
+    {
+      "name": "19-task-scope",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "20-forbidden-scope",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SCOPE",
+      "output": "REUSE-SCOPE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "21-stage-not-approved",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-STAGE",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nREUSE-STAGE : REUSE-T01: no frozen governance acceptance\r\n"
+    },
+    {
+      "name": "22-final-debt-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unclosed baseline RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/assembly/sdurws/ird/workflow/WorkflowPluginAssembly.hpp\r\n"
+    },
+    {
+      "name": "23-governance-not-algorithm-approval",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-GOV-SCOPE",
+      "output": "REUSE-GOV-SCOPE : governance authorization cannot cover product algorithms: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Business.cpp\r\n"
+    },
+    {
+      "name": "24-upstream-readonly",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-READONLY",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nREUSE-UPSTREAM-READONLY : RobWork/RobWork/src/rw/Undeclared.cpp\r\n"
+    },
+    {
+      "name": "25-missing-record-file",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/doc/industrial-robot-design/tasks/Absent.json\r\n"
+    },
+    {
+      "name": "26-deletion-undeclared",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : deleted\r\n"
+    },
+    {
+      "name": "27-forged-debt-closure",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-INVENTORY",
+      "output": "REUSE-INVENTORY : baseline classification is immutable: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "28-arbitrary-task-ready",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nREUSE-TASK : OTHER-T99: reuse contract required\r\n"
+    },
+    {
+      "name": "29-planned-not-executable",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-TASK-STATE",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nREUSE-TASK-STATE : REUSE-T01: execution needs ready/done contract\r\n"
+    },
+    {
+      "name": "30-forged-build-target",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : nonexistent: build registration missing/stale\r\n"
+    },
+    {
+      "name": "upstream-gtest-build-target",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "upstream-arbitrary-test-build-path-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UPSTREAM-TARGET",
+      "output": "REUSE-UPSTREAM-TARGET : KIN-FK: target evidence required\r\n"
+    },
+    {
+      "name": "suffix-c",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.c : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ipp",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ipp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-inl",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.inl : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-tpp",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.tpp : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-mjs",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.mjs : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ps1",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ps1 : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-py",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.py : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-html",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.html : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-ts",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.ts : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-cu",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.cu : e9c82a4c9d01bf74bd8a1afd05cd7f86affd08c29cf0636e856dfa2ded675570\r\n"
+    },
+    {
+      "name": "suffix-inc",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : new product file type requires governance registration: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.inc\r\n"
+    },
+    {
+      "name": "suffix-opaque",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-UNDECLARED",
+      "output": "REUSE-UNDECLARED : new product file type requires governance registration: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Undeclared.opaque\r\n"
+    },
+    {
+      "name": "ad-unknown-catalog-schema",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-BASELINE",
+      "output": "REUSE-BASELINE : fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)\r\n"
+    },
+    {
+      "name": "ad-owner-missing",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CATALOG-V2",
+      "output": "REUSE-CATALOG-V2 : missing ownerUnit\r\n"
+    },
+    {
+      "name": "ad-unknown-role",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CATALOG-V2",
+      "output": "REUSE-CATALOG-V2 : KIN-FK\r\n"
+    },
+    {
+      "name": "ad-fake-resource",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MISSING",
+      "output": "REUSE-MISSING : RobWork/RobWork/gtest/absent.cpp\r\n"
+    },
+    {
+      "name": "ad-permission-schema",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PERMISSIONS",
+      "output": "REUSE-PERMISSIONS : schema/authority/owner/grants\r\n"
+    },
+    {
+      "name": "ad-owner-expansion",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PERMISSIONS",
+      "output": "REUSE-PERMISSIONS : schema/authority/owner/grants\r\n"
+    },
+    {
+      "name": "ad-host-directory-exemption",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PERMISSIONS",
+      "output": "REUSE-PERMISSIONS : HOST-RENDER: exact files required\r\n"
+    },
+    {
+      "name": "ad-empty-matrix",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : missing ownerUnit\r\n"
+    },
+    {
+      "name": "ad-unknown-matrix-schema",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json\r\n"
+    },
+    {
+      "name": "ad-wrong-matrix-unit",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json\r\n"
+    },
+    {
+      "name": "ad-self-approved-closure",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : missing baselineBlob\r\n"
+    },
+    {
+      "name": "ad-gov-supplement-scope",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-GOV-SCOPE",
+      "output": "REUSE-GOV-SCOPE : GOV-T22 cannot authorize RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp\r\n"
+    },
+    {
+      "name": "function-pending-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "function-existing-restricted-pending-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : categories=model,state,loader,model,state operations=construct-model,mutate-model,write-state; no permission granted\r\nreuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "function-existing-restricted-audited-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "function-changed-restricted-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "function-final-restricted-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION",
+      "output": "REUSE-MIGRATION : unresolved function fixture.runtime.compiler\r\n"
+    },
+    {
+      "name": "function-stale-region",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : region/symbol\r\n"
+    },
+    {
+      "name": "function-symbol-not-present",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : region/symbol\r\n"
+    },
+    {
+      "name": "function-region-outside-file",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : region bounds\r\n"
+    },
+    {
+      "name": "function-duplicate-relation",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : fixture.runtime.rotation|MATH-ROT\r\n"
+    },
+    {
+      "name": "function-stale-build-input",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt\r\n"
+    },
+    {
+      "name": "function-role-not-layer",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : fixture.runtime.rotation|MATH-ROT\r\n"
+    },
+    {
+      "name": "function-unapproved-permission",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-PERMISSION-REF",
+      "output": "REUSE-PERMISSION-REF : APPROVED-BY-ME\r\n"
+    },
+    {
+      "name": "function-fake-capability",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : fixture.runtime.rotation|fake\r\n"
+    },
+    {
+      "name": "function-unresolved-not-migrated",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : unresolved cannot migrate\r\n"
+    },
+    {
+      "name": "positive-evidence-required",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : missing production\r\n"
+    },
+    {
+      "name": "business-specific-needs-evidence",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : missing nonOverlapEvidence\r\n"
+    },
+    {
+      "name": "proposal-needs-file",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : missing proposal\r\n"
+    },
+    {
+      "name": "grant-readonly-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-stale-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp\r\n"
+    },
+    {
+      "name": "grant-business-owner-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : runtime is model owner\r\n"
+    },
+    {
+      "name": "grant-business-construction-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : model ownership operation construct-model\r\n"
+    },
+    {
+      "name": "grant-shared-state-write-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : shared State write\r\n"
+    },
+    {
+      "name": "grant-unknown-target-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : target binding sdurws_ird_kinematics_nonexistent\r\n"
+    },
+    {
+      "name": "ad-real-constructor-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-real-factory-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-real-loader-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-include-without-grant-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-value-without-matrix-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-COVERAGE",
+      "output": "REUSE-COVERAGE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : no functional matrix\r\n"
+    },
+    {
+      "name": "ad-stage-missing-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SUPPLEMENT-STAGE",
+      "output": "REUSE-SUPPLEMENT-STAGE : missing commit\r\n"
+    },
+    {
+      "name": "ad-stage-forged-verdict-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SUPPLEMENT-STAGE",
+      "output": "REUSE-SUPPLEMENT-STAGE : acceptance Git object missing\r\n"
+    },
+    {
+      "name": "ad-stage-future-sha-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SUPPLEMENT-STAGE",
+      "output": "REUSE-SUPPLEMENT-STAGE : wrong task/verdict/SHA\r\n"
+    },
+    {
+      "name": "ad-catalog-downgrade-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-BASELINE",
+      "output": "REUSE-BASELINE : fixed baseline/schema mismatch (catalog v2 required; no silent downgrade)\r\n"
+    },
+    {
+      "name": "ad-usage-operation-expansion",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CATALOG-V2",
+      "output": "REUSE-CATALOG-V2 : KIN-FK: usage operation publish\r\n"
+    },
+    {
+      "name": "ad-math-value-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-changed-pending-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-COVERAGE",
+      "output": "REUSE-COVERAGE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : changed production function needs resolved migration evidence\r\n"
+    },
+    {
+      "name": "ad-host-origin-bypass",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : presentation requires exact host exception\r\n"
+    },
+    {
+      "name": "ad-value-origin-bypass",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : value is not an ownership bypass\r\n"
+    },
+    {
+      "name": "ad-actual-shared-state-write",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : operation write-state (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-actual-model-mutation",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : operation mutate-model (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-forward-model-type",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : restricted upstream use needs exact file/target/operation grant (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-probe-readonly-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-private-state-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "production-structure-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "production-demo-entry-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : demo-only or unbound production entry/consumer\r\n"
+    },
+    {
+      "name": "production-unverified-capability",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SUITABILITY",
+      "output": "REUSE-SUITABILITY : fixture.runtime.rotation\r\n"
+    },
+    {
+      "name": "production-missing-dependency",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FRESHNESS",
+      "output": "REUSE-FRESHNESS : missing production dependency RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp\r\n"
+    },
+    {
+      "name": "production-stale-log",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : RobWork/doc/industrial-robot-design/reuse/fixture-normal.log\r\n"
+    },
+    {
+      "name": "production-disconnect-stays-green",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : disconnect must fail a real assertion\r\n"
+    },
+    {
+      "name": "production-mutation-no-change",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : disconnect must bind and change production source\r\n"
+    },
+    {
+      "name": "production-wrong-mutation-source",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : disconnect must bind and change production source\r\n"
+    },
+    {
+      "name": "production-empty-xml-shell",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : normal : XML counts/assertions inconsistent\r\n"
+    },
+    {
+      "name": "production-oracle-failed",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : oracle : failing baseline/oracle/comparison\r\n"
+    },
+    {
+      "name": "production-upstream-comparison-failed",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-POSITIVE",
+      "output": "REUSE-POSITIVE : upstreamComparison : failing baseline/oracle/comparison\r\n"
+    },
+    {
+      "name": "ad-new-cmake-requires-functions",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-COVERAGE",
+      "output": "REUSE-COVERAGE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/HiddenGenerator.cmake : no functional matrix\r\n"
+    },
+    {
+      "name": "function-deleted-replacement-unknown",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-FUNCTION",
+      "output": "REUSE-FUNCTION : unknown replaced baseline RobWork/RobWorkStudio/src/rwslibs/industrialrobot/not-a-baseline.cpp\r\n"
+    },
+    {
+      "name": "production-review-version-fake",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-SUITABILITY",
+      "output": "REUSE-SUITABILITY : MATH-ROT: reviewed upstream version mismatch\r\n"
+    },
+    {
+      "name": "closure-current-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=1 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "closure-bom-log-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=1 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "closure-deleted-replacement-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=2 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=3 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "closure-changed-function-after-pass",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : fixture.runtime.rotation|MATH-ROT : accepted function changed\r\n"
+    },
+    {
+      "name": "closure-deletion-missing-replaces",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : functional closure\r\n"
+    },
+    {
+      "name": "closure-accepted-matrix-missing",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : independent migration acceptance required\r\n"
+    },
+    {
+      "name": "grant-HOST-RENDER-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-HOST-PRESENT-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-HOST-COMPILE-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-HOST-GATEWAY-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-runtime-owner-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "grant-worker-runtime-borrow-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp : worker presentation/borrowed handles\r\n"
+    },
+    {
+      "name": "grant-worker-task-private-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/worker/main.cpp : presentation requires exact host exception\r\n"
+    },
+    {
+      "name": "grant-commented-target-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp : target binding sdurws_ird_kinematics_fake\r\n"
+    },
+    {
+      "name": "closure-new-file-no-independent-record",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp\r\n"
+    },
+    {
+      "name": "closure-baseline-cannot-use-absent",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/BaseWorldTransform.cpp : baseline blob\r\n"
+    },
+    {
+      "name": "closure-new-file-cannot-use-blob",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RotationAdapterProbe.cpp : new file requires absent baseline\r\n"
+    },
+    {
+      "name": "closure-new-file-omitted-final",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-MIGRATION : new/current file lacks independent closure",
+      "output": "REUSE-MIGRATION : new/current file lacks independent closure: RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RotationAdapterProbe.cpp\r\n"
+    },
+    {
+      "name": "closure-mutable-reference-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : frozen commit and acceptance path required\r\n"
+    },
+    {
+      "name": "closure-record-path-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-CLOSURE",
+      "output": "REUSE-CLOSURE : frozen commit and acceptance path required\r\n"
+    },
+    {
+      "name": "ad-real-qt-item-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-camera-transform-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-type-name-in-message-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-state-data-shared-write-rejected",
+      "passed": true,
+      "exitCode": 1,
+      "expected": "REUSE-AD",
+      "output": "REUSE-AD : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/PermissionProbe.cpp : operation write-state (IRD-GATE-AD)\r\n"
+    },
+    {
+      "name": "ad-state-data-private-write-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-bom-script-worktree-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "ad-bom-script-frozen-positive",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=1 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=2 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "31-frozen-head",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "32-frozen-head-ignores-dirty-tree",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    },
+    {
+      "name": "33-frozen-head-repeatable",
+      "passed": true,
+      "exitCode": 0,
+      "expected": "PASS",
+      "output": "reuse supplement: schema/permission/function evidence checked; functions=0 closedFiles=0 (semantic review required)\r\nvalidate-reuse: PASS governance only; inventory=1401 units=20 changed=1 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)\r\n"
+    }
+  ]
+}

@@ -257,7 +257,7 @@
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
       "proposal": {
         "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
-        "sha256": "4fba31a299f0b7143c4974bafd0343caec8ff3a5207fa65af71154ed348b0973"
+        "sha256": "40adfa6eb6d2985f390b0024f57cc7a56985de1aa643ed7b9eda8236cafe7633"
       }
     },
     {

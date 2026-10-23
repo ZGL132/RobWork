@@ -1,0 +1,154 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 16 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 13 tests from EAA
+[ RUN      ] EAA.Test_ADL
+[       OK ] EAA.Test_ADL (0 ms)
+[ RUN      ] EAA.CastTest
+[       OK ] EAA.CastTest (0 ms)
+[ RUN      ] EAA.CrossProductTest
+[       OK ] EAA.CrossProductTest (0 ms)
+[ RUN      ] EAA.MiscTest
+[       OK ] EAA.MiscTest (0 ms)
+[ RUN      ] EAA.scalarOperatorTest
+[       OK ] EAA.scalarOperatorTest (0 ms)
+[ RUN      ] EAA.Vector3DOperatorTest
+[       OK ] EAA.Vector3DOperatorTest (0 ms)
+[ RUN      ] EAA.EAAOperatorTest
+[       OK ] EAA.EAAOperatorTest (0 ms)
+[ RUN      ] EAA.EigenOperatorTest
+[       OK ] EAA.EigenOperatorTest (0 ms)
+[ RUN      ] EAA.MathOperators
+[       OK ] EAA.MathOperators (0 ms)
+[ RUN      ] EAA.SmallAngleMatrixPrecision_REUSE_T08A
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to -1e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 1e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to 1e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to -9.9999999999999823e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 9.9999999999999823e-08, which exceeds 1e-12, where
+actual (i, j) evaluates to 0,
+expected (i, j) evaluates to 9.9999999999999823e-08, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(460): error: The difference between value[2] and theta is 1.1714006467872641e-11, which exceeds 1e-15, where
+value[2] evaluates to 3.7416456727674732e-06,
+theta evaluates to 3.7416573867739411e-06, and
+1e-15 evaluates to 1.0000000000000001e-15.
+theta=3.7416573867739411e-06
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where
+actual (i, j) evaluates to -3.7416456727587429e-06,
+expected (i, j) evaluates to -3.7416573867652107e-06, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(464): error: The difference between actual (i, j) and expected (i, j) is 1.1714006467872641e-11, which exceeds 1e-12, where
+actual (i, j) evaluates to 3.7416456727587429e-06,
+expected (i, j) evaluates to 3.7416573867652107e-06, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(460): error: The difference between value[2] and theta is 7.8314091322972956e-15, which exceeds 1e-15, where
+value[2] evaluates to 0.00099999999999216861,
+theta evaluates to 0.001, and
+1e-15 evaluates to 1.0000000000000001e-15.
+theta=0.001
+
+[  FAILED  ] EAA.SmallAngleMatrixPrecision_REUSE_T08A (0 ms)
+[ RUN      ] EAA.SmallAngleVectorConversion_REUSE_T08A
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(472): error: The difference between actual (1, 0) and sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 9.9999999999999998e-13, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(473): error: The difference between actual (0, 1) and -sin (theta) is 9.9999999999999998e-13, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -9.9999999999999998e-13, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(472): error: The difference between actual (1, 0) and sin (theta) is 1e-08, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 1e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(473): error: The difference between actual (0, 1) and -sin (theta) is 1e-08, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -1e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(472): error: The difference between actual (1, 0) and sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 9.9999999999999823e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(473): error: The difference between actual (0, 1) and -sin (theta) is 9.9999999999999823e-08, which exceeds 1e-15, where
+actual (0, 1) evaluates to 0,
+-sin (theta) evaluates to -9.9999999999999823e-08, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(474): error: The difference between actual (2, 2) and 1. is 4.9960036108132044e-15, which exceeds 1e-15, where
+actual (2, 2) evaluates to 0.999999999999995,
+1. evaluates to 1, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+[  FAILED  ] EAA.SmallAngleVectorConversion_REUSE_T08A (0 ms)
+[ RUN      ] EAA.NearlyParallelVectors_REUSE_T08A
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(484): error: The difference between (actual - expected).normInf () and 0. is 1e-08, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 1e-08,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=1e-08
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(484): error: The difference between (actual - expected).normInf () and 0. is 9.9999999999999823e-08, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 9.9999999999999823e-08,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=9.9999999999999995e-08
+
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(484): error: The difference between (actual - expected).normInf () and 0. is 9.9999999392252903e-09, which exceeds 1e-12, where
+(actual - expected).normInf () evaluates to 9.9999999392252903e-09,
+0. evaluates to 0, and
+1e-12 evaluates to 9.9999999999999998e-13.
+theta=3.1415926435897932
+
+[  FAILED  ] EAA.NearlyParallelVectors_REUSE_T08A (0 ms)
+[ RUN      ] EAA.SmallFloatAngle_REUSE_T08A
+C:\Users\zgl18\.codex\worktrees\reuse-audit\RobWork\RobWork\RobWork\gtest\math\EAATest.cpp(492): error: The difference between actual (1, 0) and sin (theta) is 1.0000000116860974e-07, which exceeds 1e-12f, where
+actual (1, 0) evaluates to 0,
+sin (theta) evaluates to 1.0000000116860974e-07, and
+1e-12f evaluates to 9.999999960041972e-13.
+
+[  FAILED  ] EAA.SmallFloatAngle_REUSE_T08A (0 ms)
+[----------] 13 tests from EAA (0 ms total)
+
+[----------] 1 test from RPYTest
+[ RUN      ] RPYTest.Test
+[       OK ] RPYTest.Test (0 ms)
+[----------] 1 test from RPYTest (0 ms total)
+
+[----------] 2 tests from QuaternionTest
+[ RUN      ] QuaternionTest.Conversion
+[       OK ] QuaternionTest.Conversion (182 ms)
+[ RUN      ] QuaternionTest.MiscTest
+[       OK ] QuaternionTest.MiscTest (0 ms)
+[----------] 2 tests from QuaternionTest (182 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 3 test suites ran. (183 ms total)
+[  PASSED  ] 12 tests.
+[  FAILED  ] 4 tests, listed below:
+[  FAILED  ] EAA.SmallAngleMatrixPrecision_REUSE_T08A
+[  FAILED  ] EAA.SmallAngleVectorConversion_REUSE_T08A
+[  FAILED  ] EAA.NearlyParallelVectors_REUSE_T08A
+[  FAILED  ] EAA.SmallFloatAngle_REUSE_T08A
+
+ 4 FAILED TESTS

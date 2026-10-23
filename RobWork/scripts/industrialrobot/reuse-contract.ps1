@@ -358,3 +358,43 @@ function CheckFunctions($grants, [string[]]$changedSources) {
     }
     Write-Output "reuse supplement: schema/permission/function evidence checked; functions=$($rows.Count) closedFiles=$($closed.Count) (semantic review required)"
 }
+
+# SA-02：仅接纳所有者逐项批准且逐字匹配真实diff的补丁。不是框架目录白名单。
+# 批准身份仍由独立审查确认；机器核对明确范围/提案/摘要与冻结树一致性。
+function CheckApprovedUpstreamPatches {
+    $approved=@{}; $assets=@{}
+    if ($null -eq (ReadText ($design+'reuse/upstream-patches.json') -Optional)) { return @{ files=$approved; assets=$assets } }
+    $registry=Json ($design+'reuse/upstream-patches.json')
+    if ($registry.schemaVersion -ne 'ird-approved-upstream-patches/1' -or -not $registry.PSObject.Properties['patches']) { Fail 'PATCH' 'registry schema' }
+    foreach ($record in $registry.patches) {
+        RequireFields $record @('taskId','proposal','approval','patch','files') 'PATCH'
+        [void](CheckBinding $record.proposal 'PATCH'); [void](CheckBinding $record.approval 'PATCH')
+        $patchPath=CheckBinding $record.patch 'PATCH'
+        if ($patchPath -notmatch ('^'+[regex]::Escape($product)+'patches/[0-9]{4}-[a-z0-9-]+\.patch$') -or $assets.ContainsKey($patchPath)) { Fail 'PATCH' 'patch path/duplicate' }
+        $approval=Json $record.approval.path
+        RequireFields $approval @('taskId','ownerQuote','date','proposal','proposalSha256','allowedFiles') 'PATCH'
+        if ($approval.taskId -ne $record.taskId -or -not $approval.ownerQuote -or -not $approval.date -or
+            $approval.proposal -ne $record.proposal.path -or $approval.proposalSha256 -ne $record.proposal.sha256 -or -not @($record.files).Count) { Fail 'PATCH' 'approval scope/proposal' }
+        $paths=@()
+        foreach ($file in $record.files) {
+            RequireFields $file @('path','baselineBlob','sha256') 'PATCH'
+            $path=SafePath $file.path
+            if ($path -notmatch '^RobWork/(RobWork|RobWorkSim)/(src|gtest)/.+\.(cpp|hpp|h|c|cc|cxx|hxx)$' -or
+                $path -notin @($approval.allowedFiles) -or $approved.ContainsKey($path)) { Fail 'PATCH' 'exact upstream file/single owner' }
+            $blob=@(GitLines @('rev-parse',"${baseline}:$path"))[0]
+            if ($blob -ne $file.baselineBlob -or (Digest (ReadText $path)) -ne $file.sha256) { Fail 'PATCH' 'baseline/current binding' }
+            $paths+=$path; $approved[$path]=$true
+        }
+        if (@(Compare-Object @($approval.allowedFiles | Sort-Object -Unique) @($paths | Sort-Object -Unique)).Count) { Fail 'PATCH' 'approval/files mismatch' }
+        # Git自己生成标准补丁；禁止外部diff驱动、重命名猜测与短index配置影响。
+        # Head模式直接比冻结树，不用当前工作树来为旧SHA背书。
+        $diffArgs=@('diff','--no-ext-diff','--no-color','--no-renames','--full-index',$baseline)
+        if ($Head) { $diffArgs+=@($Head) }
+        $diffArgs+=@('--')+@($paths | Sort-Object)
+        $actual=(GitLines $diffArgs) -join "`n"
+        if (-not $actual.Trim() -or (Digest $actual) -ne (Digest (ReadText $patchPath))) { Fail 'PATCH' 'patch differs from exact approved baseline diff' }
+        if (-not (ReadText ($product+'patches/PATCHES.md')).Contains(($patchPath -split '/')[-1])) { Fail 'PATCH' 'SA-02 registration missing' }
+        $assets[$patchPath]=$true
+    }
+    return @{ files=$approved; assets=$assets }
+}

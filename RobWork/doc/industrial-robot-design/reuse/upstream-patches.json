@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "ird-approved-upstream-patches/1",
+  "patches": [
+    {
+      "taskId": "REUSE-T10",
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-EAA-01.md",
+        "sha256": "40adfa6eb6d2985f390b0024f57cc7a56985de1aa643ed7b9eda8236cafe7633"
+      },
+      "approval": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T10/approval.json",
+        "sha256": "d4f19734cff4f5390ca3cadc274d0fd82dafb50ca430c26e639c30b2a925c728"
+      },
+      "patch": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/patches/0004-eaa-small-angle-precision.patch",
+        "sha256": "0fb681a1d310778cae1461f4adb6243c7697d03ba1be8aaf3274f3a57d88d5a6"
+      },
+      "files": [
+        {
+          "path": "RobWork/RobWork/gtest/math/EAATest.cpp",
+          "baselineBlob": "5b0273eafafe53fcbe238a140b7054c93fc2faea",
+          "sha256": "54bded081711a24d3c4ae79bfdf93a5f9735669d60cf8891d7d2c20a86f51f7e"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+          "baselineBlob": "802c7debc448bd1148d623f58a34a5b19ee22088",
+          "sha256": "ac784c12ba1b7f89217f0e11cc0dfb07da69e4f53ed9c144bdad194786d62181"
+        }
+      ]
+    }
+  ]
+}
