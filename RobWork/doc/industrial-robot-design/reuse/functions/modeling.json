@@ -218,7 +218,7 @@
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-ROT",
       "decision": "adapter",
-      "status": "migrated",
+      "status": "closed",
       "search": {
         "command": "rg -n \"rpyToRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "原库适用性见T10；T11真实业务474+契约17、独立1140输入和生产结果丢弃反例完成。上游EAA零/pi处理直接复用，Quaternion::ln不适用。"
@@ -291,7 +291,7 @@
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-ROT",
       "decision": "adapter",
-      "status": "migrated",
+      "status": "closed",
       "search": {
         "command": "rg -n \"rpyToEaa|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RpyMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "原库适用性见T10；T11真实业务474+契约17、独立1140输入和生产结果丢弃反例完成。上游EAA零/pi处理直接复用，Quaternion::ln不适用。"

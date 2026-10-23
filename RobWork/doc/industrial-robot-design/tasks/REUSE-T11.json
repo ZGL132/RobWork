@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-A",
   "title": "RPY及EAA直接复用上游并删除modeling重复旋转核",
-  "status": "ready",
+  "status": "done",
   "branch": "reuse-t01",
   "dependsOn": [
     "GOV-T21",
@@ -51,7 +51,7 @@
     "复用现有上游12例及原库误差网格；完成受影响业务回归和真实生产结果断开，不重复无关全库重配/治理夹具/冻结深查",
     "冻结能力包一次独验；不自签关闭，不操作远程，不碰drivetrain或trajectory专属范围"
   ],
-  "note": "按已批准T05-A及用户2026-10-23原库局部1e-6决议执行；适配只做参数顺序，数学值类型无owner权限变更。现有math链接已由T07接通，不为此重改CMake。ready不是迁移独验完成。",
+  "note": "独立验收 PASS 绑定 a1393ad4ac88f18a57ddb463c204a91e2887a76c；记录冻结于30b5a2343f4d08ce0b203fdbc2c5b7cfee867c27。仅RpyMath两项生产功能关闭，不代表modeling或全项目迁移完成。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
@@ -70,6 +70,6 @@
   "outputs": [
     "删除两段重复旋转核心的薄适配",
     "真实业务回归/独立oracle/生产结果消费证据",
-    "冻结包待独验"
+    "独立验收PASS及RpyMath两项功能关闭；证据索引 reuse/closures.json"
   ]
 }
