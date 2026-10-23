@@ -186,3 +186,17 @@
 - 若 A 的合入触及 testkit 本体或其依赖（core）：追加 testkit 套件（Release/Debug）重跑；未触及则引用既有 119/119 证据（输入不变原则）。
 - 同步动作：本分支一次 merge redesign-main（不自改共享治理文件；冲突仅限本记录/证据文件时自决，共享文件冲突交协调者）；合并后跑一次 ird_gates。
 - B 不抢先合入：同步与验证完成后交协调者串行合入 redesign-main。
+
+### 8.7 2026-10-24 本地主线同步结果（最新交付状态）
+
+本节记录协调者执行 §8.6 的实际结果；前文各轮证据、旧编号与受检 SHA 保留，不改写历史提交。本次仅同步主线和补受影响验证，不实施 §8.3 登记方案或 §8.2.4 算法适配，也不构成独立验收。
+
+- 所有者授权 A 本地合入并委托裁决 T13 前置门后，A 的本地合并 SHA 为 `37a07c80922a4f818785ed02ce7464d629a31536`，裁决与集成结果归档后的主线为 `08a57d562c4b5d07869e6ee6281ddee75209276e`。T13 仅解除本次 T17/T19 增量本地集成的等待限制，独验仍 NOT RUN、债务未关闭；完整裁决和 A 新增门禁阻断见 [T19 最新记录](../../REUSE-T19/README.md)。
+- B 同步前为 `codex/reuse-testkit-setcheck @ f88fc0c01f14291f8901b5b7cefe278b8e994b94`，无已跟踪文件改动，仅有未跟踪 `build-int-lsn/`，完整保留。执行 `git merge --no-ff redesign-main`，合并 SHA＝`90fa4f7ad4b4e60e5388f594fc13fe8c6dd146bb`，第一父＝上述 B 交付，第二父＝上述主线。自动合并无冲突，未直接 merge A、未 cherry-pick/rebase/squash、未操作远程。
+- T18＝F-958 监听器、T19＝A FK/Jacobian、T20＝B SetCheck 三份契约/凭证完整共存；历史改号映射保留。本次同步相对 `f88fc0c01` 的 core/testkit 产品源码、测试与 CMake 零变化，因此 testkit 既有 119 项有效证据及其余未受影响消费者证据继续引用，不重跑 Release/Debug testkit 或全库消费者。
+- 现有 `build-int-lsn` 缓存确认 `RWS_BUILD_INDUSTRIALROBOT=ON`；VS2022 x64 下执行 `cmake --build build-int-lsn --config Release --target sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test`，两个目标构建成功、exit 0；未手工重新配置全库，CMake 自动更新既有构建文件。原件：[b-build.log](sync-20261024/b-build.log)。
+- 受影响 SetCheck 消费者回归：以绝对路径单进程运行上述 kinematics 模型测试，passed=291、skipped=1、failed=0，exit 0；跳过项＝既有 `PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1`，per-exe 报告对应 envUnavailable=1，不冒称 Widgets 测试通过。契约回归 passed=57、skipped=0、failed=0，exit 0。均在 VS2022 x64 环境，`QT_QPA_PLATFORM=windows`，两可执行文件分开顺序运行。
+- 原始日志/XML/per-exe 报告：[b-kinematics.log](sync-20261024/b-kinematics.log)、[b-kinematics.xml](sync-20261024/b-kinematics.xml)、[b-kinematics-report.json](sync-20261024/b-kinematics-report.json)；[b-contract.log](sync-20261024/b-contract.log)、[b-contract.xml](sync-20261024/b-contract.xml)、[b-contract-report.json](sync-20261024/b-contract-report.json)。
+- **继承 A 集成门禁阻断，非整体 PASS**：主线 `ird_gates` 已实际 FAIL，`IRD-GATE-LIB` 报 `${_ird_kin_rw_math}`、`${_ird_kin_rw_kinematics}`、`${_ird_kin_rw_models}` 三项未知依赖（静态扫描按变量字面值检查）。本分支 kinematics/CMakeLists.txt 与扫描器同主线内容一致，B 的既有 Boost 词表变化不解决该问题；按根 AGENTS §4 对已知相同失败不重复执行，B 本轮 `ird_gates` 为 NOT RUN，直接引用 [A 实际失败原件](../../REUSE-T19/integration-20261024/a-build.log)，不得沿用 §8.4 的历史绿灯表示同步后准入。该阻断归 A 返工，未扩白名单、未跳过门禁。
+- 文档、T20 契约及全量复用机检以 `validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T20.json` 执行，实际结果与退出码保留于 `sync-20261024/b-docs.log`；机检不代表算法合规，不另重复其包含的检查。
+- **B 未合入主线，仍待补正和独验**：真实第三方复用关系登记缺口、稠密场景最高 220× 退化处置、最终版本独立验收均未完成；并须等待 A 上述门禁阻断修正及必要复核。满足条件后重新核对最新主线与最终交付 SHA，由所有者决定 B 是否合入。A/B 分支、工作树和构建缓存保留，本轮不新增能力包、不自动派发验收会话。
