@@ -114,8 +114,13 @@ private:
  * @param argv [in,out] 命令行参数；被摘除项置 nullptr（与 gtest 摘除风格一致）
  *
  * 参数语法：--ird_report=<path>（缺省＝工作目录下 ird-test-report.json）。
- * 监听器为静态存储期对象（gtest listeners 不接管所有权——官方 recommended
- * 做法，进程生命周期与测试程序一致）。
+ * 所有权（gtest.h 公开契约，vcpkg gtest 1.18.0）：Append "assumes the
+ * ownership of the listener (i.e. it will delete the listener when the test
+ * program finishes)"，Release 才把所有权返还调用方——本函数以堆对象创建
+ * 监听器并在 Append 时移交，gtest 于测试程序结束经监听器集合统一释放。
+ * 因此不得把静态/栈对象地址交给 Append（程序末尾 delete 非堆对象＝未定义
+ * 行为，F-958）；报告写盘发生在 OnTestProgramEnd（RUN_ALL_TESTS 返回前），
+ * 不依赖监听器析构时序。每进程调用一次。
  */
 inline void installTestRecordListener(int& argc, char** argv)
 {
@@ -136,9 +141,12 @@ inline void installTestRecordListener(int& argc, char** argv)
     for (char* a : kept) { argv[newArgc++] = a; }
     for (int i = newArgc; i < argc; ++i) { argv[i] = nullptr; }
     argc = newArgc;
-    // 静态存储期监听器（gtest listeners 不接管所有权）。
-    static TestRecordListener listener{reportPath};
-    ::testing::UnitTest::GetInstance()->listeners().Append(&listener);
+    // 所有权移交点（F-958）：堆上创建后交 Append——gtest 按公开契约接管并在
+    // 测试程序结束时 delete（见上方函数注释）；本函数不保留指针，无双持有。
+    // new 失败按 bad_alloc 向调用方传播（fail-fast）；自 new 成功到 Append
+    // 接管之间无可抛出代码，不存在"已创建未移交"的泄漏窗口。
+    ::testing::UnitTest::GetInstance()->listeners().Append(
+        new TestRecordListener(reportPath));
 }
 
 }  // namespace sdurws::ird::testkit

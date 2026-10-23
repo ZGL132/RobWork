@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T18",
+  "unit": "testkit",
+  "masterWp": "WP-A",
+  "title": "F-958 testkit监听器所有权修复收口与29处消费者注释订正",
+  "status": "ready",
+  "branch": "codex/reuse-testkit-listener",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TK-T10"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md",
+    "traceability/findings.json#F-958",
+    "traceability/reuse/REUSE-T05/listener-ownership/README.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json"
+  ],
+  "allowedFiles": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/gtest/RecordListener.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/Report.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/ListenerOwnershipTest.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/tools/lsnchild/main.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/perf_test/TestMainPerf.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/TestMainPerf.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/perf_test/TestMainPerf.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/contract_test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/contract_test/ContractTestMain.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/perf_test/TestMainLargeDataPerf.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/perf_test/TestMainPerf.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json",
+        "RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json",
+        "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T18.json",
+        "RobWork/doc/industrial-robot-design/reuse/functions/*.json",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/**",
+        "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+        "RobWork/doc/industrial-robot-design/traceability/findings.json",
+        "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "接缝与gtest.h:1032-1040公开契约一致，--ird_report/缺省路径/写盘时序/签名零变化",
+    "ird_gates复跑转绿；29处消费者注释订正仅动注释行",
+    "实施与测试层面独立验收记录见listener-ownership/acceptance-sub1；整体准入由所有者裁决"
+  ],
+  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned）。实施与定向测试已于fbd51e765完成并经acceptance-sub1独立验收（实施与测试层面）；本契约承接协调批共享文件落地：29处注释订正、功能矩阵整文件行覆盖登记、lsnchild白名单/DTB §4.5登记、changes清单与绑定刷新。lsnchild为test-only工具（tools/安装排除面），不入产品安装面。catalog/permissions无真实变化不改。不自签整体准入，不push。 2026-10-23合入登记：所有者裁决合入，Merge 658e0feb2（双亲c5a22b209+e128dd8e9，合并树＝交付树d34a0eeb）已并入redesign-main，合入后validate-reuse复跑PASS；远程同步另行处理。",
+  "interUnit": true,
+  "knownPitfalls": [
+    "CR-07",
+    "O-21"
+  ],
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T18.json"
+  },
+  "outputs": [
+    "ird_gates转绿所需共享治理登记、29处注释订正、矩阵行覆盖与凭证"
+  ]
+}

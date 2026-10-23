@@ -113,6 +113,7 @@ add_executable(sdurws_ird_testkit_test
     test/ReproBenchmarkTest.cpp   # WP-23-T09：复现夹具元测试（三腿/违例检出/报告）
     test/PerfBenchmarkTest.cpp   # WP-23-T02：PERF 侧计时夹具元测试（P95 插值/预热剔除/无效留痕/报告）
     test/ReportTest.cpp
+    test/ListenerOwnershipTest.cpp   # F-958：监听器所有权契约＋lsnchild 子进程三态用例
     test/ProcessRunnerTest.cpp   # TK-T11：四态 outcome＋EventWatch 双路径用例
     test/CoreIntegrationExampleTest.cpp
     test/TestMain.cpp
@@ -211,6 +212,38 @@ endif()
 # helper 一起构建：verify 命令只构建 sdurws_ird_testkit_test，缺此依赖则
 # 冒烟/集成验证时 helper 可能缺失，进程用例全数失败。
 add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_prochelper)
+
+# ---- 监听器所有权测试子进程（F-958：tools/lsnchild）----
+# ListenerOwnershipTest 的隔离子进程载体：经生产安装入口跑真实 gtest 的
+# passed/failed/skipped 三态样本（失败/跳过不污染父测试驱动的报告与退出码）；
+# --lsn_mode=legacy 为旧实现反例载体（仅取证/独验人工执行，见该文件头）。
+# 目标名后缀不匹配产品/测试目标族（ird_gates 形态解析归 other——prochelper
+# 同款）；tools/ 属 §3.6 安装排除面（同 testdata/tools 排除登记）。
+add_executable(sdurws_ird_testkit_lsnchild tools/lsnchild/main.cpp)
+target_compile_features(sdurws_ird_testkit_lsnchild PRIVATE cxx_std_17)
+set_target_properties(sdurws_ird_testkit_lsnchild PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON
+    CXX_EXTENSIONS OFF
+    # 输出目录对齐测试可执行文件（多配置生成器下含 $<CONFIG> 子目录）——
+    # 用例以 argv[0] 同目录定位，不依赖 PATH/工作目录。
+    RUNTIME_OUTPUT_DIRECTORY "$<TARGET_FILE_DIR:sdurws_ird_testkit_test>")
+if(MSVC)
+    target_compile_options(sdurws_ird_testkit_lsnchild PRIVATE /utf-8)
+endif()
+# 链接同测试目标口径：产品库 testkit（生产安装入口）＋GTest::gtest（自有
+# main，不用 gtest_main）。vcpkg gtest 为动态库——同测试目标的 POST_BUILD
+# 拷贝保证子进程不经 PATH 即可直接运行。
+target_link_libraries(sdurws_ird_testkit_lsnchild PRIVATE
+    sdurws_ird_testkit
+    GTest::gtest)
+add_custom_command(TARGET sdurws_ird_testkit_lsnchild POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_RUNTIME_DLLS:sdurws_ird_testkit_lsnchild>
+            $<TARGET_FILE_DIR:sdurws_ird_testkit_lsnchild>
+    COMMAND_EXPAND_LISTS)
+# lsnchild 一起构建（同 prochelper 理由：verify 只构建 sdurws_ird_testkit_test）。
+add_dependencies(sdurws_ird_testkit_test sdurws_ird_testkit_lsnchild)
 
 # ---- Qt 测试辅助目标 sdurws_ird_testkit_qt（UI-T02 启用登记，WP-10-T02）----
 # 启用依据（testkit.md §3.5/§10.1 启用表）：触发＝ui/workflow 出现
