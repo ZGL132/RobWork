@@ -1232,7 +1232,7 @@
           "sha256": "4cff856f40d6cc9913a8bc7332bdd97ed4299f19b6e69a7c231c26be4a7b1ec3"
         },
         {
-          "path": "RobWork/RobWork/cmake/RobWorkConfig.cmake",
+          "path": "RobWork/RobWork/cmake/RobWorkConfig.cmake.in",
           "sha256": "15a4848847ee6bff1cc7336282b01e4616d692c1815b760092a56ab80a4f39ee"
         }
       ],

@@ -43,7 +43,8 @@
     "RobWork/scripts/industrialrobot/validate-reuse.ps1",
     "RobWork/scripts/industrialrobot/reuse-contract.ps1",
     "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
-    "RobWork/doc/industrial-robot-design/reuse/upstream-patches.json"
+    "RobWork/doc/industrial-robot-design/reuse/upstream-patches.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkSim/src/**",
