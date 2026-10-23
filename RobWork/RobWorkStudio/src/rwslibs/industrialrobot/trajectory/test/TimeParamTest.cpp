@@ -23,6 +23,9 @@
  *   - 任务契约 tasks/foundation/WP-16-T08.json（acceptance 1——五次样
  *     条 C² 结点匹配用例；acceptance 2——限速校验容差按附录 D 第 10 项
  *     ＋总节拍与分段时间输出〔含驻留〕）
+ *   - REUSE-T09（基函数求值上游化验收）：上游 Polynomial::evaluate-
+ *     Derivatives 直接对照（五次/七次/内部结点非零切线）＋退化段与合法
+ *     短时长行为用例（本文件末节）
  *
  * 黄金算例的解析基准（独立书写——与实现 TU 无共享代码，NFR-COR-01）：
  *   静止-静止单段（两端点零速，结点 m 全 0）：q(u)=Δq·h0001(u)，
@@ -42,10 +45,13 @@
 #include <sdurws/ird/trajectory/TimeParam.hpp>
 #include <sdurws/ird/testkit/gtest/AssertMacros.hpp>
 
+#include <rw/math/Polynomial.hpp>
 #include <rw/math/Q.hpp>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <iomanip>
 #include <limits>
 #include <memory>
 #include <string>
@@ -1377,4 +1383,291 @@ TEST(TimeParamSepticTest, QuinticJerkStatisticsObservationOnly)
     const double h = result.timeParam->totalDurationS;
     expectNearRel(result.peakJointJerk[0], 60.0 * 0.1 / (h * h * h), 1e-9,
                   "五次剖面峰值 jerk 闭式对照（60·Δq/h³）");
+}
+
+// =====================================================================
+// REUSE-T09（基函数求值上游化验收）——上游 Polynomial 直接对照＋退化
+// 段/短时长行为。上游对照形态：生产走 rw::math::Polynomial::evaluate
+// （基值/导数基逐基 Horner 后加权）＋上游 derivative() 构造的导数链，
+// 对照走上游 evaluateDerivatives（导数数组 Horner 的另一条上游求值路径，
+// 对测试侧独立装配的段多项式一次返回值/一~三阶导）——两条上游路径独立
+// 实现，对照可捕捉系数装配/时间换算（h^-k）错误；独立解析闭式（本文件
+// 头 refH0001/refS2 族）仍是第一对照（NFR-COR-01）。
+// =====================================================================
+
+namespace {
+
+// ---------------------------------------------------------------------
+// 测试侧独立书写的基升幂系数数据（NFR-COR-01——与实现 TU 无共享代码；
+// 仅用于上游 Polynomial 装配）。
+// ---------------------------------------------------------------------
+
+/// 五次值基 h0000（1−10u³+15u⁴−6u⁵）。
+std::vector<double> coefH0000()
+{
+    return {1.0, 0.0, 0.0, -10.0, 15.0, -6.0};
+}
+/// 五次值基 h0001（10u³−15u⁴+6u⁵）。
+std::vector<double> coefH0001()
+{
+    return {0.0, 0.0, 0.0, 10.0, -15.0, 6.0};
+}
+/// 五次一阶导基 h0010（u−6u³+8u⁴−3u⁵）。
+std::vector<double> coefH0010()
+{
+    return {0.0, 1.0, 0.0, -6.0, 8.0, -3.0};
+}
+/// 五次一阶导基 h0011（−4u³+7u⁴−3u⁵）。
+std::vector<double> coefH0011()
+{
+    return {0.0, 0.0, 0.0, -4.0, 7.0, -3.0};
+}
+/// 七次值基 s2（35u⁴−84u⁵+70u⁶−20u⁷——静止-静止 septic 唯一非平凡基）。
+std::vector<double> coefSepticS2()
+{
+    return {0.0, 0.0, 0.0, 0.0, 35.0, -84.0, 70.0, -20.0};
+}
+
+/// 升幂系数数乘（测试侧装配辅助）。
+std::vector<double> scaledCoef(const std::vector<double>& a, double w)
+{
+    std::vector<double> r(a.size());
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        r[i] = w * a[i];
+    }
+    return r;
+}
+
+/// 升幂系数求和（长度不足处视 0——测试侧装配辅助）。
+std::vector<double> addCoef(const std::vector<double>& a,
+                            const std::vector<double>& b)
+{
+    std::vector<double> r(std::max(a.size(), b.size()), 0.0);
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        r[i] += a[i];
+    }
+    for (std::size_t i = 0; i < b.size(); ++i) {
+        r[i] += b[i];
+    }
+    return r;
+}
+
+/// 两点静止-静止请求（黄金骨架——q0=0、Δq=0.1、限值 V=1/A=10）。
+trj::TimeParamRequest restToRestRequest()
+{
+    trj::TimeParamRequest request = baseRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.1});
+    request.segments = {seg};
+    request.jointLimits = {limits1(1.0, 10.0)};
+    return request;
+}
+
+/**
+ * @brief 上游两条求值路径的对照断言（混合容差）。
+ *
+ * 生产（evaluate 的 Horner 形态·整数系数基在端点无舍入）与上游
+ * evaluateDerivatives（导数数组 Horner·抵消点携带 ~1e-15 路径噪声）是
+ * 不同浮点求值链——纯相对判在导数真零点处必然失效（分母为噪声）。
+ * 容差取相对 1e-9＋绝对下限 1e-12：真零点噪声被下限吸收；系数装配或
+ * h^-k 换算错误的量级 ≥1e-6，仍必被检出。
+ */
+void expectUpstreamClose(double actual, double expected, const std::string& what)
+{
+    EXPECT_LT(std::abs(actual - expected),
+              1e-9 * std::abs(expected) + 1e-12)
+        << what << " actual=" << std::setprecision(17) << std::scientific
+        << actual << " expected=" << expected;
+}
+
+}  // namespace
+
+/**
+ * 用例（REUSE-T09——上游直接对照·五次静止-静止）：生产曲线对照上游
+ * evaluateDerivatives——测试侧以独立基系数数据装配段多项式
+ * q(u)=Δq·h0001(u)（端点导数全 0 消去其余基），33 点网格（含端点）一次
+ * 取得 [f, f', f''] 并以 h^-k 独立换算后对照生产 q/qd/qdd。
+ */
+TEST(TimeParamUpstreamCheck, QuinticRestToRestUpstreamCrossCheck)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-05", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    const trj::TimeParamResult result =
+        trj::timeParameterize(restToRestRequest());
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    ASSERT_TRUE(result.timeCurve != nullptr);
+    const double h = result.timeParam->totalDurationS;
+
+    // 上游装配（测试侧系数）：q(u)=0.1·h0001(u)。
+    const rw::math::Polynomial<> spanPoly(scaledCoef(coefH0001(), 0.1));
+    for (int i = 0; i <= 32; ++i) {
+        const double u = static_cast<double>(i) / 32.0;
+        const std::vector<double> d = spanPoly.evaluateDerivatives(u, 3);
+        const trj::TimedSample s = result.timeCurve->sampleAt(u * h);
+        const std::string ctx = "u=" + std::to_string(u) + " ";
+        EXPECT_NEAR(s.q[0], d[0], 1e-12) << ctx;
+        expectUpstreamClose(s.qd[0], d[1] / h, "五次速度上游对照 " + ctx);
+        expectUpstreamClose(s.qdd[0], d[2] / (h * h), "五次加速度上游对照 " + ctx);
+    }
+}
+
+/**
+ * 用例（REUSE-T09——上游直接对照·七次静止-静止）：同五次形态换 septic
+ * 闭式 q(u)=Δq·s2(u)——对照生产七次基族（上游 derivative 链）与上游
+ * evaluateDerivatives 两条路径的 q/qd/qdd。
+ */
+TEST(TimeParamUpstreamCheck, SepticRestToRestUpstreamCrossCheck)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-08-S1", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = restToRestRequest();
+    request.motionLawToken = trj::kTimeParamMethodSepticSplineC3;
+    request.jointLimits = {limitsJ1(1.0, 10.0, 100.0)};
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    ASSERT_TRUE(result.timeCurve != nullptr);
+    const double h = result.timeParam->totalDurationS;
+
+    const rw::math::Polynomial<> spanPoly(scaledCoef(coefSepticS2(), 0.1));
+    for (int i = 0; i <= 32; ++i) {
+        const double u = static_cast<double>(i) / 32.0;
+        const std::vector<double> d = spanPoly.evaluateDerivatives(u, 3);
+        const trj::TimedSample s = result.timeCurve->sampleAt(u * h);
+        const std::string ctx = "u=" + std::to_string(u) + " ";
+        EXPECT_NEAR(s.q[0], d[0], 1e-12) << ctx;
+        expectUpstreamClose(s.qd[0], d[1] / h, "七次速度上游对照 " + ctx);
+        expectUpstreamClose(s.qdd[0], d[2] / (h * h), "七次加速度上游对照 " + ctx);
+    }
+}
+
+/**
+ * 用例（REUSE-T09——非零端导数基的上游对照·内部结点）：三点路径
+ * （0→0.05→0.1）＋interiorS={0.5}——结点 1 中心差分速度非零，两段的
+ * h0010/h0011（端点切线基）与其导数基全部生效。测试侧独立重算结点速度
+ * m₁=(q₂−q₀)/(t₂−t₀)、以读回的结点时刻装配两段多项式（段 0：
+ * 0.05·h0001+(t₁m₁)·h0011；段 1：0.05·h0000+(t₁m₁)·h0010+0.1·h0001，
+ * 其中 t₁ 为段长——等距结点 L1 位级等分），17 点网格对照两段 q/qd/qdd；
+ * 另断言生产在结点处的速度＝中心差分值（C¹ 的非零端导数面）。
+ */
+TEST(TimeParamUpstreamCheck, InteriorKnotNonZeroTangentUpstreamCrossCheck)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-05", "NFR-COR-01"},
+                  std::vector<std::string>{});
+
+    trj::TimeParamRequest request = baseRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.05, 0.1});
+    seg.interiorS = {0.5};
+    request.segments = {seg};
+    request.jointLimits = {limits1(1.0, 10.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    ASSERT_TRUE(result.timeCurve != nullptr);
+    ASSERT_EQ(result.timeParam->knotTimesS.size(), 3U);
+    const double t1 = result.timeParam->knotTimesS.at(1);  // 结点 1 时刻＝段长
+    const double total = result.timeParam->totalDurationS;
+    // 结点 1 中心差分速度（§12.1——测试侧独立重算）。
+    const double knotV = 0.1 / total;
+
+    // 两段段多项式（测试侧系数装配——等距结点 L1 等分使两段时长同为 t1；
+    // 位级等分依据：fl(0.1)=2·fl(0.05) → 两段 L1 长位级相等 → 分数 0.5）。
+    const rw::math::Polynomial<> span0(addCoef(
+        scaledCoef(coefH0001(), 0.05), scaledCoef(coefH0011(), t1 * knotV)));
+    const rw::math::Polynomial<> span1(addCoef(
+        addCoef(scaledCoef(coefH0000(), 0.05),
+                scaledCoef(coefH0010(), t1 * knotV)),
+        scaledCoef(coefH0001(), 0.1)));
+    for (int i = 0; i <= 16; ++i) {
+        const double u = static_cast<double>(i) / 16.0;
+        const std::vector<double> d0 = span0.evaluateDerivatives(u, 3);
+        const trj::TimedSample s0 = result.timeCurve->sampleAt(u * t1);
+        const std::string ctx0 = "段0 u=" + std::to_string(u) + " ";
+        EXPECT_NEAR(s0.q[0], d0[0], 1e-12) << ctx0;
+        expectUpstreamClose(s0.qd[0], d0[1] / t1, "段0速度上游对照 " + ctx0);
+        expectUpstreamClose(s0.qdd[0], d0[2] / (t1 * t1),
+                            "段0加速度上游对照 " + ctx0);
+        const std::vector<double> d1v = span1.evaluateDerivatives(u, 3);
+        const trj::TimedSample s1 =
+            result.timeCurve->sampleAt(t1 + u * (total - t1));
+        const std::string ctx1 = "段1 u=" + std::to_string(u) + " ";
+        EXPECT_NEAR(s1.q[0], d1v[0], 1e-12) << ctx1;
+        expectUpstreamClose(s1.qd[0], d1v[1] / (total - t1),
+                            "段1速度上游对照 " + ctx1);
+        expectUpstreamClose(s1.qdd[0], d1v[2] / ((total - t1) * (total - t1)),
+                            "段1加速度上游对照 " + ctx1);
+    }
+    // 结点速度＝中心差分（非零端导数基的生产生效面——C¹ 匹配）。
+    const trj::TimedSample knot = result.timeCurve->sampleAt(t1);
+    expectNearRel(knot.qd[0], knotV, 1e-12, "结点中心差分速度");
+}
+
+/**
+ * 用例（REUSE-T09——退化段）：零行程运动段（两端同构型）——全零多项式
+ * 系数（基加权输入全 0），防退化下限时长（头注登记 1e-6 s）生效。断言：
+ * Ok；总时长恰为下限；全程样本位置/速度/加速度位级 0；三维峰值统计全 0
+ * （上限校验平凡达标，不触发缩放）。
+ */
+TEST(TimeParamDegenerate, ZeroTravelSegmentConstant)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-05"}, std::vector<std::string>{});
+
+    trj::TimeParamRequest request = baseRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.0});  // 零行程段（退化）
+    request.segments = {seg};
+    request.jointLimits = {limits1(1.0, 10.0)};
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    EXPECT_DOUBLE_EQ(result.timeParam->totalDurationS, 1e-6);
+    for (const trj::TimedSample& s : result.timeParam->samples) {
+        EXPECT_EQ(s.q[0], 0.0) << "t=" << s.t;
+        EXPECT_EQ(s.qd[0], 0.0) << "t=" << s.t;
+        EXPECT_EQ(s.qdd[0], 0.0) << "t=" << s.t;
+    }
+    EXPECT_EQ(result.peakJointVelocity[0], 0.0);
+    EXPECT_EQ(result.peakJointAcceleration[0], 0.0);
+    EXPECT_EQ(result.peakJointJerk[0], 0.0);
+}
+
+/**
+ * 用例（REUSE-T09——合法短时长）：限值极大时初值两项（1.875·D/V 与
+ * sqrt((10/√3)·D/A)）均低于防退化下限 → 总时长恰为登记下限 1e-6 s——
+ * 短时长下曲线仍有效（端点还原、导数与峰值统计有限、无 NaN）。
+ */
+TEST(TimeParamDegenerate, HugeLimitsReachShortDurationFloor)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"TRJ-05"}, std::vector<std::string>{});
+
+    trj::TimeParamRequest request = baseRequest();
+    trj::TimeParamSegment seg;
+    seg.segmentIndex = 0;
+    seg.geometry = jointPath({0.0, 0.1});
+    request.segments = {seg};
+    request.jointLimits = {limits1(1e12, 1e12)};  // 两项均低于 1e-6 下限
+
+    const trj::TimeParamResult result = trj::timeParameterize(request);
+    ASSERT_EQ(result.status, trj::TimeParamStatus::Ok);
+    ASSERT_TRUE(result.timeParam.has_value());
+    ASSERT_TRUE(result.timeCurve != nullptr);
+    EXPECT_DOUBLE_EQ(result.timeParam->totalDurationS, 1e-6);
+    const trj::TimedSample start = result.timeCurve->sampleAt(0.0);
+    const trj::TimedSample end = result.timeCurve->sampleAt(1e-6);
+    EXPECT_NEAR(start.q[0], 0.0, 1e-12);
+    EXPECT_NEAR(end.q[0], 0.1, 1e-12);
+    EXPECT_TRUE(std::isfinite(start.qd[0]));
+    EXPECT_TRUE(std::isfinite(end.qd[0]));
+    EXPECT_TRUE(std::isfinite(result.peakJointVelocity[0]));
+    EXPECT_TRUE(std::isfinite(result.peakJointAcceleration[0]));
+    EXPECT_TRUE(std::isfinite(result.peakJointJerk[0]));
 }

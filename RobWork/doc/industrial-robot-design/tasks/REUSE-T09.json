@@ -1,0 +1,83 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T09",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "轨迹高阶多项式求值复用上游Polynomial并删除手写基导数链",
+  "status": "ready",
+  "branch": "codex/reuse-trajectory-polynomial",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TRJ-04",
+    "TRJ-05",
+    "TRJ-06",
+    "TRJ-08-S1",
+    "NFR-COR-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#12.11",
+    "reuse/policy.md",
+    "reuse/audit-contract.md",
+    "reuse/catalog.json#MATH-POLYNOMIAL",
+    "units/trajectory.md",
+    "ARCHITECTURE.md#3.6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t09-governance-independent",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Smooth.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/TimeParam.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/SmoothTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/TimeParamTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/trajectory.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T09.json",
+    "RobWork/doc/industrial-robot-design/reuse/trajectory-polynomial-migration.md",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T09.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json"
+  ],
+  "acceptance": [
+    "执行reuse/policy.md §1.1；在trajectory-polynomial-migration.md定位保留/删除/适配/职责归属及上游适用依据；独验核对准确性、架构、简洁性与运行效果，包含实际冗余删除/必要保留理由和性能前后测量及应用预算；无依据退化不得自判可接受，单有上游调用不构成通过",
+    "Smooth样条与TimeParam两运动律的真实生产链求值消费上游Polynomial evaluate/derivative，删除12个手写基函数展开式及逐阶导数链，无运行时旧算法回退",
+    "端点/结点位级还原、共线零偏差NoChange判定、驻留常值、C²/C³守卫、限值缩放、时间缩放非零端导数及诊断素材语义保持；短时长/退化段/非有限输入失败行为保持",
+    "真实上游evaluateDerivatives对照和独立解析oracle通过；断开生产调用必须真实失败；受影响集成/ird_gates与复用证据通过；catalog candidate→verified翻转属共享文件待主会话整合，未整合前SUITABILITY失败如实登记不伪报",
+    "完整冻结能力包由所有者独立会话验收；实施者不自签、不合入、不操作远程；GAP均未批准"
+  ],
+  "note": "migration.md §12.11 所有者批准能力序列（Polynomial::evaluateDerivatives高阶轨迹）的trajectory包；冻结起点0032c8e78含EAA补丁撤销批54f0beda6，不引用被撤销patches/0004的任何通过记录。catalog对本任务只读：MATH-POLYNOMIAL verified翻转所需复核证据已产出（trajectory-polynomial-migration.md），翻转属主会话统一整合项；整合前validate-reuse对两migrated行SUITABILITY失败属预期并如实登记。上会话基线证据evidence-baseline-*与正式normal运行均绑定真实可重跑命令。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T09.json"
+  },
+  "outputs": [
+    "上游Polynomial基函数族表与手写基删除（Smooth/TimeParam两TU）",
+    "生产正向/真实断开/独立oracle/上游对照证据（REUSE-T09证据目录）",
+    "性能/分配/确定性核查（benchmark探针与结果）",
+    "冻结能力包待独立验收；catalog verified翻转待主会话整合"
+  ]
+}
