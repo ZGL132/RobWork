@@ -120,6 +120,19 @@ target_link_libraries(sdurws_ird_drivetrain PUBLIC
     sdurws_ird_core
     sdurws_ird_evidence)
 
+# 上游线性代数复用：R2 数值核的分解/求逆直接调用上游 rw::math::LinearAlgebra，
+# 不借 core 的传递依赖隐藏归属（单元卡 §1.x 消费清单"必要的 RobWork 基础
+# 数学类型（零 Qt）"——与 modeling REUSE-T07 同款落位）。集成模式复用现
+# 有目标；独立冒烟消费同一上游导出包，绝不源码复制/备用算法。
+if(NOT TARGET sdurw_math)
+    if(NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    # 导出目标仅加同名别名，保持两模式的可静态核查链接面，不包装构建基础。
+    add_library(sdurw_math ALIAS RW::sdurw_math)
+endif()
+target_link_libraries(sdurws_ird_drivetrain PRIVATE sdurw_math)
+
 # 别名（集成模式）：供其余单元以 RWS::ird::drivetrain 消费；冒烟模式无
 # 别名（与骨架期行为一致，DTB §5.1）。
 if(NOT CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
