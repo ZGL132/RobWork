@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-767bb6aacc054ce68e0faba8e7f5c6f8\RobWork\scripts\industrialrobot\verify-task-scope.ps1:99
+Line |
+  99 |  … $headSha) { throw 'scope with empty implicit range requires explicit  …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | scope with empty implicit range requires explicit -Base <start SHA>

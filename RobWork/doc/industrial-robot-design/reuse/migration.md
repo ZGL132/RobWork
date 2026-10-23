@@ -249,7 +249,7 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 所有者已批准本节计划并要求先实施 WP-00。唯一实施现场为 `D:\10_Source_Repos\21_robot\RobWork`、分支 `redesign-main`；参考起点 `58962b338505fc9f69b6a9f1a50e2d55712efffc`，核查时工作区干净。新会话核对实际 HEAD/状态，承接新增提交，不能重置到参考起点。取消 A/B 并行开发；旧工作树和历史证据保留，不再按旧 HEAD 调度。禁止远程同步、框架/vcpkg 修改和自动派子智能体。
 
-**当前续接**：WP-00 / [GOV-T23](../tasks/GOV-T23.json) 为本轮治理实施与定向自查对象，结论见 [本包原始记录](../traceability/reuse/WP-00/README.md)。随后领取 WP-01 / GOV-T24，先核当前准入阻断；本次不提前修改其生产接线。必要独验由所有者另开会话或人工完成，实施者不得自签。WP-00 的新脚本规则独验前不宣称已独验，不影响已有 GOV-T21/T22 的真实历史结论。
+**当前续接**：WP-00 / [GOV-T23](../tasks/GOV-T23.json) 已完成，R2 独验 PASS 绑定 `85cfc8f570edc66fa7b20195e75e3587ab9c8e3d`，见 [独验记录](../traceability/acceptance/GOV-T23-20261024-r2.json)；首轮 FAIL 和返工证据保留于 [本包原始记录](../traceability/reuse/WP-00/README.md)。下一包 WP-01 / GOV-T24 仍为 planned，先核当前准入阻断并补确切范围，不提前改生产接线。必要独验由所有者另开会话或人工完成，实施者不得自签；本次所有者仅特批唯一独验子智能体及本问题复验，不解除常规禁令，不影响已有 GOV-T21/T22 的真实历史结论。
 
 每次结束或受阻，只在本节更新当前入口、相关任务和下一动作；任务 JSON 仍是契约状态来源，functions/catalog 是功能数据来源，原始记录与独验文件是验证结论来源，不新增状态平台或重复证据总账。不改既有状态枚举：planned 尚未准入、ready 可在前提内实施/待独验、blocked 有明确阻断、done 达到本任务全部退出条件；实施完成待独验在原任务 note/证据注明，不能伪装 done。
 

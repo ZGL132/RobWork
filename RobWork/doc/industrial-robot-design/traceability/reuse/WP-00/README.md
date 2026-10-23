@@ -6,11 +6,11 @@
 
 ## 验证
 
-首次实施自查通过；随后独验 FAIL，当前返工待独立复验，见下方“GOV-T23-R1-01 返工”。主线规则定向套件复用 test-governance-lite.ps1 -SerialMainlineOnly，报告为各运行时目录内 governance-lite-report.json 与 governance-lite.junit.xml。
+首次实施自查通过；首轮独验 FAIL 后返工，R2 独立复验 PASS，绑定 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d，见 [R2 原始记录](../../acceptance/GOV-T23-20261024-r2.json)。主线规则定向套件复用 test-governance-lite.ps1 -SerialMainlineOnly，报告为各运行时目录内 governance-lite-report.json 与 governance-lite.junit.xml。
 
 产品编译、数值与 GUI 测试：NOT RUN（本包无相关产品变更，不适用）。T19 IRD-GATE-LIB 与冒烟供给问题仍开放，由 WP-01 处理，不因本包文档检查通过而关闭。
 
-独立验收：首轮对 4d0f1ab024f093b65d9839d090b124da721aa69f 判定 FAIL，原始记录见 [GOV-T23-r1](../../acceptance/GOV-T23-20261024-r1.json)；实施者不自签，返工后的版本另行独立复验。
+独立验收：首轮对 4d0f1ab024f093b65d9839d090b124da721aa69f 判定 FAIL，原始记录见 [GOV-T23-r1](../../acceptance/GOV-T23-20261024-r1.json)；R2 对返工版本 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d 独立判定 PASS，GOV-T23-R1-01 已闭环，实施者仅据独验结果登记完成，不自签。
 
 ## 回滚与续接
 
@@ -30,4 +30,4 @@
 
 首轮独验发现实际主线使用旧 codex 契约时，省略 Base 会产生 base=head、changed=0 假绿。本轮以 4d0f1ab024f093b65d9839d090b124da721aa69f 为返工起点，复用 Git 分支与 merge-base 查询修复；只补真实主线/旧契约、detached 空范围、显式范围及真实任务分支兼容用例，不引入新框架。
 
-新证据在 r1-fix/：red/ 保留修复前 8 passed、1 failed、3 notRun 的真实失败；ps7/、ps51/ 各为修复后 12 passed、0 failed、0 skipped、0 notRun。命令复用本契约第一条，PS5.1 将 pwsh 替换为 powershell、输出目录改为 r1-fix/ps51；validate-docs.log 为返工文档/契约门禁真实通过。原 ps7/ps51 和首轮独验记录保持历史输入，不用旧八项报告证明新增规则。返工独验待执行，不推进 WP-01；无产品源码变化，不重跑 C++/数值/GUI。
+新证据在 r1-fix/：red/ 保留修复前 8 passed、1 failed、3 notRun 的真实失败；ps7/、ps51/ 各为修复后 12 passed、0 failed、0 skipped、0 notRun。命令复用本契约第一条，PS5.1 将 pwsh 替换为 powershell、输出目录改为 r1-fix/ps51；validate-docs.log 为返工文档/契约门禁真实通过。原 ps7/ps51 和首轮独验记录保持历史输入，不用旧八项报告证明新增规则。R2 独验完成，新增原始证据见上述记录；无产品源码变化，不重跑 C++/数值/GUI。下一步 WP-01 仍先核 GOV-T24 planned 边界，不因 WP-00 完成自动获得生产改动许可。

@@ -1,0 +1,5 @@
+command: git status --short; git branch --show-current; git rev-parse HEAD
+exitCode: 0
+git status --short: (empty)
+branch: redesign-main
+HEAD: 85cfc8f570edc66fa7b20195e75e3587ab9c8e3d

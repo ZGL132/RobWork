@@ -1,0 +1,13 @@
+PASS serial-mainline
+PASS serial-task-branch
+PASS serial-main-rejected
+PASS serial-unknown-rejected
+PASS serial-base-required
+PASS serial-explicit-scope
+PASS serial-forbidden-rejected
+PASS serial-outside-rejected
+PASS serial-legacy-mainline-base-required
+PASS serial-legacy-explicit-scope
+PASS serial-detached-mainline-base-required
+PASS serial-task-implicit-scope
+governance-lite: PASS (12 passed, 0 failed, 0 skipped)
