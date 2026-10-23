@@ -42,7 +42,7 @@
 - **实施完成**：✅ `fbd51e765`（最小所有权修复＋定向测试＋注释订正）＋协调批共享文件落地（本仓 `ird-gates-run2-final.log` 所在交付树）。
 - **测试通过**：✅ 限定向范围（上表 1-5，真实执行留痕）；不等于全量产品回归通过。协调批新增改动仅为注释行与治理登记（产品代码零逻辑变化），按增量口径不重跑表 1-5。
 - **门禁通过**：✅ **ird_gates 复跑通过**（上表第 8 行：红线 11 类零命中＋validate-reuse 全量 PASS）。首跑阻断（lsnchild 工具边登记＋凭证未整合）已按 testdata_lint 同型登记与 REUSE-T18 凭证整合消解，未放宽任何门禁。
-- **独立验收**：✅ **实施与测试层面已有验收记录**（所有者授权子代理独立会话执行，非实施者自签——原始受检 SHA＝`f7bb53943`（governance 收口），实施交付＝`fbd51e765`，记录见 `acceptance-sub1/ACCEPTANCE.md`，14 项独立运行日志随附；变更范围/gtest 契约/独立复跑/门禁复现/治理片段哈希/边界诚实性 6 项全 PASS）。❌ **整体准入未完成**：协调批治理登记、证据可检出性与最终门禁结果按增量口径复核（见下节），整体准入（合入主线）由所有者裁决；验收报告原始受检 SHA 与结果保持原样，后续状态以追加方式登记。
+- **独立验收**：✅ **实施与测试层面已有验收记录**（所有者授权子代理独立会话执行，非实施者自签——原始受检 SHA＝`f7bb53943`（governance 收口），实施交付＝`fbd51e765`，记录见 `acceptance-sub1/ACCEPTANCE.md`，14 项独立运行日志随附；变更范围/gtest 契约/独立复跑/门禁复现/治理片段哈希/边界诚实性 6 项全 PASS）。✅ **整体准入**：所有者 2026-10-23 裁决合入——`Merge 658e0feb2` 将交付链（fbd51e765→f7bb53943→46cb03430→e128dd8e9）随批基础平台提交（REUSE-T13/T15/T16 收口）并入 redesign-main，合并树与 e128dd8e9 逐字节一致（d34a0eeb…），合入后主线 validate-reuse 复跑 PASS；验收报告原始受检 SHA 与结果保持原样，后续状态以追加方式登记。
 
 ## 独立验收交接要点
 
@@ -67,4 +67,6 @@
 4. **lsnchild 登记**：白名单 IRD_TOOL_TARGET_EDGES＋IRD_T1_EXEMPT_TARGETS 各增一条＋DTB §4.5 登记册行（两处一致）；登记前已核 tools/ 属 §3.6 安装排除面、不入产品安装面（testkit/CMakeLists.txt:216-246 注释原文）。catalog/permissions 无真实变化未改；门禁引擎零改动。
 5. **29 处注释订正**：仅注释行（+3/-2 或 +3/-1），统一文本按草案 §2；全产品树其余"不接管所有权"字样经核查均为普通借用语义标注（与 gtest 无关），不订正。零调用顺序/业务逻辑变化，表 1-5 测试证据按原样引用。
 
-门禁终态：`cmake --build build-int-lsn --config Release --target ird_gates` 复跑 **exit 0**（上表第 8 行）。F-958 自身关闭条件（修复＋注释同步＋定向/子进程回归＋实施与测试层面独验＋门禁转绿）已满足，findings.json 已转 fixed（fixedAt 2026-10-23， resolution 追加收口注记）；REUSE-T05 父任务保持 planned，整体准入由所有者裁决。
+门禁终态：`cmake --build build-int-lsn --config Release --target ird_gates` 复跑 **exit 0**（上表第 8 行）。F-958 自身关闭条件（修复＋注释同步＋定向/子进程回归＋实施与测试层面独验＋门禁转绿）已满足，findings.json 已转 fixed（fixedAt 2026-10-23， resolution 追加收口注记）；REUSE-T05 父任务保持 planned。
+
+合入登记：所有者 2026-10-23 裁决合入，`Merge 658e0feb2`（双亲 c5a22b209＋e128dd8e9，合并树＝交付树 d34a0eeb…）将本包随批基础平台提交（REUSE-T13/T15/T16 收口）并入 redesign-main；合入后主线 validate-reuse 复跑 PASS（changed=66）。远程同步按既定"不操作远程"约束另行处理。

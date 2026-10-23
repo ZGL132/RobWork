@@ -77,7 +77,7 @@
     "ird_gates复跑转绿；29处消费者注释订正仅动注释行",
     "实施与测试层面独立验收记录见listener-ownership/acceptance-sub1；整体准入由所有者裁决"
   ],
-  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned）。实施与定向测试已于fbd51e765完成并经acceptance-sub1独立验收（实施与测试层面）；本契约承接协调批共享文件落地：29处注释订正、功能矩阵整文件行覆盖登记、lsnchild白名单/DTB §4.5登记、changes清单与绑定刷新。lsnchild为test-only工具（tools/安装排除面），不入产品安装面。catalog/permissions无真实变化不改。不自签整体准入，不push。",
+  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned）。实施与定向测试已于fbd51e765完成并经acceptance-sub1独立验收（实施与测试层面）；本契约承接协调批共享文件落地：29处注释订正、功能矩阵整文件行覆盖登记、lsnchild白名单/DTB §4.5登记、changes清单与绑定刷新。lsnchild为test-only工具（tools/安装排除面），不入产品安装面。catalog/permissions无真实变化不改。不自签整体准入，不push。 2026-10-23合入登记：所有者裁决合入，Merge 658e0feb2（双亲c5a22b209+e128dd8e9，合并树＝交付树d34a0eeb）已并入redesign-main，合入后validate-reuse复跑PASS；远程同步另行处理。",
   "interUnit": true,
   "knownPitfalls": [
     "CR-07",

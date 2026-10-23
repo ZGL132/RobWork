@@ -145,4 +145,6 @@ set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint"
 
 ## 9. 协调落地结论（2026-10-23，协调会话唯一修改者追加）
 
-本草案已由共享治理唯一修改者逐项核实后落地为 **REUSE-T18 精确能力子任务**（`tasks/REUSE-T18.json` ready＋`reuse/changes/REUSE-T18.json` 35 文件凭证）——§3 原拟 `changes/REUSE-T05.json` 载体因校验器 TASK-STATE 规则（清单引用任务须 ready/done、父任务保持 planned）不可行，属机器面强制修正，非范围扩张。§1/§4 注记以实际收口结果落账（F-958 已转 fixed；父任务保持 planned）；§2 的 29 处注释已订正（仅注释行）；§5 的 2 条目区间按 COVERAGE 规则扩展为整函数语义段（110-150，草案 125-150 不含文档块）；§5.3/§6 机械失真 pin 已按实测全量刷新（functions/testkit.json 76 处＋inventory 第二处条目＋execution.json 26 处既有输入绑定）；§7 白名单＋DTB §4.5 已两处一致登记。本表上方三行的历史结论为草案时点状态，其中"门禁通过/独立验收"两行已被收口结果取代（README §状态四态区分 与 §协调批收口 为准）；独立验收记录＝acceptance-sub1（实施与测试层面），整体准入由所有者裁决。ird_gates 复跑转绿（ird-gates-run2-final.log）。
+本草案已由共享治理唯一修改者逐项核实后落地为 **REUSE-T18 精确能力子任务**（`tasks/REUSE-T18.json` ready＋`reuse/changes/REUSE-T18.json` 35 文件凭证）——§3 原拟 `changes/REUSE-T05.json` 载体因校验器 TASK-STATE 规则（清单引用任务须 ready/done、父任务保持 planned）不可行，属机器面强制修正，非范围扩张。§1/§4 注记以实际收口结果落账（F-958 已转 fixed；父任务保持 planned）；§2 的 29 处注释已订正（仅注释行）；§5 的 2 条目区间按 COVERAGE 规则扩展为整函数语义段（110-150，草案 125-150 不含文档块）；§5.3/§6 机械失真 pin 已按实测全量刷新（functions/testkit.json 76 处＋inventory 第二处条目＋execution.json 26 处既有输入绑定）；§7 白名单＋DTB §4.5 已两处一致登记。本表上方三行的历史结论为草案时点状态，其中"门禁通过/独立验收"两行已被收口结果取代（README §状态四态区分 与 §协调批收口 为准）；独立验收记录＝acceptance-sub1（实施与测试层面）。ird_gates 复跑转绿（ird-gates-run2-final.log）。
+
+**合入登记（2026-10-23）**：所有者裁决合入，`Merge 658e0feb2`（双亲 c5a22b209＋e128dd8e9，合并树＝交付树）已将本包连同随批基础平台提交并入 redesign-main；合入后主线 validate-reuse 复跑 PASS。"整体准入由所有者裁决"事项就此闭合；远程同步按既定约束另行处理。
