@@ -35,8 +35,9 @@
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    // 静态存储期监听器（gtest listeners 不接管所有权——官方 recommended
-    // 做法；进程生命周期与测试程序一致）。
+    // 监听器所有权按 gtest 公开契约移交：Append 接管并在测试程序结束时释放
+    // （gtest/gtest.h TestEventListeners::Append 注释；F-958 修复后为堆对象，
+    // 静态/栈对象地址交 Append 属非法 delete）。
     sdurws::ird::testkit::installTestRecordListener(argc, argv);
     return RUN_ALL_TESTS();
 }
