@@ -1,0 +1,5 @@
+CMake Error at RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:82 (file):
+  file RELATIVE_PATH must be passed a full path to the directory:
+  RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+
+

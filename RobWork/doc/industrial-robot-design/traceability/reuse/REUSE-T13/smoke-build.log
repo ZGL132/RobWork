@@ -1,0 +1,54 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  Building Custom Rule D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  Runtime.cpp
+  Errors.cpp
+  DescriptionValidator.cpp
+  JsonLite.cpp
+  Fault.cpp
+  CanonicalModel.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Codec.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  NameMap.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  BaseWorldTransform.cpp
+  正在生成代码...
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\testkit\Release\sdurws_ird_testkit.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\runtime\Release\sdurws_ird_runtime.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/reuse-foundation/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  ErrorsTest.cpp
+  SourcesTest.cpp
+  ExpectedTest.cpp
+  DescriptionTest.cpp
+  DescriptionValidatorTest.cpp
+  CanonicalModelTest.cpp
+  CodecTest.cpp
+  NameMapTest.cpp
+  BaseWorldTransformTest.cpp
+  GoldenDataLintTest.cpp
+  正在生成代码...
+  sdurws_ird_runtime_test.vcxproj -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\runtime\Release\sdurws_ird_runtime_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\reuse-foundation\.cache\smoke\runtime\Release\gtest.dll done

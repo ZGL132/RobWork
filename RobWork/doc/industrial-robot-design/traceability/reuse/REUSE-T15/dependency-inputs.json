@@ -1,0 +1,26 @@
+[
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\multiprecision\\cpp_int.hpp",
+    "sha256": "4099045e8ac3e3507779c08980272b261a86498a23a4d0bb0786849f5424595a"
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\multiprecision\\fwd.hpp",
+    "sha256": "da8f2d642828572587cf5dbac7552ba85a8a266734398bf71c596f339eadbc5e"
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\multiprecision\\number.hpp",
+    "sha256": "e059550a01c134d8c02588747de24dafe9887f10f10419c137991b81c8dabb00"
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\include\\boost\\multiprecision\\cpp_int\\multiply.hpp",
+    "sha256": "25413c62b71c24e9a4a42ea210ee206701c2a97b976960a2f9a39299905ab64c"
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost\\BoostConfig.cmake",
+    "sha256": "fe8b0aacd59e5e51688a57f31d76a97ccd61d9aa40154eb4923152936b3a0064"
+  },
+  {
+    "path": "D:\\10_Source_Repos\\21_robot\\RobWork\\vcpkg\\installed\\x64-windows\\share\\boost-multiprecision\\copyright",
+    "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+  }
+]

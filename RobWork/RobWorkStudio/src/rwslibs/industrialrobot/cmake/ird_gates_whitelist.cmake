@@ -443,7 +443,10 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
 #     红线的既有语义内（工具不入产品面，DTB §2.2 TK-T03 行）；
 #   - sdurws_ird_demo6r：6 自由度机械臂 demo 项目生成器（owner 演示指令
 #     2026-09-26——modeling/CMakeLists.txt"链接面＝modeling＋project（两
-#     登记边；demo 工具非产品交付路径）"）。
+#     登记边；demo 工具非产品交付路径）"）；
+#   - sdurws_ird_testkit_lsnchild：testkit 单元监听器所有权测试子进程（F-958
+#     交付——tools/lsnchild，经生产安装入口跑三态样本的隔离子进程载体；
+#     testkit 同生命周期，不入产品分发面，同 testdata_lint T-1 纪律）。
 # ---------------------------------------------------------------------
 set(IRD_TOOL_TARGET_EDGES
     # WP-01-T05 回填 WP-23-T05 打开基准的独立测量进程边；精确到目标，
@@ -451,15 +454,20 @@ set(IRD_TOOL_TARGET_EDGES
     "sdurws_ird_project_openbench_worker->sdurws_ird_project"
     "sdurws_ird_testdata_lint->sdurws_ird_testkit"
     "sdurws_ird_demo6r->sdurws_ird_modeling"
-    "sdurws_ird_demo6r->sdurws_ird_project")
+    "sdurws_ird_demo6r->sdurws_ird_project"
+    "sdurws_ird_testkit_lsnchild->sdurws_ird_testkit")
 
 # ---------------------------------------------------------------------
 # IRD_T1_EXEMPT_TARGETS —— T-1（产品目标禁链 testkit）的目标豁免表。
 #   - sdurws_ird_testdata_lint：见 IRD_TOOL_TARGET_EDGES 注——lint 工具
 #     与 testkit 同生命周期（TK-T03），不随产品分发（豁免的是"产品目标"
-#     形态误判——该目标为开发工具，非产品交付物）。
+#     形态误判——该目标为开发工具，非产品交付物）；
+#   - sdurws_ird_testkit_lsnchild：见 IRD_TOOL_TARGET_EDGES 注——F-958
+#     监听器所有权测试子进程（tools/lsnchild），不入产品分发面（同款
+#     豁免的是"产品目标"形态误判——该目标为测试辅助工具，非产品交付物）。
 # ---------------------------------------------------------------------
-set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint")
+set(IRD_T1_EXEMPT_TARGETS "sdurws_ird_testdata_lint"
+                          "sdurws_ird_testkit_lsnchild")
 
 # ---------------------------------------------------------------------
 # IRD_TEST_TARGET_EDGES —— 测试目标（_test/_contract_test/_gui_test）的

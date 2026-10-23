@@ -986,9 +986,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
           "symbol": "main",
           "qualifiedSymbol": "::main",
-          "startLine": 23,
-          "endLine": 32,
-          "sha256": "105c44dd9c76e3af96f576b5fabde3ca0b42b0de04d382c0b9eec40eaadaa6ce"
+          "startLine": 1,
+          "endLine": 34,
+          "sha256": "93bd0fac0aa9a7f5a453ec7e97a848a5a03e3311aa667dce791f34404e77f7f4"
         }
       ],
       "targets": [
@@ -997,9 +997,9 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|installTestRecordListener|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/TestMainReport.cpp",
         "conclusion": "已读列明区段/候选；完整消费者和语义复核仍未结项"
@@ -1011,6 +1011,10 @@
           "sha256": "dfe9dbf8d8bb769473f043337cb957414157fffbcfb642d4db914e9a036b0818"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
       "auditBoundary": "指定功能审读样本；不视为整文件闭合或上游能力缺失",
       "designRefs": [
         "AGENTS.md §4 验证留痕",

@@ -1,0 +1,14 @@
+powershell.exe : missing task field: dependsOn
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\test-governance-lite.ps1:18 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (missing task field: dependsOn:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-58d61a45c06f41b1ad3a4cb6b0297cf5\RobWork\scripts\industrialrobot\vali
+date-task.ps1:72 char:54
++ ... required) { if ($null -eq $t.$k) { throw "missing task field: $k" } }
++                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (missing task field: dependsOn:String) [], RuntimeException
+    + FullyQualifiedErrorId : missing task field: dependsOn
+ 

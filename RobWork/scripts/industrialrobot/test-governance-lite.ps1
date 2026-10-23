@@ -1,6 +1,6 @@
 ﻿# 精简治理回归：确认短提交可用、无信息标题仍拒绝、索引审计可选但没有失去拒绝能力。
 # 在隔离稀疏 Git 检出中破坏索引，不修改调用者的证据、工作树或分支。
-param([string]$RepoRoot = '', [string]$OutputDir = '')
+param([string]$RepoRoot = '', [string]$OutputDir = '', [switch]$ValidationBatchOnly)
 $ErrorActionPreference = 'Stop'
 if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }
 if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-tests' }
@@ -8,6 +8,7 @@ if (-not $OutputDir) { $OutputDir = Join-Path $RepoRoot '.cache/governance-lite-
 $testRoot = Join-Path ([IO.Path]::GetTempPath()) ('ird-gov-lite-' + [guid]::NewGuid().ToString('N'))
 $psExe = (Get-Process -Id $PID).Path
 $results = @()
+$expectedTests = if ($ValidationBatchOnly) { 23 } else { 21 }
 
 # 每例检查真实子进程退出码及具名输出，避免“命令没执行”也被当成负例通过。
 function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int]$Expected, [string]$Pattern) {
@@ -24,7 +25,114 @@ function Invoke-Probe([string]$Name, [string]$Script, [string[]]$Arguments, [int
     Write-Output "PASS $Name"
 }
 
+# 批次回归复用本文件的子进程/退出码/报告机制，只在临时目录替换昂贵依赖以计数。
+# 计数替身不提供复用规则的语义证据；真实 CheckTask 的选择循环另有定向正负例。
+function Invoke-BatchProbe([string]$Name, [string]$Body, [int]$Expected, [string]$Pattern, [int]$Calls) {
+    $counter = Join-Path $testRoot 'gate-calls.jsonl'
+    if (Test-Path -LiteralPath $counter) { Remove-Item -LiteralPath $counter }
+    $runner = Join-Path $batchScripts 'batch-runner.ps1'
+    [IO.File]::WriteAllText($runner, ('$ErrorActionPreference="Stop"' + "`n" + $Body), [Text.UTF8Encoding]::new($true))
+    Invoke-Probe $Name $runner @() $Expected $Pattern
+    $actual = if (Test-Path -LiteralPath $counter) { @(Get-Content -LiteralPath $counter).Count } else { 0 }
+    if ($actual -ne $Calls) {
+        $script:results[-1].passed = $false
+        throw "$Name full reuse calls=$actual expected=$Calls"
+    }
+}
+
+function Test-ValidationBatch {
+    $script:batchScripts = Join-Path $testRoot 'RobWork/scripts/industrialrobot'
+    $base = Join-Path $testRoot 'RobWork/doc/industrial-robot-design'
+    [IO.Directory]::CreateDirectory($batchScripts) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $base 'tasks')) | Out-Null
+    [IO.Directory]::CreateDirectory((Join-Path $base 'context')) | Out-Null
+    [IO.File]::WriteAllText((Join-Path $base 'context/README.md'), '# fixture')
+    foreach ($name in @('validate-task.ps1','verify-task.ps1')) {
+        Copy-Item -LiteralPath (Join-Path $PSScriptRoot $name) -Destination (Join-Path $batchScripts $name)
+    }
+    $stub = @'
+param([string]$RepoRoot, [string[]]$TaskFile, [switch]$RequireMigrationComplete)
+if (-not $RepoRoot) { $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path }
+@{tasks=@($TaskFile); strict=[bool]$RequireMigrationComplete} | ConvertTo-Json -Compress | Add-Content (Join-Path $RepoRoot 'gate-calls.jsonl')
+if ((Test-Path (Join-Path $RepoRoot 'fail-gate')) -or $RequireMigrationComplete) { Write-Output 'fixture gate rejected'; exit 1 }
+Write-Output 'fixture full reuse PASS'
+exit 0
+'@
+    [IO.File]::WriteAllText((Join-Path $batchScripts 'validate-reuse.ps1'), $stub, [Text.UTF8Encoding]::new($true))
+    $a = Join-Path $base 'tasks/BATCH-T01.json'; $b = Join-Path $base 'tasks/BATCH-T02.json'
+    $one = @{taskId='BATCH-T01';unit='foundation-governance';masterWp='WP-A';title='batch fixture';status='ready';branch='codex/fixture';dependsOn=@();requirements=@('H6');designRefs=@('context/README.md');verify=@('Write-Output fixture');allowedFiles=@('fixture');forbiddenFiles=@('forbidden');outputs=@('fixture');acceptance=@('fixture');interUnit=$false;reuse=@{policy='H1-H6';manifest='fixture'}}
+    $two = $one.Clone(); $two.taskId='BATCH-T02'
+    $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    $two | ConvertTo-Json -Depth 10 | Set-Content $b -Encoding UTF8
+    $prefix = "Set-Location '$testRoot'; `$root='$testRoot'; `$a='$a'; `$b='$b'; "
+    $validate = "& '$batchScripts/validate-task.ps1' -RepoRoot `$root "
+    Invoke-BatchProbe 'batch-single-compatible' ($prefix+$validate+'-TaskFile $a') 0 'validate-task: PASS' 1
+    Invoke-BatchProbe 'batch-two-tasks-one-gate' ($prefix+$validate+'-TaskFile @($a,$b)') 0 'validate-task: PASS' 1
+    Invoke-BatchProbe 'batch-duplicate-path-once' ($prefix+$validate+'-TaskFile @($a,$a)') 0 'validate-task: PASS' 1
+    @($one,$two) | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $base 'tasks/array.json') -Encoding UTF8
+    Invoke-BatchProbe 'batch-array-contract-one-gate' ($prefix+$validate+"-TaskFile '$base/tasks/array.json'") 0 'validate-task: PASS' 1
+    $two.branch='main'; $two | ConvertTo-Json -Depth 10 | Set-Content $b -Encoding UTF8
+    Invoke-BatchProbe 'batch-bad-second-blocks' ($prefix+$validate+'-TaskFile @($a,$b)') 1 'invalid branch' 0
+    $two.branch='codex/fixture'; $two | ConvertTo-Json -Depth 10 | Set-Content $b -Encoding UTF8
+    [IO.File]::WriteAllText((Join-Path $testRoot 'fail-gate'),'fixture')
+    Invoke-BatchProbe 'batch-gate-fail-propagates' ($prefix+$validate+'-TaskFile @($a,$b)') 1 'H1-H6 task reuse contract failed' 1
+    Remove-Item -LiteralPath (Join-Path $testRoot 'fail-gate')
+    $hostName = [IO.Path]::GetFileNameWithoutExtension($psExe)
+    $canonical = "$hostName -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json"
+    $verify = "& '$batchScripts/verify-task.ps1' -RepoRoot `$root -TaskFile `$a"
+    $one.verify=@($canonical); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-identical-leading-reused' ($prefix+$verify) 0 'reusedPreflight=1' 1
+    Invoke-BatchProbe 'verify-relative-root-same-input' ($prefix+$verify.Replace('-RepoRoot $root','-RepoRoot .')) 0 'reusedPreflight=1' 1
+    $otherHost = if ($hostName -eq 'pwsh') { 'powershell' } else { 'pwsh' }
+    $one.verify=@($canonical.Replace("$hostName -NoProfile", "$otherHost -NoProfile")); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-other-runtime-not-reused' ($prefix+$verify) 0 'reusedPreflight=0' 2
+    $one.verify=@($canonical+' -RequireMigrationComplete'); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-stronger-check-executes' ($prefix+$verify) 1 'verification failed' 2
+    $one.verify=@('Write-Output first',$canonical); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-after-command-executes' ($prefix+$verify) 0 'reusedPreflight=0' 2
+    $one.verify=@('Write-Output must-not-run'); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    [IO.File]::WriteAllText((Join-Path $testRoot 'fail-gate'),'fixture')
+    Invoke-BatchProbe 'verify-preflight-fail-stops' ($prefix+$verify) 1 'H1-H6 task reuse contract failed' 1
+    Remove-Item -LiteralPath (Join-Path $testRoot 'fail-gate')
+    Invoke-BatchProbe 'verify-dryrun-still-checks' ($prefix+$verify+' -DryRun') 0 'DRYRUN PASS' 1
+    $one.verify=@($canonical.Replace('BATCH-T01','BATCH-T02')); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-other-task-executes' ($prefix+$verify) 0 'reusedPreflight=0' 2
+    $one.verify=@($canonical+'; Write-Output injected-ran'); $one | ConvertTo-Json -Depth 10 | Set-Content $a -Encoding UTF8
+    Invoke-BatchProbe 'verify-command-suffix-not-reused' ($prefix+$verify) 0 'injected-ran' 2
+    # 定向执行本次修改的 docs 委派分支，不重跑无关资产/索引检查。
+    $tokens=$null; $parseErrors=$null
+    $docsAst=[Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'validate-docs.ps1'),[ref]$tokens,[ref]$parseErrors)
+    $route=@($docsAst.EndBlock.Statements | Where-Object { $_.Extent.Text -match '^if \(\$TaskFile\)' })
+    if ($parseErrors.Count -or $route.Count -ne 1) { throw 'docs batch route not found' }
+    $docsPrefix=$prefix+"`$RepoRoot='$testRoot/RobWork'; `$errors=@(); "
+    Invoke-BatchProbe 'docs-default-full-gate' ($docsPrefix+'$TaskFile=@(); '+$route[0].Extent.Text) 0 'fixture full reuse PASS' 1
+    Invoke-BatchProbe 'docs-batch-one-gate' ($docsPrefix+'$TaskFile=@($a,$b); '+$route[0].Extent.Text) 0 'validate-task: PASS' 1
+    $two.branch='main'; $two | ConvertTo-Json -Depth 10 | Set-Content $b -Encoding UTF8
+    Invoke-BatchProbe 'docs-bad-task-not-hidden' ($docsPrefix+'$TaskFile=@($a,$b); '+$route[0].Extent.Text+'; if($errors.Count){throw ($errors -join ";")}') 1 'invalid branch' 0
+    $two.branch='codex/fixture'; $two.status='planned'; $two.Remove('reuse')
+    $two | ConvertTo-Json -Depth 10 | Set-Content $b -Encoding UTF8
+    Invoke-BatchProbe 'docs-legacy-still-full-gate' ($docsPrefix+'$TaskFile=@($b); '+$route[0].Extent.Text) 0 'fixture full reuse PASS' 1
+    # 复用真实 CheckTask 和本次修改的选择循环，验证第二份契约不被漏查。
+    $gateAst=[Management.Automation.Language.Parser]::ParseFile((Join-Path $PSScriptRoot 'validate-reuse.ps1'),[ref]$tokens,[ref]$parseErrors)
+    $check=@($gateAst.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'CheckTask'},$false))[0].Extent.Text
+    $jsonReader=@($gateAst.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst] -and $n.Name -eq 'Json'},$false))[0].Extent.Text
+    $selection=@($gateAst.FindAll({param($n) $n -is [Management.Automation.Language.ForEachStatementAst] -and $n.Variable.VariablePath.UserPath -eq 'selectedTaskFile'},$true))
+    if ($parseErrors.Count -or $selection.Count -ne 1) { throw 'reuse batch selection not found' }
+    $real=@{taskId='GOV-T21';status='ready';reuse=@{policy='H1-H6';manifest='RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json'}}
+    $real | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $base 'tasks/real.json') -Encoding UTF8
+    @($real,$real) | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $base 'tasks/real-array.json') -Encoding UTF8
+    $real.status='planned'; $real | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $base 'tasks/bad-real.json') -Encoding UTF8
+    $realPrefix=$prefix+'$RepoRoot=$root; $design="RobWork/doc/industrial-robot-design/"; function Fail($code,$detail){throw "REUSE-$code : $detail"}; function ReadText($path){if($path -like "*/changes/*"){return (@{taskId="GOV-T21";schemaVersion="ird-reuse-change/1";files=@()} | ConvertTo-Json -Compress)}; [IO.File]::ReadAllText((Join-Path $RepoRoot $path))}; '+$jsonReader+"`n"+$check+"`n"
+    Invoke-BatchProbe 'reuse-real-checktask-batch' ($realPrefix+'$TaskFile=@("RobWork/doc/industrial-robot-design/tasks/real.json","RobWork/doc/industrial-robot-design/tasks/real.json"); '+$selection[0].Extent.Text+'; Write-Output real-checktask-PASS') 0 'real-checktask-PASS' 0
+    Invoke-BatchProbe 'reuse-real-array-contracts' ($realPrefix+'$TaskFile=@("RobWork/doc/industrial-robot-design/tasks/real-array.json"); '+$selection[0].Extent.Text+'; Write-Output real-checktask-PASS') 0 'real-checktask-PASS' 0
+    Invoke-BatchProbe 'reuse-real-bad-second-rejected' ($realPrefix+'$TaskFile=@("RobWork/doc/industrial-robot-design/tasks/real.json","RobWork/doc/industrial-robot-design/tasks/bad-real.json"); '+$selection[0].Extent.Text) 1 'REUSE-TASK-STATE' 0
+    Invoke-BatchProbe 'reuse-real-outside-root-rejected' ($realPrefix+'$TaskFile=@("../outside.json"); '+$selection[0].Extent.Text) 1 'REUSE-PATH' 0
+}
+
 try {
+  if ($ValidationBatchOnly) {
+    Test-ValidationBatch
+  } else {
     $lint = Join-Path $PSScriptRoot 'commit-lint.ps1'
     $cases = @(
         @{name='short-doc'; text='[docs] 精简普通任务入口'; code=0; pattern='commit-lint: PASS'},
@@ -127,10 +235,24 @@ try {
     [IO.File]::WriteAllText($designPath, $originalDesign, [Text.UTF8Encoding]::new($false))
     [IO.File]::WriteAllText($packPath, ($originalPack + '`n"phase": "implementing"'), [Text.UTF8Encoding]::new($false))
     Invoke-Probe 'context-state-copy' $validator $selected 1 'PIPE authority red line'
+  }
 } finally {
     $passed = @($results | Where-Object { $_.passed }).Count
-    $report = [pscustomobject]@{ expected=21; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=(21-$results.Count); complete=($results.Count -eq 21 -and $passed -eq 21); cases=$results }
+    $report = [pscustomobject]@{ suite=$(if($ValidationBatchOnly){'validation-batch'}else{'governance-lite'}); expected=$expectedTests; executed=$results.Count; passed=$passed; failed=($results.Count-$passed); skipped=0; notRun=($expectedTests-$results.Count); complete=($results.Count -eq $expectedTests -and $passed -eq $expectedTests); cases=$results }
     $report | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $OutputDir 'governance-lite-report.json') -Encoding UTF8
+    # 沿既有治理测试的 JUnit＋JSON 口径，明确本次选中套件，不冒充全套历史回归。
+    $xml = [xml]'<testsuite/>'
+    $xml.DocumentElement.SetAttribute('name', $report.suite)
+    $xml.DocumentElement.SetAttribute('tests', "$($results.Count)")
+    $xml.DocumentElement.SetAttribute('failures', "$($report.failed)")
+    $xml.DocumentElement.SetAttribute('skipped', '0')
+    foreach ($case in $results) {
+        $node = $xml.CreateElement('testcase'); $node.SetAttribute('name', $case.name)
+        if (-not $case.passed) { $failure=$xml.CreateElement('failure'); $failure.InnerText="See $($case.name).log"; [void]$node.AppendChild($failure) }
+        [void]$xml.DocumentElement.AppendChild($node)
+    }
+    if ($report.notRun) { $xml.DocumentElement.SetAttribute('errors','1'); $node=$xml.CreateElement('testcase'); $node.SetAttribute('name','driver-completion'); $errorNode=$xml.CreateElement('error'); $errorNode.InnerText="notRun=$($report.notRun)"; [void]$node.AppendChild($errorNode); [void]$xml.DocumentElement.AppendChild($node); $xml.DocumentElement.SetAttribute('tests', "$($results.Count+1)") }
+    $xml.Save((Join-Path $OutputDir 'governance-lite.junit.xml'))
     # Windows 删除前核对绝对路径属于本次唯一临时目录，绝不沿主树依赖 junction 清理。
     $tempPrefix = [IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\','/') + [IO.Path]::DirectorySeparatorChar
     $resolvedTest = [IO.Path]::GetFullPath($testRoot)

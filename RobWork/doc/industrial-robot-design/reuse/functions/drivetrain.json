@@ -559,9 +559,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/contract_test/ContractTestMain.cpp",
           "symbol": "main",
           "qualifiedSymbol": "::main",
-          "startLine": 25,
-          "endLine": 36,
-          "sha256": "62ce597ca2c6e8724e57a637fb1768c96246355ee5761ff00ae4aa76a3e7699e"
+          "startLine": 1,
+          "endLine": 37,
+          "sha256": "84d190f4af35b40578e770c555a93936a5efd8b624d7c27e59bbdd0a78028651"
         }
       ],
       "targets": [
@@ -569,9 +569,9 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
         "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
@@ -605,6 +605,10 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {
@@ -618,9 +622,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/TestMainReport.cpp",
           "symbol": "main",
           "qualifiedSymbol": "::main",
-          "startLine": 45,
-          "endLine": 71,
-          "sha256": "90ceb0e006d795ebc5b6b16e6739906233c94ebf535fa12aa943f3d29f6d7a7b"
+          "startLine": 1,
+          "endLine": 72,
+          "sha256": "595cdb2e339e05d319410760944ac954e2e2ebc95a038a5b5c490ecc885fac30"
         }
       ],
       "targets": [
@@ -628,9 +632,9 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
         "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
@@ -664,6 +668,10 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {

@@ -1,6 +1,6 @@
 ﻿# H1—H6 的唯一机器校验入口。仅校验可机器证明的事实；语义等价和批准身份仍须独立审查。
 # RepoRoot 为 Git 根；Head 指定时所有输入取自同一 Git 树，避免验收混入工作树内容。
-param([string]$RepoRoot = '', [string]$Head = '', [string]$TaskFile = '', [switch]$RequireMigrationComplete)
+param([string]$RepoRoot = '', [string]$Head = '', [ValidateNotNullOrEmpty()][string[]]$TaskFile = @(), [switch]$RequireMigrationComplete)
 $ErrorActionPreference = 'Stop'
 # PS5.1 在 MSBuild/CI 重定向环境中默认按系统代码页解码 Git stdout，可能破坏中文 JSON。
 # Git 对象采用 UTF-8；显式统一 native 交互编码，避免把解码故障误归为证据损坏。
@@ -215,13 +215,14 @@ try {
             if ($t.taskId -and $t.status -in @('ready','done')) { CheckTask $t }
         }
     }
-    if ($TaskFile) {
-        $full = $TaskFile
+    # 全量库存/权限/生产链只查一次；批次内选中的每份契约仍执行原 CheckTask。
+    foreach ($selectedTaskFile in $TaskFile) {
+        $full = $selectedTaskFile
         if (-not [IO.Path]::IsPathRooted($full)) { $full = Join-Path $RepoRoot $full }
         $full = [IO.Path]::GetFullPath($full)
-        if (-not $full.StartsWith($RepoRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) { Fail 'PATH' $TaskFile }
+        if (-not $full.StartsWith($RepoRoot+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)) { Fail 'PATH' $selectedTaskFile }
         $rel = $full.Substring($RepoRoot.Length+1).Replace('\','/')
-        CheckTask (Json $rel)
+        foreach ($selectedTask in @(Json $rel)) { CheckTask $selectedTask }
     }
     Write-Output "validate-reuse: PASS governance only; inventory=$($tree.Count) units=20 changed=$count DEBT=$debt UNRESOLVED=$audit (not algorithm compliance)"
     exit 0

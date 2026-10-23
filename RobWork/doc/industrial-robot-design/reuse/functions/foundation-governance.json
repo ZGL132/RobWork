@@ -3,6 +3,456 @@
   "unit": "foundation-governance",
   "functions": [
     {
+      "functionId": "foundation-governance.ird_gates_whitelist.L1_ird_gates_whitelist",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "ird_gates_whitelist",
+          "qualifiedSymbol": "ird_gates_whitelist",
+          "startLine": 1,
+          "endLine": 32,
+          "sha256": "7d956295bd713fa364e14c13ef6ab79bfeea8974fd877d6f7111e5ff4ce740ad"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L2_IRD_ALLOWED_UNIT_EDGES",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_ALLOWED_UNIT_EDGES",
+          "qualifiedSymbol": "IRD_ALLOWED_UNIT_EDGES",
+          "startLine": 33,
+          "endLine": 174,
+          "sha256": "4b6e3bccf933d228a22a02bbc5e37418644c627b6fafc366a51283e04104cfaa"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L3_IRD_EXTRA_EDGE_REFS_EDGES",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_EXTRA_EDGE_REFS_EDGES",
+          "qualifiedSymbol": "IRD_EXTRA_EDGE_REFS_EDGES",
+          "startLine": 175,
+          "endLine": 326,
+          "sha256": "0fff469cf94cc2a8a873ccbbfb94041c275e3cdb32df560b4563b212fd8b063e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L4_IRD_BUSINESS_UNITS",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_BUSINESS_UNITS",
+          "qualifiedSymbol": "IRD_BUSINESS_UNITS",
+          "startLine": 327,
+          "endLine": 354,
+          "sha256": "439094d194a6f1906fdfc525fa2b29e3efef26028c08169d2d7e2740d4b4573e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L5_IRD_R5_EXEMPT_TARGETS",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_R5_EXEMPT_TARGETS",
+          "qualifiedSymbol": "IRD_R5_EXEMPT_TARGETS",
+          "startLine": 355,
+          "endLine": 413,
+          "sha256": "88c0e30fd8b2bc5165db28a4f9695acf5105660f2214b677c0a7995d913b21fc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L6_IRD_THIRDPARTY_ALLOWED_TARGETS",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_THIRDPARTY_ALLOWED_TARGETS",
+          "qualifiedSymbol": "IRD_THIRDPARTY_ALLOWED_TARGETS",
+          "startLine": 414,
+          "endLine": 446,
+          "sha256": "493bcbf65bd4133568758a92dddb27bfde5728e7289b4ed8fb841a7e6d118b40"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L7_IRD_TOOL_TARGET_EDGES",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_TOOL_TARGET_EDGES",
+          "qualifiedSymbol": "IRD_TOOL_TARGET_EDGES",
+          "startLine": 447,
+          "endLine": 463,
+          "sha256": "f121f1671a704862cb4565115f226b8836e77ffe5c0e2703be376f139781d590"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L8_IRD_T1_EXEMPT_TARGETS",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_T1_EXEMPT_TARGETS",
+          "qualifiedSymbol": "IRD_T1_EXEMPT_TARGETS",
+          "startLine": 464,
+          "endLine": 504,
+          "sha256": "791c1dd9b46e7b09a9b2ed47b28d63fa4160592b2df0c03be8d483e6d7334fcf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L9_IRD_TEST_TARGET_EDGES",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_TEST_TARGET_EDGES",
+          "qualifiedSymbol": "IRD_TEST_TARGET_EDGES",
+          "startLine": 505,
+          "endLine": 571,
+          "sha256": "ec94ccc48e5a6c63fc18b537ab36d4e401ea7e577e13e3da934a2ecdf297f679"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
+      "functionId": "foundation-governance.ird_gates_whitelist.L10_IRD_TARGET_LEVEL_EDGES",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "symbol": "IRD_TARGET_LEVEL_EDGES",
+          "qualifiedSymbol": "IRD_TARGET_LEVEL_EDGES",
+          "startLine": 572,
+          "endLine": 589,
+          "sha256": "3623db870cdba3d9637543d082a2b4404a5c3c7ac96d0a2057065cefabd7f098"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_testkit_lsnchild"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+        "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
+      },
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
+          "sha256": "cf69be46c8e64ee3c6063966912644795bf257c604c283f30b056d19db107795"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
+          "sha256": "bdf5362e81df46b89bb4045a7244389245ae971d761a6ecc757f2b4920a3ea0d"
+        }
+      ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "门禁数据面登记，不含产品算法；机器消费面＝ird_gates.cmake，人工登记册＝DTB §4.5"
+    },
+    {
       "functionId": "foundation-governance.make_dyn_two_link_golden.conditionIdHex",
       "ownerUnit": "foundation-governance",
       "requirements": [
@@ -24,8 +474,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
         "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
@@ -71,6 +521,10 @@
           "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
         }
       ],
+            "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
       "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02",
       "targetRelation": "generated-artifact-consumer; Node执行器见generator-replay.json，不是CMake编译源或构建自动再生"
     },
@@ -1778,8 +2232,8 @@
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "$TaskFile",
           "startLine": 19,
-          "endLine": 29,
-          "sha256": "91c1cbe7d2384451edc827ce1af76b32ea5e4289012e474046ee03875b5f9f77",
+          "endLine": 34,
+          "sha256": "2d69374c6fb89f5a9bed2b3c7bab301cd19f88d05a11688b3d4f2a57ae00b7c6",
           "semanticGroup": "root",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::root"
         }
@@ -1798,7 +2252,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1814,7 +2268,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -1849,8 +2303,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "Test-AnchorExists",
-          "startLine": 33,
-          "endLine": 42,
+          "startLine": 38,
+          "endLine": 47,
           "sha256": "42fe55bf6ef9114310c1f57ede2271f997c6c603b75d0e4c63293c70adb57275",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorExists"
         }
@@ -1869,7 +2323,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1885,7 +2339,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -1920,8 +2374,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "Test-AnchorRequired",
-          "startLine": 46,
-          "endLine": 52,
+          "startLine": 51,
+          "endLine": 57,
           "sha256": "6f9a46e85f970d33a73040ba72fab8e6ab19e9398889be5201336f01e4e6dc61",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::Test-AnchorRequired"
         }
@@ -1940,7 +2394,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -1956,7 +2410,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -1991,9 +2445,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "$allTaskIds = @{}",
-          "startLine": 55,
-          "endLine": 121,
-          "sha256": "af8521878ef2757d580b3a04232ae2b824bdbb3a6feb5d7568da5e48523738cc",
+          "startLine": 60,
+          "endLine": 131,
+          "sha256": "89f82a383c2d83d95ad12150ed855a184dcbef22317431f546fb021370e7f519",
           "semanticGroup": "index-and-contract",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::index-and-contract"
         }
@@ -2012,7 +2466,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2028,7 +2482,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2063,9 +2517,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
           "symbol": "validate-reuse.ps1",
-          "startLine": 123,
-          "endLine": 129,
-          "sha256": "622874cfef5542d29243f176890bf00e7118d8b4fe415cddff15cf2f03f9dffd",
+          "startLine": 133,
+          "endLine": 138,
+          "sha256": "2011a8904d62eada3247214102c0238b03c304e2b54ce60bbbaa4bb934f2a6e2",
           "semanticGroup": "reuse-gate",
           "qualifiedSymbol": "PowerShell::validate-task.ps1::reuse-gate"
         }
@@ -2084,7 +2538,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2100,7 +2554,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2136,8 +2590,8 @@
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
           "symbol": "validate-task.ps1",
           "startLine": 18,
-          "endLine": 44,
-          "sha256": "58171974e3ff46846a6b44c5b9539cd8c1ea2b3ec3b4b1c8a465196887e2d7c9",
+          "endLine": 45,
+          "sha256": "f78c3cc7f215a473637a4aa001557aeada77c72db0034f1ff4e40eb2576af801",
           "semanticGroup": "preflight-and-dryrun",
           "qualifiedSymbol": "PowerShell::verify-task.ps1::preflight-and-dryrun"
         }
@@ -2156,7 +2610,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
-          "sha256": "911c8021604d31b8f2607596a8f3cfa1276cab4c81e3d75f9ab9f71db4f15fe3"
+          "sha256": "92930924d04ef41e2e04a7ba130e10590abb68b2698ee0aac71f8ac3788b35eb"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2172,7 +2626,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2180,11 +2634,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
-          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2219,9 +2673,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
           "symbol": "foreach ($cmd in @($t.verify))",
-          "startLine": 52,
-          "endLine": 74,
-          "sha256": "710fdb57856f8270c396f782b271c16caf65700c7ac12aa39f5f66bf110f01c1",
+          "startLine": 53,
+          "endLine": 91,
+          "sha256": "6d4e4c5485e3014a029a23fabcc805642ab6d06c2c01e31394d05728425e4561",
           "semanticGroup": "execute-and-count",
           "qualifiedSymbol": "PowerShell::verify-task.ps1::execute-and-count"
         }
@@ -2240,7 +2694,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/verify-task.ps1",
-          "sha256": "911c8021604d31b8f2607596a8f3cfa1276cab4c81e3d75f9ab9f71db4f15fe3"
+          "sha256": "92930924d04ef41e2e04a7ba130e10590abb68b2698ee0aac71f8ac3788b35eb"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2256,7 +2710,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2264,11 +2718,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
-          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2324,7 +2778,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2340,7 +2794,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2348,11 +2802,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
-          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2419,8 +2873,8 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "Invoke-Probe",
-          "startLine": 13,
-          "endLine": 25,
+          "startLine": 14,
+          "endLine": 26,
           "sha256": "8271391b4c6ceb2e8eb17f710653d462f264d856e7370af8c8262119630fbfda",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::Invoke-Probe"
         }
@@ -2439,7 +2893,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2455,7 +2909,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2463,11 +2917,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
-          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -2534,9 +2988,9 @@
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
           "symbol": "try {",
-          "startLine": 27,
-          "endLine": 142,
-          "sha256": "d5a601e16aad6e2f9ffd1da564030917f162e97debc7237a689176f1e4240b4a",
+          "startLine": 132,
+          "endLine": 264,
+          "sha256": "3c2f367752ffaf5c7d63e061c4cfa27b74c71f401aa1398b236c16865cb43dbe",
           "semanticGroup": "fixtures-and-report",
           "qualifiedSymbol": "PowerShell::test-governance-lite.ps1::fixtures-and-report"
         }
@@ -2555,7 +3009,7 @@
       "inputs": [
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/RobWork/gtest/CMakeLists.txt",
@@ -2571,7 +3025,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/commit-lint.ps1",
@@ -2579,11 +3033,11 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
-          "sha256": "60c59fb6e757621a49d001a1a1ea70513879c3e30d024aee35755f914e39b511"
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
-          "sha256": "cd2973adf9056c5e8a3ccf14581b5fa34bba0538984741e758bb3388563a07d9"
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
         },
         {
           "path": "RobWork/scripts/industrialrobot/reuse-contract.ps1",
@@ -3199,7 +3653,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3279,7 +3733,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3359,7 +3813,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -3439,7 +3893,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
-          "sha256": "a730db76980077ec13c2971088091ebf3bdccc6e1edc70d4eed75dfff159cf8d"
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/pipeline/b1-host-integration-batch.json",
@@ -5052,7 +5506,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5131,7 +5585,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5210,7 +5664,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5289,7 +5743,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5368,7 +5822,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5447,7 +5901,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5526,7 +5980,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5605,7 +6059,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5684,7 +6138,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5763,7 +6217,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5842,7 +6296,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -5921,7 +6375,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6000,7 +6454,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6079,7 +6533,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6158,7 +6612,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6237,7 +6691,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6316,7 +6770,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6395,7 +6849,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -6474,7 +6928,7 @@
         },
         {
           "path": "RobWork/scripts/industrialrobot/validate-task.ps1",
-          "sha256": "a39a3b78df409b7ca0789b606a03ff0846a101e75b3df661671b260437280d55"
+          "sha256": "221b89494a73721667272dcd34247a2ecf9e9a3c50a6e23d7a7b9aa4d6431f37"
         },
         {
           "path": "RobWork/scripts/industrialrobot/test-pipeline-pipeline.ps1",
@@ -7387,7 +7841,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7470,7 +7924,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7553,7 +8007,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7636,7 +8090,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7719,7 +8173,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7802,7 +8256,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7885,7 +8339,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -7968,7 +8422,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8051,7 +8505,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8134,7 +8588,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8217,7 +8671,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8300,7 +8754,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8383,7 +8837,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8470,7 +8924,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8549,7 +9003,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8632,7 +9086,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8715,7 +9169,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8798,7 +9252,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8881,7 +9335,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -8964,7 +9418,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9047,7 +9501,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9130,7 +9584,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9213,7 +9667,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9296,7 +9750,7 @@
         },
         {
           "path": "AGENTS.md",
-          "sha256": "30446e56d1fa832c69da0ace00ece2401e511f3c2e70cb35a8c6f3925c005d35"
+          "sha256": "aa530e7123b6b4eabca734aed06ded47cf7dfe636587203e1ad7d8f893d85614"
         },
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch27/search.json",
@@ -9339,6 +9793,190 @@
         }
       ],
       "auditBoundary": "本批三入口全段及清单helper审读；仅列出实测边界，重复任务/坏JSON/启发式未作为已修复或全T01完成"
+    },
+    {
+      "functionId": "foundation-governance.validation-batch.validate-docs.batch-route",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "symbol": "if ($TaskFile)",
+          "startLine": 380,
+          "endLine": 396,
+          "sha256": "60e1e4ea2343ab10b66398a8c6d119fdad40230cc5701eaac063c03bffabbd68"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "批次调度/定向夹具复用既有验证器，不增加跳过或持久PASS缓存；23项定向测试见validation-batch，独验NOT RUN，保留pending。",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+          "sha256": "01cb213c2e3383198d5381948bba9a7be61a47c0453bededd27cbdcd4e44dc9c"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-docs.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/README.md",
+          "sha256": "d9e42b5b39c859b65be0a8a2ada1b4b2a048c0d4b8d81d0daeeff4f5fb4c3d11"
+        }
+      ],
+      "auditBoundary": "只审本次变更及影响；未宣称完整脚本审计或治理独验关闭。"
+    },
+    {
+      "functionId": "foundation-governance.validation-batch.validate-reuse.selected-batch-contracts",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "symbol": "foreach ($selectedTaskFile in $TaskFile)",
+          "startLine": 219,
+          "endLine": 226,
+          "sha256": "8da9d289a2db14757b2fa62202890f084f28678265e9862869d627d6df3c6598"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "批次调度/定向夹具复用既有验证器，不增加跳过或持久PASS缓存；23项定向测试见validation-batch，独验NOT RUN，保留pending。",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+          "sha256": "437e1c3aebce0fd376b81cc4e134fe14ae4c26d60255a6dfe0ecafab53621045"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/validate-reuse.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/README.md",
+          "sha256": "d9e42b5b39c859b65be0a8a2ada1b4b2a048c0d4b8d81d0daeeff4f5fb4c3d11"
+        }
+      ],
+      "auditBoundary": "只审本次变更及影响；未宣称完整脚本审计或治理独验关闭。"
+    },
+    {
+      "functionId": "foundation-governance.validation-batch.test-governance-lite.Invoke-BatchProbe",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "Invoke-BatchProbe",
+          "startLine": 30,
+          "endLine": 41,
+          "sha256": "767de5b49f6e292b1a7b90e701994a5a64be1d76c62764ddc731cad818dc9190"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "批次调度/定向夹具复用既有验证器，不增加跳过或持久PASS缓存；23项定向测试见validation-batch，独验NOT RUN，保留pending。",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -ValidationBatchOnly"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/README.md",
+          "sha256": "d9e42b5b39c859b65be0a8a2ada1b4b2a048c0d4b8d81d0daeeff4f5fb4c3d11"
+        }
+      ],
+      "auditBoundary": "只审本次变更及影响；未宣称完整脚本审计或治理独验关闭。"
+    },
+    {
+      "functionId": "foundation-governance.validation-batch.test-governance-lite.Test-ValidationBatch",
+      "ownerUnit": "foundation-governance",
+      "requirements": [
+        "H4",
+        "H6"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "symbol": "Test-ValidationBatch",
+          "startLine": 43,
+          "endLine": 130,
+          "sha256": "c9ed07e8f73cf76586d6c9bc1e188e353ed7b0160119ae9400cd1e12f2e2f1ad"
+        }
+      ],
+      "targets": [],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.4",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "见batch21/search.json的上游真实检索、原文件阅读及红绿子进程探测",
+        "conclusion": "既有C++测试入口不是项目PowerShell规则；保留原Git/PS标准工具和原治理入口，候选边界已查，非新核心授权"
+      },
+      "differences": "批次调度/定向夹具复用既有验证器，不增加跳过或持久PASS缓存；23项定向测试见validation-batch，独验NOT RUN，保留pending。",
+      "inputs": [
+        {
+          "path": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+          "sha256": "56471db06bea3aadfaac6776b307ab801d38e7a6484aa7cca390442dd71a5ea5"
+        }
+      ],
+      "execution": {
+        "kind": "governance-script",
+        "entry": "RobWork/scripts/industrialrobot/test-governance-lite.ps1",
+        "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-governance-lite.ps1 -ValidationBatchOnly"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/README.md",
+          "sha256": "d9e42b5b39c859b65be0a8a2ada1b4b2a048c0d4b8d81d0daeeff4f5fb4c3d11"
+        }
+      ],
+      "auditBoundary": "只审本次变更及影响；未宣称完整脚本审计或治理独验关闭。"
     }
   ]
 }

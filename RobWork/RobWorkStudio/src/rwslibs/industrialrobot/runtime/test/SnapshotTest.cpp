@@ -936,7 +936,12 @@ TEST(RuntimeSnapshotTest, FactoryRetainsRequestedMeshResources_T30)
     bool found=false;
     for(const auto& object:out.snapshot->workCellHandle()->getObjects()){
         for(const auto& geometry:object->getGeometry()){
-            if(geometry->getGeometryData()->getType()==rw::geometry::GeometryData::PlainTriMesh){found=true;}
+            // REUSE-T13：网格存储由上游选择，快照承诺实际三角面而非Plain类型。
+            const auto type=geometry->getGeometryData()->getType();
+            if(type==rw::geometry::GeometryData::PlainTriMesh || type==rw::geometry::GeometryData::IdxTriMesh){
+                EXPECT_EQ(geometry->getGeometryData()->getTriMesh(false)->size(),1u);
+                found=true;
+            }
         }
     }
     EXPECT_TRUE(found)<<"请求带真实网格，正式快照却只保留代理";

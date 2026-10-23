@@ -13,10 +13,15 @@
 # 用法：pwsh -File validate-task.ps1 -TaskFile <契约路径> [-RepoRoot <仓库根>]
 # 仓库根解析与 verify-task.ps1 同一套健壮逻辑（CORE-T01 验收 G-1 教训），调用方式无关。
 param(
-  [Parameter(Mandatory=$true)][string]$TaskFile,
+  [Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string[]]$TaskFile,
   [string]$RepoRoot = ""
 )
-if (-not (Test-Path $TaskFile)) { throw "task file not found: $TaskFile" }
+# 同一能力批次共用契约索引及一次全量复用检查；每份契约仍逐项验证。
+# 先解析真实路径去重，避免同一文件的相对/绝对拼写触发重复校验。
+$TaskFile = @($TaskFile | ForEach-Object {
+  if (-not (Test-Path -LiteralPath $_ -PathType Leaf)) { throw "task file not found: $_" }
+  (Resolve-Path -LiteralPath $_).Path
+} | Sort-Object -Unique)
 
 # 仓库根解析：优先显式参数；否则脚本位置上三级（scripts/industrialrobot → 仓库根），
 # 并以"doc 目录存在"自检——解析失败必须显性报错，不允许归约到盘根后静默错判（G-1 根因对策）。
@@ -60,7 +65,11 @@ Get-ChildItem (Join-Path $docBase "tasks") -Recurse -Filter "*.json" -ErrorActio
   if ($j.taskId) { $allTaskIds[$j.taskId] = $true }
 }
 
-$tasks = @(Get-Content $TaskFile -Raw -Encoding UTF8 | ConvertFrom-Json)
+$tasks = @(foreach ($taskPath in $TaskFile) {
+  # PS5.1 的 ConvertFrom-Json 会把 JSON 数组作为单个管道对象输出，显式展开后再逐契约检查。
+  $decoded = Get-Content -LiteralPath $taskPath -Raw -Encoding UTF8 | ConvertFrom-Json
+  foreach ($contract in $decoded) { $contract }
+})
 $required = 'taskId','unit','masterWp','title','status','dependsOn','requirements','designRefs','verify'
 $readyRequired = 'requirements','designRefs','verify','allowedFiles','forbiddenFiles','outputs','acceptance'
 foreach ($t in $tasks) {
@@ -107,9 +116,10 @@ foreach ($t in $tasks) {
   if ($null -ne $t.interUnit -and $t.interUnit -isnot [bool]) { throw "interUnit must be bool, got '$($t.interUnit)': $($t.taskId)" }
   # 任务分支字段（PIPE v1.4 §0.2 queue 结构化条目的唯一来源）：ready 必填（进队前提）；
   # done 契约若为分支纪律之前的历史直会话执行可无 branch（如 FOUNDATION-CR-01 系），
-  # 但若存在必须句法合法。句法 <前缀>-t<序号>（小写）。
+  # 但若存在必须句法合法。根 AGENTS §6.2 也允许 codex/<主题>；仅对齐分支
+  # 命名约定，不授予 main/集成主线写权，也不改变复用或模型所有权准入规则。
   if ($t.status -eq 'ready' -and -not $t.branch) { throw "ready task missing required field branch (CCP §3): $($t.taskId)" }
-  if ($t.branch -and "$($t.branch)" -notmatch '^[a-z][a-z0-9]*-t[0-9]+$') { throw "invalid branch '$($t.branch)' (expect like wp03-t01 / doc-t03): $($t.taskId)" }
+  if ($t.branch -and "$($t.branch)" -notmatch '^(?:[a-z][a-z0-9]*-t[0-9]+|codex/[a-z0-9]+(?:[-_][a-z0-9]+)*)$') { throw "invalid branch '$($t.branch)' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): $($t.taskId)" }
   if ($t.interUnit -eq $true) {
     # PS 细节：@($null).Count 为 1，须先滤空再判空，否则缺失字段会走错报错分支
     $pitfalls = @($t.knownPitfalls) | Where-Object { $null -ne $_ }
@@ -120,10 +130,9 @@ foreach ($t in $tasks) {
   }
 }
 # 新编译契约的复用字段不能只停留在文字上；历史契约结构检查不冒充重新授权执行。
-foreach ($t in $tasks) {
-  if ($t.reuse -or ($t.taskId -like 'REUSE-*' -and $t.status -in @('ready','done'))) {
-    & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
-    if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
-  }
+$requiresReuse = @($tasks | Where-Object { $_.reuse -or ($_.taskId -like 'REUSE-*' -and $_.status -in @('ready','done')) }).Count -gt 0
+if ($requiresReuse) {
+  & (Join-Path $PSScriptRoot 'validate-reuse.ps1') -RepoRoot $RepoRoot -TaskFile $TaskFile
+  if ($LASTEXITCODE -ne 0) { throw 'H1-H6 task reuse contract failed' }
 }
 Write-Output "validate-task: PASS ($($tasks.Count) tasks)"

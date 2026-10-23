@@ -153,4 +153,55 @@ TEST(IdentityStrongTyping, NoImplicitConversion_UT_ID_T)
     // （跨类型若存在隐式转换，上一行 fromCanonical 的 tag 校验模型即失去意义；
     //   编译期隔离由"六独立 struct 无转换构造"保证——此处以行为面钉住。）
 }
+/** GAP-CORE-FNV-01：冻结期望由 Python 整数 oracle 生成，不用被测 Boost 作参考。 */
+TEST(IdentityFnv, ExactIntegerVectors_UT_ID_T)
+{
+    struct Vector { std::size_t length; std::uint64_t hi; std::uint64_t lo; };
+    const Vector vectors[] = {
+        {0u, 0x6c62272e07bb0142ULL, 0x62b821756295c58dULL},
+        {1u, 0xd228cb69101a8cafULL, 0x78912b704e4a147fULL},
+        {2u, 0x0880945b4eab1be9ULL, 0x5aa073305527370aULL},
+        {15u, 0x72d832c1d475b04fULL, 0xd896badf51766e28ULL},
+        {16u, 0x2f57eaee93cff23fULL, 0x8177f0c93cb989fdULL},
+        {17u, 0x0a6acd19cddf1424ULL, 0x4e95479db84cb69fULL},
+        {31u, 0x96b42fa4114d6107ULL, 0xbb351f125b2f0868ULL},
+        {32u, 0x8211cde9c1366483ULL, 0x5a5d3b9632df6a6dULL},
+        {33u, 0xa21b3e0b0aedada0ULL, 0x30b851d098e7ccbfULL},
+        {63u, 0xcfcc8e62bc90c6f8ULL, 0x18280f4fdf4eef28ULL},
+        {64u, 0x0092826d1d24d345ULL, 0xb94ad747c620314dULL},
+        {65u, 0xfc0c9c73e94ff6caULL, 0xff16e550c99c5affULL},
+        {255u, 0xf7dc71f146d19967ULL, 0x48c1fb8456f0b828ULL},
+    };
+    std::array<std::uint8_t, 255> bytes{};
+    for (std::size_t i=0; i<bytes.size(); ++i) bytes[i]=static_cast<std::uint8_t>(i);
+    for (const auto& v : vectors) {
+        SCOPED_TRACE(v.length);
+        std::uint64_t hi=0, lo=0;
+        detail::fnv1a128(v.length ? bytes.data() : nullptr, v.length, &hi, &lo);
+        EXPECT_EQ(v.hi, hi); EXPECT_EQ(v.lo, lo);
+    }
+}
+
+/** 六类公开身份都经相同协议，容器查找仍使用精确身份而非持久化 hash。 */
+TEST(IdentityFnv, PublicTypesAndContainer_UT_ID_T)
+{
+    { ObjectId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<ObjectId>{}(id));
+      std::unordered_set<ObjectId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+    { ProjectId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<ProjectId>{}(id));
+      std::unordered_set<ProjectId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+    { BranchId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<BranchId>{}(id));
+      std::unordered_set<BranchId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+    { RevisionId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<RevisionId>{}(id));
+      std::unordered_set<RevisionId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+    { RunId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<RunId>{}(id));
+      std::unordered_set<RunId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+    { EventId id; for (std::size_t i=0;i<id.bytes.size();++i) id.bytes[i]=static_cast<std::uint8_t>(i);
+      EXPECT_EQ(static_cast<std::size_t>(0xae201a27af767bc2ULL),std::hash<EventId>{}(id));
+      std::unordered_set<EventId> ids; ids.insert(id); EXPECT_EQ(ids.count(id),1u); }
+}
 }  // namespace

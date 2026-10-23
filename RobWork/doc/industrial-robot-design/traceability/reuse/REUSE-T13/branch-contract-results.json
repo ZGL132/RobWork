@@ -1,0 +1,65 @@
+[
+  {
+    "branch": "codex/reuse-foundation",
+    "expectedAccepted": true,
+    "exitCode": 0,
+    "passed": true,
+    "output": "validate-task: PASS (1 tasks)"
+  },
+  {
+    "branch": "wp03-t01",
+    "expectedAccepted": true,
+    "exitCode": 0,
+    "passed": true,
+    "output": "validate-task: PASS (1 tasks)"
+  },
+  {
+    "branch": "doc-t03",
+    "expectedAccepted": true,
+    "exitCode": 0,
+    "passed": true,
+    "output": "validate-task: PASS (1 tasks)"
+  },
+  {
+    "branch": "main",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  },
+  {
+    "branch": "redesign-main",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'redesign-main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  },
+  {
+    "branch": "codex/../main",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'codex/../main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  },
+  {
+    "branch": "codex/foo bar",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'codex/foo bar' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  },
+  {
+    "branch": "codex/",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'codex/' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  },
+  {
+    "branch": "codex/foo.lock",
+    "expectedAccepted": false,
+    "exitCode": 1,
+    "passed": true,
+    "output": "Exception: D:\\10_Source_Repos\\21_robot\\reuse-foundation\\RobWork\\scripts\\industrialrobot\\validate-task.ps1:113\nLine |\n 113 |  … 9]+)*)$') { throw \"invalid branch '$($t.branch)' (expect like wp03-t0 …\n     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | invalid branch 'codex/foo.lock' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): FOUNDATION-CR-99"
+  }
+]

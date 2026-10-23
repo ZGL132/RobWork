@@ -1,0 +1,5 @@
+REUSE-COVERAGE : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt : changed production function needs resolved migration evidence
+Line |
+   3 |  & ./RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile @('Ro …
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | H1-H6 task reuse contract failed

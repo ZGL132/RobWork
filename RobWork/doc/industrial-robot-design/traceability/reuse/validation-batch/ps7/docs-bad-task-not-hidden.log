@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513\RobWork\scripts\industrialrobot\batch-runner.ps1:18
+Line |
+  18 |  }; if($errors.Count){throw ($errors -join ";")}
+     |                       ~~~~~~~~~~~~~~~~~~~~~~~~~
+     | invalid branch 'main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): BATCH-T02

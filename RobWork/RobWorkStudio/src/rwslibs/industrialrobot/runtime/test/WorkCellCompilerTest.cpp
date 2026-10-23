@@ -37,6 +37,7 @@
 #include <rw/kinematics/Kinematics.hpp>     // frameTframe/worldTframe（真实基线 FK）
 #include <rw/kinematics/StateStructure.hpp> // RT-AD-1 真实异常触发点
 #include <rw/math/Q.hpp>
+#include <rw/models/PrismaticJoint.hpp> // REUSE-T13同模型直接上游对照
 #include <rw/models/Joint.hpp>              // WC 侧关节字段读取（RT-AD-2）
 #include <rw/models/SerialDevice.hpp>
 #include <rw/models/WorkCell.hpp>
@@ -749,4 +750,141 @@ TEST(WorkCellCompilerTest, RichFixtureCompilesWithToolAndScene_RT_T07)
         out.workCell->findDevice<rw::models::SerialDevice>(out.deviceName);
     ASSERT_TRUE(!device.isNull());
     EXPECT_STREQ(device->getEnd()->getName().c_str(), "IRB_T.Flange");
+}
+
+/**
+ * @brief REUSE-T13/MDL-11/RT-EQ-1：移动关节的米制零偏必须形成平移。
+ *
+ * 期望直接由几何定义 p=T_origin*(axis*(offset+q_rw)) 得到，不调用产品
+ * jointStaticTransform或上游关节变换作oracle。覆盖正负Z/X/Y/斜轴、正负
+ * 偏置与构型，并在地面/侧装下核世界系；1e-9是原编译链容差，不能借用
+ * 已批准的表示转换1e-6。每次编译独立WC，每个构型独占State。
+ */
+TEST(WorkCellCompilerTest, PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1)
+{
+    const double invSqrt3 = 1.0 / std::sqrt(3.0);
+    const std::array<rw::math::Vector3D<double>, 9> axes = {
+        rw::math::Vector3D<double>(0, 0, 1),
+        rw::math::Vector3D<double>(0, 0, -1),
+        rw::math::Vector3D<double>(1, 0, 0),
+        rw::math::Vector3D<double>(0, 1, 0),
+        rw::math::Vector3D<double>(invSqrt3, invSqrt3, invSqrt3),
+        rw::math::normalize(rw::math::Vector3D<double>(1e-8, 0, 1)),
+        rw::math::normalize(rw::math::Vector3D<double>(1e-7, 0, -1)),
+        rw::math::normalize(rw::math::Vector3D<double>(0, 1e-6, 1)),
+        rw::math::normalize(rw::math::Vector3D<double>(0, 1e-7, -1))};
+    for (const auto preset : {InstallationPresetToken::Ground, InstallationPresetToken::Wall}) {
+      for (const bool rotatedOrigin : {false, true}) {
+        for (const auto& axis : axes) {
+            for (const double offset : {0.25, -0.25}) {
+                Fixture f = minimalFixture();
+                f.world.installPreset = core::SourcedValue<InstallationPresetToken>::provided(
+                    preset, testfixture::userProv());
+                f.world.T_world_base = rw::math::Transform3D<double>(
+                    rw::math::Vector3D<double>(0.1, -0.2, 0.3), installationPresetRotation(preset));
+                auto& moving = f.chain.joints[0];
+                moving.type = JointType::Prismatic;
+                moving.axis = axis;
+                moving.zeroOffset = offset;  // m；旋转关节的rad不得混入此分支。
+                moving.bounds = JointBounds{-1.0, 2.0};
+                moving.origin = rw::math::Transform3D<double>(
+                    rw::math::Vector3D<double>(0.2, 0.3, -0.1),
+                    rotatedOrigin ? rw::math::Rotation3D<double>(0, -1, 0, 1, 0, 0, 0, 0, 1)
+                                  : detail::identityTransform3D().R());
+                f.chain.joints[1].type = JointType::Fixed;
+                f.chain.joints[1].bounds = std::nullopt;
+                f.chain.joints[1].origin = detail::identityTransform3D();
+                const auto model = f.build();
+                const auto out = compileWorkCell(model);
+                const auto device = out.workCell->findDevice<rw::models::SerialDevice>(out.deviceName);
+                ASSERT_FALSE(device.isNull());
+                ASSERT_EQ(device->getJoints().size(), 1u);
+                // makeLookAt适用性：内部关节轴须为权威轴，且正交、右手；
+                // 滚转只选内部坐标，不允许镜像或近反向轴丢失横向分量。
+                const auto alignment = rw::math::inverse(moving.origin.R())
+                    * device->getJoints()[0]->getTransform(out.workCell->getDefaultState()).R();
+                const rw::math::Vector3D<double> x(alignment(0,0),alignment(1,0),alignment(2,0));
+                const rw::math::Vector3D<double> y(alignment(0,1),alignment(1,1),alignment(2,1));
+                const rw::math::Vector3D<double> z(alignment(0,2),alignment(1,2),alignment(2,2));
+                for (int c=0;c<3;++c) {
+                    EXPECT_NEAR(z[c],axis[c],kFkTolerance);
+                    EXPECT_NEAR(rw::math::cross(x,y)[c],z[c],kFkTolerance);
+                }
+                EXPECT_NEAR(x.norm2(),1.0,kFkTolerance);
+                EXPECT_NEAR(y.norm2(),1.0,kFkTolerance);
+                EXPECT_NEAR(rw::math::dot(x,y),0.0,kFkTolerance);
+                const auto bounds = device->getJoints()[0]->getBounds();
+                EXPECT_NEAR(bounds.first[0], -1.0 - offset, kFkTolerance);
+                EXPECT_NEAR(bounds.second[0], 2.0 - offset, kFkTolerance);
+                for (const double q : {0.0, 0.125, -0.125}) {
+                    rw::kinematics::State state = out.workCell->getDefaultState();
+                    device->setQ(rw::math::Q(1, q), state);
+                    const auto basePose = device->baseTend(state);
+                    if (axis == rw::math::Vector3D<double>(0, 0, 1)) {
+                        // 同一origin、同一权威构型，与原生关节直接调用对照；
+                        // 下方解析oracle仍独立，避免仅与上游自身互证。
+                        const rw::models::PrismaticJoint reference("direct", moving.origin);
+                        const auto direct = reference.getTransform(offset+q);
+                        expectTransformClose(basePose, direct.R(), direct.P(), "原生PrismaticJoint同构型");
+                    }
+                    // 例如Z轴offset=0.25、q=0.125：独立长度期望为0.375m。
+                    const auto expectedBase = moving.origin * (axis * (offset + q));
+                    const auto worldPose = rw::kinematics::Kinematics::worldTframe(device->getEnd(), state);
+                    const auto expectedWorld = f.world.T_world_base * expectedBase;
+                    for (int r = 0; r < 3; ++r) {
+                        EXPECT_NEAR(basePose.P()[r], expectedBase[r], kFkTolerance);
+                        EXPECT_NEAR(worldPose.P()[r], expectedWorld[r], kFkTolerance);
+                        for (int c = 0; c < 3; ++c) {
+                            EXPECT_NEAR(basePose.R()(r, c), moving.origin.R()(r, c), kFkTolerance)
+                                << "移动关节偏置和构型均不得引入额外旋转";
+                            EXPECT_NEAR(worldPose.R()(r, c), (f.world.T_world_base.R() * moving.origin.R())(r, c), kFkTolerance);
+                        }
+                    }
+                }
+            }
+        }
+      }
+    }
+}
+
+/**
+ * @brief REUSE-T13/RT-EQ-1：旋转和连续关节仍按rad折叠零偏，不改变原语义。
+ *
+ * 使用既有独立Rodrigues oracle，覆盖多轴/近极轴、正负偏置、小角和非零q；连续
+ * 关节仍显式无限位。此处不改变既有全链FK独立Rodrigues对照。
+ */
+TEST(WorkCellCompilerTest, RevoluteAndContinuousOffsetRegression_REUSE_T13_RT_EQ_1)
+{
+    for (const auto type : {JointType::Revolute, JointType::Continuous}) {
+        for (const double offset : {0.25, -0.25, 1e-8}) {
+          for (const auto axis : {rw::math::Vector3D<double>(0,0,1),
+                                 rw::math::Vector3D<double>(0,1,0),
+                                 rw::math::normalize(rw::math::Vector3D<double>(1e-7,0,1)),
+                                 rw::math::normalize(rw::math::Vector3D<double>(1e-8,0,-1))}) {
+            Fixture f = minimalFixture();
+            f.chain.joints[0].type = type;
+            f.chain.joints[0].axis = axis;
+            f.chain.joints[0].zeroOffset = offset;
+            if (type == JointType::Continuous) { f.chain.joints[0].bounds = std::nullopt; }
+            f.chain.joints[1].type = JointType::Fixed;
+            f.chain.joints[1].bounds = std::nullopt;
+            const auto out = compileWorkCell(f.build());
+            const auto device = out.workCell->findDevice<rw::models::SerialDevice>(out.deviceName);
+            ASSERT_FALSE(device.isNull());
+            for (const double q : {0.0, 0.125, -0.125}) {
+                rw::kinematics::State state = out.workCell->getDefaultState();
+                device->setQ(rw::math::Q(1, q), state);
+                const auto pose = device->baseTend(state);
+                const double angle = offset + q;  // rad，独立平面旋转期望。
+                const auto expected = canonicalRodrigues(axis, angle);
+                for (int r = 0; r < 3; ++r) {
+                    EXPECT_NEAR(pose.P()[r], 0.0, kFkTolerance);
+                    for (int c = 0; c < 3; ++c) {
+                        EXPECT_NEAR(pose.R()(r, c), expected(r, c), kFkTolerance);
+                    }
+                }
+            }
+          }
+        }
+    }
 }

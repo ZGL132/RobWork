@@ -9658,11 +9658,12 @@
       "id": "F-958",
       "source": "traceability/reuse/REUSE-T01/test-build-audit.md / probe-r10",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-23",
       "registeredAt": "2026-10-23",
       "title": "testkit静态监听器传给GTest Append，与其接管并delete对象的公开所有权契约冲突",
       "owner": "testkit / REUSE-T05",
-      "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。"
+      "resolution": "已读安装GTest公开头并实跑局部集合析构1 passed，未执行静态对象非法delete，不宣称所有产品退出崩溃已重现。T05在现有安装函数内最小传递所有权并同步注释，原testkit/子进程/Debug退出回归，不新增监听器平台。 2026-10-23收口（REUSE-T18，codex/reuse-testkit-listener）：实施fbd51e765按gtest.h:1032-1040公开契约改堆对象经Append移交并新增常驻契约回归＋lsnchild三态子进程e2e；legacy反例Debug CRT复现非法delete诊断（debug_heap.cpp 904/908）、Release静默，不夸大存量故障范围。定向测试testkit Release/Debug各115/115、core 69/69经acceptance-sub1独立验收（实施与测试层面）；29处跨单元失真注释随协调批订正（仅注释行）；lsnchild工具边白名单/DTB §4.5登记、逐文件凭证与功能矩阵行覆盖随批落地；ird_gates复跑转绿（红线11类零命中＋validate-reuse PASS，ird-gates-run2-final.log）。整体准入与合入由所有者裁决。"
     },
     {
       "id": "F-959",

@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T15",
+  "unit": "core",
+  "masterWp": "WP-A",
+  "title": "冻结FNV128成熟定宽算术薄适配",
+  "status": "ready",
+  "branch": "codex/reuse-foundation",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "ARCHITECTURE.md#3.6",
+    "units/core.md#3",
+    "traceability/reuse/REUSE-T15/README.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/IdentityTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/DigestTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T15.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T15.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/**",
+    "RobWork/doc/industrial-robot-design/units/core.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/**",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "对应GAP授权边界、原公开协议与owner不变",
+    "数值/真实文件及受影响回归通过，独立验收由所有者安排",
+    "全量继承drivetrain缺口保留，不伪报PASS"
+  ],
+  "note": "所有者2026-10-23逐项批准既有提案；本工作树唯一修改权。无远程/上游修改/合入，不自签独验。 execution/ui矩阵只因核心契约依赖实变刷新输入绑定，保留pending及原债务，不代表业务实施。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T15.json"
+  },
+  "outputs": [
+    "有界修正、原始证据、矩阵与待独验交接"
+  ]
+}

@@ -3,7 +3,7 @@
 #
 # 设计依据：
 #   - units/core.md §3.3（命名空间/目标/CMake 集成）、§3.2（依赖：仅 C++17
-#     标准库＋sdurw_math，零 Qt、零 industrialrobot 其他单元）
+#     标准库＋sdurw_math＋FNV 私有 Boost 头（GAP-CORE-FNV-01），零 Qt、零 industrialrobot 其他单元）
 #   - development-task-breakdown.md §5.1（双模式/目标命名/C++17 约定）、
 #     §5.5（gtest 接入定稿：vcpkg 安装＋find_package(GTest CONFIG REQUIRED)）
 #   - 需求 NFR-MNT-01（计算内核零 Qt）、ARC-02（架构可维护）
@@ -21,6 +21,10 @@
 # 即配置失败（失败即停，不静默跳过测试目标）。不消费框架的 USE_gtest/
 # RW::gtest（从未生成），也不源码 vendor——两份 gtest 混用会破坏 ODR。
 find_package(GTest CONFIG REQUIRED)
+
+# GAP-CORE-FNV-01：复用 vcpkg 已安装的固定精度整数，禁止隐式 include 供给。
+# Boost 仅用于 Identity.cpp 的私有算术；公共头不暴露 Boost 类型或新增运行库。
+find_package(Boost CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----
 add_library(sdurws_ird_core STATIC
@@ -65,6 +69,11 @@ target_include_directories(sdurws_ird_core PUBLIC
 if(TARGET sdurw_math)
     target_link_libraries(sdurws_ird_core PUBLIC sdurw_math)
 endif()
+
+# 此依赖只有私有头文件，没有需传递给静态库消费者的链接库；明确取已找到
+# imported target 的头目录，避免把整个 Boost 目标族引入产品链接许可表。
+target_include_directories(sdurws_ird_core PRIVATE
+    $<TARGET_PROPERTY:Boost::headers,INTERFACE_INCLUDE_DIRECTORIES>)
 
 # 别名（集成模式）：供其余单元以 RWS::ird::core 消费；冒烟模式无别名
 # （与骨架期行为一致，DTB §5.1）。

@@ -1,0 +1,3 @@
+BoostProbe.cpp
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/BoostProbe.cpp(8): error C2338: static_assert failed: '固定精度乘法不得抛异常'
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T15/BoostProbe.cpp(9): error C2338: static_assert failed: '字节异或不得抛异常'

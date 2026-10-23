@@ -1,0 +1,22 @@
+verify-task: RepoRoot=C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b
+fixture full reuse PASS
+validate-task: PASS (1 tasks)
+> powershell -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json -RequireMigrationComplete
+fixture gate rejected
+powershell.exe : verification failed: powershell -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -T
+askFile RobWork/d
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\test-governance-lite.ps1:18 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (verification fa...kFile RobWork/d:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+oc/industrial-robot-design/tasks/BATCH-T01.json -RequireMigrationComplete
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b\RobWork\scripts\industrialrobot\veri
+fy-task.ps1:76 char:51
++ ... TCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" }
++                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (verification fa...grationComplete:String) [], RuntimeException
+    + FullyQualifiedErrorId : verification failed: powershell -NoProfile -File RobWork/scripts/industrialrobot/validat 
+   e-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json -RequireMigrationComplete
+ 

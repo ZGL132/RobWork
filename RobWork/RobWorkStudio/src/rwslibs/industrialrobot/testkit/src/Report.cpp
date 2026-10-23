@@ -260,7 +260,8 @@ void Report::writeFile(const std::filesystem::path& filePath, bool pretty) const
 
 TestRecordStore& TestRecordStore::instance()
 {
-    static TestRecordStore store;   // 进程级单例（静态存储期——listener 泄漏式注册同型）
+    static TestRecordStore store;   // 进程级单例（静态存储期——登记表语义见 units/testkit.md §7.2；
+                                    // 监听器所有权归 gtest 集合，与本单例无关，见 RecordListener.hpp）
     return store;
 }
 

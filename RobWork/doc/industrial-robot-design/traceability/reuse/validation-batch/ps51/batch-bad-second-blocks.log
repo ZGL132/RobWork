@@ -1,0 +1,15 @@
+powershell.exe : invalid branch 'main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): BATCH-T02
+At D:\10_Source_Repos\21_robot\reuse-foundation\RobWork\scripts\industrialrobot\test-governance-lite.ps1:18 char:20
++ ...  $output = (& $psExe -NoProfile -File $Script @Arguments 2>&1 | Out-S ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (invalid branch ...ion): BATCH-T02:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+At C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-a1379cb7051c49398874aa1a919e4c6b\RobWork\scripts\industrialrobot\vali
+date-task.ps1:122 char:115
++ ... 9]+)*)$') { throw "invalid branch '$($t.branch)' (expect like wp03-t0 ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (invalid branch ...ion): BATCH-T02:String) [], RuntimeException
+    + FullyQualifiedErrorId : invalid branch 'main' (expect like wp03-t01 / doc-t03 / codex/reuse-foundation): BATCH-T 
+   02
+ 

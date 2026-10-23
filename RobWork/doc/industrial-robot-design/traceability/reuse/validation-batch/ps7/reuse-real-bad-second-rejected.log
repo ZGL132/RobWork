@@ -1,0 +1,5 @@
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-e2c3793bdcd144ddb3948253f44bf513\RobWork\scripts\industrialrobot\batch-runner.ps1:2
+Line |
+   2 |  … "; function Fail($code,$detail){throw "REUSE-$code : $detail"}; funct …
+     |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | REUSE-TASK-STATE : GOV-T21: execution needs ready/done contract

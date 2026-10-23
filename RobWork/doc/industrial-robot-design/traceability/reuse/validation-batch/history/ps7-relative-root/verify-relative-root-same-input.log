@@ -1,0 +1,11 @@
+verify-task: RepoRoot=D:\10_Source_Repos\21_robot\reuse-foundation
+fixture full reuse PASS
+validate-task: PASS (1 tasks)
+> pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json
+REUSE-FRESHNESS : RobWork/scripts/industrialrobot/validate-task.ps1
+Exception: C:\Users\zgl18\AppData\Local\Temp\ird-gov-lite-2362649a8d99480ead3067f73a1ccdf0\RobWork\scripts\industrialrobot\verify-task.ps1:78
+Line |
+  78 |  … TCODE -and $LASTEXITCODE -ne 0) { throw "verification failed: $cmd" }
+     |                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | verification failed: pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile
+     | RobWork/doc/industrial-robot-design/tasks/BATCH-T01.json

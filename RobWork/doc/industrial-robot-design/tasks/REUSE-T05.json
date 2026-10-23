@@ -23,5 +23,5 @@
   "verify": [
     "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
   ],
-  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 所有者2026-10-23批准migration §12.11能力准入；父任务仍planned，具体能力须精确子契约/审计/权限/生产证据/整包独验。未批准缺口仅阻断相关能力；不操作远程。"
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 所有者2026-10-23批准migration §12.11能力准入；父任务仍planned，具体能力须精确子契约/审计/权限/生产证据/整包独验。未批准缺口仅阻断相关能力；不操作远程。 2026-10-23 F-958进展：testkit监听器所有权精确子任务REUSE-T18（codex/reuse-testkit-listener）——实施fbd51e765与定向测试经acceptance-sub1独立验收（实施与测试层面通过），协调批落地29处消费者注释订正、lsnchild工具边白名单/DTB §4.5登记、功能矩阵行覆盖与逐文件凭证后ird_gates复跑；整体准入由所有者裁决。父任务与testkit单元不因此标完成；单元整体清理（其余重复实现）仍待后续精确子任务。"
 }
