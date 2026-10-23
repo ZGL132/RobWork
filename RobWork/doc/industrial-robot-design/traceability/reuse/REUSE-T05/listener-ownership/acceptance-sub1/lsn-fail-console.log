@@ -1,0 +1,20 @@
+Note: Google Test filter = LsnChild.Fails
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LsnChild
+[ RUN      ] LsnChild.Fails
+D:\10_Source_Repos\21_robot\reuse-testkit-listener\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\testkit\tools\lsnchild\main.cpp(75): error: Expected equality of these values:
+  1
+  2
+lsnchild 预期失败样本（F-958 失败态载体）
+
+[  FAILED  ] LsnChild.Fails (1 ms)
+[----------] 1 test from LsnChild (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] LsnChild.Fails
+
+ 1 FAILED TEST
