@@ -1,4 +1,4 @@
-[==========] Running 42 tests from 6 test suites.
+[==========] Running 43 tests from 7 test suites.
 [----------] Global test environment set-up.
 [----------] 3 tests from DtDiagCodes
 [ RUN      ] DtDiagCodes.FullTableMatchesUnitCard_WP18T02_ACC2
@@ -11,14 +11,14 @@
 
 [----------] 4 tests from DtBuildRedLine
 [ RUN      ] DtBuildRedLine.ProductFaceHasZeroQtIncludes_WP18T02_ACC1
-[       OK ] DtBuildRedLine.ProductFaceHasZeroQtIncludes_WP18T02_ACC1 (4 ms)
+[       OK ] DtBuildRedLine.ProductFaceHasZeroQtIncludes_WP18T02_ACC1 (3 ms)
 [ RUN      ] DtBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP18T02_ACC2
 [       OK ] DtBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP18T02_ACC2 (3 ms)
 [ RUN      ] DtBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP18T02_ACC2
-[       OK ] DtBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP18T02_ACC2 (3 ms)
+[       OK ] DtBuildRedLine.ProductFaceHasNoRobWorkStringLiterals_WP18T02_ACC2 (2 ms)
 [ RUN      ] DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1
-[       OK ] DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1 (3 ms)
-[----------] 4 tests from DtBuildRedLine (15 ms total)
+[       OK ] DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1 (2 ms)
+[----------] 4 tests from DtBuildRedLine (12 ms total)
 
 [----------] 18 tests from DtMappingGolden
 [ RUN      ] DtMappingGolden.DiagonalMappingAnalytic_WP18T03_ACC1
@@ -87,21 +87,34 @@
 [       OK ] DtMappingR2Linalg.ScaleExtremes_ConditionInvariant (0 ms)
 [----------] 4 tests from DtMappingR2Linalg (0 ms total)
 
+[----------] 1 test from DtMappingR2LinalgPerf
+[ RUN      ] DtMappingR2LinalgPerf.FixedInputLatency_SvdInverseProducers
+[dt-linalg-perf] entry=validate->singularValues scene=deepWell n=2000 min=0.300us p50=0.400us mean=0.400us p95=0.500us
+[dt-linalg-perf] entry=reflectedInertia->invertSquareMatrix scene=deepWell n=2000 min=0.900us p50=1.000us mean=0.965us p95=1.000us
+[dt-linalg-perf] entry=validate->singularValues scene=analyticSpectrum n=2000 min=0.300us p50=0.400us mean=0.374us p95=0.400us
+[dt-linalg-perf] entry=reflectedInertia->invertSquareMatrix scene=analyticSpectrum n=2000 min=0.900us p50=1.000us mean=0.984us p95=1.100us
+[dt-linalg-perf] entry=validate->singularValues scene=nearIllConditioned n=2000 min=0.300us p50=0.400us mean=0.373us p95=0.400us
+[dt-linalg-perf] entry=reflectedInertia->invertSquareMatrix scene=nearIllConditioned n=2000 min=0.900us p50=1.000us mean=1.032us p95=1.100us
+[dt-linalg-perf] entry=validate->singularValues scene=scaleExtreme n=2000 min=0.300us p50=0.400us mean=0.404us p95=0.500us
+[dt-linalg-perf] entry=reflectedInertia->invertSquareMatrix scene=scaleExtreme n=2000 min=1.000us p50=1.000us mean=1.040us p95=1.100us
+[       OK ] DtMappingR2LinalgPerf.FixedInputLatency_SvdInverseProducers (12 ms)
+[----------] 1 test from DtMappingR2LinalgPerf (12 ms total)
+
 [----------] 6 tests from DtGoldenMapping
 [ RUN      ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1
 [       OK ] DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1 (3 ms)
 [ RUN      ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1
-[       OK ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1 (2 ms)
+[       OK ] DtGoldenMapping.VirtualWorkMatrixEquivalence_At38R1_WP18T04_ACC1 (1 ms)
 [ RUN      ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1
 [       OK ] DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1 (1 ms)
 [ RUN      ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1
-[       OK ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1 (2 ms)
+[       OK ] DtGoldenMapping.BidirectionalEnergyGolden_WP18T04_ACC1 (1 ms)
 [ RUN      ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1
-[       OK ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1 (2 ms)
+[       OK ] DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1 (1 ms)
 [ RUN      ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1
-[       OK ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1 (2 ms)
-[----------] 6 tests from DtGoldenMapping (15 ms total)
+[       OK ] DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1 (1 ms)
+[----------] 6 tests from DtGoldenMapping (11 ms total)
 
 [----------] Global test environment tear-down
-[==========] 42 tests from 6 test suites ran. (32 ms total)
-[  PASSED  ] 42 tests.
+[==========] 43 tests from 7 test suites ran. (37 ms total)
+[  PASSED  ] 43 tests.

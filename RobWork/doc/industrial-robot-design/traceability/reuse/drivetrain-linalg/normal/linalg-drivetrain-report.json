@@ -1,8 +1,8 @@
 {
   "schemaVersion": "ird-test-report/1",
   "summary": {
-    "total": 42,
-    "passed": 42,
+    "total": 43,
+    "passed": 43,
     "failed": 0,
     "skipped": 0,
     "notRun": 0,
@@ -149,7 +149,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "testId": "DtBuildRedLine.IncludeFaceRestrictedToTwoRegisteredEdges_WP18T02_ACC2",
@@ -219,7 +219,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "testId": "DtBuildRedLine.ProductFaceFilesNonEmpty_WP18T02_ACC1",
@@ -253,7 +253,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "testId": "DtMappingGolden.DiagonalMappingAnalytic_WP18T03_ACC1",
@@ -1299,6 +1299,41 @@
       "durationMs": 0
     },
     {
+      "testId": "DtMappingR2LinalgPerf.FixedInputLatency_SvdInverseProducers",
+      "requirementIds": [
+        "MDL-21",
+        "NFR-COR-02"
+      ],
+      "atIds": [],
+      "dataset": null,
+      "toleranceProfile": "",
+      "repro": {
+        "seed": 20260909,
+        "threadCount": 1,
+        "softwareVersion": "",
+        "gitCommit": "",
+        "dataset": {
+          "datasetId": "",
+          "version": ""
+        },
+        "toleranceProfile": "",
+        "notes": ""
+      },
+      "environment": {
+        "compiler": "MSVC 1942",
+        "qtVersion": "",
+        "arch": "x64",
+        "os": "Windows",
+        "machineTag": "ZGL"
+      },
+      "outcome": "passed",
+      "reason": "",
+      "comparisons": [],
+      "failureLocation": null,
+      "artifacts": [],
+      "durationMs": 12
+    },
+    {
       "testId": "DtGoldenMapping.AnalyticSingleGolden_WP18T04_ACC1",
       "requirementIds": [
         "DYN-04",
@@ -1377,7 +1412,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "DtGoldenMapping.At38R1RejectionCounterexamples_WP18T04_ACC1",
@@ -1456,7 +1491,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "DtGoldenMapping.DwellZeroGolden_WP18T04_ACC1",
@@ -1493,7 +1528,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "testId": "DtGoldenMapping.ReflectedInertiaGolden_WP18T04_ACC1",
@@ -1533,7 +1568,7 @@
       "comparisons": [],
       "failureLocation": null,
       "artifacts": [],
-      "durationMs": 2
+      "durationMs": 1
     }
   ]
 }

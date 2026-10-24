@@ -7,7 +7,10 @@
  *         传动比时与既有对角路径逐项一致）、R1 阻断反例保留、§7.2 矩阵
  *         形态全表阻断（非方/奇异/病态/非有限——阻止不降级）、R2 反射
  *         惯量完整矩阵与窗口投影、三方消费同一矩阵内容身份（§7.4-4）
- *         ——任务契约 WP-18-T05 acceptance 1/2/3 的测试面。
+ *         ——任务契约 WP-18-T05 acceptance 1/2/3 的测试面；另含
+ *         DtMappingR2Linalg 上游线性代数复用组（独立 oracle/解析谱/
+ *         阈值邻界/极端尺度——REUSE-T12）与 DtMappingR2LinalgPerf 固定
+ *         输入性能实测组（REUSE-T12 返工性能证据生产者）。
  *
  * 设计依据：
  *   - units/drivetrain.md §5.3（方向/符号/轴序全文唯一约定）、§7.1～
@@ -46,8 +49,11 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <cstdio>
 #include <limits>
 #include <stdexcept>
 #include <string>
@@ -1107,5 +1113,121 @@ TEST(DtMappingR2Linalg, ScaleExtremes_ConditionInvariant)
         const auto gate = validator.validate(m, dt::StageCapability::R2Capability);
         EXPECT_TRUE(gate.accepted) << "scale：kappa=1 必须良态接受";
         EXPECT_PRED_FORMAT2(closeRel, gate.conditionNumber, 1.0);
+    }
+}
+
+// =====================================================================
+// 上游线性代数复用（性能实测——REUSE-T12 返工 2026-10-25，验收 ISSUE-2
+// 『固定条件性能前后测量』）：固定输入集（深良态/解析谱/病态分界邻界
+// 良态/极端尺度归一适配四组 2×2 窗口 C 矩阵——覆盖良态到邻界）对
+// singularValues（上游 LinearAlgebra::svd）与 invertSquareMatrix（上游
+// LinearAlgebra::inverse）的**真实生产入口**端到端计时：
+//   · singularValues 的生产调用方＝validateCoupledWindow 谱条件数检查
+//     （§7.2 检查序末两步，代码内唯一调用点）——经
+//     ICouplingMatrixValidator::validate(R2Capability) 触达；
+//   · invertSquareMatrix 的生产调用方＝反射惯量窗口投影 C⁻¹（§9.3，
+//     代码内唯一调用点）——经 IReflectedInertiaEvaluator::evaluate 触达。
+// 测量口径：每场景先预热 200 次，再逐次 std::chrono::steady_clock 采样
+// 2000 次（纯函数重复调用无状态污染），报告 min/p50/mean/p95（μs）。
+// 预算与机器环境登记于证据 README 分档表（性能量不做硬断言——避免
+// 机器差异造成回归抖动，AGENTS §4『数值/性能验收不能省略』由证据落盘
+// 满足）；本用例仅断言两生产入口调用成功且结果有限，作为可复跑的
+// 性能证据生产者，数据随运行日志与 per-exe ird-test-report 落盘。
+// =====================================================================
+TEST(DtMappingR2LinalgPerf, FixedInputLatency_SvdInverseProducers)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-21", "NFR-COR-02"},
+                  std::vector<std::string>{});
+
+    struct PerfScene
+    {
+        const char* name;          ///< 场景名（README 分档表行键）
+        dt::RowMatrix c;           ///< 窗口 C 矩阵（2×2，无量纲传动比）
+        std::vector<double> ratios; ///< 对角传动比（与 C 同源——块对角一致）
+    };
+    const double s3 = std::sqrt(3.0) / 2.0;
+    const std::vector<PerfScene> scenes = {
+        // 深良态（κ≈2.62——解析逆 oracle 同款矩阵）。
+        {"deepWell", mat2(2.0, 1.0, 1.0, 3.0), {1.0, 1.0}},
+        // 解析谱（κ＝3——正交相似 diag(3,1)，SVD 谱路径典型工况）。
+        {"analyticSpectrum", mat2(2.5, s3, s3, 1.5), {1.0, 1.0}},
+        // 病态分界下侧邻界（κ＝5×10⁷ ≤ 1×10⁸——良态接受域内贴界）。
+        {"nearIllConditioned", mat2(1.0, 0.0, 0.0, 5e7), {1.0, 5e7}},
+        // 极端尺度归一适配（κ＝1——max|a_ij| 归一乘回分支全走；取 1e100
+        // 而非 ScaleExtremes 的 1e200：反射惯量端 J_ref＝(C⁻¹)ᵀ·diag(J_rotor)·C⁻¹
+        // 在 1e200 尺度平方下溢出正定域（DT-INERTIA-NOT-POSITIVE-DEFINITE
+        // 防线真实触发——§9.3 既有覆盖面），1e100 下 J_ref≈2×10⁻²⁰⁰ 有限
+        // 正定，两生产入口均可评估）。
+        {"scaleExtreme", mat2(1e100, 0.0, 0.0, 1e100), {1e100, 1e100}},
+    };
+
+    constexpr int kWarmup = 200;
+    constexpr int kSamples = 2000;
+
+    dt::DriveTrainMappingCore coreImpl;
+    dt::ICouplingMatrixValidator& validator = coreImpl;
+    dt::IReflectedInertiaEvaluator& inertiaEval = coreImpl;
+
+    for (const PerfScene& scene : scenes) {
+        dt::DriveTrainModel model = rawCoupledModel(
+            2, scene.c, scene.ratios,
+            makeWindow(scene.c, jointAxis(0).jointId, jointAxis(1).jointId));
+        // 窗口转子条目齐备（§9.3 完整矩阵/窗口投影以 diag(J_rotor)≻0 为前提
+        // ——反射惯量路径不降级）。
+        model.rotor.push_back(rotor(1.0));
+        model.rotor.push_back(rotor(2.0));
+
+        // ---- 生产入口①：validate(R2) → validateCoupledWindow → singularValues。
+        for (int i = 0; i < kWarmup; ++i) {
+            (void)validator.validate(model, dt::StageCapability::R2Capability);
+        }
+        std::vector<double> svdNs;
+        svdNs.reserve(static_cast<std::size_t>(kSamples));
+        for (int i = 0; i < kSamples; ++i) {
+            const auto t0 = std::chrono::steady_clock::now();
+            const auto gate = validator.validate(model, dt::StageCapability::R2Capability);
+            const auto t1 = std::chrono::steady_clock::now();
+            ASSERT_TRUE(gate.accepted) << scene.name << "：良态场景必须被接受";
+            ASSERT_TRUE(std::isfinite(gate.conditionNumber) && gate.conditionNumber > 0.0)
+                << scene.name << "：谱条件数必须有限且为正";
+            svdNs.push_back(static_cast<double>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+        }
+
+        // ---- 生产入口②：反射惯量 evaluate → invertSquareMatrix（窗口投影）。
+        for (int i = 0; i < kWarmup; ++i) {
+            (void)inertiaEval.evaluate(model, {});
+        }
+        std::vector<double> invNs;
+        invNs.reserve(static_cast<std::size_t>(kSamples));
+        for (int i = 0; i < kSamples; ++i) {
+            const auto t0 = std::chrono::steady_clock::now();
+            const dt::ReflectedInertiaResult inertia = inertiaEval.evaluate(model, {});
+            const auto t1 = std::chrono::steady_clock::now();
+            ASSERT_EQ(inertia.axes.size(), 2U);
+            ASSERT_TRUE(inertia.axes[0].windowProjected && inertia.axes[1].windowProjected)
+                << scene.name << "：全窗口模型反射惯量必须走窗口投影";
+            invNs.push_back(static_cast<double>(
+                std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count()));
+        }
+
+        // ---- 统计输出（ns → μs；min/p50/mean/p95——排序分位）。
+        const auto report = [kSamples](const char* entry, const char* sceneName,
+                                       std::vector<double>& ns) {
+            std::sort(ns.begin(), ns.end());
+            double sum = 0.0;
+            for (const double v : ns) {
+                sum += v;
+            }
+            const double usPerNs = 1e-3;
+            const std::size_t p50 = ns.size() / 2;
+            const std::size_t p95 = static_cast<std::size_t>(0.95 * static_cast<double>(ns.size()));
+            std::printf("[dt-linalg-perf] entry=%s scene=%s n=%d min=%.3fus p50=%.3fus mean=%.3fus p95=%.3fus\n",
+                        entry, sceneName, kSamples, ns.front() * usPerNs,
+                        ns[p50] * usPerNs, (sum / static_cast<double>(ns.size())) * usPerNs,
+                        ns[p95] * usPerNs);
+        };
+        report("validate->singularValues", scene.name, svdNs);
+        report("reflectedInertia->invertSquareMatrix", scene.name, invNs);
     }
 }

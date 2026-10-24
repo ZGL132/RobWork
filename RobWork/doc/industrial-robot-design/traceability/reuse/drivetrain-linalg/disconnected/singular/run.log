@@ -3,7 +3,7 @@ Note: Google Test filter = DtMappingR2Linalg.SingularValuesAnalyticSpectrum_Cond
 [----------] Global test environment set-up.
 [----------] 1 test from DtMappingR2Linalg
 [ RUN      ] DtMappingR2Linalg.SingularValuesAnalyticSpectrum_ConditionNumber
-D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp(1022): error: actual（gate.conditionNumber）=1；expected（3.0）=3；diff=2（容差 1e-9 相对——附录 D 第 9 项）
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\drivetrain\test\MappingR2GoldenTest.cpp(1028): error: actual（gate.conditionNumber）=1；expected（3.0）=3；diff=2（容差 1e-9 相对——附录 D 第 9 项）
 
 [  FAILED  ] DtMappingR2Linalg.SingularValuesAnalyticSpectrum_ConditionNumber (0 ms)
 [----------] 1 test from DtMappingR2Linalg (0 ms total)

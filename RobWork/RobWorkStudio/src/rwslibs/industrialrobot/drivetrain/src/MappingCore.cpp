@@ -1082,7 +1082,8 @@ ReflectedInertiaResult DriveTrainMappingCore::evaluate(
     }
 
     // ---- R2 前置：窗口逆矩阵 C⁻¹（校验通过⟹可逆良态——§7.3 使用前提；
-    // Gauss-Jordan 部分主元，确定性——文件头注）。
+    // 上游 LinearAlgebra::inverse＝Eigen LU（部分主元）封闭代数路径——
+    // 同输入必得位等输出，确定性口径见文件头注）。
     RowMatrix cinv;
     if (w > 0) {
         cinv = invertSquareMatrix(model.window->C);

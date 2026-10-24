@@ -3,16 +3,16 @@
  "taskId": "REUSE-T12",
  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T12.json",
  "files": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
-   "sha256": "a6f6b1ce4bd2a88434c8994566c535129930a6ab75c2a81343a2c9ca77bbd313",
-   "mode": "adapter",
-   "capabilities": [
-    "MATH-SVD"
-   ],
-   "boundary": "R2数值核分解/求逆改上游LinearAlgebra薄适配；自写Jacobi/Gauss-Jordan删除；业务阈值与校验顺序不变",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/linalg-drivetrain-test.xml"
-  },
+ {
+ "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/src/MappingCore.cpp",
+ "sha256": "7b23f98afcd34d88920246b324ca6541293fda88357f4529eaf440b408d91e9c",
+ "mode": "adapter",
+ "capabilities": [
+  "MATH-SVD"
+ ],
+ "boundary": "R2数值核分解/求逆改上游LinearAlgebra薄适配；自写Jacobi/Gauss-Jordan删除；业务阈值与校验顺序不变；2026-10-25返工：invertSquareMatrix注释区段更正为上游inverse（Eigen LU）确定性提法（验收r1 ISSUE-3，仅注释零实现变化）",
+ "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/rework-20261025/02-int-drivetrain-test.xml"
+ },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/include/sdurws/ird/drivetrain/MappingCore.hpp",
    "sha256": "6a22756cee6c290ebd28daa864b3924ce774a71be6753404147cb2fcc5675a42",
@@ -29,13 +29,13 @@
    "boundary": "PRIVATE sdurw_math链接落位（modeling REUSE-T07同款）与目标注册；无数值核心",
    "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/build/linalg-smoke-rebuild.log"
   },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
-   "sha256": "512135a4cb1102147dec52ec895593e070a5d6e77751bb14d5da8a81eeef69d2",
-   "mode": "business",
-   "capabilities": [],
-   "boundary": "新增DtMappingR2Linalg组（解析逆/谱/阈值邻界/尺度）与路径提法同步；不改黄金期望",
-   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/linalg-drivetrain-test.xml"
-  }
+ {
+ "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/test/MappingR2GoldenTest.cpp",
+ "sha256": "504896711151b6a17156c21c094cc08f8035aeec3afd9a22d9b765668abbf801",
+ "mode": "business",
+ "capabilities": [],
+ "boundary": "新增DtMappingR2Linalg组（解析逆/谱/阈值邻界/尺度）与路径提法同步；不改黄金期望；2026-10-25返工：新增DtMappingR2LinalgPerf固定输入性能实测组（验收r1 ISSUE-2，良态/邻界窗口矩阵组对singularValues/invertSquareMatrix生产入口计时，黄金期望零改动）",
+ "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/rework-20261025/02-int-drivetrain-test.xml"
+ }
  ]
 }
