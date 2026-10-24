@@ -1,0 +1,2 @@
+verify-task-scope: GOV-T26 base=0a091394b946 head=2136a89d5cd6 changed=16 allowedRules=6 forbiddenRules=5
+verify-task-scope: PASS GOV-T26 —— 16 个路径全部在允许面内

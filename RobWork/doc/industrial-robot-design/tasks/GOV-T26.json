@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "WP-10 C4修订提案与成熟数值原语隔离验证",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [],
   "requirements": [
@@ -24,7 +24,9 @@
     "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T14/revision-r3/**",
-    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T26.json"
+    "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T26.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T26-20261024-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/**",
@@ -43,7 +45,7 @@
     "引用原语料，以真实Python Fraction核数值、正常路径不变及异常/性能风险，原始输入摘要与命令可复核",
     "R3私有Boost范围、第三方表达及最终生产性能未经批准不得实施或关闭F-966；独验另行安排"
   ],
-  "note": "主工作树redesign-main串行、本地提交、不操作远程；本轮起点0a091394b9466c3fa7521d34162b1c8b64a843c4。仅按WP-10批准前边界修提案并隔离验证，不批准新核心、上游修改或产品依赖。R3固定128位乘积/4224位加减复用既有Boost；22831组自查通过，独验NOT RUN，生产/Q/消费者回归NOT RUN且未修改；最终生产适配、私有依赖及第三方表达待所有者裁决。status ready表示提案自查完成待裁决，不表示产品修复完成。 所有者已明确批准R3有界实施、最终性能另验；批准对象2136a89d5中提案规范SHA256=7c5d1ec99982215bffc1b41b21988e884b60c69499c7ccbccf36e6e64bc55f06。产品实施另归REUSE-T21；本治理契约不替代产品验收。",
+  "note": "主工作树redesign-main串行、本地提交、不操作远程；本轮起点0a091394b9466c3fa7521d34162b1c8b64a843c4。仅按WP-10批准前边界修提案并隔离验证，不批准新核心、上游修改或产品依赖。R3固定128位乘积/4224位加减复用既有Boost；22831组自查通过，独验NOT RUN，生产/Q/消费者回归NOT RUN且未修改；最终生产适配、私有依赖及第三方表达待所有者裁决。status ready表示提案自查完成待裁决，不表示产品修复完成。 所有者已明确批准R3有界实施、最终性能另验；批准对象2136a89d5中提案规范SHA256=7c5d1ec99982215bffc1b41b21988e884b60c69499c7ccbccf36e6e64bc55f06。产品实施另归REUSE-T21；本治理契约不替代产品验收。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）第1轮独立复验 12/12 通过——verdict=pass，绑定送验SHA 2136a89d5cd65e7183c734956df68291862e0fc0，记录 traceability/acceptance/GOV-T26-20261024-r1.json（复跑原件在其同名目录：范围 16 路径原生 PASS、10 项输入指纹绑定送验版本、MSVC 独立重建双探针、Fraction 22831 组数值完全复现、串行微基准同量级、红线零触碰、F-966 保持 open）；据此由登记步骤置 done——仅收口本治理/隔离验证包，产品实施归 REUSE-T21 另行验收，R3 待批条件（位宽推导/noexcept/4224 位 Karatsuba 临时存储规避论证）获批实施时仍须按提案第 8 点验证，F-966 不因本登记关闭；后续纯记录提交不属于被验实现 SHA。allowedFiles 补 r1 验收记录与证据目录两条（登记产物入允许面，不触碰 forbidden 面、不改门禁脚本）。登记后门禁实测：verify-task-scope 0a091394b..2136a89d5 原生 PASS（16 路径）；commit-lint 0a091394b..HEAD 登记前 16/16 全合规，登记后以提交后复跑为准。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-24T19:02:28+08:00",
+  "generatedAt": "2026-10-24T19:20:41+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 24223,
-    "totalBytes": 932661210,
+    "totalFiles": 24232,
+    "totalBytes": 932684576,
     "byKind": {
-      "manual-acceptance": 1,
-      "acceptance-record": 3579,
-      "gtest-report": 335,
-      "pipeline-artifact": 2,
       "build-log": 15580,
-      "other": 220,
+      "acceptance-record": 3588,
       "governance-record": 40,
-      "script": 68,
-      "benchmark": 8,
+      "xml-report": 250,
+      "pipeline-artifact": 2,
+      "other": 220,
       "json-data": 956,
-      "log": 3058,
+      "gtest-report": 335,
+      "script": 68,
+      "manual-acceptance": 1,
       "markdown-doc": 126,
-      "xml-report": 250
+      "benchmark": 8,
+      "log": 3058
     },
     "byLifecycle": {
-      "historical": 1057,
+      "historical": 1066,
       "superseded": 0,
       "unverified": 23137,
       "current": 29
     },
-    "associated": 8113,
+    "associated": 8122,
     "unassociated": 16110,
-    "shaComputed": 24195,
+    "shaComputed": 24204,
     "shaSkippedLarge": 28,
-    "duplicateGroupsTotal": 1621,
+    "duplicateGroupsTotal": 1624,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -6907,6 +6907,96 @@
       ],
       "bytes": 2757,
       "sha256": "46a9674b33cfc0ad2366be672206136f4d43c5807fadc865f26318b5b6350c44",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 13338,
+      "sha256": "73200f8aa53434af39353d41c7adb36947cc3b496401086c3648723f5f3195df",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/02-scope.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 167,
+      "sha256": "4190e9f450f25838bf12eef4ddc37ba11c9962767d79691fdda764700ba586c4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/03-result-original-backup.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 2873,
+      "sha256": "0fcccb364fce545dff94be8406d7554ae5a47019f710fd1157a2dfcd36d75c76",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/03-verify-rerun.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 431,
+      "sha256": "57c4dc9084570d5c6a5081a6372e22f9210a71a8bc78edf862f4f2dbcae0082d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/04-bench-rerun.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 686,
+      "sha256": "cdf002f19f2234e58746d03f74f9dd7db0fa71a95118bb7efb2e14635ad19d8c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/05-commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 69,
+      "sha256": "cff72359cc5a559f58f5c8c875d7e25e97820d0c6ea37eae2f883d053cbcea87",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/07-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 2080,
+      "sha256": "969d4e1a3fb1b10adc13f74a85c6e8b343f4905f81466f835441a2401462cc09",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/08-index-evidence-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 965,
+      "sha256": "8f7691ed7a6cc49921db8dcf232ff6611d310113829db70db049745d6f7d29bb",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T26-20261024-r1/09-validate-docs-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T26"
+      ],
+      "bytes": 2757,
+      "sha256": "d2060df7e09f662316c40fd4f957262cf4f3b6deb8963dec2d7ab63f95046195",
       "lifecycle": "historical"
     },
     {
