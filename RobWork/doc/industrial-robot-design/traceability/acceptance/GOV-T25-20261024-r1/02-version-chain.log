@@ -1,0 +1,22 @@
+== GOV-T25 version-chain verification ==
+-- 9276f19b26 tree vs claimed inspected tree --
+9276f19b26^{tree} = e98cf3deb2c8f5680edc766e963235fe4954f25d
+-- unique GOV-T25 commit (all refs) --
+0a091394b9466c3fa7521d34162b1c8b64a843c4 2026-10-24 [governance] GOV-T25 核对既有能力证据并交接独验范围
+-- base 2ac114f33 identity --
+2ac114f33d2102d0b7848d8d4d51345147fa32b8 2026-10-24 [governance] REUSE-T20 登记性能接受及第三方表达裁决
+-- inspected historical HEAD 881f576cd --
+881f576cd03b1d52576c8ca6c78f24647c70d56c 2026-10-24 [REUSE-T20] 精简集合匹配适配并补齐实际消费证据
+-- six task statuses --
+REUSE-T07: "status":"ready"
+REUSE-T09: "status":"ready"
+REUSE-T12: "status":"ready"
+REUSE-T13: "status":"ready"
+REUSE-T15: "status":"ready"
+REUSE-T16: "status":"ready"
+-- acceptance dir records named for six packs --
+(none found)
+-- T07/T09/T12 legacy numbers in original records --
+- `benchmark/`：旧头只从实施基线c27349提取到.cache中作测量，未保留产品fallback；原样测量JSON与比较见comparison.json。耗时增至约4.662倍，未获性能接受，不判验收通过。
+| `benchmark/` | 性能/分配/确定性核查：polynomial-replace-bench.cpp（旧手写式 vs 生产上游表 vs 被否决 evaluateDerivatives 热路径形态，同 TU 同开关）＋bench-result.tx
+| 性能前后测量 | NOT RUN——基线 exe 未留存、冻结对比超出本会话预算；理论分析（JacobiSVD O(n³) 同阶、LU 逆优于增广 Gauss-Jordan）无退化依据；登记为独

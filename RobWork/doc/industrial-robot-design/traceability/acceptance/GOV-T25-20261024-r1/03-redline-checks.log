@@ -1,0 +1,17 @@
+== GOV-T25 redline checks (2ac114f33..0a091394b) ==
+-- 1 closures.json frozen --
+PASS zero-diff
+-- 2 gate scripts dir zero-diff --
+PASS zero-diff
+-- 3 modeling frozen chain (6 files) --
+PASS zero-diff
+-- 4 forbidden planes in range --
+0
+-- 5 product code (.hpp/.cpp/cmake outside doc) in range --
+0
+-- 6 full changed-file list --
+RobWork/doc/industrial-robot-design/reuse/migration.md
+RobWork/doc/industrial-robot-design/tasks/GOV-T25.json
+RobWork/doc/industrial-robot-design/traceability/reuse/WP-03/README.md
+RobWork/doc/industrial-robot-design/traceability/reuse/WP-03/handoff-input-check.txt
+RobWork/doc/industrial-robot-design/traceability/reuse/WP-03/validate-docs.log
