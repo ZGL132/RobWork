@@ -1,0 +1,6 @@
+# 复跑命令：pwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1
+# 登记说明：2026-10-24 REUSE-T01 r2 收口登记步骤——git add 12 份 r2 验收产物（记录 JSON＋01-10 复跑原件）与本批登记日志后全量重建证据索引，索引自 95874bf1b 时点 24232 条递增至当前跟踪面。
+# 递归口径：本 log 于索引运行前已 git add（跟踪面已含本文件），下列输出为索引按本 log 头部占位字节数收录时的读数；其后正文写入引起的字节变化由之后的 index-evidence 再次运行收敛，终态以 evidence-index.json 与提交后复跑为准（GOV-T21-20261024-r2/15 号 log 同型口径）。
+index-evidence: 24258 files, 891.5 MB -> traceability/evidence-index.json
+index-evidence: lifecycle current=29 historical=6768 unverified=17461; associated=8148 unassociated=16110
+index-evidence: sha computed=24228 skippedLarge=30; duplicateGroups=1626 (listed 100)

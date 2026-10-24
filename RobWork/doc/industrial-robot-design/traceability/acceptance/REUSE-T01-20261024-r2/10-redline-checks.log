@@ -1,0 +1,9 @@
+== 红线抽查（r2，全部亲测于本会话）==
+1) 上游/vcpkg 净零：收敛段 0d0d3ca3e..bfe024cd0 与返工段 95874bf1b..9d889781cd3a 对 vcpkg/、RobWork/RobWork/src/、RobWork/RobWorkSim/src/ 路径计数均为 0
+2) closures.json 冻结：两段对 reuse/closures.json diff 行数均为 0（当前树 closedFiles=1 系 T11 在送验面外合法闭环，r1 checks[12] 已核）
+3) 门禁未放宽：契约 forbiddenFiles 4 条零实质改动（--ignore-cr-at-eol diff 仅 note 追加+allowedFiles +3 条 r1 验收产物路径）；两段对 industrialrobot/cmake 与 scripts 零路径
+4) PASS/FAIL/SKIP/NOT RUN 分列：REUSE-T11 ird-test-report-final.json summary total=474 passed=474 failed=0 skipped=0 notRun=0 envUnavailable=0 datasetInvalid=0 decisive=true
+5) F-970/F-971/F-972 在册豁免：findings.json 9784/9796/9808 行起，source/status=fixed/resolution/fixedAt 齐备
+6) REUSE-T07 契约在位：tasks/REUSE-T07.json status=ready，allowedFiles 含 CouplingMath.hpp/modeling CMakeLists.txt/CouplingReuseTest.cpp 3 产品文件
+7) migration.md T07 表述：送验面两段未触碰该区域（4f0a01e25 改动系 r1 head 后主线治理提交、不在送验面）
+8) L2 零 Qt/六端口/runtime owner：送验面产品代码零变更（H1/H2/H5 无新增实现面触碰）
