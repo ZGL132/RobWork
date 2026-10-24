@@ -1124,78 +1124,103 @@
    "layer": "adapter"
   },
   {
-   "id": "MATH-INERTIA",
-   "search": {
-    "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|InertiaMatrix|Polynomial|evaluateDerivatives\" RobWork/RobWork/src RobWork/RobWork/gtest",
-    "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-    "conclusion": "已读公共接口与调用实现，局部适用性探测不等同完整业务审计"
-   },
-   "boundary": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点",
-   "upstream": [
-    {
-     "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
-     "symbols": [
-      "InertiaMatrix"
-     ],
-     "target": "sdurw_math",
-     "sha256": "dd10f64b32bb64cff25b48e1b66333cd8bd1815f3ffc5bab4d2335fbf4d3da16",
-     "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
-     "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
-    }
-   ],
-   "build": {
-    "targets": [
-     "sdurw_math"
-    ],
-    "constraints": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点"
-   },
-   "usages": [
-    {
-     "consumerUnit": "modeling",
-     "usageRole": "adapter",
-     "permissionRef": "ARCH:3.6",
-     "operations": [
-      "value"
-     ]
+      "id": "MATH-INERTIA",
+      "search": {
+        "command": "rg -n \"Inertia|makeCuboidInertia|estimateInertia|setMass\" InertiaMatrix.hpp Rotation3D.hpp GeometryUtil.hpp/.cpp Body.hpp DynamicUtil.hpp; upstream-search.log",
+        "baseline": "4794f64476945d3b8cf6974bb3e778b6ba419f95",
+        "conclusion": "本包旋转与长方体公开值API适用并真实消费；几何估算/Body存储不等同任意既有张量平移；无圆柱工厂。只验证modeling本包，不批准runtime/dynamics其他候选。"
+      },
+      "boundary": "仅本包同参考点kg·m²惯量旋转/长方体主惯量；平行轴及产品估算/确认策略保留，无模型owner变化",
+      "upstream": [
+        {
+          "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
+          "sha256": "dd10f64b32bb64cff25b48e1b66333cd8bd1815f3ffc5bab4d2335fbf4d3da16",
+          "symbols": [
+            "InertiaMatrix",
+            "makeCuboidInertia"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+          "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2",
+          "symbols": [
+            "inverse"
+          ],
+          "target": "sdurw_math",
+          "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        }
+      ],
+      "build": {
+        "targets": [
+          "sdurw_math"
+        ],
+        "constraints": "沿用既有modeling math依赖；不新增几何/仿真依赖/CMake目标或渠道"
+      },
+      "usages": [
+        {
+          "consumerUnit": "modeling",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "runtime",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        },
+        {
+          "consumerUnit": "dynamics",
+          "usageRole": "adapter",
+          "permissionRef": "ARCH:3.6",
+          "operations": [
+            "value"
+          ]
+        }
+      ],
+      "limits": {
+        "semantics": "R把段质心系映到连杆系，inverse(R)为转置；完整九项自检前不镜像；输入m/kg，惯量kg·m²；长方体轴对应(a,b,L)，非近似网格",
+        "lifetime": "局部数学值，无模型/State/cache所有权；runtime仍owner",
+        "determinism": "固定段序/行列序，当前输入/工具链重复回归；不保证跨工具链位级或超double可表示范围"
+      },
+      "ownerUnit": "modeling",
+      "examples": [],
+      "docs": [
+        {
+          "path": "RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp",
+          "sha256": "388b9cd733a811fa2bf0fbd58c051f9659f66bb9054802f7a5c33befd3c9b5fd",
+          "symbols": [
+            "estimateInertia",
+            "estimateInertiaCOG"
+          ]
+        }
+      ],
+      "operations": [
+        "value"
+      ],
+      "review": {
+        "status": "verified",
+        "version": "4794f64476945d3b8cf6974bb3e778b6ba419f95",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/README.md",
+          "sha256": "9efe177548fd7fa76b3f4cc88614da0052de7216e96e6e107cee8b496c3fd298"
+        }
+      },
+      "tests": [],
+      "resourceSearch": {
+        "command": "upstream-search.log; rg InertiaMatrix|makeCuboidInertia RobWork/RobWork/gtest/math RobWork/RobWork/example",
+        "conclusion": "沿用已编入modeling_test的上游LinearAlgebraTest与原testkit物性夹具；未发现专属InertiaMatrix测试目标，不虚构专属测试；本包字面张量/直接上游/生产扰动补适用性，未运行全上游测试集。"
+      },
+      "layer": "adapter"
     },
-    {
-     "consumerUnit": "runtime",
-     "usageRole": "adapter",
-     "permissionRef": "ARCH:3.6",
-     "operations": [
-      "value"
-     ]
-    },
-    {
-     "consumerUnit": "dynamics",
-     "usageRole": "adapter",
-     "permissionRef": "ARCH:3.6",
-     "operations": [
-      "value"
-     ]
-    }
-   ],
-   "limits": {
-    "semantics": "惯量旋转直接复用；平行轴组合须继续核对 GeometryUtil/Body API，保留 kg·m² 与参考点",
-    "lifetime": "数学值运算；输入/输出由调用者持有，无模型结构写入",
-    "determinism": "已探测固定输入；跨平台位级一致性及业务边界仍须回归"
-   },
-   "ownerUnit": "modeling",
-   "examples": [],
-   "docs": [],
-   "operations": [
-    "value"
-   ],
-   "review": {
-    "status": "candidate",
-    "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
-   },
-   "tests": [],
-   "resourceSearch": {
-    "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
-    "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
-   }
-  },
   {
    "id": "MATH-POLYNOMIAL",
    "search": {

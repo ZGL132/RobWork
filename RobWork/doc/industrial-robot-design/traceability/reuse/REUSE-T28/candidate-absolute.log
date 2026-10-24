@@ -1,0 +1,76 @@
+Note: Google Test filter = MdlInertiaTransformReuse.*:MdlPropertyEstimation.*:MdlInertiaReuse.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*
+[==========] Running 23 tests from 5 test suites.
+[----------] Global test environment set-up.
+[----------] 16 tests from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23
+[       OK ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4 (0 ms)
+[----------] 16 tests from MdlPropertyEstimation (0 ms total)
+
+[----------] 2 tests from MdlInertiaReuse
+[ RUN      ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27
+[       OK ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27 (0 ms)
+[ RUN      ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+[       OK ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27 (0 ms)
+[----------] 2 tests from MdlInertiaReuse (0 ms total)
+
+[----------] 2 tests from MdlInertiaTransformReuse
+[ RUN      ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(949): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+rotation=1, scale=100000: 合成自检失败：asymmetric-beyond-tolerance（物理合法输入的合成恒 SPD——触发即内部实现错误，不输出非法张量）
+
+[  FAILED  ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28 (0 ms)
+[ RUN      ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28
+[       OK ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28 (0 ms)
+[----------] 2 tests from MdlInertiaTransformReuse (0 ms total)
+
+[----------] 1 test from MdlCanonicalBridge
+[ RUN      ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1
+[       OK ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1 (0 ms)
+[----------] 1 test from MdlCanonicalBridge (0 ms total)
+
+[----------] 2 tests from ModelingManualBody
+[ RUN      ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+[       OK ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17 (0 ms)
+[ RUN      ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+[       OK ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17 (0 ms)
+[----------] 2 tests from ModelingManualBody (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 5 test suites ran. (1 ms total)
+[  PASSED  ] 22 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28
+
+ 1 FAILED TEST

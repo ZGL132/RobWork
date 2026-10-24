@@ -1,0 +1,175 @@
+Note: Google Test filter = MdlInertiaTransformReuse.*:MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*
+[==========] Running 68 tests from 11 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlRobotDesign
+[ RUN      ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl3_ProvidedValuesFinite_WP13T03_ACC3 (0 ms)
+[ RUN      ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl5_BodyPhysicalAssertions_WP13T03_ACC3 (0 ms)
+[----------] 2 tests from MdlRobotDesign (0 ms total)
+
+[----------] 1 test from MdlParts
+[ RUN      ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3
+[       OK ] MdlParts.ToolBodyAssertionsSameAsLink_WP13T03_ACC3 (0 ms)
+[----------] 1 test from MdlParts (0 ms total)
+
+[----------] 16 tests from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.FormulaVersionAndProvenanceMarking_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.SolidCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.HollowCylinderClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.BoxClosedForm_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1
+[       OK ] MdlPropertyEstimation.DensityResolutionProvidedOverridesTable_WP13T04_ACC1 (0 ms)
+[ RUN      ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.TwoSegmentParallelAxisSynthesis_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23
+[       OK ] MdlPropertyEstimation.IsotropicInertiaEigenvaluesRemainFinite_WP13T23 (0 ms)
+[ RUN      ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2
+[       OK ] MdlPropertyEstimation.SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditMigrateBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditOverwriteBranch_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditUnresolvedRejected_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3
+[       OK ] MdlPropertyEstimation.CentroidEditPreconditionsFailFast_WP13T04_ACC3 (0 ms)
+[ RUN      ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.MaterialDensityTableDefaults_WP13T04_ACC4 (0 ms)
+[ RUN      ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4
+[       OK ] MdlPropertyEstimation.DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4 (0 ms)
+[----------] 16 tests from MdlPropertyEstimation (0 ms total)
+
+[----------] 2 tests from MdlInertiaReuse
+[ RUN      ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27
+[       OK ] MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27 (0 ms)
+[ RUN      ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27
+[       OK ] MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27 (0 ms)
+[----------] 2 tests from MdlInertiaReuse (0 ms total)
+
+[----------] 3 tests from MdlInertiaTransformReuse
+[ RUN      ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28
+[       OK ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28 (0 ms)
+[ RUN      ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28
+[       OK ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28 (0 ms)
+[ RUN      ] MdlInertiaTransformReuse.RelativeSymmetryScaleAndBoundary_REUSE_T28
+[       OK ] MdlInertiaTransformReuse.RelativeSymmetryScaleAndBoundary_REUSE_T28 (0 ms)
+[----------] 3 tests from MdlInertiaTransformReuse (0 ms total)
+
+[----------] 31 tests from MdlImport
+[ RUN      ] MdlImport.MapWorkCellXml_ChannelImplementedR1Retired_WP13T17_ACC1
+[       OK ] MdlImport.MapWorkCellXml_ChannelImplementedR1Retired_WP13T17_ACC1 (0 ms)
+[ RUN      ] MdlImport.Mapper_ReentrantStateless_WP13T05_ACC1
+[       OK ] MdlImport.Mapper_ReentrantStateless_WP13T05_ACC1 (0 ms)
+[ RUN      ] MdlImport.MapXacroExpanded_ProvenanceRecorded_WP13T05_ACC1
+[       OK ] MdlImport.MapXacroExpanded_ProvenanceRecorded_WP13T05_ACC1 (0 ms)
+[ RUN      ] MdlImport.FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2
+[       OK ] MdlImport.FullUrdf_FieldMappingRowsObservable_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.MissingInertial_NotProvidedInDefaults_WP13T05_ACC2
+[       OK ] MdlImport.MissingInertial_NotProvidedInDefaults_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.PartialOriginAttributes_DefaultZeroNotIllegal_F570
+[       OK ] MdlImport.PartialOriginAttributes_DefaultZeroNotIllegal_F570 (0 ms)
+[ RUN      ] MdlImport.IllegalOriginTextStillRejected_F570
+[       OK ] MdlImport.IllegalOriginTextStillRejected_F570 (0 ms)
+[ RUN      ] MdlImport.NonFiniteOriginXyzNan_Rejected_F633
+[       OK ] MdlImport.NonFiniteOriginXyzNan_Rejected_F633 (0 ms)
+[ RUN      ] MdlImport.NonFiniteOriginRpyInf_Rejected_F633
+[       OK ] MdlImport.NonFiniteOriginRpyInf_Rejected_F633 (0 ms)
+[ RUN      ] MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2
+[       OK ] MdlImport.PhysicalIllegality_ReportErrorItems_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.NameConflictAndIllegalValue_Preserved_WP13T05_ACC2
+[       OK ] MdlImport.NameConflictAndIllegalValue_Preserved_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.MissingAxis_DefaultPlusXPendingConfirm_WP13T05_ACC3
+[       OK ] MdlImport.MissingAxis_DefaultPlusXPendingConfirm_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.ZeroAxis_ReportOnlyInvalidNotSubmittable_WP13T05_ACC3
+[       OK ] MdlImport.ZeroAxis_ReportOnlyInvalidNotSubmittable_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.NonFiniteAxis_ReportOnly_WP13T05_ACC3
+[       OK ] MdlImport.NonFiniteAxis_ReportOnly_WP13T05_ACC3 (0 ms)
+[ RUN      ] MdlImport.MimicJoint_TypePreservedBlocked_WP13T05_ACC4
+[       OK ] MdlImport.MimicJoint_TypePreservedBlocked_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.PlanarJoint_UnsupportedNoDraft_WP13T05_ACC4
+[       OK ] MdlImport.PlanarJoint_UnsupportedNoDraft_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.MultiBranch_NoSelectionRejected_WP13T05_ACC4
+[       OK ] MdlImport.MultiBranch_NoSelectionRejected_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.SixRevoluteChain_FullTemplateRange_WP13T05_ACC4
+[       OK ] MdlImport.SixRevoluteChain_FullTemplateRange_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.SevenRevoluteChain_FullTemplateRange_WP13T05_ACC4
+[       OK ] MdlImport.SevenRevoluteChain_FullTemplateRange_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4
+[       OK ] MdlImport.FiveAxes_BeyondRange_DraftEditable_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.PrismaticInChain_HybridFullRange_WP13T19_AT36
+[       OK ] MdlImport.PrismaticInChain_HybridFullRange_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.SevenAxesWithPrismatic_HybridFullRange_WP13T19_AT36
+[       OK ] MdlImport.SevenAxesWithPrismatic_HybridFullRange_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.FourAxesWithPrismatic_StillBlocked_WP13T19_AT36
+[       OK ] MdlImport.FourAxesWithPrismatic_StillBlocked_WP13T19_AT36 (0 ms)
+[ RUN      ] MdlImport.HybridChainStage_Parameterization_R1KeepsBlocked_R2Unlocks_WP13T19
+[       OK ] MdlImport.HybridChainStage_Parameterization_R1KeepsBlocked_R2Unlocks_WP13T19 (0 ms)
+[ RUN      ] MdlImport.MultiBranch_WithSelection_AuxCandidatesNotRejected_WP13T05_ACC4
+[       OK ] MdlImport.MultiBranch_WithSelection_AuxCandidatesNotRejected_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.DeepSplit_SelectionResidualBranches_WP13T05_ACC4
+[       OK ] MdlImport.DeepSplit_SelectionResidualBranches_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.Continuous_WorkingRangePendingConfirm_WP13T05_ACC4
+[       OK ] MdlImport.Continuous_WorkingRangePendingConfirm_WP13T05_ACC4 (0 ms)
+[ RUN      ] MdlImport.Determinism_SameBytesSameOptionsSameOutput_WP13T05_ACC5
+[       OK ] MdlImport.Determinism_SameBytesSameOptionsSameOutput_WP13T05_ACC5 (0 ms)
+[ RUN      ] MdlImport.Diags_SortedBySourceLineOrder_WP13T05_ACC5
+[       OK ] MdlImport.Diags_SortedBySourceLineOrder_WP13T05_ACC5 (0 ms)
+[ RUN      ] MdlImport.InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2
+[       OK ] MdlImport.InertialRpy_RotatesInertiaToLinkFrame_WP13T05_ACC2 (0 ms)
+[ RUN      ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587
+[       OK ] MdlImport.AxisNormSqOverflow_ReportInvalidNotSubmittable_F587 (0 ms)
+[----------] 31 tests from MdlImport (2 ms total)
+
+[----------] 1 test from MdlCanonicalBridge
+[ RUN      ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1
+[       OK ] MdlCanonicalBridge.LinksMappingBodyAndGeometry_WP13T12_ACC1 (0 ms)
+[----------] 1 test from MdlCanonicalBridge (0 ms total)
+
+[----------] 2 tests from ModelingManualBody
+[ RUN      ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17
+[       OK ] ModelingManualBody.ExplicitMigrationAndCompleteOverride_MDL05_V17 (0 ms)
+[ RUN      ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17
+[       OK ] ModelingManualBody.MissingBaselineAndInvalidInputsRemainAtomic_MDL05_V17 (0 ms)
+[----------] 2 tests from ModelingManualBody (0 ms total)
+
+[----------] 8 tests from MdlReadiness
+[ RUN      ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction
+[       OK ] MdlReadiness.LegalWorkingSetAllLayersPassAndPureFunction (0 ms)
+[ RUN      ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23
+[       OK ] MdlReadiness.NotProvidedOnlyNoteKeepsReadyReachable_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23
+[       OK ] MdlReadiness.InformationalNoteStillAggregatesReadyWithNotes_WP13T23 (0 ms)
+[ RUN      ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer
+[       OK ] MdlReadiness.ShortCircuitPriorityStopsAtFirstBlockingLayer (0 ms)
+[ RUN      ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip
+[       OK ] MdlReadiness.L11PolicyUnresolvableBlocksWithoutSilentTravelSkip (0 ms)
+[ RUN      ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject
+[       OK ] MdlReadiness.ResultGroupsStableOrderByLayerThenSubject (0 ms)
+[ RUN      ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18
+[       OK ] MdlReadiness.L9CouplingStageLockAndR2NumericCheck_WP13T18 (0 ms)
+[ RUN      ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25
+[       OK ] MdlReadiness.NoVelocitySchemaGapNoteWhenFieldsSeeded_WP13T25 (0 ms)
+[----------] 8 tests from MdlReadiness (0 ms total)
+
+[----------] 1 test from MdlCommandPrepare
+[ RUN      ] MdlCommandPrepare.HardAssertBlocksWithPreciseDiagnostic
+[       OK ] MdlCommandPrepare.HardAssertBlocksWithPreciseDiagnostic (0 ms)
+[----------] 1 test from MdlCommandPrepare (0 ms total)
+
+[----------] 1 test from LinAlgeTest
+[ RUN      ] LinAlgeTest.LinearAlgebraTest
+[       OK ] LinAlgeTest.LinearAlgebraTest (0 ms)
+[----------] 1 test from LinAlgeTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 68 tests from 11 test suites ran. (4 ms total)
+[  PASSED  ] 68 tests.

@@ -1,0 +1,22 @@
+Note: Google Test filter = MdlInertiaTransformReuse.*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from MdlInertiaTransformReuse
+[ RUN      ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(949): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+rotation=1, scale=100000: 合成自检失败：asymmetric-beyond-tolerance（物理合法输入的合成恒 SPD——触发即内部实现错误，不输出非法张量）
+
+[  FAILED  ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28 (0 ms)
+[ RUN      ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28
+[       OK ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28 (0 ms)
+[----------] 2 tests from MdlInertiaTransformReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlInertiaTransformReuse.RationalRotationAndScale_REUSE_T28
+
+ 1 FAILED TEST

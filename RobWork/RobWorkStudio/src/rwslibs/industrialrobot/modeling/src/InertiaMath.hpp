@@ -22,6 +22,7 @@
 #ifndef IRD_MODELING_SRC_INERTIAMATH_HPP
 #define IRD_MODELING_SRC_INERTIAMATH_HPP
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 
@@ -100,9 +101,8 @@ inline void checkInertiaAssertions(std::vector<InvariantViolation>& out,
 // 三角不等式（自检失败=内部错误码，不输出非法张量）"的单一实现点）
 // =====================================================================
 
-/// 对称性容差：|M−Mᵀ| 逐元素上限 1×10⁻¹²（卡 acceptance 2 原文"对称相对
-/// 1×10⁻¹²"——双精度旋转/平移合成引入的浮点噪声远低于此量级，超限即
-/// 实现错误而非正常舍入）。附录 D 第 6 项同值的建模侧承载。
+/// 相对对称性容差（REQUIREMENTS附录D第6项固定1×10⁻¹²）。REUSE-T28
+/// 经所有者确认，以九项最大绝对元素作张量尺度，不按kg·m²的绝对差判定。
 inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
 
 /**
@@ -117,9 +117,10 @@ inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
  *
  * 核查序（失败即短路返回原因，NFR-COR-03 不修复不截断）：
  *   ①有限性：九元素全有限（NaN/Inf——如量纲溢出到 inf——立即拒收）；
- *   ②对称性：|M(i,j)−M(j,i)| ≤ 1×10⁻¹²（kSynthesisSymmetryTolerance）；
+ *   ②对称性：令s为九项最大绝对值，|M(i,j)/s−M(j,i)/s| ≤ 1×10⁻¹²；
+ *     零阵不除以零，随后由原严格SPD拒收（REUSE-T28已确认的相对尺度）；
  *   ③SPD＋三角不等式：经六分量投影（容差内的对称化取平均——两三角
- *     差已由②保证 ≤1×10⁻¹²，投影不引入超容差改动）复用
+ *     相对差已由②保证 ≤1×10⁻¹²，投影不引入超容差改动）复用
  *     symmetricEigenvalues3x3 判定 λmin>0 且 λmax ≤ λmid+λmin。
  *
  * 物理背景（为什么合法输入下此自检应恒过）：SPD 张量经正交相似变换
@@ -137,17 +138,20 @@ inline constexpr double kSynthesisSymmetryTolerance = 1e-12;
 inline std::string synthesisSelfCheck(const std::array<std::array<double, 3>, 3>& m)
 {
     // ①有限性：任何 NaN/Inf（含大尺寸溢出场景）都不能作为"物性"输出。
+    double scale = 0.0;  // kg·m²，有限性检查通过后才参与无量纲相对比较。
     for (int r = 0; r < 3; ++r) {
         for (int c = 0; c < 3; ++c) {
             if (!std::isfinite(m[r][c])) {
                 return "non-finite-entry";
             }
+            scale = std::max(scale, std::abs(m[r][c]));
         }
     }
-    // ②对称性（相对 1×10⁻¹²）：逐元素核查两三角的偏差。
+    // ②先归一再相减：有限大数直接相减也可能溢出；不以1作尺度下限，
+    // 极小张量同样执行相对1×10⁻¹²。零阵留给下方严格SPD，无0/0路径。
     for (int r = 0; r < 3; ++r) {
         for (int c = r + 1; c < 3; ++c) {
-            const double diff = m[r][c] - m[c][r];
+            const double diff = scale == 0.0 ? 0.0 : m[r][c] / scale - m[c][r] / scale;
             if (!(diff <= kSynthesisSymmetryTolerance
                   && diff >= -kSynthesisSymmetryTolerance)) {
                 return "asymmetric-beyond-tolerance";

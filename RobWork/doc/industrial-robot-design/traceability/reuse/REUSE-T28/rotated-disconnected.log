@@ -1,0 +1,32 @@
+Note: Google Test filter = MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28:MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlPropertyEstimation
+[ RUN      ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(146): error: Value of: outcome.ok()
+  Actual: false
+Expected: true
+单段估算意外失败（阶段公因）
+
+unknown file: error: C++ exception with description "runtime/expected/get-on-error: 对错误态调用 get()" thrown in the test body.
+
+[  FAILED  ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2 (0 ms)
+[----------] 1 test from MdlPropertyEstimation (0 ms total)
+
+[----------] 1 test from MdlInertiaTransformReuse
+[ RUN      ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PropertyEstimationTest.cpp(988): error: Value of: result.ok()
+  Actual: false
+Expected: true
+
+[  FAILED  ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28 (0 ms)
+[----------] 1 test from MdlInertiaTransformReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MdlPropertyEstimation.SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2
+[  FAILED  ] MdlInertiaTransformReuse.MixedOffsetsAndStrictOutput_REUSE_T28
+
+ 2 FAILED TESTS

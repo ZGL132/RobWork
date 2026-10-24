@@ -25,6 +25,7 @@
 
 #include "../src/InertiaMath.hpp"  // 单元内私有头（runtime/reporting 同款先例）——自检分量级反例与 NotProvided 断言跳过
 
+#include <rw/math/InertiaMatrix.hpp>  // REUSE-T28：直接上游对照；字面张量 oracle 保持独立。
 #include <rw/math/LinearAlgebra.hpp>  // REUSE-T27：独立闭式之外，核对当前公开上游入口。
 
 #include <gtest/gtest.h>
@@ -914,4 +915,123 @@ TEST(MdlInertiaReuse, UpstreamAndAssertionConsumers_REUSE_T27)
     }
     const auto zero=sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(InertiaTensor{});
     EXPECT_EQ(zero,(std::array<double,3>{0,0,0}));
+}
+
+/**
+ * @brief MDL-05／REUSE-T28：非等边长方体按已知有理旋转的字面惯量核对。
+ *
+ * 边长(2,4,6)m、密度1kg/m³给出质量48kg及主惯量(208,160,80)kg·m²。
+ * 下列六分量由有理数手算；期望不调用上游矩阵乘法或工厂。长度缩放s时
+ * 质量按s³、惯量按s⁵变化；先归一尺度再用原1e-12容差，避免小量误过。
+ */
+TEST(MdlInertiaTransformReuse, RationalRotationAndScale_REUSE_T28)
+{
+    IRD_TEST_INFO("MDL-05", {}, std::nullopt);
+    const rwmath::Rotation3D<double> rotations[] = {
+        rwmath::Rotation3D<double>::identity(),
+        rwmath::Rotation3D<double>(0.6,-0.8,0, 0.8,0.6,0, 0,0,1),
+        rwmath::Rotation3D<double>(1.0/3,2.0/3,2.0/3,
+                                  2.0/3,1.0/3,-2.0/3,
+                                  -2.0/3,2.0/3,-1.0/3)};
+    // 分量顺序为xx,yy,zz,xy,xz,yz；三张量均在连杆姿态、段质心处。
+    const double expected[][6] = {
+        {208,160,80,0,0,0},
+        {177.28,190.72,80,23.04,0,0},
+        {1168.0/9,1312.0/9,1552.0/9,416.0/9,64.0/9,-352.0/9}};
+    const PropertyEstimator estimator;
+    for (int r=0;r<3;++r) {
+        for (const double scale : {1e-5,1.0,1e5}) {
+            const double inertiaScale=scale*scale*scale*scale*scale;
+            const auto segment=box(2*scale,4*scale,6*scale,
+                materialWithDensity("known",1.0),rwmath::Vector3D<double>(0.25,-0.5,0.75),rotations[r]);
+            std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+            const auto outcome=estimator.estimateLink({segment},diags);
+            ASSERT_TRUE(outcome.ok()) << "rotation="<<r<<", scale="<<scale<<": "
+                << (outcome.ok() ? "" : outcome.error().detail);
+            const auto& p=outcome.get();
+            const double actual[]={p.inertia.ixx,p.inertia.iyy,p.inertia.izz,
+                                   p.inertia.ixy,p.inertia.ixz,p.inertia.iyz};
+            EXPECT_NEAR(p.massKg/(scale*scale*scale),48.0,48e-12);
+            EXPECT_TRUE(diags.empty());
+            for (int k=0;k<6;++k) {
+                EXPECT_NEAR(actual[k]/inertiaScale,expected[r][k],closeTolerance(expected[r][k]))
+                    << "连杆系旋转方向/惯量积符号/长度尺度，rotation="<<r<<", component="<<k;
+            }
+            const auto repeated=estimator.estimateLink({segment},diags);
+            ASSERT_TRUE(repeated.ok());
+            EXPECT_TRUE(repeated.get().inertia==p.inertia);
+            EXPECT_TRUE(repeated.get().provenance==p.provenance);
+            // 上游对照单独保留；不能代替上面的独立字面张量断言。
+            const auto local=rwmath::InertiaMatrix<double>::makeCuboidInertia(
+                p.massKg,2*scale,4*scale,6*scale);
+            const auto direct=rotations[r]*local*rwmath::inverse(rotations[r]);
+            EXPECT_NEAR(p.inertia.ixy/inertiaScale,direct(0,1)/inertiaScale,1e-12*208);
+            EXPECT_NEAR(p.inertia.ixx/inertiaScale,direct(0,0)/inertiaScale,1e-12*208);
+        }
+    }
+}
+
+/** @brief MDL-05／REUSE-T28：两个已知旋转长方体的质心与平行轴组合手算。 */
+TEST(MdlInertiaTransformReuse, MixedOffsetsAndStrictOutput_REUSE_T28)
+{
+    IRD_TEST_INFO("MDL-05", {}, std::nullopt);
+    const rwmath::Rotation3D<double> rz(0.6,-0.8,0, 0.8,0.6,0, 0,0,1);
+    // 两段等质量48kg、中心相对合成质心为±(1,2,-1)m。
+    // 两段惯量对角和=(385.28,350.72,160)，平移项对角=(480,192,480)，
+    // xy=-192、xz=+96、yz=+192；旋转段另贡献xy=23.04。
+    const auto material=materialWithDensity("known",1.0);
+    const auto a=box(2,4,6,material,rwmath::Vector3D<double>(-1,-2,1));
+    const auto b=box(2,4,6,material,rwmath::Vector3D<double>(1,2,-1),rz);
+    const PropertyEstimator estimator;
+    std::vector<sdurws::ird::core::DiagnosticRecord> diags;
+    const auto result=estimator.estimateLink({a,b},diags);
+    ASSERT_TRUE(result.ok());
+    const auto& p=result.get();
+    EXPECT_DOUBLE_EQ(p.massKg,96);
+    EXPECT_TRUE(p.centerOfMass==rwmath::Vector3D<double>(0,0,0));
+    EXPECT_NEAR(p.inertia.ixx,865.28,865.28e-12);
+    EXPECT_NEAR(p.inertia.iyy,542.72,542.72e-12);
+    EXPECT_NEAR(p.inertia.izz,640,640e-12);
+    EXPECT_NEAR(p.inertia.ixy,-168.96,168.96e-12);
+    EXPECT_NEAR(p.inertia.ixz,96,96e-12);
+    EXPECT_NEAR(p.inertia.iyz,192,192e-12);
+    EXPECT_EQ(p.provenance.kind,ProvenanceKind::GeometricEstimate);
+    EXPECT_TRUE(diags.empty());
+}
+
+/**
+ * @brief MDL-06／附录D第6项：T28已确认的相对对称尺度，固定阈值不变。
+ *
+ * 对同一无量纲反例整体缩放，接收/拒收必须不变；原绝对比较会在小尺度
+ * 误收、在大尺度误拒。保留零阵/非有限和有限极大反号差的拒收，不用被测
+ * 函数生成期望；单位阵上的正负1e-12同时验证闭边界。
+ */
+TEST(MdlInertiaTransformReuse, RelativeSymmetryScaleAndBoundary_REUSE_T28)
+{
+    IRD_TEST_INFO("MDL-06", {}, std::nullopt);
+    using sdurws::ird::modeling::inertiamath::synthesisSelfCheck;
+    for (const double scale : {1e-300,1.0,1e300}) {
+        for (const double sign : {-1.0,1.0}) {
+            std::array<std::array<double,3>,3> matrix{};
+            for (int i=0;i<3;++i) { matrix[i][i]=scale; }
+            matrix[0][1]=sign*0.5e-12*scale;
+            EXPECT_EQ(synthesisSelfCheck(matrix),"") << "同一相对误差应随尺度不变";
+            matrix[0][1]=sign*2e-12*scale;
+            EXPECT_EQ(synthesisSelfCheck(matrix),"asymmetric-beyond-tolerance");
+        }
+    }
+    for (const double sign : {-1.0,1.0}) {
+        std::array<std::array<double,3>,3> matrix{};
+        for (int i=0;i<3;++i) { matrix[i][i]=1.0; }
+        matrix[0][1]=sign*1e-12;
+        EXPECT_EQ(synthesisSelfCheck(matrix),"") << "固定1e-12边界包含等号";
+    }
+    std::array<std::array<double,3>,3> extreme{};
+    extreme[0][1]=std::numeric_limits<double>::max();
+    extreme[1][0]=-std::numeric_limits<double>::max();
+    EXPECT_EQ(synthesisSelfCheck(extreme),"asymmetric-beyond-tolerance")
+        << "有限反号大数不能在先减后归一时溢出";
+    EXPECT_EQ(synthesisSelfCheck({}),"not-positive-definite");
+    extreme[2][2]=std::numeric_limits<double>::infinity();
+    EXPECT_EQ(synthesisSelfCheck(extreme),"non-finite-entry");
 }

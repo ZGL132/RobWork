@@ -8,8 +8,8 @@
  * DYN-06；任务契约 tasks/foundation/WP-13-T04.json acceptance 1~4。
  *
  * 确定性纪律（NFR-COR-02）：本文件全部浮点运算按固定次序执行（段元按
- * 输入序遍历、矩阵元素按固定行列序累加），无归约重排/无并行/无迭代
- * 收敛判据——同输入逐字节同输出。
+ * 输入序遍历、矩阵元素按固定行列序累加）；REUSE-T28 将惯量旋转和
+ * 长方体惯量交给 RobWork，同输入/工具链重复确定性由回归核对。
  */
 
 #include <sdurws/ird/modeling/PropertyEstimation.hpp>
@@ -21,6 +21,8 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
+
+#include <rw/math/InertiaMatrix.hpp>  // REUSE-T28：复用既有 sdurw_math 惯量值运算。
 
 namespace sdurws::ird::modeling {
 
@@ -84,22 +86,6 @@ namespace {
 /// 合成累加缓冲：全 3×3 矩阵（kg·m²）——提取六分量前须过自检
 /// （inertiamath::synthesisSelfCheck，见 InertiaMath.hpp 函数注）。
 using Matrix3 = std::array<std::array<double, 3>, 3>;
-
-/// 把"段质心系主轴惯量旋转到连杆系姿态"累加进合成缓冲：
-/// M += R·diag(ixx,iyy,izz)·Rᵀ。D 为对角阵时的闭式展开
-/// (R·D·Rᵀ)(i,j) = Σ_k R(i,k)·d_k·R(j,k)——比通用三矩阵乘少一次遍历，
-/// 且浮点运算次序固定（确定性）。
-void accumulateRotatedInertia(Matrix3& m, const rw::math::Rotation3D<double>& r,
-                              double ixx, double iyy, double izz)
-{
-    for (int row = 0; row < 3; ++row) {
-        for (int col = 0; col < 3; ++col) {
-            m[row][col] += r(row, 0) * ixx * r(col, 0)
-                         + r(row, 1) * iyy * r(col, 1)
-                         + r(row, 2) * izz * r(col, 2);
-        }
-    }
-}
 
 /// 把平行轴项 m((d·d)E − d·dᵀ) 累加进合成缓冲（d＝段质心相对连杆合成
 /// 质心的位移，单位 m）：对角元 +m(d·d−d_i²)、非对角元 −m·d_i·d_j。
@@ -234,9 +220,13 @@ EstimateOutcome PropertyEstimator::estimateLink(
                     where + ".box 三边长须 >0 且有限（m）"});
             }
             segmentMass = density * box->a * box->b * box->length;    // ρabL
-            ixx = segmentMass * (box->b * box->b + box->length * box->length) / 12.0;
-            iyy = segmentMass * (box->a * box->a + box->length * box->length) / 12.0;
-            izz = segmentMass * (box->a * box->a + box->b * box->b) / 12.0;
+            // 同一段质心系、边长(a,b,L)，kg/m输入直接符合上游工厂；
+            // 非等边时Ixx/Iyy不同，由上游维护，不另写三条主惯量公式。
+            const auto local = rw::math::InertiaMatrix<double>::makeCuboidInertia(
+                segmentMass, box->a, box->b, box->length);
+            ixx = local(0, 0);
+            iyy = local(1, 1);
+            izz = local(2, 2);
         } else {
             // variant 新增备择（表尾追加纪律允许扩表）未接入公式→显性失败
             // （不静默按零质量处理——NFR-COR-03；新段元落位时本分支被替换）。
@@ -272,7 +262,16 @@ EstimateOutcome PropertyEstimator::estimateLink(
     Matrix3 composite{};  // 零初始化后按段序累加（I_C=Σ[...]）
     for (const SegmentInertia& part : parts) {
         // Rᵢ·Iᵢ·Rᵢᵀ：段质心系主轴惯量转连杆系姿态（参考姿态＝连杆坐标系——M-2）。
-        accumulateRotatedInertia(composite, part.rotation, part.ixx, part.iyy, part.izz);
+        // R把段轴分量映到连杆系；正交旋转的inverse就是转置，不改变参考点。
+        // 仅将上游完整九项投影到原自检缓冲，不能提前镜像上三角掩盖不对称。
+        const auto rotated = part.rotation
+            * rw::math::InertiaMatrix<double>(part.ixx, part.iyy, part.izz)
+            * rw::math::inverse(part.rotation);
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
+                composite[row][col] += rotated(row, col);
+            }
+        }
         // dᵢ＝cᵢ−C（m）——平行轴项 mᵢ((dᵢ·dᵢ)E−dᵢdᵢᵀ)。
         const rw::math::Vector3D<double> delta = part.comInLink - centroid;
         accumulateParallelAxis(composite, part.massKg, delta);

@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "modeling.symmetricEigenvalues3x3",
+  "target": "sdurws_ird_modeling",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+      "sha256": "29d682dffc6d86bd90901cace4884da0cd0c0960e5f9fdef78135be3b27fdc79"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+      "sha256": "f71c84c2a179e9979e924dd20ee92b1696564cd91821683aacf92d4f4ed470d2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+      "sha256": "0ea2ded5865cdf0acfd86cd856182c6ba07b03d5a624929ad944013822634710"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
+      "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+      "sha256": "f7f7c8dc2f3fdee15317858582311b4135eed3a1759dc629386e8bfff0499996"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+      "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
+      "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+      "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
+      "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
+      "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/InertiaMatrix.hpp",
+      "sha256": "dd10f64b32bb64cff25b48e1b66333cd8bd1815f3ffc5bab4d2335fbf4d3da16"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/PropertyEstimation.hpp",
+      "sha256": "e9b881b108be4f3fa9aebc086eaf8cda58dc0a6f5d343e90d10a0c675ec64ac1"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter MdlInertiaTransformReuse.*:MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.xml",
+      "sha256": "fc66d0e16d23c2fc6f106de048174ab9f849fe6a564433b2a7d92c7da750a213"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.log",
+      "sha256": "60acd40ea381b935d9ec2415b6749b69a6922f5b5e90dfb91220a182345aa302"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label eigen-disconnected -Filter MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27:MdlRobotDesign.IMdl5*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/eigen-disconnected.xml",
+      "sha256": "91b7cff34f2328ad74d1c73363c0bef8fff7820e2df483b50b10118f2fa674ef"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/eigen-disconnected.log",
+      "sha256": "89b3a5e9e8d76e5294e471cd60abceb9e09683f110ee923df658de1942ffebe2"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+      "originalSha256": "f71c84c2a179e9979e924dd20ee92b1696564cd91821683aacf92d4f4ed470d2",
+      "description": "对当前最终头真实编译：上游分解仍执行，但返回三个0；原IMdl5和上游/断言消费者2项失败。写回正确字节更新时间戳，重新构建执行最终68及8契约。T27原件不改写。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/eigen-mutated.hpp",
+      "sha256": "52ed25b2e495bd33109c539af660abea766206844bf531cc14c4fbc2c343f7da"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter MdlInertiaTransformReuse.*:MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.xml",
+      "sha256": "fc66d0e16d23c2fc6f106de048174ab9f849fe6a564433b2a7d92c7da750a213"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.log",
+      "sha256": "60acd40ea381b935d9ec2415b6749b69a6922f5b5e90dfb91220a182345aa302"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "MdlInertiaReuse.KnownSpectrumAcrossScales_REUSE_T27"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter MdlInertiaTransformReuse.*:MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.xml",
+      "sha256": "fc66d0e16d23c2fc6f106de048174ab9f849fe6a564433b2a7d92c7da750a213"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T28/final.log",
+      "sha256": "60acd40ea381b935d9ec2415b6749b69a6922f5b5e90dfb91220a182345aa302"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "MdlInertiaReuse.UpstreamAndAssertionConsumers_REUSE_T27",
+      "LinAlgeTest.LinearAlgebraTest"
+    ]
+  },
+  "note": "一次真实最终68项运行供正常/oracle/上游对照引用；mutation为真实生产结果消费扰动，详见README适用性；独验NOT RUN。"
+}

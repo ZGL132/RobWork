@@ -2,7 +2,7 @@
   "schemaVersion": "ird-task/1",
   "taskId": "REUSE-T27",
   "unit": "modeling",
-  "masterWp": "WP-A",
+  "masterWp": "WP-E",
   "title": "惯量特征值复用RobWork对称分解并删除解析核心",
   "status": "ready",
   "branch": "redesign-main",
@@ -43,7 +43,7 @@
     "独立已知谱/非对角/正负/零/重根/极小与极大尺度，重复确定性；真实上游与产品消费者对照、生产返回值扰动、受影响回归",
     "保持公共接口/owner/原构建供给；实测性能、无预算退化需明确接受，独验NOT RUN不得done"
   ],
-  "note": "WP-12惯量特征值直接复用包；起点704667b598967d9849dd02f113dd28ec3ad93a8e。替换单点旧核心，不改公共接口/CMake/依赖/框架/模型owner，不依赖未独验T13/T26。适配候选为公开LinearAlgebra，GeometryUtil包装无额外收益。普通数值原语无共享状态；本包精确实审，独验NOT RUN。 已实施，最终65passed/0failed/0skipped，契约8passed/0failed/0skipped；真实扰动2failed，恢复时间戳导致的旧对象22failed已留存并经重编译关闭。所有者明确接受本包具体性能开销并交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T27/README.md。",
+  "note": "WP-12惯量特征值直接复用包；起点704667b598967d9849dd02f113dd28ec3ad93a8e。替换单点旧核心，不改公共接口/CMake/依赖/框架/模型owner，不依赖未独验T13/T26。适配候选为公开LinearAlgebra，GeometryUtil包装无额外收益。普通数值原语无共享状态；本包精确实审，独验NOT RUN。 已实施，最终65passed/0failed/0skipped，契约8passed/0failed/0skipped；真实扰动2failed，恢复时间戳导致的旧对象22failed已留存并经重编译关闭。所有者明确接受本包具体性能开销并交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T27/README.md。 归属校正：DTB主交付WP-E；migration §13串行WP-12仅完成惯量特征值子项，其余由后继精确包推进；独验仍NOT RUN，不翻转ready。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
