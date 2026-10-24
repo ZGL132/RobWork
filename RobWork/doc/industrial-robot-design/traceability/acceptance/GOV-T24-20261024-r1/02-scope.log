@@ -1,0 +1,2 @@
+verify-task-scope: GOV-T24 base=fac3d030a0e3 head=df0b35fc2b32 changed=40 allowedRules=11 forbiddenRules=4
+verify-task-scope: PASS GOV-T24 —— 40 个路径全部在允许面内
