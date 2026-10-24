@@ -48,15 +48,7 @@
       "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485",
       "mode": "business",
       "capabilities": [],
-      "boundary": "executor级锚语义用例（真实编译快照）：同源转发/换绑不动旧任务/两任务State隔离/锚释放可析构。",
-      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/normal/ui.xml"
-    },
-    {
-      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-      "sha256": "c6b4f2a62d83ae42e655c09e712e0e55a6594068f3a67cf4c138baba1acbb734",
-      "mode": "business",
-      "capabilities": [],
-      "boundary": "值委托空锚转发用例（能力缺席如实传递）；rebind同拍切换。",
+      "boundary": "executor级锚语义用例（真实编译快照）：同源转发/换绑不动旧任务/两任务State隔离/锚释放可析构（RebindKeepsOldTaskModelAndLifetime_REUSE_T17）；值委托空锚如实转发与rebind同拍切换（ValueDelegateExposesNullAnchor_REUSE_T17）。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/normal/ui.xml"
     }
   ]
