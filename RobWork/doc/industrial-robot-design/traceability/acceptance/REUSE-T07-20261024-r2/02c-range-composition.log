@@ -1,0 +1,26 @@
+== awk stats on 02-scope-fullrange.log ==
+out-of-scope=1676
+forbidden=0
+== awk stats on 02b-scope-r1range.log ==
+out-of-scope=17
+forbidden=0
+== T07 three product files untouched in B segment 8e4a08ac8..5fb4ebd32 ==
+0
+== product-tree zero change impl-head..review-head (whole src tree) ==
+91
+== literal-range violation subset check: any of the 286+18 acceptance-face paths flagged? ==
+303
+0
+-- intersection acceptance-face vs literal-violations (expect 0):
+0
+viol paths extracted: 1672
+intersection acceptance-face vs literal-violations (expect 0): 0
+== head of violation paths ==
+RobWork/.agents/skills/ird-verify-change/SKILL.md（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Identity.hpp（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Identity.cpp（未命中任何
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp（未命中任何

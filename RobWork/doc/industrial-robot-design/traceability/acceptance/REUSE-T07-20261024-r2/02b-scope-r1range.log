@@ -1,0 +1,21 @@
+== r1 segment recheck: -Base bfe024cd0 -Head 8e4a08ac8 ==
+verify-task-scope: REUSE-T07 base=bfe024cd0147 head=8e4a08ac8249 changed=303 allowedRules=18 forbiddenRules=3
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/audit-contract.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/migration.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/policy.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/README.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-docs-corrected.exit.txt（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-docs-corrected.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-docs-final.exit.txt（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-docs-final.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-task-corrected.exit.txt（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-task-corrected.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-task-corrected2.exit.txt（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-task-corrected2.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/capability-plan-task.log（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL REUSE-T07 —— 17 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）
+exit=1

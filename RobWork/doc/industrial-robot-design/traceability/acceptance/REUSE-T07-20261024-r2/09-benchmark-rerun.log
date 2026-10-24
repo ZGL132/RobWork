@@ -1,0 +1,19 @@
+== r2 independent benchmark rerun (r1-built frozen exes; CouplingMath.hpp blob identical impl=review=worktree, verified this round) ==
+-- baseline (Jacobi, extracted from c27349a80) --
+{"medianMicroseconds":0.0899,"minMicroseconds":0.08889,"maxMicroseconds":0.09174,"checksum":280400,"calls":70100}
+BASELINE-EXIT=0
+-- migrated (upstream SVD, head == review head 53768464c) --
+C:/Users/zgl18/AppData/Local/Temp/t07-acc-bench/build/t07-bench-frozen/Release/coupling_svd_migrated.exe: error while loading shared libraries: sdurw_math.dll: cannot open shared object file: No such file or directory
+MIGRATED-EXIT=127
+== migrated head identity check ==
+CMakeLists.txt
+CouplingMath-baseline.hpp
+build
+/tmp/t07-acc-bench/CouplingMath-baseline.hpp -> e969fa67092f81cfcc0b6719b32a4f209a12e8b5
+9edee4d8557e00166f2342508aa2f63943e9e2a2
+-- migrated rerun with PATH prefix build/RobWork/bin/Release --
+{"medianMicroseconds":0.34002,"minMicroseconds":0.28768,"maxMicroseconds":0.41217,"checksum":280400,"calls":70100}
+MIGRATED-EXIT=0
+-- baseline rerun (same PATH, consistency) --
+{"medianMicroseconds":0.09195,"minMicroseconds":0.08894,"maxMicroseconds":0.09528,"checksum":280400,"calls":70100}
+BASELINE-EXIT=0

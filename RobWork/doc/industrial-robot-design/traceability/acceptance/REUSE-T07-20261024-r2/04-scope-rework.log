@@ -1,0 +1,4 @@
+== cmd: verify-task-scope -Base 5fb4ebd32 -Head 53768464c (rework segment) ==
+verify-task-scope: REUSE-T07 base=5fb4ebd32855 head=53768464caf8 changed=18 allowedRules=18 forbiddenRules=3
+verify-task-scope: PASS REUSE-T07 —— 18 个路径全部在允许面内
+exit=0

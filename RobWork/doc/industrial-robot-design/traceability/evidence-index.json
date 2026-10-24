@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-24T20:42:43+08:00",
+  "generatedAt": "2026-10-25T00:05:02+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 24258,
-    "totalBytes": 934814676,
+    "totalFiles": 24293,
+    "totalBytes": 935726321,
     "byKind": {
-      "json-data": 956,
-      "acceptance-record": 3614,
-      "manual-acceptance": 1,
-      "build-log": 15580,
-      "pipeline-artifact": 2,
       "gtest-report": 335,
-      "other": 220,
+      "json-data": 956,
       "log": 3058,
+      "other": 220,
+      "script": 68,
+      "markdown-doc": 126,
+      "acceptance-record": 3649,
       "governance-record": 40,
       "benchmark": 8,
-      "script": 68,
-      "xml-report": 250,
-      "markdown-doc": 126
+      "build-log": 15580,
+      "manual-acceptance": 1,
+      "pipeline-artifact": 2,
+      "xml-report": 250
     },
     "byLifecycle": {
-      "historical": 6768,
+      "historical": 7077,
       "current": 29,
-      "unverified": 17461,
+      "unverified": 17187,
       "superseded": 0
     },
-    "associated": 8148,
+    "associated": 8183,
     "unassociated": 16110,
-    "shaComputed": 24228,
+    "shaComputed": 24263,
     "shaSkippedLarge": 30,
-    "duplicateGroupsTotal": 1626,
+    "duplicateGroupsTotal": 1628,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -58,7 +58,8 @@
       "sha256": "b138fc7a29c21b72e64d2965052349fef41bc26dd2a0276e73c5b322dc3b9b2b",
       "paths": [
         "acceptance/GOV-T21-20261024-r2/08-test-reuse-governance-ps7.log",
-        "acceptance/GOV-T21-20261024-r2/09-test-reuse-governance-ps51.log"
+        "acceptance/GOV-T21-20261024-r2/09-test-reuse-governance-ps51.log",
+        "acceptance/REUSE-T07-20261024-r1/09-governance-selftest.log"
       ]
     },
     {
@@ -33882,6 +33883,356 @@
       ],
       "bytes": 11110,
       "sha256": "27dee3ee6c6c0df1afc494913cacb03c682707de2cc72bd7a8ba20d1289eefa8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1-fix/01-scope-collapsed.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 181,
+      "sha256": "dba918b73f23f6511de83d3d9de1ccd3f63fd6dcae1d61b43a90b862b7d3efe8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1-fix/02-commit-lint-collapsed.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 76,
+      "sha256": "2b764aa4a3da70ba2677715de1df2fcbdebaf77204ffaecdd756e11b2d5dad0f",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1-fix/03-owner-decision.txt",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2043,
+      "sha256": "d5e4596f394fdaa6f270c78d918732ef7f6541abc6800e1770f34b47d19c060d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1-fix/README.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 6350,
+      "sha256": "4b823e6fe5591aa255dd242b3ebcbce38db43221051c813061f95de50e0b39e6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 19387,
+      "sha256": "5099e2230d16ef71e7bfb3a1f5e2768294d72f6f9960ec65163857b3a604f8fd",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/02-scope.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2596,
+      "sha256": "42041c21402d3d6355166274196e0ce775516db8514afde108a032bb9fecf67c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/03-commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 98,
+      "sha256": "a9138413ab1ae27754023be2f7ebca8e4f7fd457402e85e19133e68715bb92fb",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/04-cmake-comments-gate-ps51.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 265,
+      "sha256": "488a776b83fdec1b373c696c62a0dade9146d9a60fb2a7fc97f9633a8814ab99",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/04-cmake-comments-gate.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 265,
+      "sha256": "488a776b83fdec1b373c696c62a0dade9146d9a60fb2a7fc97f9633a8814ab99",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/05-alt-scope-probe.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 181,
+      "sha256": "dba918b73f23f6511de83d3d9de1ccd3f63fd6dcae1d61b43a90b862b7d3efe8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/06-int-modeling-test.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 83700,
+      "sha256": "26259f73777d93233370591855c97998fca21763307ddec340866bb519d503df",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/06-int-modeling-test.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 161824,
+      "sha256": "559ae875a41126aa589c377e5b0cabd7cb3067f76765ec28e343db1fdca2e9d4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/07-benchmark-build.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2203,
+      "sha256": "ce3dc904e6c9bda54b810b28bad7f518f0f46d98dfc74b6636c4b46a900ebae6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/07-benchmark-configure.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 1890,
+      "sha256": "aa7dd06735942e60ccb8e099f6f2d16202f209ef5a29b4d76cf995e365eb4883",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/07-benchmark-run.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 262,
+      "sha256": "8365e6a0504f04f5597e1883bc71b98621e7bfe881edda0db3fb72ff043f6ebb",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/08-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2087,
+      "sha256": "23d0a28d8eedba34da0a17b2982710376b126de1929655a36b380a67378ef90b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r1/09-governance-selftest.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 9922,
+      "sha256": "b138fc7a29c21b72e64d2965052349fef41bc26dd2a0276e73c5b322dc3b9b2b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 23839,
+      "sha256": "a195d83c5b9032527d2a9e9e5d6a9dde5ae4213ece88eb76ec1bddfd3abf4c8c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/01-field.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 640,
+      "sha256": "142f4d023d7538d9a30b43d4d1c622b5ad20d81c7607909a41c577100551e684",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/02-scope-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 240558,
+      "sha256": "61446c56be2c53bf2444f714de48a849c40913e98856c0791791e17d1430b296",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/02b-scope-r1range.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2654,
+      "sha256": "a4910df7d4132c373c4b21884e11c73f25eedf836c50fab1fe909ff9dc72c881",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/02c-range-composition.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 1249,
+      "sha256": "d8d77dce359473e26f0cf50aaee9e5ac67bc72fe350e88903eb6f45d2e7b426f",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/03-scope-impl.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 267,
+      "sha256": "aaddb2f55df4b15f49a99935aecf5ef88c4a8fb53d90a310008847a469c7f77d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/04-scope-rework.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 257,
+      "sha256": "806d1c20991d701385fd44afda7eb1234e68ccb6977967969db5e22942c8fdd7",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/05-commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 3483,
+      "sha256": "c1d8410fdb416241decfad6e14221f1e80cc6ed80eb358a78fd7db7431615fc4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/06-redline-checks.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 6111,
+      "sha256": "ac81cc8859e8db0c2ea68be0407da33110a158cd0394279f3afbb7972c443a76",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/06b-redline-followup.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 1408,
+      "sha256": "3a40b5372b0ce6649fa824dbed765c20cc52cc2813754c3161e16d9777651861",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/07-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2087,
+      "sha256": "eb29b941b7dc31b06976a3ed14c6e36ee2ac04e54ac8167c07061a410a4652f0",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/08-int-modeling-test.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 167359,
+      "sha256": "c52d0f73b0b1dcb2d45162e11fb1c8b38ab240a7feabb5a3e483c62d9277eaaf",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/08-int-modeling-test.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 161793,
+      "sha256": "febd94460814ff1dd066e015ddb9523aaad69088c8c06db19c2a4b833d65c679",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/09-benchmark-rerun.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 1196,
+      "sha256": "77c700ac69bbdf0596ff6b7a127f409866757cce5c29cb57a54a9c47c0a8e292",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/10-verify1-cmake-comments.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 385,
+      "sha256": "15dac7502888e5fbeefae4bff9c5b694556737b9eb0d3ebdfa7e3dc7ccb04342",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/11-owner-decision-crosscheck.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 1308,
+      "sha256": "299515ca06772155d28777ce09b217ac1c33ae0608674ce55e582e0ff0af0ff0",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/12-index-evidence-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 960,
+      "sha256": "cf12decb5cd4e9f46548437282eb3e361f28e397d17d0958522fda4db7e69d4c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T07-20261024-r2/13-validate-docs-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T07"
+      ],
+      "bytes": 2761,
+      "sha256": "47f9b1ce8a3e66d72f3a28b218682972a48bbfce5fcf1e3b66068a32dfbd900e",
       "lifecycle": "historical"
     },
     {
@@ -198321,7 +198672,7 @@
       ],
       "bytes": 725,
       "sha256": "d8784d199f29a97e33bee958da103a2d45bbc2f1cfb4f19289c7d3d01bd94380",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/comparison.json",
@@ -198331,7 +198682,7 @@
       ],
       "bytes": 834,
       "sha256": "f48c848be6c960eb1cc01d92b7a7b996c2d63051c247d7250e2a5fc823ebc9c9",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/CouplingBenchmark.cpp",
@@ -198341,7 +198692,7 @@
       ],
       "bytes": 1409,
       "sha256": "000ecce88f38704c813a4195a810bbe949550f922b1d12789767f90d6ec0db07",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/t07-benchmark-baseline.exit.txt",
@@ -198351,7 +198702,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/t07-benchmark-baseline.json",
@@ -198361,7 +198712,7 @@
       ],
       "bytes": 115,
       "sha256": "471af026f413b0f4459cbe873e4ac27bb626a5def2b8d072040e2464009cba26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/t07-benchmark-migrated.exit.txt",
@@ -198371,7 +198722,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/benchmark/t07-benchmark-migrated.json",
@@ -198381,7 +198732,7 @@
       ],
       "bytes": 115,
       "sha256": "0e919a2aff57c44dc57e1ba1a0f5a6c92d065b96d860620c0d84e7886350fb53",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/contract/exit.txt",
@@ -198391,7 +198742,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/contract/gtest.xml",
@@ -198401,7 +198752,7 @@
       ],
       "bytes": 7049,
       "sha256": "283d410f958b95d64b370ab71eda7a6c4091946b01fb99eda317b25e5f633225",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/contract/ird-test-report.json",
@@ -198411,7 +198762,7 @@
       ],
       "bytes": 14430,
       "sha256": "84b9fc1990a305087b45d39705ebd7b3414a6462cde2347900bfccf9ea11ce1d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/contract/run.log",
@@ -198421,7 +198772,7 @@
       ],
       "bytes": 3660,
       "sha256": "dca62a2e1b139ad4e4bf241f536e6674a3506aa6a65156029b358a5ef39c2e71",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/build.exit.txt",
@@ -198431,7 +198782,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/build.log",
@@ -198441,7 +198792,7 @@
       ],
       "bytes": 6648,
       "sha256": "ba01864efb092d1e0362cab688ff2c0e1ab932bb5279bf520fe7cf0621809d3a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/CouplingMath.hpp",
@@ -198451,7 +198802,7 @@
       ],
       "bytes": 6518,
       "sha256": "391abfe6db8f512d92da5073b57b6bef4eb442cbadaa3afd99467fc20ca84845",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/exit.txt",
@@ -198461,7 +198812,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/gtest.xml",
@@ -198471,7 +198822,7 @@
       ],
       "bytes": 2260,
       "sha256": "5b4b43a38c3810bd8226641c3de64f73cdc43d51297f6733f36d3236d698caec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/ird-test-report.json",
@@ -198481,7 +198832,7 @@
       ],
       "bytes": 1126,
       "sha256": "c1514c97300eb55a47825bd883b3e7b1654642a74c726ad46eecd71737e50629",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected-initial/run.log",
@@ -198491,7 +198842,7 @@
       ],
       "bytes": 1411,
       "sha256": "75ed21be595146f1d3ad7cb2af96edd0b0788234bb2725fc648d4e3fde47c72a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/build-final.exit.txt",
@@ -198501,7 +198852,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/build-final.log",
@@ -198511,7 +198862,7 @@
       ],
       "bytes": 6624,
       "sha256": "bd82da3f31a8c0db94fe1534eada259d73eb880c20a9ca3971ec9fdd43dbdf1e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/build.exit.txt",
@@ -198521,7 +198872,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/build.log",
@@ -198531,7 +198882,7 @@
       ],
       "bytes": 6648,
       "sha256": "ba01864efb092d1e0362cab688ff2c0e1ab932bb5279bf520fe7cf0621809d3a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/CouplingMath.hpp",
@@ -198541,7 +198892,7 @@
       ],
       "bytes": 6518,
       "sha256": "391abfe6db8f512d92da5073b57b6bef4eb442cbadaa3afd99467fc20ca84845",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/exit.txt",
@@ -198551,7 +198902,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/gtest.xml",
@@ -198561,7 +198912,7 @@
       ],
       "bytes": 1434,
       "sha256": "87847590fc5a31cc3d6cb72384c4fb4254cd2720b4b7f0559bb9086faf4d433c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/ird-test-report.json",
@@ -198571,7 +198922,7 @@
       ],
       "bytes": 1126,
       "sha256": "9b7fbd6a4acb5b8c21c72f616cb6a332334f2602bf2c80a205ce56084f462883",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/disconnected/run.log",
@@ -198581,7 +198932,7 @@
       ],
       "bytes": 1029,
       "sha256": "8fa1540e1bb2dddf4fd3d3f1b9f742b4aadb2e65a3c68aa4080c51f97114da08",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-green-ps51.exit.txt",
@@ -198591,7 +198942,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-green-ps51.log",
@@ -198601,7 +198952,7 @@
       ],
       "bytes": 258,
       "sha256": "c3106a3a5164a02f29ee6e2954cd2a9e2f1c78d97941a58ef923561867d65cba",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-green-ps7.exit.txt",
@@ -198611,7 +198962,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-green-ps7.json",
@@ -198621,7 +198972,7 @@
       ],
       "bytes": 2047,
       "sha256": "4d034203a53078c6d1d7524151e9c62b1ca9e2f4629fea6cf547d738c9a1f558",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-green-ps7.log",
@@ -198631,7 +198982,7 @@
       ],
       "bytes": 258,
       "sha256": "c3106a3a5164a02f29ee6e2954cd2a9e2f1c78d97941a58ef923561867d65cba",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-red.exit.txt",
@@ -198641,7 +198992,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-red.json",
@@ -198651,7 +199002,7 @@
       ],
       "bytes": 2534,
       "sha256": "65b94a6280e2d19bb3394ce7bb8ae99e96b5cc2adefcf03833a61597507d3de7",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/cmake-comments-red.log",
@@ -198661,7 +199012,7 @@
       ],
       "bytes": 258,
       "sha256": "6504b7b38fc39a21af3e28c027b27306b62567a81ed9aa9ea141503889d25569",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-cmake-comment.exit.txt",
@@ -198671,7 +199022,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-cmake-comment.log",
@@ -198681,7 +199032,7 @@
       ],
       "bytes": 479,
       "sha256": "9b9adf243a0328accc9afa9423aeb51ba616e06304a7b51505a09ca950a60a14",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-final.exit.txt",
@@ -198691,7 +199042,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-final.log",
@@ -198701,7 +199052,7 @@
       ],
       "bytes": 3028,
       "sha256": "e9320d905696a37cbdaf8f8f414ffd53cb275f2abf056d87aed1210e779b0723",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-initial.exit.txt",
@@ -198711,7 +199062,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-initial.log",
@@ -198721,7 +199072,7 @@
       ],
       "bytes": 381,
       "sha256": "592ae3ddfece20fdb23b17dd0a9e313d44278103cd0caa30ce14d34cd61f135f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-stale-macro.exit.txt",
@@ -198731,7 +199082,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs-stale-macro.log",
@@ -198741,7 +199092,7 @@
       ],
       "bytes": 422,
       "sha256": "0608037887a3308c8a397fccc0140b4a18e5c6064d334900199eb8c248c12628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs.exit.txt",
@@ -198751,7 +199102,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/docs.log",
@@ -198761,7 +199112,7 @@
       ],
       "bytes": 3028,
       "sha256": "e9320d905696a37cbdaf8f8f414ffd53cb275f2abf056d87aed1210e779b0723",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-cmake-comment.exit.txt",
@@ -198771,7 +199122,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-cmake-comment.log",
@@ -198781,7 +199132,7 @@
       ],
       "bytes": 2847,
       "sha256": "2b6173a8f73ec9070cba4d5774dd237a99a51960b4fe0b3510ffe7bcd38f964d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-final.exit.txt",
@@ -198791,7 +199142,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-final.log",
@@ -198801,7 +199152,7 @@
       ],
       "bytes": 5036,
       "sha256": "f926b5cb8393d71dc2bd12a155331b1d6f798fea65b829bbb832364e3b351785",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-initial.exit.txt",
@@ -198811,7 +199162,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates-initial.log",
@@ -198821,7 +199172,7 @@
       ],
       "bytes": 3660,
       "sha256": "0351c853f430b2dc9a81816f5aae34e812b1daaebb8b207781e0f545eee71dc0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates.exit.txt",
@@ -198831,7 +199182,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/ird_gates.log",
@@ -198841,7 +199192,7 @@
       ],
       "bytes": 5036,
       "sha256": "f926b5cb8393d71dc2bd12a155331b1d6f798fea65b829bbb832364e3b351785",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned.exit.txt",
@@ -198851,7 +199202,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned.log",
@@ -198861,7 +199212,7 @@
       ],
       "bytes": 9915,
       "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/01-clean.log",
@@ -198871,7 +199222,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/02-fixed-baseline.log",
@@ -198881,7 +199232,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/03-all-units.log",
@@ -198891,7 +199242,7 @@
       ],
       "bytes": 36,
       "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/04-missing-source.log",
@@ -198901,7 +199252,7 @@
       ],
       "bytes": 51,
       "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/05-stale-source.log",
@@ -198911,7 +199262,7 @@
       ],
       "bytes": 63,
       "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/06-missing-symbol.log",
@@ -198921,7 +199272,7 @@
       ],
       "bytes": 82,
       "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/07-inventory-omission.log",
@@ -198931,7 +199282,7 @@
       ],
       "bytes": 37,
       "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/08-forged-blob.log",
@@ -198941,7 +199292,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/09-inventory-duplicate.log",
@@ -198951,7 +199302,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/10-inventory-unit.log",
@@ -198961,7 +199312,7 @@
       ],
       "bytes": 109,
       "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/11-new-source.log",
@@ -198971,7 +199322,7 @@
       ],
       "bytes": 166,
       "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/12-stale-change-hash.log",
@@ -198981,7 +199332,7 @@
       ],
       "bytes": 151,
       "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/13-core-even-business.log",
@@ -198991,7 +199342,7 @@
       ],
       "bytes": 97,
       "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/14-cpp-not-governance.log",
@@ -199001,7 +199352,7 @@
       ],
       "bytes": 128,
       "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/15-missing-approval.log",
@@ -199011,7 +199362,7 @@
       ],
       "bytes": 14,
       "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/16-unknown-capability.log",
@@ -199021,7 +199372,7 @@
       ],
       "bytes": 91,
       "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/17-path-traversal.log",
@@ -199031,7 +199382,7 @@
       ],
       "bytes": 28,
       "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/18-missing-task-proof.log",
@@ -199041,7 +199392,7 @@
       ],
       "bytes": 76,
       "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/19-task-scope.log",
@@ -199051,7 +199402,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/20-forbidden-scope.log",
@@ -199061,7 +199412,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/21-stage-not-approved.log",
@@ -199071,7 +199422,7 @@
       ],
       "bytes": 173,
       "sha256": "007db7bbfc7d65db7c2d2051070258a0b4245e0cb338bdf8d31c0492d9e72d7a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/22-final-debt-rejected.log",
@@ -199081,7 +199432,7 @@
       ],
       "bytes": 118,
       "sha256": "890d68ae798925bed77330880023ca6e58b067996048ac0724b7c7cd2e2bcc99",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/23-governance-not-algorithm-approval.log",
@@ -199091,7 +199442,7 @@
       ],
       "bytes": 154,
       "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/24-upstream-readonly.log",
@@ -199101,7 +199452,7 @@
       ],
       "bytes": 180,
       "sha256": "64d5a64d1df59995b7767a99524b8e6257ed23315ecfb4c9f75bbcd96896cf01",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/25-missing-record-file.log",
@@ -199111,7 +199462,7 @@
       ],
       "bytes": 70,
       "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/26-deletion-undeclared.log",
@@ -199121,7 +199472,7 @@
       ],
       "bytes": 101,
       "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/27-forged-debt-closure.log",
@@ -199131,7 +199482,7 @@
       ],
       "bytes": 121,
       "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/28-arbitrary-task-ready.log",
@@ -199141,7 +199492,7 @@
       ],
       "bytes": 164,
       "sha256": "ab9d1dc6f271e7bbbae66846df6723a6d2c252ddd63e37d725b9ccf96bd6efa1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/29-planned-not-executable.log",
@@ -199151,7 +199502,7 @@
       ],
       "bytes": 182,
       "sha256": "2e3326d6556386f23d841442b4f374ed0b36fb4ebc6e42d2dbefc3f070c26100",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/30-forged-build-target.log",
@@ -199161,7 +199512,7 @@
       ],
       "bytes": 70,
       "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/31-frozen-head.log",
@@ -199171,7 +199522,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/32-frozen-head-ignores-dirty-tree.log",
@@ -199181,7 +199532,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/33-frozen-head-repeatable.log",
@@ -199191,7 +199542,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-actual-model-mutation.log",
@@ -199201,7 +199552,7 @@
       ],
       "bytes": 135,
       "sha256": "a54acfb6d10309221b1de1516f5a8533822de78e0dc77cc25804f6324b85c9ae",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-actual-shared-state-write.log",
@@ -199211,7 +199562,7 @@
       ],
       "bytes": 134,
       "sha256": "4a5ecb1ac6e0b0703bfc12b551804adb3963c5cc3d451b541564f32d41ba4237",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-bom-script-frozen-positive.log",
@@ -199221,7 +199572,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-bom-script-worktree-positive.log",
@@ -199231,7 +199582,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-camera-transform-positive.log",
@@ -199241,7 +199592,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-catalog-downgrade-rejected.log",
@@ -199251,7 +199602,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-changed-pending-rejected.log",
@@ -199261,7 +199612,7 @@
       ],
       "bytes": 166,
       "sha256": "9084159cbb6d388b9a9ea8f2e880214f27d890e0ef7b1c4d6541f06865b3c19e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-empty-matrix.log",
@@ -199271,7 +199622,7 @@
       ],
       "bytes": 35,
       "sha256": "5ce6ef98e98e9ae7ebcd4154a582491444aeeea8cfd4e8f9fea3da5a80cc5170",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-fake-resource.log",
@@ -199281,7 +199632,7 @@
       ],
       "bytes": 49,
       "sha256": "59e6ff64d1085bf603a87e59ae8e91553e408967ff6a9e7aa60505a92ffd238c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-forward-model-type.log",
@@ -199291,7 +199642,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-gov-supplement-scope.log",
@@ -199301,7 +199652,7 @@
       ],
       "bytes": 115,
       "sha256": "bf378121ec628ebb3e5857b47dec9ecca70de69f29e975eb919d1d415ab39202",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-host-directory-exemption.log",
@@ -199311,7 +199662,7 @@
       ],
       "bytes": 54,
       "sha256": "9174a53a8a63bb91c0f4536aaeb7d9132781dda0cabb4f9f7e9ace61d799d0f5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-host-origin-bypass.log",
@@ -199321,7 +199672,7 @@
       ],
       "bytes": 141,
       "sha256": "d70ed4bd2c669fe378b09708d5159b2380e46bf86cd1d2936551a1a4ba8ebbd3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-include-without-grant-rejected.log",
@@ -199331,7 +199682,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-math-value-positive.log",
@@ -199341,7 +199692,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-new-cmake-requires-functions.log",
@@ -199351,7 +199702,7 @@
       ],
       "bytes": 123,
       "sha256": "34af43c0862fbafec4cc13758c871f351b99a4569368c982ba6b04182da772d3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-owner-expansion.log",
@@ -199361,7 +199712,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-owner-missing.log",
@@ -199371,7 +199722,7 @@
       ],
       "bytes": 37,
       "sha256": "798e255ee5f77c13ec5513ea26dea1a4bf12257941f65c1bf0294e9b1ac54333",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-permission-schema.log",
@@ -199381,7 +199732,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-private-state-positive.log",
@@ -199391,7 +199742,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-probe-readonly-positive.log",
@@ -199401,7 +199752,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-real-constructor-rejected.log",
@@ -199411,7 +199762,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-real-factory-rejected.log",
@@ -199421,7 +199772,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-real-loader-rejected.log",
@@ -199431,7 +199782,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-real-qt-item-positive.log",
@@ -199441,7 +199792,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-self-approved-closure.log",
@@ -199451,7 +199802,7 @@
       ],
       "bytes": 37,
       "sha256": "fc929d6a60ee75747c7f9bd1d3d440b37622bfdb1bd6758fa23c509c950bb04b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-stage-forged-verdict-rejected.log",
@@ -199461,7 +199812,7 @@
       ],
       "bytes": 55,
       "sha256": "8beb70f364807459e55e12d5e3ae42e8510fb4c214653d835077f3daa70d76f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-stage-future-sha-rejected.log",
@@ -199471,7 +199822,7 @@
       ],
       "bytes": 48,
       "sha256": "b289b8d5e88088c8d712697c1d17475e67ce96aa7b5d99a251f083bee42d68b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-stage-missing-rejected.log",
@@ -199481,7 +199832,7 @@
       ],
       "bytes": 40,
       "sha256": "6727964abf6bfb3048de86a6f8f6a36b1ad3c8d1aa449fed845d56976bc82270",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-state-data-private-write-positive.log",
@@ -199491,7 +199842,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-state-data-shared-write-rejected.log",
@@ -199501,7 +199852,7 @@
       ],
       "bytes": 134,
       "sha256": "4a5ecb1ac6e0b0703bfc12b551804adb3963c5cc3d451b541564f32d41ba4237",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-type-name-in-message-positive.log",
@@ -199511,7 +199862,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-unknown-catalog-schema.log",
@@ -199521,7 +199872,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-unknown-matrix-schema.log",
@@ -199531,7 +199882,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-unknown-role.log",
@@ -199541,7 +199892,7 @@
       ],
       "bytes": 26,
       "sha256": "0f3b2265cc953e67ac184f958b2500b5fc1b210a465212ca8e16ec81b92443c3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-usage-operation-expansion.log",
@@ -199551,7 +199902,7 @@
       ],
       "bytes": 51,
       "sha256": "a26ae1e991a4cf5c9b58b92ebcb4456ae0665ee0d1ae38880ff894b97f2fb341",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-value-origin-bypass.log",
@@ -199561,7 +199912,7 @@
       ],
       "bytes": 131,
       "sha256": "7b6df9ce41bda4122dae06335e41ade4358dbf15f9dee038efb3651c8601e840",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-value-without-matrix-rejected.log",
@@ -199571,7 +199922,7 @@
       ],
       "bytes": 125,
       "sha256": "374e566dea881ee94d3c205c648d478280da2bbaf382e909fc229ad8fbedce84",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/ad-wrong-matrix-unit.log",
@@ -199581,7 +199932,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/business-specific-needs-evidence.log",
@@ -199591,7 +199942,7 @@
       ],
       "bytes": 44,
       "sha256": "32ef652a0367e56b5ab4b0365fa627698bf45fdfe5ecfc8a6f11c2049f47f776",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-accepted-matrix-missing.log",
@@ -199601,7 +199952,7 @@
       ],
       "bytes": 58,
       "sha256": "47c6f92f5f3ac0b2d02be9915c6958758fe8ce85da91a84ad7b94f0303214264",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-baseline-cannot-use-absent.log",
@@ -199611,7 +199962,7 @@
       ],
       "bytes": 117,
       "sha256": "24acbbbeb233f99aa2ab15517a0436d879310793195d043c5147c9fe96182fe1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-bom-log-positive.log",
@@ -199621,7 +199972,7 @@
       ],
       "bytes": 239,
       "sha256": "90fe2ba226df136e87d1991a070c28be0e1e5d58a732c50de9e1cb4cb30031f0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-changed-function-after-pass.log",
@@ -199631,7 +199982,7 @@
       ],
       "bytes": 78,
       "sha256": "ad763dda4042fec3fdcca58177833084046ba395162132e87caf5d73b2a8d8a8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-current-positive.log",
@@ -199641,7 +199992,7 @@
       ],
       "bytes": 239,
       "sha256": "90fe2ba226df136e87d1991a070c28be0e1e5d58a732c50de9e1cb4cb30031f0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-deleted-replacement-positive.log",
@@ -199651,7 +200002,7 @@
       ],
       "bytes": 239,
       "sha256": "8694dd3d68bc3c580b39fb1ffe8a181fa6af4d8a2a55c935774d5870ae45665c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-deletion-missing-replaces.log",
@@ -199661,7 +200012,7 @@
       ],
       "bytes": 122,
       "sha256": "0b61f0976f50054faf05be0c9419cb5877aa2f90e84ca8a7cffcf4759d013156",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-mutable-reference-rejected.log",
@@ -199671,7 +200022,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-new-file-cannot-use-blob.log",
@@ -199681,7 +200032,7 @@
       ],
       "bytes": 139,
       "sha256": "6fbaa3db902ef14e3d5eeb469f51ef95f9184167f3bd53a49402f2db1e1743f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-new-file-no-independent-record.log",
@@ -199691,7 +200042,7 @@
       ],
       "bytes": 147,
       "sha256": "35b957f5e4c29bed25e6033b6076e9898be9f83da0f934d0458e58fd80785658",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-new-file-omitted-final.log",
@@ -199701,7 +200052,7 @@
       ],
       "bytes": 149,
       "sha256": "c3e29c7d9c6d7c3a7dba05ed4fcc2ba5fa19f626d3fe10c367fc9834f78a765f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/closure-record-path-rejected.log",
@@ -199711,7 +200062,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-changed-restricted-pending-rejected.log",
@@ -199721,7 +200072,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-deleted-replacement-unknown.log",
@@ -199731,7 +200082,7 @@
       ],
       "bytes": 112,
       "sha256": "12b3baf4447432d09cab4ba0508012f313371748d6492791b7836a7bc896e38f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-duplicate-relation.log",
@@ -199741,7 +200092,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-existing-restricted-audited-rejected.log",
@@ -199751,7 +200102,7 @@
       ],
       "bytes": 174,
       "sha256": "f8eb26172fdfbc41288745f0e9adf6acd2e91221d85f786b18ac9ccfc2b259f2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-existing-restricted-pending-positive.log",
@@ -199761,7 +200112,7 @@
       ],
       "bytes": 460,
       "sha256": "4eb3fa5ead8cb83d4ae2019a262a5dd7bd2ab2a2bf34f706049f68e5f9fb91ea",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-fake-capability.log",
@@ -199771,7 +200122,7 @@
       ],
       "bytes": 47,
       "sha256": "24e2efc6ef35a45dc8375f3d5cba6c5b8ef55998c3597771192a5954a9ff0613",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-final-restricted-pending-rejected.log",
@@ -199781,7 +200132,7 @@
       ],
       "bytes": 63,
       "sha256": "4434ca0343fa79a4a218e0ab0c17b5c354a9e6ee86a92acba85bf801f3d990d0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-pending-positive.log",
@@ -199791,7 +200142,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-region-outside-file.log",
@@ -199801,7 +200152,7 @@
       ],
       "bytes": 118,
       "sha256": "53d60b37a962c342e880674439a1e899234d0c5dbbfa92564c9c85dd173ff89a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-role-not-layer.log",
@@ -199811,7 +200162,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-stale-build-input.log",
@@ -199821,7 +200172,7 @@
       ],
       "bytes": 91,
       "sha256": "81d8b72bd74d3e4447f7a7365abfd41eada5f01365c0062634406e03b23d5464",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-stale-region.log",
@@ -199831,7 +200182,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-symbol-not-present.log",
@@ -199841,7 +200192,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-unapproved-permission.log",
@@ -199851,7 +200202,7 @@
       ],
       "bytes": 38,
       "sha256": "82f4cb98574e989fbd4f85264f50a2087a18ef4e06686c9efb6775444fd8d8e3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/function-unresolved-not-migrated.log",
@@ -199861,7 +200212,7 @@
       ],
       "bytes": 43,
       "sha256": "e8094bb5c029f523b4cc3593c4952d7df4c6db4a2b8e58cdd16f5a34d0c59c28",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-business-construction-rejected.log",
@@ -199871,7 +200222,7 @@
       ],
       "bytes": 127,
       "sha256": "6a04b39e965a8c8f44656c4090d340d2b7b62089c4ebc7d934cf010134169405",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-business-owner-rejected.log",
@@ -199881,7 +200232,7 @@
       ],
       "bytes": 108,
       "sha256": "ec7f43d158696b56f55e4935d77b99948cc74721b00860ea52cb51de079c1d8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-commented-target-rejected.log",
@@ -199891,7 +200242,7 @@
       ],
       "bytes": 127,
       "sha256": "e459f4a0852b2924ec44c43f4ce207abbda3ef632fd1501a21eb9ecb548c6a38",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-HOST-COMPILE-positive.log",
@@ -199901,7 +200252,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-HOST-GATEWAY-positive.log",
@@ -199911,7 +200262,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-HOST-PRESENT-positive.log",
@@ -199921,7 +200272,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-HOST-RENDER-positive.log",
@@ -199931,7 +200282,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-readonly-positive.log",
@@ -199941,7 +200292,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-runtime-owner-positive.log",
@@ -199951,7 +200302,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-shared-state-write-rejected.log",
@@ -199961,7 +200312,7 @@
       ],
       "bytes": 104,
       "sha256": "723d9c4236ec358224e9c9850abfc455c1c757016981a1b7f4dbe5737f88e275",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-stale-source.log",
@@ -199971,7 +200322,7 @@
       ],
       "bytes": 90,
       "sha256": "0cefc9c7f46ddf717aef5a5b43834051b0b44d77ee6c96ea85c1389f593fc65f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-unknown-target-rejected.log",
@@ -199981,7 +200332,7 @@
       ],
       "bytes": 134,
       "sha256": "44dc80f54e2a2d384c7dbcaa993eb5bb6d2608191f8a7bc671826b1267a448a5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-worker-runtime-borrow-rejected.log",
@@ -199991,7 +200342,7 @@
       ],
       "bytes": 126,
       "sha256": "e2589441052e4e16aeb4124fb66f65687e285c50417051e73b8e0c2b4989333e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/grant-worker-task-private-rejected.log",
@@ -200001,7 +200352,7 @@
       ],
       "bytes": 132,
       "sha256": "67f1dcaf4adacc4b44f7b97ff6bdd07ef1acd827c2a4e652c59be3ebd732866e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/positive-evidence-required.log",
@@ -200011,7 +200362,7 @@
       ],
       "bytes": 36,
       "sha256": "abf1c5b5100da066c4592f5c93cfabe478802e1b0e896601a50709417930b489",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-demo-entry-rejected.log",
@@ -200021,7 +200372,7 @@
       ],
       "bytes": 64,
       "sha256": "d395a251c362570066b0522967a4530f1b10a20c9e5d1d64dfa9db216c0cdd12",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-disconnect-stays-green.log",
@@ -200031,7 +200382,7 @@
       ],
       "bytes": 55,
       "sha256": "7a9da254f69de5f0f4664841275dca5fe9d24b163185b0da919f0fd0a5a0625e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-empty-xml-shell.log",
@@ -200041,7 +200392,7 @@
       ],
       "bytes": 61,
       "sha256": "16737d28d1fede08b54c24d6e25d011d6b1bb9c26eed2f9a0dc2fc1239602a8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-missing-dependency.log",
@@ -200051,7 +200402,7 @@
       ],
       "bytes": 133,
       "sha256": "004c2eaef5bda9f94ca1739f245010dfe6f3fc8010ab6c6136ce6805c7a5b382",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-mutation-no-change.log",
@@ -200061,7 +200412,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-oracle-failed.log",
@@ -200071,7 +200422,7 @@
       ],
       "bytes": 61,
       "sha256": "f5ffd57b727f9a6cde9046fc8360bab12d1df938800cc8db6ec2468991863bcd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-review-version-fake.log",
@@ -200081,7 +200432,7 @@
       ],
       "bytes": 65,
       "sha256": "2da6b09dc59ade8ceabddb5a936ef9fcdcf3a23eeb1c153b7f9c5478545264fd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-stale-log.log",
@@ -200091,7 +200442,7 @@
       ],
       "bytes": 78,
       "sha256": "ff0584553e1c9eb4c714c7032fed55e0a351058601c4d452e0fa4db2c235c9ed",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-structure-positive.log",
@@ -200101,7 +200452,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-unverified-capability.log",
@@ -200111,7 +200462,7 @@
       ],
       "bytes": 45,
       "sha256": "a9ff83d59c89ad688e046caf1bf6b3d8f75ea6d20c3a07789ee4c3ecaaf0bde2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-upstream-comparison-failed.log",
@@ -200121,7 +200472,7 @@
       ],
       "bytes": 73,
       "sha256": "1d30234029f05fefefec2462744de73813752beaad8ec38095217e6d84552919",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/production-wrong-mutation-source.log",
@@ -200131,7 +200482,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/proposal-needs-file.log",
@@ -200141,7 +200492,7 @@
       ],
       "bytes": 34,
       "sha256": "a20a9b8aa81b129b8de485e724e50944b12ba863cdc053109b4bc0839ec09de2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/reuse-governance.junit.xml",
@@ -200151,7 +200502,7 @@
       ],
       "bytes": 7419,
       "sha256": "b146a64752e55401d7cdcb164db7f9065a93dcf57237d0900bfb64ab79033041",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/reuse-test-report.json",
@@ -200161,7 +200512,7 @@
       ],
       "bytes": 43470,
       "sha256": "efc9f895731a43cbf69b7dc48d729ae621ffa67b22176df509e5aae4653947ce",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-no-fake-target.log",
@@ -200171,7 +200522,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-reject-cmake-target.log",
@@ -200181,7 +200532,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-reject-fake-migration.log",
@@ -200191,7 +200542,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-reject-other-directory.log",
@@ -200201,7 +200552,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-reject-product-escape.log",
@@ -200211,7 +200562,7 @@
       ],
       "bytes": 74,
       "sha256": "1e0ed70d930b943eea3733e240ca05f2c45a76cc54a92b3b369084e2d3c766da",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-reject-production-disguise.log",
@@ -200221,7 +200572,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-require-own-context.log",
@@ -200231,7 +200582,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-require-real-entry-binding.log",
@@ -200241,7 +200592,7 @@
       ],
       "bytes": 43,
       "sha256": "bccdc610c4b9ee0a90d3fcc50ed9c7a0db712558c5f3be56486dbdc60dfe9ebe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-sourced-helper.log",
@@ -200251,7 +200602,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/script-audit-stale-context.log",
@@ -200261,7 +200612,7 @@
       ],
       "bytes": 66,
       "sha256": "20900737d271299f6a912afe196a927c4fe5374ef3f35f13d313de0e568fdea8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-c.log",
@@ -200271,7 +200622,7 @@
       ],
       "bytes": 164,
       "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-cu.log",
@@ -200281,7 +200632,7 @@
       ],
       "bytes": 165,
       "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-html.log",
@@ -200291,7 +200642,7 @@
       ],
       "bytes": 167,
       "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-inc.log",
@@ -200301,7 +200652,7 @@
       ],
       "bytes": 155,
       "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-inl.log",
@@ -200311,7 +200662,7 @@
       ],
       "bytes": 166,
       "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-ipp.log",
@@ -200321,7 +200672,7 @@
       ],
       "bytes": 166,
       "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-mjs.log",
@@ -200331,7 +200682,7 @@
       ],
       "bytes": 166,
       "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-opaque.log",
@@ -200341,7 +200692,7 @@
       ],
       "bytes": 158,
       "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-ps1.log",
@@ -200351,7 +200702,7 @@
       ],
       "bytes": 166,
       "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-py.log",
@@ -200361,7 +200712,7 @@
       ],
       "bytes": 165,
       "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-tpp.log",
@@ -200371,7 +200722,7 @@
       ],
       "bytes": 166,
       "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/suffix-ts.log",
@@ -200381,7 +200732,7 @@
       ],
       "bytes": 165,
       "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/upstream-arbitrary-test-build-path-rejected.log",
@@ -200391,7 +200742,7 @@
       ],
       "bytes": 57,
       "sha256": "4be57883b605af15036b590aa4269ea903041be1821f489aecc80199bc06ee9d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-pinned/upstream-gtest-build-target.log",
@@ -200401,7 +200752,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite.log",
@@ -200411,7 +200762,7 @@
       ],
       "bytes": 2158,
       "sha256": "fe1daaf781c0fa695d33a24c74e28a5990f156f76898a1aee9d6dfa2803fe7ca",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/01-clean.log",
@@ -200421,7 +200772,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/02-fixed-baseline.log",
@@ -200431,7 +200782,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/03-all-units.log",
@@ -200441,7 +200792,7 @@
       ],
       "bytes": 36,
       "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/04-missing-source.log",
@@ -200451,7 +200802,7 @@
       ],
       "bytes": 51,
       "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/05-stale-source.log",
@@ -200461,7 +200812,7 @@
       ],
       "bytes": 63,
       "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/06-missing-symbol.log",
@@ -200471,7 +200822,7 @@
       ],
       "bytes": 82,
       "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/07-inventory-omission.log",
@@ -200481,7 +200832,7 @@
       ],
       "bytes": 37,
       "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/08-forged-blob.log",
@@ -200491,7 +200842,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/09-inventory-duplicate.log",
@@ -200501,7 +200852,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/10-inventory-unit.log",
@@ -200511,7 +200862,7 @@
       ],
       "bytes": 109,
       "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/11-new-source.log",
@@ -200521,7 +200872,7 @@
       ],
       "bytes": 166,
       "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/12-stale-change-hash.log",
@@ -200531,7 +200882,7 @@
       ],
       "bytes": 151,
       "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/13-core-even-business.log",
@@ -200541,7 +200892,7 @@
       ],
       "bytes": 97,
       "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/14-cpp-not-governance.log",
@@ -200551,7 +200902,7 @@
       ],
       "bytes": 128,
       "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/15-missing-approval.log",
@@ -200561,7 +200912,7 @@
       ],
       "bytes": 14,
       "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/16-unknown-capability.log",
@@ -200571,7 +200922,7 @@
       ],
       "bytes": 91,
       "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/17-path-traversal.log",
@@ -200581,7 +200932,7 @@
       ],
       "bytes": 28,
       "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/18-missing-task-proof.log",
@@ -200591,7 +200942,7 @@
       ],
       "bytes": 76,
       "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/19-task-scope.log",
@@ -200601,7 +200952,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/20-forbidden-scope.log",
@@ -200611,7 +200962,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/21-stage-not-approved.log",
@@ -200621,7 +200972,7 @@
       ],
       "bytes": 57,
       "sha256": "102f4cfcbe65c10cec16303ccf9b981b23ef53d908b3710fb115ec36b5a6697f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/22-final-debt-rejected.log",
@@ -200631,7 +200982,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/23-governance-not-algorithm-approval.log",
@@ -200641,7 +200992,7 @@
       ],
       "bytes": 154,
       "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/24-upstream-readonly.log",
@@ -200651,7 +201002,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/INCOMPLETE.md",
@@ -200661,7 +201012,7 @@
       ],
       "bytes": 219,
       "sha256": "410e4fd80d8ffcb2ee622ea0f002885b6cf40af36411393d451f126dd637fa5f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-no-fake-target.log",
@@ -200671,7 +201022,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-reject-cmake-target.log",
@@ -200681,7 +201032,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-reject-fake-migration.log",
@@ -200691,7 +201042,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-reject-other-directory.log",
@@ -200701,7 +201052,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-reject-product-escape.log",
@@ -200711,7 +201062,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-reject-production-disguise.log",
@@ -200721,7 +201072,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-require-own-context.log",
@@ -200731,7 +201082,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-require-real-entry-binding.log",
@@ -200741,7 +201092,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-sourced-helper.log",
@@ -200751,7 +201102,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/t07-governance-suite/script-audit-stale-context.log",
@@ -200761,7 +201112,7 @@
       ],
       "bytes": 66,
       "sha256": "97d452a2cc92e16d4681c639fae0b10265c10cf17dc5eb97057b0aac6543f3a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/gates/TestCMakeComments.ps1",
@@ -200771,7 +201122,7 @@
       ],
       "bytes": 2553,
       "sha256": "9d05205cab2996863194a9a1cd34bb939c759634c9b859fb942e2c002acf32df",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/initial-green/exit.txt",
@@ -200781,7 +201132,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/initial-green/gtest.xml",
@@ -200791,7 +201142,7 @@
       ],
       "bytes": 167074,
       "sha256": "03a28494f3f4b32d71277e0d0ab3cb80474504eb0a8e1a70a80ec5c7d758f458",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/initial-green/ird-test-report.json",
@@ -200801,7 +201152,7 @@
       ],
       "bytes": 389064,
       "sha256": "cade73ef26fdb6d988fd958d37bb106261bcc88c655e2fe78a6bcca3656e315b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/initial-green/run.log",
@@ -200811,7 +201162,7 @@
       ],
       "bytes": 81993,
       "sha256": "d974bcce6ffd31bb5e6ccbd7e5c5f73695535b1b0e6a50cdbaf8a933675f0b1d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/normal/exit.txt",
@@ -200821,7 +201172,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/normal/gtest.xml",
@@ -200831,7 +201182,7 @@
       ],
       "bytes": 167470,
       "sha256": "e90bf5bbbfda3e943f45db336d9ac2602b08d9ad08b06e58ecea37fff471c755",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/normal/ird-test-report.json",
@@ -200841,7 +201192,7 @@
       ],
       "bytes": 389795,
       "sha256": "15f724376240e1de0f547a131c8eb619c53b3adac1055abc0bb2cfd494f630f3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/normal/run.log",
@@ -200851,7 +201202,7 @@
       ],
       "bytes": 82157,
       "sha256": "9dea38acf9bfdd84d783341c9898208a28c48722f6ba71dd000c2480ae9b90fe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/production.json",
@@ -200861,7 +201212,7 @@
       ],
       "bytes": 6469,
       "sha256": "db7f25d2ac5c7a808219e66814c67ebd8d87983505894beb71849bd293b82731",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/README.md",
@@ -200871,7 +201222,7 @@
       ],
       "bytes": 2903,
       "sha256": "19d82ef697d0e6a782996d4b9f4f815b422588ff88f6228cd320182c862e06df",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/red/exit.txt",
@@ -200881,7 +201232,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/red/gtest.xml",
@@ -200891,7 +201242,7 @@
       ],
       "bytes": 14452,
       "sha256": "63b8b7867e29038f5b7c3823bdd030ca8a3018e18d4291560e209a6e4ecf28bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/red/ird-test-report.json",
@@ -200901,7 +201252,7 @@
       ],
       "bytes": 30749,
       "sha256": "88d7cb7846deae631f75b4d58f4fcb4b72c74062c3cb5b06bf7e93de63bf70e1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/red/run.log",
@@ -200911,7 +201262,7 @@
       ],
       "bytes": 7182,
       "sha256": "f62c823846be003222a56f493cc42504ee3fdc3f1b11ebc1f0de26302464515b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/results.json",
@@ -200921,7 +201272,7 @@
       ],
       "bytes": 2667,
       "sha256": "6e22db92b24a85f7bedcd66a08cb6619879f641eb86b125da3b1e2e010836323",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/search.log",
@@ -200931,7 +201282,7 @@
       ],
       "bytes": 7912,
       "sha256": "2e334574b28709e73014c6f14be09cd36170c5f8551ee68677d0425bd853fc5b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke-contract/exit.txt",
@@ -200941,7 +201292,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke-contract/gtest.xml",
@@ -200951,7 +201302,7 @@
       ],
       "bytes": 3337,
       "sha256": "6f7a938df2c26865825d28f83f82812d97c25a8476b0ed482ff89d2b57154b8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke-contract/ird-test-report.json",
@@ -200961,7 +201312,7 @@
       ],
       "bytes": 6709,
       "sha256": "e1252658dcd0cff7caf0db994ecb812586ac27335e5ab6c96934c34f5436e90f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke-contract/run.log",
@@ -200971,7 +201322,7 @@
       ],
       "bytes": 1748,
       "sha256": "0f50e9650e6dc6c5d3b98c51d847d3c53ddd8fbed5f43228a3106d03263630ea",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke/exit.txt",
@@ -200981,7 +201332,7 @@
       ],
       "bytes": 2,
       "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke/gtest.xml",
@@ -200991,7 +201342,7 @@
       ],
       "bytes": 129543,
       "sha256": "2b5971f6f741f77b4a14e5edb854f10c8a25d52a4156c86f8ed042e29ae4bb0c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke/ird-test-report.json",
@@ -201001,7 +201352,7 @@
       ],
       "bytes": 304703,
       "sha256": "337f9527dfd83ab798e922843d97257bcd84765d220624bb36e5d00f13e626cb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/smoke/run.log",
@@ -201011,7 +201362,7 @@
       ],
       "bytes": 62957,
       "sha256": "19793fcc4285dd049c9cb54314088b4b09db87f414aa1182fdaf4b1931bbf757",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/stale-restoration/exit.txt",
@@ -201021,7 +201372,7 @@
       ],
       "bytes": 2,
       "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/stale-restoration/gtest.xml",
@@ -201031,7 +201382,7 @@
       ],
       "bytes": 195025,
       "sha256": "3351242817ce266e59c899f30d3e60b55d4950760cc47aa1084f9102c74a2bc0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/stale-restoration/ird-test-report.json",
@@ -201041,7 +201392,7 @@
       ],
       "bytes": 390369,
       "sha256": "ff269d5927ec4b9b29279fa7a508d56b4e1bf43bbfd715fe3a6a61be4eb25ea4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T07/stale-restoration/run.log",
@@ -201051,7 +201402,7 @@
       ],
       "bytes": 95268,
       "sha256": "feb7c683919f5b8b9756d3f62e806a217365a36b22d05c6aeac4674dad4c0af7",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T08/probe/CMakeLists.txt",

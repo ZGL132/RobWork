@@ -1,0 +1,37 @@
+== 1. frozen faces: closures.json / permissions.json / industrialrobot/cmake (collapsed & rework segments, expect 0) ==
+collapsed RobWork/doc/industrial-robot-design/reuse/closures.json: 0
+rework   RobWork/doc/industrial-robot-design/reuse/closures.json: 0
+collapsed RobWork/doc/industrial-robot-design/reuse/permissions.json: 0
+rework   RobWork/doc/industrial-robot-design/reuse/permissions.json: 0
+collapsed industrialrobot/cmake/: 0
+rework   industrialrobot/cmake/: 0
+== 2. T07 product files blob identity impl-head vs review-head (migration result NOT rolled back) ==
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CouplingMath.hpp impl=9edee4d8557e00166f2342508aa2f63943e9e2a2 review=9edee4d8557e00166f2342508aa2f63943e9e2a2 worktree=9edee4d8557e00166f2342508aa2f63943e9e2a2 IDENTICAL
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt impl=943a429493bbbdb2ddf3f7f70ba7c96d10481515 review=943a429493bbbdb2ddf3f7f70ba7c96d10481515 worktree=0b9e7dd3d76f90abb86fd08511b18eb4f7de9932 DIFFER
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CouplingReuseTest.cpp impl=c6d7f254f1452ee79cd15fd501c75b8d0d8c975e review=c6d7f254f1452ee79cd15fd501c75b8d0d8c975e worktree=c6d7f254f1452ee79cd15fd501c75b8d0d8c975e IDENTICAL
+== 3. contract substantive diff impl-head..review-head (expect only note + allowedFiles +3) ==
+-    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1"
++    "RobWork/scripts/industrialrobot/test-reuse-governance.ps1",
+-  "note": "所有者2026-10-23明确授权本能力首先交付；纯值rw::math不构造模型/State，无T02依赖。原MATH-SVD/CouplingMath审计为输入，实施时补本能力完整证据。全T01覆盖筛查继续；ready仅授权此精确范围实施，不表示已独验。 本包实际构建暴露AD把CMake #注释当模型操作的误报，精确修复CheckSourcePermission的CMake注释处理；不豁免真实对象/操作，不发模型grant；PS7/PS5.1正反回归纳入verify及完整能力独验。 全套治理自测改用已独验GOV-T22固定夹具提交，执行本工作树真实validator/helper的全部152正反例；与当前产品工作树的validate-reuse/ird_gates分开验证，不能互相替代。",
++  "note": "所有者2026-10-23明确授权本能力首先交付；纯值rw::math不构造模型/State，无T02依赖。原MATH-SVD/CouplingMath审计为输入，实施时补本能力完整证据。全T01覆盖筛查继续；ready仅授权此精确范围实施，不表示已独验。 本包实际构建暴露AD把CMake #注释当模型操作的误报，精确修复CheckSourcePermission的CMake注释处理；不豁免真实对象/操作，不发模型grant；PS7/PS5.1正反回归纳入verify及完整能力独验。 全套治理自测改用已独验GOV-T22固定夹具提交，执行本工作树真实validator/helper的全部152正反例；与当前产品工作树的validate-reuse/ird_gates分开验证，不能互相替代。 2026-10-24 r1独立验收FAIL返工：①送验范围由bfe024cd0..8e4a08ac8（grep首提交父级推导，303路径17越界）收敛为c27349a80..8e4a08ac8（实测scope PASS 286路径、commit-lint PASS 1提交）——c27349a80准入提交的17个治理路径（audit-contract/migration/policy三文本、T01/T02/T05/T06四契约、T01 capability-plan十件）属REUSE-T01审计包治理面并已含于REUSE-T01-20261024-r2（pass，6509e5e4..9d889781，ancestor已核），不补allowedFiles消化；仅追加本任务r1验收产物3条allowedFiles，forbiddenFiles零改动。②性能退化获所有者2026-10-24经主会话AskUserQuestion（工作流dwfrun-d425945b）明示接受：原件4.662倍（0.09174→0.42767µs）、复测约3.46倍（0.11802→0.40896µs）、绝对增量约0.41µs/次、生产路径建模编辑/就绪校验非实时回路、checksum 280400等价，按REUSE-T20 2ac114f33登记先例形态；接受仅覆盖本能力已展示数据，不推导其他能力预算，运行效果仍交独验核查，不回滚迁移成果。处置登记：traceability/acceptance/REUSE-T07-20261024-r1-fix/README.md；status保持ready待所有者按收敛口径重跑独验r2，独验不由实施者自签。",
+== 4. Jacobi reflux grep on current modeling product sources ==
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\CouplingMath.hpp:7: * Jacobi 或备用算法。适配只处理行主序输入、极端有限尺度和返回值容器。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:553:std::vector<double> numericJacobian(const std::vector<double>& x,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:630:        const std::vector<double> j = numericJacobian(x0, targets);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:736:    const std::vector<double>& jacobian, std::size_t m, std::size_t n)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:738:    std::vector<double> a = jacobian;  // 消元工作副本
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:1524:    const std::vector<double> jacobian = numericJacobian(chosen.x, targets);
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\DhConvert.cpp:1526:        jacobian, targets.size() * 6, chosen.x.size());
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/\Parts.cpp:281:    // ---- ⑤⑥ 数值档（奇异/病态）：单侧 Jacobi SVD 重算（I-MDL-11"可逆、
+== 5. governance/gates scripts blob identity at three points ==
+RobWork/scripts/industrialrobot/reuse-contract.ps1 => CHANGED
+RobWork/scripts/industrialrobot/test-reuse-governance.ps1 => SAME
+RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/gates/TestCMakeComments.ps1 => SAME
+== 6. closures.json current closedFiles (T07 must not appear) ==
+
+== 7. L2 zero-Qt: CouplingMath.hpp include face ==
+0
+6
+== 8. upstream SVD call still in place ==
+6: * 分解唯一来源为 rw::math::LinearAlgebra::svd（sdurw_math），不保留自写
+91:    rw::math::LinearAlgebra::svd(matrix, u, sigma, v);
