@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T23",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T23.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/RunRegistry.cpp",
+      "sha256": "142c7fd9c60ddaeec5f4ad5f45b336d924aae24eb718ce04c28cc7004fefd9b3",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "原RunRegistry业务状态写入顺序修正；复用既有core状态/错误轨/登记事实，不新增核心或上游调用；真实拒绝红例和直接生产接纳/缓存消费者通过，独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+      "sha256": "c2f47198cee7fc4d7ccd123166b6f1637de73da47c7797f4da513bc0094cfbd4",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "仅原终结用例加14行快照/合法取消/一次写入断言；保留原25测试及夹具工厂/真实ProjectStore，不新增测试框架或算法oracle。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T23/README.md"
+    }
+  ]
+}

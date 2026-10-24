@@ -1,0 +1,11 @@
+**********************************************************************
+** Visual Studio 2022 Developer Command Prompt v17.12.0
+** Copyright (c) 2022 Microsoft Corporation
+**********************************************************************
+[vcvarsall.bat] Environment initialized for: 'x64'
+[       OK ] CacheCoordinatorTest.EX_CCH_2_StoreGateOnlyFinalizedCompleted (0 ms)
+[----------] 1 test from CacheCoordinatorTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 26 tests from 2 test suites ran. (880 ms total)
+[  PASSED  ] 26 tests.

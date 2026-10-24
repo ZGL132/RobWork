@@ -311,7 +311,6 @@ void RunRegistry::markTerminated(core::RunId run, TerminationCause cause)
         throw ExecutionError(ExecutionErrorCode::InvalidState,
                              "execution/run-registry: 登记已带终结标记，不允许二次写入");
     }
-    rec->terminationCause = cause;
     // 状态镜像随终结同步（§9.1 currentState 行"随任务状态机同步"）：
     // 强杀在状态轴上是 Failed（TerminationCause 只携带区分标记——TaskTypes
     // 注），Completed 不经本方法（接纳完成走 noteAdmissionCompleted）。
@@ -332,6 +331,10 @@ void RunRegistry::markTerminated(core::RunId run, TerminationCause cause)
         throw ExecutionError(ExecutionErrorCode::InvalidState,
                              "execution/run-registry: Completed 终结须经接纳路径（noteAdmissionCompleted）");
     }
+    // REUSE-T23/F-964：完成所有可抛出的契约检查后，再提交一次终结标记。
+    // 上方只有合法分支会写状态；枚举/optional赋值不抛异常，且仅调度线程访问，
+    // 因此拒绝Completed时两字段均保持原值，不会污染后续合法取消。
+    rec->terminationCause = cause;
 }
 
 void RunRegistry::noteAdmissionCompleted(core::RunId run)

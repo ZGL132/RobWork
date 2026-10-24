@@ -1,0 +1,36 @@
+Note: Google Test filter = RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(683): error: Expected equality of these values:
+  rejected->terminationCause
+    Which is: (4-byte object <02-00 00-00>)
+  before->terminationCause
+    Which is: (nullopt)
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(685): error: Expected: m_registry.markTerminated(other.run, TerminationCause::Canceled) doesn't throw an exception.
+  Actual: it throws sdurws::ird::execution::ExecutionError with description "execution/run-registry: 登记已带终结标记，不允许二次写入".
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(688): error: Expected equality of these values:
+  canceled->terminationCause
+    Which is: (4-byte object <02-00 00-00>)
+  TerminationCause::Canceled
+    Which is: 4-byte object <00-00 00-00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\test\RunRegistryAdmissionTest.cpp(689): error: Expected equality of these values:
+  canceled->currentState
+    Which is: 4-byte object <02-00 00-00>
+  core::TaskState::Canceled
+    Which is: 4-byte object <05-00 00-00>
+
+[  FAILED  ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState (28 ms)
+[----------] 1 test from RunRegistryAdmissionTest (28 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (32 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] RunRegistryAdmissionTest.MarkTerminatedWritesOnceAndMirrorsState
+
+ 1 FAILED TEST
