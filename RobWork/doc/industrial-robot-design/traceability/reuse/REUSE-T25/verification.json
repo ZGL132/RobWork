@@ -1,0 +1,73 @@
+{
+  "task": "REUSE-T25",
+  "base": "c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215",
+  "delivery": "candidate only; production restored; NOT MIGRATED",
+  "independentAcceptance": "NOT RUN",
+  "inputs": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "baselineSha256": "292501fc6015f28ce4c2c7a5e32af4a56d2dd88915b25f3c40204382cdac890c",
+      "candidateSha256": "f6bcf34d3f78088f6ec7ae010339c2983b71f4a77365cb0d31c9a7d7c89533f9"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+      "baselineSha256": "c98e2ef8d410cf590615252668d18631a44665d5e71a5eba7319483edc931aab",
+      "candidateSha256": "f88f1daa50bede9ead89f12e4c9524eb6f52be27bb6070a368e8e46b56949d94"
+    }
+  ],
+  "patch": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T25/candidate.patch",
+    "sha256": "6178fac5c7fb55a0fbf70d0f412dc81fde76be15cd2215b132116ff4f0a3fbfa"
+  },
+  "sdk": {
+    "path": "D:\\Windows Kits\\10\\Include\\10.0.22621.0\\shared\\winerror.h",
+    "rawSha256": "241f475c7c52085f1c9fcc9b851a9fa53484c7c8a7c0841caf3f28f01d7efb3a",
+    "definitions": [
+      "#define ERROR_ACCESS_DENIED              5L",
+      "#define ERROR_SHARING_PAUSED             70L",
+      "#define ERROR_DISK_FULL                  112L",
+      "#define ERROR_CLOUD_FILE_ACCESS_DENIED   395L",
+      "#define ERROR_DISK_QUOTA_EXCEEDED        1295L"
+    ]
+  },
+  "runs": [
+    {
+      "label": "red",
+      "exitCode": 1,
+      "total": 2,
+      "failed": 2,
+      "skipped": 0,
+      "xml": "red.xml",
+      "report": "red-report.json",
+      "log": "red.log"
+    },
+    {
+      "label": "green",
+      "exitCode": 1,
+      "total": 31,
+      "failed": 1,
+      "skipped": 0,
+      "xml": "green.xml",
+      "report": "green-report.json",
+      "log": "green.log"
+    },
+    {
+      "label": "final",
+      "exitCode": 0,
+      "total": 31,
+      "failed": 0,
+      "skipped": 0,
+      "xml": "final.xml",
+      "report": "final-report.json",
+      "log": "final.log"
+    }
+  ],
+  "architecture": {
+    "exitCode": 0,
+    "log": "architecture-gates.log"
+  },
+  "performance": {
+    "status": "NOT RUN",
+    "reason": "编译期错误身份替换，控制流/分配结构未变；候选未准入，不另造形式微基准"
+  }
+}

@@ -1,0 +1,77 @@
+Note: Google Test filter = TxEngineTest.*:ProjectStoreTest.WriteChannel_*:ProjectStoreTest.Tx9_UncommittedRevision_*:CommandSubmitS6.*:CommandSubmitD18.*
+[==========] Running 31 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 21 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+[       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (61 ms)
+[ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+[       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (63 ms)
+[ RUN      ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned
+[       OK ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned (62 ms)
+[ RUN      ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester
+[       OK ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester (65 ms)
+[ RUN      ] TxEngineTest.F963_SdkWriteErrors_StableCategoryAndUnchangedBytes
+[       OK ] TxEngineTest.F963_SdkWriteErrors_StableCategoryAndUnchangedBytes (28 ms)
+[ RUN      ] TxEngineTest.F1_PrepareFails_StagingDirCreate
+[       OK ] TxEngineTest.F1_PrepareFails_StagingDirCreate (23 ms)
+[ RUN      ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag
+[       OK ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag (30 ms)
+[ RUN      ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish
+[       OK ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish (60 ms)
+[ RUN      ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes
+[       OK ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes (46 ms)
+[ RUN      ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted
+[       OK ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted (48 ms)
+[ RUN      ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands
+[       OK ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands (59 ms)
+[ RUN      ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands
+[       OK ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands (59 ms)
+[ RUN      ] TxEngineTest.F7_CleanupFails_CommittedStateIntact
+[       OK ] TxEngineTest.F7_CleanupFails_CommittedStateIntact (65 ms)
+[ RUN      ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant (24 ms)
+[ RUN      ] TxEngineTest.F8_AfterStage_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterStage_OldStateByteInvariant (49 ms)
+[ RUN      ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant (52 ms)
+[ RUN      ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir
+[       OK ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir (38 ms)
+[ RUN      ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+[       OK ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean (42 ms)
+[ RUN      ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites
+[       OK ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites (12 ms)
+[ RUN      ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast
+[       OK ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast (13 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings
+[       OK ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings (40 ms)
+[----------] 21 tests from TxEngineTest (950 ms total)
+
+[----------] 2 tests from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen
+[       OK ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen (57 ms)
+[ RUN      ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically
+[       OK ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically (72 ms)
+[----------] 2 tests from ProjectStoreTest (129 ms total)
+
+[----------] 8 tests from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents
+[       OK ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents (45 ms)
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (74 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+[       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (136 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+[       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (164 ms)
+[ RUN      ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips
+[       OK ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips (58 ms)
+[ RUN      ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen
+[       OK ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen (60 ms)
+[ RUN      ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible
+[       OK ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible (68 ms)
+[ RUN      ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload
+[       OK ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload (17 ms)
+[----------] 8 tests from CommandSubmitS6 (627 ms total)
+
+[----------] Global test environment tear-down
+[==========] 31 tests from 3 test suites ran. (1764 ms total)
+[  PASSED  ] 31 tests.

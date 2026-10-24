@@ -1,0 +1,88 @@
+Note: Google Test filter = TxEngineTest.*:ProjectStoreTest.WriteChannel_*:ProjectStoreTest.Tx9_UncommittedRevision_*:CommandSubmitS6.*:CommandSubmitD18.*
+[==========] Running 31 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 21 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01
+[       OK ] TxEngineTest.RetainedObjects_CompleteManifest_ARC01 (68 ms)
+[ RUN      ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01
+[       OK ] TxEngineTest.RetainedObjects_InvalidPlansZeroWrite_ARC01 (85 ms)
+[ RUN      ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned
+[       OK ] TxEngineTest.Commit_HappyPath_SevenStepsAndStagingCleaned (55 ms)
+[ RUN      ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester
+[       OK ] TxEngineTest.HeadManifestDigest_MatchesDirectCoreDigester (55 ms)
+[ RUN      ] TxEngineTest.F963_SdkWriteErrors_StableCategoryAndUnchangedBytes
+[       OK ] TxEngineTest.F963_SdkWriteErrors_StableCategoryAndUnchangedBytes (27 ms)
+[ RUN      ] TxEngineTest.F1_PrepareFails_StagingDirCreate
+[       OK ] TxEngineTest.F1_PrepareFails_StagingDirCreate (16 ms)
+[ RUN      ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag
+[       OK ] TxEngineTest.F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag (33 ms)
+[ RUN      ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish
+[       OK ] TxEngineTest.F3_VerifyFails_TamperedStagedBytes_StoreCorrupt_NoPublish (44 ms)
+[ RUN      ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes
+[       OK ] TxEngineTest.F4_PublishPartialFailure_DanglingResidue_ClosureExcludes (58 ms)
+[ RUN      ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted
+[       OK ] TxEngineTest.F5_HeadSwitchFails_PublishedButUncommitted (53 ms)
+[ RUN      ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands
+[       OK ] TxEngineTest.F6_EventPublishFails_RetriedOnce_CommitStands (68 ms)
+[ RUN      ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands
+[       OK ] TxEngineTest.F6b_EventPublishFailsAll_CommitStillStands (72 ms)
+[ RUN      ] TxEngineTest.F7_CleanupFails_CommittedStateIntact
+[       OK ] TxEngineTest.F7_CleanupFails_CommittedStateIntact (63 ms)
+[ RUN      ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterPrepare_OldStateByteInvariant (23 ms)
+[ RUN      ] TxEngineTest.F8_AfterStage_OldStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterStage_OldStateByteInvariant (39 ms)
+[ RUN      ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant
+[       OK ] TxEngineTest.F8_AfterHeadSwitch_CommittedStateByteInvariant (63 ms)
+[ RUN      ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir
+[       OK ] TxEngineTest.StagingTmp_CleanedByScan_EngineArtefactsStayInTxDir (56 ms)
+[ RUN      ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(397): error: Expected equality of these values:
+  e.code()
+    Which is: 4-byte object <07-00 00-00>
+  code
+    Which is: 4-byte object <08-00 00-00>
+稳定码不符: project/tx-engine: stage-write path=C:\Users\zgl18\AppData\Local\Temp\ird_prj_tx_test\78572\case18\proj.rwdesign\.staging\tx-0-b4a8e59bb9c5a0d9\objects\obj-9c985cc19ad1a37ee623a254808ab883\ba9beabcf1a45da385bb760161c72da15ae20dce551dde5220cba28d3cd3c952 osError=70
+
+[  FAILED  ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean (81 ms)
+[ RUN      ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites
+[       OK ] TxEngineTest.Commit_InconsistentTipUpdate_FailFastZeroDiskWrites (21 ms)
+[ RUN      ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast
+[       OK ] TxEngineTest.Commit_UnregisteredAuthoritativeRef_FailFast (20 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings
+[       OK ] TxEngineTest.RecoveryScan_HealthyStore_NoFindings (48 ms)
+[----------] 21 tests from TxEngineTest (1058 ms total)
+
+[----------] 2 tests from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen
+[       OK ] ProjectStoreTest.Tx9_UncommittedRevision_InvisibleAfterReopen (57 ms)
+[ RUN      ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically
+[       OK ] ProjectStoreTest.WriteChannel_HeadAdvancesMonotonically (82 ms)
+[----------] 2 tests from ProjectStoreTest (140 ms total)
+
+[----------] 8 tests from CommandSubmitS6
+[ RUN      ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents
+[       OK ] CommandSubmitS6.AppendObject_CommittedExactlyOneRevisionWithEvents (46 ms)
+[ RUN      ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit
+[       OK ] CommandSubmitS6.ObjectIdAllocation_BothPathsCommit (75 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08
+[       OK ] CommandSubmitS6.CompleteObjectSet_UpdateMetadataReopen_ARC01_PM08 (139 ms)
+[ RUN      ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04
+[       OK ] CommandSubmitS6.CompleteObjectSet_BranchBaselineIsolation_ARC01_PM04 (144 ms)
+[ RUN      ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips
+[       OK ] CommandSubmitS6.InverseDeclaration_PersistedAndRoundTrips (54 ms)
+[ RUN      ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen
+[       OK ] CommandSubmitS6.UnknownCommandTypeInHistory_MarkedUnresolvedAfterReopen (56 ms)
+[ RUN      ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible
+[       OK ] CommandSubmitS6.CreateBranchMechanics_NoTipUpdateAddedBranchVisible (60 ms)
+[ RUN      ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload
+[       OK ] CommandSubmitS6.MetadataDisplayNameR2Reserved_RejectedInvalidPayload (16 ms)
+[----------] 8 tests from CommandSubmitS6 (593 ms total)
+
+[----------] Global test environment tear-down
+[==========] 31 tests from 3 test suites ran. (1842 ms total)
+[  PASSED  ] 30 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] TxEngineTest.Commit_FailedTxThenSuccess_SeqMonotonicAndClosureClean
+
+ 1 FAILED TEST
