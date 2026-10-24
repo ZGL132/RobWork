@@ -64,5 +64,11 @@
     "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json"
   },
   "implementationState": "ready-for-independent-acceptance",
-  "note": "实现提交冻结后独立验收；status保持ready直至所有者收尾，不自签done。零产品算法变更。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）第2轮独立复验 12/12 通过——verdict=pass，绑定送验SHA af7c623ae1c93f223f03b25b106bb0a522af6b25，记录 traceability/acceptance/GOV-T21-20261024-r2.json（复跑原件在其同名目录01-14：四段范围全PASS、commit-lint段级甄别、validate-reuse、治理矩阵PS7与PS5.1各152例、ird_gates零命中、-DeepEvidence干净树24181证据、红线抽查）；据此由登记步骤置done，后续纯记录提交不属于被验实现SHA。字面区间FAIL甄别、F-970豁免、远程禁令superseded口径及遗留事项均以该记录为准。"
+  "note": "实现提交冻结后独立验收；status保持ready直至所有者收尾，不自签done。零产品算法变更。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）第2轮独立复验 12/12 通过——verdict=pass，绑定送验SHA af7c623ae1c93f223f03b25b106bb0a522af6b25，记录 traceability/acceptance/GOV-T21-20261024-r2.json（复跑原件在其同名目录01-14：四段范围全PASS、commit-lint段级甄别、validate-reuse、治理矩阵PS7与PS5.1各152例、ird_gates零命中、-DeepEvidence干净树24181证据、红线抽查）；据此由登记步骤置done，后续纯记录提交不属于被验实现SHA。字面区间FAIL甄别、F-970豁免、远程禁令superseded口径及遗留事项均以该记录为准。2026-10-24 登记后门禁处置：登记提交（d81b66c4c）后字面区间复验 FAIL（commit-lint -Range 64ef0fd07..HEAD 5/162、verify-task-scope -Base 64ef0fd07 -Head HEAD 94 路径越界）＝r2 记录 checks[1]/checks[2] 已甄别的同一现象——单一连续区间混入 r1 head（0032c8e78）后其他任务包主线内容（REUSE-T17~T29、WP-01 等）与 AB 集成期 merge 携入的分支侧历史，非本任务治理链缺陷；r1-fix README 已论证无单一区间可同时覆盖全链并剔除外包内容，补 allowedFiles（触碰 forbidden 面且属放宽门禁）与改写历史均被禁止。机器核验面＝五段：段A 64ef0fd07..c27349a80（6378 路径）、段B 8e4a08ac8..0032c8e78（362 路径）、返工段 6921197dd..af7c623ae（16 路径）、首实施本体 64ef0fd07^..64ef0fd07（343 路径）——前四段见 r2 记录 02/03/04/14 号 log 全 PASS；登记段 af7c623ae..登记链 HEAD 以提交后复跑为准。字面区间 5 个 commit-lint FAIL 已全部按 F-012 口径登记台账：717594e5c/3a61e300f＝F-970，9e1fe9c2e/340dc88a4/3e8cec6ef＝F-971（登记后补登）。",
+  "independentAcceptance": {
+    "commit": "d81b66c4c16fd8ca71d9a2c0a235da0c43d592fe",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2.json",
+    "reviewedCommit": "af7c623ae1c93f223f03b25b106bb0a522af6b25",
+    "verdict": "pass"
+  }
 }

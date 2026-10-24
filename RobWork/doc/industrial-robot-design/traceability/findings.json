@@ -9791,5 +9791,17 @@
   "resolution": "按 F-012 口径显式登记豁免：历史提交不可改写（AGENTS §6.3 红线）。豁免依据＝717594e5c 正文自证『所有者指示合入』且全程只读调查（不改矩阵/产品/权限），3a61e300f 为其前序 T07 增量合入（内容与 8e4a08ac8 一致、对 8e4a08ac8..0032c8e78 净 diff 为零，GOV-T21-20261024-r1-fix README 实测佐证），两提交内容均已经主线后续验收链消化；豁免不改变标题违规与口径冲突的事实本身。杜绝再现：2026-10-22 精简治理起主工作树串行实施（AGENTS §0/§6.2），增量一律以主线新提交进入，不再执行跨会话/跨分支合入；新增提交标题过 commit-lint 白名单自检（GOV-T21 返工提交即按 [governance] 前缀自查）。",
   "fixedAt": "2026-10-24"
 }
+,
+{
+  "id": "F-971",
+  "source": "traceability/acceptance/GOV-T21-20261024-r2.json#checks[2]（05/06 号 log；2026-10-24 登记后字面区间复验同型：64ef0fd07..HEAD 5/162）",
+  "severity": "suggestion",
+  "status": "fixed",
+  "registeredAt": "2026-10-24",
+  "title": "GOV-T21 字面区间 commit-lint FAIL 剩余 3 提交未按 F-012 转登台账：9e1fe9c2e905/340dc88a4000（『[REUSE-T09] 轨迹五次/七次多项式求值复用上游Polynomial并删除手写基导数链』，[REUSE-T09] 前缀不在 commit-lint 白名单）与 3e8cec6ef9d2（『并入主会话reuse-t01最新进展（EAA撤销与policy文本，按所有者指令）』，无合法中文前缀）；三者均为 r1 head（0032c8e78）之后 AB 集成期 merge（b0997f8d8『Merge 357d19e3d (reuse-t01) into redesign-main』、8db7a7e78『集成收口3/3：并入trajectory多项式替换（REUSE-T09）』、6fb26b31d 等）携入的其他任务包分支侧历史提交——git merge-base --is-ancestor 实测均非 0032c8e78 祖先，不属 GOV-T21 治理提交链（段A 78/78 PASS、0032c8e78..af7c623ae first-parent 链零前缀违规佐证）；r2 独立验收 checks[2] 已甄别核销但未转登台账，2026-10-24 登记后字面区间复验（5/162）暴露该缺口",
+  "owner": "AB 集成期跨分支合入会话（分支侧提交纪律）＋commit-lint 门禁所有者（单一连续区间枚举必然含 merge 携入历史，属登记事实，不改脚本不放宽门禁）",
+  "resolution": "按 F-012/F-970 口径显式登记豁免：历史提交不可改写（AGENTS §6.3 红线）。豁免依据＝三者为 REUSE-T09/reuse-t01 其他任务包分支侧历史，经 r1 head 后集成 merge 进入主线枚举面；其能力内容按各自契约另行送验独验，GOV-T21 r2 记录 limitations 明示『字面区间内其他任务包内容不因本验收放行』；GOV-T21 治理链五提交（64ef0fd07/6eab38df8/25ecf7f6d/0032c8e78/af7c623ae）标题全部合法前缀（r2 05/06 号 log 段级 PASS 佐证）。杜绝再现：2026-10-22 起主工作树串行实施（AGENTS §0/§6.2），不再跨分支合入；新增提交过 commit-lint 白名单自检。",
+  "fixedAt": "2026-10-24"
+}
   ]
 }
