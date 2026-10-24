@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-25T00:10:00+08:00",
+  "generatedAt": "2026-10-25T01:00:36+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,42 +10,50 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 24293,
-    "totalBytes": 935726321,
+    "totalFiles": 24336,
+    "totalBytes": 937154881,
     "byKind": {
-      "governance-record": 40,
-      "xml-report": 250,
-      "benchmark": 8,
-      "pipeline-artifact": 2,
-      "gtest-report": 335,
       "script": 68,
-      "log": 3058,
-      "build-log": 15580,
+      "json-data": 956,
+      "governance-record": 40,
       "markdown-doc": 126,
       "manual-acceptance": 1,
+      "acceptance-record": 3692,
+      "pipeline-artifact": 2,
+      "gtest-report": 335,
+      "xml-report": 250,
+      "build-log": 15580,
+      "benchmark": 8,
       "other": 220,
-      "acceptance-record": 3649,
-      "json-data": 956
+      "log": 3058
     },
     "byLifecycle": {
+      "unverified": 17159,
       "current": 29,
-      "historical": 7077,
-      "unverified": 17187,
+      "historical": 7148,
       "superseded": 0
     },
-    "associated": 8183,
+    "associated": 8226,
     "unassociated": 16110,
-    "shaComputed": 24263,
+    "shaComputed": 24306,
     "shaSkippedLarge": 30,
-    "duplicateGroupsTotal": 1628,
+    "duplicateGroupsTotal": 1631,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
+    {
+      "sha256": "34e0b0da30ab44a04f5b2fcdb48b62ade6b4938f1fbafe4cf0c1f56d6b475543",
+      "paths": [
+        "acceptance/GOV-T21-20261024-r1/02-validate-reuse.log",
+        "acceptance/REUSE-T09-20261025-r1/05-validate-reuse.log"
+      ]
+    },
     {
       "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
       "paths": [
         "acceptance/GOV-T21-20261024-r1/03-test-reuse-governance.log",
         "acceptance/GOV-T21-20261024-r1/08-test-reuse-governance-ps51.log",
+        "acceptance/REUSE-T09-20261025-r1/04-test-reuse-governance.log",
         "reuse/REUSE-T01/batch19/ps51/driver.log",
         "reuse/REUSE-T01/batch19/ps7/driver.log",
         "reuse/REUSE-T07/gates/t07-governance-pinned.log",
@@ -1663,17 +1671,6 @@
         "reuse/REUSE-T01/batch19/ps7/production-review-version-fake.log",
         "reuse/REUSE-T07/gates/t07-governance-pinned/production-review-version-fake.log",
         "reuse/REUSE-T10/governance/production-review-version-fake.log"
-      ]
-    },
-    {
-      "sha256": "ff0584553e1c9eb4c714c7032fed55e0a351058601c4d452e0fa4db2c235c9ed",
-      "paths": [
-        "acceptance/GOV-T22-20261022/ps51/production-stale-log.log",
-        "acceptance/GOV-T22-20261022/ps7/production-stale-log.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps51/production-stale-log.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps7/production-stale-log.log",
-        "reuse/REUSE-T07/gates/t07-governance-pinned/production-stale-log.log",
-        "reuse/REUSE-T10/governance/production-stale-log.log"
       ]
     }
   ],
@@ -34233,6 +34230,436 @@
       ],
       "bytes": 2761,
       "sha256": "47f9b1ce8a3e66d72f3a28b218682972a48bbfce5fcf1e3b66068a32dfbd900e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1-fix/01-commit-lint-fullrange-rerun.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1160,
+      "sha256": "5ffbbfcf7a494c390e1613ab147eaea55a61433c8bacfe3e25516d9cfc9af069",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1-fix/02-scope-check.ps1",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 3690,
+      "sha256": "4cd4aac01ff4198e3110c00096f36de9bc80a5359726ad7a7b03ef69b1e69ac2",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1-fix/02-t09-chain-scope-rerun.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 4121,
+      "sha256": "0382532925132d73e1077fe3fe407cea8f374a58d9c61ae7c7cb062fbfdc0b56",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1-fix/README.md",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 7828,
+      "sha256": "3250311977a49841951abd24758045816aa3998a218ff4d71cf9dade593b0fbf",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 22955,
+      "sha256": "3bd7df71acd001e6ad77976d2dc5ee2d284781e4f54976afdfbcfb7f042df82b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/02-scope-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 13057,
+      "sha256": "38e5c2f9b09f79a89a1e2e78c7050eb62b6a893f79846cf412b2ded8dbc5f206",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/03-fullrange-diff-files.txt",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 11400,
+      "sha256": "955d29bab869df9ae5aaf4da9466775530ddf8b8067e1af98184b03163255f19",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/03b-t09-commits-scope-check.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 437,
+      "sha256": "4baaa0c88c4c1eee97f6fa542475df1c4f951568ebe71fbd0f879b8780e40710",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/04-test-reuse-governance.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 9915,
+      "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/05-validate-reuse.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1814,
+      "sha256": "34e0b0da30ab44a04f5b2fcdb48b62ade6b4938f1fbafe4cf0c1f56d6b475543",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/06-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 2025,
+      "sha256": "75ff360e187cee035d2b7f2a250559090898f0adea4e36067f274f45274c8ab6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/07-ird-gates.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1438,
+      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/08-build-trajectory.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 11027,
+      "sha256": "517b43e0209634402547106182779197586a9e5867dc9df947589acb559d3fef",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/09-commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1160,
+      "sha256": "5ffbbfcf7a494c390e1613ab147eaea55a61433c8bacfe3e25516d9cfc9af069",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 56612,
+      "sha256": "9b86dea56b239c279ddb9273555a177e5a7b765019ce37826c3998761271748b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 12984,
+      "sha256": "0ed46dadf1dff57fb22780751b560ba04f9cbeaab5bacaaef258e4855caa2eaf",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-contract.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 25781,
+      "sha256": "4307c8037e4ff8d9e986d29eff02543612845149fcf66bb30566fc93081c6038",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 154885,
+      "sha256": "b79912a7f4292e7ae62e406316763d65701b21be8890833d13e2c28145fc98a0",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 31153,
+      "sha256": "a38580acb71b63e8c7f19cba6caf22f7e0c1fa1bc48d18a9b9c02dc20f50e79f",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/10-int-trajectory-test.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 64814,
+      "sha256": "5e123f7cd52a976c71bececd39cfec13ba14d5c9b0231f1e7d239425c6e47412",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/11-bench-rerun-result.txt",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1121,
+      "sha256": "84d9410d194ffa80e1a69ff28137c2a7c995f7e8f686d31497dc7b2aeac86ffd",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/11-bench-run.bat",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 868,
+      "sha256": "6aaa1c8216554256b8f4ebec19623f3ff465e8e5816c9d89284a0bb33e81b8b6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r1/acc-bench-rerun.exe",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 267776,
+      "sha256": "3ee2c8051f289817a4f68462238820c557cbddceba19802646f62d6cd5e438b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 21940,
+      "sha256": "8849b6b7add80cb893b0454134ae4e37a3ff7997da5b05f6c16f0c5d31af71c6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/02-scope-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 189954,
+      "sha256": "0997965d3a778b2f12f6742c29cc0711070423b4ea3b072ef0e6b621f808d9c8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/03-commit-lint-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 2678,
+      "sha256": "e62fb7e0a858017f05d417efe5fd56d2c52113c0c69d6b0252e92e79dcc8efcd",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/03-fullrange-diff-files.txt",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 130219,
+      "sha256": "f951f9831af5b8766d073c7165e1b9a200f722341a3abfc880241f3b690ecf6b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/03b-scope-check.ps1",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 3559,
+      "sha256": "fcf04c184ca655fe8f43ca492dfdd99401cf053a890f6a7650a4419ba525594a",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/03b-t09-face-scope-check.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 6917,
+      "sha256": "cd0cad417f9e3bd0cc1623107881a51790a0c8c696155da71fffb034a0c6ba79",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/04-fullrange-attribution.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 496,
+      "sha256": "258c1d090356b001e51e4510193f5fb002fc6492f7ebc54a83c2770f08122197",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/05-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 2080,
+      "sha256": "969d4e1a3fb1b10adc13f74a85c6e8b343f4905f81466f835441a2401462cc09",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-build-trajectory.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 11027,
+      "sha256": "517b43e0209634402547106182779197586a9e5867dc9df947589acb559d3fef",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-contract-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 56612,
+      "sha256": "351d8898afe7af43133ff5c6e6bb94f55a603fd5718790331a8e981f25063939",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-contract.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 12984,
+      "sha256": "b3e79a2cff46dd2a6090b0d3d3a545912159edcafd34ccc3d3036caecd29705d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-contract.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 25781,
+      "sha256": "089117b7e682a5574e6700b3c723fd82e02d0008e5f22b04d5ccac911cb4a3b4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-test-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 154888,
+      "sha256": "f613794c9237b20a1c869d545e8b84e0002866ade5e2cc44b12b6533272f9e8a",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-test.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 31156,
+      "sha256": "ed2b8474fe8d2fee3ed962f1d56f2b3f835fe5044490850f66caca935c864060",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/06-int-trajectory-test.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 64814,
+      "sha256": "c16f409be0d57dae52e8643c76ccdff35b775624aef97a7291bd42682dc3bea4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/07-ird-gates.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 1438,
+      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/08-commit-lint-rework.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 91,
+      "sha256": "208bf2ea2024ec247f3ac46dde2f4cc93ce9e1d7e8225e89d6ca87de1f4c6a97",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/08-scope-rework.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 184,
+      "sha256": "3ecfcad5c62e43d4f0c3b53d3f65f66e1267c5a7d35adfbd678e4cce49bf809f",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/09-index-evidence-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 960,
+      "sha256": "59478bfee79830ae596d233dcb8ae5dbc23b6364a89b92be3c2a8edf309212a9",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T09-20261025-r2/10-validate-docs-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T09"
+      ],
+      "bytes": 2761,
+      "sha256": "1afc5d4af368af9a6cff0578bdfab4d487228ab6c6a8137079cdab4c439ef321",
       "lifecycle": "historical"
     },
     {
@@ -201782,7 +202209,7 @@
       ],
       "bytes": 707,
       "sha256": "5344c088f8518e409737537e1ad10579f6fc7772be8cfad7964c8ab9f514b7a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/benchmark/polynomial-replace-bench.cpp",
@@ -201792,7 +202219,7 @@
       ],
       "bytes": 17362,
       "sha256": "d4dd596328ed938ba5aaffacd09c43254ea9927d6992c7a7d94713dc96bcc7cb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/Smooth.mutated.cpp",
@@ -201802,7 +202229,7 @@
       ],
       "bytes": 39540,
       "sha256": "7db67e8bdd681861b12727d29994e8d6088d51f5c9b876e8990b886b245a4f47",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/smooth/gtest.xml",
@@ -201812,7 +202239,7 @@
       ],
       "bytes": 1372,
       "sha256": "67385780cd3855d046bf08a18df8efb3ca88ba21d5cb129416047df3fc2f16b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/smooth/run.log",
@@ -201822,7 +202249,7 @@
       ],
       "bytes": 986,
       "sha256": "cadb634bf0af654065ce7d5f4cad728ae66972760bff1c72ba9f90290b89af65",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/TimeParam.mutated.cpp",
@@ -201832,7 +202259,7 @@
       ],
       "bytes": 93745,
       "sha256": "6a9990599658cd3bca3dd4aafa8a432e2ac856cb1e47846e59945b0b47400cd3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/timeparam/gtest.xml",
@@ -201842,7 +202269,7 @@
       ],
       "bytes": 1364,
       "sha256": "0f1f8b7a06a0e7fd3454464cac8aad4cfbdd15c2a8ae8194412ce0f17e1ebdba",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/disconnected/timeparam/run.log",
@@ -201852,7 +202279,7 @@
       ],
       "bytes": 934,
       "sha256": "f1670068a0e2204af9786c140f4d119c92a1d4062e3e385ac51c629f8e945e45",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/ird-gates-final.log",
@@ -201862,7 +202289,7 @@
       ],
       "bytes": 4424,
       "sha256": "5bb5c494cb308bb4bd9a3e75f8f93238fd991b936f3db2ecec92f4b2be5d754f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/ird-gates.log",
@@ -201872,7 +202299,7 @@
       ],
       "bytes": 2701,
       "sha256": "de33423d42f00792ec1e548f0c5584eb2ec71fd73732c19fe8c5f7025b293d48",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/merged-reuse-t01-validate-docs.log",
@@ -201882,7 +202309,7 @@
       ],
       "bytes": 2708,
       "sha256": "0eb5ddd85e840bdb2e2d3f3fba3b42bda609d2f45f0960a05a12d3d7e23491d1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/merged-reuse-t01-validate-reuse.log",
@@ -201892,7 +202319,7 @@
       ],
       "bytes": 2472,
       "sha256": "43af792fde2357c9c656198ee28d88a9c6bf0a5dbec7f25f486cfe34565fe174",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/sandbox-integrated-validate-docs.log",
@@ -201902,7 +202329,7 @@
       ],
       "bytes": 2682,
       "sha256": "fbd0e3abe95b16e34ae74c692f7a85b3404c3974985fd636a538711aea9b12f3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/sandbox-integrated-validate-reuse.log",
@@ -201912,7 +202339,7 @@
       ],
       "bytes": 2471,
       "sha256": "d86643f745fceb2c4d949966d3f87ef0b7d67bb9d3d5554f1372379a79883cfb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/t09-register.ps1",
@@ -201922,7 +202349,7 @@
       ],
       "bytes": 12578,
       "sha256": "a0718a8733a472128489f421a50b17391ddeb7a261ab33bb26870357ab9f8060",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/test-reuse-gov-t09.log",
@@ -201932,7 +202359,7 @@
       ],
       "bytes": 9915,
       "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/validate-docs-t09.log",
@@ -201942,7 +202369,7 @@
       ],
       "bytes": 359,
       "sha256": "e5e26fc33203fabc4986924bb3c16df53cfabefe1707b07e5852af35cecd8e96",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/validate-reuse-head-frozen-base.log",
@@ -201952,7 +202379,7 @@
       ],
       "bytes": 28,
       "sha256": "81f100ad4c0a090f85807197845214cf45032a3427a0be35543f45ab916c37e2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/gates/validate-reuse-t09.log",
@@ -201962,7 +202389,7 @@
       ],
       "bytes": 199,
       "sha256": "165311cb3969c65a385b233c1072c03ddf5614a6aa45f2d8194d4bb41d57c831",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-contract-report.json",
@@ -201972,7 +202399,7 @@
       ],
       "bytes": 56613,
       "sha256": "e4f028637f48c05e160f7223b594a330d569d63e9f42fa719e97d5969bca1e0d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-contract-run.log",
@@ -201982,7 +202409,7 @@
       ],
       "bytes": 12985,
       "sha256": "1ae34a22b99ec5728f8c46c2daca58da47be12363b10d3b60c0bd24e35b4a6b3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-contract.xml",
@@ -201992,7 +202419,7 @@
       ],
       "bytes": 27584,
       "sha256": "66240dd4f3071a1ab4aa9d77aa1873f3c8f4ab9296ff69824bb48e5338928e2d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-test-report.json",
@@ -202002,7 +202429,7 @@
       ],
       "bytes": 153236,
       "sha256": "070988c22377569dc7fc35377c24748ce7b36c5e91d9c5eebb4098db98254cf6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-test-run.log",
@@ -202012,7 +202439,7 @@
       ],
       "bytes": 30879,
       "sha256": "0a45ca28bcfe4b97e4d6e514ed0580c0ee6684b712c38c14a881cb54e11a205f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/normal/trajectory-test.xml",
@@ -202022,7 +202449,7 @@
       ],
       "bytes": 69085,
       "sha256": "e9a5889a00417d50765dc8db6546cd05bf662326b1e9e19dc22f1278c7d3c2f7",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/production-smooth.json",
@@ -202032,7 +202459,7 @@
       ],
       "bytes": 5667,
       "sha256": "acd8b4147d570a0ecf40892c96c17b2a999c659ff6b28d8769931669e22e6a57",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/production-timeparam.json",
@@ -202042,7 +202469,7 @@
       ],
       "bytes": 6034,
       "sha256": "e6a628b6c7f0eeaa422ad4d08e79bf75b0bc75eac23a2d40b869515aab46558b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T09/README.md",
@@ -202052,7 +202479,7 @@
       ],
       "bytes": 3199,
       "sha256": "522302b55a0adcf23cfb5028503a78b275df6bf4a49525f5fc22f4a390cba8b4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T10/0004-r1-original.patch",
