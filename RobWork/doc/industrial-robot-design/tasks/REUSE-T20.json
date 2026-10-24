@@ -51,7 +51,7 @@
     "Boost第三方来源与上游RobWork来源分开记录；schema表达缺口不冒充已解决，不以NONE或business标签豁免真实复用审查",
     "独立验收由所有者另开独立会话执行；整体准入由所有者裁决"
   ],
-  "note": "WP-02承接：主工作树redesign-main，本轮起点7be67a6a59912ec243f2251dd3a127b8b5c7e679；旧codex/reuse-testkit-setcheck仅作历史溯源，不同步远程。任务ready表示可在精确范围实施，不是已完成。保留SetCheck公开契约、C4相容边、身份/歧义/诊断和唯一匹配接缝；无自写贪心快路径/旧Kuhn fallback。本轮已复用Boost公开matching策略（库greedy初始化/Edmonds增广/最大性验证器），在原模板边谓词增加单次标准map解析缓存；不增加公共接口、依赖渠道或算法核心。原README§9绑定数值oracle、生产mate扰动及受影响消费者；1024稠密118.73ms对旧3.26ms，性能尚未接受；第三方schema缺口、独验仍未关闭。第三方schema缺口按原README§8.3保留并以真实来源/正向证据订正，未经批准不改schema/门禁、不假关。实质性能退化仍需所有者裁决；完成后独验，不自签done。仅覆盖SetCheck匹配内核，不代表testkit整体迁移完成。编号沿用T20，原T19撞号历史保留。",
+  "note": "WP-02承接：主工作树redesign-main，本轮起点7be67a6a59912ec243f2251dd3a127b8b5c7e679；旧codex/reuse-testkit-setcheck仅作历史溯源，不同步远程。任务ready表示可在精确范围实施，不是已完成。保留SetCheck公开契约、C4相容边、身份/歧义/诊断和唯一匹配接缝；无自写贪心快路径/旧Kuhn fallback。本轮已复用Boost公开matching策略（库greedy初始化/Edmonds增广/最大性验证器），在原模板边谓词增加单次标准map解析缓存；不增加公共接口、依赖渠道或算法核心。原README§9绑定数值oracle、生产mate扰动及受影响消费者；所有者已针对1024稠密118.73ms对旧3.26ms及O(E)图内存明确接受开销并交独验；schema选择原README§8.3.4方案一且债务保留。独验NOT RUN。纠正标题后实现SHA9276f19b26bfe095cbe2ccf460a64dec39bf45e9，代码树/正文与原881f576c完全一致，原/新lint及显式scope原件保留。第三方schema缺口按原README§8.3保留并以真实来源/正向证据订正，未经批准不改schema/门禁、不假关。本次具体性能接受已记录；后续新增实质退化仍需另行裁决；完成后独验，不自签done。仅覆盖SetCheck匹配内核，不代表testkit整体迁移完成。编号沿用T20，原T19撞号历史保留。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",

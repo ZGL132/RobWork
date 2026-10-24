@@ -10,7 +10,7 @@
       "capabilities": [
         
       ],
-      "boundary": "本轮仅阶段2相容边增加单次断言私有标准map解析缓存，仍由profile.resolve与core C4决定相容性；保留公开签名/身份/歧义/详情/护栏，不跨调用缓存、不新增数学核心；匹配来源为唯一Boost接缝，原Kuhn已删。第三方schema/性能未决见README§9。",
+      "boundary": "本轮仅阶段2相容边增加单次断言私有标准map解析缓存，仍由profile.resolve与core C4决定相容性；保留公开签名/身份/歧义/详情/护栏，不跨调用缓存、不新增数学核心；匹配来源为唯一Boost接缝，原Kuhn已删。性能已获当前范围接受，第三方schema按方案一保留债务，独验NOT RUN，见README§9。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
     },
     {
@@ -20,7 +20,7 @@
       "capabilities": [
         
       ],
-      "boundary": "既有Boost.Graph薄适配仅改公开matching初始化策略：greedy_matching＋Edmonds增广＋原最大性验证器，保留matching_size和索引转表；Boost 1.92来自既有vcpkg而非RobWork，零新核心/依赖/上游修改；真实mate返回值扰动已使生产断言失败，schema与性能债务未关。",
+      "boundary": "既有Boost.Graph薄适配仅改公开matching初始化策略：greedy_matching＋Edmonds增广＋原最大性验证器，保留matching_size和索引转表；Boost 1.92来自既有vcpkg而非RobWork，零新核心/依赖/上游修改；真实mate返回值扰动已使生产断言失败，性能已获当前范围接受，schema表达债务保留，独验NOT RUN。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
     },
     {

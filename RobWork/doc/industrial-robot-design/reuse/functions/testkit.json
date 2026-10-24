@@ -2393,7 +2393,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2409,7 +2409,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.resultStructs",
@@ -2449,7 +2449,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2465,7 +2465,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.detailOpen",
@@ -2505,7 +2505,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2521,7 +2521,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.matchSeamDoc",
@@ -2561,7 +2561,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2577,7 +2577,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.seamClose",
@@ -2617,7 +2617,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2633,7 +2633,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.namespaceClose",
@@ -2673,7 +2673,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2689,7 +2689,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.maximumBipartiteMatching",
@@ -2737,7 +2737,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2753,7 +2753,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.fileHeader",
@@ -2797,7 +2797,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2813,7 +2813,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.equivalenceAndDuplicates",
@@ -2857,7 +2857,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2873,7 +2873,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.numericMatching",
@@ -2917,7 +2917,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2933,7 +2933,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.orderAndGuard",
@@ -2977,7 +2977,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -2993,7 +2993,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.ambiguityF594AndHelpers",
@@ -3037,7 +3037,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -3053,7 +3053,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.exhaustiveBruteForce",
@@ -3097,7 +3097,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -3113,7 +3113,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.gridFamilyOracle",
@@ -3157,7 +3157,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -3173,7 +3173,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.greedyTrapAndDeterminism",
@@ -3217,7 +3217,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -3233,7 +3233,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
 
     {
@@ -6820,9 +6820,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.MatchPair.operator!=",
@@ -6908,9 +6908,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.SetMatchTraits.identity",
@@ -6996,9 +6996,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.SetMatchTraits.numerics",
@@ -7084,9 +7084,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.compatible",
@@ -7172,9 +7172,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.checkSetEquivalent",
@@ -7205,7 +7205,7 @@
         "command": "见batch17-search.json实际检索/安装候选摘要及公开API探测",
         "conclusion": "core产品公式权威与testkit成熟算法/标准工具分别核；未因无命中批准自持核心，Boost只列候选，非全量测试或生产证明"
       },
-      "differences": "身份/重复规则→逐边traits/profile.resolve/core::closeWithin→唯一maximumBipartiteMatching Boost接缝→见证/交错圈歧义/缺失多余/详情；单次标准map只缓存不可变档案解析值，键拥有字符串，不跨调用共享。原Kuhn删除、无第二核心；生产返回值扰动与独立oracle见README§9，性能及第三方schema仍未决。",
+      "differences": "身份/重复规则→逐边traits/profile.resolve/core::closeWithin→唯一maximumBipartiteMatching Boost接缝→见证/交错圈歧义/缺失多余/详情；单次标准map只缓存不可变档案解析值，键拥有字符串，不跨调用共享。原Kuhn删除、无第二核心；生产返回值扰动与独立oracle见README§9，当前性能已获所有者接受，第三方schema按方案一保留债务；独验NOT RUN。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -7260,9 +7260,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheck.checkStableOrder",
@@ -7348,9 +7348,9 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     },
     {
       "functionId": "testkit.SetCheckTest.toleranceCacheBoundaries",
@@ -7394,7 +7394,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md",
-        "sha256": "603b783a1c5e007c773c3271faa87f98cf5eeecb78ca63430566f6f5b511fad8"
+        "sha256": "e19eb35b53489b4fb579ac20681939186861b1881d4b22d8be9b0422a5bb6298"
       },
       "auditEvidence": [
         {
@@ -7410,7 +7410,7 @@
           "sha256": "df727a480e6d3d5944c13d553476d03f1234a726c2ba1b6202c521e4aad3880c"
         }
       ],
-      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达和稠密性能仍未决、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
+      "auditBoundary": "WP-02受影响源/消费者实审；独立oracle及生产mate扰动见原README§9；第三方schema表达按所有者方案一保留债务，当前稠密性能已获明确接受、独验NOT RUN，现有migrated过渡标签不表示closed或豁免。"
     }
   ]
 }
