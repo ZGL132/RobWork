@@ -24,7 +24,7 @@
     "reuse/policy.md",
     "reuse/audit-contract.md",
     "reuse/catalog.json#MATH-POLYNOMIAL",
-    "units/trajectory.md",
+    "units/trajectory.md#1.2",
     "ARCHITECTURE.md#3.6"
   ],
   "verify": [
