@@ -26,7 +26,7 @@
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1"
   ],
-  "note": "所有者要求依次自动推进。继承本地治理pass基点开展只读审计，远程代理阻断单列；不授权新核心/上游扩展，不修改产品代码。审计发现保留pending/proposal，只有逐功能实证及独立审查后才称完成。 2026-10-23所有者明确指示继续本地执行、不要同步远程；后续提交仅本地保存，远程交付状态单列。",
+  "note": "所有者要求依次自动推进。继承本地治理pass基点开展只读审计，远程代理阻断单列；不授权新核心/上游扩展，不修改产品代码。审计发现保留pending/proposal，只有逐功能实证及独立审查后才称完成。 2026-10-23所有者明确指示继续本地执行、不要同步远程；后续提交仅本地保存，远程交付状态单列。 2026-10-24 r1独立验收FAIL返工：送验范围由grep首末推导6509e5e4c..d50e824c7e8b整段收敛为0d0d3ca3e..bfe024cd0（64提交、B01—B35审计本体，实测scope PASS 5725路径、commit-lint PASS 64提交）；0d0d3ca3e（GOV-T22收口）、c27349a80/8e4a08ac8（REUSE-T07产品实施，无独验缺口由其契约单独送验补齐）、eae9d213e（T08提案）、d8bc82403/fdd07d1ce/a467cc731（覆盖清查R1/R2，随audit-in-progress后续轮次送验）、3a61e300f/717594e5c（跨会话合并提交，findings F-970在册豁免引用）、e453006ea/54f0beda6（REUSE-T10）、a1393ad4a/30b5a2343/2daace508（REUSE-T11已闭环）、d50e824c7（所有者治理文本）剔出，由各自契约/记录独立送验；产品modeling 5文件属forbiddenFiles不补allowedFiles消化。处置与复验证据：traceability/acceptance/REUSE-T01-20261024-r1-fix/README.md（冻结送验树bfe024cd0上validate-task/reuse/docs三命令全PASS原件在册）。status保持ready、implementationState保持audit-in-progress待所有者按收敛段+返工段口径重新送验，独验不由实施者自签。",
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T01.json",
@@ -3256,7 +3256,10 @@
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json",
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T07.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/capability-plan/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1-fix/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",

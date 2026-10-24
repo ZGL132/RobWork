@@ -1,0 +1,72 @@
+{
+  "taskId": "REUSE-T01",
+  "baseCommit": "6509e5e4cc15ed5f0da1cf874277abb00f5b4511",
+  "reviewedCommit": "d50e824c7e8bf21e7845b68e55dadd64e8b56d56",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-24T19:39:02+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T01 单次验收子智能体（独立验收·REUSE-T01·r1）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未远程操作；为忠实复现送验 SHA 状态曾以 git worktree add --detach 临时检出 d50e824c7e8b 跑契约 verify 三命令，取证后已 git worktree remove 清理，主工作树未受影响；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 6509e5e4c..d50e824c7e8b 送验段（80 提交、6434 变更路径，REUSE-T01 全 20 单元逐功能复用审计父任务第 1 轮整包验收）：base/head 系 git log --grep 首末推导核验、显式 Base/Head 范围复跑、契约三条 verify 命令在冻结送验树上真实执行、acceptance 四条逐项映射、红线抽查（H1—H6、L2 零 Qt、六端口/私有头、runtime 模型 owner、CLOSURE 冻结、门禁未放宽、上游净零、测试计数分列）、80 提交 commit-lint 与一包一组核验。",
+  "counts": {
+    "failed": 4,
+    "passed": 14,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "18 项验收检查（含 3 条 verify 命令各计 1 项）；契约 implementationState=audit-in-progress，审计本体（catalog/functions/evidence）按治理检查口径，未跑无关 C++ 构建（范围净 diff 产品源码仅 modeling 5 文件且其测试证据已核原件）"
+  },
+  "checks": [
+    "现场：分支 redesign-main；HEAD=95874bf1b（送验 head 之后另有 GOV-T21/22/25/26 收口与 WP-01 提交，非被验内容）；git status --short 干净（仅本验收产物目录未跟踪）。",
+    "base/head 推导核验：git log --grep REUSE-T01 在送验段共 6 个提交正文提及，首=0d0d3ca3e（标题「登记GOV-T22本地独立通过与远程交付阻断」不含任务号、正文「下一阶段仍为REUSE-T01全20单元逐功能审计」）、末=d50e824c7e8b（标题不含任务号、正文「…及REUSE-T01追溯说明」）；6509e5e4c 为 0d0d3ca3e 的直接父级（段间仅 1 提交），与送验说明的推导口径一致。",
+    "范围（FAIL）：verify-task-scope 显式 -Base 6509e5e4cc15 -Head d50e824c7e8b exit=1——6434 变更路径中 694 个越界/命中禁止面：5 个 [forbidden] 产品源文件（modeling/CMakeLists.txt、src/CouplingMath.hpp、src/RpyMath.hpp、test/BasePlacementEditTest.cpp、test/CouplingReuseTest.cpp，均命中 forbiddenFiles 规则 industrialrobot/**）＋689 个 [out-of-scope]（REUSE-T10 证据 288、REUSE-T07 证据 274、REUSE-T11 证据 51、REUSE-T08 证据 37、REUSE-T01 自身 coverage-sweep 等 11，及 AGENTS.md、REQUIREMENTS.md、acceptance-protocol.md、units/modeling.md、units/runtime.md、tasks/与 changes/ 下 REUSE-T08/T10/T11 契约、.github/pull_request_template.md、scripts/industrialrobot/verify-task.ps1、traceability/acceptance/lean-verification/** 等）。证据 01-scope.log、04-range-files.txt。",
+    "契约 verify ①validate-task（PASS）：在冻结送验树（临时 detached worktree 检出 d50e824c7e8b）执行，exit=0，「validate-task: PASS (1 tasks)」，内嵌复用治理 PASS governance only（inventory=1401 units=20 changed=6 DEBT=16 UNRESOLVED=1399）；REUSE-AD-PENDING 两行为 AD 审计既有 pending 提示（GOV-T24 r1 同款，非阻断）。证据 02-validate-task.log。",
+    "契约 verify ②validate-reuse（PASS）：同送验树单独执行，exit=0，「PASS governance only; inventory=1401 units=20 changed=6 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)」；functions=1128 closedFiles=1。证据 03-validate-reuse.log。",
+    "契约 verify ③validate-docs（PASS）：同送验树执行，exit=0，「validate-docs: PASS (20 units, 12 trace entries, 382 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence)」。证据 03b-validate-docs.log。REUSE-T01.json 契约文件在 d50e824c7e8b..HEAD 之间无改动，三命令结果对送验状态忠实。",
+    "acceptance 第 1 条「全部20单元…按真实功能登记；待审发现不能冒充审计完成」（PASS）：catalog.json（送验树）units 数组恰为 20 单元；能力状态分布 candidate=33、verified=2——审计发现以 candidate 保留未冒充；契约 implementationState=audit-in-progress、status=ready 与治理输出 UNRESOLVED=1399 一致。",
+    "acceptance 第 2 条「上游具体文件/符号/目标/版本/差异和权限可追溯；四项缺口先检索探测」（PASS）：catalog.json 每能力 upstream 绑定含 path/symbols/target/sha256/targetFile/targetSha256（如 KIN-FK 绑定 Device.hpp 的 setQ/baseTframe/baseJframe→sdurw_models）＋search.command 检索证据；validate-reuse「schema/permission/function evidence checked functions=1128」机器核验通过；extensions/required-proposals.md 及 GAP-EAA-01 等提案文件在册。",
+    "acceptance 第 3 条「零生产代码变更；pending或proposal不能授权变动产品代码」（FAIL）：送验段净 diff 含 5 个产品源文件（8e4a08ac8 耦合SVD删除自写Jacobi、a1393ad4a RPY/EAA替换自写三角核——属 REUSE-T07/T11 能力包实施），命中本契约 forbiddenFiles 硬面。改动方向本身符合 H1/H2（删除平行实现改调 rw::math::LinearAlgebra/RPY/EAA，RpyMath.hpp diff 亲验：手写逐元素展开全删、改调 rw::math::RPY(yaw,pitch,roll).toRotation3D()），且 T11 有独立验收链（REUSE-T11-20261023.json verdict=pass reviewedCommit=a1393ad4a、closures.json 绑定该验收），但它们不是 REUSE-T01 契约授权的变更、verify-task-scope 判 forbidden，T01 名义下「零生产代码变更」不成立。",
+    "acceptance 第 4 条「完整审计须冻结SHA独验；局部能力按migration §12.11独立准入与整包验收…远程未同步不冒充交付」（FAIL——T07 缺口）：migration.md §12.11（第 226 行起）确立「完整能力包独立验收后放行依赖能力」；T11 局部准入链完整（验收记录+closures.json 闭环）；但送验段内 REUSE-T07 的产品实施（8e4a08ac8/c27349a80，CouplingMath SVD 迁移）截至送验 head 无独立验收记录（traceability/acceptance/ 无 REUSE-T07* 文件，migration.md 第 224 行亦载「当前下一项产品交付为REUSE-T07」），未经 §12.11 整包独验的产品代码变更已落入本送验段。远程侧：本地无 push/远程操作证据，契约 note「远程交付阻断单列」如实。",
+    "红线·H1/H2 平行实现方向（PASS）：亲验 RpyMath.hpp、CouplingMath.hpp 全量 diff——删除自写三角/Jacobi 数学核，改 include rw/math/LinearAlgebra.hpp 并调用上游；无第二份旋转/线性代数实现回流。",
+    "红线·L2 零 Qt 与跨单元私有头（PASS）：两 hpp 的 diff 仅新增 rw/math 公共头包含、删 <functional>/<cmath>，无 Qt 符号、无跨单元私有 include；modeling 私有头仍限本单元消费。",
+    "红线·runtime 唯一模型 owner（PASS）：RpyMath.hpp 新头注释明示「基座编辑仅产生 EAA 参数，最终安装矩阵仍由 runtime 唯一维护」；纯值函数无模型持有/缓存。",
+    "红线·CLOSURE 冻结未触碰（PASS）：closures.json 为送验段内新建文件（非改既有冻结记录），其条目绑定 RpyMath.hpp baselineBlob/currentSha256/functionKeys 与 T11 验收 commit 30b5a2343f→REUSE-T11-20261023.json，属合法登记闭环而非越权关闭；validate-reuse 输出 closedFiles=1 (semantic review required) 未被冒充。",
+    "红线·门禁/权限未放宽（PASS）：送验段 industrialrobot/cmake/ 零变更（ird_gates 未动）；.github 仅 pull_request_template.md（治理文本收紧）；AGENTS.md/PR 模板变更为所有者 2026-10-23 指示的复用目标收紧条款（提交 d50e824c7e8b 正文自证），非放宽。",
+    "红线·上游只读净面（PASS）：送验段内 e453006ea 曾按批准补丁改上游 EAA.cpp/EAATest.cpp，随即 54f0beda6 撤销，净 diff 上游 RobWork/src、RobWorkSim/src、vcpkg 均为零（04-range-files.txt 过滤计数=0）；patch 与撤销留痕完整。",
+    "红线·PASS/FAIL/SKIP/NOT RUN 分列（PASS）：抽验送验树 traceability/reuse/REUSE-T11/ird-test-report-final.json——passed=474/failed=0/skipped=0/notRun=0 四列分立，无混列。",
+    "提交链（FAIL）：commit-lint -Range 6509e5e4c..d50e824c7e8b exit=1——78/80 合规，717594e5c「合入覆盖清查会话R1/R2成果（codex/coverage-sweep）」与 3a61e300f「合入主会话reuse-t01增量（T07实施+T08旋转提案）用于R2增量核对」两个双亲合并提交标题缺合法中文前缀。一包一组观察：T01 审计批次（B28—B35、覆盖清查 R1/R2、治理脚本批次）成组可回滚，正文普遍含验证摘要与影响面（如 e453006ea/8e4a08ac8 正文含命令级验证与计数），证据与提交正文一致性抽查未见虚报。证据 05-commit-lint.log。"
+  ],
+  "commands": [
+    { "name": "verify-task-scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json -Base 6509e5e4cc15ed5f0da1cf874277abb00f5b4511 -Head d50e824c7e8bf21e7845b68e55dadd64e8b56d56", "exitCode": 1, "passed": false, "log": "01-scope.log" },
+    { "name": "validate-task@reviewSHA", "command": "（worktree 检出 d50e824c7e8b）pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json", "exitCode": 0, "passed": true, "log": "02-validate-task.log" },
+    { "name": "validate-reuse@reviewSHA", "command": "（worktree 检出 d50e824c7e8b）pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T01.json", "exitCode": 0, "passed": true, "log": "03-validate-reuse.log" },
+    { "name": "validate-docs@reviewSHA", "command": "（worktree 检出 d50e824c7e8b）pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1", "exitCode": 0, "passed": true, "log": "03b-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 6509e5e4cc15ed5f0da1cf874277abb00f5b4511..d50e824c7e8bf21e7845b68e55dadd64e8b56d56", "exitCode": 1, "passed": false, "log": "05-commit-lint.log" },
+    { "name": "range-files", "command": "git diff --name-only 6509e5e4c..d50e824c7e8b", "exitCode": 0, "passed": true, "log": "04-range-files.txt" }
+  ],
+  "executionNotes": [
+    "verify 三命令在临时 detached worktree（$TEMP/reuset01-acc-d50e824c7，检出送验 head）执行而非主树：送验 head 之后 reuse/ 目录被 T20—T29 批次大量推进（git diff d50e824c7..HEAD 佐证），主树直跑将混入后续状态；取证后 worktree 已删除，git worktree list 复核无残留。",
+    "本会话首次 pwsh 调用因工作目录错误失败（exit=64）并在 tasks/ 下误建空目录树，已确认仅含该失败输出后整体删除，仓库恢复干净；正式证据全部以仓库根为工作目录落盘。",
+    "01-scope.log 含 MSYS grep 不识别的编码字节，违规计数改以 awk 统计（forbidden=5、out-of-scope=689，合计 694 与脚本总结行一致），awk 明细未另存文件、以 01-scope.log 原件为准。"
+  ],
+  "issues": [
+    "范围与 allowedFiles 不一致（阻断）：verify-task-scope exit=1，694 路径越界/命中禁止面（5 个 forbidden 产品源文件＋689 个 out-of-scope，构成见 checks 第 3 条）。处置建议：REUSE-T01 为只读审计父任务，送验范围应收敛为本任务自身提交（标题/正文含 REUSE-T01 或其批次证据目录变更），将 REUSE-T07/T08/T10/T11 能力包实施与所有者治理文本改动（AGENTS.md、REQUIREMENTS.md、acceptance-protocol.md、units/*.md、.github 模板、lean-verification、verify-task.ps1 等）剔出本包、由各自契约独立送验；产品 modeling 5 文件属本契约 forbiddenFiles 且与 acceptance 第 3 条「零生产代码变更」根本冲突，不可通过补 allowedFiles 消化。范围修正后复跑 verify-task-scope 至 exit=0 再送第 2 轮验收。证据：traceability/acceptance/REUSE-T01-20261024-r1/01-scope.log、04-range-files.txt。",
+    "提交前缀违规（阻断）：commit-lint 2/80 不合规——717594e5c、3a61e300f 两个跨会话合并提交标题缺 [governance]/[ACC] 等合法中文前缀。因禁止改写历史，须由所有者裁决：或在送验说明/契约 note 按历史豁免口径（F-012 同型）登记豁免理由（跨会话合入、内容可追溯），或以新提交补记；重跑 commit-lint 核对其余 78 提交合规维持不变。证据：traceability/acceptance/REUSE-T01-20261024-r1/05-commit-lint.log。",
+    "T07 产品实施无独立验收（阻断）：送验段含 8e4a08ac8/c27349a80 对 CouplingMath.hpp/CMakeLists.txt/CouplingReuseTest.cpp 的产品变更（REUSE-T07 耦合 SVD 迁移），截至送验 head traceability/acceptance/ 无任何 REUSE-T07 独立验收记录，违反 migration §12.11「完整能力包独立验收后放行」与契约 acceptance 第 4 条。处置：为 T07 补齐完整能力包独立验收（对端契约回归＋数值验收，含其 benchmark/contract 证据核验），或在本包内将其明确剔出并随范围收敛重验。证据：04-range-files.txt（产品文件清单）、git show --stat 8e4a08ac8、migration.md 第 224 行。",
+    "重验要求（随范围修正）：按本记录同口径复跑 verify-task-scope（显式 Base/Head）、commit-lint、validate-task/validate-reuse/validate-docs（冻结送验树），全部 exit=0 后方可登记验收通过。"
+  ],
+  "notRun": [],
+  "limitations": "FAIL 仅针对送验范围口径（6509e5e4c..d50e824c7e8b 按首末提交推导的整段）与该范围下的契约符合性，不否定段内各批次审计工作本体（validate-docs/validate-reuse 在送验树全 PASS、20 单元 functions=1128 在册、catalog candidate=33/verified=2 如实保留、红线抽查零违反）及 T11 已完成的能力包独立验收；亦不构成 REUSE-T02 或算法替换（migration §11）的放行或阻断。审计任务本体持续 audit-in-progress，本记录不改动任务状态、不推进下一任务。集成/冒烟 C++ 构建未重跑：范围净 diff 产品源码仅 modeling 5 文件且属其他任务送验面，其测试证据（T11 474/0/0/0 等）已核送验树原件，按 AGENTS §4 增量口径不扩大。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/02-validate-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/03-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/03b-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/04-range-files.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T01-20261024-r1.json"
+  ]
+}
