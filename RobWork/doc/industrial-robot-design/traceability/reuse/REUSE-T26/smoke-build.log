@@ -1,0 +1,22 @@
+
+  Compare.cpp
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\core\Release\sdurws_ird_core.lib
+  ParamSchema.cpp
+  sdurws_ird_diagnostics.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\diagnostics\Release\sdurws_ird_diagnostics.lib
+  sdurws_ird_evidence.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\evidence\Release\sdurws_ird_evidence.lib
+  TxEngine.cpp
+  sdurws_ird_project.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\project\Release\sdurws_ird_project.lib
+  RunRegistry.cpp
+  sdurws_ird_execution.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\execution\Release\sdurws_ird_execution.lib
+  sdurws_ird_io.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\io\Release\sdurws_ird_io.lib
+  sdurws_ird_policy.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\policy\Release\sdurws_ird_policy.lib
+  sdurws_ird_runtime.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\runtime\Release\sdurws_ird_runtime.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt
+  DiagCodes.cpp
+  TrjTypes.cpp
+  PlanConfig.cpp
+  FailureLocate.cpp
+  Commands.cpp
+  Export.cpp
+  正在生成代码...
+  sdurws_ird_trajectory.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\govt24-smoke\trajectory\Release\sdurws_ird_trajectory.lib

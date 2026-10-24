@@ -59,10 +59,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
           "symbol": "interpolateCartesianLine",
-          "qualifiedSymbol": "sdurws::ird::trajectory::interpolateCartesianLine",
-          "startLine": 191,
-          "endLine": 268,
-          "sha256": "c69d1989f4769a25653078a64acd08a7bb25baecb1f13778642782466663948e"
+          "startLine": 128,
+          "endLine": 168,
+          "sha256": "ddf3d37ef819f3f59201d499477721924ce79f7f85d388bf62c3d197ae8e9781"
         }
       ],
       "targets": [
@@ -71,20 +70,68 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "TRAJ-SLERP",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"interpolateCartesianLine|slerp\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+        "conclusion": "RobWork Quaternion公开slerp适用，真实生产调用/735闭式及端点极值/消费者回归；无新封装/模型或缓存。"
       },
-      "differences": "手写最短弧slerp；Quaternion::slerp及LinearInterpolator可复用，端点位级快速路径、极小角及pi回归需保留",
+      "differences": "仅保留端点位级/行程定义域和位置凸组合；删除手写四元数核心/无用helper；直接上游normalize/slerp/toRotation3D，不强接LinearInterpolator极值不同语义。",
       "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
           "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/CartesianLine.hpp",
+          "sha256": "e8cdc91803b45bde749abb9540d4a2857f2aa0402e17e026bd3163a560956bfc"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+          "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+          "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Geometry/Quaternion.h",
+          "sha256": "647bee175ef29e4b57252cf84f0ca211c34b30096aeb8ea5898e2f7b05c5e039"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+      "auditBoundary": "生产与独立oracle/上游/直接消费者/返回值扰动已执行；性能获本包接受；独验NOT RUN，非closed。",
+      "production": {
+        "entry": "interpolateCartesianLine",
+        "consumer": "interpolateCartesianLine",
+        "upstream": "slerp",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/production.json",
+        "sha256": "8c64ce5bec2643d0f0db2f2d1765a7fe2aaba16f03e5f82b518728fc3306221a"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+          "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ]
     },
     {
       "functionId": "trajectory.rotationAngleBetween",
@@ -181,7 +228,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -244,7 +291,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -1363,6 +1410,2918 @@
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json",
         "sha256": "e6a628b6c7f0eeaa422ad4d08e79bf75b0bc75eac23a2d40b869515aab46558b"
       }
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.isFiniteDouble",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "isFiniteDouble",
+          "startLine": 51,
+          "endLine": 54,
+          "sha256": "54e2c6ad02f0e2b0573ff7ae7187a07577db3692f3fa1ad163034c788f063a66"
+        }
+      ],
+      "differences": "原NFR-COR-03有限性请求守卫，非数值核心；无状态；保持NaN/inf拒绝契约。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.isOrthogonal",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "isOrthogonal",
+          "startLine": 58,
+          "endLine": 72,
+          "sha256": "a0ec587cc16f961c421ba5e586f3b989b2327acbc89bc69ad7f8be4eaf45c5ba"
+        }
+      ],
+      "differences": "产品三列点积残差1e-9阈值，六项点积直接rw::math::dot（Vector3D.hpp）；不改为额外行列式/不同默认容差；无自写点积核心。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.qSummary",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "qSummary",
+          "startLine": 76,
+          "endLine": 87,
+          "sha256": "bbf69b8518974cb0e7e384faf2ec39dab4b06b569fad3025c8ebda359ebbd3a7"
+        }
+      ],
+      "differences": "仅FailedSegmentRecord素材中的混合rad|m关节摘要；正式诊断仍由FailureLocate经IDiagnosticFactory创建，不新增诊断权威。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.toPtpCandidate",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "toPtpCandidate",
+          "startLine": 91,
+          "endLine": 101,
+          "sha256": "e45aab673a063541bcb0ce0415fde25662ea790f434be9a749175299496d3a02"
+        }
+      ],
+      "differences": "原IK端口解向原PtpCandidate字段投影，q/stableIndex/margin保持；不解IK、不存模型或额外缓存。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.singularComparison",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "singularComparison",
+          "startLine": 105,
+          "endLine": 120,
+          "sha256": "b355fb9ddbd66c6fbb6a02b31fda6a90e3e434b67359a8de2375d5140cd8781f"
+        }
+      ],
+      "differences": "原core ComparativeFields/ValueProvenance/UnitToken的素材投影；实际条件数来自FK端口，threshold来源policy投影，无第二证据envelope。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.cartesianSamplePlan",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "cartesianSamplePlan",
+          "startLine": 174,
+          "endLine": 200,
+          "sha256": "18159409bc33950e102a246e8b70b5c7700c5d28ae2ee541c2c5a2e3276b95e4"
+        }
+      ],
+      "differences": "TRJ-02固定弧长上限/端点必含解析离散策略，保留原ceil/i除n与请求检查；不冒充通用时标轨迹算法；超大容量历史边界不在本包修改。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.planCartesianLine",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "planCartesianLine",
+          "startLine": 206,
+          "endLine": 708,
+          "sha256": "dc6baf175a581ca8618c47306ec4bdfba7468dcbbd61cd232f279e9fb288bade"
+        }
+      ],
+      "differences": "原产品轴/角色/采样/分支选择/取消/素材装配，IK/FK只消费端口；参考轴点积直接Vector3D.hpp::dot；无第二模型/State/求解器或共享缓存；既有依赖方向不变。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine.makeFailure",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "makeFailure",
+          "startLine": 401,
+          "endLine": 412,
+          "sha256": "b915e820bba4a1dace758ae54da5a3dc6b28a4fa1ff9d389bb741807cb44657e"
+        }
+      ],
+      "differences": "原局部FailedSegmentRecord payload构造，捕获只在本次plan调用存活；不直接构造正式DiagnosticEntry，诊断权威保持diagnostics。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L92",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "Tolerance goldenTolerance()",
+          "startLine": 92,
+          "endLine": 95,
+          "sha256": "6957a537caff79023d3b5c032863ecd6a294c7046577cb266af2cb5ac0c2a560"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L98",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "Tolerance endpointTolM()",
+          "startLine": 98,
+          "endLine": 101,
+          "sha256": "33ef58c1456aff5b4e568e6b8bf3cb86110a315e0ef39779530ab807d91fa40e"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L104",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "rw::math::Q makeQ(std::initializer_list<double> vals)",
+          "startLine": 104,
+          "endLine": 112,
+          "sha256": "82c409c8fd1c1e1caccac066af251c33177709b12a8b1ef26981a72592ae92d0"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L118",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "rw::math::Transform3D<double> makePose(double x, double y, double z, double yawAboutZRad)",
+          "startLine": 118,
+          "endLine": 123,
+          "sha256": "800202946d853fcde13e2b78d82d7601f6acf0accb1a882d5cc9e847a467dc7b"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L127",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "double yawOf(const rw::math::Rotation3D<double>& R)",
+          "startLine": 127,
+          "endLine": 130,
+          "sha256": "56e6da3cd7c76360ebf98180f8d1e4bb0934541abd6f39ad6129b676e162f084"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L133",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "IkPortSolution sol(std::initializer_list<double> q, std::uint32_t idx, double margin)",
+          "startLine": 133,
+          "endLine": 142,
+          "sha256": "bd46c65b00e5239680a7bef215c07b4e94a4fc4de7cc42d6071c7132c49eab8c"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L165",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "IkPortReply solveIk(const IkPortRequest& request) override",
+          "startLine": 165,
+          "endLine": 187,
+          "sha256": "a5bfe7cd1da512f9d639a4b57a466cd826255cdc181b0f5d5d31e7267a345d01"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L189",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "FkPortReply evaluateFk(const FkPortRequest& request) override",
+          "startLine": 189,
+          "endLine": 210,
+          "sha256": "99272f4d2b6156e3597fda4bcf3a50fbf40310f23667baa13bcd3584c4a1dc3f"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L219",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "CartesianLineRequest makeGoldenRequest(FakeKinPort* port)",
+          "startLine": 219,
+          "endLine": 240,
+          "sha256": "b591bc9e5b2f96e7ecfea7b4f7dcbe3ae8080db98d6aed067732a27f8764e8ba"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L244",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "void fillContinuousIkScript(FakeKinPort& port)",
+          "startLine": 244,
+          "endLine": 253,
+          "sha256": "547c2c81933a28ba140121180c858776618eec243b03b2b86ecaf8ab8e1f17bf"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L256",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "void fillBenignFkScript(FakeKinPort& port)",
+          "startLine": 256,
+          "endLine": 267,
+          "sha256": "ff9586d5356cb0b0cf931a526e7dda78467e2ea7665cf198c6c2081338e0dd1f"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L277",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, SamplePlanAnalytic_WP16T05_ACC1)",
+          "startLine": 277,
+          "endLine": 294,
+          "sha256": "bf451ef8dbb4b8d6be9fd152521b84ac86ff3efcbe3363097a1aa8302a95a229"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L301",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, InterpolateEndpointsRestore_WP16T05_ACC1)",
+          "startLine": 301,
+          "endLine": 322,
+          "sha256": "ffc0cfa33744b96e1970a8d2e0320fad877d2f4924307ac58d6357f01023ffe2"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L326",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, InterpolateSlerpShortestArc_WP16T05_ACC1)",
+          "startLine": 326,
+          "endLine": 355,
+          "sha256": "bcfcca956ba8ec4202b7d18b00a5542f336cd09714a726e1d9f81e2a86a1552e"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.lambda.L331",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "const auto deg = [pi](double d) { return d * pi / 180.0; };",
+          "startLine": 331,
+          "endLine": 331,
+          "sha256": "0a394a38d2edcf5b4ec3e3b31e4a8e7c791da634ddf7b4a1b6a402904e879e01"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L362",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, SlerpIndependentAxisOracle_REUSE_T26)",
+          "startLine": 362,
+          "endLine": 407,
+          "sha256": "9fedadd207d33ba6cea3ea97ae4d47026d5a4e21c5ef2839273e6e1dd967a558"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.lambda.L373",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "const auto rodrigues = [](const rw::math::Vector3D<double>& a, double angle) {",
+          "startLine": 373,
+          "endLine": 380,
+          "sha256": "72108ab923638d1c159de5b35ca23b78556c8edc51df6fb8411bf78de3bb534b"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L410",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, SlerpUpstreamAndBoundary_REUSE_T26)",
+          "startLine": 410,
+          "endLine": 439,
+          "sha256": "1ca4b39c40c5941005d0b937655f4d8c4eafa8fe686f8432dbfbb38bed954f38"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L449",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanApproachGoldenContinuous_WP16T05_ACC1)",
+          "startLine": 449,
+          "endLine": 518,
+          "sha256": "cac5c2e9e93d072fb4ec0a3568f230f68e274d622e153a62a43e2edc5100a5f8"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L522",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanRetractReferenceAxis_WP16T05_ACC1)",
+          "startLine": 522,
+          "endLine": 544,
+          "sha256": "26da9088047a2b0e8eb87779ee9167f5b015c7c782fbcc2a39786a5b633c9ef8"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L548",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanDetectsBranchJump_WP16T05_ACC1)",
+          "startLine": 548,
+          "endLine": 579,
+          "sha256": "6a434166537a6ce45ee4293b7034bd85d568988c3184c68c170e174a29cbf877"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L584",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanSampleUnreachableSearchExhausted_WP16T05_ACC1)",
+          "startLine": 584,
+          "endLine": 613,
+          "sha256": "4ba91af43fcd5ebae718362349afcba653cd5472b48bce322136917edadf7a59"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L616",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanMidSampleUnreachableLocatedByS_WP16T05_ACC1)",
+          "startLine": 616,
+          "endLine": 638,
+          "sha256": "f95b1268ada0bed95c80bf7aa95c895f4d0f9b959e225d4f5b0b213a4297edbe"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L642",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanSingularNeighborhoodWarnsNotBlocks_WP16T05_ACC1)",
+          "startLine": 642,
+          "endLine": 674,
+          "sha256": "16756df0ebefd7d384b121d1353e7b63d56b145c31ed73f9ee6b39cf2a3aa273"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L678",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanSingularCheckNotApplicableWithoutThreshold_WP16T05_ACC1)",
+          "startLine": 678,
+          "endLine": 692,
+          "sha256": "c89e4e087c64155b6a56940edc6d8a22757d5210a3df557f62164074984e6b12"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L696",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanSingularInfiniteConditionNumberHits_WP16T05_ACC1)",
+          "startLine": 696,
+          "endLine": 712,
+          "sha256": "abe1fd33db16d39f2986ca15fa6618409cf7abfecaf4fd0ffebae3ad16cea83e"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L716",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanFirstSampleBranchContinuesFromSeed_WP16T05_ACC1)",
+          "startLine": 716,
+          "endLine": 730,
+          "sha256": "0eb5d7ae3a33ac47893b12350060216fed32c92924ab960059c075c9b6faa9e2"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L734",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanCancelYieldsZeroMaterial_WP16T05_ACC1)",
+          "startLine": 734,
+          "endLine": 745,
+          "sha256": "20904ec90c894412382e8db5d9b3ab2092f75b10379e08d68909a9878efede46"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.lambda.L740",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "req.cancel = [] { return true; };",
+          "startLine": 740,
+          "endLine": 740,
+          "sha256": "b36810a7e3db18c96831985b32de63299524e5ad44702423e2fcc46d99addfc7"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L749",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanPortErrorSurfacesTrajectoryError_WP16T05_ACC1)",
+          "startLine": 749,
+          "endLine": 761,
+          "sha256": "eabf658dfb3016c1bcea0b3bd6bc00c438206fd147e69c6ea52cb9c2525939a3"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L765",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanDeterministicReplays_WP16T05_ACC1)",
+          "startLine": 765,
+          "endLine": 795,
+          "sha256": "ddc66e9708b6b98a6d338a394da6ab065683578621ca548116d680724a7ee7bc"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L799",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjCartesianLine, PlanRejectsContractViolations_WP16T05_ACC1)",
+          "startLine": 799,
+          "endLine": 869,
+          "sha256": "c7dd326922779d606d8ef0c2a943d94037f9d7520ffe51f40e29afa32e223e93"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L877",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjContinuity, CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1)",
+          "startLine": 877,
+          "endLine": 904,
+          "sha256": "7acdb5ef1c11eb7579a900ad8ecbaa60b38191b2b72ca950778f93fa3e6c381a"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L912",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjContinuity, BoundaryContinuousApproachToRetract_WP16T05_ACC1)",
+          "startLine": 912,
+          "endLine": 940,
+          "sha256": "27d76d6cdea71ae16d174edc797790f1f82cf4ab8c0ff65cb67914623769e021"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L945",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjContinuity, BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1)",
+          "startLine": 945,
+          "endLine": 991,
+          "sha256": "6f577facdcc6a960724f46f80db19cbd8e084b64e5efda968a0dbfcd9300e3bf"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L995",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjContinuity, JointBoundaryNotApplicable_WP16T05_ACC1)",
+          "startLine": 995,
+          "endLine": 1029,
+          "sha256": "59035e7000884efc41b0bcc6625f74988b152c07a8fb8ac0c587d8e6ed656229"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "原测试夹具/字面期望、独立单轴atan2与新Rodrigues闭式oracle，复用gtest/testkit/真实trajectory库；FakeKinPort只在端口边界，无生产算法/测试框架副本。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest.L1032",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "TEST(TrjContinuity, CheckRejectsContractViolations_WP16T05_ACC1)",
+          "startLine": 1032,
+          "endLine": 1069,
+          "sha256": "2c19294152f8bcd30058c4b8a17e559856f7f20c418bcff31e92075e2d12efee"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "functionId": "trajectory.audit-t26.CartesianLine_cpp.declarations",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "/**",
+          "startLine": 1,
+          "endLine": 50,
+          "sha256": "384ab6eff3de51250fd96c271ee8af1dc82ec93885da0a4ef2f47d62d398c415"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "/// 旋转矩阵正交性核验（构造点 fail-fast 的判定式）：三列范数平方与 1 的",
+          "startLine": 56,
+          "endLine": 57,
+          "sha256": "c8500621487cb3512254b26e0199f1d31d35d68a6a71fd16ad28ce982522438e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "/// 两端解摘要（素材文案用——逐轴数值列表；rad|m 逐轴混合计量口径在",
+          "startLine": 74,
+          "endLine": 75,
+          "sha256": "663bb74a86edf722b7867201e6b247c98178b3b59eebb27eb6ceda76e38f9102"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "/// IkPortSolution → PtpCandidate 投影（§7.5 三键同名同义——§15.4 稳定",
+          "startLine": 89,
+          "endLine": 90,
+          "sha256": "1d8a4be22ce4d43810341cb16f6849b1a3c48541193076aa7449301d940ecc1f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "/// 构造奇异 warning 比较型字段（实际条件数/阈值/单位 1——UX-03 三要素；",
+          "startLine": 103,
+          "endLine": 104,
+          "sha256": "c29943a81ab8e789473ab40744fd794cbd0a72eecc2753fc52fef5a8f95f4ce8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "}  // namespace",
+          "startLine": 122,
+          "endLine": 126,
+          "sha256": "60a6e059be9fef44d3553e656620cf379e1a049d62608221011c65ae206d14a6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 170,
+          "endLine": 172,
+          "sha256": "5676f2485d1a2382c7331ff963c0120804fdc610a7a4088950d36ccf33e3eff2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 202,
+          "endLine": 204,
+          "sha256": "884a881e905308c9f85e0058dc3d029fecb2e1becd46f47ee8d254f7deb1bfff"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "symbol": "}  // namespace sdurws::ird::trajectory",
+          "startLine": 710,
+          "endLine": 710,
+          "sha256": "b12f74a0657c7ef467dda712ff99858be99ae5c574e7d85aff304b56f72ee28c"
+        }
+      ],
+      "differences": "仅文件头/注释/include/namespace/声明与FakeKinPort数据成员；所有有体函数和lambda已分别登记，不将函数藏入声明区。"
+    },
+    {
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02",
+        "TRJ-06",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T26 upstream-search.log；定向检查Quaternion/Vector3D/LinearInterpolator、原CartesianLine/头契约/FailureLocate/测试消费者",
+        "conclusion": "复用上游公开数学值与原端口/gTest/testkit；剩余采样、分支稳定排序、结果素材和非法请求为原产品契约，不是另一份FK/IK/四元数核心。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+          "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+        "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/verification.json",
+          "sha256": "69007f1415b0431ed4323dc72ea3b46cd1fbb73ce2221a761247d274f517768d"
+        }
+      ],
+      "auditBoundary": "逐函数复用边界实审；仅本包变化和直接影响验证，非完整全域正确性证明；独验NOT RUN。",
+      "differences": "仅文件头/注释/include/namespace/声明与FakeKinPort数据成员；所有有体函数和lambda已分别登记，不将函数藏入声明区。",
+      "functionId": "trajectory.audit-t26.CartesianLineContinuityTest_cpp.declarations",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/**",
+          "startLine": 1,
+          "endLine": 91,
+          "sha256": "cdf1d484322990ef9df833bcb583b158378bc94c4be44ac2b7541f1c27333fbc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 附录 D C7 端点还原量纲（长度 1e-12 m——笛卡尔端点还原断言）。",
+          "startLine": 97,
+          "endLine": 97,
+          "sha256": "8a497a49730f3436b7c9e30ed9591af5d9bb61686d1d8baf4dd463f58a714a30"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 构造权威关节向量（转动关节——rad；AGENTS §2.5 单位显式）。",
+          "startLine": 103,
+          "endLine": 103,
+          "sha256": "773887b9502808b1c88d77c85ff6a5b1e767b5c32a89c455e9c1a0453c7b56ba"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 构造基座系位姿（平移 m＋绕基座 Z 轴的偏航角 rad——AGENTS §2.5 单位/",
+          "startLine": 114,
+          "endLine": 117,
+          "sha256": "985f58f61f2273bad1b7aa36cd1cc31e0733ed54726edde712854a8880c5e27c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 提取旋转矩阵的 Rz 等价角（rad）——解析对照用（姿态绕 z 单轴样例：",
+          "startLine": 125,
+          "endLine": 126,
+          "sha256": "c51f2474698f0e33d13301fe79de5940819e3f921ac97f0376f4d8eaccba5114"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 单个 IK 端口解便利构造（q＋stableIndex＋裕量——§7.5 三键镜像）。",
+          "startLine": 132,
+          "endLine": 132,
+          "sha256": "d2cf2bcd6eb7294c4080cb598bac070a0ee152fc8976847033381fda5555a34a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/**",
+          "startLine": 144,
+          "endLine": 163,
+          "sha256": "601df5e5fe2bd7196d72d06d5b558314fbfebd2ba03cfc0905963ba605404a79"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "};",
+          "startLine": 211,
+          "endLine": 218,
+          "sha256": "279a546c6968735e8c1772b6d4b26dbbd9a92bd22f627947f815524817eb8668"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 填充\"同分支连续\"IK 脚本：样本 i（0..3）解＝种子＋(0.001·i, 0, 0) rad",
+          "startLine": 242,
+          "endLine": 243,
+          "sha256": "55de64f7541dfbc8f2ee9cb160c563493d2a57311c5d3b5d865bad0e3e54aad0"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/// 填充 FK 脚本：4 采样全部条件数 10（低于阈值——无 warning 路径）。",
+          "startLine": 255,
+          "endLine": 255,
+          "sha256": "ba269d1ee8c47bd2182f186fc24e420d1b485bc212ac688bf01ef4060a82c679"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "}  // namespace",
+          "startLine": 269,
+          "endLine": 276,
+          "sha256": "e653cb48703e807fb5f47597a21af33755c2cc60bf7128c2e71c1b5eb881d518"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 296,
+          "endLine": 300,
+          "sha256": "b46d88518a228a6a9b97b40368202e65387f3d2d1e4a17fac635f7836b2d7088"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** V-05 姿态最短弧 slerp：与显式四元数对照（NFR-COR-01 解析口径）——",
+          "startLine": 324,
+          "endLine": 325,
+          "sha256": "588831b86e25d2e8214ee2068d149b0b5c626fdf8193edf85e17a2f02ea13301"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 357,
+          "endLine": 361,
+          "sha256": "86963462dceaf2d6a58bcb970f3294275f18a18be03d181ed8291571320934c5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** @brief TRJ-02：独立解析断言之外，单独核对实际安装上游调用的输入/结果。 */",
+          "startLine": 409,
+          "endLine": 409,
+          "sha256": "82cfa1a13a148218aa0feab71bf240d8611c2f3ac764052b7b677f5d8147738e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "// REUSE-T26：解析 oracle 不调用 Quaternion/slerp；罗德里格斯矩阵按",
+          "startLine": 441,
+          "endLine": 448,
+          "sha256": "955cca54de09066d202b4b8e99b0cff95ebad84f1f2a60d2d1dcc9b979a5a328"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** ReferenceZ/retract 双向样例：参考轴基座系 X 正向、retract 外推——",
+          "startLine": 520,
+          "endLine": 521,
+          "sha256": "a3bceff462d2103f84b9c772e264785d4ca134fe3d1b5edf22a7a73fea04934f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** V-06 反例——分支跳变：第 2 采样点解集远离当前分支 → BranchJump 终态",
+          "startLine": 546,
+          "endLine": 547,
+          "sha256": "f2dea3a4c2c8045729ec24aec311dbbff950b35f19e2d59b369590075d5e747c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.4 采样失败（搜索未果口径）：首采样点全部解被过滤（初值扩充重试后",
+          "startLine": 581,
+          "endLine": 583,
+          "sha256": "30e9efe6405457ad043f64dbaba58ef5f50cd040b335cf3045a9f2368335d4cc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.4 中途失败：第 3 采样点无解 → 素材定位 s=2/3（段内可定位）。 */",
+          "startLine": 615,
+          "endLine": 615,
+          "sha256": "e39d9ec98b601394b070d29332e2fc92eb6a5b89c5f19e6e0cfb576d94f1b043"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.5 奇异邻域（V-07）：阈值启用＋条件数超限 → warning 素材逐采样记录",
+          "startLine": 640,
+          "endLine": 641,
+          "sha256": "420d84ae8103d886335c186317f2cad2a8aabcc912c253ba9525e95888ca760b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.5 NotApplicable 路：policy 未启用（nullopt）→ 零 FK 调用、零",
+          "startLine": 676,
+          "endLine": 677,
+          "sha256": "964388292c87fdbce8f37b583ff5d0b2801950f2f38a4208ebc6ba666de08daa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.5 有限性路：条件数 +∞（conditionNumberIsFinite=false）→ 命中",
+          "startLine": 694,
+          "endLine": 695,
+          "sha256": "fb274687528ce7c6dc3cad610e8981343188e2a40740805f3d877ae3110a606c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §8.3 首采样分支延续：种子近解与远解并存 → 首采样按 PTP 构型选择规则",
+          "startLine": 714,
+          "endLine": 715,
+          "sha256": "16510dd526235d5688931615d9c3454bc101e7eef039b4a11ef804e996602946"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 取消路：入口命中 → Canceled 零素材（取消不是错误——UX-03）；端口侧",
+          "startLine": 732,
+          "endLine": 733,
+          "sha256": "b411e0460f5653a3bc418b3f132e340cc1f11b8b95eeb6b8a3456de0649dd93d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 端口层错误传播：PortError → TrajectoryError（token 恒",
+          "startLine": 747,
+          "endLine": 748,
+          "sha256": "b2e12880c440e9fd46efa5873a73d62f5df571257475fa9306571e1cf5518834"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 确定性（NFR-COR-02）：同输入两次规划 → 端口请求序列逐字段一致＋",
+          "startLine": 763,
+          "endLine": 764,
+          "sha256": "2036cfe80c9bc0bb3cc5070082d16d49b61063320fa8c189caadca4b372573af"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** §15.2 非法示例组（fail-fast 面）：distanceM≤0／ReferenceZ 方向缺失/",
+          "startLine": 797,
+          "endLine": 798,
+          "sha256": "4d980f83b943f27696affbe754b8eeef87c6894495c6cd612019d80f04cda9d8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 871,
+          "endLine": 876,
+          "sha256": "37b802ae9acbf5ca676f748159a5658b9bad5a1680b132f0741874d7f86e7f97"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 906,
+          "endLine": 911,
+          "sha256": "17694c80e00496a2a6a4110e314cbf10a1d4ff06573ecaddbd188064245ca801"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 非法连接（§9.2 行 2）：后段起点姿态错开 1e-6 rad（> 容差 1e-12）→",
+          "startLine": 942,
+          "endLine": 944,
+          "sha256": "079cb48adcdc757f922681f060caef3e5852171e095284eb6960f67fea6bfa37"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 纯关节边界：前段末路点只携 q → 笛卡尔维度 NotApplicable（无判定值、",
+          "startLine": 993,
+          "endLine": 994,
+          "sha256": "63bbdd398e0c25063cbd7d21161d14f3a48326b73f1b62ff1964f594eae9766e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+          "symbol": "/** 前置违约面：段序号不连续／容差非法 → fail-fast（§15.3 前置原文）。 */",
+          "startLine": 1031,
+          "endLine": 1031,
+          "sha256": "4e8bd835b82a752a6aa13e178199eb65f0f97a331044255771db7bf6052ca7c2"
+        }
+      ]
     }
   ]
 }

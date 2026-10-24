@@ -657,15 +657,18 @@
    "id": "TRAJ-SLERP",
    "search": {
     "command": "rg -n \"slerp\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-    "conclusion": "已读公共接口；适配等价性仍须REUSE-T01验证"
+    "baseline": "507db46bba838bb170e1fbfaf5784a389ad3790d",
+    "conclusion": "公开Quaternion构造/normalize/slerp/toRotation3D适用；T26生产接线、735独立闭式、上游/消费者对照及断开实测，独验NOT RUN。"
    },
-   "boundary": "端点、最短弧、异常",
+   "boundary": "仅姿态最短弧数值核心；端点位级、位置凸组合、行程及产品容差由trajectory维护",
    "upstream": [
     {
      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
      "symbols": [
-      "slerp"
+      "Quaternion",
+      "normalize",
+      "slerp",
+      "toRotation3D"
      ],
      "target": "sdurw_math",
      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63",
@@ -677,7 +680,7 @@
     "targets": [
      "sdurw_math"
     ],
-    "constraints": "端点、最短弧、异常"
+    "constraints": "沿用sdurw_math及既有trajectory目标；不增加CMake/依赖/公共接口"
    },
    "usages": [
     {
@@ -690,25 +693,54 @@
     }
    ],
    "limits": {
-    "semantics": "端点、最短弧、异常",
-    "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
-    "determinism": "按需求与功能探测，未验证不得宣称确定性"
+    "semantics": "单位四元数最短弧；构造后显式normalize，产品保留s=0/1快速路径和位置凸组合，不强接不同极值语义LinearInterpolator",
+    "lifetime": "ARCH 3.6.1数学局部值；无模型/State借持、无新owner或共享缓存",
+    "determinism": "相同输入在当前工具链重复位级一致，735组实测；不宣称跨工具链位级或线程压力测试已通过"
    },
    "ownerUnit": "trajectory",
    "examples": [],
-   "docs": [],
+   "docs": [
+    {
+     "path": "RobWork/RobWork/src/rw/trajectory/LinearInterpolator.hpp",
+     "sha256": "303849f1606e2a60df011b4852af5e3b9c99ddefee317ee7413b2a79af319c87",
+     "symbols": [
+      "slerp"
+     ]
+    }
+   ],
    "operations": [
     "value"
    ],
    "review": {
-    "status": "candidate",
-    "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    "status": "verified",
+    "version": "507db46bba838bb170e1fbfaf5784a389ad3790d",
+    "evidence": {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/README.md",
+     "sha256": "ba769c5bf7919a8741d5c2c74e0cf57dd0abdf104588fe6dc8cbf0db52c617e5"
+    }
    },
-   "tests": [],
+   "tests": [
+    {
+     "path": "RobWork/RobWork/gtest/math/QuaternionTest.cpp",
+     "sha256": "821387b2c2fa5a6c7046d6c7debaa424a0847cc74a89af005b364223c64784cd",
+     "symbols": [
+      "Conversion",
+      "MiscTest"
+     ]
+    },
+    {
+     "path": "RobWork/RobWork/gtest/trajectory/LinearInterpolatorTest.cpp",
+     "sha256": "3fbd1a00ed62fd84f113d70504706fb3c83bb925c2824948d3ac9d0be3128952",
+     "symbols": [
+      "LinearInterpolatorTest"
+     ]
+    }
+   ],
    "resourceSearch": {
-    "command": "rg -n \"slerp\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "conclusion": "资源尚未按功能复核；空数组不表示不存在上游测试/示例/文档"
-   }
+    "command": "rg -n \"slerp\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest; 定向读取QuaternionTest和LinearInterpolatorTest",
+    "conclusion": "公开Quaternion数学接口及LinearInterpolator旋转特化均可追溯；上游现有转换/插值测试资源引用复用，不声称运行上游测试或存在专门slerp测试；未发现需引入独立示例的缺口，原件upstream-search.log。"
+   },
+   "layer": "adapter"
   },
   {
    "id": "TRAJ-LINEAR",

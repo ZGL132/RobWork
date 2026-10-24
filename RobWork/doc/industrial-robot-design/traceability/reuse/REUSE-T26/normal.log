@@ -1,0 +1,58 @@
+Note: Google Test filter = TrjCartesianLine.*:TrjContinuity.*
+[==========] Running 23 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 18 tests from TrjCartesianLine
+[ RUN      ] TrjCartesianLine.SamplePlanAnalytic_WP16T05_ACC1
+[       OK ] TrjCartesianLine.SamplePlanAnalytic_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.InterpolateEndpointsRestore_WP16T05_ACC1
+[       OK ] TrjCartesianLine.InterpolateEndpointsRestore_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.InterpolateSlerpShortestArc_WP16T05_ACC1
+[       OK ] TrjCartesianLine.InterpolateSlerpShortestArc_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.SlerpIndependentAxisOracle_REUSE_T26
+[       OK ] TrjCartesianLine.SlerpIndependentAxisOracle_REUSE_T26 (1 ms)
+[ RUN      ] TrjCartesianLine.SlerpUpstreamAndBoundary_REUSE_T26
+[       OK ] TrjCartesianLine.SlerpUpstreamAndBoundary_REUSE_T26 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanApproachGoldenContinuous_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanApproachGoldenContinuous_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanRetractReferenceAxis_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanRetractReferenceAxis_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanDetectsBranchJump_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanDetectsBranchJump_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanSampleUnreachableSearchExhausted_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanSampleUnreachableSearchExhausted_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanMidSampleUnreachableLocatedByS_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanMidSampleUnreachableLocatedByS_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanSingularNeighborhoodWarnsNotBlocks_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanSingularNeighborhoodWarnsNotBlocks_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanSingularCheckNotApplicableWithoutThreshold_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanSingularCheckNotApplicableWithoutThreshold_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanSingularInfiniteConditionNumberHits_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanSingularInfiniteConditionNumberHits_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanFirstSampleBranchContinuesFromSeed_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanFirstSampleBranchContinuesFromSeed_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanCancelYieldsZeroMaterial_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanCancelYieldsZeroMaterial_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanPortErrorSurfacesTrajectoryError_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanPortErrorSurfacesTrajectoryError_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanDeterministicReplays_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanDeterministicReplays_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjCartesianLine.PlanRejectsContractViolations_WP16T05_ACC1
+[       OK ] TrjCartesianLine.PlanRejectsContractViolations_WP16T05_ACC1 (0 ms)
+[----------] 18 tests from TrjCartesianLine (2 ms total)
+
+[----------] 5 tests from TrjContinuity
+[ RUN      ] TrjContinuity.CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1
+[       OK ] TrjContinuity.CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.BoundaryContinuousApproachToRetract_WP16T05_ACC1
+[       OK ] TrjContinuity.BoundaryContinuousApproachToRetract_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1
+[       OK ] TrjContinuity.BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.JointBoundaryNotApplicable_WP16T05_ACC1
+[       OK ] TrjContinuity.JointBoundaryNotApplicable_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.CheckRejectsContractViolations_WP16T05_ACC1
+[       OK ] TrjContinuity.CheckRejectsContractViolations_WP16T05_ACC1 (0 ms)
+[----------] 5 tests from TrjContinuity (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 23 tests from 2 test suites ran. (2 ms total)
+[  PASSED  ] 23 tests.

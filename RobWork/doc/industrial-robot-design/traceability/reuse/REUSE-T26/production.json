@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "trajectory.interpolateCartesianLine",
+  "target": "sdurws_ird_trajectory",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+      "sha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+      "sha256": "db9eaabadd8de39d7163cde0c8f2247bdf95ef121390371e69ae0ef5bc894632"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/CartesianLine.hpp",
+      "sha256": "e8cdc91803b45bde749abb9540d4a2857f2aa0402e17e026bd3163a560956bfc"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Geometry/Quaternion.h",
+      "sha256": "647bee175ef29e4b57252cf84f0ca211c34b30096aeb8ea5898e2f7b05c5e039"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter TrjCartesianLine.*:TrjContinuity.*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.xml",
+      "sha256": "6a908253c6243fb25c461515c3ef88943862133f91003c9f44d8f707fdc1b653"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.log",
+      "sha256": "3e885b29ba1380e4872642c36f952f21aaaa52d06702370efcdba6d7feb88d50"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label disconnected -Filter TrjCartesianLine.*REUSE_T26:TrjCartesianLine.InterpolateSlerpShortestArc*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/disconnected.xml",
+      "sha256": "70dd37f9434e0118044865c5dc3215c2e0256f20b42dca23a42b2ac4e36102ab"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/disconnected.log",
+      "sha256": "d5c547393d6bf19e5d3092256d9cb4e00deb46d2f65574f5bc0a78bb3ba75e66"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+      "originalSha256": "7fa55d57bccab574b265fde9a935014cb675cf17abee67597c36b64f9cebed52",
+      "description": "真实生产qa.slerp(qb,s)替换为qa.slerp(qb,0.0)，丢失行程参数消费；3项断言用例失败，随后恢复最终源码并重建复测23项PASS。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/CartesianLine.mutated.cpp",
+      "sha256": "1fa268228457a708dfa001c49e6bbd8976dacb6a5e1ceac8ac5674e784c5d91f"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter TrjCartesianLine.*:TrjContinuity.*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.xml",
+      "sha256": "6a908253c6243fb25c461515c3ef88943862133f91003c9f44d8f707fdc1b653"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.log",
+      "sha256": "3e885b29ba1380e4872642c36f952f21aaaa52d06702370efcdba6d7feb88d50"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjCartesianLine.SlerpIndependentAxisOracle_REUSE_T26"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter TrjCartesianLine.*:TrjContinuity.*",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.xml",
+      "sha256": "6a908253c6243fb25c461515c3ef88943862133f91003c9f44d8f707fdc1b653"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/final.log",
+      "sha256": "3e885b29ba1380e4872642c36f952f21aaaa52d06702370efcdba6d7feb88d50"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjCartesianLine.SlerpUpstreamAndBoundary_REUSE_T26"
+    ]
+  },
+  "note": "normal/oracle/upstream comparison reference one final execution, not three executions; performance accepted by owner, independent acceptance NOT RUN"
+}

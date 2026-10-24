@@ -1,0 +1,28 @@
+perf.cpp
+perf-old.cpp
+perf-new.cpp
+正在生成代码...
+round=0 scenario=0 variant=old us=0.037696500 checksum=468911.277821557
+round=0 scenario=0 variant=new us=0.033223500 checksum=468911.277821557
+round=0 scenario=1 variant=old us=0.039132500 checksum=468911.276847467
+round=0 scenario=1 variant=new us=0.030284000 checksum=468911.276847467
+round=0 scenario=2 variant=old us=0.054375500 checksum=405913.840820197
+round=0 scenario=2 variant=new us=0.059644000 checksum=405913.840820197
+round=0 scenario=3 variant=old us=0.061493500 checksum=375075.427646015
+round=0 scenario=3 variant=new us=0.063153000 checksum=375075.427646015
+round=1 scenario=0 variant=new us=0.032728500 checksum=468911.277821557
+round=1 scenario=0 variant=old us=0.040177000 checksum=468911.277821557
+round=1 scenario=1 variant=new us=0.035329500 checksum=468911.276847467
+round=1 scenario=1 variant=old us=0.041975000 checksum=468911.276847467
+round=1 scenario=2 variant=new us=0.063280000 checksum=405913.840820197
+round=1 scenario=2 variant=old us=0.057635500 checksum=405913.840820197
+round=1 scenario=3 variant=new us=0.064005500 checksum=375075.427646015
+round=1 scenario=3 variant=old us=0.063827000 checksum=375075.427646015
+round=2 scenario=0 variant=old us=0.040432000 checksum=468911.277821557
+round=2 scenario=0 variant=new us=0.033162500 checksum=468911.277821557
+round=2 scenario=1 variant=old us=0.045513500 checksum=468911.276847467
+round=2 scenario=1 variant=new us=0.035263500 checksum=468911.276847467
+round=2 scenario=2 variant=old us=0.059157000 checksum=405913.840820197
+round=2 scenario=2 variant=new us=0.062813000 checksum=405913.840820197
+round=2 scenario=3 variant=old us=0.063208500 checksum=375075.427646015
+round=2 scenario=3 variant=new us=0.064306500 checksum=375075.427646015

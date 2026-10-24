@@ -31,7 +31,7 @@
 #include <sdurws/ird/trajectory/CartesianLine.hpp>
 
 #include <rw/math/Quaternion.hpp>           // 姿态插值（§8.2 slerp 的四元数载体）
-#include <rw/math/Rotation3D.hpp>           // inverse（姿态角差）
+#include <rw/math/Rotation3D.hpp>           // 旋转矩阵值类型（请求正交性契约）
 
 #include <sdurws/ird/core/Units.hpp>        // core::UnitToken（比较型素材单位——"1" 无量纲）
 #include <sdurws/ird/trajectory/DiagCodes.hpp>
@@ -53,18 +53,6 @@ bool isFiniteDouble(double v)
     return v == v && v - v == 0.0;
 }
 
-/// acos 安全包裹：入参钳制到 [-1,1]（浮点点积可能越出 ±1 一个 ULP）。
-double safeAcos(double x)
-{
-    if (x > 1.0) {
-        return 0.0;
-    }
-    if (x < -1.0) {
-        return std::acos(-1.0);
-    }
-    return std::acos(x);
-}
-
 /// 旋转矩阵正交性核验（构造点 fail-fast 的判定式）：三列范数平方与 1 的
 /// 偏差 ≤1×10⁻⁹，且两两列点积绝对值 ≤1×10⁻⁹（无量纲——旋转无量纲）。
 bool isOrthogonal(const rw::math::Rotation3D<double>& R)
@@ -73,65 +61,14 @@ bool isOrthogonal(const rw::math::Rotation3D<double>& R)
     rw::math::Vector3D<double> c0(R(0, 0), R(1, 0), R(2, 0));
     rw::math::Vector3D<double> c1(R(0, 1), R(1, 1), R(2, 1));
     rw::math::Vector3D<double> c2(R(0, 2), R(1, 2), R(2, 2));
-    const auto n2 = [](const rw::math::Vector3D<double>& v) {
-        return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-    };
-    const auto dot = [](const rw::math::Vector3D<double>& a,
-                        const rw::math::Vector3D<double>& b) {
-        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-    };
-    return std::fabs(n2(c0) - 1.0) <= kOrthoEps
-        && std::fabs(n2(c1) - 1.0) <= kOrthoEps
-        && std::fabs(n2(c2) - 1.0) <= kOrthoEps
-        && std::fabs(dot(c0, c1)) <= kOrthoEps
-        && std::fabs(dot(c0, c2)) <= kOrthoEps
-        && std::fabs(dot(c1, c2)) <= kOrthoEps;
-}
-
-/// 四元数点积（x·x'+y·y'+z·z'+w·w'——分量经 getQx..getQw 取，避免
-/// Eigen 存储顺序歧义直用 .e()）。
-double quatDot(const rw::math::Quaternion<double>& a,
-               const rw::math::Quaternion<double>& b)
-{
-    return a.getQx() * b.getQx() + a.getQy() * b.getQy()
-         + a.getQz() * b.getQz() + a.getQw() * b.getQw();
-}
-
-/// 归一化后的四元数分量组（构造自旋转矩阵后再归一——旋转矩阵构造已
-/// 归一，此处防御非单位输入的数值漂移）。
-struct QuatComponents {
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
-    double w = 1.0;
-};
-
-QuatComponents normalizedQuat(const rw::math::Rotation3D<double>& R)
-{
-    const rw::math::Quaternion<double> q(R);
-    QuatComponents c{q.getQx(), q.getQy(), q.getQz(), q.getQw()};
-    const double n2 = c.x * c.x + c.y * c.y + c.z * c.z + c.w * c.w;
-    if (n2 > 0.0) {
-        const double inv = 1.0 / std::sqrt(n2);
-        c.x *= inv;
-        c.y *= inv;
-        c.z *= inv;
-        c.w *= inv;
-    }
-    return c;
-}
-
-/// 姿态角差（rad）：相对旋转 R_rel = R_a · R_bᵀ 的旋转角
-/// θ = 2·atan2(‖vec(q_rel)‖, |q_rel.w|)——以 |w| 保证落在最短弧 [0,π]。
-double rotationAngleBetween(const rw::math::Rotation3D<double>& Ra,
-                            const rw::math::Rotation3D<double>& Rb)
-{
-    // 相对旋转的姿态四元数：先构造 Rb 的逆旋转再复合（Rotation3D 无
-    // 直接 transpose 转 Quaternion 的开销敏感路径，走 Rotation3D 代数）。
-    const rw::math::Rotation3D<double> Rrel = Ra * rw::math::inverse(Rb);
-    const QuatComponents q = normalizedQuat(Rrel);
-    const double vecNorm = std::sqrt(q.x * q.x + q.y * q.y + q.z * q.z);
-    return 2.0 * std::atan2(vecNorm, std::fabs(q.w));
+    // TRJ-02：本函数只保留产品正交性容差，点积复用上游值类型算法；
+    // 不改用带行列式/其他默认容差的检查器，以免收窄已有请求契约。
+    return std::fabs(rw::math::dot(c0, c0) - 1.0) <= kOrthoEps
+        && std::fabs(rw::math::dot(c1, c1) - 1.0) <= kOrthoEps
+        && std::fabs(rw::math::dot(c2, c2) - 1.0) <= kOrthoEps
+        && std::fabs(rw::math::dot(c0, c1)) <= kOrthoEps
+        && std::fabs(rw::math::dot(c0, c2)) <= kOrthoEps
+        && std::fabs(rw::math::dot(c1, c2)) <= kOrthoEps;
 }
 
 /// 两端解摘要（素材文案用——逐轴数值列表；rad|m 逐轴混合计量口径在
@@ -217,53 +154,16 @@ rw::math::Transform3D<double> interpolateCartesianLine(
                                        (1.0 - s) * pa[1] + s * pb[1],
                                        (1.0 - s) * pa[2] + s * pb[2]);
 
-    // 姿态：四元数最短路径 slerp（§8.2"姿态最短弧 slerp（四元数最短
-    // 路径）"）。手写显式实现以锁定口径（V-05 与显式四元数对照）：
-    // 两端各取单位四元数→点积为负时翻转一端（±q 同旋转成对，取非负
-    // 点积一支保证最短弧）→θ=acos(dot)→标准 slerp 公式。
-    QuatComponents qa = normalizedQuat(ta.R());
-    QuatComponents qb = normalizedQuat(tb.R());
-    double dot = qa.x * qb.x + qa.y * qb.y + qa.z * qb.z + qa.w * qb.w;
-    if (dot < 0.0) {
-        // 最短路径翻转：q 与 -q 表示同一旋转，翻转后插值走短弧（V-05
-        // 大弧样例锁定该分支——Rz(350°)→Rz(10°) 经 0° 而非绕行 340°）。
-        qb.x = -qb.x;
-        qb.y = -qb.y;
-        qb.z = -qb.z;
-        qb.w = -qb.w;
-        dot = -dot;
-    }
-    const double theta = safeAcos(dot);
-    QuatComponents qo = qa;
-    if (theta > 1e-12) {
-        // 常规 slerp：θ 大于极小角阈值——sin(θ) 远离 0，公式稳定。
-        const double sinTheta = std::sin(theta);
-        const double wa = std::sin((1.0 - s) * theta) / sinTheta;
-        const double wb = std::sin(s * theta) / sinTheta;
-        qo.x = wa * qa.x + wb * qb.x;
-        qo.y = wa * qa.y + wb * qb.y;
-        qo.z = wa * qa.z + wb * qb.z;
-        qo.w = wa * qa.w + wb * qb.w;
-    } else {
-        // 近共线分支：θ<1e-12 rad（约 5.7×10⁻¹¹°）时 sin(θ)≈θ 数值不稳，
-        // 回退线性插值后归一化（数学极限一致——θ→0 时 slerp→nlerp）。
-        qo.x = (1.0 - s) * qa.x + s * qb.x;
-        qo.y = (1.0 - s) * qa.y + s * qb.y;
-        qo.z = (1.0 - s) * qa.z + s * qb.z;
-        qo.w = (1.0 - s) * qa.w + s * qb.w;
-        const double len = std::sqrt(qo.x * qo.x + qo.y * qo.y + qo.z * qo.z + qo.w * qo.w);
-        if (len > 0.0) {
-            const double inv = 1.0 / len;
-            qo.x *= inv;
-            qo.y *= inv;
-            qo.z *= inv;
-            qo.w *= inv;
-        }
-    }
+    // REUSE-T26／TRJ-02：数值插值由 RobWork Quaternion 维护；产品仅
+    // 保留端点快速路径、行程范围与位置凸组合，不再维护翻转/三角权重/
+    // 极小角分支或另一份四元数分量结构。两个局部值无共享状态或缓存。
+    rw::math::Quaternion<double> qa(ta.R()), qb(tb.R());
+    qa.normalize();
+    qb.normalize();
 
     rw::math::Transform3D<double> out;
     out.P() = p;
-    out.R() = rw::math::Quaternion<double>(qo.x, qo.y, qo.z, qo.w).toRotation3D();
+    out.R() = qa.slerp(qb, s).toRotation3D();
     return out;
 }
 
@@ -392,9 +292,7 @@ CartesianLinePlanResult planCartesianLine(const CartesianLineRequest& request)
         }
         // 单位向量核验（|v| 偏差 ≤1×10⁻⁹——无量纲；非单位向量会静默
         // 改变段长语义，拒绝不归一化——NFR-COR-03）。
-        const double norm = std::sqrt(axisDir[0] * axisDir[0]
-                                      + axisDir[1] * axisDir[1]
-                                      + axisDir[2] * axisDir[2]);
+        const double norm = std::sqrt(rw::math::dot(axisDir, axisDir));
         if (std::fabs(norm - 1.0) > 1e-9) {
             throw TrajectoryError("trajectory/cartesian/axis-not-unit",
                                   "参考轴方向须为单位向量（|v| 偏差 ≤1×10⁻⁹），"

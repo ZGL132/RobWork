@@ -1,0 +1,67 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T26",
+  "unit": "trajectory",
+  "masterWp": "WP-A",
+  "title": "直接复用RobWork四元数插值并删除重复核心",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "TRJ-02",
+    "TRJ-06",
+    "NFR-COR-01",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/trajectory.md#8.2",
+    "units/trajectory.md#8.3",
+    "reuse/migration.md#13.3"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/CartesianLine.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/CartesianLineContinuityTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T26.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/trajectory.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "删除手写slerp及无用分量/归一/点积/角差辅助；直接消费Quaternion normalize/slerp，业务边界点积使用Vector3D dot；无备用核心",
+    "端点位级、最短弧、微小角/pi和任意初态解析独立oracle及上游直接对照，原容差不降低；位置凸组合/IK端口/取消/失败素材契约保留",
+    "真实生产返回值扰动失败、受影响消费者回归和性能实际对照；整文件功能实审；独验未执行不得done"
+  ],
+  "note": "直接复用迁移，WP-11笛卡尔姿态子包；起点507db46bba838bb170e1fbfaf5784a389ad3790d。仅值类型API和局部适配，不依赖T13模型真值、不替换IK，不改公共接口/CMake/依赖/框架。完整文件必要实审，禁止恢复自写fallback。独验NOT RUN，不操作远程。 已实施删除旧核心；最终23单元+16消费者passed、failed=0、skipped=0；生产扰动3failed后恢复。所有者明确接受本次一般角约6-10%/近pi约0.3-2.7%微基准开销并要求交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T26/README.md。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T26.json"
+  },
+  "outputs": [
+    "Quaternion直接生产消费与重复核心删除",
+    "独立解析对照/上游对照/生产断开/性能/消费者原始证据和精确文件功能凭证；交独验"
+  ]
+}

@@ -1,0 +1,44 @@
+Note: Google Test filter = TrjKinPortContract.*:TrjAt06GoldenContract.*
+[==========] Running 16 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from TrjAt06GoldenContract
+[ RUN      ] TrjAt06GoldenContract.ManifestRegistration_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.ManifestRegistration_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.IntegrityCoversAllFiles_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.IntegrityCoversAllFiles_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.P06FrozenProtocolMaterialization_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.P06FrozenProtocolMaterialization_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseRecheckCollision_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseRecheckCollision_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseBudgetExhausted_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseBudgetExhausted_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseReplanSuccess_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseReplanSuccess_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseLimitExceeded_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseLimitExceeded_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.ToleranceProfileChannel_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.ToleranceProfileChannel_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.DataRootLayout_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.DataRootLayout_WP16T13_ACC2 (0 ms)
+[----------] 9 tests from TrjAt06GoldenContract (4 ms total)
+
+[----------] 7 tests from TrjKinPortContract
+[ RUN      ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2
+[       OK ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2 (8 ms)
+[ RUN      ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2
+[       OK ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2
+[       OK ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2 (0 ms)
+[----------] 7 tests from TrjKinPortContract (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 16 tests from 2 test suites ran. (13 ms total)
+[  PASSED  ] 16 tests.
