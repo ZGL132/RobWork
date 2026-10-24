@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "实施并独立验收上游复用文档约束与门禁治理",
-  "status": "ready",
+  "status": "done",
   "branch": "gov-t21",
   "dependsOn": [],
   "requirements": [
@@ -27,7 +27,9 @@
     "RobWork/doc/industrial-robot-design/**",
     "RobWork/scripts/industrialrobot/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/AGENTS.md",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -62,5 +64,5 @@
     "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T21.json"
   },
   "implementationState": "ready-for-independent-acceptance",
-  "note": "实现提交冻结后独立验收；status保持ready直至所有者收尾，不自签done。零产品算法变更。"
+  "note": "实现提交冻结后独立验收；status保持ready直至所有者收尾，不自签done。零产品算法变更。2026-10-24 独立验收收口：所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」授权工作流内单次验收子智能体（GOV-T23/T24 先例同型；实施者不得自签，本轮验收员未参与实施）第2轮独立复验 12/12 通过——verdict=pass，绑定送验SHA af7c623ae1c93f223f03b25b106bb0a522af6b25，记录 traceability/acceptance/GOV-T21-20261024-r2.json（复跑原件在其同名目录01-14：四段范围全PASS、commit-lint段级甄别、validate-reuse、治理矩阵PS7与PS5.1各152例、ird_gates零命中、-DeepEvidence干净树24181证据、红线抽查）；据此由登记步骤置done，后续纯记录提交不属于被验实现SHA。字面区间FAIL甄别、F-970豁免、远程禁令superseded口径及遗留事项均以该记录为准。"
 }

@@ -1,0 +1,85 @@
+{
+  "taskId": "GOV-T21",
+  "baseCommit": "64ef0fd07755479ce01b3f936320fe91396cfce2",
+  "reviewedCommit": "af7c623ae1c93f223f03b25b106bb0a522af6b25",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-24T17:34:07+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "GOV-T21 第 2 轮单次验收子智能体（独立验收·GOV-T21·r2）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建构建树（仅按契约 verify 命令构建既有 build 树的 ird_gates 目标）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "第 2 轮独立复验：r1 四 issues 逐项核销（两段式送验范围＋首实施本体单提交补证、F-970 豁免登记、-DeepEvidence 干净树复跑、显式提交清单取代 grep 推导）；契约 verify 四命令在送验 head 树真实执行（validate-reuse / test-reuse-governance PS7＋PS5.1 / ird_gates 构建 / validate-docs -DeepEvidence）；lean-verification 前置夹具复跑；红线抽查合集；字面区间 64ef0fd0..af7c623ae 的 scope/commit-lint 结果甄别（r1 head 后其他任务包内容混入面）；返工提交 af7c623ae 一包一组与正文-证据一致性核对。",
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；治理矩阵计数另列（selfTest PS7=152、PS5.1=152、leanPreflight=5，均全过），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 仅本验收产物目录（未跟踪，符合『只写文件不提交』）；分支 redesign-main；HEAD=af7c623ae1c93f223f03b25b106bb0a522af6b25 即送验 head，工作区无他人未提交改动。",
+    "r1 issue 1＋4 核销（送验范围）：实施方登记显式任务包提交清单（64ef0fd07/6eab38df8/25ecf7f6d/0032c8e78＋返工 af7c623ae）与两段式范围，本人逐一亲测——段A -Base 64ef0fd0 -Head c27349a80 PASS（6378 路径，02 号）；段B -Base 8e4a08ac8 -Head 0032c8e78 PASS（362 路径，03 号）；返工段 -Base 6921197dd -Head af7c623ae PASS（16 路径，04 号）；另补证首实施本体——-Base 64ef0fd0^ -Head 64ef0fd0 PASS（343 路径全在允许面，14 号），弥合 r1 issue 4『acceptance 1/2/3 主体变更不在检查面』缺口（注意：r1-fix README 称『段A 含首实施 64ef0fd07 本体』表述不准——脚本 diff base..head 语义不含 base 本体，实质由 14 号单提交检查补证）。产品文件收敛佐证：git diff --name-only 段A/段B 对 industrialrobot/（剔 AGENTS.md）均为空，即产品变更全部收敛于 8e4a08ac8 单提交（REUSE-T07，按其自身契约另行送验，未因此放行）；契约 tasks/GOV-T21.json 仅有创建提交 64ef0fd07、零后续改动——allowedFiles/forbiddenFiles 未放宽。字面区间 -Base 64ef0fd0 -Head af7c623ae exit 1（94 路径越界，01 号）：系区间 git 表达限制——该净 diff 还混入 r1 head（0032c8e78）之后 REUSE-T17~T29 等产品实施包（约 100 个产品文件），属其他任务包内容、不在 GOV-T21 治理提交链；按 r1 处置口径（收窄为治理链、能力包各自送验）核销，不构成新 FAIL。",
+    "r1 issue 2 核销（commit-lint）：findings.json F-970（9784 行起）按 F-012 口径登记齐备——source（r1 记录 issues[1]）、severity、status=fixed、title（两提交标题违规＋口径冲突事实）、owner（合入执行会话＋门禁所有者，含豁免面盲区登记事实）、resolution（豁免依据：717594e5c 正文自证所有者指示合入、3a61e300f 内容与 8e4a08ac8 一致净 diff 为零；杜绝再现：串行实施＋前缀自检）、fixedAt。段级亲测：段A 78/78 PASS、返工段 1/1 PASS；段B 2/9 FAIL 恰为 F-970 豁免的 717594e5c、3a61e300f（历史不可改写，脚本提示语自身声明『历史提交按 F-012 豁免，不回写』）。字面区间 5/161 FAIL 中另 3 个（9e1fe9c2e、340dc88a4 [REUSE-T09] 前缀、3e8cec6ef 无前缀合入）：git merge-base --is-ancestor 实测三者均非 0032c8e78 祖先、经 r1 head 之后 AB 集成期 merge（658e0feb2 等）携入的其他包分支侧历史提交，不属 GOV-T21 治理链（段A 78/78 佐证）；first-parent 甄别：0032c8e78..af7c623ae 主线第一父链新提交零前缀违规（仅 2 个 ^Merge 开头提交属脚本豁免面）——『杜绝再现』佐证成立。证据 05/06 号。",
+    "r1 issue 3 核销（-DeepEvidence）：在写入任何验收证据之前的干净树上复跑 validate-docs.ps1 -DeepEvidence exit 0 PASS（20 units, 404 task files, 24181 audited evidence，11 号），与实施方返工原件 r1-fix/11 号逐字一致（索引已由 16525 重建至 24181）；REUSE-AD-PENDING 为既有 AD 审计 pending 提示（r1/GOV-T24 r1 均确认非阻断）。",
+    "契约 verify 第 1 条 validate-reuse：exit 0 PASS governance only——inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399，债务显式而非合规宣称（acceptance 第 2 条满足）；changed=94 与 r1 时点一致（返工段仅动 traceability，不改变复用登记面）。证据 07 号。",
+    "契约 verify 第 2 条 test-reuse-governance（PS7，pwsh -NoProfile）：exit 0，passed=152 skipped=0 failed=0——正例 exit=0、负例（后缀拒绝/冻结重复/AD 权限拒绝/CLOSURE 违规等 29+ 类）按预期拒绝，满足 acceptance 第 3 条『至少20类负例』。r1 head 后治理脚本被其他任务包改动（8 文件 +276/-24），故本轮复跑而非引用，当前树实测通过。证据 08 号。",
+    "契约 verify 第 2 条 test-reuse-governance（Windows PS5.1，powershell.exe -NoProfile）：exit 0，passed=152 skipped=0 failed=0——双运行时全过（acceptance 第 4 条 PS7/PS5.1 子项；r1 时点由验收员补跑弥合的缺口在当前树持续闭合）。证据 09 号。",
+    "契约 verify 第 4 条 ird_gates：cmake --build build --config Release --target ird_gates exit 0，目标执行输出『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』并含自测 fail_* 正负例与 reuse supplement＋validate-reuse PASS（acceptance 第 3 条 ird_gates 接线满足；既有构建树缓存未重新配置）。日志中文乱码为控制台代码页显示问题，同 r1 已知现象，判定不受影响。证据 10 号。",
+    "lean-verification 前置夹具：TestVerifyPreflight.ps1 exit 0，preflight passed=5 failed=0 skipped=0——verify-task.ps1 虽被后续包改动（+19 行），执行器接线正负例本人复跑仍全过。证据 13 号。",
+    "红线抽查合集（12 号）：CLOSURE 冻结——段A+B（64ef0fd0..0032c8e78）与返工段（6921197dd..af7c623ae）对 reuse/closures.json 均 git diff --exit-code 零差异（字面区间 +20 行经 git log 定位来自 2daace508『依据独立验收关闭RPY两项复用债务』，系 REUSE 包依据独验的合法闭环、非 GOV-T21 治理链触碰）；上游与 vcpkg 净零——字面区间对 RobWork/RobWork/src、RobWorkSim/src、vcpkg 零路径；L2 零 Qt——modeling/src/CouplingMath.hpp、InertiaMath.hpp、RpyMath.hpp 当前树 grep -i qt 计数 0；无平行实现回流——GOV-T21 治理链（段A/段B/返工段）产品 .hpp/.cpp 净零，零产品算法变更成立；门禁未放宽——契约零改动（检查 2）＋返工段 16 路径全落 traceability 零脚本改动；PASS/FAIL/SKIP/NOT RUN 分列——07-10/13 号实测输出均显式分列；H1-H6 锚点——AGENTS.md（H1 命中）、.github/workflows/upstream-reuse-governance.yml、.github/pull_request_template.md 实测在位。",
+    "acceptance 六条映射（r1 检查 12 基础上增量复核）：第 1 条（H1-H6 同步/20单元卡/README/Skills/PR、替代旧 SVD/RK4 规则、零算法修改）——治理链产品文件净零即『零算法修改』成立（r1 时因 8e4a08ac8 混入不成立，本轮收窄后成立），锚点与 units=20 实测在位，首实施本体 343 路径进检查面（14 号）；第 2 条（固定基线库存/真实上游证据/债务显式）满足（检查 5）；第 3 条（门禁接入任务执行/文档/ird_gates/CI＋正例与≥20类负例＋JUnit/JSON 计数）满足——PS7/PS5.1 各 152 例双过（08/09 号）、ird_gates 零命中（10 号）、文档深查维度本轮 PASS（11 号，r1 缺口已闭合）、JUnit/JSON 计数原件 r1-fix 与 builds/gov-t21 多轮留存；第 4 条（集成/独立冒烟重新配置执行门禁、PS7/PS5.1）——原始证据直接引用：traceability/builds/gov-t21/{integration,integration-build,integration-final,smoke,smoke-build,smoke-final}.log 与 ps7*/ps51* 多轮目录在位（返工段未改脚本/产品/CMake，输入与工具链不变，AGENTS §4 增量口径不重跑），PS7/PS5.1 矩阵本轮双复跑通过；第 5 条（冻结 SHA 独立验收、实施者不自行合入、后续任务须验收 pass 记录）——本轮 r2 即冻结 head 独立验收的执行；实施者仅登记返工未自签（任务 status 保持 ready，契约 implementationState 未被返工提交改动——04 号 16 路径全 traceability 佐证）；GOV-T22~T24 及 REUSE 系列验收记录在 acceptance/ 目录在案；远程推送条款由 2026-10-22 所有者禁远程令取代（AGENTS §0），按 superseded 口径不作 fail（同 r1）；第 6 条（远程分支保护读取并配置复用检查）——禁令前留档原件 builds/gov-t21/branch-protection.json 与 -pinned.json 实测在位（required contexts 含 ird-reuse-governance、ird-industrial-robot-package），现势复核因禁远程令 NOT RUN（不作 fail，同 r1）。",
+    "提交链（ask ④）：返工包 af7c623ae 单提交＝一包一组，标题 [governance] 前缀合规（返工段 commit-lint 1/1 PASS）；正文四项声称与本人亲测逐项复现一致——两段式 scope PASS（02/03 号数字与登记相同）、-DeepEvidence exit 0（11 号）、F-970 登记（检查 3）、索引重建 16525→24181（11 号 audited 数）；正文声明『提交后三门禁』的口径与 r1-fix README 一致；正文如实声明『任务 status 保持 ready 待所有者重新送验，独验不由实施者自签』——无越权自签。治理提交链五提交（64ef0fd07/6eab38df8/25ecf7f6d/0032c8e78/af7c623ae）标题全部合法前缀（[governance]×4＋[docs]×1，r1 05 号与本轮 06 号 [PASS] 行佐证）。"
+  ],
+  "selfTest": {
+    "ps7": { "runtime": "pwsh -NoProfile", "passed": 152, "skipped": 0, "failed": 0, "exitCode": 0, "log": "08-test-reuse-governance-ps7.log" },
+    "ps51": { "runtime": "powershell.exe -NoProfile", "passed": 152, "skipped": 0, "failed": 0, "exitCode": 0, "log": "09-test-reuse-governance-ps51.log" },
+    "leanPreflight": { "passed": 5, "failed": 0, "skipped": 0, "exitCode": 0, "log": "13-lean-verification-selftest.log" }
+  },
+  "commands": [
+    { "name": "scope-fullrange", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T21.json -Base 64ef0fd07755479ce01b3f936320fe91396cfce2 -Head af7c623ae1c93f223f03b25b106bb0a522af6b25", "exitCode": 1, "passed": false, "log": "01-verify-task-scope-fullrange.log", "note": "ask 字面区间：94 路径越界系 r1 head 后其他任务包产品实施混入（区间表达限制），按登记的两段式口径核销，见 checks[1]" },
+    { "name": "scope-segmentA", "command": "同上 -Base 64ef0fd07755479ce01b3f936320fe91396cfce2 -Head c27349a80d6116151e2b9625c3196c77a4398fff", "exitCode": 0, "passed": true, "log": "02-verify-task-scope-segmentA.log" },
+    { "name": "scope-segmentB", "command": "同上 -Base 8e4a08ac8 -Head 0032c8e78b0a3b6c12942f945fd9182624735813", "exitCode": 0, "passed": true, "log": "03-verify-task-scope-segmentB.log" },
+    { "name": "scope-rework", "command": "同上 -Base 6921197dd -Head af7c623ae1c93f223f03b25b106bb0a522af6b25", "exitCode": 0, "passed": true, "log": "04-verify-task-scope-rework.log" },
+    { "name": "scope-firstcommit", "command": "同上 -Base 64ef0fd07755479ce01b3f936320fe91396cfce2^ -Head 64ef0fd07755479ce01b3f936320fe91396cfce2（首实施本体单提交补证）", "exitCode": 0, "passed": true, "log": "14-verify-task-scope-firstcommit.log" },
+    { "name": "commit-lint-fullrange", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 64ef0fd07755479ce01b3f936320fe91396cfce2..af7c623ae1c93f223f03b25b106bb0a522af6b25", "exitCode": 1, "passed": false, "log": "05-commit-lint-fullrange.log", "note": "5/161：2 个 F-970 已豁免历史合入提交＋3 个 r1 head 后 merge 携入的其他包分支侧历史提交，甄别见 checks[2]" },
+    { "name": "commit-lint-segments", "command": "commit-lint.ps1 -Range 段A／段B／返工段／r1后段（0032c8e78..af7c623ae）四组", "exitCode": 1, "passed": false, "log": "06-commit-lint-postseg.log", "note": "段A 78/78 PASS、返工段 1/1 PASS；段B 2/9（恰为 F-970 两提交）；r1后段 3/73（均为 merge 携入历史，first-parent 零违规）" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1", "exitCode": 0, "passed": true, "log": "07-validate-reuse.log" },
+    { "name": "test-reuse-governance-ps7", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "08-test-reuse-governance-ps7.log" },
+    { "name": "test-reuse-governance-ps51", "command": "powershell.exe -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "09-test-reuse-governance-ps51.log" },
+    { "name": "ird-gates-build", "command": "cmake --build build --config Release --target ird_gates", "exitCode": 0, "passed": true, "log": "10-ird-gates-build.log" },
+    { "name": "validate-docs-deep", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -DeepEvidence\"（写入任何验收证据之前的干净树执行）", "exitCode": 0, "passed": true, "log": "11-validate-docs-deep.log" },
+    { "name": "redline-checks", "command": "git diff --exit-code 段级 closures.json／契约提交史／上游+vcpkg 净零／modeling 头文件 grep -i qt／branch-protection 与 CI/PR 锚点存在性", "exitCode": 0, "passed": true, "log": "12-redline-checks.log" },
+    { "name": "lean-verification-selftest", "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/acceptance/lean-verification/TestVerifyPreflight.ps1", "exitCode": 0, "passed": true, "log": "13-lean-verification-selftest.log" }
+  ],
+  "executionNotes": [
+    "validate-docs -DeepEvidence 特意安排在写入任何验收证据文件之前的干净树上执行（exit 0，24181 audited），消除 r1 曾遇到的自产 untracked 干扰；其后产生的本目录 14 份证据按『只写文件不提交，由登记步骤统一 git add』口径留待登记步骤按脚本提示重建索引。",
+    "字面区间（64ef0fd0..af7c623ae）的 scope（94 路径越界）与 commit-lint（5/161）FAIL 均非 GOV-T21 治理链缺陷：净 diff 与提交枚举混入 r1 head（0032c8e78，2026-10-23）之后主线串行推进的 REUSE-T17~T29、WP-01 等其他任务包内容及 AB 集成期 merge 携入的分支侧历史提交（9e1fe9c2e/340dc88a4/3e8cec6ef 经 git merge-base --is-ancestor 实证均非 0032c8e78 祖先）；GOV-T21 送验语义范围＝显式清单五提交，其机器核验面＝段A+段B+返工段+首实施本体四段 scope 全 PASS、治理链提交前缀全合规。",
+    "治理脚本（validate-task/verify-task/validate-docs 等 8 文件）在 r1 head 后被其他任务包改动（+276/-24），故 test-reuse-governance PS7/PS5.1、lean-verification 均本轮亲测复跑而非引用 r1 原件；builds/gov-t21 的 2026-10-22 集成/冒烟原件因返工段零脚本/产品/CMake 改动而按 AGENTS §4 增量口径直接引用。"
+  ],
+  "issues": [],
+  "notRun": [
+    { "item": "远程分支保护现势复核（acceptance 第 6 条『读取』的复核）", "reason": "所有者 2026-10-22 起禁止远程同步（AGENTS §0）；以禁令前留档原件 traceability/builds/gov-t21/branch-protection.json 与 -pinned.json 直接引用（本轮实测两文件在位，required contexts 含 ird-reuse-governance、ird-industrial-robot-package）。" },
+    { "item": "traceability/builds/gov-t21 集成/冒烟门禁原件的重跑", "reason": "原始证据直接引用口径（AGENTS §4）：返工段 16 路径全落 traceability、未改脚本/产品/CMake，2026-10-22 双模式重新配置原件（integration*.log、smoke*.log、ps7*/ps51* 多轮）输入与工具链未变；PS7/PS5.1 治理矩阵已由本轮在当前树复跑覆盖。" }
+  ],
+  "limitations": "PASS 仅覆盖 GOV-T21 治理提交链（显式清单五提交：64ef0fd07/6eab38df8/25ecf7f6d/0032c8e78/af7c623ae）及四段机器核验面（段A 6378＋段B 362＋返工段 16＋首实施本体 343 路径全在允许面）；字面区间 64ef0fd0..af7c623ae 内其他任务包内容（REUSE-T07~T29、WP-01、GOV-T25/T26 等）不因本验收放行，须按各自契约另行送验独验。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭）；本验收不构成 REUSE-T02、算法替换（migration §11）或任何 REUSE 能力包的放行。登记文本瑕疵（非阻断）：r1-fix README『段A 含首实施 64ef0fd07 本体』表述与 verify-task-scope.ps1 的 git diff base..head 语义不符（段A 不含 base 本体变更），实质缺口已由本轮 14 号单提交范围检查补证合规（343 路径 PASS），登记文本本身未更正，留登记步骤知悉。任务 status 保持 ready，待所有者接收收尾。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/01-verify-task-scope-fullrange.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/02-verify-task-scope-segmentA.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/03-verify-task-scope-segmentB.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/04-verify-task-scope-rework.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/05-commit-lint-fullrange.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/06-commit-lint-postseg.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/07-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/08-test-reuse-governance-ps7.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/09-test-reuse-governance-ps51.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/10-ird-gates-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/11-validate-docs-deep.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/12-redline-checks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/13-lean-verification-selftest.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2/14-verify-task-scope-firstcommit.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r2.json"
+  ]
+}

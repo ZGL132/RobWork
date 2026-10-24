@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-24T17:07:04+08:00",
+  "generatedAt": "2026-10-24T17:45:56+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 24181,
-    "totalBytes": 932357365,
+    "totalFiles": 24198,
+    "totalBytes": 932435167,
     "byKind": {
       "build-log": 15580,
-      "gtest-report": 335,
-      "other": 220,
-      "json-data": 956,
-      "xml-report": 250,
       "benchmark": 8,
-      "markdown-doc": 126,
+      "acceptance-record": 3554,
+      "gtest-report": 335,
+      "governance-record": 40,
       "script": 68,
+      "xml-report": 250,
+      "json-data": 956,
+      "other": 220,
       "manual-acceptance": 1,
-      "acceptance-record": 3537,
+      "markdown-doc": 126,
       "pipeline-artifact": 2,
-      "log": 3058,
-      "governance-record": 40
+      "log": 3058
     },
     "byLifecycle": {
       "current": 29,
-      "historical": 683,
-      "unverified": 23469,
-      "superseded": 0
+      "superseded": 0,
+      "historical": 714,
+      "unverified": 23455
     },
-    "associated": 8071,
+    "associated": 8088,
     "unassociated": 16110,
-    "shaComputed": 24153,
+    "shaComputed": 24170,
     "shaSkippedLarge": 28,
-    "duplicateGroupsTotal": 1619,
+    "duplicateGroupsTotal": 1620,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -52,6 +52,13 @@
         "reuse/REUSE-T09/gates/test-reuse-gov-t09.log",
         "reuse/REUSE-T10/governance.log",
         "reuse/REUSE-T10/original-envelope/withdrawal-governance.log"
+      ]
+    },
+    {
+      "sha256": "b138fc7a29c21b72e64d2965052349fef41bc26dd2a0276e73c5b322dc3b9b2b",
+      "paths": [
+        "acceptance/GOV-T21-20261024-r2/08-test-reuse-governance-ps7.log",
+        "acceptance/GOV-T21-20261024-r2/09-test-reuse-governance-ps51.log"
       ]
     },
     {
@@ -1666,17 +1673,6 @@
         "reuse/REUSE-T07/gates/t07-governance-pinned/production-unverified-capability.log",
         "reuse/REUSE-T10/governance/production-unverified-capability.log"
       ]
-    },
-    {
-      "sha256": "1d30234029f05fefefec2462744de73813752beaad8ec38095217e6d84552919",
-      "paths": [
-        "acceptance/GOV-T22-20261022/ps51/production-upstream-comparison-failed.log",
-        "acceptance/GOV-T22-20261022/ps7/production-upstream-comparison-failed.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps51/production-upstream-comparison-failed.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps7/production-upstream-comparison-failed.log",
-        "reuse/REUSE-T07/gates/t07-governance-pinned/production-upstream-comparison-failed.log",
-        "reuse/REUSE-T10/governance/production-upstream-comparison-failed.log"
-      ]
     }
   ],
   "entries": [
@@ -2520,7 +2516,7 @@
       ],
       "bytes": 549,
       "sha256": "a4852adff676f6eb3102dcf56cdfabbb70be078a49fb38f87992495c0509b10d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1-fix/10-verify-task-scope-segmentB.log",
@@ -2530,7 +2526,7 @@
       ],
       "bytes": 556,
       "sha256": "e24d99a9c0ab6c98c6613b89edebb495ef9a1e85a738abf8ebf536a97c3ca0e2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1-fix/11-validate-docs-deep-rework.log",
@@ -2540,7 +2536,7 @@
       ],
       "bytes": 2402,
       "sha256": "a0588b53d9b16adffea26e85435dc4c2d82a4d3ccd6d05ae828b7a38c0b0fbed",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1-fix/12-index-evidence-rework.log",
@@ -2550,7 +2546,7 @@
       ],
       "bytes": 846,
       "sha256": "71201b14182589f4b9746343f7f2bf31e2d1e4ef9e0846e9513d7c7159a34575",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1-fix/README.md",
@@ -2560,7 +2556,7 @@
       ],
       "bytes": 7595,
       "sha256": "aab6c324a7e7be5369c70d84a73e1a430703d70e1b15db112a315245a3304a82",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1.json",
@@ -2570,7 +2566,7 @@
       ],
       "bytes": 17558,
       "sha256": "44b7d4b7e7a416a16f1465a8497365ede9b6b22ef517d4e916e5939d95fdb09b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/01-verify-task-scope.log",
@@ -2580,7 +2576,7 @@
       ],
       "bytes": 660,
       "sha256": "c497078302c0abd2be1d80a75c99e54ee7bcc2a9e7496f5cc85560c29b93ad9f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/02-validate-reuse.log",
@@ -2590,7 +2586,7 @@
       ],
       "bytes": 1814,
       "sha256": "34e0b0da30ab44a04f5b2fcdb48b62ade6b4938f1fbafe4cf0c1f56d6b475543",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/03-test-reuse-governance.log",
@@ -2600,7 +2596,7 @@
       ],
       "bytes": 9915,
       "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/04-ird-gates-build.log",
@@ -2610,7 +2606,7 @@
       ],
       "bytes": 3732,
       "sha256": "914e7c2bc05cbe927f75fab3ec585a05207c3b203f3030eb7f854cf3ab79684c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/05-commit-lint.log",
@@ -2620,7 +2616,7 @@
       ],
       "bytes": 2450,
       "sha256": "c8af9470619c047e67fc949fdf394aa0b91cc2466914860c295cef2971a8f395",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/06-validate-docs-deep.log",
@@ -2630,7 +2626,7 @@
       ],
       "bytes": 4696,
       "sha256": "ba64eccb54eb1b6bc5d49e0836fd6d2d51a66b2184b326f2465d89765c5dc4e6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/07-lean-verification-selftest.log",
@@ -2640,7 +2636,7 @@
       ],
       "bytes": 39,
       "sha256": "e6bffedb8ea5669af7580c591811ba013baa9f6a96691ef4a4178312ec24d3a3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T21-20261024-r1/08-test-reuse-governance-ps51.log",
@@ -2650,7 +2646,177 @@
       ],
       "bytes": 9915,
       "sha256": "3728c499cc491d65dfd68ba512311bedd861deb96b4688819463a64ddb345601",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 20033,
+      "sha256": "3ef685c7790e3a90b94a22ddcf9f229d2509d00c7c090036b5190ebff195933a",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/01-verify-task-scope-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 15120,
+      "sha256": "b45b1bc103a021f89a6a07d5a6aaffeb3cab9f1e55f116478b3711e7eee0fdcb",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/02-verify-task-scope-segmentA.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 178,
+      "sha256": "222aaa2a1a92073a4b6579c83e93a1bbcb638f138ab829a10dab94c7ee149120",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/03-verify-task-scope-segmentB.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 176,
+      "sha256": "5d0e3f2aecab9b58413b7c8f182a9d9affb23c80b78845840d45d4c48f4ca5d3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/04-verify-task-scope-rework.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 174,
+      "sha256": "aa50bc03a430311582803278e71dcb4722a35a43c5a11e42133733582d7e536c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/05-commit-lint-fullrange.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 4686,
+      "sha256": "d0ba9f6373cf2a7657bce1bfc44b72f406fe6787315f22bf90666976f10f318e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/06-commit-lint-postseg.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 5098,
+      "sha256": "7021415fef72be394257b6440404a5d7ee035e3ff066f40a33bb0622b3c7007d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/07-validate-reuse.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 1821,
+      "sha256": "006a706ce9ddf46dafd2b403b5626cd367f67224c9e8d9c101fe47c6687d78b8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/08-test-reuse-governance-ps7.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 9922,
+      "sha256": "b138fc7a29c21b72e64d2965052349fef41bc26dd2a0276e73c5b322dc3b9b2b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/09-test-reuse-governance-ps51.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 9922,
+      "sha256": "b138fc7a29c21b72e64d2965052349fef41bc26dd2a0276e73c5b322dc3b9b2b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/10-ird-gates-build.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 3739,
+      "sha256": "5b428495daed85fda11e3c6debd1524f5b7d653e463be99330b94ae325ef1401",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/11-validate-docs-deep.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 1953,
+      "sha256": "8a3e47c57fe1bd9fd65438d9c166a1d3ba24fbfe38f41951d2b74d4cce40b7b7",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/12-redline-checks.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 1048,
+      "sha256": "2b4ef822a28c7c16245bfabe8e25092f76a31b864700540adf6c07a73db49b70",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/13-lean-verification-selftest.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 46,
+      "sha256": "9f613067c21a253a87bc2904f53e291d5554d6a9900074dc806f199be8b357e2",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/14-verify-task-scope-firstcommit.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 176,
+      "sha256": "bfe1505d758282ca093511d817043eb34f92b063c249922cbf6f04ea306f2486",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/15-index-evidence-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 954,
+      "sha256": "542cbf057b5121bb2499e7875fe065ea473653b19ef3ef636cba5fc91a4c8079",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T21-20261024-r2/16-validate-docs-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T21"
+      ],
+      "bytes": 2756,
+      "sha256": "2b704b22cb5e45640b9fd3ab49f32ca94d2edf2306a6d45914a57721496215a4",
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2.json",
