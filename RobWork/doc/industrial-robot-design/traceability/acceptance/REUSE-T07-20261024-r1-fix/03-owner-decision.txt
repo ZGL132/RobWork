@@ -1,0 +1,26 @@
+所有者性能裁决传达记录（2026-10-24）
+
+通道：返工子代理「返工·REUSE-T07」经工作流升级（escalate，工作流 dwfrun-d425945b）
+向主会话提问，主会话经 AskUserQuestion 获所有者明示裁决后传达。以下为传达原文（逐字）：
+
+  所有者已明示裁决：接受该性能退化，按 REUSE-T20 先例（2ac114f33 形态）处理。执行要点：
+  ①在裁决登记中如实记录接受事实与依据——所有者 2026-10-24 经主会话（AskUserQuestion，
+  工作流 dwfrun-d425945b 返工·REUSE-T07 升级）明示接受，附关键数据：原件 4.662 倍
+  （0.09174→0.42767µs/次）、独验复测约 3.46 倍（0.11802→0.40896µs，两环境 migrated
+  0.409/0.428 吻合）、绝对增量约 0.41µs/次、非实时回路、checksum 等价 280400、exit 0；
+  引用既有证据路径（traceability/acceptance/REUSE-T07-20261024-r1.json benchmark 段、
+  07-benchmark-run.log、reuse/REUSE-T07/benchmark/comparison.json）；②任务保持 ready、
+  待独验 r2，acceptance#1 随裁决登记闭合；③不做产品回滚，不改动迁移成果；④登记后按
+  你的自检流程（verify-task-scope/commit-lint 已 PASS 的 01/02 号 log 继续沿用）完成
+  契约登记与提交，返回规范 RepairResult。
+
+提问原文（供对照）：
+
+  REUSE-T07 耦合SVD迁移的性能退化（Jacobi→上游SVD，原件4.662x、独验复测3.46x，绝对值
+  0.41µs/次、非实时回路、checksum等价）——所有者是接受该退化并交独验（按REUSE-T20先例
+  2ac114f33登记），还是驳回要求处置（按REUSE-T29先例6921197dd保留阻断/恢复起点）？
+
+登记位置：traceability/acceptance/REUSE-T07-20261024-r1-fix/README.md §Issue 2；
+契约 note 处置段同步登记。接受边界按 REUSE-T20 2ac114f33 形态：仅覆盖本能力已展示数据
+与实现范围，不推导其他能力性能预算；后续新增实质退化仍需另行裁决；运行效果仍交独验
+核查。实施者不自签验收。

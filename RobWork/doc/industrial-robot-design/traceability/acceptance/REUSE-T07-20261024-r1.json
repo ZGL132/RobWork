@@ -1,0 +1,113 @@
+{
+  "taskId": "REUSE-T07",
+  "baseCommit": "bfe024cd01475ab8510a045c2877c0fe07c0d9e3",
+  "reviewedCommit": "8e4a08ac82498ded085fc4173b17e67044614327",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-24T21:23:40+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T07/WP-03 单次验收子智能体（第 1 轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何仓库文件、未提交、未切分支、未建工作树、未远程操作、未重配集成构建树；benchmark 复跑在系统临时目录独立构建（冻结 benchmark 工程零改动、经 GOV-T24 前置绑定先例包装）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 bfe024cd0..8e4a08ac8 送验实现（c27349a80 准入＋8e4a08ac8 实现，2 提交 303 路径）：显式 Base/Head 范围门禁、commit-lint、冻结面零触碰（cmake/ 门禁、closures.json、permissions.json）、H1—H6 与架构红线抽查（Jacobi 删除/上游 SVD 生产链/L2 零 Qt/runtime owner/无平行实现回流/门禁未越权放宽）、契约 5 条 acceptance 与 verify 4 命令逐项（含集成 modeling test exe 复跑、性能 benchmark 独立构建真实复跑、PS7+PS5.1 CMake 注释门禁、当前树治理自测 152 例、validate-docs 三合一）、凭证/catalog/blob 一致性、PASS/FAIL/SKIP/NOT RUN 分列核查。",
+  "counts": {
+    "failed": 2,
+    "passed": 16,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "18 项验收检查；集成/基准测试计数另列（integrationTest、benchmark），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 空（干净）；分支 redesign-main；HEAD=5fb4ebd32；送验 head 8e4a08ac8 经 git merge-base --is-ancestor 确认为 HEAD 祖先；范围 bfe024cd0..8e4a08ac8 恰含 2 提交（c27349a80 准入、8e4a08ac8 实现），与送验说明推导一致。",
+    "范围（FAIL，阻断）：verify-task-scope 显式 -Base bfe024cd0 -Head 8e4a08ac8 exit 1——303 路径中 17 个越界（全部出自 c27349a80 准入提交）：reuse/audit-contract.md、reuse/migration.md、reuse/policy.md 三件治理文本、tasks/REUSE-T01/T02/T05/T06.json 四契约、traceability/reuse/REUSE-T01/capability-plan/** 十件证据，均未命中 REUSE-T07 契约 15 条 allowedFiles。处置选项已实测：收敛为 -Base c27349a80 -Head 8e4a08ac8 时 286 路径全部在允许面 PASS exit 0（05-alt-scope-probe.log）——c27349a80 的治理文本改动属 T01 包且已被 REUSE-T01-20261024-r2（6509e5e4..9d889781，pass）覆盖（ancestor 关系已核）。证据：02-scope.log、05-alt-scope-probe.log。",
+    "提交规范：commit-lint -Range bfe024cd0..8e4a08ac8 PASS（2 提交全部合规，[governance] 前缀＋中文正文含原因/验证/影响）exit 0。证据：03-commit-lint.log。",
+    "冻结面零触碰：git diff --exit-code bfe024cd0..8e4a08ac8 对 industrialrobot/cmake/（门禁引擎）、reuse/closures.json（CLOSURE 冻结）、reuse/permissions.json 三处退出 0 零差异。",
+    "H2 平行实现删除：git diff 范围内 CouplingMath.hpp 删除 12 行 Jacobi 相关（单侧 Jacobi/Hestenes 核、kCouplingJacobiMaxSweeps=60、kCouplingJacobiOrthogonality=1e-16 两专用迭代常量、平面旋转 ζ=(β−α)/(2γ)）；送验版全文（git blob 9edee4d8 与工作区 hash-object 一致）核读无 Jacobi、无备用算法、无运行时回退分支；grep modeling 单元仅剩注释提及与 DhConvert.cpp 数值差分 Jacobian（不同概念，非 SVD 回流）；证据目录 disconnected*/CouplingMath.hpp 副本系 mutation 断开证据非产品树回流。",
+    "H1/H3 生产链真实复用：Parts.cpp:286 真实生产入口 checkCouplingMatrix 消费 couplingmath::couplingSingularValues；CouplingMath.hpp:91 调 rw::math::LinearAlgebra::svd（sdurw_math），仅行主序→Eigen 转换、max 元素缩放乘回、容器适配（薄适配边界）；modeling/CMakeLists.txt 382-388 行集成分支 sdurw_math 既有目标/独立分支 find_package(RobWork CONFIG)＋sdurw_math ALIAS RW::sdurw_math（与 T12 先例同型），PRIVATE 链接。",
+    "架构红线：L2 计算库零 Qt——sdurws_ird_modeling 链接面（PUBLIC/PRIVATE 段）无任何 Qt 目标，Qt6 仅 _plugin 目标（R-3 唯一例外面）；CouplingMath.hpp include 仅 STL＋rw/math＋Eigen。runtime 模型 owner——纯值调用，不构造 WorkCell/State/求解器（SA-19 §3.6.1 栈私有纯值）；无业务域互链、无跨单元私有头。",
+    "门禁未越权放宽：reuse-contract.ps1 +5 行仅对 CMake 后缀剥离 # 注释（收窄注释误报；C++ #include/真实对象/State 写仍完整分类），TestCMakeComments 负例 cpp-model-include-still-rejected/cpp-state-write-still-rejected/cmake-uncommented-type-still-rejected 全过；test-reuse-governance.ps1 夹具固定为已独验 GOV-T22 提交 e6f06e5b9（fixtureCommit 记入报告），validator/helper 仍取当前工作树真实字节并记 SHA——两项均为误报修复/测试基建修正，非权限或门禁逻辑放宽；契约 note 已如实登记。",
+    "凭证/catalog/blob 一致性：changes/REUSE-T07.json 三产品文件 mode/边界/证据路径与实测相符；catalog.json MATH-SVD 条目补 LinearAlgebra::svd 上游符号与 sdurw_math 目标 SHA 绑定（H6）；当前工作区 CouplingMath.hpp git blob hash 9edee4d8557e00166f2342508aa2f63943e9e2a2 与送验提交完全一致（凭证 sha256 f04c14ee 系实施工作树 CRLF 字节，主树 autocrlf=true 环境不可复现同值，git blob 层已排除内容漂移）；送验后 HEAD 期间无任何提交触碰 T07 三个产品文件（modeling/ 改动的 6 文件属其他任务）。",
+    "acceptance#1 四维审查与性能（FAIL，待所有者裁决）：coupling-svd-migration.md 含 policy §1.1 保留/删除/适配/职责归属、被否候选与四维表，实测核对属实；性能前后测量真实——本人独立构建冻结 benchmark 工程（baseline 头自 c27349a80 提取、migrated 头取当前树）复跑：baseline 中位 0.11802µs vs migrated 0.40896µs（复跑比值约 3.46x），与原件 0.0917→0.4277（4.662x）同量级（migrated 两次独立环境 0.409/0.428 吻合），checksum 均 280400 数值等价、退出 0。但退化事实成立且任务明确『约4.662倍性能尚未获所有者接受』，实施者亦登记『不得自判已接受或关闭』——独验无权代所有者接受，须所有者明示裁决后方可重验。",
+    "acceptance#2 数值与接口保持：送验版 kCouplingConditionNumberLimit=1e8、kCouplingSingularSigmaRatio=1e-12、行主序转换、max 缩放乘回、couplingSingularValues/couplingConditionNumber 签名与 Parts.cpp 消费接口不变；checkCouplingMatrix 有限性/窗口/两阈值/比较型诊断结构保留（Parts.cpp 270-300 实读）。",
+    "acceptance#3 回归有效：集成 modeling test exe 复跑（PATH 前置框架/vcpkg DLL）479 tests＝479 passed/0 failed/0 skipped exit 0（含原 Parts/Readiness 用例、上游 LinearAlgebraTest 直接编入对照、CouplingReuse 阈值/尺度/独立 2×2 解析 oracle 用例；479 对送验 474 之差系送验后其他任务增测）；送验原件 normal 474/474、smoke 372/372、smoke-contract 8/8、contract 17/17 与 results.json 分列一致。",
+    "acceptance#4 断开真实失败：disconnected/gtest.xml 单 case ProductionConsumesRecomputedCondition 真实失败原件（recomputedConditionNumber=1 vs 期望 3）；red 37 项中 1 预期接线失败；stale-restoration 9 失败中间制品如实保留未冒充最终结果。",
+    "acceptance#5 流程边界：实施者不自签（results.json independentAcceptance=NOT RUN、closure=NOT CLOSED 如实）、未填 closures.json（零差异）、未标 done、无远程操作痕迹；GAP 均未批准（catalog 未新增真实 migrated/closed 记录，validate-reuse 仍 governance only）。",
+    "verify#1 TestCMakeComments.ps1：PS7（pwsh）exit 0 八项全过、PS5.1（powershell.exe）exit 0 同过——CMake # 注释剥离修复正负例双运行时成立。",
+    "verify#2 治理自测：test-reuse-governance.ps1 -OutputDir .cache/t07-governance-independent-acc 当前树真实执行 152 正反例＝152 passed/0 failed/0 skipped/0 notRun exit 0（fixtureCommit e6f06e5b9 固定夹具＋当前树 validator/helper）。",
+    "verify#3/#4 validate 三合一：validate-docs.ps1 -TaskFile REUSE-T07.json exit 0——validate-task: PASS（1 tasks）、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS（20 units, 12 trace entries, 404 task files）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示，非本包阻断。",
+    "PASS/FAIL/SKIP/NOT RUN 分列：results.json 各批次 executed/passed/failed/skipped 分列、notRun 仅 governanceSelftest 独立字段 0、independentAcceptance/remote/closure 三项 NOT RUN 如实标注；预期失败（red 1、disconnected 1）与真实通过（normal 474）不混列。"
+  ],
+  "integrationTest": {
+    "modeling": {
+      "tests": 479,
+      "passed": 479,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "exe": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe",
+      "xml": "06-int-modeling-test.xml",
+      "note": "当前 HEAD 树 exe（Oct 24 重建）；含上游 LinearAlgebraTest 对照与 CouplingReuse oracle 用例"
+    }
+  },
+  "benchmark": {
+    "reviewedAndRerun": true,
+    "original": { "baselineMedianUs": 0.09174, "migratedMedianUs": 0.42767, "ratio": 4.6618, "source": "reuse/REUSE-T07/benchmark/comparison.json" },
+    "rerun": { "baselineMedianUs": 0.11802, "migratedMedianUs": 0.40896, "ratioApprox": 3.46, "checksumBoth": 280400, "exitCodeBoth": 0, "log": "07-benchmark-run.log" },
+    "method": "冻结 benchmark 工程零改动，经 GOV-T24 前置绑定先例（Threads＋synchronization INTERFACE）包装配置；baseline 头提取自 c27349a80（含 12 处 Jacobi），migrated 头为当前树（blob 与送验 head 一致）；VS2022 x64 Release",
+    "interpretation": "两环境独立测量同量级（migrated 0.409/0.428 吻合，baseline 噪声内 0.091/0.118），原件测量可信；性能退化事实成立（约 3.5～4.7 倍），checksum 一致证数值等价；绝对值 0.43µs/次、生产路径为建模编辑/就绪校验（非实时回路），但可接受性属所有者保留裁决，未获接受前 acceptance#1 不闭合"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T07.json -Base bfe024cd01475ab8510a045c2877c0fe07c0d9e3 -Head 8e4a08ac82498ded085fc4173b17e67044614327", "exitCode": 1, "passed": false, "log": "02-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range bfe024cd01475ab8510a045c2877c0fe07c0d9e3..8e4a08ac82498ded085fc4173b17e67044614327", "exitCode": 0, "passed": true, "log": "03-commit-lint.log" },
+    { "name": "frozen-zero-diff", "command": "git diff --stat（范围） -- industrialrobot/cmake/ + reuse/closures.json + reuse/permissions.json", "exitCode": 0, "passed": true },
+    { "name": "cmake-comments-gate-ps7", "command": "pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/gates/TestCMakeComments.ps1", "exitCode": 0, "passed": true, "log": "04-cmake-comments-gate.log" },
+    { "name": "cmake-comments-gate-ps51", "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -File .../gates/TestCMakeComments.ps1", "exitCode": 0, "passed": true, "log": "04-cmake-comments-gate-ps51.log" },
+    { "name": "alt-scope-probe", "command": "verify-task-scope.ps1 -Base c27349a80d6116151e2b9625c3196c77a4398fff -Head 8e4a08ac8...（处置选项探针）", "exitCode": 0, "passed": true, "log": "05-alt-scope-probe.log" },
+    { "name": "int-modeling-test", "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin|libs/Release＋vcpkg bin）", "exitCode": 0, "passed": true, "log": "06-int-modeling-test.log", "xml": "06-int-modeling-test.xml" },
+    { "name": "benchmark-rerun", "command": "冻结 benchmark 工程＋GOV-T24 前置绑定包装，VS2022 x64 Release 构建 coupling_svd_baseline/migrated 并运行", "exitCode": 0, "passed": true, "logs": ["07-benchmark-configure.log", "07-benchmark-build.log", "07-benchmark-run.log"] },
+    { "name": "validate-docs-triple", "command": "pwsh -NoProfile validate-docs.ps1 -TaskFile REUSE-T07.json（含 validate-task＋validate-reuse 全量）", "exitCode": 0, "passed": true, "log": "08-validate-docs.log" },
+    { "name": "governance-selftest", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t07-governance-independent-acc", "exitCode": 0, "passed": true, "log": "09-governance-selftest.log" }
+  ],
+  "executionNotes": [
+    "benchmark 复跑首次配置按工程原样失败（vcpkg 拦截＋『Looking for sdurw - not found』），与 GOV-T24 问题B同根因；改用该包已独验的前置绑定先例（find_package(Threads)＋synchronization INTERFACE IMPORTED）在系统临时目录包装后配置/构建/运行全通过，冻结 benchmark 目录与产品树零改动。",
+    "工作区 sha256sum 与凭证 sha256 不一致系 core.autocrlf=true 行尾转换（实施工作树 CRLF 字节）；以 git blob hash（9edee4d8...）与送验提交比对一致排除内容漂移，凭证值不因此在主树环境可复现，属跨环境 SHA 登记局限，未计入 issues。",
+    "治理自测在主会话后台执行完毕后读回完整结果（152/152），日志原件落 09-governance-selftest.log。"
+  ],
+  "issues": [
+    "【阻断｜范围】verify-task-scope 显式 -Base bfe024cd0 -Head 8e4a08ac8 exit 1：17 路径越界（reuse/audit-contract.md、reuse/migration.md、reuse/policy.md、tasks/REUSE-T01/T02/T05/T06.json、traceability/reuse/REUSE-T01/capability-plan/** 十件），全部出自 c27349a80 准入提交，未命中 REUSE-T07 契约 15 条 allowedFiles。可执行处置（二选一）：(A) 送验范围收敛为 c27349a80..8e4a08ac8——已实测该范围 286 路径全部在允许面 PASS（05-alt-scope-probe.log），c27349a80 治理文本改动已被 REUSE-T01-20261024-r2（pass）范围覆盖，需登记步骤/所有者确认范围口径后按新 Base 重跑本验收；(B) 在 REUSE-T07 契约 allowedFiles 补登该 17 项并在 note 登记变更理由，重跑 verify-task-scope exit 0 后重验。证据：02-scope.log、05-alt-scope-probe.log。",
+    "【阻断｜所有者裁决】性能退化未获所有者接受：本人独立复跑证实退化事实（migrated 0.409µs vs baseline 0.118µs，约 3.46x；原件 4.662x 同量级），checksum 280400 一致证数值等价，绝对值亚微秒且生产路径为建模编辑/就绪校验（非实时回路）——但任务明示『约4.662倍性能尚未获所有者接受』，实施者亦登记『性能可接受性待所有者/独验确认、不得自判』，契约 acceptance#1『无依据退化不得自判可接受』。独验无权代所有者接受：须所有者明示接受该退化（登记裁决记录）或驳回要求处置；裁决落地前本条 acceptance 不闭合，本轮不 pass。证据：07-benchmark-run.log、reuse/REUSE-T07/benchmark/comparison.json、reuse/coupling-svd-migration.md §运行效果。"
+  ],
+  "observations": [
+    "过期注释 2 处：Parts.cpp:281 与 PartsTest.cpp:791 注释仍写『单侧 Jacobi SVD』，实现已换上游 SVD（AGENTS §2 禁止过期注释）；随下轮返工顺带修正，不单独构成阻断。",
+    "实施发生在 C:\\Users\\zgl18\\.codex\\worktrees\\reuse-audit 旧工作树（AGENTS §0 要求统一主工作树串行实施），证据 XML 的 file 路径与 README 登记的 .cache/t07-integrated/.cache/t07-smoke 复现树均系实施树私物、主树不存在；git blob 一致性已核，不构成内容问题，但主树侧复现依赖本验收产物目录的独立复跑证据（06/07 系列）。"
+  ],
+  "notRun": [
+    {
+      "item": "PS5.1 完整治理自测 152 例",
+      "reason": "实施口径即『完整152仅在PS7执行，未声称PS5.1完整自测执行』（migration 文档第 66 行），契约仅要求 PS7 全套＋PS5.1 AD 正反回归；本人 PS5.1 已复跑 TestCMakeComments 八项全过，与实施口径一致，无未声明缺口。"
+    },
+    {
+      "item": "独立冒烟树重配（smoke 372 例复跑）",
+      "reason": "效率口径：冒烟原件（smoke/gtest.xml 372/372）真实完整且 GOV-T24 已用同链路独立复跑过 modeling 冒烟（smoke-modeling-test.xml 372/372，含 CouplingReuse 上游 SVD 消费用例）；本人以集成树 479/479 复跑覆盖同一数值面，不重复重建冒烟树。"
+    }
+  ],
+  "limitations": "FAIL 仅针对送验范围 bfe024cd0..8e4a08ac8 的范围门禁与性能裁决两项阻断；技术实现本体（Jacobi 删除、上游 SVD 生产链、数值/接口保持、回归、治理自测、文档门禁）16 项检查全部通过，返工无需改动产品代码即可处置范围项。性能裁决属所有者保留权限，任何会话不得自签代受。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399）；本验收不构成 WP-03 其余五包、算法替换（migration §11）或 REUSE-T02 的放行。PS5.1 完整自测与冒烟重配按 notRun 所列理由未执行。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/03-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/04-cmake-comments-gate.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/04-cmake-comments-gate-ps51.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/05-alt-scope-probe.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/06-int-modeling-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/06-int-modeling-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/07-benchmark-configure.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/07-benchmark-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/07-benchmark-run.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/08-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1/09-governance-selftest.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T07-20261024-r1.json"
+  ]
+}

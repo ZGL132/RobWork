@@ -1,0 +1,4 @@
+{"medianMicroseconds":0.11802,"minMicroseconds":0.09498,"maxMicroseconds":0.27298,"checksum":280400,"calls":70100}
+BASELINE-EXIT=0
+{"medianMicroseconds":0.40896,"minMicroseconds":0.35856,"maxMicroseconds":0.43717,"checksum":280400,"calls":70100}
+MIGRATED-EXIT=0

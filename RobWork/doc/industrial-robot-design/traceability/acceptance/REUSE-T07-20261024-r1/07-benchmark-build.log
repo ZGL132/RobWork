@@ -1,0 +1,15 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\ZERO_CHECK.vcxproj]
+  1>Checking Build System
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\t07-bench-frozen\coupling_svd_baseline.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/benchmark/CMakeLists.txt
+  CouplingBenchmark.cpp
+  coupling_svd_baseline.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\t07-bench-frozen\Release\coupling_svd_baseline.exe
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\t07-bench-frozen\coupling_svd_migrated.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/benchmark/CMakeLists.txt
+  CouplingBenchmark.cpp
+  coupling_svd_migrated.vcxproj -> C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\t07-bench-frozen\Release\coupling_svd_migrated.exe
+D:\software\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(541,5): warning MSB8029: 中间目录或输出目录无法驻留在临时目录下，因为这可能会导致增量生成出现问题。 [C:\Users\zgl18\AppData\Local\Temp\t07-acc-bench\build\t07-bench-frozen\ALL_BUILD.vcxproj]
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T07/benchmark/CMakeLists.txt
+EXIT=0
