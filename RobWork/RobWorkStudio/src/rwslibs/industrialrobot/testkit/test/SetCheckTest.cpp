@@ -410,16 +410,16 @@ TEST(SetMatchCore, GridFamilyTemplateSemantics_UT_SET)
  *  完美覆盖（TK-SET 一一配对语义的反贪婪验证）。 */
 TEST(SetNumeric, GreedyTrapAugmented_UT_SET)
 {
-    // E: {0, 2δ}，A: {δ, 2δ}（δ=0.75e-12）——E0 只邻 A0，E1 邻 A0/A1：
-    // 贪婪先把 E0→A0，E1 必须经增广改配 A1 才能全覆盖。
+    // E: {δ, 0}，A: {0, 2δ}（δ=0.75e-12）——E0 邻 A0/A1，E1 只邻 A0：
+    // 索引序贪婪先把 E0→A0 后会留下 E1；必须增广为 E0→A1、E1→A0。
     constexpr double kDelta = 0.75e-12;
-    const std::vector<DemoElem> expected{elem("", 0.0, 0.0),
-                                         elem("", 2.0 * kDelta, 0.0)};
-    const std::vector<DemoElem> actual{elem("", 1.0 * kDelta, 0.0),
+    const std::vector<DemoElem> expected{elem("", kDelta, 0.0),
+                                         elem("", 0.0, 0.0)};
+    const std::vector<DemoElem> actual{elem("", 0.0, 0.0),
                                        elem("", 2.0 * kDelta, 0.0)};
     const auto r = checkSetEquivalent(expected, actual, sampleProfile(),
                                       SetMatchTraits<DemoElem>{});
-    EXPECT_TRUE(r.equivalent) << "完美匹配存在（E0→A0 让出或 E1→A1）——贪婪"
+    EXPECT_TRUE(r.equivalent) << "完美匹配存在（E0→A1、E1→A0）——贪婪"
                                  "陷阱形态必须经增广达成全覆盖";
     EXPECT_EQ(r.matched.size(), 2u);
     EXPECT_FALSE(r.ambiguousMatch);
@@ -442,4 +442,43 @@ TEST(SetNumeric, MultiSolutionWitnessDeterministic_UT_SET)
     EXPECT_EQ(first.matched, second.matched)
         << "多解情形的见证配对必须逐次稳定（确定性 tie-break 语义）";
     EXPECT_EQ(first.ambiguousMatch, second.ambiguousMatch);
+}
+
+/** REUSE-T20／TK-SET：解析缓存只属于本次断言，同字段在另一档案下必须重新解析。
+ * 更严档案仍低于既有 allowedMax；不能让先前宽档案的解析值污染随后比较。 */
+TEST(SetNumeric, ToleranceCacheIsAssertionLocal_UT_SET)
+{
+    auto strict = sampleProfile();
+    for (auto& entry : strict.entries) { entry.tolerance.absolute *= 0.25; }
+    const std::vector<DemoElem> expected{elem("", 0.0, 0.0), elem("", 4e-12, 0.0)};
+    const std::vector<DemoElem> actual{elem("", 0.75e-12, 0.0), elem("", 4.75e-12, 0.0)};
+    const auto compare = [&](const ToleranceProfile& profile) {
+        return checkSetEquivalent(expected, actual, profile, SetMatchTraits<DemoElem>{});
+    };
+    EXPECT_TRUE(compare(sampleProfile()).equivalent);
+    EXPECT_FALSE(compare(strict).equivalent) << "同一路径必须采用当前档案的更严容差";
+    EXPECT_TRUE(compare(sampleProfile()).equivalent) << "缓存不能跨断言共享";
+}
+
+/** REUSE-T20／TK-SET：缓存不能预解析未消费字段，也不能吞掉真正使用的缺失容差。
+ * 空侧无数值比较；相容谓词在首字段失配时短路；真正消费缺档字段仍报原错误。 */
+TEST(SetNumeric, ToleranceResolutionRemainsLazy_UT_SET)
+{
+    auto xOnly = sampleProfile();
+    xOnly.entries = {sampleProfile().resolve("fk[0].tcp.position.x")};
+    const std::vector<DemoElem> expected{elem("", 0.0, 0.0)};
+    const auto compare = [&](const std::vector<DemoElem>& actual) {
+        return checkSetEquivalent(expected, actual, xOnly, SetMatchTraits<DemoElem>{});
+    };
+    EXPECT_NO_THROW(compare({}));
+    // 只验证边谓词的短路；完整断言的失配详情会合法地消费全部字段，不能混为一谈。
+    std::map<std::string, sdurws::ird::core::Tolerance, std::less<>> cache;
+    EXPECT_FALSE(detail::compatible(expected.front(), elem("", 1.0, 0.0),
+                                    xOnly, SetMatchTraits<DemoElem>{}, &cache));
+    try {
+        compare(expected);
+        FAIL() << "实际比较到缺失的 y 容差时必须 fail-fast";
+    } catch (const TestKitError& error) {
+        EXPECT_EQ(error.kind(), TestKitErrorKind::ToleranceUndefined);
+    }
 }

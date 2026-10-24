@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="0.017" timestamp="2026-10-24T10:48:41.495" name="AllTests">
+  <testsuite name="PolicyContractDoubles" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0.017" timestamp="2026-10-24T10:48:41.495">
+    <testcase name="ThreeEntriesShareSingleEvaluatorInstanceAndEquivalentOutputs" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\policy\test\PolicyContractDoublesTest.cpp" line="527" status="run" result="completed" time="0.017" timestamp="2026-10-24T10:48:41.495" classname="PolicyContractDoubles" />
+  </testsuite>
+</testsuites>

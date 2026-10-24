@@ -1,0 +1,40 @@
+REUSE-T20 WP-02 inputs (normalized UTF-8 LF SHA-256)
+base=7be67a6a59912ec243f2251dd3a127b8b5c7e679
+configuration=Release; host=Windows x64; generator=Visual Studio 17 2022
+Boost headers=1.92 from existing vcpkg, no upstream/vcpkg edits
+Only test changes followed consumer runs; consumer source and production executable semantics unchanged. Final testkit/smoke runs cover the exact final test source.
+cf992d9d2c4f2294b69d8819e334927644a48b978bfea3c525e3f9c6dbc7cb9f  vcpkg/installed/x64-windows/include/boost/version.hpp
+09c26de2626a0baf4699045569a563440569a7c704f95291adfbae6a3ed9395f  vcpkg/installed/x64-windows/include/boost/graph/max_cardinality_matching.hpp
+e88068e50b2abc688e9afdbbc2f10a85f770bd9a6f392c1bdedf4eb251e95b34  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp
+aa6f68c15d14de990d49f693351d7ea033f3ae8d4378c4841252f429903f64a6  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp
+9c63b560d8b7dc73c9ef6b0cae0517d67297275bbe0b89521127fbb38c0a820e  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp
+d2f5d1ccf7b5360a4260dec0420b7e3eae58b65c81d6fff2f658d09b9a54d752  RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/perf-compare/perf_probe.cpp
+2fd91e0f7df27f8508a498b8cd4219dd6faff29b9900c2410435984c88c56f39  RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/perf-compare/CMakeLists.txt
+676718bfd58eb080bb85951d1ee1d0b9766100826144a0989d3f5b5b1ab9b346  RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/perf-compare/v1.0.0.json
+
+build/CMakeCache.txt
+CMAKE_CXX_FLAGS_RELEASE:STRING=/MD /O2 /Ob2 /DNDEBUG
+CMAKE_PREFIX_PATH:UNINITIALIZED=D:/software/Qt/6.11.1/msvc2022_64
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+RWS_BUILD_INDUSTRIALROBOT:BOOL=ON
+CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+
+build/govt24-smoke/CMakeCache.txt
+CMAKE_CXX_FLAGS_RELEASE:STRING=/O2 /Ob2 /DNDEBUG
+CMAKE_PREFIX_PATH:UNINITIALIZED=D:/software/Qt/6.11.1/msvc2022_64
+CMAKE_TOOLCHAIN_FILE:FILEPATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/scripts/buildsystems/vcpkg.cmake
+RobWork_DIR:UNINITIALIZED=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWork/cmake
+VCPKG_OVERRIDE_FIND_PACKAGE_NAME:UNINITIALIZED=vcpkg_find_package
+CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+
+build/wp02-setcheck-perf/CMakeCache.txt
+BOOST_INCLUDEDIR:PATH=D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/include
+CMAKE_CXX_FLAGS_RELEASE:STRING=/O2 /Ob2 /DNDEBUG
+CMAKE_GENERATOR:INTERNAL=Visual Studio 17 2022
+CMAKE_GENERATOR_PLATFORM:INTERNAL=x64
+
+build/wp02-setcheck-perf/CMakeFiles/4.3.1/CMakeCXXCompiler.cmake
+set(CMAKE_CXX_COMPILER "D:/software/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.42.34433/bin/Hostx64/x64/cl.exe")
+set(CMAKE_CXX_COMPILER_VERSION "19.42.34433.0")

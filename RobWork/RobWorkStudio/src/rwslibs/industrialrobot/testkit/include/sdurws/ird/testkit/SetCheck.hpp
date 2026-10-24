@@ -22,8 +22,8 @@
  * （按 expected 索引序逐配对交错圈判定）。
  *
  * 实现取舍（报告 notes 同步）：阶段 2 最大匹配核心＝Boost.Graph
- * checked_edmonds_maximum_cardinality_matching 薄适配（库内部自验最大性；
- * matching_size 作计数正交源），经 detail::maximumBipartiteMatching 内部接缝
+ * matching（greedy_matching 初始化＋Edmonds 增广＋最大性验证器）薄适配；
+ * 并用 matching_size 作计数互检，经 detail::maximumBipartiteMatching 内部接缝
  * 承接（实现于 src/SetCheckMatch.cpp——Boost 头编译期使用收敛于该 TU，
  * 本公共模板头零 Boost；相容边按索引物化后调用）。物化求值 O(nL·nR) 与
  * 原谓词按需扫描同阶，新增 |E| 边存储（不承诺内存/复杂度收益——§5.4.2
@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <map>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -102,9 +103,19 @@ struct SetMatchTraits {
 namespace detail {
 
 /// 预期/实际元素是否构成相容边（字段同名一一对应＋全部经 profile 容差满足 C4）。
+/// @param expectedElem [in] 预期元素，字段值采用各自量纲的 SI 单位。
+/// @param actualElem [in] 实际元素，字段顺序须与预期一致。
+/// @param profile [in] 调用期间不可变的容差档案；借持、不接管所有权。
+/// @param traits [in] 当前元素类型的字段投影，不缓存元素或接管其生命周期。
+/// @param toleranceCache [in,out] 可选的本次断言私有解析缓存，借持、不接管所有权；
+///   只供同一不可变 profile 使用。nullptr 保留独立调用语义；缺失路径仍在首次
+///   实际比较时由 profile.resolve 抛 ToleranceUndefined，不提前扫描未消费字段。
+/// @return 字段非空、同名且全部满足 C4 时为 true；任一不相容即短路为 false。
+/// @throws TestKitError(ToleranceUndefined) 实际比较到未定义容差的路径。
 template <class T>
 bool compatible(const T& expectedElem, const T& actualElem,
-                const ToleranceProfile& profile, const SetMatchTraits<T>& traits)
+                const ToleranceProfile& profile, const SetMatchTraits<T>& traits,
+                std::map<std::string, core::Tolerance, std::less<>>* toleranceCache = nullptr)
 {
     const auto expectedFields = traits.numerics(expectedElem);
     const auto actualFields = traits.numerics(actualElem);
@@ -113,8 +124,20 @@ bool compatible(const T& expectedElem, const T& actualElem,
     }
     for (std::size_t i = 0; i < expectedFields.size(); ++i) {
         if (expectedFields[i].fieldPath != actualFields[i].fieldPath) { return false; }
-        if (!core::closeWithin(actualFields[i].valueSi, expectedFields[i].valueSi,
-                               profile.resolve(expectedFields[i].fieldPath).tolerance)) {
+        const auto path = expectedFields[i].fieldPath;
+        core::Tolerance tolerance;
+        if (toleranceCache) {
+            // profile 在本次断言中只读，同一路径的解析结果不变；透明查找避免
+            // 每条边为键分配字符串。键仅在首次命中时复制，不借持 traits 临时视图。
+            auto found = toleranceCache->find(path);
+            if (found == toleranceCache->end()) {
+                found = toleranceCache->emplace(std::string{path}, profile.resolve(path).tolerance).first;
+            }
+            tolerance = found->second;
+        } else {
+            tolerance = profile.resolve(path).tolerance;
+        }
+        if (!core::closeWithin(actualFields[i].valueSi, expectedFields[i].valueSi, tolerance)) {
             return false;
         }
     }
@@ -122,7 +145,7 @@ bool compatible(const T& expectedElem, const T& actualElem,
 }
 
 /// 最大二分图匹配内部接缝（实现于 src/SetCheckMatch.cpp——Boost.Graph
-/// checked Edmonds 薄适配；Boost 头只在该 TU 编译期使用，不出本公共头）。
+/// checked Edmonds 策略薄适配；Boost 头只在该 TU 编译期使用，不出本公共头）。
 /// 仅承接"给定边集求一个最大基数匹配"的算法核心；身份优先/C4 相容边构造/
 /// 歧义/诊断等业务语义全在模板层，双方以纯索引类型交接。
 ///
@@ -250,9 +273,11 @@ SetCheckResult checkSetEquivalent(const std::vector<T>& expected,
     const std::size_t nR = actualFreeIdx.size();
     // 相容边物化（求值 O(nL·nR)——与原谓词按需扫描同阶）；相容性语义留在模板层，
     // 算法核心移交内部接缝（detail::maximumBipartiteMatching，Boost 薄适配）。
+    // 仅缓存同一不可变档案的解析值，生命周期止于本次断言；模型/业务事实仍归原 owner。
+    std::map<std::string, core::Tolerance, std::less<>> toleranceCache;
     const auto edge = [&](std::size_t li, std::size_t ri) {
         return detail::compatible(expected[expectedFreeIdx[li]],
-                                  actual[actualFreeIdx[ri]], profile, traits);
+                                  actual[actualFreeIdx[ri]], profile, traits, &toleranceCache);
     };
     std::vector<std::pair<std::size_t, std::size_t>> edges;
     for (std::size_t li = 0; li < nL; ++li) {

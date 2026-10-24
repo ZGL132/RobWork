@@ -5,22 +5,22 @@
   "files": [
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/include/sdurws/ird/testkit/SetCheck.hpp",
-      "sha256": "c882aeda2aff0cfe0a228e87bb2521b95cc2f350c873361adca673eb1e3f0b81",
+      "sha256": "e88068e50b2abc688e9afdbbc2f10a85f770bd9a6f392c1bdedf4eb251e95b34",
       "mode": "business",
       "capabilities": [
         
       ],
-      "boundary": "F-958后阶段 2 匹配内核复用：删除自写 Kuhn 递归 detail::tryAugmentAt 与驱动循环（无 fallback/双实现），新增 detail::maximumBipartiteMatching 内部接缝声明与相容边物化驱动；阶段 0/1、compatible 谓词、F-594 交错圈歧义检测、缺失/多余推导、100000 护栏、checkStableOrder 逐字未动；§5.4.2 实现取舍注同步（多解配对见证确定性保持）。",
+      "boundary": "本轮仅阶段2相容边增加单次断言私有标准map解析缓存，仍由profile.resolve与core C4决定相容性；保留公开签名/身份/歧义/详情/护栏，不跨调用缓存、不新增数学核心；匹配来源为唯一Boost接缝，原Kuhn已删。第三方schema/性能未决见README§9。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
     },
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/src/SetCheckMatch.cpp",
-      "sha256": "4cf7805326505306b4d0bf554571c9c92b808a3e27e7109297b58c9d583ff8e4",
+      "sha256": "aa6f68c15d14de990d49f693351d7ea033f3ae8d4378c4841252f429903f64a6",
       "mode": "business",
       "capabilities": [
         
       ],
-      "boundary": "新增 TU＝Boost.Graph checked_edmonds_maximum_cardinality_matching＋matching_size 薄适配（vcpkg 已装 Boost 1.92，header-only 编译期使用）；图构造/库侧最大性自验/计数互检/mate 转表，业务规则零涉及；Boost 头收敛于本 TU。",
+      "boundary": "既有Boost.Graph薄适配仅改公开matching初始化策略：greedy_matching＋Edmonds增广＋原最大性验证器，保留matching_size和索引转表；Boost 1.92来自既有vcpkg而非RobWork，零新核心/依赖/上游修改；真实mate返回值扰动已使生产断言失败，schema与性能债务未关。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
     },
     {
@@ -35,12 +35,12 @@
     },
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/test/SetCheckTest.cpp",
-      "sha256": "93733df47808cff230858034836e163da499b930e544265897c1efe7947ef428",
+      "sha256": "9c63b560d8b7dc73c9ef6b0cae0517d67297275bbe0b89521127fbb38c0a820e",
       "mode": "business",
       "capabilities": [
         
       ],
-      "boundary": "新增 4 用例：内核穷举 oracle（3×3 全 512 边集＋4×5 伪随机 240 例）、生产入口网格族 oracle（15625 组含真歧义）、贪婪陷阱、多解见证确定性；oracle 独立于被测内核。",
+      "boundary": "保留独立穷举/网格/F-594与确定性oracle；本轮增加两例验证单次缓存不跨档案/调用污染、边谓词短路和真正缺档错误。未放宽容差；首版错误测试预期和纠正后原件保留。",
       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/setcheck-max-matching/README.md"
     },
     {

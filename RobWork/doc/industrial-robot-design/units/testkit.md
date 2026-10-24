@@ -520,6 +520,8 @@ IRD_EXPECT_FINITE(fieldPath, value)                                      // NaN/
 
 失败定位输出：`missing`（期望未匹配，逐个列出其身份/最近实际距离）、`extra`（实际未匹配）、`mismatched`（参与相容边计算但无法配对的最近对详情，复用 CompareDetail）；三者合成 SetCheckResult。
 
+当前实现（REUSE-T20／WP-02）：相容边与身份、歧义、详情规则仍归 testkit，容差数值比较复用 core::closeWithin；同次断言以私有标准 map 缓存不可变档案的路径解析值，首次消费才 resolve，不跨档案/调用共享。唯一匹配接缝 `detail::maximumBipartiteMatching` 在 `SetCheckMatch.cpp` 复用已安装 Boost.Graph 的公开 `matching` 策略入口：`greedy_matching` 初始化 → `edmonds_augmenting_path_finder` 增广 → `maximum_cardinality_matching_verifier` → `matching_size` 计数互检 → 索引见证。公共模板头零 Boost，自写 Kuhn 已删除且不恢复。上述 `O(E√V)` 是原复杂度期望，当前 Edmonds 实现不宣称满足该界；稠密输入的时间/内存退化及第三方 catalog 表达缺口仍未关闭，见 [最新实施与未决项](../traceability/reuse/REUSE-T05/setcheck-max-matching/README.md#9-wp-02-串行收口2026-10-24)。多解仅保证同输入/配置下见证确定性，不承诺与旧实现逐对相同。
+
 #### 5.4.3 两种断言的区分
 
 | 断言 | 语义（"候选集合等价"） | 语义（"稳定排序一致"） |

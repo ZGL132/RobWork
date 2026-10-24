@@ -25,6 +25,9 @@
 #include <sdurws/ird/testkit/SetCheck.hpp>
 #include <sdurws/ird/testkit/ToleranceProfile.hpp>
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/max_cardinality_matching.hpp>
+
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
@@ -33,6 +36,7 @@
 #include <fstream>
 #include <functional>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <utility>
 #include <vector>
@@ -175,10 +179,63 @@ void runCase(std::size_t n, double tolAbs, const char* densityLabel,
         right[i].v = static_cast<double>(rng.next()) / 32768.0;
         right[i].fp = fieldPath;
     }
+    // 原基线每次解析档案；新生产路径仅缓存同一档案的字段解析，仍逐边执行 C4。
+    std::map<std::string, sdurws::ird::core::Tolerance, std::less<>> toleranceCache;
     const auto edge = [&](std::size_t li, std::size_t ri) {
         return detail::compatible(left[li], right[ri], profile,
-                                  SetMatchTraits<ProbeElem>{});
+                                  SetMatchTraits<ProbeElem>{}, mode[0] != 'o' ? &toleranceCache : nullptr);
     };
+
+    // WP-02：在相同输入上单独计时适配阶段，不把图/容差构造开销归给匹配算法。
+    // 候选仅调用 Boost 公开 matching 策略入口，保留原最大性验证器；不写匹配核心。
+    if (std::strcmp(mode, "stages") == 0) {
+        using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
+        using Vertex = boost::graph_traits<Graph>::vertex_descriptor;
+        using MateMap = Vertex*;
+        using IndexMap = boost::property_map<Graph, boost::vertex_index_t>::const_type;
+        LARGE_INTEGER freq, mark;
+        QueryPerformanceFrequency(&freq);
+        QueryPerformanceCounter(&mark);
+        std::vector<std::pair<std::size_t, std::size_t>> edges;
+        for (std::size_t li = 0; li < n; ++li) {
+            for (std::size_t ri = 0; ri < n; ++ri) {
+                if (edge(li, ri)) { edges.emplace_back(li, ri); }
+            }
+        }
+        const double evaluateMs = secondsSince(mark, freq) * 1000.0;
+        QueryPerformanceCounter(&mark);
+        Graph graph(n * 2);
+        for (const auto& pair : edges) { add_edge(pair.first, n + pair.second, graph); }
+        const double graphMs = secondsSince(mark, freq) * 1000.0;
+        std::vector<Vertex> mate(n * 2, boost::graph_traits<Graph>::null_vertex());
+        QueryPerformanceCounter(&mark);
+        const bool checked = boost::checked_edmonds_maximum_cardinality_matching(graph, mate.data());
+        const double checkedMs = secondsSince(mark, freq) * 1000.0;
+        const auto checkedSize = boost::matching_size(graph, mate.data());
+        QueryPerformanceCounter(&mark);
+        const bool greedyChecked = boost::matching<Graph, MateMap, IndexMap,
+            boost::edmonds_augmenting_path_finder, boost::greedy_matching,
+            boost::maximum_cardinality_matching_verifier>(graph, mate.data(), get(boost::vertex_index, graph));
+        const double greedyMs = secondsSince(mark, freq) * 1000.0;
+        QueryPerformanceCounter(&mark);
+        const auto greedySize = boost::matching_size(graph, mate.data());
+        std::vector<std::size_t> matchL(n, static_cast<std::size_t>(-1));
+        std::size_t converted = 0;
+        for (std::size_t li = 0; li < n; ++li) {
+            if (mate[li] != boost::graph_traits<Graph>::null_vertex()) {
+                matchL[li] = mate[li] - n;
+                ++converted;
+            }
+        }
+        const double convertMs = secondsSince(mark, freq) * 1000.0;
+        if (!checked || !greedyChecked || checkedSize != greedySize || converted != greedySize) {
+            throw std::runtime_error("Boost candidate cardinality/verification mismatch");
+        }
+        std::printf("stages n=%zu density=%s edges=%zu matched=%zu evaluate_ms=%.3f graph_ms=%.3f checked_ms=%.3f greedy_checked_ms=%.3f convert_ms=%.3f peakWS=%.1f\n",
+            n, densityLabel, edges.size(), converted, evaluateMs, graphMs, checkedMs, greedyMs, convertMs, peakWorkingSetMiB());
+        std::fflush(stdout);
+        return;
+    }
 
     double best = 1e30;
     std::size_t matched = 0;
@@ -186,6 +243,7 @@ void runCase(std::size_t n, double tolAbs, const char* densityLabel,
     LARGE_INTEGER freq;
     QueryPerformanceFrequency(&freq);
     for (int rep = 0; rep < 3; ++rep) {
+        toleranceCache.clear(); // 每轮与生产单次断言同生命周期，不跨轮借用热缓存。
         LARGE_INTEGER t0;
         QueryPerformanceCounter(&t0);
         if (std::strcmp(mode, "old") == 0) {
@@ -216,9 +274,9 @@ void runCase(std::size_t n, double tolAbs, const char* densityLabel,
 }  // namespace
 
 /**
- * @brief 探针入口：perf_probe old|new <profile.json>。
+ * @brief 探针入口：perf_probe old|new|stages <profile.json> [dense-only]。
  * @param argc [in] 参数计数（模式＋档案路径）
- * @param argv [in] 模式（old/new）＋容差档案路径
+ * @param argv [in] 模式＋容差档案路径；dense-only 仅运行三组受控稠密输入
  * @return 0（任一案例异常即传播失败）
  */
 int main(int argc, char** argv)
@@ -226,10 +284,12 @@ int main(int argc, char** argv)
     std::printf("probe start argc=%d\n", argc);
     std::fflush(stdout);
     if (argc < 3) {
-        std::fprintf(stderr, "usage: perf_probe old|new <tolerance-profile.json>\n");
+        std::fprintf(stderr, "usage: perf_probe old|new|stages <tolerance-profile.json> [dense-only]\n");
         return 2;
     }
     const std::string mode = argv[1];
+    if (mode != "old" && mode != "new" && mode != "stages") { return 2; }
+    if (argc > 4 || (argc == 4 && std::strcmp(argv[3], "dense-only") != 0)) { return 2; }
     std::optional<ToleranceProfile> profile;
     try {
         profile = ToleranceProfile::load(std::filesystem::path{argv[2]});
@@ -249,6 +309,8 @@ int main(int argc, char** argv)
     const std::size_t sizesDense[] = {64, 256, 1024};
     const std::size_t sizesSparse[] = {64, 256, 1024, 4096};
     for (const auto& tier : tiers) {
+        // 只对实际疑点追加同机对照，避免再次运行旧版 4096 稀疏的百秒案例。
+        if (argc == 4 && std::strcmp(tier.label, "dense") != 0) { continue; }
         const bool isSparse = std::strcmp(tier.label, "sparse") == 0;
         if (isSparse) {
             // 稀疏档含大尺度点（4096×4096 求值 ≈ 16.8M 次边评估，受控）。

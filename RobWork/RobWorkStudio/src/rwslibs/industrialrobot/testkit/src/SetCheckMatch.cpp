@@ -1,6 +1,6 @@
 /**
  * @file   SetCheckMatch.cpp
- * @brief  最大二分图匹配内核——Boost.Graph checked Edmonds 薄适配
+ * @brief  最大二分图匹配内核——Boost.Graph 可配置 checked Edmonds 薄适配
  *         （SetCheck 阶段 2 的 detail::maximumBipartiteMatching 实现）。
  *
  * 设计依据：
@@ -9,7 +9,8 @@
  *   - REUSE-T01 审计 B17（compare-set-dataset-audit.md"集合最大匹配"节）与
  *     probe-r17/candidates（checked_edmonds_maximum_cardinality_matching／
  *     matching_size 两项公开 API 探测 passed——候选可运行证据，本 TU 为其
- *     生产接入面）；
+ *     生产接入面）；WP-02 定向测量核实 matching 的公开策略入口，保留
+ *     Edmonds 增广及 maximum_cardinality_matching_verifier，只换初始化策略；
  *   - H1/H6：成熟库承担匹配核心（复用来源＝vcpkg 已装 Boost 1.92
  *     Boost::headers，header-only 编译期使用，零新增运行库/渠道变更）。
  *
@@ -54,15 +55,21 @@ std::vector<std::size_t> maximumBipartiteMatching(
                  graph);
     }
 
-    // checked 变体：算法结束后由 Boost 自行验证配对合法且基数最大——准确性
-    // 的库侧保证（探测 ReuseAuditMatching 两用例钉住的两候选之一）。
+    // 默认 checked 入口使用 extra_greedy_matching，会复制双向边再做两轮排序。
+    // 本接缝的图已经按左右索引稳定构造，改用 Boost 自带 greedy_matching 初始化，
+    // 避免排序暂存；它不是最终匹配结果，后续仍由同一 Edmonds 核增广到最大基数。
+    // 最大性验证器保持不变，不能以贪心“配不全”冒充不存在最大匹配（REUSE-T20）。
+    using MateMap = Vertex*;
+    using IndexMap = boost::property_map<Graph, boost::vertex_index_t>::const_type;
     std::vector<Vertex> mate(nLeft + nRight,
                              boost::graph_traits<Graph>::null_vertex());
-    if (!boost::checked_edmonds_maximum_cardinality_matching(graph,
-                                                             mate.data())) {
+    if (!boost::matching<Graph, MateMap, IndexMap,
+            boost::edmonds_augmenting_path_finder, boost::greedy_matching,
+            boost::maximum_cardinality_matching_verifier>(
+                graph, mate.data(), get(boost::vertex_index, graph))) {
         throw TestKitError(TestKitErrorKind::Usage,
                            "usage: 最大匹配内核自验失败（Boost checked Edmonds "
-                           "返回 false）——testkit 内部不变量破坏，fail-fast");
+                           "验证器返回 false）——testkit 内部不变量破坏，fail-fast");
     }
 
     // mate 表 → matchL 转表；计数与 matching_size（第二候选）正交互检——

@@ -214,3 +214,61 @@
 - `ird_gates` 的三项 `${_ird_kin_rw_*}` 变量识别阻断未修正；对应 kinematics/CMakeLists.txt 和扫描器相对 `08a57d562` 无变化，B 依赖词表未为这些变量增加豁免。本轮门禁目标 NOT RUN，按根 AGENTS §4 引用 [A 实际失败原件](../../REUSE-T19/integration-20261024/a-build.log)，不重复相同失败，不宣称门禁 PASS。登记缺口、稠密性能处置和最终独验仍按原记录补正，不新增能力包、不自动派发验收。
 - 本次记录及 A/B 契约使用 `validate-docs.ps1 -TaskFile` 数组选择 T17/T19/T20，一次完成文档、三契约及全量复用机检；实际结果与退出码保留于 `integration-20261024/main-docs.log`。机检仍不代表算法合规或独立验收。
 - 当前结论：**A/B 全部已有提交已在本地 redesign-main 集成，遗留门禁/登记/性能/独验事项未关闭**。A/B 任务分支、全部工作树和构建目录完整保留；不推送远程、不删除或清理现场。
+
+## 9. WP-02 串行收口（2026-10-24）
+
+本轮起点 `7be67a6a59912ec243f2251dd3a127b8b5c7e679`，主工作树 `redesign-main`；仅续接 REUSE-T20，不按历史 A/B 分支调度、不同步远程。下列是实施自查，**性能未获接受、第三方 schema 债务未关闭、独立验收 NOT RUN**，不代表任务完成。
+
+### 9.1 范围、复用来源与数据流
+
+- 保留：SetCheck 公共签名、SI/C4、身份优先、F-594 歧义、诊断、护栏及确定性；业务所有者仍为 testkit，容差公式归 core。业务消费者为 kinematics 黄金集合、optimization 黄金集合及契约、policy 共享求值契约；ReproBenchmark 在 testkit 原夹具验证。
+- 适配：`SetCheckMatch.cpp::maximumBipartiteMatching` 只用 Boost 公开 `matching<..., edmonds_augmenting_path_finder, greedy_matching, maximum_cardinality_matching_verifier>` 替换默认 checked 入口的 extra_greedy 初始化，再复用 `matching_size`。保留库侧最大性验证，没有手写贪心快路径、第二匹配核心或旧 Kuhn fallback。
+- 上游检索沿用 [B17 原审计](../../REUSE-T01/compare-set-dataset-audit.md) 和 [候选原证据](../../REUSE-T01/probe-r17/environment-artifacts.json)。本轮定向实读 `vcpkg/installed/x64-windows/include/boost/graph/max_cardinality_matching.hpp`：greedy_matching 位于497行，extra_greedy_matching 位于529行，验证器688行，matching 793行，默认 checked 812行；`boost/version.hpp` 为 `1_92`。第三方来源是既有 vcpkg／Boost::headers，**不是 RobWork API**，没有改上游或增加依赖渠道。
+- 局部整理：`SetCheck.hpp::detail::compatible` 在同次断言内通过标准 map 缓存 `ToleranceProfile::resolve` 的解析值；每路径首次实际消费才解析，键拥有字符串，缓存止于本次调用。仍逐边调用 traits 和 core::closeWithin，不缓存模型、不改变 resolve 或公式、不创建通用缓存平台。保留原独立调用入口的无缓存语义。
+- 替换后数据流：业务元素 → 身份阶段 → 数值字段／单次档案解析缓存 → C4 相容边 → 唯一 Boost 接缝 → mate/计数互检 → 见证／歧义／失配详情。最大匹配、验证器均由库承担；业务规则不移入接缝。
+- 结构性不重叠：生产头与 TU 中没有 `tryAugmentAt`、自写增广驱动或旧算法 fallback；可复核 `rg -n 'tryAugmentAt|baselineMatching|fallback' <testkit/include/.../SetCheck.hpp> <testkit/src/SetCheckMatch.cpp>`。旧快照仅存在原 measurement-only 探针，不注册产品目标。独立穷举 oracle 保留为测试对照，不能移入生产。
+
+### 9.2 定向验证与生产返回值证据
+
+原始文件均在 [wp02-20261024](wp02-20261024/)，源、Boost版本/头摘要、配置与测量输入绑定见 [inputs.txt](wp02-20261024/inputs.txt)。构建只针对本轮变化及直接消费者；没有全库重配或全量测试。公共头最终新增的说明注释不改变已验证源的执行语义。
+
+| 验证 | 命令／范围 | 结果与原件 |
+| --- | --- | --- |
+| 集成构建 | `cmake --build build --config Release --target sdurws_ird_testkit_test sdurws_ird_kinematics_test sdurws_ird_optimization_test sdurws_ird_optimization_contract_test sdurws_ird_policy_test` | PASS，[integration-build-final.log](wp02-20261024/integration-build-final.log)；policy 实际消费目标另建，见下行 |
+| policy 契约构建 | 同一树 `--target sdurws_ird_policy_contract_test` | PASS，[policy-contract-build.log](wp02-20261024/policy-contract-build.log) |
+| testkit 数值/集合/复现 | 集成 exe，`--gtest_filter=Set*.*:StableOrder.*:Repro*.*` | 24 passed / 0 skipped / 0 failed，[XML](wp02-20261024/testkit-verified.xml)、[报告](wp02-20261024/testkit-verified-report.json)、[日志](wp02-20261024/testkit-verified.log) |
+| 独立冒烟 | 复用 `build/govt24-smoke` 配置，只构建/运行 testkit 同过滤器 | 24 passed / 0 skipped / 0 failed，[构建](wp02-20261024/smoke-verified-build.log)、[XML](wp02-20261024/smoke-verified.xml)、[报告](wp02-20261024/smoke-verified-report.json) |
+| kinematics 消费 | `--gtest_filter=KinGoldenIkDedup.*:KinGoldenCoverage.ACC1_SampleSet*:KinGoldenCoverage.ACC5_Thread*` | 5 passed / 0 skipped / 0 failed，[XML](wp02-20261024/kinematics.xml)、[报告](wp02-20261024/kinematics-report.json) |
+| optimization 消费 | `--gtest_filter=OptGoldenLhs.Seeded*:OptGoldenPareto.Orchestrator*` | 2 passed / 0 skipped / 0 failed，[XML](wp02-20261024/optimization.xml)、[报告](wp02-20261024/optimization-report.json) |
+| optimization 契约 | `--gtest_filter=OptGoldenDatasetContract.ParetoSetMatchTraitsChannel*` | 1 passed / 0 skipped / 0 failed，[XML](wp02-20261024/optimization-contract.xml)、[报告](wp02-20261024/optimization-contract-report.json) |
+| policy 契约消费 | `--gtest_filter=PolicyContractDoubles.ThreeEntries*` | 1 passed / 0 skipped / 0 failed，[XML](wp02-20261024/policy.xml)、[报告](wp02-20261024/policy-report.json) |
+
+测试均以 `build/RobWorkStudio/bin/Release/<target>.exe`（冒烟为 `build/govt24-smoke/testkit/Release/...`）的绝对路径执行，并带 `--gtest_output=xml:<原件路径>`、`--ird_report=<报告路径>`。未变且无直接 SetCheck 调用的消费者不重复验证。testkit 的独立 oracle 包含全部512种3×3边图、240组4×5边图及15625组生产网格；新增两例覆盖跨档案/调用隔离和缺档懒解析，不放宽任何容差。
+
+生产返回值扰动：在同一生产 TU 的 Boost 调用后、计数/转表前，暂将 mate 全部置为 null_vertex（[扰动源快照](wp02-20261024/SetCheckMatch.perturbed.cpp.txt)），重建原目标，只跑 `SetNumeric.NumericOnlyMatching_UT_SET`。该**真实业务入口**失败（exit 1，0 passed / 0 skipped / 1 failed），见 [red XML](wp02-20261024/perturb-red.xml)、[red 报告](wp02-20261024/perturb-red-report.json)、[red 日志](wp02-20261024/perturb-red.log)、[构建](wp02-20261024/perturb-build.log)。随后以原字节还原 TU，重建并执行上述24例全部通过（[恢复构建](wp02-20261024/restore-build.log)）。证明业务消费库的 mate 返回值；不是仅链接、记录 API 名或运行候选。产品不保留开关、扰动或双路径。
+
+过程记录不洗绿：`testkit-cache-initial-fail.*` 为首版新增测试的错误预期（将完整失配详情误当成边谓词短路），23 passed / 0 skipped / 1 failed；仅修正测试作用域后已复验。`policy-wrong-target-not-run.*` 为错误目标过滤得到0例，按 NOT RUN；已改跑实际 policy 契约目标。`performance-stages-arguments-not-run.log` 为参数顺序错误 exit 2、未测量，随后按下节命令运行成功。
+
+### 9.3 分项性能与仍待裁决的退化
+
+沿用原 `perf-compare` CMake 探针与 `build/wp02-setcheck-perf`，Release／MSVC x64／相同种子与档案。命令：`setcheck_perf_probe.exe old|new|stages <perf-compare/v1.0.0.json绝对路径> [dense-only]`。只增加阶段计时和 bounded dense-only，未新建框架。new 每轮清空缓存，避免跨轮热缓存；old 保留原逐边解析。测量范围是阶段2边求值及匹配接缝，**不是完整 checkSetEquivalent 的端到端耗时**。歧义/最近对未纳入该探针，正确性由真实入口回归覆盖。
+
+同机稠密 best-of-3 原件：[old](wp02-20261024/performance-dense-old.log)、[仅换库策略](wp02-20261024/performance-dense-production.log)、[最终缓存版本](wp02-20261024/performance-cache.log)。
+
+| n | 原旧实现 ms | 仅换初始化 ms | 库策略＋局部缓存 ms |
+| --- | --- | --- | --- |
+| 64 | 0.31 | 2.73 | 0.47 |
+| 256 | 0.95 | 48.42 | 6.84 |
+| 1024 | 3.26 | 789.94 | 118.73 |
+
+最终缓存版还测得4096稀疏1271.57ms、匹配4068；不重复历史旧版137秒案例，也不据不同轮次直接声称精确加速倍数。最终阶段计时 [performance-stages-cache.log](wp02-20261024/performance-stages-cache.log) 的1024稠密单次样本：边求值88.920ms、建图26.882ms、默认 checked 83.159ms、greedy＋checked 6.839ms、转表0.002ms；两种库入口在每个输入上基数与验证结果一致。原无缓存分项记录仍保留于 `performance-stages.log`，不冒称最新源码的结果。
+
+限制：最终1024稠密仍约为旧版36倍；物化边与 Boost 图仍 O(E) 内存，稠密1024解析估计12.8MiB（非完整堆测量）；缓存 O(本次不同字段路径数)。本轮新进程整组峰值工作集51.7MiB，旧 dense-only 进程峰值5.2MiB，案例顺序/进程累计峰值不同，不能当作严格单例内存差。未运行病态全图或100000护栏规模。**没有性能预算或本项所有者接受，性能验收仍未通过**；不沿用EAA/FNV的接受，也不直接实施历史贪心快路径提案。
+
+### 9.4 治理表达、回滚与下一动作
+
+本轮按§8.3.3补齐 functions 两行的真实生产链、结构不重叠及正向证据，更新实际变化源的区间/输入摘要与逐文件边界。沿用现有 NONE／business-specific／migrated 过渡机器标签仅为schema兼容，**不是对第三方适配的合规豁免或已关闭声明**；不得改称 RobWork 能力。原§8.3.2的 catalog 域与Git溯源缺口仍需所有者选方案一保留明确债务或批准最小schema扩展；本轮未改catalog、permissions、白名单、校验器或CMake。
+
+回滚仅撤销本轮库初始化策略、单次解析缓存和配套测试/凭证，不恢复已删除的Kuhn生产核心。原有效独立oracle及历史记录保留。另将原名为贪婪陷阱但无需增广的样本改为真实陷阱（E={δ,0}、A={0,2δ}）；只有库增广才能达完美匹配，最终集成/冒烟24例已覆盖。确切送验版本以本轮提交SHA为准；独立会话应核对本轮范围、源/工具链/配置/输入和受影响原件，不重复全库重配。独验 NOT RUN，待所有者安排；不得由实施者自签。
+
+门禁自查：`validate-docs.ps1 -TaskFile .../REUSE-T20.json` 已通过，含一次全量复用机检与任务契约检查（[原件](wp02-20261024/validate-docs.log)）；其 PASS 仅治理有效，输出 DEBT=16、UNRESOLVED=1399，不代表算法合规。直接运行现有 `ird_gates.cmake` 已通过全部11类架构红线（[原件](wp02-20261024/architecture-gates.log)），未重复执行相同复用检查。独验和性能/schema裁决依然未完成。
