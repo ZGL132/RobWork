@@ -1,0 +1,9 @@
+baseline.cpp
+ParamSchema.cpp
+perf.cpp
+round=1 reuse=0 old_us=0.113235 new_us=0.109992
+round=1 reuse=1 old_us=0.057715 new_us=0.058222
+round=2 reuse=0 old_us=0.109600 new_us=0.109786
+round=2 reuse=1 old_us=0.058504 new_us=0.058767
+round=3 reuse=0 old_us=0.118854 new_us=0.115088
+round=3 reuse=1 old_us=0.060850 new_us=0.061892

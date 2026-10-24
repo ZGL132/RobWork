@@ -1,0 +1,86 @@
+Note: Google Test filter = DiagCodesRegistry.DtReg5_ParamSchemaFailureClearsNames_F968
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from DiagCodesRegistry
+[ RUN      ] DiagCodesRegistry.DtReg5_ParamSchemaFailureClearsNames_F968
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid","PID"]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid","pid"]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid",]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid"]x
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid","host
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid"
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid" x]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid",1]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid","\u0068ost"]
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(511): error: Value of: names.empty()
+  Actual: false
+Expected: true
+失败输出不得保留局部参数
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\diagnostics\test\StableCodeRegistryTest.cpp(503): ["pid"]
+
+
+[  FAILED  ] DiagCodesRegistry.DtReg5_ParamSchemaFailureClearsNames_F968 (0 ms)
+[----------] 1 test from DiagCodesRegistry (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] DiagCodesRegistry.DtReg5_ParamSchemaFailureClearsNames_F968
+
+ 1 FAILED TEST

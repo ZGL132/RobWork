@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T24",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T24.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/ParamSchema.cpp",
+      "sha256": "06894116ae29fdaac64faacc64c2cd939c72b6435544056043cb79bf8351df99",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "保留冻结的单一私有解析入口，仅修正局部结果成功提交；原容量复用，不新增解析核心、上游调用或依赖。B33适用性差异及本包红绿实证，独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/StableCodeRegistryTest.cpp",
+      "sha256": "ac3958379d67d74be9d7b75b04089a879be1fddfb7c749ddd5b2c1247c5f1339",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "原注册表夹具增加F-968失败清空及重复调用回归；沿用gtest/testkit/真实库，未复制解析器或新增测试框架。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T24/README.md"
+    }
+  ]
+}
