@@ -1,0 +1,4 @@
+$ pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e8ee7d31d..HEAD
+  [PASS] 0801488bcf86
+commit-lint: PASS（1 个提交全部合规）
+exit=0
