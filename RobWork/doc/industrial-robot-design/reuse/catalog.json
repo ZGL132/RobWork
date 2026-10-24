@@ -1021,38 +1021,37 @@
    "id": "MATH-EIGEN",
    "search": {
     "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|InertiaMatrix|Polynomial|evaluateDerivatives\" RobWork/RobWork/src RobWork/RobWork/gtest",
-    "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-    "conclusion": "已读公共接口与调用实现，局部适用性探测不等同完整业务审计"
+    "baseline": "704667b598967d9849dd02f113dd28ec3ad93a8e",
+    "conclusion": "公开LinearAlgebra对称分解适用本包六分量3x3惯量；原上游测试/已知谱96组/直接消费者/生产扰动已验证，其他runtime/selection入口未结项。"
    },
-   "boundary": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性",
+   "boundary": "六分量有限对称3x3张量、升序主惯量；严格SPD/三角谓词仍由产品负责，非自动批准其他消费者",
    "upstream": [
     {
      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+     "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a",
      "symbols": [
       "eigenDecompositionSymmetric"
      ],
      "target": "sdurw_math",
-     "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a",
      "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
      "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
     },
     {
-     "path": "RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp",
+     "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+     "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4",
      "symbols": [
-      "calculatePrincipalInertia"
+      "eigenDecompositionSymmetric"
      ],
-     "target": "sdurw_geometry",
-     "sha256": "388b9cd733a811fa2bf0fbd58c051f9659f66bb9054802f7a5c33befd3c9b5fd",
-     "targetFile": "RobWork/RobWork/src/rw/geometry/CMakeLists.txt",
-     "targetSha256": "f579ee32d7e0f0373d28a812a6652f03031168a2256fcf219ae10a878a818db3"
+     "target": "sdurw_math",
+     "targetFile": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+     "targetSha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
     }
    ],
    "build": {
     "targets": [
-     "sdurw_geometry",
      "sdurw_math"
     ],
-    "constraints": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性"
+    "constraints": "沿用modeling原PRIVATE math依赖；GeometryUtil包装非所需，不新增geometry/依赖渠道/CMake目标"
    },
    "usages": [
     {
@@ -1081,19 +1080,31 @@
     }
    ],
    "limits": {
-    "semantics": "惯量特征值排序、SPD/三角不等式业务阈值、极小尺度与确定性",
-    "lifetime": "数学值运算；输入/输出由调用者持有，无模型结构写入",
-    "determinism": "已探测固定输入；跨平台位级一致性及业务边界仍须回归"
+    "semantics": "保持同参考点/系/单位kg·m²与惯量积符号，返回升序特征值；不额外扩大容差或修正物性，真实谱超出double可表示范围不保证有限",
+    "lifetime": "数学局部值；上游动态矩阵/分解结果仅调用期；资源分配失败原异常传播，不共享状态/模型/cache",
+    "determinism": "当前相同输入/工具链96张量重复位级一致；不保证跨工具链位级，未执行线程压力/分配故障注入"
    },
    "ownerUnit": "modeling",
    "examples": [],
-   "docs": [],
+   "docs": [
+    {
+     "path": "RobWork/RobWork/src/rw/geometry/GeometryUtil.hpp",
+     "sha256": "388b9cd733a811fa2bf0fbd58c051f9659f66bb9054802f7a5c33befd3c9b5fd",
+     "symbols": [
+      "calculatePrincipalInertia"
+     ]
+    }
+   ],
    "operations": [
     "value"
    ],
    "review": {
-    "status": "candidate",
-    "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+    "status": "verified",
+    "version": "704667b598967d9849dd02f113dd28ec3ad93a8e",
+    "evidence": {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+     "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+    }
    },
    "tests": [
     {
@@ -1107,9 +1118,10 @@
     }
    ],
    "resourceSearch": {
-    "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia|Polynomial|InertiaMatrix\" RobWork/RobWork/gtest RobWork/RobWork/example",
-    "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
-   }
+    "command": "rg -n \"eigenDecompositionSymmetric|calculatePrincipalInertia\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+    "conclusion": "原件REUSE-T27/upstream-search.log；复用已编入modeling_test的上游LinearAlgebraTest，本轮LinAlgeTest实际PASS；GeometryUtil公开包装只作被否候选/文档来源，无需新增示例或几何依赖。"
+   },
+   "layer": "adapter"
   },
   {
    "id": "MATH-INERTIA",

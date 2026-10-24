@@ -1,0 +1,28 @@
+perf.cpp
+perf-old.cpp
+perf-new.cpp
+正在生成代码...
+round=0 scenario=0 variant=old us=0.023060000 checksum=399999.999992131
+round=0 scenario=0 variant=new us=0.423291000 checksum=400000.000000000
+round=0 scenario=1 variant=old us=0.040375000 checksum=300000.000000000
+round=0 scenario=1 variant=new us=0.468979000 checksum=300000.000000000
+round=0 scenario=2 variant=old us=0.003787000 checksum=400026.665566740
+round=0 scenario=2 variant=new us=0.480403000 checksum=300000.000000000
+round=0 scenario=3 variant=old us=0.029514000 checksum=-inf
+round=0 scenario=3 variant=new us=0.566964000 checksum=300000.000000000
+round=1 scenario=0 variant=new us=0.445528000 checksum=400000.000000000
+round=1 scenario=0 variant=old us=0.029400000 checksum=399999.999992131
+round=1 scenario=1 variant=new us=0.466924000 checksum=300000.000000000
+round=1 scenario=1 variant=old us=0.034541000 checksum=300000.000000000
+round=1 scenario=2 variant=new us=0.445022000 checksum=300000.000000000
+round=1 scenario=2 variant=old us=0.003931000 checksum=400026.665566740
+round=1 scenario=3 variant=new us=0.465926000 checksum=300000.000000000
+round=1 scenario=3 variant=old us=0.030453000 checksum=-inf
+round=2 scenario=0 variant=old us=0.035693000 checksum=399999.999992131
+round=2 scenario=0 variant=new us=0.546090000 checksum=400000.000000000
+round=2 scenario=1 variant=old us=0.039370000 checksum=300000.000000000
+round=2 scenario=1 variant=new us=0.465632000 checksum=300000.000000000
+round=2 scenario=2 variant=old us=0.003925000 checksum=400026.665566740
+round=2 scenario=2 variant=new us=0.487972000 checksum=300000.000000000
+round=2 scenario=3 variant=old us=0.030199000 checksum=-inf
+round=2 scenario=3 variant=new us=0.444825000 checksum=300000.000000000

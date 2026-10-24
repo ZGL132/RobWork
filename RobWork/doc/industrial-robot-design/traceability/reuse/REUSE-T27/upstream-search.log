@@ -1,0 +1,18 @@
+RobWork/RobWork/gtest\math\LinearAlgebraTest.cpp:48:    std::pair<Eigen::MatrixXd, Eigen::VectorXd > val1 = LinearAlgebra::eigenDecompositionSymmetric(A);
+RobWork/RobWork/src\sandbox\OBRSS.hpp:144:	        ResultType res = LinearAlgebra::eigenDecompositionSymmetric( covar );
+RobWork/RobWork/src\sandbox\OBLSS.hpp:143:	        ResultType res = LinearAlgebra::eigenDecompositionSymmetric( covar );
+RobWork/RobWorkSim/src\rwsim\dynamics\RigidBody.cpp:45:    _IbodyPrincipal (GeometryUtil::calculatePrincipalInertia (info.inertia))
+RobWork/RobWorkSim/src\rwsim\dynamics\OBRManifold.cpp:145:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsim\util\PlaneModel.cpp:67:        ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsim\util\CircleModel.cpp:120:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWorkSim/src\rwsimlibs\gui\TactileSensorDialog.cpp:58:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWork/src\rwlibs\swig\sdurw_math.i:119:%template(eigenDecompositionSymmetric) rw::math::LinearAlgebra::eigenDecompositionSymmetric<double>;
+RobWork/RobWork/src\rw\geometry\BSphere.cpp:63:    ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWork/src\rw\geometry\GeometryUtil.hpp:145:        calculatePrincipalInertia (const rw::math::InertiaMatrix< T >& inertia)
+RobWork/RobWork/src\rw\geometry\GeometryUtil.hpp:150:                dec = rw::math::LinearAlgebra::eigenDecompositionSymmetric (inertiaEigen);
+RobWork/RobWork/src\rw\geometry\Covariance.hpp:60:            ResultType res = rw::math::LinearAlgebra::eigenDecompositionSymmetric (_covar);
+RobWork/RobWork/src\rw\geometry\OBB.hpp:143:            ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWork/src\rw\geometry\Plane.cpp:139:        ResultType res = LinearAlgebra::eigenDecompositionSymmetric (covar);
+RobWork/RobWork/src\rw\math\LinearAlgebra.cpp:84:LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1)
+RobWork/RobWork/src\rw\math\LinearAlgebra.hpp:227:        eigenDecompositionSymmetric (const Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic >& Am1)
+RobWork/RobWork/src\rw\math\LinearAlgebra.hpp:261:    LinearAlgebra::eigenDecompositionSymmetric< double > (const Eigen::MatrixXd& Am1);

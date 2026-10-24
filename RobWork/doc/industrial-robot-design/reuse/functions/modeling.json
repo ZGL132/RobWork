@@ -12,10 +12,17 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
           "symbol": "symmetricEigenvalues3x3",
-          "qualifiedSymbol": "sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3",
-          "startLine": 54,
-          "endLine": 91,
-          "sha256": "b63f8d4c4b961506d2edb5feccaa9e2af64db590adfd6a99837b5f3c7f49870b"
+          "startLine": 50,
+          "endLine": 60,
+          "sha256": "152db4d489962f9a715bb950d25da9a50c2d68737a70fa9c6dc6abc8135aa7be",
+          "qualifiedSymbol": "sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "checkInertiaAssertions",
+          "startLine": 79,
+          "endLine": 96,
+          "sha256": "a73eb7532ce56066010f157774ab2dd5973acb5485404d968750d8411f5714b9"
         }
       ],
       "targets": [
@@ -24,20 +31,92 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-EIGEN",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"symmetricEigenvalues3x3|eigenDecompositionSymmetric\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+        "conclusion": "公开LinearAlgebra入口直接适用；GeometryUtil再包装含不需要的主轴/反射，复用math单点最简；96谱/严格业务边界实测。"
       },
-      "differences": "上游特征值/主惯量可复用；保留SPD和三角不等式判定；复核非对角、退化、尺度与位级确定性论据",
+      "differences": "原单点只做六分量对称矩阵/返回值投影；删除解析平方和/行列式/三角根，不新建核心/缓存。SPD/三角严格谓词不变；私有noexcept移除使分配失败传播，公共契约不变。",
       "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
           "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/include/sdurws/ird/modeling/RobotDesign.hpp",
+          "sha256": "14e705397b6930e3cc7896351a2c9e2ed60074915bf9c6e528451a700f8464f5"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+          "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+          "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+        },
+        {
+          "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+          "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+        },
+        {
+          "path": "vcpkg/installed/x64-windows/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h",
+          "sha256": "f7f7c8dc2f3fdee15317858582311b4135eed3a1759dc629386e8bfff0499996"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/RobotDesign.cpp",
+          "sha256": "8b7b0ee69876441c1f9629d6d5763bf6af934e47dc11dc68911161f5e7c730ae"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Parts.cpp",
+          "sha256": "3845aabc98545fd5c431f65333322ef9c2759357e75eade847be93574b32a9ff"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+          "sha256": "70574d523e35549547012e00a11151e7ee9632bb83e8403499b03952da39b0e0"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CommandHandlers.cpp",
+          "sha256": "0da9154c69be12bf607f7f5abac431c6fd6de22c33b02caf169ae1e926922efd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/PropertyEstimation.cpp",
+          "sha256": "1a397e8867174664fe4c3e60db0a35ac19ee459c731b9ba7b588cce3976eae9b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/ModelingBodyEditor.cpp",
+          "sha256": "e405fedaab6eb178f9c5b28d37d9bc4c828b370f4afca82a68532be74a5bff7e"
         }
       ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
+      "auditBoundary": "本包已知谱/上游/受影响消费者/扰动/性能实际执行；性能获单项接受；独验NOT RUN，非closed。",
+      "production": {
+        "entry": "symmetricEigenvalues3x3",
+        "consumer": "checkInertiaAssertions",
+        "upstream": "eigenDecompositionSymmetric",
+        "target": "sdurws_ird_modeling"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/production.json",
+        "sha256": "e01edadcd3c567fd08ea2a2edbd8c5d35c149a6c7c4cb9e69bf153e3aa93a1b7"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+          "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ]
     },
     {
       "functionId": "modeling.accumulateRotatedInertia",
@@ -3857,6 +3936,2334 @@
         "sha256": "bc28c9682094f2eeb0912df77567861b4f9aca7cd58023bffa892d67425cbfca"
       },
       "auditBoundary": "既有业务测试本函数和相邻说明；不是新生产算法授权。"
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "functionId": "modeling.audit-t27.InertiaMath.checkInertiaAssertions",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "checkInertiaAssertions",
+          "startLine": 79,
+          "endLine": 96,
+          "sha256": "a73eb7532ce56066010f157774ab2dd5973acb5485404d968750d8411f5714b9"
+        }
+      ],
+      "differences": "原NotProvided跳过、严格SPD/三角谓词与IMdl5定位追加；只消费唯一上游特征值入口，不扩大容差/诊断权威。"
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "functionId": "modeling.audit-t27.InertiaMath.synthesisSelfCheck",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "synthesisSelfCheck",
+          "startLine": 137,
+          "endLine": 173,
+          "sha256": "f19aebf5afcbb0b63fbb693f5b2e63c80d0aef4f0e87936d1ae3f05822310625"
+        }
+      ],
+      "differences": "原九项有限性/对称容差/六分量投影后消费唯一特征值入口；保留稳定失败token，无第二数学核心或正式诊断体系。"
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L74",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "double closeTolerance(double expected)",
+          "startLine": 74,
+          "endLine": 77,
+          "sha256": "a08ac68c154fc72cd07b05d0ec7864fc65083fcd3298c48f5d801ddd79ae0990"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L80",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "MaterialRef materialWithDensity(std::string id, double densityKgPerM3)",
+          "startLine": 80,
+          "endLine": 87,
+          "sha256": "4c5b84e09ac29cb2ab1e3464f2d54ce61efdc03691c91908ee662ea93beacbc9"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L90",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "MaterialRef materialByTable(std::string id)",
+          "startLine": 90,
+          "endLine": 95,
+          "sha256": "6b2567e4b3f3a13fb302931ee9b9943d4f95d4d1310f5cccb48526ab33d5d7d6"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L98",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "SegmentSpec solidCylinder(double radiusM, double lengthM, MaterialRef material,",
+          "startLine": 98,
+          "endLine": 111,
+          "sha256": "13777ecc4edac36daa69862e70c0d8798b83fb994687a61d7a64d7057d601a6c"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L114",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "SegmentSpec hollowCylinder(double rOutM, double rInM, double lengthM, MaterialRef material)",
+          "startLine": 114,
+          "endLine": 120,
+          "sha256": "cc49d4e24ffb4f6b81a16408a05bf6e54b082f5e4863db09f710e7ba12a1f026"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L123",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "SegmentSpec box(double aM, double bM, double lengthM, MaterialRef material,",
+          "startLine": 123,
+          "endLine": 136,
+          "sha256": "12da5bfdd2911eecd1eb92cbf357f34092635541acb9215f175821121c8b0bb6"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L139",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "sdurws::ird::modeling::EstimatedLinkProperties estimateOne(const SegmentSpec& segment)",
+          "startLine": 139,
+          "endLine": 147,
+          "sha256": "2aa69838555a8b3fcba9c7a02ae53bb484ad81ba146ac86f946129c6a525de42"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L151",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "BodyData estimatedBody()",
+          "startLine": 151,
+          "endLine": 172,
+          "sha256": "5e3b2afb3b3a4ce8439216bdd6e06ce4ab912eb9301997ceddecc92fcdf4230e"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L175",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "ObjectId makeOid(std::uint64_t v)",
+          "startLine": 175,
+          "endLine": 182,
+          "sha256": "6974dae695ecd6cab3d091d7280d36d0cc4be6fd2deec0fb469d2ad16e00e928"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L185",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "sdurws::ird::modeling::JointEntry makeJoint(std::uint64_t id, std::string name)",
+          "startLine": 185,
+          "endLine": 202,
+          "sha256": "30031bd163189440170123571999f2b23390b429604ec25265a5e065375f56b9"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L205",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "sdurws::ird::modeling::LinkEntry makeEmptyBodyLink(std::uint64_t id, std::string name)",
+          "startLine": 205,
+          "endLine": 211,
+          "sha256": "afaa94c9de4c23f7a0e9b922eae73937673fc475ea1b906440f91fd56f578eb5"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L214",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "::testing::AssertionResult hasViolation(const std::vector<sdurws::ird::modeling::InvariantViolation>& v,",
+          "startLine": 214,
+          "endLine": 225,
+          "sha256": "7be18b81357d789a14f7b5c9cabe7155f6c6f0e86cc62f9d7658b5e320b54881"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L235",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, FormulaVersionAndProvenanceMarking_WP13T04_ACC1)",
+          "startLine": 235,
+          "endLine": 254,
+          "sha256": "271a900007335eedfa343ac1a592ee6242f1dfc6241bedf75ba23f70d4a7932e"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L257",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, EmptySegmentsRejectedIllegalDimension_WP13T04_ACC1)",
+          "startLine": 257,
+          "endLine": 266,
+          "sha256": "ea62e721f6c5f6ab43504d545ecfb564bbc42f4fe237a5c6b3ef3dbc54c00272"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L270",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, SolidCylinderClosedForm_WP13T04_ACC1)",
+          "startLine": 270,
+          "endLine": 294,
+          "sha256": "6a5fb28e75d8399fc203c36256c522ded90e5a6e7d8c51e8fa0b723025dadb67"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L298",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, HollowCylinderClosedForm_WP13T04_ACC1)",
+          "startLine": 298,
+          "endLine": 315,
+          "sha256": "0d72d6b8742506408f7a12bf325db2918d8d9c51aef84b1f8d48e5dccbb9f48f"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L320",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, BoxClosedForm_WP13T04_ACC1)",
+          "startLine": 320,
+          "endLine": 339,
+          "sha256": "1a478f5c362ad58d583d8bd6395ed845f01c04e359e07f715efeb9bd56c776f5"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L343",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, DensityResolutionProvidedOverridesTable_WP13T04_ACC1)",
+          "startLine": 343,
+          "endLine": 359,
+          "sha256": "86fbbe128450aca622e8465a24857c291d8558786cd2efba0f838c72a2b61452"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L367",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, TwoSegmentParallelAxisSynthesis_WP13T04_ACC2)",
+          "startLine": 367,
+          "endLine": 443,
+          "sha256": "f26415555ac361fe8b8d006c703356ab079847485b9c03fc541749145b4cb368"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L448",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, SingleSegmentRotatedTensorInLinkFrame_WP13T04_ACC2)",
+          "startLine": 448,
+          "endLine": 472,
+          "sha256": "bfd258e85ca1423aaf42441ccd4811b4d52f0fd18150766e9b35951888b072ba"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L478",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, IsotropicInertiaEigenvaluesRemainFinite_WP13T23)",
+          "startLine": 478,
+          "endLine": 512,
+          "sha256": "709bb391dcd6013582467e4a35e452defb1547aa39ece61e45c65c4e1e4e455f"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L518",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, SynthesisSelfCheckRejectsCounterexamples_WP13T04_ACC2)",
+          "startLine": 518,
+          "endLine": 563,
+          "sha256": "0aa102d111ca29432090fa70330b269bf737bd193e577f07bc916ee13d856a70"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.lambda.L523",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "const std::array<std::array<double, 3>, 3> zero = [] {",
+          "startLine": 523,
+          "endLine": 527,
+          "sha256": "3db8693e74e4bc628b0e5252854c6578a7399d64ed097ac8f2915c01260c189d"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L575",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, CentroidEditMigrateBranch_WP13T04_ACC3)",
+          "startLine": 575,
+          "endLine": 610,
+          "sha256": "35081690ba41f5a062b767f88685ea58f9b2a0ac3a831ec298663ab2e2646b38"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L614",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, CentroidEditOverwriteBranch_WP13T04_ACC3)",
+          "startLine": 614,
+          "endLine": 637,
+          "sha256": "9ff7f546e437a01232157541257c404709e8c1b993450d9825126d3992c2a671"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L641",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, CentroidEditUnresolvedRejected_WP13T04_ACC3)",
+          "startLine": 641,
+          "endLine": 659,
+          "sha256": "e023b5e522d8c012769b074dd0a0d2e4e331b88c1291ef91c2c3ede702da9172"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L663",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, CentroidEditPreconditionsFailFast_WP13T04_ACC3)",
+          "startLine": 663,
+          "endLine": 678,
+          "sha256": "1ebaf73efd2323de6532a6703549b7f244218353eb3742b5729ad2095403500a"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L687",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, MaterialDensityTableDefaults_WP13T04_ACC4)",
+          "startLine": 687,
+          "endLine": 706,
+          "sha256": "bc5ea0271f843cd452efae955894f9e9e1445cb5dbd69d44314aabf6ea162d81"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L716",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlPropertyEstimation, DensityMissingValueFaceAndNotProvidedNoAssertion_WP13T04_ACC4)",
+          "startLine": 716,
+          "endLine": 747,
+          "sha256": "507c09dff60271e34cacfc17aa6e525ce173ef69153755b671faad0066395665"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L759",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlDrivetrainSchema, FieldConstraintsAndProvenanceMarking_WP13T04_ACC5)",
+          "startLine": 759,
+          "endLine": 816,
+          "sha256": "f08bd8c3c10d8f0681901d302d0adb2cddda1a7cdc50d275b3be184bafaf7737"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.lambda.L764",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "auto sourced = [](double v, ProvenanceKind kind) {",
+          "startLine": 764,
+          "endLine": 766,
+          "sha256": "9b5c622c07016e802a3e7f071d34c7cbda7b2cd62382b265c3395c296833d92a"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L820",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlDrivetrainSchema, FrictionTorqueNotProvidedAccepted_WP13T04_ACC5)",
+          "startLine": 820,
+          "endLine": 839,
+          "sha256": "7be171e04234dfb7a4c47676eefb2dbec9c5e601a9d88887d55ab2eed3ecf3c2"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L848",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlInertiaReuse, KnownSpectrumAcrossScales_REUSE_T27)",
+          "startLine": 848,
+          "endLine": 886,
+          "sha256": "164891d44a1e2a7dcb80b2c24057209d1551a97f2fd444d835c67b1e5506af19"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "原gtest/testkit夹具、字面物性公式及新增已知谱独立oracle；生成输入的RdiagRᵀ不是另一份特征值算法。保留原理想段元/平行轴等业务公式的独立对照；不变生产公式，不新增框架。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest.L889",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "TEST(MdlInertiaReuse, UpstreamAndAssertionConsumers_REUSE_T27)",
+          "startLine": 889,
+          "endLine": 917,
+          "sha256": "aea82d3dc9c6a2c41ef58c93fa51542397a2a8354a10ed76f2a3d2527c798b02"
+        }
+      ]
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "functionId": "modeling.audit-t27.InertiaMath_hpp.declarations",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "/**",
+          "startLine": 1,
+          "endLine": 49,
+          "sha256": "7d1b0593d95cd3a5604eada46b3305c68f056328d6c6f617a6aaff31ed5ddfda"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "/**",
+          "startLine": 62,
+          "endLine": 78,
+          "sha256": "f4fdc50ea2753b72821c22a60c22bf801bffb7e8bed7e6e60fa05542394498fd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "// =====================================================================",
+          "startLine": 98,
+          "endLine": 136,
+          "sha256": "c55ca5b16e88c45a57f6a9b21583bd8ef53541e6cb69bd05e0e0e7cf8ba50f8b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "symbol": "}  // namespace sdurws::ird::modeling::inertiamath",
+          "startLine": 175,
+          "endLine": 177,
+          "sha256": "369c9cfa1892c469ebec36370776fb6c9b24650a2cbef6e9caf2d38ad6c101dd"
+        }
+      ],
+      "differences": "文件头/文档/include/namespace/类型别名及原对称容差常量声明；所有有体函数和lambda独立登记，不把未审函数藏入声明区。"
+    },
+    {
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-05",
+        "NFR-COR-02"
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T27 upstream-search.log；定向实读InertiaMath/原消费者/已知谱及原物性公式表测试",
+        "conclusion": "特征值数值核心委托RobWork；其余严格物性/缺失/对称/结果规则是原产品契约，测试保留独立闭式，不另建模型/算法/测试框架。"
+      },
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+          "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md",
+        "sha256": "85d0764012dc3c87b06ad5d80f21f8b93ba9a03958ab43f4273d2a06f90d5580"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/verification.json",
+          "sha256": "4e422a1427379ce86f6c929b7406203465927f4aa51e7dbe8ad62af595661014"
+        }
+      ],
+      "auditBoundary": "逐功能复用边界审计与本包增量验证；非全域正确性或独验关闭。",
+      "differences": "文件头/文档/include/namespace/类型别名及原对称容差常量声明；所有有体函数和lambda独立登记，不把未审函数藏入声明区。",
+      "functionId": "modeling.audit-t27.PropertyEstimationTest_cpp.declarations",
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/**",
+          "startLine": 1,
+          "endLine": 73,
+          "sha256": "f156414a91b335053274276860bab214e232ce2bd286d368dc0596e49b2ff401"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 密度已提供的材料（自定义值——覆盖默认表路径的输入形态）。",
+          "startLine": 79,
+          "endLine": 79,
+          "sha256": "2eb06e0ec52540b72438ecfab1af8835f3c66f4df144bab7d7483c88c1671355"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 只挂默认表键的材料（density 缺省＝NotProvided——走默认表查询路径）。",
+          "startLine": 89,
+          "endLine": 89,
+          "sha256": "eae7bcc9747264ef6a0513892f35910eed7ae1b0566cb72be056f15d9a0a181b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 实心圆柱段元（位姿＝平移 p＋可选旋转——段系原点在几何中心，§5.3）。",
+          "startLine": 97,
+          "endLine": 97,
+          "sha256": "e5c527cae05d56fc4f666ceb74618964bd0e739ed6c9dde0194751f8fbbf84de"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 空心圆柱段元。",
+          "startLine": 113,
+          "endLine": 113,
+          "sha256": "ddc98eb4caa6056813ed265d414c911dfef81c37b356a1354ac695c7299239c3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 长方体段元。",
+          "startLine": 122,
+          "endLine": 122,
+          "sha256": "f5c27d1f242e242f3e96740222f911f8cb82bab232b39c5ee2bf7f8ecdef34f1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 跑一次单段估算并断言成功（返回成功载荷——各公式用例的公共入口）。",
+          "startLine": 138,
+          "endLine": 138,
+          "sha256": "0d5c4e63e9730ede9022f31841cbb07dabf090e454a4eb16e92567125ad01b73"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 已估算连杆的物性组（ACC3 确认流基底——V-17 前置\"已估算连杆\"：",
+          "startLine": 149,
+          "endLine": 150,
+          "sha256": "ea9590b7a038d019dc25af0c46a07d7f99dc3776cb626d2591a110d548da0262"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 由 64 位序号构造确定 ObjectId（同单元内 RobotDesignTest 口径）。",
+          "startLine": 174,
+          "endLine": 174,
+          "sha256": "74630d6bcae8a332aa28e8834334bb6dd065ab4e5a3bb9b417c2eec981f3d8ea"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 合法关节（Revolute，axis=+Z——I-MDL-6；±π/2 有限限位——I-MDL-4）。",
+          "startLine": 184,
+          "endLine": 184,
+          "sha256": "2bf0ce265f03f82823845db6db65cf9c8e1dfd746afe160f5d1c640c5fa3d243"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 物性全缺失连杆（BodyData 默认＝全 NotProvided——ACC4 的 V-15 第④例面）。",
+          "startLine": 204,
+          "endLine": 204,
+          "sha256": "d7cc98fae82ca732917c350b385e9cf7ea5db59437d40309c17677588eb5a64b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 断言辅助：违例清单恰含指定不变量与定位子串（RobotDesignTest 同款）。",
+          "startLine": 213,
+          "endLine": 213,
+          "sha256": "f26762291e55f410803a1605be2a9b787bcc7432c8f78c36bf0e1f5ab8e48c1b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "}  // namespace",
+          "startLine": 227,
+          "endLine": 234,
+          "sha256": "91c221e03e726bf3e2fe21b7d7bacb58e933198a703d17170a81aee94198acd2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 空段元列表拒绝（§9.4.6 @pre\"segments 非空\"——值面 IllegalDimension）。",
+          "startLine": 256,
+          "endLine": 256,
+          "sha256": "57af8cb38bbb53411646c97024a1b66f18dd189c4d96c5c7ce69cb1a6eed89fd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 公式表第 1 行（实心圆柱 r,L）：m=ρπr²L；Ixx=Iyy=m(3r²+L²)/12；Izz=mr²/2。",
+          "startLine": 268,
+          "endLine": 269,
+          "sha256": "c630f6c168e04bc71d34abe2e34410cc83b85f77433eabe7b413c982546e3d22"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 公式表第 2 行（空心圆柱 rOut,rIn,L）：m=ρπ(rOut²−rIn²)L；",
+          "startLine": 296,
+          "endLine": 297,
+          "sha256": "b8c924400f2fcc0892ee9c0b652cbb311eb83c58c37a7b473f7657f645a40710"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 公式表第 3 行（长方体 a,b,L；z 沿 L）：m=ρabL；Ixx=m(b²+L²)/12；",
+          "startLine": 317,
+          "endLine": 319,
+          "sha256": "0372cbb8787405e0879598bd1a46c718522651b2ebadd7b6cbede7f0b23bb8c0"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 密度解析序（§9.4.6 @pre）：MaterialRef.density 已提供值优先于默认表——",
+          "startLine": 341,
+          "endLine": 342,
+          "sha256": "541be1870ddd202a309edd9cd1a4f9823384d0aa0667a1b911f7bde295095388"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 361,
+          "endLine": 366,
+          "sha256": "7f542c17a443fb5b73ea8130048965a1a447e1ce56832698297684bc139115ff"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 参考姿态＝连杆坐标系（M-2）的单段钉子面：绕 x 转 90° 的实心圆柱",
+          "startLine": 445,
+          "endLine": 447,
+          "sha256": "3697baf776bd3b254db5ea0774b153dddd67d242f9d4bc6b9fc8f0f405fdce3f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 各向同性惯量的特征值边界（WP-13-T23）：p2=0 时三重特征值就是",
+          "startLine": 474,
+          "endLine": 477,
+          "sha256": "6a65d8e460de9341ead282bc58bbd7dc26c89254e649286532a3a4ff1686c774"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 输出自检反例拒收（§9.4.6 @post\"自检失败=内部错误码，不输出非法张量\"）：",
+          "startLine": 514,
+          "endLine": 517,
+          "sha256": "5a2a68220a206063133c233f0d69c1b4bb469939298a35ff8f16d8483c1504ca"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 565,
+          "endLine": 574,
+          "sha256": "5a1aff82b2c642e9e06cc056286c68febc84b6cb8814e8ce72821bb8968385a8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 分支 (b) 强制覆盖完整张量：接受；com/inertia 均 UserProvided；",
+          "startLine": 612,
+          "endLine": 613,
+          "sha256": "4c4884b7a2b19c0feb9b440cc197b828743276bba798499f357edf61e37f461b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 分支 (c) 既不迁移也不覆盖→CentroidEditUnresolved 调用方错误拒绝；",
+          "startLine": 639,
+          "endLine": 640,
+          "sha256": "2be6b0ade764ab2ef327c8596baab185db2ca02cfc909b2590dda9ba1c56b42f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 前置边界（fail-fast 轨）：无物性基准确认流＝调用方契约违约；",
+          "startLine": 661,
+          "endLine": 662,
+          "sha256": "e0607843f2e659c6825ff96ec7d2faa5d9479001ecadee6bfd6d348f3f93b8e7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 680,
+          "endLine": 686,
+          "sha256": "3d2579db8edf16c70c06c78a097a0b32359c6fd895b8b12fc0b9cb66f3e1a7fc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 物性缺失面（DYN-06/M-8 modeling 侧闭环）：",
+          "startLine": 708,
+          "endLine": 715,
+          "sha256": "f3e9b02c7e566034fc9baea8bcc84c25581bd6170e5bb5c59c190117a0bc1e21"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "// =====================================================================",
+          "startLine": 749,
+          "endLine": 758,
+          "sha256": "990bed9b85d11411880fe68c326cdcc5c27195556cc527915dc378bc4aa40990"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/// 摩擦/力矩限值缺失（NotProvided）不触发传动不变量违例——DYN-06/M-8",
+          "startLine": 818,
+          "endLine": 819,
+          "sha256": "e074acaa90abce09ac17cc091ba4c5516e9c6e4902a5fa3b76dc6936366bc659"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/**",
+          "startLine": 841,
+          "endLine": 847,
+          "sha256": "cfaceabbddf5407fa189727870e9baa94157e6486cd8f38d3833eda977cde3e2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+          "symbol": "/** @brief MDL-05：公开上游对照与原 SPD/三角不等式消费者的严格边界。 */",
+          "startLine": 888,
+          "endLine": 888,
+          "sha256": "24aabd5f1462ed929f6a20afd646161cabf5024328deb148732d3317eaeb8d00"
+        }
+      ]
     }
   ]
 }

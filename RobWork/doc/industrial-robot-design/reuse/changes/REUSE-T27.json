@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T27",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T27.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/InertiaMath.hpp",
+      "sha256": "3e1bb8988b67bbf63a7ab3a0dad0af0a72ea908674b6baeec939e9e267d5f26c",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-EIGEN"
+      ],
+      "boundary": "删除旧特征值核心，原私有入口只投影并直接调用上游；原SPD/三角/缺失守卫及owner不变，整文件实审；独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PropertyEstimationTest.cpp",
+      "sha256": "669e76a1297746f2cdcd72458c22b71d70a66e8d3118985dab5d427080a19f69",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "已有gtest/testkit/真实modeling/已编译上游测试供给；新独立已知谱96张量及上游和断言消费者对照，原独立oracle保留。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/README.md"
+    }
+  ]
+}

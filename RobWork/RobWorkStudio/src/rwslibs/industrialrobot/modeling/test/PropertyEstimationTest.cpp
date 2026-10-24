@@ -25,6 +25,8 @@
 
 #include "../src/InertiaMath.hpp"  // 单元内私有头（runtime/reporting 同款先例）——自检分量级反例与 NotProvided 断言跳过
 
+#include <rw/math/LinearAlgebra.hpp>  // REUSE-T27：独立闭式之外，核对当前公开上游入口。
+
 #include <gtest/gtest.h>
 
 #include <algorithm>
@@ -834,4 +836,82 @@ TEST(MdlDrivetrainSchema, FrictionTorqueNotProvidedAccepted_WP13T04_ACC5)
     EXPECT_EQ(dt.frictionPerJoint[0].coulomb.state(), FieldState::NotProvided);
     EXPECT_EQ(dt.frictionPerJoint[0].bias.state(), FieldState::NotProvided);
     EXPECT_TRUE(checkInvariants(dt, sdurws::ird::modeling::CouplingStage::R1Locked).empty());
+}
+
+/**
+ * @brief MDL-05／I-MDL-5：用预先给定谱的正交相似变换独立验证惯量特征值。
+ *
+ * 期望谱由字面值给定，不使用被测公式或任何特征值求解器。张量单位 kg·m²，
+ * 旋转只改变表达坐标系，不改变主惯量。按尺度归一后仍用原 1e-12 容差，
+ * 防止极小惯量用固定绝对容差而把明显错误判为通过；排序/重根/负根也须保真。
+ */
+TEST(MdlInertiaReuse, KnownSpectrumAcrossScales_REUSE_T27)
+{
+    IRD_TEST_INFO("MDL-05", {}, std::nullopt);
+    // 三个正交基：恒等、绕 Z 的 3-4-5 有理旋转、稠密有理正交基。
+    const double bases[3][3][3] = {
+        {{1,0,0},{0,1,0},{0,0,1}},
+        {{0.6,-0.8,0},{0.8,0.6,0},{0,0,1}},
+        {{1.0/3,2.0/3,2.0/3},{2.0/3,1.0/3,-2.0/3},{-2.0/3,2.0/3,-1.0/3}}};
+    const double spectra[4][3] = {{3,4,5},{2,2,2},{0,1,2},{-2,3,4}};
+    const double scales[] = {1e-300,1e-160,1e-100,1e-3,1,1e100,1e160,1e300};
+    for (const auto& basis : bases) {
+        for (const auto& spectrum : spectra) {
+            for (const double scale : scales) {
+                double matrix[3][3]{};
+                // 独立 R·diag(已知谱)·Rᵀ：先在无量纲小数域生成再乘尺度，
+                // 避免测试自身平方大数溢出。这里不是另一份求特征值算法。
+                for (int r=0;r<3;++r) {
+                    for (int c=0;c<3;++c) {
+                        for (int k=0;k<3;++k) {
+                            matrix[r][c] += basis[r][k]*spectrum[k]*basis[c][k];
+                        }
+                        matrix[r][c] *= scale;
+                    }
+                }
+                InertiaTensor t;
+                t.ixx=matrix[0][0];t.iyy=matrix[1][1];t.izz=matrix[2][2];
+                t.ixy=matrix[0][1];t.ixz=matrix[0][2];t.iyz=matrix[1][2];
+                const auto actual=sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t);
+                EXPECT_EQ(actual,sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t))
+                    << "当前相同输入/工具链须重复位级一致";
+                for (int k=0;k<3;++k) {
+                    EXPECT_TRUE(std::isfinite(actual[k]));
+                    EXPECT_NEAR(actual[k]/scale,spectrum[k],1e-12)
+                        << "主惯量谱／升序／尺度不变性，scale=" << scale;
+                }
+            }
+        }
+    }
+}
+
+/** @brief MDL-05：公开上游对照与原 SPD/三角不等式消费者的严格边界。 */
+TEST(MdlInertiaReuse, UpstreamAndAssertionConsumers_REUSE_T27)
+{
+    IRD_TEST_INFO("MDL-05", {}, std::nullopt);
+    for (const double scale : {1e-300,1.0,1e300}) {
+        InertiaTensor t;
+        t.ixx=4*scale;t.iyy=4*scale;t.izz=4*scale;t.ixy=scale;
+        Eigen::MatrixXd matrix(3,3);
+        matrix << t.ixx,t.ixy,t.ixz,t.ixy,t.iyy,t.iyz,t.ixz,t.iyz,t.izz;
+        const auto direct=rw::math::LinearAlgebra::eigenDecompositionSymmetric(matrix).second;
+        const auto actual=sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(t);
+        for (int k=0;k<3;++k) { EXPECT_DOUBLE_EQ(actual[k],direct[k]); }
+        std::vector<sdurws::ird::modeling::InvariantViolation> violations;
+        sdurws::ird::modeling::inertiamath::checkInertiaAssertions(violations,
+            SourcedValue<InertiaTensor>::provided(t,
+                ValueProvenance::make(ProvenanceKind::UserProvided)),"links[spectrum]");
+        EXPECT_TRUE(violations.empty()) << "正定且三角有裕量的非对角张量应被原消费者接受";
+    }
+    // 不在 SPD 或三角判断上加 epsilon：零根拒绝，等号通过，严格超出拒绝。
+    for (const double maximum : {0.0,2.0,3.0}) {
+        InertiaTensor t;t.ixx=1;t.iyy=1;t.izz=maximum;
+        std::vector<sdurws::ird::modeling::InvariantViolation> violations;
+        sdurws::ird::modeling::inertiamath::checkInertiaAssertions(violations,
+            SourcedValue<InertiaTensor>::provided(t,
+                ValueProvenance::make(ProvenanceKind::UserProvided)),"links[boundary]");
+        EXPECT_EQ(violations.empty(),maximum==2.0);
+    }
+    const auto zero=sdurws::ird::modeling::inertiamath::symmetricEigenvalues3x3(InertiaTensor{});
+    EXPECT_EQ(zero,(std::array<double,3>{0,0,0}));
 }
