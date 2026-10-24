@@ -253,6 +253,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **后续交接**：WP-03 / [GOV-T25](../tasks/GOV-T25.json) 已完成六个既有包的定向输入与原记录核对，见[交接入口](../traceability/reuse/WP-03/README.md)。正式起点`2ac114f33d2102d0b7848d8d4d51345147fa32b8`；T13/T15/T16及T07/T09/T12未找到已归档的独立PASS，保持开放。T12旧coverage已修而性能NOT RUN；T07约4.662倍尚未获接受；T15仅core/CMake供给变化引用WP-01，算法输入未变。该包是交接准备、仍ready，不能代替独验；先验清T13模型真值再放行依赖的普通IK/RNE，其他独立包不受无关遗留阻塞。
 
+**独立推进**：WP-10 / [GOV-T26](../tasks/GOV-T26.json) 已完成C4修订提案及成熟原语隔离验证，见[R3原始记录](../traceability/reuse/REUSE-T14/revision-r3/README.md)。R2哨兵文实不一致保留；R3复用既有Boost固定精度原语，22831组自查通过但无生产修改、无独验。私有依赖/第三方表达待所有者批准，最终产品性能另验；F-966保持OPEN，不以本包放行依赖或外推T20性能接受。
+
 每次结束或受阻，只在本节更新当前入口、相关任务和下一动作；任务 JSON 仍是契约状态来源，functions/catalog 是功能数据来源，原始记录与独验文件是验证结论来源，不新增状态平台或重复证据总账。不改既有状态枚举：planned 尚未准入、ready 可在前提内实施/待独验、blocked 有明确阻断、done 达到本任务全部退出条件；实施完成待独验在原任务 note/证据注明，不能伪装 done。
 
 开包时在既有任务或其引用说明中写清：文件/符号、业务契约、上游适用来源与被否候选、保留/删除/适配、唯一 owner、数据流、消费者、验证与可引用证据、回滚边界。正式 REUSE 编号先查重；下表 WP 编号只是计划别名。近期任务先细化，后续包临近执行再补可执行契约，不凭 planned 父任务任意改生产。

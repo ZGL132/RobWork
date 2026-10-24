@@ -1,0 +1,13 @@
+production-normal loops=1000000 us/call=0.001805
+candidate-normal-delegated loops=1000000 us/call=0.0043979
+production-overflow-incorrect loops=20000 us/call=0.002265
+candidate-overflow loops=20000 us/call=10.64338
+production-normal loops=1000000 us/call=0.0019343
+candidate-normal-delegated loops=1000000 us/call=0.0057222
+production-overflow-incorrect loops=20000 us/call=0.00241
+candidate-overflow loops=20000 us/call=10.69111
+production-normal loops=1000000 us/call=0.0020027
+candidate-normal-delegated loops=1000000 us/call=0.0051326
+production-overflow-incorrect loops=20000 us/call=0.00204
+candidate-overflow loops=20000 us/call=10.44373
+checksum=6060000 candidate-new-calls=0
