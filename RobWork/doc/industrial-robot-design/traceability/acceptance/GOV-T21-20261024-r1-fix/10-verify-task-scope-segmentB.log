@@ -1,0 +1,5 @@
+# 复跑命令：pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T21.json -Base 8e4a08ac8249 -Head 0032c8e78b0a3b6c12942f945fd9182624735813
+# 复跑时点：2026-10-24 返工会话（r1 issue 1/4 处置：段B＝REUSE-T07 提交之后至送验 head，剔除 8e4a08ac8 自身产品文件改动）
+verify-task-scope: GOV-T21 base=8e4a08ac8249 head=0032c8e78b0a changed=362 allowedRules=8 forbiddenRules=5
+verify-task-scope: PASS GOV-T21 ���� 362 ��·��ȫ������������
+exit=0

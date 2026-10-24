@@ -1,0 +1,30 @@
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1764 closedFiles=1 (semantic review required)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/01-verify-task-scope.log[0m
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/02-validate-reuse.log[0m
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/03-test-reuse-governance.log[0m
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/04-ird-gates-build.log[0m
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/05-commit-lint.log[0m
+[31;1mWrite-Error: [31;1muntracked evidence file (git add 后重跑 index-evidence.ps1): RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1/06-validate-docs-deep.log[0m
+[31;1mWrite-Error: [31;1mevidence index out of date: index=16525 actual=24167——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index size mismatch: README.md (index=4450 actual=1201)——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2.json——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/closure-bom-driver.log——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/closure-bom/reuse-governance.junit.xml——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/closure-bom/reuse-test-report.json——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/independent-closure-bom.ps1——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/independent-probes.ps1——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/ird-gates.log——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/probes-ps51.log——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index missing entry: acceptance/GOV-T22-20261022-r2/probes-ps51/independent-probes.json——重跑 index-evidence.ps1[0m
+[31;1mWrite-Error: [31;1mevidence index mismatch total: 7644（仅列前 10 条）——重跑 index-evidence.ps1[0m

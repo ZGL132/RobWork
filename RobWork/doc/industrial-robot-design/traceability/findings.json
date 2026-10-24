@@ -9779,5 +9779,17 @@
   "owner": "diagnostics / REUSE-T01",
   "resolution": "真实日志器keep1额外保留.1；真实文件接缝从5代缩至2后.2/.3/.4仍在。19跑17passed2failed0skipped，原产品12与上游1全过；后续在既有文件接缝最小修正并核上游候选，T01不改产品或新写日志核心。"
 }
+,
+{
+  "id": "F-970",
+  "source": "traceability/acceptance/GOV-T21-20261024-r1.json#issues[1]（05-commit-lint.log，送验范围 64ef0fd07..0032c8e78）",
+  "severity": "suggestion",
+  "status": "fixed",
+  "registeredAt": "2026-10-24",
+  "title": "GOV-T21 独立验收 commit-lint FAIL：717594e5c『合入覆盖清查会话R1/R2成果（codex/coverage-sweep）』、3a61e300f『合入主会话reuse-t01增量（T07实施+T08旋转提案）用于R2增量核对』两个跨会话合入提交标题无合法中文前缀（2/88），且合并动作本身与 AGENTS §6.2 主工作树串行、不自行合并其他分支口径冲突；二者为自定义中文标题的 merge 提交，不匹配 commit-lint.ps1 的 ^Merge 前缀豁免，漏过 F-012 止增门禁",
+  "owner": "合入操作执行会话（提交纪律：绕过主工作树串行与 commit-lint 自检）＋commit-lint 门禁所有者（豁免面未覆盖自定义标题 merge，属登记事实，本轮不改脚本）",
+  "resolution": "按 F-012 口径显式登记豁免：历史提交不可改写（AGENTS §6.3 红线）。豁免依据＝717594e5c 正文自证『所有者指示合入』且全程只读调查（不改矩阵/产品/权限），3a61e300f 为其前序 T07 增量合入（内容与 8e4a08ac8 一致、对 8e4a08ac8..0032c8e78 净 diff 为零，GOV-T21-20261024-r1-fix README 实测佐证），两提交内容均已经主线后续验收链消化；豁免不改变标题违规与口径冲突的事实本身。杜绝再现：2026-10-22 精简治理起主工作树串行实施（AGENTS §0/§6.2），增量一律以主线新提交进入，不再执行跨会话/跨分支合入；新增提交标题过 commit-lint 白名单自检（GOV-T21 返工提交即按 [governance] 前缀自查）。",
+  "fixedAt": "2026-10-24"
+}
   ]
 }

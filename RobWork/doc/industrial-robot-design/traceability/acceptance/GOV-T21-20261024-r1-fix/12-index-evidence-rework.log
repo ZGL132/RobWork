@@ -1,0 +1,8 @@
+# å¤è·‘å‘½ä»¤ï¼špwsh -NoProfile -File RobWork/scripts/industrialrobot/index-evidence.ps1
+# å¤è·‘æ—¶ç‚¹ï¼š2026-10-24 è¿”å·¥ä¼šè¯ï¼ˆr1 issue 3 å¤„ç½®ï¼šgit add éªŒæ”¶åŽŸä»¶ä¸Žè¿”å·¥äº§ç‰©åŽå…¨é‡é‡å»ºï¼Œç´¢å¼•è‡ª 6eab38df8 æ—¶ç‚¹ 16525 æ¡é‡å»ºè‡³å½“å‰è·Ÿè¸ªé¢ï¼‰
+[33;1m¾¯¸æ: ¼ì²âµ½ 1 ¸öÎ´¸ú×ÙÖ¤¾ÝÎÄ¼þ¡ª¡ªËüÃÇ²»»á½øÈëË÷Òý£¨git ls-files »ù×¼£©¡£Ë÷ÒýÉó¼ÆÇ°ÏÈ git add ÔÙÖØÅÜ£»validate-docs -DeepEvidence »á¾Ü¾øÎ´¸ú×ÙÖ¤¾Ý¡£[0m
+[33;1m¾¯¸æ:   untracked: RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261024-r1-fix/12-index-evidence-rework.log[0m
+index-evidence: 24179 files, 889.2 MB -> traceability/evidence-index.json
+index-evidence: lifecycle current=29 historical=683 unverified=23467; associated=8069 unassociated=16110
+index-evidence: sha computed=24151 skippedLarge=28; duplicateGroups=1619 (listed 100)
+exit=0
