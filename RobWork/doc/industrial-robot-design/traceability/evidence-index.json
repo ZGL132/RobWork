@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-24T17:58:09+08:00",
+  "generatedAt": "2026-10-24T18:31:19+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 24198,
-    "totalBytes": 932437364,
+    "totalFiles": 24214,
+    "totalBytes": 932634613,
     "byKind": {
-      "gtest-report": 335,
-      "acceptance-record": 3554,
-      "other": 220,
-      "build-log": 15580,
       "markdown-doc": 126,
       "log": 3058,
+      "gtest-report": 335,
+      "json-data": 956,
       "script": 68,
-      "benchmark": 8,
+      "xml-report": 250,
       "manual-acceptance": 1,
+      "build-log": 15580,
+      "acceptance-record": 3570,
       "governance-record": 40,
       "pipeline-artifact": 2,
-      "json-data": 956,
-      "xml-report": 250
+      "benchmark": 8,
+      "other": 220
     },
     "byLifecycle": {
-      "historical": 714,
-      "superseded": 0,
-      "unverified": 23455,
-      "current": 29
+      "historical": 1048,
+      "current": 29,
+      "unverified": 23137,
+      "superseded": 0
     },
-    "associated": 8088,
+    "associated": 8104,
     "unassociated": 16110,
-    "shaComputed": 24170,
+    "shaComputed": 24186,
     "shaSkippedLarge": 28,
-    "duplicateGroupsTotal": 1620,
+    "duplicateGroupsTotal": 1621,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -113,6 +113,7 @@
         "acceptance/GOV-T22-20261022/ps7/grant-readonly-positive.log",
         "acceptance/GOV-T22-20261022/ps7/grant-runtime-owner-positive.log",
         "acceptance/GOV-T22-20261022/validate-reuse.log",
+        "acceptance/GOV-T22-20261024-r1/05-validate-reuse.log",
         "acceptance/REUSE-T01-gate-fix-20261022/ps51/01-clean.log",
         "acceptance/REUSE-T01-gate-fix-20261022/ps51/31-frozen-head.log",
         "acceptance/REUSE-T01-gate-fix-20261022/ps51/32-frozen-head-ignores-dirty-tree.log",
@@ -185,14 +186,25 @@
       "sha256": "409014af8bc373d46f7a273dd849ba7b1108fda376d25a28bc4711ee925191a8",
       "paths": [
         "acceptance/GOV-T22-20261022-r3/ps51-driver.log",
-        "acceptance/GOV-T22-20261022-r3/ps7-driver.log"
+        "acceptance/GOV-T22-20261022-r3/ps7-driver.log",
+        "acceptance/GOV-T22-20261024-r1/04-test-ps51-driver.log",
+        "acceptance/GOV-T22-20261024-r1/04-test-ps7-driver.log"
       ]
     },
     {
       "sha256": "300addedcf4a6d65510d282c3adfaee20418ab00ae68d7c565905a3d3aeaff0b",
       "paths": [
         "acceptance/GOV-T22-20261022-r3/ps51/reuse-governance.junit.xml",
-        "acceptance/GOV-T22-20261022-r3/ps7/reuse-governance.junit.xml"
+        "acceptance/GOV-T22-20261022-r3/ps7/reuse-governance.junit.xml",
+        "acceptance/GOV-T22-20261024-r1/04-test-ps51.junit.xml",
+        "acceptance/GOV-T22-20261024-r1/04-test-ps7.junit.xml"
+      ]
+    },
+    {
+      "sha256": "df1526a25551647222d1e8b04c5fc29fa859a16b9f41b55692a13a0eca5c2714",
+      "paths": [
+        "acceptance/GOV-T22-20261022-r3/ps51/reuse-test-report.json",
+        "acceptance/GOV-T22-20261024-r1/04-test-ps51-report.json"
       ]
     },
     {
@@ -1662,17 +1674,6 @@
         "reuse/REUSE-T07/gates/t07-governance-pinned/production-stale-log.log",
         "reuse/REUSE-T10/governance/production-stale-log.log"
       ]
-    },
-    {
-      "sha256": "a9ff83d59c89ad688e046caf1bf6b3d8f75ea6d20c3a07789ee4c3ecaaf0bde2",
-      "paths": [
-        "acceptance/GOV-T22-20261022/ps51/production-unverified-capability.log",
-        "acceptance/GOV-T22-20261022/ps7/production-unverified-capability.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps51/production-unverified-capability.log",
-        "acceptance/REUSE-T01-gate-fix-20261022/ps7/production-unverified-capability.log",
-        "reuse/REUSE-T07/gates/t07-governance-pinned/production-unverified-capability.log",
-        "reuse/REUSE-T10/governance/production-unverified-capability.log"
-      ]
     }
   ],
   "entries": [
@@ -2826,7 +2827,7 @@
       ],
       "bytes": 9869,
       "sha256": "22ad080197697c488c995a407a3ed41912121b39996731ab993d13b583c78e2f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/closure-bom-driver.log",
@@ -2836,7 +2837,7 @@
       ],
       "bytes": 528,
       "sha256": "eefa0f5c24da9de6ab454f95ec6463d06990fa3d58d0ba0bbba711b25803cc71",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/closure-bom/reuse-governance.junit.xml",
@@ -2846,7 +2847,7 @@
       ],
       "bytes": 352,
       "sha256": "1975e36802d54a9538d72ed8010b513da0268748cd8e2ad96ed8974188de8068",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/closure-bom/reuse-test-report.json",
@@ -2856,7 +2857,7 @@
       ],
       "bytes": 1391,
       "sha256": "595c518674f0437a005765e5f60e3e4e056ea1a98da89dc58524f4abb23c3ca2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/independent-closure-bom.ps1",
@@ -2866,7 +2867,7 @@
       ],
       "bytes": 3025,
       "sha256": "e857a376fd599c3209cfb4ee6f55c2cc351fb4cc98430738d998e4e37c3a2287",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/independent-probes.ps1",
@@ -2876,7 +2877,7 @@
       ],
       "bytes": 5020,
       "sha256": "bfb016ec26295cd2845ff280c915987f13ea3c849fb8b29bfd766862c16938ef",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ird-gates.log",
@@ -2886,7 +2887,7 @@
       ],
       "bytes": 1466,
       "sha256": "0ead57f20d1568fbfcf1b9aaebc9d6cb669ba549e65b15ae1e09211d779be9bb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/probes-ps51.log",
@@ -2896,7 +2897,7 @@
       ],
       "bytes": 5505,
       "sha256": "f3654a97719b7e19a946445ae6c12688107e7f358b5abd847b5de011d31141f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/probes-ps51/independent-probes.json",
@@ -2906,7 +2907,7 @@
       ],
       "bytes": 5504,
       "sha256": "05246723ff7175628cc3dcabc1cd5058a46baec8756a6909a3a707f661f0f39d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/probes-ps7.log",
@@ -2916,7 +2917,7 @@
       ],
       "bytes": 3930,
       "sha256": "ff53c0a301a90880edadb0f76cf408e3a0cf4650c037eb7a9ad49e1dcb81bd0c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/probes-ps7/independent-probes.json",
@@ -2926,7 +2927,7 @@
       ],
       "bytes": 3929,
       "sha256": "480d262c9b5d668b68eb75760d437e3aeeccbec1521ce5226a7867f147c25ac2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps51-driver.log",
@@ -2936,7 +2937,7 @@
       ],
       "bytes": 8669,
       "sha256": "4162826b54ce3dfd965f4aaea249c07ca6292aaf5e97e8ddac77099688544598",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps51/reuse-governance.junit.xml",
@@ -2946,7 +2947,7 @@
       ],
       "bytes": 6433,
       "sha256": "0c49bf9fedf666ac25616df3a6e71a7c72679c63ac1260290b486a649cc46425",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps51/reuse-test-report.json",
@@ -2956,7 +2957,7 @@
       ],
       "bytes": 53617,
       "sha256": "7a0c2bae7adcc1c4e783b6d40f10a52aabe6f50facb4e730b458737a13c5a797",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps7-driver.log",
@@ -2966,7 +2967,7 @@
       ],
       "bytes": 8669,
       "sha256": "4162826b54ce3dfd965f4aaea249c07ca6292aaf5e97e8ddac77099688544598",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps7/reuse-governance.junit.xml",
@@ -2976,7 +2977,7 @@
       ],
       "bytes": 6433,
       "sha256": "0c49bf9fedf666ac25616df3a6e71a7c72679c63ac1260290b486a649cc46425",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/ps7/reuse-test-report.json",
@@ -2986,7 +2987,7 @@
       ],
       "bytes": 38335,
       "sha256": "3f95447db6f465b3685912e8e859cd8920276f81009f4228f63cb8c99d3b67bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/record-docs.log",
@@ -2996,7 +2997,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/validate-docs.log",
@@ -3006,7 +3007,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/validate-reuse.log",
@@ -3016,7 +3017,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r2/validate-task.log",
@@ -3026,7 +3027,7 @@
       ],
       "bytes": 269,
       "sha256": "67455f9e3114324e7fdb7096079684e41e18fb26a14fb94824b330e8914c7e16",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3.json",
@@ -3036,7 +3037,7 @@
       ],
       "bytes": 11814,
       "sha256": "6e8d15b11bd373205e202f3f140ca5e032bf359987d388df147dfcc53f223437",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps51.log",
@@ -3046,7 +3047,7 @@
       ],
       "bytes": 184,
       "sha256": "261543b57a3ddba56bcb594b595e9c9d8e468d767f7e09f3cc45b2e70484e0ab",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps51/reuse-governance.junit.xml",
@@ -3056,7 +3057,7 @@
       ],
       "bytes": 206,
       "sha256": "ed1f6937f2c5e924a164bace212c6d2e365a4f52a1efde850542c3fd1d5dceef",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps51/reuse-test-report.json",
@@ -3066,7 +3067,7 @@
       ],
       "bytes": 1808,
       "sha256": "e1f6863397dfd23535bbe1d3e45ea85d7933855074e5a5e6393de999ace587d2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps7.log",
@@ -3076,7 +3077,7 @@
       ],
       "bytes": 184,
       "sha256": "261543b57a3ddba56bcb594b595e9c9d8e468d767f7e09f3cc45b2e70484e0ab",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps7/reuse-governance.junit.xml",
@@ -3086,7 +3087,7 @@
       ],
       "bytes": 206,
       "sha256": "ed1f6937f2c5e924a164bace212c6d2e365a4f52a1efde850542c3fd1d5dceef",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/closure-bom-ps7/reuse-test-report.json",
@@ -3096,7 +3097,7 @@
       ],
       "bytes": 1522,
       "sha256": "dea847ebf6935c16a83e6432ed3ee251c286c73d472750cf65ef804fec4a8e4d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/independent-closure-bom.ps1",
@@ -3106,7 +3107,7 @@
       ],
       "bytes": 3025,
       "sha256": "85a574d37e4d7dac1883e1cd727b3365eb4218c94d199ef5ad44dc9db98ef069",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/independent-probes.ps1",
@@ -3116,7 +3117,7 @@
       ],
       "bytes": 5020,
       "sha256": "18f65c968d2f28ea68ecfadfd3c0188b881a63e4a00f0b4f04a3b59caf52f088",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ird-gates.log",
@@ -3126,7 +3127,7 @@
       ],
       "bytes": 1466,
       "sha256": "871835388025a5c94af8137d27ec3f70c9f7aff92cabd63f8665a664229c2791",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/probes-ps51.log",
@@ -3136,7 +3137,7 @@
       ],
       "bytes": 5505,
       "sha256": "50aa7d2061a7940051b7511dc3cd08d8f4fd658d3cbe4aadda37159cf1b2b54a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/probes-ps51/independent-probes.json",
@@ -3146,7 +3147,7 @@
       ],
       "bytes": 5504,
       "sha256": "f1894c07e780521fe3970f1e3b78d5cc92ae254b68bce4cb57113a8878569111",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/probes-ps7.log",
@@ -3156,7 +3157,7 @@
       ],
       "bytes": 3930,
       "sha256": "eb4b2bcda8dbbe16138e9e14f599693e97b53ce5b127d47f7a825a6cd48d097c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/probes-ps7/independent-probes.json",
@@ -3166,7 +3167,7 @@
       ],
       "bytes": 3929,
       "sha256": "4d775c65fd5629f9ef91fc23f2ee4bea6e482fb386172422f2bdfabce02495f4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps51-driver.log",
@@ -3176,7 +3177,7 @@
       ],
       "bytes": 8724,
       "sha256": "409014af8bc373d46f7a273dd849ba7b1108fda376d25a28bc4711ee925191a8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps51/reuse-governance.junit.xml",
@@ -3186,7 +3187,7 @@
       ],
       "bytes": 6480,
       "sha256": "300addedcf4a6d65510d282c3adfaee20418ab00ae68d7c565905a3d3aeaff0b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps51/reuse-test-report.json",
@@ -3196,7 +3197,7 @@
       ],
       "bytes": 54118,
       "sha256": "df1526a25551647222d1e8b04c5fc29fa859a16b9f41b55692a13a0eca5c2714",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps7-driver.log",
@@ -3206,7 +3207,7 @@
       ],
       "bytes": 8724,
       "sha256": "409014af8bc373d46f7a273dd849ba7b1108fda376d25a28bc4711ee925191a8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps7/reuse-governance.junit.xml",
@@ -3216,7 +3217,7 @@
       ],
       "bytes": 6480,
       "sha256": "300addedcf4a6d65510d282c3adfaee20418ab00ae68d7c565905a3d3aeaff0b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/ps7/reuse-test-report.json",
@@ -3226,7 +3227,7 @@
       ],
       "bytes": 38710,
       "sha256": "f1c459d026628253c417adb0c18c2f2ee0efec4bae0aa3ea4b89c16b872d3728",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/record-docs.log",
@@ -3236,7 +3237,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/scope-review.log",
@@ -3246,7 +3247,7 @@
       ],
       "bytes": 5346,
       "sha256": "ecf643d39921b287d0ffca9a970e9c8a28392f7c24b9faa20eec8af321d0896f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/validate-docs.log",
@@ -3256,7 +3257,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/validate-reuse.log",
@@ -3266,7 +3267,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022-r3/validate-task.log",
@@ -3276,7 +3277,7 @@
       ],
       "bytes": 269,
       "sha256": "67455f9e3114324e7fdb7096079684e41e18fb26a14fb94824b330e8914c7e16",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022.json",
@@ -3286,7 +3287,7 @@
       ],
       "bytes": 5647,
       "sha256": "71be5811b169a5bf212439c942838d3ac4f3578e4ebae07a54c892fa5395c0a3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/completion-docs.log",
@@ -3296,7 +3297,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/completion.json",
@@ -3306,7 +3307,7 @@
       ],
       "bytes": 3332,
       "sha256": "7952fe3560536fd092e9cc92cb9142093636b9196c7de2b6838e2104316dc13a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/independent-probes.json",
@@ -3316,7 +3317,7 @@
       ],
       "bytes": 2436,
       "sha256": "bb781f5e09d52c886525d83931195222d8af4caeb1bbaac1388b991853fbb4a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/independent-probes.log",
@@ -3326,7 +3327,7 @@
       ],
       "bytes": 2436,
       "sha256": "bb781f5e09d52c886525d83931195222d8af4caeb1bbaac1388b991853fbb4a2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/independent-probes.ps1",
@@ -3336,7 +3337,7 @@
       ],
       "bytes": 3721,
       "sha256": "b5035347bb4bdfa96eb47c3d4f6dbf204506b61c44f26c5da8590c7d03e13ac8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ird-gates.log",
@@ -3346,7 +3347,7 @@
       ],
       "bytes": 1463,
       "sha256": "57f64c56ac5dca8804c5cc8eaefb34c2d22c193d0e92a99ecd56bc93dcddb6b9",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51-driver.log",
@@ -3356,7 +3357,7 @@
       ],
       "bytes": 8233,
       "sha256": "e00995da814a831ebd1559f76934e236006fa0f750a353322b55eca479947b2d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/01-clean.log",
@@ -3366,7 +3367,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/02-fixed-baseline.log",
@@ -3376,7 +3377,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/03-all-units.log",
@@ -3386,7 +3387,7 @@
       ],
       "bytes": 36,
       "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/04-missing-source.log",
@@ -3396,7 +3397,7 @@
       ],
       "bytes": 51,
       "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/05-stale-source.log",
@@ -3406,7 +3407,7 @@
       ],
       "bytes": 63,
       "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/06-missing-symbol.log",
@@ -3416,7 +3417,7 @@
       ],
       "bytes": 82,
       "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/07-inventory-omission.log",
@@ -3426,7 +3427,7 @@
       ],
       "bytes": 37,
       "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/08-forged-blob.log",
@@ -3436,7 +3437,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/09-inventory-duplicate.log",
@@ -3446,7 +3447,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/10-inventory-unit.log",
@@ -3456,7 +3457,7 @@
       ],
       "bytes": 109,
       "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/11-new-source.log",
@@ -3466,7 +3467,7 @@
       ],
       "bytes": 166,
       "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/12-stale-change-hash.log",
@@ -3476,7 +3477,7 @@
       ],
       "bytes": 151,
       "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/13-core-even-business.log",
@@ -3486,7 +3487,7 @@
       ],
       "bytes": 97,
       "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/14-cpp-not-governance.log",
@@ -3496,7 +3497,7 @@
       ],
       "bytes": 128,
       "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/15-missing-approval.log",
@@ -3506,7 +3507,7 @@
       ],
       "bytes": 14,
       "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/16-unknown-capability.log",
@@ -3516,7 +3517,7 @@
       ],
       "bytes": 91,
       "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/17-path-traversal.log",
@@ -3526,7 +3527,7 @@
       ],
       "bytes": 28,
       "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/18-missing-task-proof.log",
@@ -3536,7 +3537,7 @@
       ],
       "bytes": 76,
       "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/19-task-scope.log",
@@ -3546,7 +3547,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/20-forbidden-scope.log",
@@ -3556,7 +3557,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/21-stage-not-approved.log",
@@ -3566,7 +3567,7 @@
       ],
       "bytes": 173,
       "sha256": "007db7bbfc7d65db7c2d2051070258a0b4245e0cb338bdf8d31c0492d9e72d7a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/22-final-debt-rejected.log",
@@ -3576,7 +3577,7 @@
       ],
       "bytes": 114,
       "sha256": "fc35729feeabcbdadf5a46faad890036a28676fc9d1d5e0271ab1aefd39d0217",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/23-governance-not-algorithm-approval.log",
@@ -3586,7 +3587,7 @@
       ],
       "bytes": 154,
       "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/24-upstream-readonly.log",
@@ -3596,7 +3597,7 @@
       ],
       "bytes": 180,
       "sha256": "64d5a64d1df59995b7767a99524b8e6257ed23315ecfb4c9f75bbcd96896cf01",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/25-missing-record-file.log",
@@ -3606,7 +3607,7 @@
       ],
       "bytes": 70,
       "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/26-deletion-undeclared.log",
@@ -3616,7 +3617,7 @@
       ],
       "bytes": 101,
       "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/27-forged-debt-closure.log",
@@ -3626,7 +3627,7 @@
       ],
       "bytes": 121,
       "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/28-arbitrary-task-ready.log",
@@ -3636,7 +3637,7 @@
       ],
       "bytes": 164,
       "sha256": "ab9d1dc6f271e7bbbae66846df6723a6d2c252ddd63e37d725b9ccf96bd6efa1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/29-planned-not-executable.log",
@@ -3646,7 +3647,7 @@
       ],
       "bytes": 182,
       "sha256": "2e3326d6556386f23d841442b4f374ed0b36fb4ebc6e42d2dbefc3f070c26100",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/30-forged-build-target.log",
@@ -3656,7 +3657,7 @@
       ],
       "bytes": 70,
       "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/31-frozen-head.log",
@@ -3666,7 +3667,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/32-frozen-head-ignores-dirty-tree.log",
@@ -3676,7 +3677,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/33-frozen-head-repeatable.log",
@@ -3686,7 +3687,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-actual-model-mutation.log",
@@ -3696,7 +3697,7 @@
       ],
       "bytes": 135,
       "sha256": "a54acfb6d10309221b1de1516f5a8533822de78e0dc77cc25804f6324b85c9ae",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-actual-shared-state-write.log",
@@ -3706,7 +3707,7 @@
       ],
       "bytes": 134,
       "sha256": "4a5ecb1ac6e0b0703bfc12b551804adb3963c5cc3d451b541564f32d41ba4237",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-catalog-downgrade-rejected.log",
@@ -3716,7 +3717,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-changed-pending-rejected.log",
@@ -3726,7 +3727,7 @@
       ],
       "bytes": 166,
       "sha256": "9084159cbb6d388b9a9ea8f2e880214f27d890e0ef7b1c4d6541f06865b3c19e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-empty-matrix.log",
@@ -3736,7 +3737,7 @@
       ],
       "bytes": 35,
       "sha256": "5ce6ef98e98e9ae7ebcd4154a582491444aeeea8cfd4e8f9fea3da5a80cc5170",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-fake-resource.log",
@@ -3746,7 +3747,7 @@
       ],
       "bytes": 49,
       "sha256": "59e6ff64d1085bf603a87e59ae8e91553e408967ff6a9e7aa60505a92ffd238c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-forward-model-type.log",
@@ -3756,7 +3757,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-gov-supplement-scope.log",
@@ -3766,7 +3767,7 @@
       ],
       "bytes": 115,
       "sha256": "bf378121ec628ebb3e5857b47dec9ecca70de69f29e975eb919d1d415ab39202",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-host-directory-exemption.log",
@@ -3776,7 +3777,7 @@
       ],
       "bytes": 54,
       "sha256": "9174a53a8a63bb91c0f4536aaeb7d9132781dda0cabb4f9f7e9ace61d799d0f5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-host-origin-bypass.log",
@@ -3786,7 +3787,7 @@
       ],
       "bytes": 141,
       "sha256": "d70ed4bd2c669fe378b09708d5159b2380e46bf86cd1d2936551a1a4ba8ebbd3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-include-without-grant-rejected.log",
@@ -3796,7 +3797,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-math-value-positive.log",
@@ -3806,7 +3807,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-new-cmake-requires-functions.log",
@@ -3816,7 +3817,7 @@
       ],
       "bytes": 123,
       "sha256": "34af43c0862fbafec4cc13758c871f351b99a4569368c982ba6b04182da772d3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-owner-expansion.log",
@@ -3826,7 +3827,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-owner-missing.log",
@@ -3836,7 +3837,7 @@
       ],
       "bytes": 37,
       "sha256": "798e255ee5f77c13ec5513ea26dea1a4bf12257941f65c1bf0294e9b1ac54333",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-permission-schema.log",
@@ -3846,7 +3847,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-private-state-positive.log",
@@ -3856,7 +3857,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-probe-readonly-positive.log",
@@ -3866,7 +3867,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-real-constructor-rejected.log",
@@ -3876,7 +3877,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-real-factory-rejected.log",
@@ -3886,7 +3887,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-real-loader-rejected.log",
@@ -3896,7 +3897,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-self-approved-closure.log",
@@ -3906,7 +3907,7 @@
       ],
       "bytes": 37,
       "sha256": "fc929d6a60ee75747c7f9bd1d3d440b37622bfdb1bd6758fa23c509c950bb04b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-stage-forged-verdict-rejected.log",
@@ -3916,7 +3917,7 @@
       ],
       "bytes": 55,
       "sha256": "8beb70f364807459e55e12d5e3ae42e8510fb4c214653d835077f3daa70d76f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-stage-future-sha-rejected.log",
@@ -3926,7 +3927,7 @@
       ],
       "bytes": 48,
       "sha256": "b289b8d5e88088c8d712697c1d17475e67ce96aa7b5d99a251f083bee42d68b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-stage-missing-rejected.log",
@@ -3936,7 +3937,7 @@
       ],
       "bytes": 40,
       "sha256": "6727964abf6bfb3048de86a6f8f6a36b1ad3c8d1aa449fed845d56976bc82270",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-unknown-catalog-schema.log",
@@ -3946,7 +3947,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-unknown-matrix-schema.log",
@@ -3956,7 +3957,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-unknown-role.log",
@@ -3966,7 +3967,7 @@
       ],
       "bytes": 26,
       "sha256": "0f3b2265cc953e67ac184f958b2500b5fc1b210a465212ca8e16ec81b92443c3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-usage-operation-expansion.log",
@@ -3976,7 +3977,7 @@
       ],
       "bytes": 51,
       "sha256": "a26ae1e991a4cf5c9b58b92ebcb4456ae0665ee0d1ae38880ff894b97f2fb341",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-value-origin-bypass.log",
@@ -3986,7 +3987,7 @@
       ],
       "bytes": 131,
       "sha256": "7b6df9ce41bda4122dae06335e41ade4358dbf15f9dee038efb3651c8601e840",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-value-without-matrix-rejected.log",
@@ -3996,7 +3997,7 @@
       ],
       "bytes": 125,
       "sha256": "374e566dea881ee94d3c205c648d478280da2bbaf382e909fc229ad8fbedce84",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/ad-wrong-matrix-unit.log",
@@ -4006,7 +4007,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/business-specific-needs-evidence.log",
@@ -4016,7 +4017,7 @@
       ],
       "bytes": 44,
       "sha256": "32ef652a0367e56b5ab4b0365fa627698bf45fdfe5ecfc8a6f11c2049f47f776",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-accepted-matrix-missing.log",
@@ -4026,7 +4027,7 @@
       ],
       "bytes": 58,
       "sha256": "47c6f92f5f3ac0b2d02be9915c6958758fe8ce85da91a84ad7b94f0303214264",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-baseline-cannot-use-absent.log",
@@ -4036,7 +4037,7 @@
       ],
       "bytes": 117,
       "sha256": "24acbbbeb233f99aa2ab15517a0436d879310793195d043c5147c9fe96182fe1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-changed-function-after-pass.log",
@@ -4046,7 +4047,7 @@
       ],
       "bytes": 78,
       "sha256": "ad763dda4042fec3fdcca58177833084046ba395162132e87caf5d73b2a8d8a8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-current-positive.log",
@@ -4056,7 +4057,7 @@
       ],
       "bytes": 239,
       "sha256": "90fe2ba226df136e87d1991a070c28be0e1e5d58a732c50de9e1cb4cb30031f0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-deleted-replacement-positive.log",
@@ -4066,7 +4067,7 @@
       ],
       "bytes": 239,
       "sha256": "8694dd3d68bc3c580b39fb1ffe8a181fa6af4d8a2a55c935774d5870ae45665c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-deletion-missing-replaces.log",
@@ -4076,7 +4077,7 @@
       ],
       "bytes": 122,
       "sha256": "0b61f0976f50054faf05be0c9419cb5877aa2f90e84ca8a7cffcf4759d013156",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-mutable-reference-rejected.log",
@@ -4086,7 +4087,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-new-file-cannot-use-blob.log",
@@ -4096,7 +4097,7 @@
       ],
       "bytes": 139,
       "sha256": "6fbaa3db902ef14e3d5eeb469f51ef95f9184167f3bd53a49402f2db1e1743f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-new-file-no-independent-record.log",
@@ -4106,7 +4107,7 @@
       ],
       "bytes": 147,
       "sha256": "35b957f5e4c29bed25e6033b6076e9898be9f83da0f934d0458e58fd80785658",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-new-file-omitted-final.log",
@@ -4116,7 +4117,7 @@
       ],
       "bytes": 149,
       "sha256": "c3e29c7d9c6d7c3a7dba05ed4fcc2ba5fa19f626d3fe10c367fc9834f78a765f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/closure-record-path-rejected.log",
@@ -4126,7 +4127,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-deleted-replacement-unknown.log",
@@ -4136,7 +4137,7 @@
       ],
       "bytes": 112,
       "sha256": "12b3baf4447432d09cab4ba0508012f313371748d6492791b7836a7bc896e38f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-duplicate-relation.log",
@@ -4146,7 +4147,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-fake-capability.log",
@@ -4156,7 +4157,7 @@
       ],
       "bytes": 47,
       "sha256": "24e2efc6ef35a45dc8375f3d5cba6c5b8ef55998c3597771192a5954a9ff0613",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-pending-positive.log",
@@ -4166,7 +4167,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-region-outside-file.log",
@@ -4176,7 +4177,7 @@
       ],
       "bytes": 118,
       "sha256": "53d60b37a962c342e880674439a1e899234d0c5dbbfa92564c9c85dd173ff89a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-role-not-layer.log",
@@ -4186,7 +4187,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-stale-build-input.log",
@@ -4196,7 +4197,7 @@
       ],
       "bytes": 91,
       "sha256": "81d8b72bd74d3e4447f7a7365abfd41eada5f01365c0062634406e03b23d5464",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-stale-region.log",
@@ -4206,7 +4207,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-symbol-not-present.log",
@@ -4216,7 +4217,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-unapproved-permission.log",
@@ -4226,7 +4227,7 @@
       ],
       "bytes": 38,
       "sha256": "82f4cb98574e989fbd4f85264f50a2087a18ef4e06686c9efb6775444fd8d8e3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/function-unresolved-not-migrated.log",
@@ -4236,7 +4237,7 @@
       ],
       "bytes": 43,
       "sha256": "e8094bb5c029f523b4cc3593c4952d7df4c6db4a2b8e58cdd16f5a34d0c59c28",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-business-construction-rejected.log",
@@ -4246,7 +4247,7 @@
       ],
       "bytes": 127,
       "sha256": "6a04b39e965a8c8f44656c4090d340d2b7b62089c4ebc7d934cf010134169405",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-business-owner-rejected.log",
@@ -4256,7 +4257,7 @@
       ],
       "bytes": 108,
       "sha256": "ec7f43d158696b56f55e4935d77b99948cc74721b00860ea52cb51de079c1d8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-commented-target-rejected.log",
@@ -4266,7 +4267,7 @@
       ],
       "bytes": 127,
       "sha256": "e459f4a0852b2924ec44c43f4ce207abbda3ef632fd1501a21eb9ecb548c6a38",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-HOST-COMPILE-positive.log",
@@ -4276,7 +4277,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-HOST-GATEWAY-positive.log",
@@ -4286,7 +4287,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-HOST-PRESENT-positive.log",
@@ -4296,7 +4297,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-HOST-RENDER-positive.log",
@@ -4306,7 +4307,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-readonly-positive.log",
@@ -4316,7 +4317,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-runtime-owner-positive.log",
@@ -4326,7 +4327,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-shared-state-write-rejected.log",
@@ -4336,7 +4337,7 @@
       ],
       "bytes": 104,
       "sha256": "723d9c4236ec358224e9c9850abfc455c1c757016981a1b7f4dbe5737f88e275",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-stale-source.log",
@@ -4346,7 +4347,7 @@
       ],
       "bytes": 90,
       "sha256": "0cefc9c7f46ddf717aef5a5b43834051b0b44d77ee6c96ea85c1389f593fc65f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-unknown-target-rejected.log",
@@ -4356,7 +4357,7 @@
       ],
       "bytes": 134,
       "sha256": "44dc80f54e2a2d384c7dbcaa993eb5bb6d2608191f8a7bc671826b1267a448a5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-worker-runtime-borrow-rejected.log",
@@ -4366,7 +4367,7 @@
       ],
       "bytes": 126,
       "sha256": "e2589441052e4e16aeb4124fb66f65687e285c50417051e73b8e0c2b4989333e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/grant-worker-task-private-rejected.log",
@@ -4376,7 +4377,7 @@
       ],
       "bytes": 132,
       "sha256": "67f1dcaf4adacc4b44f7b97ff6bdd07ef1acd827c2a4e652c59be3ebd732866e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/positive-evidence-required.log",
@@ -4386,7 +4387,7 @@
       ],
       "bytes": 36,
       "sha256": "abf1c5b5100da066c4592f5c93cfabe478802e1b0e896601a50709417930b489",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-demo-entry-rejected.log",
@@ -4396,7 +4397,7 @@
       ],
       "bytes": 64,
       "sha256": "d395a251c362570066b0522967a4530f1b10a20c9e5d1d64dfa9db216c0cdd12",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-disconnect-stays-green.log",
@@ -4406,7 +4407,7 @@
       ],
       "bytes": 55,
       "sha256": "7a9da254f69de5f0f4664841275dca5fe9d24b163185b0da919f0fd0a5a0625e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-empty-xml-shell.log",
@@ -4416,7 +4417,7 @@
       ],
       "bytes": 61,
       "sha256": "16737d28d1fede08b54c24d6e25d011d6b1bb9c26eed2f9a0dc2fc1239602a8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-missing-dependency.log",
@@ -4426,7 +4427,7 @@
       ],
       "bytes": 133,
       "sha256": "004c2eaef5bda9f94ca1739f245010dfe6f3fc8010ab6c6136ce6805c7a5b382",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-mutation-no-change.log",
@@ -4436,7 +4437,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-oracle-failed.log",
@@ -4446,7 +4447,7 @@
       ],
       "bytes": 61,
       "sha256": "f5ffd57b727f9a6cde9046fc8360bab12d1df938800cc8db6ec2468991863bcd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-review-version-fake.log",
@@ -4456,7 +4457,7 @@
       ],
       "bytes": 65,
       "sha256": "2da6b09dc59ade8ceabddb5a936ef9fcdcf3a23eeb1c153b7f9c5478545264fd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-stale-log.log",
@@ -4466,7 +4467,7 @@
       ],
       "bytes": 78,
       "sha256": "ff0584553e1c9eb4c714c7032fed55e0a351058601c4d452e0fa4db2c235c9ed",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-structure-positive.log",
@@ -4476,7 +4477,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-unverified-capability.log",
@@ -4486,7 +4487,7 @@
       ],
       "bytes": 45,
       "sha256": "a9ff83d59c89ad688e046caf1bf6b3d8f75ea6d20c3a07789ee4c3ecaaf0bde2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-upstream-comparison-failed.log",
@@ -4496,7 +4497,7 @@
       ],
       "bytes": 73,
       "sha256": "1d30234029f05fefefec2462744de73813752beaad8ec38095217e6d84552919",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/production-wrong-mutation-source.log",
@@ -4506,7 +4507,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/proposal-needs-file.log",
@@ -4516,7 +4517,7 @@
       ],
       "bytes": 34,
       "sha256": "a20a9b8aa81b129b8de485e724e50944b12ba863cdc053109b4bc0839ec09de2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/reuse-governance.junit.xml",
@@ -4526,7 +4527,7 @@
       ],
       "bytes": 6057,
       "sha256": "524724ee2a867a5f7a914bd5e1d579fdd44b8979494576b1f3b6bc74b96d3a6c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/reuse-test-report.json",
@@ -4536,7 +4537,7 @@
       ],
       "bytes": 50167,
       "sha256": "9a705d48ba0d79693d5ed1a0c3ca6a28757c7b96f69f499299b548f1f088d001",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-c.log",
@@ -4546,7 +4547,7 @@
       ],
       "bytes": 164,
       "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-cu.log",
@@ -4556,7 +4557,7 @@
       ],
       "bytes": 165,
       "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-html.log",
@@ -4566,7 +4567,7 @@
       ],
       "bytes": 167,
       "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-inc.log",
@@ -4576,7 +4577,7 @@
       ],
       "bytes": 155,
       "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-inl.log",
@@ -4586,7 +4587,7 @@
       ],
       "bytes": 166,
       "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-ipp.log",
@@ -4596,7 +4597,7 @@
       ],
       "bytes": 166,
       "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-mjs.log",
@@ -4606,7 +4607,7 @@
       ],
       "bytes": 166,
       "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-opaque.log",
@@ -4616,7 +4617,7 @@
       ],
       "bytes": 158,
       "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-ps1.log",
@@ -4626,7 +4627,7 @@
       ],
       "bytes": 166,
       "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-py.log",
@@ -4636,7 +4637,7 @@
       ],
       "bytes": 165,
       "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-tpp.log",
@@ -4646,7 +4647,7 @@
       ],
       "bytes": 166,
       "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps51/suffix-ts.log",
@@ -4656,7 +4657,7 @@
       ],
       "bytes": 165,
       "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7-driver.log",
@@ -4666,7 +4667,7 @@
       ],
       "bytes": 8233,
       "sha256": "e00995da814a831ebd1559f76934e236006fa0f750a353322b55eca479947b2d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/01-clean.log",
@@ -4676,7 +4677,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/02-fixed-baseline.log",
@@ -4686,7 +4687,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/03-all-units.log",
@@ -4696,7 +4697,7 @@
       ],
       "bytes": 36,
       "sha256": "409e542d1670a3fea0ff94d3c774cad7a2b4b7d14b3f7ec3da9d5c9361bc5734",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/04-missing-source.log",
@@ -4706,7 +4707,7 @@
       ],
       "bytes": 51,
       "sha256": "a68dc24848adec349453288e49281359f83286dd6eb2e357f5e10f4eb30bce54",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/05-stale-source.log",
@@ -4716,7 +4717,7 @@
       ],
       "bytes": 63,
       "sha256": "1545cf05e505afbb5d12cb917f777ed72bf8dc6c348de50b351ae0d4a1cb030c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/06-missing-symbol.log",
@@ -4726,7 +4727,7 @@
       ],
       "bytes": 82,
       "sha256": "103d2ade4a033deb0e5d2c1104d2fb9a05e824918c3ae7993ec23d5e15fc8dc2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/07-inventory-omission.log",
@@ -4736,7 +4737,7 @@
       ],
       "bytes": 37,
       "sha256": "bfb226eddf2eb31bc737639305ea11482a85227033f0fb85bc27cc4cc9017811",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/08-forged-blob.log",
@@ -4746,7 +4747,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/09-inventory-duplicate.log",
@@ -4756,7 +4757,7 @@
       ],
       "bytes": 83,
       "sha256": "1ee722f98eadb5d34c1554375714312c98f6da6fa70e176af4ea96f44e3d96eb",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/10-inventory-unit.log",
@@ -4766,7 +4767,7 @@
       ],
       "bytes": 109,
       "sha256": "a36e694c77ed0c14c9c08807086ff56da9e6aaa1e8831d8d0ee27eaefc15a55f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/11-new-source.log",
@@ -4776,7 +4777,7 @@
       ],
       "bytes": 166,
       "sha256": "b5a6acc18995308d369d18663ffa24aae6dd9ab1270539208b227367322a3a09",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/12-stale-change-hash.log",
@@ -4786,7 +4787,7 @@
       ],
       "bytes": 151,
       "sha256": "999910e0b9b9e39739285c0ca12be58431c4abf9b652cbf63d1f81e0ca7a7b60",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/13-core-even-business.log",
@@ -4796,7 +4797,7 @@
       ],
       "bytes": 97,
       "sha256": "984e02019e2e200aef04941e6f0a51b1e0e1fdfb11cd84d815b85cb21dd74a1e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/14-cpp-not-governance.log",
@@ -4806,7 +4807,7 @@
       ],
       "bytes": 128,
       "sha256": "b64a6e58f3664c8a1fed1f0edeb07eb86ffd97b0b843888f0f9725f29c82354b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/15-missing-approval.log",
@@ -4816,7 +4817,7 @@
       ],
       "bytes": 14,
       "sha256": "185a601872653393e58858bc5ccf8fa263d93f07d399c79017a0ee21b7983c0d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/16-unknown-capability.log",
@@ -4826,7 +4827,7 @@
       ],
       "bytes": 91,
       "sha256": "11afa5aa28ed12fe11b78737570131160625970ceccf8a1ec0d716b0ceb19565",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/17-path-traversal.log",
@@ -4836,7 +4837,7 @@
       ],
       "bytes": 28,
       "sha256": "8f9b3927e2dce35037db9cd8427c7cc17ec02946923a7969448e4e819f15d514",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/18-missing-task-proof.log",
@@ -4846,7 +4847,7 @@
       ],
       "bytes": 76,
       "sha256": "ebb32298e9eef61e374659b742c8a4e13db319d25bb455a3d475aa6c95f9668a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/19-task-scope.log",
@@ -4856,7 +4857,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/20-forbidden-scope.log",
@@ -4866,7 +4867,7 @@
       ],
       "bytes": 79,
       "sha256": "d5609b106c4fa0d236efb5e9186dfe2c7f5a51e424d5c1b262fe55ae279c3bb5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/21-stage-not-approved.log",
@@ -4876,7 +4877,7 @@
       ],
       "bytes": 173,
       "sha256": "007db7bbfc7d65db7c2d2051070258a0b4245e0cb338bdf8d31c0492d9e72d7a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/22-final-debt-rejected.log",
@@ -4886,7 +4887,7 @@
       ],
       "bytes": 144,
       "sha256": "654031e55ff0008ed945b6de5dfb7ccc45605736bf29da81084775e6f188998f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/23-governance-not-algorithm-approval.log",
@@ -4896,7 +4897,7 @@
       ],
       "bytes": 154,
       "sha256": "d3c7ce8f5ef02fe9ebe1b699fb40a50da03ff7665fe9052e310c96c888d460f8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/24-upstream-readonly.log",
@@ -4906,7 +4907,7 @@
       ],
       "bytes": 180,
       "sha256": "64d5a64d1df59995b7767a99524b8e6257ed23315ecfb4c9f75bbcd96896cf01",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/25-missing-record-file.log",
@@ -4916,7 +4917,7 @@
       ],
       "bytes": 70,
       "sha256": "17f653b5ff7263577e02e20a579369c44e4ded083ace13034f4083bd06e3efb1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/26-deletion-undeclared.log",
@@ -4926,7 +4927,7 @@
       ],
       "bytes": 101,
       "sha256": "8ea35e27c566d977a0072738781dcb4a40ed75aba9e0c23243bb9f72f8d34a7d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/27-forged-debt-closure.log",
@@ -4936,7 +4937,7 @@
       ],
       "bytes": 121,
       "sha256": "53f32dcf23172c8370bd28253a2715ead8d07a36e6526b652e5521e8ebd1236f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/28-arbitrary-task-ready.log",
@@ -4946,7 +4947,7 @@
       ],
       "bytes": 164,
       "sha256": "ab9d1dc6f271e7bbbae66846df6723a6d2c252ddd63e37d725b9ccf96bd6efa1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/29-planned-not-executable.log",
@@ -4956,7 +4957,7 @@
       ],
       "bytes": 182,
       "sha256": "2e3326d6556386f23d841442b4f374ed0b36fb4ebc6e42d2dbefc3f070c26100",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/30-forged-build-target.log",
@@ -4966,7 +4967,7 @@
       ],
       "bytes": 70,
       "sha256": "06238bb2faf15ea1aef09b24a1e1662dae9dcdf64940c26d96f5e34efe34fe0e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/31-frozen-head.log",
@@ -4976,7 +4977,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/32-frozen-head-ignores-dirty-tree.log",
@@ -4986,7 +4987,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/33-frozen-head-repeatable.log",
@@ -4996,7 +4997,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-actual-model-mutation.log",
@@ -5006,7 +5007,7 @@
       ],
       "bytes": 135,
       "sha256": "a54acfb6d10309221b1de1516f5a8533822de78e0dc77cc25804f6324b85c9ae",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-actual-shared-state-write.log",
@@ -5016,7 +5017,7 @@
       ],
       "bytes": 134,
       "sha256": "4a5ecb1ac6e0b0703bfc12b551804adb3963c5cc3d451b541564f32d41ba4237",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-catalog-downgrade-rejected.log",
@@ -5026,7 +5027,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-changed-pending-rejected.log",
@@ -5036,7 +5037,7 @@
       ],
       "bytes": 166,
       "sha256": "9084159cbb6d388b9a9ea8f2e880214f27d890e0ef7b1c4d6541f06865b3c19e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-empty-matrix.log",
@@ -5046,7 +5047,7 @@
       ],
       "bytes": 35,
       "sha256": "5ce6ef98e98e9ae7ebcd4154a582491444aeeea8cfd4e8f9fea3da5a80cc5170",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-fake-resource.log",
@@ -5056,7 +5057,7 @@
       ],
       "bytes": 49,
       "sha256": "59e6ff64d1085bf603a87e59ae8e91553e408967ff6a9e7aa60505a92ffd238c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-forward-model-type.log",
@@ -5066,7 +5067,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-gov-supplement-scope.log",
@@ -5076,7 +5077,7 @@
       ],
       "bytes": 115,
       "sha256": "bf378121ec628ebb3e5857b47dec9ecca70de69f29e975eb919d1d415ab39202",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-host-directory-exemption.log",
@@ -5086,7 +5087,7 @@
       ],
       "bytes": 54,
       "sha256": "9174a53a8a63bb91c0f4536aaeb7d9132781dda0cabb4f9f7e9ace61d799d0f5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-host-origin-bypass.log",
@@ -5096,7 +5097,7 @@
       ],
       "bytes": 141,
       "sha256": "d70ed4bd2c669fe378b09708d5159b2380e46bf86cd1d2936551a1a4ba8ebbd3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-include-without-grant-rejected.log",
@@ -5106,7 +5107,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-math-value-positive.log",
@@ -5116,7 +5117,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-new-cmake-requires-functions.log",
@@ -5126,7 +5127,7 @@
       ],
       "bytes": 123,
       "sha256": "34af43c0862fbafec4cc13758c871f351b99a4569368c982ba6b04182da772d3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-owner-expansion.log",
@@ -5136,7 +5137,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-owner-missing.log",
@@ -5146,7 +5147,7 @@
       ],
       "bytes": 37,
       "sha256": "798e255ee5f77c13ec5513ea26dea1a4bf12257941f65c1bf0294e9b1ac54333",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-permission-schema.log",
@@ -5156,7 +5157,7 @@
       ],
       "bytes": 50,
       "sha256": "a926dcc95328eaa203b678ccbf1412bd1268d7c966de467155e3365459d077bd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-private-state-positive.log",
@@ -5166,7 +5167,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-probe-readonly-positive.log",
@@ -5176,7 +5177,7 @@
       ],
       "bytes": 239,
       "sha256": "425f6ad193def05c0da5b738a1d722049028ac3173074644544898861051dc59",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-real-constructor-rejected.log",
@@ -5186,7 +5187,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-real-factory-rejected.log",
@@ -5196,7 +5197,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-real-loader-rejected.log",
@@ -5206,7 +5207,7 @@
       ],
       "bytes": 176,
       "sha256": "222a860102c153b36f48ae75b2e48a5509b9423c61e3c08ea0a413f9f2f110ec",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-self-approved-closure.log",
@@ -5216,7 +5217,7 @@
       ],
       "bytes": 37,
       "sha256": "fc929d6a60ee75747c7f9bd1d3d440b37622bfdb1bd6758fa23c509c950bb04b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-stage-forged-verdict-rejected.log",
@@ -5226,7 +5227,7 @@
       ],
       "bytes": 55,
       "sha256": "8beb70f364807459e55e12d5e3ae42e8510fb4c214653d835077f3daa70d76f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-stage-future-sha-rejected.log",
@@ -5236,7 +5237,7 @@
       ],
       "bytes": 48,
       "sha256": "b289b8d5e88088c8d712697c1d17475e67ce96aa7b5d99a251f083bee42d68b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-stage-missing-rejected.log",
@@ -5246,7 +5247,7 @@
       ],
       "bytes": 40,
       "sha256": "6727964abf6bfb3048de86a6f8f6a36b1ad3c8d1aa449fed845d56976bc82270",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-unknown-catalog-schema.log",
@@ -5256,7 +5257,7 @@
       ],
       "bytes": 91,
       "sha256": "85a3ed644f3d46377fa9453ff9635ca41df47d35ac6b3c905751ca239cb4b628",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-unknown-matrix-schema.log",
@@ -5266,7 +5267,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-unknown-role.log",
@@ -5276,7 +5277,7 @@
       ],
       "bytes": 26,
       "sha256": "0f3b2265cc953e67ac184f958b2500b5fc1b210a465212ca8e16ec81b92443c3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-usage-operation-expansion.log",
@@ -5286,7 +5287,7 @@
       ],
       "bytes": 51,
       "sha256": "a26ae1e991a4cf5c9b58b92ebcb4456ae0665ee0d1ae38880ff894b97f2fb341",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-value-origin-bypass.log",
@@ -5296,7 +5297,7 @@
       ],
       "bytes": 131,
       "sha256": "7b6df9ce41bda4122dae06335e41ade4358dbf15f9dee038efb3651c8601e840",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-value-without-matrix-rejected.log",
@@ -5306,7 +5307,7 @@
       ],
       "bytes": 125,
       "sha256": "374e566dea881ee94d3c205c648d478280da2bbaf382e909fc229ad8fbedce84",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/ad-wrong-matrix-unit.log",
@@ -5316,7 +5317,7 @@
       ],
       "bytes": 85,
       "sha256": "4b9eb19ebc6c2af27867eb01735ac9253274f84b8abb4d341346c6962b6d35a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/business-specific-needs-evidence.log",
@@ -5326,7 +5327,7 @@
       ],
       "bytes": 44,
       "sha256": "32ef652a0367e56b5ab4b0365fa627698bf45fdfe5ecfc8a6f11c2049f47f776",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-accepted-matrix-missing.log",
@@ -5336,7 +5337,7 @@
       ],
       "bytes": 58,
       "sha256": "47c6f92f5f3ac0b2d02be9915c6958758fe8ce85da91a84ad7b94f0303214264",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-baseline-cannot-use-absent.log",
@@ -5346,7 +5347,7 @@
       ],
       "bytes": 117,
       "sha256": "24acbbbeb233f99aa2ab15517a0436d879310793195d043c5147c9fe96182fe1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-changed-function-after-pass.log",
@@ -5356,7 +5357,7 @@
       ],
       "bytes": 78,
       "sha256": "ad763dda4042fec3fdcca58177833084046ba395162132e87caf5d73b2a8d8a8",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-current-positive.log",
@@ -5366,7 +5367,7 @@
       ],
       "bytes": 239,
       "sha256": "90fe2ba226df136e87d1991a070c28be0e1e5d58a732c50de9e1cb4cb30031f0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-deleted-replacement-positive.log",
@@ -5376,7 +5377,7 @@
       ],
       "bytes": 239,
       "sha256": "8694dd3d68bc3c580b39fb1ffe8a181fa6af4d8a2a55c935774d5870ae45665c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-deletion-missing-replaces.log",
@@ -5386,7 +5387,7 @@
       ],
       "bytes": 122,
       "sha256": "0b61f0976f50054faf05be0c9419cb5877aa2f90e84ca8a7cffcf4759d013156",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-mutable-reference-rejected.log",
@@ -5396,7 +5397,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-new-file-cannot-use-blob.log",
@@ -5406,7 +5407,7 @@
       ],
       "bytes": 139,
       "sha256": "6fbaa3db902ef14e3d5eeb469f51ef95f9184167f3bd53a49402f2db1e1743f1",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-new-file-no-independent-record.log",
@@ -5416,7 +5417,7 @@
       ],
       "bytes": 147,
       "sha256": "35b957f5e4c29bed25e6033b6076e9898be9f83da0f934d0458e58fd80785658",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-new-file-omitted-final.log",
@@ -5426,7 +5427,7 @@
       ],
       "bytes": 149,
       "sha256": "c3e29c7d9c6d7c3a7dba05ed4fcc2ba5fa19f626d3fe10c367fc9834f78a765f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/closure-record-path-rejected.log",
@@ -5436,7 +5437,7 @@
       ],
       "bytes": 59,
       "sha256": "06fae2223decce8995573d3bde91a28010458d27fb112f424c79a30269808070",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-deleted-replacement-unknown.log",
@@ -5446,7 +5447,7 @@
       ],
       "bytes": 112,
       "sha256": "12b3baf4447432d09cab4ba0508012f313371748d6492791b7836a7bc896e38f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-duplicate-relation.log",
@@ -5456,7 +5457,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-fake-capability.log",
@@ -5466,7 +5467,7 @@
       ],
       "bytes": 47,
       "sha256": "24e2efc6ef35a45dc8375f3d5cba6c5b8ef55998c3597771192a5954a9ff0613",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-pending-positive.log",
@@ -5476,7 +5477,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-region-outside-file.log",
@@ -5486,7 +5487,7 @@
       ],
       "bytes": 118,
       "sha256": "53d60b37a962c342e880674439a1e899234d0c5dbbfa92564c9c85dd173ff89a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-role-not-layer.log",
@@ -5496,7 +5497,7 @@
       ],
       "bytes": 51,
       "sha256": "148f48df2389ca8c6b60f64b835b7672ec36a3b6c9d30759615dca15d47d156e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-stale-build-input.log",
@@ -5506,7 +5507,7 @@
       ],
       "bytes": 91,
       "sha256": "81d8b72bd74d3e4447f7a7365abfd41eada5f01365c0062634406e03b23d5464",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-stale-region.log",
@@ -5516,7 +5517,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-symbol-not-present.log",
@@ -5526,7 +5527,7 @@
       ],
       "bytes": 119,
       "sha256": "2e60471b268457322df156fdcfd18377a7f433996b9abb4da8fbd1793fc87063",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-unapproved-permission.log",
@@ -5536,7 +5537,7 @@
       ],
       "bytes": 38,
       "sha256": "82f4cb98574e989fbd4f85264f50a2087a18ef4e06686c9efb6775444fd8d8e3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/function-unresolved-not-migrated.log",
@@ -5546,7 +5547,7 @@
       ],
       "bytes": 43,
       "sha256": "e8094bb5c029f523b4cc3593c4952d7df4c6db4a2b8e58cdd16f5a34d0c59c28",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-business-construction-rejected.log",
@@ -5556,7 +5557,7 @@
       ],
       "bytes": 127,
       "sha256": "6a04b39e965a8c8f44656c4090d340d2b7b62089c4ebc7d934cf010134169405",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-business-owner-rejected.log",
@@ -5566,7 +5567,7 @@
       ],
       "bytes": 108,
       "sha256": "ec7f43d158696b56f55e4935d77b99948cc74721b00860ea52cb51de079c1d8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-commented-target-rejected.log",
@@ -5576,7 +5577,7 @@
       ],
       "bytes": 127,
       "sha256": "e459f4a0852b2924ec44c43f4ce207abbda3ef632fd1501a21eb9ecb548c6a38",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-HOST-COMPILE-positive.log",
@@ -5586,7 +5587,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-HOST-GATEWAY-positive.log",
@@ -5596,7 +5597,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-HOST-PRESENT-positive.log",
@@ -5606,7 +5607,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-HOST-RENDER-positive.log",
@@ -5616,7 +5617,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-readonly-positive.log",
@@ -5626,7 +5627,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-runtime-owner-positive.log",
@@ -5636,7 +5637,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-shared-state-write-rejected.log",
@@ -5646,7 +5647,7 @@
       ],
       "bytes": 104,
       "sha256": "723d9c4236ec358224e9c9850abfc455c1c757016981a1b7f4dbe5737f88e275",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-stale-source.log",
@@ -5656,7 +5657,7 @@
       ],
       "bytes": 90,
       "sha256": "0cefc9c7f46ddf717aef5a5b43834051b0b44d77ee6c96ea85c1389f593fc65f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-unknown-target-rejected.log",
@@ -5666,7 +5667,7 @@
       ],
       "bytes": 134,
       "sha256": "44dc80f54e2a2d384c7dbcaa993eb5bb6d2608191f8a7bc671826b1267a448a5",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-worker-runtime-borrow-rejected.log",
@@ -5676,7 +5677,7 @@
       ],
       "bytes": 126,
       "sha256": "e2589441052e4e16aeb4124fb66f65687e285c50417051e73b8e0c2b4989333e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/grant-worker-task-private-rejected.log",
@@ -5686,7 +5687,7 @@
       ],
       "bytes": 132,
       "sha256": "67f1dcaf4adacc4b44f7b97ff6bdd07ef1acd827c2a4e652c59be3ebd732866e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/positive-evidence-required.log",
@@ -5696,7 +5697,7 @@
       ],
       "bytes": 36,
       "sha256": "abf1c5b5100da066c4592f5c93cfabe478802e1b0e896601a50709417930b489",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-demo-entry-rejected.log",
@@ -5706,7 +5707,7 @@
       ],
       "bytes": 64,
       "sha256": "d395a251c362570066b0522967a4530f1b10a20c9e5d1d64dfa9db216c0cdd12",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-disconnect-stays-green.log",
@@ -5716,7 +5717,7 @@
       ],
       "bytes": 55,
       "sha256": "7a9da254f69de5f0f4664841275dca5fe9d24b163185b0da919f0fd0a5a0625e",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-empty-xml-shell.log",
@@ -5726,7 +5727,7 @@
       ],
       "bytes": 61,
       "sha256": "16737d28d1fede08b54c24d6e25d011d6b1bb9c26eed2f9a0dc2fc1239602a8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-missing-dependency.log",
@@ -5736,7 +5737,7 @@
       ],
       "bytes": 133,
       "sha256": "004c2eaef5bda9f94ca1739f245010dfe6f3fc8010ab6c6136ce6805c7a5b382",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-mutation-no-change.log",
@@ -5746,7 +5747,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-oracle-failed.log",
@@ -5756,7 +5757,7 @@
       ],
       "bytes": 61,
       "sha256": "f5ffd57b727f9a6cde9046fc8360bab12d1df938800cc8db6ec2468991863bcd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-review-version-fake.log",
@@ -5766,7 +5767,7 @@
       ],
       "bytes": 65,
       "sha256": "2da6b09dc59ade8ceabddb5a936ef9fcdcf3a23eeb1c153b7f9c5478545264fd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-stale-log.log",
@@ -5776,7 +5777,7 @@
       ],
       "bytes": 78,
       "sha256": "ff0584553e1c9eb4c714c7032fed55e0a351058601c4d452e0fa4db2c235c9ed",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-structure-positive.log",
@@ -5786,7 +5787,7 @@
       ],
       "bytes": 239,
       "sha256": "72d755729f08b05d61e23b09f1b508c1c44cde788af53fef7a0e9987b1c8f7a0",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-unverified-capability.log",
@@ -5796,7 +5797,7 @@
       ],
       "bytes": 45,
       "sha256": "a9ff83d59c89ad688e046caf1bf6b3d8f75ea6d20c3a07789ee4c3ecaaf0bde2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-upstream-comparison-failed.log",
@@ -5806,7 +5807,7 @@
       ],
       "bytes": 73,
       "sha256": "1d30234029f05fefefec2462744de73813752beaad8ec38095217e6d84552919",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/production-wrong-mutation-source.log",
@@ -5816,7 +5817,7 @@
       ],
       "bytes": 67,
       "sha256": "e0aa0838c28fb5a307dc2020d6bb0c189967d6860cdd2368d358fd5f0dbf5192",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/proposal-needs-file.log",
@@ -5826,7 +5827,7 @@
       ],
       "bytes": 34,
       "sha256": "a20a9b8aa81b129b8de485e724e50944b12ba863cdc053109b4bc0839ec09de2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/reuse-governance.junit.xml",
@@ -5836,7 +5837,7 @@
       ],
       "bytes": 6057,
       "sha256": "524724ee2a867a5f7a914bd5e1d579fdd44b8979494576b1f3b6bc74b96d3a6c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/reuse-test-report.json",
@@ -5846,7 +5847,7 @@
       ],
       "bytes": 35679,
       "sha256": "330ed7d6abb49738861fe0bc1ec155c574b9b128a46869c7435b4988887da8a4",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-c.log",
@@ -5856,7 +5857,7 @@
       ],
       "bytes": 164,
       "sha256": "9e6828831158b495a9e448fc93eec1f8896fbc7d28d8f573ed60de52d7658566",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-cu.log",
@@ -5866,7 +5867,7 @@
       ],
       "bytes": 165,
       "sha256": "ad006edab5bfbeb1b72ccc800cd19b4fa06241fd8f3665540a1d4119a67df418",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-html.log",
@@ -5876,7 +5877,7 @@
       ],
       "bytes": 167,
       "sha256": "da76768355d72f0797e451829986a43112bb28a6ec40982a4ee492742912d657",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-inc.log",
@@ -5886,7 +5887,7 @@
       ],
       "bytes": 155,
       "sha256": "03fe42b44b4fe97910c12a00d87416392794a45ef2e93041513957dda38a770b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-inl.log",
@@ -5896,7 +5897,7 @@
       ],
       "bytes": 166,
       "sha256": "7ceef7842b60f0394b750c9a583ac2c8dabb940f6d77895f10d636d1c5a172b2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-ipp.log",
@@ -5906,7 +5907,7 @@
       ],
       "bytes": 166,
       "sha256": "8c21da5aabcceaef57d70cc8a87e2c4c7a40616d02ecd6bf257dd48b51b3da89",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-mjs.log",
@@ -5916,7 +5917,7 @@
       ],
       "bytes": 166,
       "sha256": "45bc3c7b21d3c679252f20db03953801be532de90eebcd3e67a4f448762ef0a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-opaque.log",
@@ -5926,7 +5927,7 @@
       ],
       "bytes": 158,
       "sha256": "7ca72664617ba0db3f0c220f2c1bf364d0621ee66747cd290540ffdbd6459c0a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-ps1.log",
@@ -5936,7 +5937,7 @@
       ],
       "bytes": 166,
       "sha256": "822419a8aa374c8e9ed83177311a252aba73211f6f8bb547fbe52ec7c99d80a6",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-py.log",
@@ -5946,7 +5947,7 @@
       ],
       "bytes": 165,
       "sha256": "c6f563628a4c616a7583ba7bfae60cbc855fb92b39bbd983f48131c8739b1c90",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-tpp.log",
@@ -5956,7 +5957,7 @@
       ],
       "bytes": 166,
       "sha256": "75c0908a265ff49d9627aa3dc60c06360947660caf16558867ba68b980828f9f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/ps7/suffix-ts.log",
@@ -5966,7 +5967,7 @@
       ],
       "bytes": 165,
       "sha256": "f8bdda1195f0222e6ee546516ce89b25e8bd8d8b278423e3ef5cae6938ffcf2f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/validate-docs.log",
@@ -5976,7 +5977,7 @@
       ],
       "bytes": 475,
       "sha256": "f1a0da3a4fca5335f9e501e313d87adb626188ad3a90aade67a5a598ed8d196d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/validate-reuse.log",
@@ -5986,7 +5987,7 @@
       ],
       "bytes": 239,
       "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T22-20261022/validate-task.log",
@@ -5996,7 +5997,167 @@
       ],
       "bytes": 269,
       "sha256": "67455f9e3114324e7fdb7096079684e41e18fb26a14fb94824b330e8914c7e16",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 15202,
+      "sha256": "b83fc53e945808d26be4d57eefc86a0f798148ed24e6858f3667f239a49e2292",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/01-scope-review.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 1781,
+      "sha256": "092579928b76803456000c390c74ef5790f743e7556341d5249b1193ee9b1ed4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/02-scope.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 50347,
+      "sha256": "698cb9084ee682db55fcf801b9519ecebeaabb441c3c8b259344d9d96f7ff8a1",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/03-commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 223,
+      "sha256": "5e6c3e8b0aa0a6b7c433bdb150d34f1c6646f44a983594a18c14b3aff214546b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps51-driver.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 8724,
+      "sha256": "409014af8bc373d46f7a273dd849ba7b1108fda376d25a28bc4711ee925191a8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps51-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 54118,
+      "sha256": "df1526a25551647222d1e8b04c5fc29fa859a16b9f41b55692a13a0eca5c2714",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps51.junit.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 6480,
+      "sha256": "300addedcf4a6d65510d282c3adfaee20418ab00ae68d7c565905a3d3aeaff0b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps7-driver.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 8724,
+      "sha256": "409014af8bc373d46f7a273dd849ba7b1108fda376d25a28bc4711ee925191a8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps7-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 38705,
+      "sha256": "803dac8c94c59cdbe30bbc86aa9bf1dad9b60e4f973b05e7664d08450a39784b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/04-test-ps7.junit.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 6480,
+      "sha256": "300addedcf4a6d65510d282c3adfaee20418ab00ae68d7c565905a3d3aeaff0b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/05-validate-reuse.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 239,
+      "sha256": "b41a5d68c4c7dad8465b5d2521092903d0f8587f81c07ce3ce1bea86cc40bc26",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/06-validate-docs.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 450,
+      "sha256": "036eb8631b0ad5f90f21158a9b1c7c9d18aaad55d8f2573c39f25b838caa883e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/07-ird-gates.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 1450,
+      "sha256": "4b2b6896117b4f1bd84540f766b91a649c092423ab45179e9e91dec08ea0c1d3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/08-fixture-preservation.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 419,
+      "sha256": "e49cb1d1d78a6d7a2300073078ad768b555315884724686809b6e468eb1c1fed",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/09-index-evidence-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 958,
+      "sha256": "f367574530e190a53328e82c4d3b8b92ab708e8aecffb3b95f0fa51c109b1218",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T22-20261024-r1/10-validate-docs-registration.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T22"
+      ],
+      "bytes": 2949,
+      "sha256": "096a92af7d9239e742593998f3d41a44d177f8ae69f7a73f6611c0cacbfc31e1",
+      "lifecycle": "historical"
     },
     {
       "path": "acceptance/GOV-T23-20261024-r1.json",

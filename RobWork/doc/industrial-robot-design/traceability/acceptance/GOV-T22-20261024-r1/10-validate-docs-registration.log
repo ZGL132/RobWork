@@ -1,0 +1,19 @@
+# 复跑命令：pwsh -NoProfile -Command "[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile RobWork/doc/industrial-robot-design/tasks/GOV-T22.json -DeepEvidence"
+# 登记说明：2026-10-24 GOV-T22 r1 收口登记终态门禁——契约置 done、allowedFiles 补 r1 验收记录与证据目录后，文档门禁＋所选契约（validate-task）＋全量复用检查＋全库证据索引（-DeepEvidence）一次通过。
+# 递归口径：本 PASS 读数采集于本 log 正文写入之前（索引按头部占位字节数收录本文件）；正文写入后由其后的 index-evidence 运行收敛，终态以 evidence-index.json 与提交后复跑为准（GOV-T21-20261024-r2/16 号 log 同型口径）。
+REUSE-GOV-SCOPE : GOV-T22 cannot authorize RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261024-r1.json
+[31;1mWrite-Error: [31;1mH1-H6 task reuse contract failed[0m
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=state operations=write-state; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionQuery.cpp : categories=model,state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/reporting/src/ReportCodec.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/Snapshot.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=construct-model; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DPreviewBackend.cpp : categories=model operations=; no permission granted
+REUSE-AD-PENDING : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/HostView3DGateway.cpp : categories=state operations=; no permission granted
+reuse supplement: schema/permission/function evidence checked; functions=1764 closedFiles=1 (semantic review required)
+validate-reuse: PASS governance only; inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399 (not algorithm compliance)
+validate-task: PASS (1 tasks)
+validate-docs: PASS (20 units, 12 trace entries, 404 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, 24214 audited evidence)
