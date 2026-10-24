@@ -259,6 +259,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 开包时在既有任务或其引用说明中写清：文件/符号、业务契约、上游适用来源与被否候选、保留/删除/适配、唯一 owner、数据流、消费者、验证与可引用证据、回滚边界。正式 REUSE 编号先查重；下表 WP 编号只是计划别名。近期任务先细化，后续包临近执行再补可执行契约，不凭 planned 父任务任意改生产。
 
+**WP-12当前精确子包**：[REUSE-T27](../tasks/REUSE-T27.json)惯量特征值、[REUSE-T28](../tasks/REUSE-T28.json)惯量旋转/长方体及获批相对自检已实施待独验，均未将WP-12标完成。后继[REUSE-T29](../tasks/REUSE-T29.json)为实际runtime owner的基座世界数学候选：GAP-BW-EAA-01方案A及第三方表达债务已批，53项runtime/19项直接消费者和3组扰动自查有效；所有者暂不接受本包性能，保持blocked，生产恢复起点，候选见[原始记录](../traceability/reuse/REUSE-T29/README.md)，不计已完成直接迁移。下一动作按依赖选择其他独立直接复用包；WP-12仍余本包性能、DescriptionValidator/DH等，T13仍不放行普通IK/RNE。
+
 ### 13.2 交接索引与已知阻断
 
 交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。

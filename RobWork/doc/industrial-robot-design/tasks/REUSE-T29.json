@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T29",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "基座世界数学直接复用及旋转矢量值适配",
+  "status": "blocked",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-22",
+    "DYN-01",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/runtime.md#6",
+    "reuse/migration.md#13.3",
+    "reuse/extensions/GAP-BW-EAA-01.md"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T29.json"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T29.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-BW-EAA-01.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "删除手写旋转/向量乘法、刚体组合/逆及Rodrigues和行列式核心，真实消费RobWork公开值API；有限性、预设精确矩阵、原1e-9/1e-12和错误语义不变",
+    "GAP-BW-EAA-01方案A已由所有者批准：已有Eigen::AngleAxisd单点适配到RobWork Rotation3D；来源/摘要与第三方catalog表达债务如实登记，不改上游/依赖渠道",
+    "独立解析/非交换变换/小角/阈值边界、真实生产返回值扰动、直接消费者/性能/必要冒烟；无预算退化须单项接受，独验NOT RUN不得done"
+  ],
+  "note": "migration §13 WP-12基座世界子项，实际owner runtime、DTB WP-A；起点ea8ac53baa8923d93c6233ca88db77f8e8778291。删除重复数学helper，保留产品预设/一致性/诊断/公共API；无模型owner/State/cache变更。WP-04/07仍受T13模型真值独验阻断，本包纯值不依赖该映射。GAP-BW-EAA-01方案A及明确保留第三方来源表达债务已批准；不得恢复EAA补丁或推广T11局部1e-6。WP-12仍余DH/DescriptionValidator等定向候选；实施待独验不等于WP完成。 已形成候选并自查53passed/0failed/0skipped、modeling直接消费19passed/0failed/0skipped，3组扰动各1failed。所有者暂不接受本包6场景性能，保留BLOCKED；生产/测试已恢复起点，仅保存隔离候选及证据，不计迁移完成、独验NOT RUN。性能候选/预算由后续实施与所有者处置，不自行放宽。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "未落地候选与真实正确性/生产扰动/性能证据",
+    "原生产恢复、性能阻断与责任明确，不标migrated/done"
+  ]
+}

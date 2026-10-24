@@ -1,0 +1,45 @@
+Note: Google Test filter = BaseWorldReuse.RationalTransformConsumers_REUSE_T29
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from BaseWorldReuse
+[ RUN      ] BaseWorldReuse.RationalTransformConsumers_REUSE_T29
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(848): error: The difference between forward[i] and world[i] is 1, which exceeds 1e-12, where
+forward[i] evaluates to 5,
+world[i] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(848): error: The difference between backward[i] and point[i] is 1, which exceeds 1e-12, where
+backward[i] evaluates to 2,
+point[i] evaluates to 1, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(849): error: The difference between composed.P()[i] and world[i] is 1, which exceeds 1e-12, where
+composed.P()[i] evaluates to 5,
+world[i] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(849): error: The difference between inv.P()[i] and inverseP[i] is 0.99999999999999956, which exceeds 1e-12, where
+inv.P()[i] evaluates to 4.6666666666666661,
+inverseP[i] evaluates to 3.6666666666666665, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(850): error: The difference between gravity[i] and gravityP[i] is 1, which exceeds 1e-12, where
+gravity[i] evaluates to 7,
+gravityP[i] evaluates to 6, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(850): error: The difference between composed.P()[i] and upstream.P()[i] is 1, which exceeds 1e-12, where
+composed.P()[i] evaluates to 5,
+upstream.P()[i] evaluates to 4, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+[  FAILED  ] BaseWorldReuse.RationalTransformConsumers_REUSE_T29 (0 ms)
+[----------] 1 test from BaseWorldReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] BaseWorldReuse.RationalTransformConsumers_REUSE_T29
+
+ 1 FAILED TEST

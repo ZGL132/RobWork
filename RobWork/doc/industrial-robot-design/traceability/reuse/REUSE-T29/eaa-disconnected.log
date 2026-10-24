@@ -1,0 +1,61 @@
+Note: Google Test filter = BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from BaseWorldReuse
+[ RUN      ] BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29单轴独立解析 元素(2,1) 实测 0 期望 1e-08
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(818): error: Value of: checkWorldBaseTransform(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0), actual)).has_value()
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29单轴独立解析 元素(2,1) 实测 0 期望 4.9999999999997912e-07
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(818): error: Value of: checkWorldBaseTransform(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0), actual)).has_value()
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29单轴独立解析 元素(2,1) 实测 0 期望 9.999999999998333e-07
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(818): error: Value of: checkWorldBaseTransform(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0), actual)).has_value()
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29普通角上游对照 元素(2,1) 实测 0 期望 9.999999999998333e-07
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29单轴独立解析 元素(2,1) 实测 0 期望 0.29552020666133955
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(818): error: Value of: checkWorldBaseTransform(rw::math::Transform3D<double>(rw::math::Vector3D<double>(0,0,0), actual)).has_value()
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\BaseWorldTransformTest.cpp(118): error: Value of: core::closeWithin(actual(i, j), expected(i, j), tol)
+  Actual: false
+Expected: true
+T29普通角上游对照 元素(2,1) 实测 0 期望 0.29552020666133955
+
+[  FAILED  ] BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29 (0 ms)
+[----------] 1 test from BaseWorldReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] BaseWorldReuse.TinyAngleAndAxisOracle_REUSE_T29
+
+ 1 FAILED TEST

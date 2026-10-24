@@ -1,0 +1,23 @@
+perf.cpp
+perf-old.cpp
+perf-new.cpp
+正在生成代码...
+MSVC /O2 /MD /DNDEBUG EIGEN_DONT_ALIGN_STATICALLY=1; extracted exact functions, separate TUs; 200000/case,10000warmup; us/call; alternating order
+round=1 scene=0 old=0.01774850 new=0.02250300 ratio=1.2679 checksum=2200000.9999175156
+round=1 scene=1 old=0.01830500 new=0.02351350 ratio=1.2845 checksum=-200001.6665316144
+round=1 scene=2 old=0.00860700 new=0.01239750 ratio=1.4404 checksum=654001.6665316380
+round=1 scene=3 old=0.02480600 new=0.02666800 ratio=1.0751 checksum=1909977.4279703891
+round=1 scene=4 old=0.01531000 new=0.02802300 ratio=1.8304 checksum=3000000.0040042219
+round=1 scene=5 old=0.02222050 new=0.02466600 ratio=1.1101 checksum=400000.0000000000
+round=2 scene=0 old=0.02224550 new=0.02486050 ratio=1.1176 checksum=2200000.9999175156
+round=2 scene=1 old=0.01725800 new=0.02407350 ratio=1.3949 checksum=-200001.6665316144
+round=2 scene=2 old=0.00738950 new=0.01070600 ratio=1.4488 checksum=654001.6665316380
+round=2 scene=3 old=0.02246000 new=0.02569000 ratio=1.1438 checksum=1909977.4279703891
+round=2 scene=4 old=0.01576350 new=0.02448850 ratio=1.5535 checksum=3000000.0040042219
+round=2 scene=5 old=0.02201750 new=0.02334250 ratio=1.0602 checksum=400000.0000000000
+round=3 scene=0 old=0.02349400 new=0.02458650 ratio=1.0465 checksum=2200000.9999175156
+round=3 scene=1 old=0.01929950 new=0.02146100 ratio=1.1120 checksum=-200001.6665316144
+round=3 scene=2 old=0.00845900 new=0.01235900 ratio=1.4610 checksum=654001.6665316380
+round=3 scene=3 old=0.02249200 new=0.02334700 ratio=1.0380 checksum=1909977.4279703891
+round=3 scene=4 old=0.01347400 new=0.02526450 ratio=1.8751 checksum=3000000.0040042219
+round=3 scene=5 old=0.01922250 new=0.02276700 ratio=1.1844 checksum=400000.0000000000

@@ -1,0 +1,4 @@
+@echo off
+call "D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat" >nul
+pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label final -Filter PresetRotationTest.*:CustomEaaTest.*:ResolveTest.*:ValidateTest.*:PresetConsistencyTest.*:InverseAndPointTest.*:ComposeTest.*:BaseMountConsistencyTest.*:BaseWorldReuse.*:WorkCellCompilerTest.*RT_BW_4:WorkCellCompilerTest.FixedSceneFrameKeepsWorldPoseWhenInverted_MDL15_AT28_AT37:WorkCellCompilerTest.PrismaticOffsetUnitsAndWorldAxes_REUSE_T13_RT_EQ_1:CompilerTest.InvertedPresetResolvedIntoWorldTransform_S5Assembly:SnapshotTest.CreatePublishesSnapshotFields_RT_T09:SnapshotTest.ConcurrentReadOnlyView_RT_SNAP_1
+exit /b %errorlevel%

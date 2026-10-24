@@ -1,0 +1,53 @@
+Note: Google Test filter = MdlBasePlacementEdit.*:MdlRobotDesign.IMdl7*:MdlTemplate.CreateDraft*:MdlTemplate.SixAxisDefaults*
+[==========] Running 19 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlRobotDesign
+[ RUN      ] MdlRobotDesign.IMdl7_BasePlacementCustom_WP13T03_ACC3
+[       OK ] MdlRobotDesign.IMdl7_BasePlacementCustom_WP13T03_ACC3 (0 ms)
+[----------] 1 test from MdlRobotDesign (0 ms total)
+
+[----------] 7 tests from MdlTemplate
+[ RUN      ] MdlTemplate.CreateDraft_Generic6R_WorkingSetInvariants_WP13T07_ACC1
+[       OK ] MdlTemplate.CreateDraft_Generic6R_WorkingSetInvariants_WP13T07_ACC1 (0 ms)
+[ RUN      ] MdlTemplate.CreateDraft_IllegalInputs_WP13T07_ACC1
+[       OK ] MdlTemplate.CreateDraft_IllegalInputs_WP13T07_ACC1 (0 ms)
+[ RUN      ] MdlTemplate.CreateDraft_DeterministicTempHandles_WP13T07_ACC1
+[       OK ] MdlTemplate.CreateDraft_DeterministicTempHandles_WP13T07_ACC1 (0 ms)
+[ RUN      ] MdlTemplate.CreateDraft_Generic7R_DisabledBlocked_WP13T07_ACC2
+[       OK ] MdlTemplate.CreateDraft_Generic7R_DisabledBlocked_WP13T07_ACC2 (0 ms)
+[ RUN      ] MdlTemplate.SixAxisDefaults_TableValues_WP13T07_ACC3
+[       OK ] MdlTemplate.SixAxisDefaults_TableValues_WP13T07_ACC3 (0 ms)
+[ RUN      ] MdlTemplate.SixAxisDefaults_J6TravelAtThresholdBoundary_WP13T07_ACC3
+[       OK ] MdlTemplate.SixAxisDefaults_J6TravelAtThresholdBoundary_WP13T07_ACC3 (0 ms)
+[ RUN      ] MdlTemplate.CreateDraft_JointFieldsFromTable_WP13T07_ACC3
+[       OK ] MdlTemplate.CreateDraft_JointFieldsFromTable_WP13T07_ACC3 (0 ms)
+[----------] 7 tests from MdlTemplate (0 ms total)
+
+[----------] 11 tests from MdlBasePlacementEdit
+[ RUN      ] MdlBasePlacementEdit.ApplyThreePresetsAndPosition_WP13T11_ACC1_V13
+[       OK ] MdlBasePlacementEdit.ApplyThreePresetsAndPosition_WP13T11_ACC1_V13 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.ApplyCustomEaaEdit_WP13T11_ACC1_V13
+[       OK ] MdlBasePlacementEdit.ApplyCustomEaaEdit_WP13T11_ACC1_V13 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.PresetTokenVocabularyIsRuntimeEnum_WP13T11_ACC1
+[       OK ] MdlBasePlacementEdit.PresetTokenVocabularyIsRuntimeEnum_WP13T11_ACC1 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.AtomicPersistenceViaApplyRobotDesign_WP13T11_ACC1_V13
+[       OK ] MdlBasePlacementEdit.AtomicPersistenceViaApplyRobotDesign_WP13T11_ACC1_V13 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.DefaultGroundTemplatePath_WP13T11_ACC2_V15_04
+[       OK ] MdlBasePlacementEdit.DefaultGroundTemplatePath_WP13T11_ACC2_V15_04 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.DefaultGroundImportPath_WP13T11_ACC2_V15_04
+[       OK ] MdlBasePlacementEdit.DefaultGroundImportPath_WP13T11_ACC2_V15_04 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.IMdl7IllegalCombinationsRejected_WP13T11_ACC2
+[       OK ] MdlBasePlacementEdit.IMdl7IllegalCombinationsRejected_WP13T11_ACC2 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.Prt4PresetAxisSingleAuthority_WP13T11_ACC3
+[       OK ] MdlBasePlacementEdit.Prt4PresetAxisSingleAuthority_WP13T11_ACC3 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.SingleFieldCompileIntoRWorldBase_WP13T11_ACC4
+[       OK ] MdlBasePlacementEdit.SingleFieldCompileIntoRWorldBase_WP13T11_ACC4 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37
+[       OK ] MdlBasePlacementEdit.EulerCompilesAndCodecRoundTrips_MDL22_AT37 (0 ms)
+[ RUN      ] MdlBasePlacementEdit.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37
+[       OK ] MdlBasePlacementEdit.EulerInvalidAndAmbiguousAreAtomic_MDL22_AT37 (0 ms)
+[----------] 11 tests from MdlBasePlacementEdit (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 19 tests from 3 test suites ran. (2 ms total)
+[  PASSED  ] 19 tests.
