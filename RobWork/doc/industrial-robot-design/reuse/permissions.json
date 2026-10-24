@@ -201,7 +201,7 @@
    "usageRole": "adapter",
    "build": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
   },
   {
@@ -226,7 +226,7 @@
    "usageRole": "adapter",
    "build": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
   },
   {
@@ -251,7 +251,7 @@
    "usageRole": "adapter",
    "build": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
   }
  ]

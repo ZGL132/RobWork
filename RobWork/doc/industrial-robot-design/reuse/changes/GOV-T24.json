@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "GOV-T24",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/GOV-T24.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+      "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "GOV-T24/WP-01 上游链接重接线：三局部变量选名（_ird_kin_rw_*，静态扫描按字面 token 判未知目标族）改条件分支显式合法目标——集成分支 sdurw_math/sdurw_kinematics/sdurw_models 三目标名不变（集成链接面零变化），冒烟分支 sdurw_math/sdurw_models 同名 ALIAS（drivetrain/modeling 先例）＋RW::sdurw_models 接口传递覆盖 sdurw_kinematics（不建 sdurw_kinematics 冒烟别名——集成判定符）；IRD-GATE-LIB 阻断消除，门禁代码/词表零改动；无数值核心",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/govt24-wp01-20261024/gate-engine-postfix.log"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "sha256": "17fc2ff5707f6c670859eceba26f9776077bed84210d2a77c813234b0633d0e9",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "GOV-T24/WP-01 冒烟供给前置绑定（core＝add_subdirectory 序首单元，尾插段先于 modeling/kinematics/drivetrain 的 find_package(RobWork) 执行）：find_package(Threads REQUIRED)＋synchronization 空 INTERFACE 目标——RobWorkConfig 配置期验证器（RW_verify_library，NO_DEFAULT_PATH）解析不了 vcpkg Boost 1.92 Boost::atomic 接口裸名 synchronization（boost_atomic.dll 实际零该导入）与未定义 Threads::Threads 而误判 sdurw 元库 not found；消费侧零链接语义变化，集成模式经 NOT TARGET sdurw_math 守卫整体跳过零影响；无数值核心",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/govt24-wp01-20261024/rwprobe-prebound-configure-ok.log"
+    }
+  ]
+}

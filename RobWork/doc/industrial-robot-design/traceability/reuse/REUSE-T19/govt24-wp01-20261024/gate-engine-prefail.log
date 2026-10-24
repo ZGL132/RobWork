@@ -1,0 +1,32 @@
+IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_math}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_kinematics}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_models}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] 自测 pass_clean：干净夹具通过（无误报）
+[ird_gates] 自测 pass_perf_targets：干净夹具通过（无误报）
+[ird_gates] 自测 pass_perf_registered_edge：干净夹具通过（无误报）
+[ird_gates] 自测 pass_openbench_worker：干净夹具通过（无误报）
+[ird_gates] 自测 fail_perf_unregistered：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_openbench_testkit：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_perf_lookalike：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 pass_r4comment：干净夹具通过（无误报）
+[ird_gates] 自测 pass_r4cliff：干净夹具通过（无误报）
+[ird_gates] 自测 fail_r4cliff：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_r1：按预期检出 IRD-GATE-R1
+[ird_gates] 自测 fail_t1：按预期检出 IRD-GATE-T1
+[ird_gates] 自测 fail_r5：按预期检出 IRD-GATE-R5
+[ird_gates] 自测 fail_sub：按预期检出 IRD-GATE-SUB
+[ird_gates] 自测 fail_r3：按预期检出 IRD-GATE-R3
+[ird_gates] 自测 fail_r4：按预期检出 IRD-GATE-R4
+[ird_gates] 自测 fail_t2：按预期检出 IRD-GATE-T2
+==============================================================
+[ird_gates] 扫描根：D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot
+[ird_gates] 命中 3 项：
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_math}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_kinematics}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+[ird_gates] IRD-GATE-LIB: 目标 sdurws_ird_kinematics 链接未知目标族 ${_ird_kin_rw_models}（不在 ird/框架基线/gtest 词表；如属第三方新增依赖，先登记 DTB 再扩词表）
+==============================================================
+CMake Error at RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake:1061 (message):
+  [ird_gates] 依赖红线/补丁门禁存在 3 处命中——按 ARCH §3.2
+  SA-10 判构建失败；例外只经 DTB §4.5 登记册
+
+

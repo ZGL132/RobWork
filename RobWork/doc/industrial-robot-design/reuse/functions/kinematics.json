@@ -34,7 +34,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -71,7 +71,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -108,7 +108,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -145,7 +145,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -182,7 +182,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -219,7 +219,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -256,7 +256,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -293,7 +293,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -330,7 +330,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -367,7 +367,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -404,7 +404,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -441,7 +441,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -478,7 +478,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -515,7 +515,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -552,7 +552,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -589,7 +589,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -626,7 +626,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
@@ -667,7 +667,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -704,7 +704,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
@@ -742,7 +742,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "nonOverlapEvidence": {
@@ -787,7 +787,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "nonOverlapEvidence": {
@@ -832,7 +832,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "nonOverlapEvidence": {
@@ -877,7 +877,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -937,7 +937,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -996,7 +996,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1055,7 +1055,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1114,7 +1114,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1169,7 +1169,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1228,7 +1228,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1287,7 +1287,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1329,8 +1329,8 @@
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
      "symbol": "ird_add_gtest",
      "qualifiedSymbol": "ird_add_gtest",
-     "startLine": 544,
-     "endLine": 556,
+     "startLine": 570,
+     "endLine": 582,
      "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
     }
    ],
@@ -1348,11 +1348,11 @@
     "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
     "conclusion": "构建注册宏区段随 REUSE-T19 行号刷新；目标注册/报告机制不变（business-specific——零上游重叠）"
    },
-   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T19：区段行号随上游链接段插入刷新（544-556），内容逐字节未变。",
+   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T19：区段行号随上游链接段插入刷新（内容逐字节未变）；GOV-T24：上游链接段重接线使区段随行刷新至 570-582，宏内容仍逐字节未变。",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditEvidence": [
@@ -1380,7 +1380,7 @@
    "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
    "nonOverlapEvidence": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
   },
   {
@@ -1415,7 +1415,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     },
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
@@ -1474,7 +1474,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     },
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
@@ -1533,7 +1533,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     },
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
@@ -1592,7 +1592,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     },
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
@@ -1651,7 +1651,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
@@ -1663,7 +1663,7 @@
    },
    "evidence": {
     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
-    "sha256": "43bb75c6d06de9e298e37fc11fe7aa6dc2ab3126f9139f32e33912dc0231ec1b"
+    "sha256": "7fd466a8928f64665ba95f5c9069f3a097c9efa0fbfaa67ab4ea1b7fcaa623d1"
    }
   },
   {
@@ -1698,7 +1698,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
@@ -1739,7 +1739,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
@@ -1780,7 +1780,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
@@ -1821,7 +1821,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
@@ -1862,7 +1862,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
@@ -1903,7 +1903,7 @@
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
@@ -1924,8 +1924,8 @@
      "symbol": "ird_add_gtest",
      "qualifiedSymbol": "sdurws::ird::kinematics::CMake.UpstreamLinks",
      "startLine": 1,
-     "endLine": 736,
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "endLine": 762,
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "targets": [
@@ -1940,19 +1940,19 @@
    "status": "migrated",
    "search": {
     "command": "rg -n \"find_package\\(RobWork|RW::sdurw|IRD_HAVE_RUNTIME_COMPILE\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
-    "conclusion": "REUSE-T07/T12 先例同机制：集成链真实 sdurw_math/kinematics/models 目标，冒烟 find_package(RobWork CONFIG)→RW:: 导出包（绝不源码复制/备用算法，绝不建 sdurw_kinematics 冒烟别名——集成判定依赖该名）；FkTest/KinP4FlowsTest/PoseMetricsContract 移入集成块（真实编译产物依赖），IRD_HAVE_RUNTIME_COMPILE 定义随集成树注入"
+    "conclusion": "REUSE-T07/T12 先例同机制：集成链真实 sdurw_math/kinematics/models 目标，冒烟 find_package(RobWork CONFIG)→RW:: 导出包（绝不源码复制/备用算法，绝不建 sdurw_kinematics 冒烟别名——集成判定依赖该名）；FkTest/KinP4FlowsTest/PoseMetricsContract 移入集成块（真实编译产物依赖），IRD_HAVE_RUNTIME_COMPILE 定义随集成树注入；GOV-T24：三局部变量选名改条件分支显式合法目标（集成分支三目标名不变；冒烟经 sdurw_math/sdurw_models 同名 ALIAS＋RW::sdurw_models 接口传递覆盖 sdurw_kinematics），IRD-GATE-LIB 阻断消除、门禁零改动"
    },
-   "differences": "Fk.cpp 消费上游框架符号的两模式链接承载；FK 用例 gating 边界（冒烟树无 runtime 编译器）",
+   "differences": "Fk.cpp 消费上游框架符号的两模式链接承载；FK 用例 gating 边界（冒烟树无 runtime 编译器）；GOV-T24 重接线＝静态可核查链接面（两模式字面名均在门禁已知目标族）",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
    "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
    "nonOverlapEvidence": {
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "d00d30f071fe096e29a95cf05ce8ae54f1300d0292df0a74fd5a77ab033f97b3"
+    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
   }
  ]

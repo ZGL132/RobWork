@@ -248,36 +248,62 @@ target_link_libraries(sdurws_ird_kinematics PUBLIC
 # PRIVATE 不进接口面）。
 target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
 
-# ---- 上游 FK/Jacobian 消费（REUSE-T18）----
+# ---- 上游 FK/Jacobian 消费（REUSE-T18；GOV-T24/WP-01 重接线）----
 # src/Fk.cpp 经 T17 锚能力入口（runtimeModelView→已编译 WorkCell＋任务私有
 # State）消费上游真实计算：rw::models::Device::setQ/baseTframe/baseJframe、
 # rw::math::LinearAlgebra::svd——直接 API 复用（H1），不持第二套链式 FK/
 # 几何雅可比/SVD 实现（H2 禁平行实现）。集成模式复用现有框架目标；独立
 # 冒烟经 RobWork 导出包（RW:: 目标）消费同一上游——REUSE-T07/T12 先例，
-# 绝不源码复制/备用算法。★ 禁止建立名为 sdurw_kinematics 的冒烟别名：
-# runtime/kinematics/policy 等单元以"TARGET sdurw_kinematics"作集成模式
-# 判定，该目标名必须只在集成配置树存在（下列探测对单元配置序鲁棒——
-# drivetrain 先行的 sdurw_math 别名与导出包并存均正确解析）。
-if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
-    find_package(RobWork CONFIG REQUIRED)
-endif()
-if(TARGET sdurw_math)
-    set(_ird_kin_rw_math sdurw_math)
-else()
-    set(_ird_kin_rw_math RW::sdurw_math)
-endif()
+# 绝不源码复制/备用算法。
+# GOV-T24/WP-01：原"三局部变量选名"写法（set _ird_kin_rw_* 后统一
+# target_link_libraries）被 ird_gates 第 1 步文本级解析按字面 token
+# ${_ird_kin_rw_*} 判为未知目标族（IRD-GATE-LIB 三命中——静态扫描不展开
+# 变量，实际链接成功不代替门禁通过，见 REUSE-T19/integration-20261024/
+# a-build.log）。改为条件分支显式合法目标名链接（门禁代码/词表零改动）：
+#   - 集成分支＝sdurw_math/sdurw_kinematics/sdurw_models 三真实目标，
+#     与原变量解析结果逐字相同（集成链接面零变化）；
+#   - 冒烟分支＝sdurw_math/sdurw_models 两同名 ALIAS（modeling REUSE-T07
+#     ／drivetrain REUSE-T12 既有先例形态）；sdurw_kinematics 不单列——
+#     ★ 禁止建立名为 sdurw_kinematics 的冒烟别名（runtime/policy/
+#     trajectory/dynamics/optimization/ui/modeling/requirements 与本文件
+#     均以"TARGET sdurw_kinematics"作集成模式判定，该目标名必须只在集成
+#     配置树存在），其符号经 RW::sdurw_models 的 INTERFACE_LINK_LIBRARIES
+#     传递到达（导出包 targets/sdurw_models.cmake 原生携带 RW::sdurw_
+#     kinematics/RW::sdurw_math），链接面语义等价且字面名全部落在门禁
+#     已知目标族（^sdurw）内。
 if(TARGET sdurw_kinematics)
-    set(_ird_kin_rw_kinematics sdurw_kinematics)
+    target_link_libraries(sdurws_ird_kinematics PRIVATE
+        sdurw_math sdurw_kinematics sdurw_models)
 else()
-    set(_ird_kin_rw_kinematics RW::sdurw_kinematics)
+    # 冒烟分支（集成判定符＝TARGET sdurw_kinematics 只在集成配置树存在，
+    # 与 runtime/policy 等单元同款口径）：导出包加载守卫沿用 modeling
+    # （add_subdirectory 序先于本单元——供给前置绑定统一落 core/
+    # CMakeLists.txt 首单元尾段〔Threads/synchronization＋
+    # VCPKG_OVERRIDE_FIND_PACKAGE_NAME 配置参数〕，见 REUSE-T19/
+    # govt24-wp01-20261024/ 探针证据）既有形态；本单元自持同款守卫，
+    # 单元配置序变化亦正确解析。
+    if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    if(NOT TARGET sdurw_math)
+        # 导出目标仅加同名别名，保持两模式的可静态核查链接面，不包装构建
+        # 基础（modeling REUSE-T07 同款注释口径）。
+        add_library(sdurw_math ALIAS RW::sdurw_math)
+    endif()
+    if(NOT TARGET sdurw_models)
+        add_library(sdurw_models ALIAS RW::sdurw_models)
+    endif()
+    # sdurw_math 用 PUBLIC：集成模式下本库消费者（plugin/测试——公共头含
+    # rw/math 类型）经 runtime 的 PUBLIC 框架链获得上游 include 面；冒烟
+    # 模式 runtime 无框架链（TARGET sdurw_kinematics 判定为假），由本库
+    # 直接对外供给同一接口面（RW::sdurw_math 的 INTERFACE 携带 src 头＋
+    # 经 sdurw_core→Boost::headers 的 boost 头——rw/math/Q.hpp 的序列化
+    # 头依赖由此可达；trajectory/optimization 冒烟分支手工加头路径为先例，
+    # 此处复用导出包接口面不加手写路径）。sdurw_models 保持 PRIVATE——
+    # 仅符号链接，无向下游传播的用法需求。
+    target_link_libraries(sdurws_ird_kinematics PUBLIC sdurw_math)
+    target_link_libraries(sdurws_ird_kinematics PRIVATE sdurw_models)
 endif()
-if(TARGET sdurw_models)
-    set(_ird_kin_rw_models sdurw_models)
-else()
-    set(_ird_kin_rw_models RW::sdurw_models)
-endif()
-target_link_libraries(sdurws_ird_kinematics PRIVATE
-    ${_ird_kin_rw_math} ${_ird_kin_rw_kinematics} ${_ird_kin_rw_models})
 
 # ---- Qt6 接入（WP-15-T12——插件目标的 Qt 载体面，R-3 唯一例外面）----
 # 仅插件目标与 harness 消费 Qt（卡 §3.2"_plugin 落位（Widgets，AUTOMOC，

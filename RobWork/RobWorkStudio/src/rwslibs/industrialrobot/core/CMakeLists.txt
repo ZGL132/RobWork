@@ -178,3 +178,30 @@ foreach(_lib IN LISTS _ird_core_link_libs _ird_core_iface_libs)
             "发现 ${_lib}（ARCHITECTURE §3.2）")
     endif()
 endforeach()
+
+# ---- 冒烟 RobWork 导出包供给前置绑定（GOV-T24/WP-01）----
+# 本单元是 add_subdirectory 序中首个被处理的单元——此前置绑定先于一切消费
+# RobWork 导出包的单元（modeling/kinematics/drivetrain 的 find_package
+# (RobWork CONFIG REQUIRED)）执行。两重环境适配（探针复现与修复证据：
+# traceability/reuse/REUSE-T19/govt24-wp01-20261024/）：
+#   1. RobWorkConfig 的 rw_find_components→RW_verify_library 配置期验证在
+#      find_library(... NO_DEFAULT_PATH) 下解析不了 vcpkg Boost 1.92 的
+#      Boost::atomic 接口裸名 synchronization（boost_atomic.dll 实际零该
+#      导入——同步原语经 Kernel32；集成树链接期由 Windows SDK 的
+#      synchronization.lib 顺带解析）与尚未定义的 Threads::Threads，递归
+#      判定 sdurw 元库"Looking for sdurw - not found"而配置失败；
+#   2. 冒烟配置须带 VCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package
+#      参数（vcpkg 拦截宏对 RobWorkConfig 内 find_package(Boost ...
+#      HINTS "C:\local") 的再展开存在转义崩溃——T07 既有参数先例）。
+# 此处以真实 Threads 目标＋空接口目标显式承载 synchronization 名字
+# （消费侧零链接语义变化）。守卫＝两模式判定的标准形态：集成树
+# sdurw_math 真实目标存在即整体跳过，集成模式零影响。GLOBAL＝IMPORTED
+# 目标默认仅本目录及子目录可见，后续兄弟单元的 find_package(RobWork)
+# 验证链在同层目录解析该名字，须全局可见（Threads::Threads 由现代
+# find 模块建为 GLOBAL，同因）。
+if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+    find_package(Threads REQUIRED)
+    if(NOT TARGET synchronization)
+        add_library(synchronization INTERFACE IMPORTED GLOBAL)
+    endif()
+endif()
