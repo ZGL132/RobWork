@@ -1,0 +1,27 @@
+Note: Google Test filter = OptPareto.*
+[==========] Running 9 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 9 tests from OptPareto
+[ RUN      ] OptPareto.DominatesStrictZeroTolerance
+[       OK ] OptPareto.DominatesStrictZeroTolerance (0 ms)
+[ RUN      ] OptPareto.DominatesToleranceExplicitConfig
+[       OK ] OptPareto.DominatesToleranceExplicitConfig (0 ms)
+[ RUN      ] OptPareto.DominatesMaxDirectionAndToleranceReference
+[       OK ] OptPareto.DominatesMaxDirectionAndToleranceReference (0 ms)
+[ RUN      ] OptPareto.BuildFrontStableOrderInputOrderIndependent
+[       OK ] OptPareto.BuildFrontStableOrderInputOrderIndependent (0 ms)
+[ RUN      ] OptPareto.BuildFrontDedupKeepsFirstOccurrence
+[       OK ] OptPareto.BuildFrontDedupKeepsFirstOccurrence (0 ms)
+[ RUN      ] OptPareto.BuildFrontLayeredRanksCascade
+[       OK ] OptPareto.BuildFrontLayeredRanksCascade (0 ms)
+[ RUN      ] OptPareto.DefaultZeroToleranceKeepsFloatTotalOrder
+[       OK ] OptPareto.DefaultZeroToleranceKeepsFloatTotalOrder (0 ms)
+[ RUN      ] OptPareto.BuildFrontRejectsContractViolations
+[       OK ] OptPareto.BuildFrontRejectsContractViolations (0 ms)
+[ RUN      ] OptPareto.BuildFrontDeterministicAndBaselineFlag
+[       OK ] OptPareto.BuildFrontDeterministicAndBaselineFlag (0 ms)
+[----------] 9 tests from OptPareto (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 9 tests.

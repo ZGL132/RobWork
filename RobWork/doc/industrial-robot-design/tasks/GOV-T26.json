@@ -43,7 +43,7 @@
     "引用原语料，以真实Python Fraction核数值、正常路径不变及异常/性能风险，原始输入摘要与命令可复核",
     "R3私有Boost范围、第三方表达及最终生产性能未经批准不得实施或关闭F-966；独验另行安排"
   ],
-  "note": "主工作树redesign-main串行、本地提交、不操作远程；本轮起点0a091394b9466c3fa7521d34162b1c8b64a843c4。仅按WP-10批准前边界修提案并隔离验证，不批准新核心、上游修改或产品依赖。R3固定128位乘积/4224位加减复用既有Boost；22831组自查通过，独验NOT RUN，生产/Q/消费者回归NOT RUN且未修改；最终生产适配、私有依赖及第三方表达待所有者裁决。status ready表示提案自查完成待裁决，不表示产品修复完成。",
+  "note": "主工作树redesign-main串行、本地提交、不操作远程；本轮起点0a091394b9466c3fa7521d34162b1c8b64a843c4。仅按WP-10批准前边界修提案并隔离验证，不批准新核心、上游修改或产品依赖。R3固定128位乘积/4224位加减复用既有Boost；22831组自查通过，独验NOT RUN，生产/Q/消费者回归NOT RUN且未修改；最终生产适配、私有依赖及第三方表达待所有者裁决。status ready表示提案自查完成待裁决，不表示产品修复完成。 所有者已明确批准R3有界实施、最终性能另验；批准对象2136a89d5中提案规范SHA256=7c5d1ec99982215bffc1b41b21988e884b60c69499c7ccbccf36e6e64bc55f06。产品实施另归REUSE-T21；本治理契约不替代产品验收。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",

@@ -1,0 +1,110 @@
+Note: Google Test filter = TimeParam*.*:TrjContinuity.*
+[==========] Running 31 tests from 14 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from TrjContinuity
+[ RUN      ] TrjContinuity.CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1
+[       OK ] TrjContinuity.CartesianIkContinuityApplicabilityDualPath_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.BoundaryContinuousApproachToRetract_WP16T05_ACC1
+[       OK ] TrjContinuity.BoundaryContinuousApproachToRetract_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1
+[       OK ] TrjContinuity.BoundaryBrokenYieldsComparativeMaterial_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.JointBoundaryNotApplicable_WP16T05_ACC1
+[       OK ] TrjContinuity.JointBoundaryNotApplicable_WP16T05_ACC1 (0 ms)
+[ RUN      ] TrjContinuity.CheckRejectsContractViolations_WP16T05_ACC1
+[       OK ] TrjContinuity.CheckRejectsContractViolations_WP16T05_ACC1 (0 ms)
+[----------] 5 tests from TrjContinuity (0 ms total)
+
+[----------] 4 tests from TimeParamGoldenTest
+[ RUN      ] TimeParamGoldenTest.TwoPointRestToRestProfile
+[       OK ] TimeParamGoldenTest.TwoPointRestToRestProfile (0 ms)
+[ RUN      ] TimeParamGoldenTest.C2KnotMatchCentralDifference
+[       OK ] TimeParamGoldenTest.C2KnotMatchCentralDifference (0 ms)
+[ RUN      ] TimeParamGoldenTest.DwellConstantZeroDerivatives
+[       OK ] TimeParamGoldenTest.DwellConstantZeroDerivatives (1 ms)
+[ RUN      ] TimeParamGoldenTest.InteriorKnotsInterpolating
+[       OK ] TimeParamGoldenTest.InteriorKnotsInterpolating (0 ms)
+[----------] 4 tests from TimeParamGoldenTest (2 ms total)
+
+[----------] 3 tests from TimeParamLimitTest
+[ RUN      ] TimeParamLimitTest.VelocityScalingConverges
+[       OK ] TimeParamLimitTest.VelocityScalingConverges (0 ms)
+[ RUN      ] TimeParamLimitTest.AccelerationScalingConverges
+[       OK ] TimeParamLimitTest.AccelerationScalingConverges (0 ms)
+[ RUN      ] TimeParamLimitTest.ToleranceEdgeRelative1e9
+[       OK ] TimeParamLimitTest.ToleranceEdgeRelative1e9 (10 ms)
+[----------] 3 tests from TimeParamLimitTest (11 ms total)
+
+[----------] 1 test from TimeParamFailureTest
+[ RUN      ] TimeParamFailureTest.UndefinedLimitNoFabricatedCycleTime
+[       OK ] TimeParamFailureTest.UndefinedLimitNoFabricatedCycleTime (0 ms)
+[----------] 1 test from TimeParamFailureTest (0 ms total)
+
+[----------] 1 test from TimeParamSyncTest
+[ RUN      ] TimeParamSyncTest.MultiJointSimultaneousArrival
+[       OK ] TimeParamSyncTest.MultiJointSimultaneousArrival (1 ms)
+[----------] 1 test from TimeParamSyncTest (1 ms total)
+
+[----------] 1 test from TimeParamSamplingTest
+[ RUN      ] TimeParamSamplingTest.EventAlignedKnotsAndPeakConsistency
+[       OK ] TimeParamSamplingTest.EventAlignedKnotsAndPeakConsistency (0 ms)
+[----------] 1 test from TimeParamSamplingTest (0 ms total)
+
+[----------] 1 test from TimeParamCancelTest
+[ RUN      ] TimeParamCancelTest.CanceledZeroMaterial
+[       OK ] TimeParamCancelTest.CanceledZeroMaterial (0 ms)
+[----------] 1 test from TimeParamCancelTest (0 ms total)
+
+[----------] 1 test from TimeParamDeterminismTest
+[ RUN      ] TimeParamDeterminismTest.RepeatedCallsEquivalentValues
+[       OK ] TimeParamDeterminismTest.RepeatedCallsEquivalentValues (2 ms)
+[----------] 1 test from TimeParamDeterminismTest (2 ms total)
+
+[----------] 1 test from TimeParamCurveTest
+[ RUN      ] TimeParamCurveTest.OutOfRangeFailsFast
+[       OK ] TimeParamCurveTest.OutOfRangeFailsFast (0 ms)
+[----------] 1 test from TimeParamCurveTest (0 ms total)
+
+[----------] 1 test from TimeParamPreconditionTest
+[ RUN      ] TimeParamPreconditionTest.FailFastFamily
+[       OK ] TimeParamPreconditionTest.FailFastFamily (0 ms)
+[----------] 1 test from TimeParamPreconditionTest (0 ms total)
+
+[----------] 1 test from TimeParamScaleFactorTest
+[ RUN      ] TimeParamScaleFactorTest.HalvedScaleDoublesDuration
+[       OK ] TimeParamScaleFactorTest.HalvedScaleDoublesDuration (0 ms)
+[----------] 1 test from TimeParamScaleFactorTest (0 ms total)
+
+[----------] 6 tests from TimeParamSepticTest
+[ RUN      ] TimeParamSepticTest.RestToRestGoldenProfileJerkLimited
+[       OK ] TimeParamSepticTest.RestToRestGoldenProfileJerkLimited (0 ms)
+[ RUN      ] TimeParamSepticTest.JerkScalingConvergesWithInteriorKnots
+[       OK ] TimeParamSepticTest.JerkScalingConvergesWithInteriorKnots (17 ms)
+[ RUN      ] TimeParamSepticTest.C3KnotContinuityWithDwell
+[       OK ] TimeParamSepticTest.C3KnotContinuityWithDwell (1 ms)
+[ RUN      ] TimeParamSepticTest.UndefinedJerkLimitMaterial
+[       OK ] TimeParamSepticTest.UndefinedJerkLimitMaterial (0 ms)
+[ RUN      ] TimeParamSepticTest.QuinticRejectsFiniteJerkLimit
+[       OK ] TimeParamSepticTest.QuinticRejectsFiniteJerkLimit (0 ms)
+[ RUN      ] TimeParamSepticTest.QuinticJerkStatisticsObservationOnly
+[       OK ] TimeParamSepticTest.QuinticJerkStatisticsObservationOnly (0 ms)
+[----------] 6 tests from TimeParamSepticTest (19 ms total)
+
+[----------] 3 tests from TimeParamUpstreamCheck
+[ RUN      ] TimeParamUpstreamCheck.QuinticRestToRestUpstreamCrossCheck
+[       OK ] TimeParamUpstreamCheck.QuinticRestToRestUpstreamCrossCheck (0 ms)
+[ RUN      ] TimeParamUpstreamCheck.SepticRestToRestUpstreamCrossCheck
+[       OK ] TimeParamUpstreamCheck.SepticRestToRestUpstreamCrossCheck (0 ms)
+[ RUN      ] TimeParamUpstreamCheck.InteriorKnotNonZeroTangentUpstreamCrossCheck
+[       OK ] TimeParamUpstreamCheck.InteriorKnotNonZeroTangentUpstreamCrossCheck (0 ms)
+[----------] 3 tests from TimeParamUpstreamCheck (1 ms total)
+
+[----------] 2 tests from TimeParamDegenerate
+[ RUN      ] TimeParamDegenerate.ZeroTravelSegmentConstant
+[       OK ] TimeParamDegenerate.ZeroTravelSegmentConstant (0 ms)
+[ RUN      ] TimeParamDegenerate.HugeLimitsReachShortDurationFloor
+[       OK ] TimeParamDegenerate.HugeLimitsReachShortDurationFloor (0 ms)
+[----------] 2 tests from TimeParamDegenerate (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 31 tests from 14 test suites ran. (41 ms total)
+[  PASSED  ] 31 tests.

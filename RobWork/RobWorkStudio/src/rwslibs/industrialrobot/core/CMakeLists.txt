@@ -3,7 +3,7 @@
 #
 # 设计依据：
 #   - units/core.md §3.3（命名空间/目标/CMake 集成）、§3.2（依赖：仅 C++17
-#     标准库＋sdurw_math＋FNV 私有 Boost 头（GAP-CORE-FNV-01），零 Qt、零 industrialrobot 其他单元）
+#     标准库＋sdurw_math＋FNV/C4 私有 Boost 头（各GAP授权），零 Qt、零 industrialrobot 其他单元）
 #   - development-task-breakdown.md §5.1（双模式/目标命名/C++17 约定）、
 #     §5.5（gtest 接入定稿：vcpkg 安装＋find_package(GTest CONFIG REQUIRED)）
 #   - 需求 NFR-MNT-01（计算内核零 Qt）、ARC-02（架构可维护）
@@ -23,7 +23,7 @@
 find_package(GTest CONFIG REQUIRED)
 
 # GAP-CORE-FNV-01：复用 vcpkg 已安装的固定精度整数，禁止隐式 include 供给。
-# Boost 仅用于 Identity.cpp 的私有算术；公共头不暴露 Boost 类型或新增运行库。
+# Boost 仅用于 Identity.cpp/Compare.cpp 的获批私有算术；公共头不暴露 Boost 类型或新增运行库。
 find_package(Boost CONFIG REQUIRED)
 
 # ---- 产品库目标：INTERFACE 占位 → STATIC（目标名不变，DTB §5.1）----

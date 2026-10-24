@@ -1,0 +1,9 @@
+{
+  "sourceRawSha256": "9a9602c68fc81010e41122a5bc15b73c1006bd1a7a255f14894098cd7f41f77d",
+  "mutation": "const Wide wideLimit = Wide(product) + Wide(t.absolute); -> const Wide wideLimit = Wide(0);",
+  "mutationBuildExit": 0,
+  "mutationTestExit": 1,
+  "restoredRawSha256": "9a9602c68fc81010e41122a5bc15b73c1006bd1a7a255f14894098cd7f41f77d",
+  "restoredBuildExit": 0,
+  "restoredTestExit": 0
+}

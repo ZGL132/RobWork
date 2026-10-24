@@ -253,7 +253,7 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **后续交接**：WP-03 / [GOV-T25](../tasks/GOV-T25.json) 已完成六个既有包的定向输入与原记录核对，见[交接入口](../traceability/reuse/WP-03/README.md)。正式起点`2ac114f33d2102d0b7848d8d4d51345147fa32b8`；T13/T15/T16及T07/T09/T12未找到已归档的独立PASS，保持开放。T12旧coverage已修而性能NOT RUN；T07约4.662倍尚未获接受；T15仅core/CMake供给变化引用WP-01，算法输入未变。该包是交接准备、仍ready，不能代替独验；先验清T13模型真值再放行依赖的普通IK/RNE，其他独立包不受无关遗留阻塞。
 
-**独立推进**：WP-10 / [GOV-T26](../tasks/GOV-T26.json) 已完成C4修订提案及成熟原语隔离验证，见[R3原始记录](../traceability/reuse/REUSE-T14/revision-r3/README.md)。R2哨兵文实不一致保留；R3复用既有Boost固定精度原语，22831组自查通过但无生产修改、无独验。私有依赖/第三方表达待所有者批准，最终产品性能另验；F-966保持OPEN，不以本包放行依赖或外推T20性能接受。
+**独立推进**：WP-10 / [GOV-T26](../tasks/GOV-T26.json) 的R3有界实施已获明确批准，生产包[REUSE-T21](../tasks/REUSE-T21.json)已在原Compare单点接入既有Boost原语，见[最终产品原件](../traceability/reuse/REUSE-T21/README.md)。22831组精确对照与真实Q/受影响消费者自查通过，库结果扰动真实失败；正常路径/C7/公开接口保持，第三方表达债务保留。最终性能已获本包明确接受、独验NOT RUN，F-966保持OPEN；不放行相关依赖或外推T20性能接受。
 
 每次结束或受阻，只在本节更新当前入口、相关任务和下一动作；任务 JSON 仍是契约状态来源，functions/catalog 是功能数据来源，原始记录与独验文件是验证结论来源，不新增状态平台或重复证据总账。不改既有状态枚举：planned 尚未准入、ready 可在前提内实施/待独验、blocked 有明确阻断、done 达到本任务全部退出条件；实施完成待独验在原任务 note/证据注明，不能伪装 done。
 
@@ -292,7 +292,7 @@ T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功
 | WP-07 / T04 RNE 子任务 | dynamics/src/InverseDynamics.cpp → rwsim/util/RecursiveNewtonEuler；核 solve 的 DOF+1 Wrench、参考系/索引及按关节类型投影 | 依赖 WP-06；移动关节反例必须正确，不能截尾或盲用 solveMotorTorques；删 Vec3/Mat3/RneaChain/buildRneaChain/computeGeometry/rneaTorques 等旧核；独立物理 oracle |
 | WP-08 / GAP-FD-BUILD-01 | 现有 PhysicsEngine/ODE 等实际供给定向探测；核 Device、力驱动、状态/步长/确定性与部署；记录 Bullet/RWPhysics 已知不适用证据 | 仅适用性与供给提案；新依赖/扩展等未获批不实施，不把刚体积分器当关节求解器 |
 | WP-09 / T04 FD 子任务 | dynamics/src/ForwardDynamics.cpp → WP-08 已验证引擎；保留公共输入/结果、单位和错误语义，删除质量阵/消元/RK4四阶段及重复状态 | 依赖 WP-06、WP-08 及所需批准；解析基准/平衡/能量/收敛/确定性及真实业务链，无隐藏 fallback |
-| WP-10 / GAP-CORE-C4-01 | core 原 C4 单点及原提案；重审 fma/TwoSum 候选的次正规 a/2 信息损失、哨兵/精度和是否新核心，先找成熟原语 | 原 A 撤回不授权新范围；批准前只修提案/验证候选；批准后单点修复和独立高精度 oracle，不拓展精确计算平台 |
+| WP-10 / REUSE-T21 | R3有界实施已批；原Compare同时溢出分支接入既有Boost128/4224位，生产自查见本包原件 | 原A撤回、R2不入生产；最终性能已获本包明确接受、独验待完成，F-966保持OPEN；不拓展精确计算平台 |
 | WP-11 / T05 trajectory 子任务 | Ptp.cpp、CartesianLine.cpp；核上游 LinearInterpolator、Quaternion::slerp/路径轨迹工具；按 Ptp、直线、其余分别提交 | 保留已实施 Smooth/TimeParam Polynomial；核端点/时标/导数/连续性；时间加权 RMS 不强套 Statistics；删旧系数/转换/缓存 |
 | WP-12 / T05 modeling 子任务 | BaseWorldTransform/DescriptionValidator 按实际 owner 定位；modeling DH/惯量能力；优先 LinearAlgebra、RPY/EAA/Transform3D 及成熟标定入口 | 保留 CouplingMath 成果；模型真值归 runtime；每个数值子包独立坐标/单位/退化 oracle；LM/差分缺口不直接新写 |
 | WP-13 / policy 子任务 | 原规则入口 F-961：合法名称 REGEX 解释问题，优先已有字面 API/单点转义；随后独立审随机/LHS 候选 | 不把未证实规则不匹配描述为碰撞漏检；保留种子/分布/线程/确定性，具体消费者正反例 |

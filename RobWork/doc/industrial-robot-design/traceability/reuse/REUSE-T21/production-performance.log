@@ -1,0 +1,7 @@
+production-normal loops=1000000 us/call=0.0060446
+production-overflow loops=20000 us/call=12.176465
+production-normal loops=1000000 us/call=0.0038739
+production-overflow loops=20000 us/call=9.902195
+production-normal loops=1000000 us/call=0.003479
+production-overflow loops=20000 us/call=9.839925
+checksum=3000000 production-new-calls=0

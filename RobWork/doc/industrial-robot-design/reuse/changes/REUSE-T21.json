@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T21",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T21.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "C4合法同时溢出分支的获批Boost私有适配；保留普通路径/ABI/noexcept，真实库消费与Fraction原件见README。第三方catalog表达债务、性能待决、独验NOT RUN；business仅过渡标签。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+      "sha256": "ea6c490e3dac3683f1d64e622f20473c57d0b0aeade898c1e76472bfd54b8444",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "原8测试保留；新增5测试含独立边界/六反例/普通舍入/vector/真实Q。旧生产4项真实FAIL、库结果扰动3项真实FAIL、恢复版本74项PASS，无新测试框架。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+      "sha256": "687b120dfa8635b1fed6b7f21522c70d8d82da57c80d7dcea06cea2c6b93b377",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "仅更新2行私有Boost授权范围注释；原目标、头供给、链接、公开接口及注册不变，不新增依赖。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/README.md"
+    }
+  ]
+}

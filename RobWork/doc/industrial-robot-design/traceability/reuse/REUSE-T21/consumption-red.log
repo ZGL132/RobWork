@@ -1,0 +1,51 @@
+Note: Google Test filter = CompareFormula.FiniteOverflowBoundary_UT_UNIT:AllCloseWithin.FiniteOverflowDelegates_UT_UNIT:AllCloseWithinQ.FiniteOverflowDelegates_UT_UNIT
+[==========] Running 3 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from CompareFormula
+[ RUN      ] CompareFormula.FiniteOverflowBoundary_UT_UNIT
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(74): error: Value of: closeWithin(sign * maximum, -sign * maximum, Tolerance::make(2.0, 0.0))
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(76): error: Value of: closeWithin(sign * maximum, -sign * maximum, Tolerance::make(1.0, maximum))
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(74): error: Value of: closeWithin(sign * maximum, -sign * maximum, Tolerance::make(2.0, 0.0))
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(76): error: Value of: closeWithin(sign * maximum, -sign * maximum, Tolerance::make(1.0, maximum))
+  Actual: false
+Expected: true
+
+[  FAILED  ] CompareFormula.FiniteOverflowBoundary_UT_UNIT (0 ms)
+[----------] 1 test from CompareFormula (0 ms total)
+
+[----------] 1 test from AllCloseWithin
+[ RUN      ] AllCloseWithin.FiniteOverflowDelegates_UT_UNIT
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(122): error: Value of: allCloseWithin(std::vector<double>{maximum, 0.0}, std::vector<double>{-maximum, 0.0}, Tolerance::make(2.0, 0.0))
+  Actual: false
+Expected: true
+
+[  FAILED  ] AllCloseWithin.FiniteOverflowDelegates_UT_UNIT (0 ms)
+[----------] 1 test from AllCloseWithin (0 ms total)
+
+[----------] 1 test from AllCloseWithinQ
+[ RUN      ] AllCloseWithinQ.FiniteOverflowDelegates_UT_UNIT
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\test\CompareTest.cpp(207): error: Value of: allCloseWithin(value, reference, Tolerance::make(2.0, 0.0))
+  Actual: false
+Expected: true
+
+[  FAILED  ] AllCloseWithinQ.FiniteOverflowDelegates_UT_UNIT (0 ms)
+[----------] 1 test from AllCloseWithinQ (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 3 test suites ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 3 tests, listed below:
+[  FAILED  ] CompareFormula.FiniteOverflowBoundary_UT_UNIT
+[  FAILED  ] AllCloseWithin.FiniteOverflowDelegates_UT_UNIT
+[  FAILED  ] AllCloseWithinQ.FiniteOverflowDelegates_UT_UNIT
+
+ 3 FAILED TESTS

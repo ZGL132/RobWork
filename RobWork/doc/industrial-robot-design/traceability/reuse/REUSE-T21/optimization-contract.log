@@ -1,0 +1,30 @@
+Note: Google Test filter = OptObjectiveParetoContract.*:OptGoldenDatasetContract.*
+[==========] Running 9 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from OptObjectiveParetoContract
+[ RUN      ] OptObjectiveParetoContract.MetricVocabularyAndDefaultActivation
+[       OK ] OptObjectiveParetoContract.MetricVocabularyAndDefaultActivation (0 ms)
+[ RUN      ] OptObjectiveParetoContract.ToleranceConfigCarriedIntoConfigOpt
+[       OK ] OptObjectiveParetoContract.ToleranceConfigCarriedIntoConfigOpt (0 ms)
+[ RUN      ] OptObjectiveParetoContract.NoWeightedScoreInProductSources
+[       OK ] OptObjectiveParetoContract.NoWeightedScoreInProductSources (467 ms)
+[----------] 3 tests from OptObjectiveParetoContract (467 ms total)
+
+[----------] 6 tests from OptGoldenDatasetContract
+[ RUN      ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ManifestsRegistered_WP20T11_ACC2 (31 ms)
+[ RUN      ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.IntegrityCoversAllFiles_WP20T11_ACC2 (1 ms)
+[ RUN      ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ToleranceProfileChannelAndConservatism_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.DataRootLayout_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.GoldenStatusesUseCandidateStatusTokens_WP20T11_ACC2 (0 ms)
+[ RUN      ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2
+[       OK ] OptGoldenDatasetContract.ParetoSetMatchTraitsChannel_WP20T11_ACC2 (0 ms)
+[----------] 6 tests from OptGoldenDatasetContract (34 ms total)
+
+[----------] Global test environment tear-down
+[==========] 9 tests from 2 test suites ran. (501 ms total)
+[  PASSED  ] 9 tests.

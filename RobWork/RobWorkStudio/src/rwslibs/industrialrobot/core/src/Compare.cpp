@@ -10,6 +10,7 @@
 #include <sdurws/ird/core/Compare.hpp>
 
 #include <cmath>
+#include <boost/multiprecision/cpp_bin_float.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -29,6 +30,31 @@ bool closeWithin(double value, double reference, Tolerance t) noexcept
     const double diff = value - reference;
     const double limit = t.relative * (reference < 0 ? -reference : reference)
                        + t.absolute;
+    // REUSE-T21 / GAP-CORE-C4-01 R3：只有两侧同时溢出才会丢失原比较的排序信息。
+    // 先保留普通路径的既定舍入；聚合构造的非法tolerance也继续走原行为，
+    // 不借数值修复收窄工厂以外的公开接口。有限值前置已由上方检查保证。
+    if (std::isinf(diff) && std::isinf(limit) && limit > 0.0
+        && t.relative >= 0.0 && t.absolute >= 0.0
+        && std::isfinite(t.relative) && std::isfinite(t.absolute)) {
+        using Product = boost::multiprecision::number<
+            boost::multiprecision::cpp_bin_float<128,
+                boost::multiprecision::digit_base_2, void>,
+            boost::multiprecision::et_off>;
+        using Wide = boost::multiprecision::number<
+            boost::multiprecision::cpp_bin_float<4224,
+                boost::multiprecision::digit_base_2, void>,
+            boost::multiprecision::et_off>;
+        // binary64两数乘积最多106位；先在128位库类型相乘，再无损扩大。
+        // 直接做4224位乘法会进入库的Karatsuba临时分配路径；这里不改库或写新乘法。
+        const Product product = Product(t.relative) * Product(std::fabs(reference));
+        // 有限binary64为2^-1074的整数倍；乘加量子2^-2148且绝对值<2^2049，
+        // 最多4197位。4224位足够精确表达原公式，包含次正规绝对项，无需除二。
+        // 固定Allocator=void的有界转换/加减不申请堆空间；本分支的指数范围
+        // 也远在库类型范围内，不引入分配失败、指数溢出或吞异常的替代行为。
+        const Wide wideDiff = boost::multiprecision::abs(Wide(value) - Wide(reference));
+        const Wide wideLimit = Wide(product) + Wide(t.absolute);
+        return wideDiff <= wideLimit;
+    }
     return (diff <= limit) && (-diff <= limit);
 }
 

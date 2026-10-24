@@ -4,7 +4,7 @@
 
 基础平台后续有界提案（REUSE-T13首包之后，**三项有界范围已于2026-10-23分别获所有者批准，详见各提案授权节；独验仍待完成**）：[GAP-CORE-C4-01](GAP-CORE-C4-01.md) 保持非对称C4契约的溢出修正；[GAP-DIAG-RETENTION-01](GAP-DIAG-RETENTION-01.md) 原日志轮转的保留总数边界修正；[GAP-CORE-FNV-01](GAP-CORE-FNV-01.md) 先验证已安装成熟128位整数运算的最薄适配，core必要私有头依赖包含在本次候选A批准范围。既有红例/检索直接引用，不重新清查全库。三项独立决策，未扩大到其他提案，也不修改上游或接管业务算法。当前结果：C4 缩放候选被独立精确 oracle 否决，已撤回，F-966 仍 OPEN（见 traceability/reuse/REUSE-T14）；FNV 与日志已实施自查、待独验，批准不等于验收。
 
-C4当前修订为[GOV-T26／R3成熟原语候选](../../traceability/reuse/REUSE-T14/revision-r3/README.md)：原A失败、R2未批且哨兵分支文实不符；R3隔离自查通过，私有Boost范围、第三方表达及最终生产验收仍待裁决，未修改产品。
+C4当前修订为[GOV-T26／R3成熟原语候选](../../traceability/reuse/REUSE-T14/revision-r3/README.md)：原A失败、R2未批且哨兵分支文实不符；R3有界生产实施已获所有者明确批准；[REUSE-T21](../../traceability/reuse/REUSE-T21/README.md)已完成Compare单点适配、精确oracle与受影响消费者自查。最终性能已获本包明确接受、独验NOT RUN；第三方表达债务保留，F-966仍OPEN。
 
 已形成的具体草案：[GAP-IK-01](GAP-IK-01.md)（原求解器任务行/可观测性最小扩展候选）与 [GAP-FD-BUILD-01](GAP-FD-BUILD-01.md)（先供给现成ODE后端，尚不申请FD新核心）；版本、源摘要、7条真实检索在 [proposal-search.json](proposal-search.json)。两项均未批准，不能因自动继续指令自行实施。其他差异继续检索，不能将本文件所有入口批量升级为已证实缺口。
 
