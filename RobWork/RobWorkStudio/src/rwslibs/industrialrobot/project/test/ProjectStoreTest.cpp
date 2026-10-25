@@ -882,7 +882,14 @@ TEST_F(ProjectStoreTest, WritableOpen_DegradesToReadOnlyWhenHeld)
         head.revisionId = r0;
         head.revisionSeq = 1;
         head.branchId = bid;
-        head.manifestDigest = metaCvHex;
+        // 夹具契约订正（REUSE-T40）：manifestDigest 的被摘要对象＝r0 清单
+        // **字节**（§4.4.1；与提交路径 cvHex(contentVersionOf(dump(manifest)))
+        // 同口径）——原夹具误写为元数据对象摘要 metaCvHex，属裸写夹具偏差；
+        // 恢复扫描补实算比对（F-962）后该形态必被④拒绝，打开用例前置的
+        // 存储必须是"字节合法且摘要自洽"的健康形态。
+        const std::string manifestDigest = contentVersionOf(
+            sdurws::ird::project::codec::dump(manifest)).toCanonical().substr(3);
+        head.manifestDigest = manifestDigest;
         ASSERT_TRUE(writeRaw(m_dir / "objects" / metaOid.toCanonical()
                                  / metaCvHex,
                              metaPayload));
@@ -953,6 +960,49 @@ TEST_F(ProjectStoreTest, InProcessSecondWritableOpen_Rejected)
     expectStoreError(StoreErrorCode::LockHeldByOther,
                      [&] { (void)ProjectStoreFactory::open(request); });
     EXPECT_TRUE(holder.store->writable());
+}
+
+/**
+ * 锚定：§7.4④"校验 HEAD 引用闭包完整性（对象/清单哈希）"／PM-02 读校验
+ * ／findings F-962 反例③——错误 HEAD.manifestDigest 经**公开工厂**
+ * ProjectStoreFactory::open 必须拒绝（修复前扫描不核清单摘要，公开 open
+ * 接受错误摘要并报告完整——B20 独立复现在案）。
+ *
+ * 前置：健康项目（createNew 真实路径）。操作：close 后裸写 HEAD，仅改
+ * manifestDigest 首字符（64 小写 hex 形态合法——parse 拒不了，只有摘要
+ * 比对能拒）。预期：StoreError(StoreCorrupt)＋PRJ-STORE-CORRUPT 用户级
+ * 诊断（cause 定位到清单文件）；项目磁盘字节不被打开动作改动。
+ */
+TEST_F(ProjectStoreTest, Open_WrongHeadManifestDigest_Rejected)
+{
+    {
+        pd::OpenStoreResult opened = createNew("Digest Probe");
+        ASSERT_NE(opened.store, nullptr);
+        EXPECT_EQ(opened.store->requestClose(), 0u);
+    }
+    const fs::path headPath = m_dir / "HEAD";
+    const std::string headBytesBefore = readAll(headPath);
+    HeadRecord head = sdurws::ird::project::codec::parseHeadRecord(
+        headBytesBefore);
+    ASSERT_EQ(head.manifestDigest.size(), 64u);
+    head.manifestDigest[0] =
+        head.manifestDigest[0] == 'a' ? 'b' : 'a';  // 形态合法、值必异
+    ASSERT_TRUE(writeRaw(headPath, sdurws::ird::project::codec::dump(head)));
+
+    OpenStoreRequest request;
+    request.path = m_dir;
+    request.diagnostics = m_sink.get();
+    expectStoreError(StoreErrorCode::StoreCorrupt,
+                     [&] { (void)ProjectStoreFactory::open(request); });
+    EXPECT_TRUE(m_sink->hasUserCode("PRJ-STORE-CORRUPT"));
+    ASSERT_FALSE(m_sink->reports.empty());
+    EXPECT_NE(m_sink->reports.back().cause.find("manifest.json"),
+              std::string::npos)
+        << "cause 未定位到清单文件: " << m_sink->reports.back().cause;
+    // 打开中止不触碰磁盘（§8.7"激活前失败不影响当前项目"——篡改现场
+    // 保持供人工排查）。
+    EXPECT_EQ(readAll(headPath),
+              sdurws::ird::project::codec::dump(head));
 }
 
 // =====================================================================

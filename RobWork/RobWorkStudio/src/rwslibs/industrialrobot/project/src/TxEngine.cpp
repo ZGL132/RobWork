@@ -959,6 +959,41 @@ TxRecoveryScan TxEngine::scanForRecovery()
     bool broken = false;  // ④完整性结论（仅闭包相关失败置位）
     std::string brokenDetail;
 
+    // ---- ④ 清单哈希半边（F-962 修复）：HEAD.manifestDigest 与 HEAD 指向
+    // 修订的清单**字节实算**严格比对（§7.4④"校验 HEAD 引用闭包完整性
+    // （对象/清单哈希）"——此前仅装载期 parse 拒绝截断/字段违约字节，
+    // "字节合法篡改而 HEAD 摘要未随动"或"HEAD 摘要本身失真"不构成
+    // parse 失败，扫描会误报完整——findings F-962 三反例）。实算口径与
+    // 提交路径同源（commit 第 4 步：cvHex(contentVersionOf(dump(manifest)))
+    // ——CR-02 唯一摘要入口，本层不私设第二哈希；历史合法仓库由该口径
+    // 保证摘要与清单字节一致，比对零误伤）。缺失/不符＝损坏并定位到
+    // 文件；扫描不中断（⑤残留识别与悬挂计数随行完成——一次扫描产出
+    // 完整清单），用户诊断 cause 采**首败钉扎**：HEAD 锚点自身的失败
+    // 优先写入记录，后续失败仍经开发通道逐一交底。
+    {
+        const fs::path headManifestPath =
+            revisionsRoot() / head.revisionId.toCanonical() / "manifest.json";
+        const auto headManifestBytes = readAllBytes(headManifestPath);
+        if (!headManifestBytes) {
+            broken = true;
+            brokenDetail = "project/tx-engine: HEAD 指向修订清单缺失 path="
+                + headManifestPath.string();
+            reportDev("recovery-head-manifest-missing path="
+                      + headManifestPath.string());
+        } else {
+            const std::string actualDigest =
+                cvHex(codec::contentVersionOf(*headManifestBytes));
+            if (actualDigest != head.manifestDigest) {
+                broken = true;
+                brokenDetail =
+                    "project/tx-engine: HEAD.manifestDigest 与清单字节实算"
+                    "不符 path=" + headManifestPath.string();
+                reportDev("recovery-head-manifest-digest-mismatch path="
+                          + headManifestPath.string());
+            }
+        }
+    }
+
     {
         std::error_code dirEc;
         const fs::path revRoot = revisionsRoot();
@@ -1047,8 +1082,12 @@ TxRecoveryScan TxEngine::scanForRecovery()
         closureOk = true;
     } catch (const StoreError& e) {
         broken = true;
-        brokenDetail = "project/tx-engine: 闭包行走失败 detail="
-            + std::string(e.what());
+        // 首败钉扎（见上——HEAD 清单缺失时闭包行走必随之失败，用户诊断
+        // 保留更贴近文件的 HEAD 锚点定位；本失败仍经开发通道交底）。
+        if (brokenDetail.empty()) {
+            brokenDetail = "project/tx-engine: 闭包行走失败 detail="
+                + std::string(e.what());
+        }
         reportDev(std::string{"recovery-closure-failed "} + e.what());
     }
 
@@ -1080,7 +1119,8 @@ TxRecoveryScan TxEngine::scanForRecovery()
 
         // ---- ④ 后半：闭包内全部对象引用做 size＋SHA-256 校验（§7.4④
         // "校验 HEAD 引用闭包完整性（对象/清单哈希）"——全量档）。清单
-        // 哈希半边＝装载期 parse 拒绝（上文），对象半边在此。
+        // 哈希半边＝上文 HEAD 摘要与 HEAD 指向清单字节的实算比对（含装载
+        // 期 parse 拒绝），对象半边在此。
         std::vector<objstore::ObjectKey> references;
         references.reserve(closure.revisions.size());
         for (const RevisionId& rid : closure.revisions) {
@@ -1093,7 +1133,9 @@ TxRecoveryScan TxEngine::scanForRecovery()
             const auto failedMeta = failedMetaRefs.find(manifest->metadataRef);
             if (failedMeta != failedMetaRefs.end()) {
                 broken = true;
-                brokenDetail = failedMeta->second;
+                if (brokenDetail.empty()) {  // 首败钉扎（用户诊断 cause）
+                    brokenDetail = failedMeta->second;
+                }
                 reportDev("recovery-closure-metadata-failed "
                           + failedMeta->second);
             }
@@ -1107,10 +1149,12 @@ TxRecoveryScan TxEngine::scanForRecovery()
         if (!objReport.missingReferenced.empty()
             || !objReport.corruptReferenced.empty()) {
             broken = true;
-            brokenDetail = "project/tx-engine: 闭包对象完整性失败 missing="
-                + std::to_string(objReport.missingReferenced.size())
-                + " corrupt="
-                + std::to_string(objReport.corruptReferenced.size());
+            if (brokenDetail.empty()) {  // 首败钉扎（用户诊断 cause）
+                brokenDetail = "project/tx-engine: 闭包对象完整性失败 missing="
+                    + std::to_string(objReport.missingReferenced.size())
+                    + " corrupt="
+                    + std::to_string(objReport.corruptReferenced.size());
+            }
             reportDev("recovery-object-integrity-failed missing="
                       + std::to_string(objReport.missingReferenced.size())
                       + " corrupt="

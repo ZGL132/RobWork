@@ -9699,11 +9699,11 @@
       "id": "F-962",
       "source": "traceability/reuse/REUSE-T01/project-transaction-audit.md / probe-r20",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
       "registeredAt": "2026-10-23",
       "title": "project恢复扫描未核清单字节摘要，错误HEAD摘要可经公开工厂成功打开",
       "owner": "project / REUSE-T05",
-      "resolution": "原project目标/原TxEngine夹具新增6项2passed4failed，错误HEAD摘要、合法清单时间字节变化均scan true；公共ProjectStoreFactory::open也接受错误摘要并报告完整，健康正例通过。T05复用codec::contentVersionOf/core摘要补实算比较与原测试，不改上游或新建持久化核心。未跑全project/崩溃矩阵/并发。2026-10-25 REUSE-T40（WP-16）按本路线完成修复候选并验证：候选scanForRecovery实算HEAD指向清单字节摘要与head.manifestDigest严格比对（codec::contentVersionOf同commit口径，不新建哈希）＋首败钉扎定位；候选五用例未修复码5/5红（三反例全放行）修复后project_test 287/287＋contract_test 32/32绿零回归；因复用门禁对改动文件要求全文件解决（TxEngine.cpp 22行全pending＋四文件铺面，超出WP-16边界）经T33/T36 blocked先例留存候选（traceability/reuse/REUSE-T40/candidate/），产品未改，保持open至候选随project单元迁移包落地并独立验收。"
+      "resolution": "原project目标/原TxEngine夹具新增6项2passed4failed，错误HEAD摘要、合法清单时间字节变化均scan true；公共ProjectStoreFactory::open也接受错误摘要并报告完整，健康正例通过。T05复用codec::contentVersionOf/core摘要补实算比较与原测试，不改上游或新建持久化核心。未跑全project/崩溃矩阵/并发。2026-10-25 REUSE-T40（WP-16）按本路线完成修复候选并验证：候选scanForRecovery实算HEAD指向清单字节摘要与head.manifestDigest严格比对（codec::contentVersionOf同commit口径，不新建哈希）＋首败钉扎定位；候选五用例未修复码5/5红（三反例全放行）修复后project_test 287/287＋contract_test 32/32绿零回归；因复用门禁对改动文件要求全文件解决（TxEngine.cpp 22行全pending＋四文件铺面，超出WP-16边界）经T33/T36 blocked先例留存候选（traceability/reuse/REUSE-T40/candidate/），产品未改，保持open至候选随project单元迁移包落地并独立验收。2026-10-26 REUSE-T40落地批（所有者批量批准落地裁决表第1~4项，解阻原全文件解决批blocked）：候选diff对44c8d59e4干净应用（产品四件与候选全件摘要逐位一致），project全量287/287＋contract 32/32＋B20三反例复跑5/5全绿＋ird_gates零命中（landing2-*证据在案）；全文件解决批一次收口（TxEngine.cpp 22行migrated＋四文件217铺面行＋47行TxEngine.hpp inputs摘要级联同步＋changes/REUSE-T40.json凭证，permissions零新增）；ProjectStoreTest夹具head.manifestDigest误写元数据对象摘要随批订正为清单字节摘要。实证范围＝恢复扫描与公开工厂对错误/失真HEAD摘要的拒绝（篡改/缺失/合法恢复/历史兼容四验收面），不声称超出scanForRecovery④闭包校验的语义；独立验收由所有者另行执行。"
     },
     {
       "id": "F-963",

@@ -1,8 +1,9 @@
-# REUSE-T40 原始记录 — WP-16 project F-962 修复候选（blocked 留存）
+# REUSE-T40 原始记录 — WP-16 project F-962 修复候选（2026-10-26 已落地）
 
-任务契约：[tasks/REUSE-T40.json](../../../tasks/REUSE-T40.json)（status=blocked）；
-起点 `d7874f57f1f0e2cde192a6c76e5b0f90a016306e`；产品树保持 HEAD 零改动
-（所有者 2026-10-25 T33/T36 blocked 先例同型）。
+任务契约：[tasks/REUSE-T40.json](../../../tasks/REUSE-T40.json)（status=ready，待独立验收）；
+候选起点 `d7874f57f1f0e2cde192a6c76e5b0f90a016306e`，落地批起点 `44c8d59e4`。
+§1—§4 为候选/blocked 阶段历史记录（候选在场时产品树保持 HEAD 零改动）；
+§5 为落地批实录。
 
 ## 1. 缺陷与修复候选
 
@@ -89,3 +90,41 @@ blocked 登记，解阻待项目单元迁移包批准后按 `candidate/*.diff` �
 changes/ 逐文件凭证、permissions 绑定 → 复跑本目录绿命令复验 → 独立验收
 （本修复属 §6.4 身份/持久化类，实施提交不等于独验通过）。F-962 在候选落地
 前保持 open：现 HEAD 公开 open 仍接受错误 HEAD 摘要（B20 三反例在案）。
+
+## 5. 落地批（2026-10-26，所有者批量批准落地裁决表第 1~4 项，解阻原全文件解决批 blocked）
+
+- 起始 `44c8d59e4`；四份候选 diff 对该起点 `git apply` 干净应用，产品四件
+  与 `candidate/` 全件 sha256 逐位一致（原始字节逐位比对；gate Digest 口径：
+  TxEngine.cpp=`29540740…`、TxEngine.hpp=`9c1f818e…`、TxEngineTest.cpp=
+  `bb7f7db1…`、ProjectStoreTest.cpp=`9f487564…`）。
+- **全文件解决批**（reuse-contract.ps1:271-279 要求，一次收口）：
+  functions/project.json TxEngine.cpp 22 功能行全部 business-specific/
+  migrated——scanForRecovery 行 differences 登记修复语义（实算比对＋首败
+  钉扎），其余 21 行随批 resolved；47 个绑定 TxEngine.hpp inputs 的矩阵行
+  摘要级联同步（含 win32.AtomicFile/CommandServiceImpl/QueryPortImpl/
+  ArchiveServiceImpl/ProjectStoreImpl 等消费者行）；四文件全行区段铺面
+  217 个 `project.audit-t40.*` 行（TxEngine.cpp 洞带 23＋TxEngine.hpp 25
+  ＋TxEngineTest.cpp 97＋ProjectStoreTest.cpp 72；区段按逻辑块连续划分，
+  每非空行落区段，脚本自检四文件覆盖 0 缺口）；逐行证据绑定本 README
+  （nonOverlapEvidence）。closures.json 无本包文件，冻结链零触碰。
+- **permissions 零新增**：四文件无 rw/rwsim 类别或模型操作命中
+  （IRD-GATE-AD 零触发），与 T36 不同无需测试夹具例外。
+- **验证（全部真实执行，本目录 landing2-* 文件）**：
+  - 集成树（`RWS_BUILD_INDUSTRIALROBOT=ON`，Release）构建
+    `sdurws_ird_project_test`＋`sdurws_ird_project_contract_test` exit 0；
+  - project 全量 **287/287 passed**（landing2-green-sdurws_ird_project_test
+    .log/.xml/.ird-test-report.json——既有 282 零回归＋候选 5 用例全绿，
+    历史兼容半区）；
+  - contract 目标 **32/32 passed**（landing2-green-sdurws_ird_project_
+    contract_test.*——含 ProcessCrashContractTest 崩溃重开断言）；
+  - B20 三反例复跑 **5/5 passed**（landing2-b20-f962-three-counterexamples
+    .*——错误 HEAD 摘要拒／合法清单字节篡改拒／公开工厂拒＋缺失定位／
+    篡改还原恢复绿，篡改/缺失/合法恢复/历史兼容四验收面齐备）；
+  - `cmake -DIRD_ROOT=<industrialrobot> -P cmake/ird_gates.cmake` exit 0
+    （landing2-wp16-t40-ird-gates.log——R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/
+    SA02 零命中）。
+- **收口**：findings.json F-962 → fixed（实证范围＝恢复扫描与公开工厂对
+  错误/失真 HEAD 摘要的拒绝，不声称超出 scanForRecovery④ 闭包校验的语义）；
+  migration §13.1/§13.2/§13.3 更新；reuse/changes/REUSE-T40.json 四文件
+  sha256 凭证登记；契约 status=ready 待独立验收（§6.4 身份/持久化类——
+  独验必查篡改/缺失/合法恢复/历史兼容四类）。

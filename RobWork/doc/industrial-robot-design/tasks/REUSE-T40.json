@@ -3,8 +3,8 @@
   "taskId": "REUSE-T40",
   "unit": "project",
   "masterWp": "WP-A",
-  "title": "project恢复扫描F-962修复候选（blocked——复用门禁对改动文件的全文件解决要求超出本包边界）",
-  "status": "blocked",
+  "title": "project恢复扫描F-962修复落地与全文件解决批收口（2026-10-26所有者批量批准，原blocked解阻）",
+  "status": "ready",
   "branch": "redesign-main",
   "dependsOn": [
     "GOV-T21",
@@ -20,7 +20,7 @@
   "designRefs": [
     "reuse/migration.md#13.3",
     "reuse/policy.md#1.1",
-    "units/project.md",
+    "units/project.md#7.4",
     "traceability/findings.json",
     "traceability/reuse/REUSE-T01/project-transaction-audit.md",
     "traceability/acceptance/REUSE-T01-batch20-20261023/acceptance.json",
@@ -28,15 +28,20 @@
   ],
   "verify": [
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json",
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range d7874f57f1f0e2cde192a6c76e5b0f90a016306e..HEAD",
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json -Base d7874f57f1f0e2cde192a6c76e5b0f90a016306e -Head <送验SHA>"
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 44c8d59e4..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json -Base 44c8d59e4 -Head <送验SHA>"
   ],
   "allowedFiles": [
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json",
     "RobWork/doc/industrial-robot-design/reuse/functions/project.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T40.json",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
     "RobWork/doc/industrial-robot-design/traceability/findings.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProjectStoreTest.cpp"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -44,14 +49,14 @@
     "vcpkg/**"
   ],
   "acceptance": [
-    "blocked登记（采T33/T36所有者2026-10-25 escalate裁决先例，产品树HEAD零改动）：F-962修复须改project/src/TxEngine.cpp与project/src/TxEngine.hpp及两测试文件，而复用门禁对累计改动集产品文件要求全文件解决（reuse-contract.ps1:271-279——TxEngine.cpp全部22个功能行现均为pending/pending，须全部resolved〔migrated/closed＋非pending决策〕＋逐行区段铺面〔现差81个非空行〕＋TxEngine.hpp/TxEngineTest.cpp 1422行/ProjectStoreTest.cpp 1119行自零建覆盖行＋changes逐文件凭证）；超出migration §13.3 WP-16批准边界且逐行语义审计/capability升级属项目单元迁移包（T05-project父任务）独立验收事项；候选留存traceability/reuse/REUSE-T40/待项目单元迁移包批准后低成本落地",
-    "修复候选已完整验证（真实执行在案，未落产品）：候选scanForRecovery在HEAD解析后新增HEAD.manifestDigest与HEAD指向修订清单字节的实算严格比对（经codec::contentVersionOf/core::ContentDigester——CR-02唯一摘要入口，与commit第4步cvHex(contentVersionOf(dump(manifest)))同口径，不新建哈希路径、不改Codec、不自写摘要）；缺失/不符＝broken＋PRJ-STORE-CORRUPT（cause定位到文件）＋headIntegrityVerified=false；用户诊断cause采首败钉扎（扫描序第一失败优先，三处后续赋值加守卫——清单缺失时闭包失败不再覆盖文件级定位）；候选验证链：f962-red.log（未修复码5用例5 failed红——错误HEAD摘要/合法时间字节篡改/公开open三反例全放行）→修复后green-sdurws_ird_project_test.log（287/287绿，含5新用例）＋green-sdurws_ird_project_contract_test.log（32/32绿，含ProcessCrashContractTest重开断言）零回归",
-    "篡改/缺失/合法恢复/历史兼容四验收面齐备（TxEngineTest 4用例＋ProjectStoreTest 1用例）：RecoveryScan_WrongHeadDigest_StoreCorrupt（64hex形态合法的错误摘要拒）、RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt（committedAtUtc合法改字而HEAD摘要保持——parse/闭包/对象校验全绿，仅摘要比对能拒）、RecoveryScan_HeadManifestMissing_StoreCorrupt（cause定位缺失路径——修复前经闭包失败间接判损坏定位不达文件）、RecoveryScan_TamperThenRestore_ScanGreen（还原原字节后扫描恢复完整判定，无一次性损坏闩锁）、Open_WrongHeadManifestDigest_Rejected（公开工厂拒绝＋PRJ-STORE-CORRUPT＋磁盘字节不被打开动作改动）；历史兼容＝种子夹具/既有282用例/contract 32用例零回归（提交路径自856544ef7起实算清单摘要，健康仓库比对零误伤）",
-    "跨文件治理订正（随批）：project/test/ProjectStoreTest.cpp裸写夹具head.manifestDigest误写为元数据对象摘要metaCvHex而非清单字节摘要（ProjectStoreTest.cpp:885原状）——属夹具契约偏差（§4.4.1被摘要对象＝清单字节），修复后该形态必被④拒绝，订正为与提交路径同口径；随候选留存，与产品修复成对落地",
-    "摘要供给前置说明（migration §13.3 WP-16行'摘要供给有前置先说明'）：复用对象＝本单元既有唯一入口codec::contentVersionOf（H1直接API，commit路径在用；project/src/Codec.cpp:1510-1518经core::ContentDigester）——非未获批提案GAP-DIGEST-01（core摘要后端替换，归WP-15，本包零改动零替换）；本包不新建哈希路径、不自写摘要，满足'不自写摘要'边界",
-    "F-962保持open：候选留存未落产品，公开open在现HEAD仍接受错误HEAD摘要（B20三反例在案）；登记实施候选与blocked原因于findings，状态收口待候选随项目单元迁移包落地并独立验收"
+    "修复落地（所有者2026-10-26批量批准落地裁决表第1~4项，解阻原全文件解决批blocked；候选起点d7874f57f、落地批起点44c8d59e4）：四份candidate/*.diff对44c8d59e4干净应用，产品四件与candidate/全件sha256逐位一致（gate Digest口径）；scanForRecovery在HEAD解析后新增HEAD.manifestDigest与HEAD指向修订清单字节实算严格比对（经codec::contentVersionOf/core::ContentDigester——CR-02唯一摘要入口，与commit第4步cvHex(contentVersionOf(dump(manifest)))同口径，不新建哈希路径、不改Codec、不自写摘要）；缺失/不符＝broken＋PRJ-STORE-CORRUPT（cause定位到文件）＋headIntegrityVerified=false；用户诊断cause首败钉扎（扫描序第一失败优先写入brokenDetail，三处后续赋值加守卫，后续失败仍经reportDev开发通道逐一交底）",
+    "全文件解决批一次收口（reuse-contract.ps1:271-279）：functions/project.json TxEngine.cpp 22功能行全部business-specific/migrated（scanForRecovery行differences登记修复语义，21行随批resolved）；47个绑定TxEngine.hpp inputs的矩阵行摘要级联同步；四文件全行区段铺面217个audit-t40行（TxEngine.cpp洞带23＋TxEngine.hpp 25＋TxEngineTest.cpp 97＋ProjectStoreTest.cpp 72，区段按逻辑块连续划分、每非空行落区段、四文件覆盖自检0缺口）；逐行证据绑定REUSE-T40/README.md（nonOverlapEvidence）；closures.json无本包文件零触碰；permissions零新增grant（四文件无rw/rwsim类别或模型操作命中，IRD-GATE-AD零触发）；changes/REUSE-T40.json四文件sha256凭证登记",
+    "篡改/缺失/合法恢复/历史兼容四验收面真实复跑（landing2-*证据在案）：project全量287/287 passed（既有282零回归＋TxEngineTest 4用例全绿）＋contract目标32/32 passed（含ProcessCrashContractTest崩溃重开断言）＋B20三反例过滤跑5/5 passed（RecoveryScan_WrongHeadDigest_StoreCorrupt——64hex形态合法的错误摘要拒；RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt——committedAtUtc合法改字而HEAD摘要保持，parse/闭包/对象校验全绿仅摘要比对能拒；Open_WrongHeadManifestDigest_Rejected——公开工厂拒绝＋PRJ-STORE-CORRUPT＋磁盘字节不被打开动作改动；RecoveryScan_HeadManifestMissing_StoreCorrupt——cause定位缺失路径；RecoveryScan_TamperThenRestore_ScanGreen——还原原字节后扫描恢复完整判定无一次性损坏闩锁）；历史兼容＝提交路径自856544ef7起实算清单摘要，健康仓库比对零误伤；ird_gates exit 0（R-1..R-5/T-1/T-2/SUB/GRAPH/LIB/SA02零命中）",
+    "跨文件治理订正随批落地：project/test/ProjectStoreTest.cpp裸写夹具head.manifestDigest由元数据对象摘要metaCvHex订正为r0清单字节摘要（§4.4.1被摘要对象＝清单字节），与产品修复成对落地——修复后该形态必被④拒绝；TxEngineTest.cpp按原夹具风格重写B20未合入测试树（会话内订正sink隔离，与candidate终版字节一致）",
+    "摘要供给前置说明（migration §13.3 WP-16行'摘要供给有前置先说明'）：复用对象＝本单元既有唯一入口codec::contentVersionOf（H1直接API，commit路径在用；project/src/Codec.cpp经core::ContentDigester）——非未获批提案GAP-DIGEST-01（core摘要后端替换，归WP-15，本包零改动零替换）；本包不新建哈希路径、不自写摘要",
+    "F-962改fixed随批收口：findings.json登记落地实证范围＝恢复扫描与公开工厂对错误/失真HEAD摘要的拒绝（三反例复跑在案），不声称超出scanForRecovery④闭包校验的语义；migration §13.1/§13.2/§13.3同步已落地状态；独立验收由所有者另行执行（§6.4身份/持久化类，实施提交不等于独验通过）"
   ],
-  "note": "migration §13.3 WP-16 project子任务（masterWp=WP-A按DTB阶段字母口径/REUSE-T25同单元先例；§13.3包号仅调度别名）。REUSE-T40为本包正式编号——REUSE-T30~T39已占用，开包查重后定号；原侦察计划拟用T30已过时。起点d7874f57f1f0e2cde192a6c76e5b0f90a016306e。**blocked登记（采T33 blocked先例——所有者2026-10-25两次同型裁决：REUSE-T33 A/D解冻裁决与REUSE-T36 F-961，见migration §13.1）**：阻断原因＝IRD复用门禁对累计改动集产品文件的全文件解决要求（reuse-contract.ps1:271-279——changedSources每文件须COVERAGE全行铺面＋全部覆盖行resolved〔status migrated/closed＋decision非pending/proposal〕；validate-reuse.ps1:178-199实测首败REUSE-UNDECLARED即拒，实证落reuse-gate-coverage-evidence.log）；量化＝TxEngine.cpp 22个功能行全部pending/pending＋81个非空行无区段归属、TxEngine.hpp/TxEngineTest.cpp(1422行)/ProjectStoreTest.cpp(1119行)零覆盖行；受影响消费者＝F-962（project恢复扫描未核清单字节摘要，错误HEAD摘要可经公开ProjectStoreFactory::open成功打开——major/open）在产品保持open，影响面为§8.4打开协议与PM-08恢复链的完整性判定；解阻路径＝所有者批准project单元迁移包（T05-project父任务）时按candidate/目录候选落地（成品代码+测试+四份diff+红转绿证据齐备，落地成本＝应用diff＋门禁全文件解决批——TxEngine 22行语义审计＋四文件铺面）。摘要供给前置已说明满足：复用既有codec::contentVersionOf（H1直接API）非GAP-DIGEST-01。修复实现单点scanForRecovery（TxEngine.cpp:941后插入实算比对段＋三处首败钉扎守卫），不改Codec/不新建哈希/不改错误码语义；TxEngine.hpp契约注释同步；测试按原TxEngineTest风格重写B20未合入的ReuseProjectBoundary探测（原探测2passed/4failed独立复现记录在案）。",
+  "note": "migration §13.3 WP-16 project子任务（masterWp=WP-A按DTB阶段字母口径/REUSE-T25同单元先例；§13.3包号仅调度别名）。REUSE-T40为本包正式编号。候选起点d7874f57f1f0e2cde192a6c76e5b0f90a016306e（候选验证与blocked留痕见本目录README §1—§4）；**2026-10-26落地批（所有者批量批准落地裁决表第1~4项，采REUSE-T36落地批同型）：落地批起始44c8d59e4**——原blocked原因（复用门禁对累计改动集产品文件的全文件解决要求超出WP-16修复包边界）已由所有者批准解除，§13.3原包边界相应扩至全文件解决批；候选diff干净应用＋22行语义解决＋四文件217铺面行＋47行inputs摘要级联同步一次收口；验证面＝project全量287/287＋contract 32/32＋B20三反例过滤跑5/5＋ird_gates全绿（landing2-*证据），零permissions新增（IRD-GATE-AD零触发）。摘要供给前置已说明满足：复用既有codec::contentVersionOf（H1直接API）非GAP-DIGEST-01；本包不新建哈希路径、不自写摘要。修复实现单点scanForRecovery（实算比对段插入＋三处首败钉扎守卫），不改Codec/不新建哈希/不改错误码语义；TxEngine.hpp契约注释同步；两测试文件随批（ProjectStoreTest夹具head.manifestDigest订正为清单字节摘要）。status=ready待独立验收：本修复属§6.4身份/持久化类，独验必查篡改/缺失/合法恢复/历史兼容四类。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
@@ -63,8 +68,12 @@
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
     "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
   },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T40.json"
+  },
   "outputs": [
-    "F-962修复候选（TxEngine.cpp/TxEngine.hpp/TxEngineTest.cpp/ProjectStoreTest.cpp四件全件＋四份diff＋红5/5→绿287+32证据链）留存traceability/reuse/REUSE-T40/，产品树HEAD零改动",
-    "blocked登记与解阻路径（契约note＋findings F-962＋migration §13.1/§13.3＋矩阵scanForRecovery行differences注记），交所有者随project单元迁移包裁决"
+    "F-962修复落地产品树（TxEngine.cpp/TxEngine.hpp/TxEngineTest.cpp/ProjectStoreTest.cpp四件与candidate/全件字节一致），landing2-*红转绿与复跑证据（project 287/287＋contract 32/32＋B20三反例5/5＋ird_gates）留存traceability/reuse/REUSE-T40/",
+    "全文件解决批收口（22行migrated＋217铺面行＋47行inputs级联同步＋changes/REUSE-T40.json凭证）与收口登记（findings F-962 fixed、migration §13.1/§13.2/§13.3、契约ready待独立验收）"
   ]
 }

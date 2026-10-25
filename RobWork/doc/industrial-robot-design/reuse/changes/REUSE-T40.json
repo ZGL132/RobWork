@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T40",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T40.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.cpp",
+      "sha256": "2954074021ea89f2dda92f1aa68a176ddae4e81eeafeae4bed247f162d452cc5",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "F-962 修复落地（所有者 2026-10-26 批量批准落地裁决表第 1~4 项，解阻原全文件解决批 blocked）：候选 diff 对 44c8d59e4 干净应用，产品文件与 candidate/ 全件摘要逐位一致。scanForRecovery 在 HEAD 解析后新增 HEAD.manifestDigest 与 HEAD 指向修订清单字节的实算严格比对——经本单元唯一摘要入口 codec::contentVersionOf（CR-02，与 commit 第 4 步 cvHex(contentVersionOf(dump(manifest))) 同口径，不新建哈希路径、不改 Codec、不自写摘要）；缺失/不符＝broken＋PRJ-STORE-CORRUPT（cause 定位到文件）＋headIntegrityVerified=false；用户诊断 cause 首败钉扎（闭包行走/闭包元数据/闭包对象三处赋值加 brokenDetail.empty() 守卫，扫描序第一失败优先写入，后续失败仍经 reportDev 逐一交底）。修订事务/恢复协议按 policy §1.2 保留产品唯一职责（business-specific）；上游无恢复扫描对应物。整文件逐区段实审（22 功能行 migrated＋23 audit 铺面行）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/TxEngine.hpp",
+      "sha256": "9c1f818e9b88eaf5a0a457c3195a96995ff3b5f4c5714b55c68bfa8a33d1a5ec",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "scanForRecovery 契约注释同步（F-962 候选随批）：④契约注释补实算比对与首败钉扎语义（HEAD.manifestDigest 与清单字节经 CR-02 唯一摘要入口实算比对；缺失/不符＝损坏并定位到文件）。零接口/签名/构建变化，纯注释与既有声明同步；全文件 25 个 audit 铺面行登记。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/TxEngineTest.cpp",
+      "sha256": "bb7f7db1e0b6d712e65f8ef2152ef352a8aaabf1d0f2eba0fa2742dce5eb5ffb",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "B20 未合入测试树按原夹具风格重写为 F-962 四用例：WrongHeadDigest（64hex 形态合法的错误摘要拒）、LegalManifestByteTamper_StaleDigest（committedAtUtc 合法改字而 HEAD 摘要保持——parse/闭包/对象校验全绿仅摘要比对能拒）、HeadManifestMissing（cause 定位缺失路径）、TamperThenRestore（还原原字节后扫描恢复完整判定，无一次性损坏闩锁）。会话内订正 sink 隔离（与候选终版字节一致）；测试文件 97 个 audit 铺面行登记。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/test/ProjectStoreTest.cpp",
+      "sha256": "9f487564068b171fe38ba582754f4d429af62bbc3403e9336176d6a54f6eea6e",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "新增公开工厂反例 Open_WrongHeadManifestDigest_Rejected（错误 HEAD 摘要拒绝＋PRJ-STORE-CORRUPT＋磁盘字节不被打开动作改动）；并订正裸写夹具 head.manifestDigest=metaCvHex（:885 原状）——被摘要对象应为 r0 清单字节（§4.4.1），原误写为元数据对象摘要，属夹具契约偏差，修复后该形态必被④拒绝，订正与产品修复成对落地。测试文件 72 个 audit 铺面行登记。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T40/README.md"
+    }
+  ]
+}
