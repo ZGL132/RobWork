@@ -4,6 +4,53 @@
   "baselineCommit": "b12e8503cc1c2a1acc040f506842a02e126b9515",
   "reviewedProductCommit": "877f6afee38446ab43c5e6a6fd9b09593925aedb",
   "scope": "已读候选头/实现/构建/测试/示例；搜索无命中不是能力缺失证明；本机cache仅为环境事实",
+  "increments": [
+    {
+      "taskId": "REUSE-T31",
+      "date": "2026-10-25",
+      "headCommit": "e74886dfcb972a2bbcc4f1336e22ab146037ffde",
+      "topic": "GAP-FD-BUILD-01 供给定向探测（WP-08）：vcpkg port/安装状态/力驱动 API 链/负面证据/部署握手，全部只读实核",
+      "results": [
+        {
+          "command": "cat vcpkg/ports/ode/vcpkg.json; head -40 vcpkg/ports/ode/portfile.cmake; grep -rn 'DOUBLE\\|PRECISION' vcpkg/ports/ode/",
+          "exitCode": 0,
+          "stdoutSummary": "ode 0.16.6；license=BSD-3-Clause OR LGPL-2.1-or-later；supports=!uwp；依赖 vcpkg-cmake/vcpkg-cmake-config(host)；portfile：vcpkg_from_bitbucket SHA512 锁定、-DODE_WITH_DEMOS=OFF -DODE_WITH_TESTS=OFF、vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/ode-${VERSION})（安装后 config 落 share/ode）；port 无精度选项覆盖（零 DOUBLE/PRECISION 命中）",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §A"
+        },
+        {
+          "command": "ls vcpkg/installed/x64-windows/lib/ | grep -i ode; ls vcpkg/installed/x64-windows/share/ | grep -iE '^(bullet3|fcl|ode)$'; grep -n 'BUILD_sdurwsim_ode\\|ODE_DIR:\\|ODE_INCLUDE_DIR\\|ODE_LIBRARY_TMP' build/CMakeCache.txt; grep -n 'VCPKG_MANIFEST_MODE\\|VCPKG_TARGET_TRIPLET:' build/CMakeCache.txt; grep -n 'pqp\\|PQP' build/CMakeCache.txt | head -6; grep -n 'BUILD_sdurwsim_bullet' build/CMakeCache.txt",
+          "exitCode": 0,
+          "stdoutSummary": "installed lib 零 ode 命中（未安装）；share 下 bullet3、fcl 在位、ode 无；build/CMakeCache.txt:240 BUILD_sdurwsim_ode:BOOL=OFF、:600 ODE_DIR-NOTFOUND、:603/:606 NOTFOUND、:942 VCPKG_MANIFEST_MODE:BOOL=OFF、:953 triplet x64-windows、:834 RW_USE_PQP:BOOL=ON、:228 BUILD_sdurwsim_bullet:BOOL=ON",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §B"
+        },
+        {
+          "command": "grep -n 'void RigidDevice::setMotorForceTargets\\|void RigidDevice::setJointVelocities' RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.cpp; grep -n '_odeJoints\\[i\\]->setForce' RobWork/RobWorkSim/src/rwsimlibs/ode/ODEVelocityDevice.cpp; grep -n 'RigidDevice\\* rdev = dynamic_cast' RobWork/RobWorkSim/src/rwsimlibs/ode/ODESimulator.cpp; grep -n 'virtual void step\\|virtual void resetScene\\|virtual void initPhysics\\|virtual void exitPhysics\\|virtual double getTime' RobWork/RobWorkSim/src/rwsim/simulator/PhysicsEngine.hpp",
+          "exitCode": 0,
+          "stdoutSummary": "RigidDevice.cpp:234 setMotorForceTargets（写 _target 并置 modes=1=Force）、:260 setJointVelocities（clamp 速度限位写 State）；ODEVelocityDevice.cpp:166 setForce（:113 每步 getMotorModes 读回）；ODESimulator.cpp:1214 RigidDevice dynamic_cast→new ODEVelocityDevice；PhysicsEngine.hpp:99/105/110/115/120 纯虚",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §C"
+        },
+        {
+          "command": "sed -n '580,595p' RobWork/RobWorkSim/src/rwsimlibs/bullet/BtSimulator.cpp; sed -n '128,140p' RobWork/RobWorkSim/src/rwsim/rwphysics/RWSimulator.cpp; sed -n '1,40p' RobWork/RobWorkSim/src/rwsim/rwphysics/RK4Integrator.hpp",
+          "exitCode": 0,
+          "stdoutSummary": "BtSimulator.cpp:585-588 addDevice RW_THROW(\"not implemented yet!\")；RWSimulator.cpp:132-135 RigidDevice 分支打印 \"NO SUPPORT FOR RIGID DEVICES!\"；RK4Integrator.hpp:22-36 class RK4Integrator : public BodyIntegrator（ctor 收 dynamics::RigidBody*）——单刚体 BodyIntegrator，非关节 ODE 求解器",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §D"
+        },
+        {
+          "command": "head -16 RobWork/RobWorkSim/cmake/Modules/FindODE.cmake; tail -50 RobWork/RobWorkSim/cmake/Modules/FindODE.cmake; grep -n 'ODE_WITH_THREADING_IMPL' RobWork/RobWorkSim/src/rwsimlibs/ode/CMakeLists.txt; sed -n '170,230p' RobWork/RobWorkSim/cmake/RobWorkSimSetup.cmake",
+          "exitCode": 0,
+          "stdoutSummary": "FindODE.cmake:10-16 find_package(ODE QUIET PATHS .../lib/cmake/ode-* NO_MODULE) config 优先；config 命中走 tail else 分支（ODE_BUILD_WITH=DOUBLE、ODE_INCLUDE_DIR=${ODE_INCLUDE_DIRS}）；rwsimlibs/ode/CMakeLists.txt:65-86 检测 ODE_WITH_THREADING_IMPL、:118-123 手工 dDOUBLE/dSINGLE 仅 <0.13；RobWorkSimSetup.cmake:175-231 RWSIM_HAVE_ODE=find_package 命中且 PQP/FCL 在位，WIN32 未命中走 :206-221 ExternalProject git 拉 0.16.2（须规避）、未命中禁用走 :230-232 静默 disabled",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §E"
+        },
+        {
+          "command": "head -30 RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp; grep -n 'class ForwardDynamicsValidator' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp; grep -n 'evalAcceleration' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp | head -3; sed -n '340,352p' RobWork/doc/industrial-robot-design/units/dynamics.md; sed -n '40,75p' RobWork/RobWorkSim/gtest/ode/ODEControlTest.cpp; sed -n '63,73p' RobWork/RobWorkSim/gtest/CMakeLists.txt",
+          "exitCode": 0,
+          "stdoutSummary": "DynamicWorkCellCompiler.cpp 文件头＝S7 编译器/集成模式编译/单位纪律（产品承接面在位）；ForwardDynamics.hpp:303 class ForwardDynamicsValidator；ForwardDynamics.cpp:510 evalAcceleration、:612-692 RK4 子步；units/dynamics.md:345 integratorToken 封闭词表锁定 rk4-fixed；ODEControlTest.cpp:45 movePTP 速度控制（:73 起注释 _FC 变体）、gtest/CMakeLists.txt:63-73 TARGET sdurwsim_ode 门控 sdurwsim_ode-gtest（ODEControlTest+ODESimpleTest，无关节力输入用例）；tasks/REUSE-T04.json status=planned",
+          "fullLog": "traceability/reuse/REUSE-T31/README.md §F-§G"
+        }
+      ],
+      "conclusion": "GAP §2『若该渠道当前无适用port』的不确定已收窄：port ode 0.16.6 在位而未安装；力驱动直连 API 链与部署握手行号级核验完成；Bullet/RWPhysics/RK4Integrator 负面证据落位。仅适用性与供给提案（GAP-FD-BUILD-01.md 修订为可裁决提案），阶段 B 新依赖启用未获批不实施，不解除 WP-09/T04 阻断"
+    }
+  ],
   "bindings": [
     {
       "path": "RobWork/RobWork/src/rw/invkin/IterativeIK.hpp",

@@ -263,6 +263,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **WP-06/T02动力学映射**：[REUSE-T30](../tasks/REUSE-T30.json)实施完成待独验（起点`c816a2c482088b9d03d537c103cf9ac314259187`）：S7映射定向核＋3个oracle测试（非零offset参考点/固定段复合刚体多重集/RNE可消费性单z轴全分量手算），全量runtime 309项（308passed＋1既有skipped）、modeling消费者479项全过、mutation聚合断开在案；capability RUNTIME-DWC-MODEL（verified）与runtime.compileDynamicWorkCell等矩阵/凭证见[原始记录](../traceability/reuse/REUSE-T30/README.md)。2026-10-25所有者escalate裁决：GAP-RNE-FRAME（权威轴≠z时上游RNE按关节系解释masscenter错位）接受为登记缺口、包内不实施修复；B1/薄适配两落点见suitability §6供WP-07准入提案。
 
+**WP-08/FD后端供给探测**：[REUSE-T31](../tasks/REUSE-T31.json)实施完成待独验（起点`e74886dfcb972a2bbcc4f1336e22ab146037ffde`）：GAP-FD-BUILD-01供给定向探测全部只读实核——vcpkg port ode 0.16.6在位而未安装（installed零ode库、bullet3/fcl对照、BUILD_sdurwsim_ode=OFF/ODE_DIR-NOTFOUND、VCPKG_MANIFEST_MODE=OFF）、力驱动直连API链行号级核验（RigidDevice::setMotorForceTargets→ODEVelocityDevice::update Force分支setForce→ODESimulator::addDevice建ODEVelocityDevice）、Bullet/RWPhysics/RK4Integrator负面证据落位、部署握手（FindODE config包与vcpkg布局兼容；须规避RobWorkSimSetup WIN32的git网络拉取回退）；[GAP-FD-BUILD-01](GAP-FD-BUILD-01.md)已修订为可裁决供给提案（含阶段B验证设计与回滚边界），增量检索见[proposal-search.json](extensions/proposal-search.json)增量批，原始记录见[REUSE-T31](../traceability/reuse/REUSE-T31/README.md)。阶段B（安装ode＋隔离树启用BUILD_sdurwsim_ode＋力输入探针）属新依赖启用，未获所有者批准不实施；T04/WP-09阻断不变；提案裁决与独立验收由所有者安排，实施者不自签。
+
 ### 13.2 交接索引与已知阻断
 
 交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。

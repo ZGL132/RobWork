@@ -188,7 +188,7 @@
       "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
       "proposal": {
         "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
-        "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+        "sha256": "f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b"
       }
     },
     {
@@ -236,7 +236,7 @@
       ],
       "proposal": {
         "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
-        "sha256": "52c72508378226b1317b820b9c5bafa7bb1268243f363549d7898be9b041d41d"
+        "sha256": "f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b"
       }
     },
     {
