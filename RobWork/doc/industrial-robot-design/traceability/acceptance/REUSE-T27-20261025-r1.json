@@ -1,0 +1,83 @@
+{
+  "taskId": "REUSE-T27",
+  "baseCommit": "704667b598967d9849dd02f113dd28ec3ad93a8e",
+  "reviewedCommit": "4794f64476945d3b8cf6974bb3e778b6ba419f95",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T07:30:57+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T27/WP-12 单次验收子智能体（第 1 轮独立验收）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何产品/文档文件、未提交、未切分支、未建工作树、未远程操作、未改动构建配置（仅对既有 build 树增量编译受影响目标）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。只验收不修复、不改任务状态、不推进下一任务。"
+  },
+  "scope": "独立验收 704667b..4794f644（单提交，4794f644 为 base 之直接子提交、HEAD 0ca544e49 祖先链上唯一 REUSE-T27 实施提交）：复跑 verify-task-scope 显式 Base/Head、证据原件 SHA-256 与送验 blob 逐项核对、acceptance 三条逐项（代码删除/上游消费核对、65+8 测试真实复跑、性能微基准真实复跑）、红线抽查（H1—H6、L2 零 Qt、无平行实现、私有头不跨单元、CLOSURE 冻结、门禁/权限未放宽、PASS/FAIL/NOT RUN 分列）、commit-lint 提交链。送验后主线 T28/T29 又改 modeling（synthesisSelfCheck 对称容差相对化等，不触碰特征值路径），本独验测试复跑在当前树上以同 filter 执行并与送验树原件计数一致对照。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查；集成/契约测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场与送验定位：branch=redesign-main；HEAD=0ca544e49；送验范围 704667b..4794f644 恰含 1 个提交 4794f644（git log 证实），base 704667b 即其父提交（git rev-parse ^ 证实）；工作区除验收产物目录外无未跟踪/修改（01-git-state.log）。4794f644 之后主线另有 T28（ea8ac53ba，改 modeling/src/InertiaMath.hpp 的 synthesisSelfCheck 对称性容差为相对尺度、PropertyEstimation.cpp、PropertyEstimationTest.cpp +120 行）与 T29 等提交，均不属于送验范围；T28 对 InertiaMath.hpp 的 diff 逐行核对仅触碰 synthesisSelfCheck 对称性计算，特征值入口 symmetricEigenvalues3x3 与 SPD/三角谓词未变。",
+    "范围：verify-task-scope 显式 -Base 704667b598967d9849dd02f113dd28ec3ad93a8e -Head 4794f64476945d3b8cf6974bb3e778b6ba419f95 exit 0，『45 个路径全部在允许面内』（02-scope.log）；45 文件与 allowedFiles 逐项对应（InertiaMath.hpp、PropertyEstimationTest.cpp、tasks/REUSE-T27.json、reuse/changes/REUSE-T27.json、reuse/functions/modeling.json、reuse/catalog.json、traceability/reuse/REUSE-T27/** 证据目录），无 forbiddenFiles（RobWork/RobWork/src/**、RobWorkSim、vcpkg）命中，无 cmake/ 门禁文件、无 permissions 文件。",
+    "证据原件与送验树一致性：verification.json 登记的 sha256 按 git blob 内容逐一核对——final.xml(87fb826e)/final.log(58712b8f)/contract.xml(d97c163f)/contract.log(dee7fa0c)/performance.log(c7a346c7)/final-build.log(dc04b889)/architecture-gates.log(38667284)/smoke-build.log(53a39d31)/InertiaMath.hpp(3e1bb898)/PropertyEstimationTest.cpp(669e76a1)/LinearAlgebra.hpp(32ce2b2c)/LinearAlgebra.cpp(d799f756)/PropertyEstimation.cpp(1a397e88) 及基线 InertiaMath.hpp(9a81c419) 全部一致。唯一不符：bindings 中 modeling/CMakeLists.txt 登记值 638d9bdd 与送验 blob 3876d896（亦为 base/HEAD/工作区同值）不符——但该文件在送验范围内零改动（git diff 704667b..4794f644 无此文件），绑定可由 git 历史更强证明，登记为记录瑕疵（见 issues 注记，不阻断）。",
+    "acceptance-1（删除自写解析核心、直接消费上游、严格策略不放宽）：基线版 704667b InertiaMath.hpp 的 symmetricEigenvalues3x3 为 Smith 解析三角法（零阵分支/均值/平方和/归一行列式/acos/2π/3 三角根，git show 逐行读取）；送验版 4794f644 同函数仅做六分量→Eigen::MatrixXd 投影并调用 rw::math::LinearAlgebra::eigenDecompositionSymmetric 取 decomposition.second[0..2]（升序），解析公式全部删除；checkInertiaAssertions 保持 eig[0]>0.0 严格与 eig[2]>eig[1]+eig[0] 严格，synthesisSelfCheck ③ 仍复用同入口——SPD/三角谓词零放宽。",
+    "acceptance-2（独立谱/对照/扰动/回归）：本人重跑实施同款 gtest filter——sdurws_ird_modeling_test 65 tests/65 passed/0 failed/0 skipped exit 0（10-modeling-test.xml），sdurws_ird_modeling_contract_test 8 tests/8 passed exit 0（11-contract-test.xml），与送验原件 final.xml（testsuites tests=65 failures=0）与 contract.xml（tests=8 failures=0）一致；96 张量独立已知谱测试 KnownSpectrumAcrossScales_REUSE_T27 在送验版测试源码 848 行确认（期望值不经求解器生成、归一尺度后原 1e-12 容差，76 行）；真实生产返回值扰动原件 disconnected.xml 0 passed/2 failed 如实留存（预期失败，未混列 PASS）；恢复事件原件 restore-stale.xml 43 passed/22 failed 留存，README/verification.json restoreIncident 如实叙述时间戳复用旧对象的构建事故并以重编译关闭，未以任何生产改动掩盖。",
+    "acceptance-3（公共接口/owner/构建供给保持；性能实测+所有者接受）：送验 diff 无公共头/include//CMake/依赖/框架改动（45 文件清单为证，RobotDesign.hpp 绑定 SHA 未变）；私有头消费者 grep 全部在 modeling 单元内（Parts/RobotDesign/PropertyEstimation/Import/CommandHandlers/ModelingBodyEditor，16-private-header-consumers.log），无跨单元借用；runtime 仍唯一模型 owner（limits.lifetime 登记数学局部值、无模型写入；测试断言拒绝路径零副作用）。性能项真实复跑（13-performance.log，run-performance.cmd 原脚本、MSVC /O2 /MD /DNDEBUG、100000 次×4 场景×3 轮交替）：一般非对角新 0.436–0.449µs/次 vs 旧 0.0367–0.0387µs（约 12 倍），与 README 登记 11.6–13.5 倍同量级；极小尺度旧核 checksum=400026.67（误算）新 300000.000000000 正确；极大尺度旧 checksum=-inf 新 300000.000000000 正确——性能开销与正确性改善同时实测复现。所有者接受登记于 verification.json performance.ownerDecision=『接受本包具体开销并交独验』及 README §性能与接受，范围限定本包具体测量。",
+    "文档/契约/复用门禁：validate-docs -TaskFile REUSE-T27.json 复跑 exit 0——validate-task PASS (1 tasks)、validate-reuse PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs PASS (20 units, 12 trace entries, 404 task files)（12-validate-docs.log）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示（GOV-T24 先例同认定），非本包阻断。",
+    "架构门禁引擎直跑：ird_gates.cmake 复跑 exit 0，含 17 项自测正负例（fail_* 按预期检出），『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』（14-architecture-gates.log）——与实施原件 architecture-gates.log 结论一致，门禁未被放宽。",
+    "红线抽查：H1 直接 API 消费公开 LinearAlgebra（catalog MATH-EIGEN 登记直接来源并记载 GeometryUtil 包装无收益的候选比较）；H2 无平行实现——modeling/src 全目录 grep 旧核心特征（acos/2.0943951023931953）仅命中 DhConvert.cpp:371 姿态转换注释，无特征值核心残留或复活；H3 沿用上游类型/目标（Eigen::MatrixXd、sdurw_math、上游 LinearAlgebraTest 直接编译不复制）；H4 文档/凭证/矩阵/catalog 同批同步（functions/modeling.json +2443 行 MATH-EIGEN 功能登记、changes/REUSE-T27.json 逐文件凭证 SHA 与 blob 一致、mode=adapter/business 如实）；H5 无上游/vcpkg 改动、无新核心；H6 catalog 绑定含文件 SHA/symbols/target 可追溯。L2 零 Qt：InertiaMath.hpp 无 Qt/Q_OBJECT/QWidget 命中。CLOSURE 冻结：45 文件 diff 无 migration.md、catalog.json diff 仅 MATH-EIGEN 条目（candidate→verified，未到 closed，与独验 NOT RUN 不得 done 一致）、无 CLOSURE 段触碰。PASS/FAIL/SKIP/NOT RUN 未混列：verification.json results 六组分列（baseline 0p/2f、normal 62/0、disconnected 0p/2f、restore-stale 43p/22f、final 65/0、contract 8/0），README 表格 FAIL/预期FAIL/PASS/NOT RUN 逐项如实，分配失败注入/线程压力等如实登记 NOT RUN。",
+    "提交链：commit-lint -Range 704667b598967d9849dd02f113dd28ec3ad93a8e..4794f64476945d3b8cf6974bb3e778b6ba419f95 exit 0『PASS（1 个提交全部合规）』（15-commit-lint.log）；提交标题 [governance] REUSE-T27 复用上游惯量特征值并删除解析核心 前缀合规、一包一组；正文数字（65/0、契约 8、扰动 2 failed、恢复 43/22、性能所有者接受、独验 NOT RUN ready 非 done）与 verification.json/README/契约 note 逐项一致，无夸大。契约 tasks/REUSE-T27.json 于送验后被 T28 提交（ea8ac53ba）顺带做归属校正（masterWp WP-A→WP-E、note 追加归属句）——非本包实施越权，属主线后继归属修正，本验收以送验时点契约（随 4794f644 新增）与当前契约（含校正）双读核对，acceptance 正文未变。"
+  ],
+  "integrationTest": {
+    "modeling": {
+      "tests": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "10-modeling-test.xml",
+      "note": "本独验在当前工作树（含 T28 后续改动，不触碰特征值路径）以实施同款 filter 重跑；计数与送验树原件 final.xml（65/0）一致"
+    },
+    "modelingContract": {
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "11-contract-test.xml",
+      "note": "与送验原件 contract.xml（8/0）一致"
+    }
+  },
+  "performance": {
+    "rerun": true,
+    "command": "pwsh → cmd /c run-performance.cmd（实施原脚本：vcvars64 + cl /O2 /MD /DNDEBUG + 100000 次 × 4 场景 × 3 轮交替）",
+    "log": "13-performance.log",
+    "observed": "一般非对角 old 0.0367–0.0387µs new 0.436–0.449µs（≈12 倍）；近各向同性 old 0.0234–0.0281µs new 0.394–0.417µs；极小尺度 old checksum=400026.67（误算）new=300000 正确；极大尺度 old checksum=-inf new=300000 正确",
+    "ownerDecision": "所有者明确接受本包具体开销并交独验（verification.json ownerDecision + README §性能与接受）；仅限本包具体测量，不外推其他包预算"
+  },
+  "commands": [
+    { "name": "git-state", "command": "git status --short / git branch --show-current / git rev-parse HEAD / git log 704667b..4794f644 / git rev-parse 4794f644^", "exitCode": 0, "passed": true, "log": "01-git-state.log" },
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T27.json -Base 704667b598967d9849dd02f113dd28ec3ad93a8e -Head 4794f64476945d3b8cf6974bb3e778b6ba419f95", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "evidence-sha256", "command": "对 14 项 verification.json 登记绑定逐一执行 git show 4794f644:<path> | sha256sum（blob 口径）及工作区 sha256sum 对照", "exitCode": 0, "passed": true },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test（既有 build 树增量；Git Bash 下省略 MSBuild /nologo 附加开关，构建命令与实施等价）", "exitCode": 0, "passed": true, "log": "10-build.log" },
+    { "name": "modeling-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_test.exe --gtest_filter=MdlInertiaReuse.*:MdlPropertyEstimation.*:MdlRobotDesign.IMdl5*:MdlRobotDesign.IMdl3*:MdlParts.ToolBodyAssertions*:MdlImport.*:MdlReadiness.*:MdlCommandPrepare.HardAssert*:LinAlgeTest.*:ModelingManualBody.*:MdlCanonicalBridge.LinksMappingBodyAndGeometry*（PATH 前置 vcpkg/build bin，QT_QPA_PLATFORM=windows）", "exitCode": 0, "passed": true, "log": "10-modeling-test.log", "xml": "10-modeling-test.xml" },
+    { "name": "modeling-contract-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_modeling_contract_test.exe --gtest_filter=MdlDescriptionBridgeContract.*:MdlGoldenPeerContract.*:MdlCompileBridgeContract.*", "exitCode": 0, "passed": true, "log": "11-contract-test.log", "xml": "11-contract-test.xml" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T27.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "12-validate-docs.log" },
+    { "name": "performance-rerun", "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/run-performance.cmd（经 pwsh 调用避免 MSYS 路径转义）", "exitCode": 0, "passed": true, "log": "13-performance.log" },
+    { "name": "architecture-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=<temp>/t27-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "14-architecture-gates.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 704667b598967d9849dd02f113dd28ec3ad93a8e..4794f64476945d3b8cf6974bb3e778b6ba419f95", "exitCode": 0, "passed": true, "log": "15-commit-lint.log" }
+  ],
+  "issues": [],
+  "observations": [
+    "verification.json bindings 中 modeling/CMakeLists.txt 登记 sha256=638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a，与送验 blob（3876d896…，且 base/HEAD/工作区四口径同值）不符；该文件在送验范围内零改动（git diff 704667b..4794f644 无此文件），输入绑定由 git 历史强证明，属登记记录瑕疵，不影响任何验收结论。其余 13 项绑定 SHA 全部与 blob 一致。",
+    "送验后主线 T28 提交（ea8ac53ba）顺带校正本契约归属（masterWp WP-A→WP-E、note 追加归属句）并修改 modeling 三文件（synthesisSelfCheck 对称容差相对化等）；本验收在当前树上复跑测试并以送验树原件对照，T28 改动经 diff 逐行核对不触碰特征值路径与 SPD/三角谓词。",
+    "实施登记 NOT RUN 项（分配失败注入、线程压力、整机性能、无关模块全量测试）维持 NOT RUN，不在本独验范围内补跑；validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399），不构成其他包或算法替换（migration §11）的放行。"
+  ],
+  "notRun": [],
+  "limitations": "PASS 仅覆盖 REUSE-T27 送验范围 704667b598967d9849dd02f113dd28ec3ad93a8e..4794f64476945d3b8cf6974bb3e778b6ba419f95（WP-12 惯量特征值子包）。测试复跑在当前工作树执行（modeling 源码含 T28 后续改动、不触碰本包特征值路径），与送验树原件 final.xml/contract.xml 计数一致对照成立；性能复跑为同一台机器当前状态的独立实测，量级与实施原件一致。本 PASS 不关闭任务（ready 维持）、不翻转 migrated→closed、不构成 T13/T26 独验、不放行依赖 T13 的普通 IK/RNE、不批准其他 runtime/selection 惯量候选。记录与证据仅落盘未提交，由登记步骤统一提交。"
+}

@@ -1,0 +1,7 @@
+=== 现场快照 2026-10-25T07:30:52+08:00 ===
+branch: redesign-main
+HEAD: 0ca544e493813441ff03bfc701757ee7ae496095
+reviewedCommit 4794f644 状态: HEAD祖先(唯一REUSE-T27实施提交)
+base 704667b 为 4794f644 父提交: 704667b598967d9849dd02f113dd28ec3ad93a8e
+git status 未跟踪仅验收产物目录:
+(以上无输出=除验收产物外无其他未跟踪/修改)

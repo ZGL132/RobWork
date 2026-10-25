@@ -4,7 +4,7 @@
   "unit": "modeling",
   "masterWp": "WP-E",
   "title": "惯量特征值复用RobWork对称分解并删除解析核心",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "GOV-T21",
@@ -31,7 +31,9 @@
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T27.json",
     "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
     "RobWork/doc/industrial-robot-design/reuse/catalog.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T27/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T27-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T27-20261025-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -43,7 +45,7 @@
     "独立已知谱/非对角/正负/零/重根/极小与极大尺度，重复确定性；真实上游与产品消费者对照、生产返回值扰动、受影响回归",
     "保持公共接口/owner/原构建供给；实测性能、无预算退化需明确接受，独验NOT RUN不得done"
   ],
-  "note": "WP-12惯量特征值直接复用包；起点704667b598967d9849dd02f113dd28ec3ad93a8e。替换单点旧核心，不改公共接口/CMake/依赖/框架/模型owner，不依赖未独验T13/T26。适配候选为公开LinearAlgebra，GeometryUtil包装无额外收益。普通数值原语无共享状态；本包精确实审，独验NOT RUN。 已实施，最终65passed/0failed/0skipped，契约8passed/0failed/0skipped；真实扰动2failed，恢复时间戳导致的旧对象22failed已留存并经重编译关闭。所有者明确接受本包具体性能开销并交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T27/README.md。 归属校正：DTB主交付WP-E；migration §13串行WP-12仅完成惯量特征值子项，其余由后继精确包推进；独验仍NOT RUN，不翻转ready。",
+  "note": "WP-12惯量特征值直接复用包；起点704667b598967d9849dd02f113dd28ec3ad93a8e。替换单点旧核心，不改公共接口/CMake/依赖/框架/模型owner，不依赖未独验T13/T26。适配候选为公开LinearAlgebra，GeometryUtil包装无额外收益。普通数值原语无共享状态；本包精确实审，独验NOT RUN。 已实施，最终65passed/0failed/0skipped，契约8passed/0failed/0skipped；真实扰动2failed，恢复时间戳导致的旧对象22failed已留存并经重编译关闭。所有者明确接受本包具体性能开销并交独验；独验NOT RUN、ready非done。原件traceability/reuse/REUSE-T27/README.md。 独验仍NOT RUN，不翻转ready。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T27-20261025-r1.json（复跑原件在其同名目录），verdict=pass（10项检查failed=0/notRun=0/skipped=0；集成/契约测试计数另列65+8互不相加），绑定送验 SHA=4794f64476945d3b8cf6974bb3e778b6ba419f95（base=704667b598967d9849dd02f113dd28ec3ad93a8e，送验范围单提交）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（45路径全在允许面）、证据原件SHA-256与送验blob逐项核对（14项绑定中13项一致，modeling/CMakeLists.txt登记值为记录瑕疵但该文件送验范围零改动、由git历史强证明，不阻断）、解析核心删除与上游eigenDecompositionSymmetric消费实审、SPD/三角严格谓词未放宽、modeling单元65/65与契约8/8以同filter真实复跑且与送验原件计数一致、96张量独立已知谱测试在送验源码确认、性能微基准独立重跑（≈12倍开销与极小/极大尺度checksum由误算/-inf转正确，所有者接受范围限本包）、ird_gates直跑11类零命中、validate-docs三合一exit 0、commit-lint PASS；limitations：测试复跑在当前树（含T28后续改动、不触碰特征值路径）与送验树原件对照成立，validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399），本PASS不构成T13/T26独验、不放行依赖T13的普通IK/RNE、不批准其他惯量候选。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
