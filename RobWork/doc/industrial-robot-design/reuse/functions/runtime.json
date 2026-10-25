@@ -178,7 +178,7 @@
         "command": "rg -n \"singularValuesOneSidedJacobi|svd|pseudoInverse\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
       },
-      "differences": "手写Jacobi；保留有限性/条件数/奇异阈值的产品语义",
+      "differences": "手写单侧 Jacobi；保留有限性/条件数/奇异阈值的产品语义。REUSE-T34 候选实测（LinearAlgebra::svd）：n=3/6/12 分别 2.597/2.154/1.944× 退化、σ 相对差 ≤2.1e-15（上游对照通过）——按预声明规则（无既有预算；T07 同接口 4.662× 悬置前科）不落地生产，候选/测量交所有者单项裁决；上游 svd 强制 ComputeFullU|ComputeFullV 而 σ-only 直连亦 1.8× 慢且属未批依赖渠道（performance.log）。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
@@ -246,13 +246,13 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-EIGEN",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
       "search": {
         "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
-      "differences": "自持按轴二进制平衡、补偿LDLT；DescriptionValidator与builder共用。候选上游对称谱及已依赖Eigen分解；严格>0、次正规/混合尺度/近半正定必须独立核，不能全局缩放吞小轴或加epsilon；probe-r6实测谱解丢混合尺度小正轴，既有Eigen LLT通过该对角、1±nextafter边界与精确秩1十进制块；仍须完整不对称/平衡/非法极值与诊断消费者回归，不批准保留自持LDLT",
+      "differences": "REUSE-T34 终审（带证据保留）：自持按轴二进制平衡、补偿 LDLT 见证保留——谱解候选被 probe-r6 混合尺度反例证伪（丢小正轴），Eigen::LLT 直连属未批新依赖渠道（上游 LinearAlgebra 无 LLT 公开入口）；矩阵记录要求的完整不对称/平衡/非法极值与诊断消费者回归已补（InertiaWitnessMixedScaleAndExtremes_T34：1e-300/5e-324 小正轴接受、半正定/Cauchy/秩1拒绝、不对称阈两侧）；\"不批准保留自持LDLT\"系补证前状态，本批证据落位后按 T32 business-specific/audited 形态交独验复核。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
@@ -273,7 +273,11 @@
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
           "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
         }
-      ]
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+        "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+      }
     },
     {
       "functionId": "runtime.relativeAsymmetry",
@@ -297,20 +301,24 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "MATH-EIGEN",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "audited",
       "search": {
         "command": "rg -n \"eigenDecompositionSymmetric|SelfAdjointEigenSolver|LLT|LDLT\" RobWork/RobWork/src/rw/math RobWork/RobWork/gtest/math",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
-      "differences": "按最大分量归一计算对称Frobenius相对偏差；规范比较与数值范数分开审，不把通用范数/矩阵重复计算当owner豁免",
+      "differences": "REUSE-T34 终审（带证据保留）：按最大分量归一的相对不对称度量为产品拒绝规则（附录 D #6 阈值语义），上游无等义入口（isSkewSymmetric 为布尔且语义不同）；不对称阈两侧 oracle 已补（1e-14 级接受/1e-11 级拒绝）；S3/S5 共用实现一致性由 RT-T16 结构与两侧用例承接。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
           "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
         }
       ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+        "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+      }
     },
     {
       "functionId": "runtime.rtcodec.Writer.u16",
@@ -1291,7 +1299,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -8696,215 +8704,325 @@
         "sha256": "1b51a2c6ab60b326c8dbadea6ccb87719bcd11435b814fb02a9d239e2ca43437"
       }
     },
-{
- "functionId": "runtime.compileDynamicWorkCell",
- "ownerUnit": "runtime",
- "requirements": [
-  "DYN-01",
-  "DYN-02",
-  "MDL-06"
- ],
- "sources": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
-   "symbol": "makeBodyInfo",
-   "startLine": 1,
-   "endLine": 127,
-   "sha256": "a52c2ec1a615490196f0994be573a565964111da511043c44cae05874e636f89"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
-   "symbol": "compileDynamicWorkCell",
-   "startLine": 128,
-   "endLine": 518,
-   "sha256": "010ec15d47bcc54425678aca0e67d8e2cc92387d59181fe32dc1c6e928959d35"
-  }
- ],
- "targets": [
-  "sdurws_ird_runtime"
- ],
- "usageRole": "owner",
- "permissionRef": "ARCH:3.6.1",
- "capabilityId": "RUNTIME-DWC-MODEL",
- "decision": "adapter",
- "status": "migrated",
- "search": {
-  "command": "rg -n \"class BodyInfo|class FixedBody|class RigidDevice|class DynamicWorkCell|class MaterialDataMap|setGravity|addFrictionData\" RobWork/RobWorkSim/src/rwsim RobWork/RobWork/gtest",
-  "conclusion": "已定向实读rwsim dynamics/util公共头与实现（BodyInfo质心系惯量/RigidDevice ctor与速度接口/DWC重力与材质/摩擦material-pair载体）；保留/删除/适配及GAP-RNE-FRAME登记见REUSE-T30/suitability.md；migrated仅实施完成，未独验、不closed。"
- },
- "differences": "单位SI零换算（kg/m/kg·m²/N·m·s/rad）；质心/惯量为权威连杆系表达、承载帧挂连杆帧下恒等（Body.hpp body-frame契约）；q_auth=zeroOffset+q_rw（REUSE-T13既有修复复用）；固定段复合刚体裁决（Fixed不入设备关节集、下游体回溯最近上游活动关节、§8.5 4c为存在性校验）；摩擦=MaterialDataMap承载约定（fv/fc/bias参数名冻结），不接管摩擦策略；工具体=Tcp帧FixedBody不进设备连杆序列（RNE载荷经setPayload通道，WP-07消费面）；GAP-RNE-FRAME：权威轴≠z时上游RNE按关节系解释masscenter错位（2026-10-25所有者裁决登记，修复待WP-07准入提案批准）；RNE重力不入映射产物（消费方setGravity显式供给）。不代表全项目动力学已迁移。",
- "inputs": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.hpp",
-   "sha256": "78281ff660cd8004c7838911b79f07caeb16a06ce407da3c4dc4d311270fad19"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-   "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-   "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
-   "sha256": "e461a26ebdd9249fe1c91fb1bee809de627b21f41a9bf64ddfd249c94de72f2e"
-  },
-  {
-   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
-   "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
-  }
- ],
- "auditBoundary": "本功能含文件头契约说明/匿名空间helper/主编译函数（整文件区段1+2）；视图实现区段归runtime.DynamicWorkCellConstView.accessors。独验待所有者另开会话。",
- "production": {
-  "entry": "compileDynamicWorkCell",
-  "consumer": "compileDynamicWorkCell",
-  "upstream": "setGravity",
-  "target": "sdurws_ird_runtime"
- },
- "evidence": {
-  "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.compileDynamicWorkCell.json",
-  "sha256": "b5e2de8e0b659891c7cb1ce61014933869646d0fb16bc490d3c851fe2b9535b4"
- }
-},
-{
- "functionId": "runtime.DynamicWorkCellConstView.accessors",
- "ownerUnit": "runtime",
- "requirements": [
-  "ARC-03"
- ],
- "sources": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
-   "symbol": "DynamicWorkCellConstView",
-   "startLine": 519,
-   "endLine": 560,
-   "sha256": "b84947fc38b6255901f43a0f1bcaaeca75ad5fee59d7e1ea8fbfbdeb03b71276"
-  }
- ],
- "targets": [
-  "sdurws_ird_runtime"
- ],
- "usageRole": "owner",
- "permissionRef": "ARCH:3.6.1",
- "capabilityId": "RUNTIME-DWC-MODEL",
- "decision": "adapter",
- "status": "migrated",
- "search": {
-  "command": "rg -n \"findBody|getBodies|class DynamicWorkCell\" RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp",
-  "conclusion": "已定向实读DWC查询面（findBody/getBodies）与只读包装（cast<const Body>收敛返回面）；同形访问器（ctor空句柄校验/dynamicWorkCell()/findBody/bodyCount）按audit-contract成组登记；migrated仅实施完成，未独验、不closed。"
- },
- "differences": "§8.2/8.3只读包装：返回面收敛const（Body写路径类型层不可达）；空Ptr构造fail-fast（robwork-error）；string_view显式转std::string（基线签名）。发布后只读共享（快照唯一规范持有者）。",
- "inputs": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.hpp",
-   "sha256": "78281ff660cd8004c7838911b79f07caeb16a06ce407da3c4dc4d311270fad19"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-   "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
-   "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
-   "sha256": "e461a26ebdd9249fe1c91fb1bee809de627b21f41a9bf64ddfd249c94de72f2e"
-  },
-  {
-   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
-   "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
-  }
- ],
- "auditBoundary": "本功能为DynamicWorkCellConstView实现区段（ctor/dynamicWorkCell/findBody/bodyCount同型访问器成组）；契约声明在公共头Adapter.hpp（零变更）。独验待所有者另开会话。",
- "production": {
-  "entry": "DynamicWorkCellConstView",
-  "consumer": "DynamicWorkCellConstView",
-  "upstream": "findBody",
-  "target": "sdurws_ird_runtime"
- },
- "evidence": {
-  "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.DynamicWorkCellConstView.json",
-  "sha256": "23676cf6f3759a1778ad4b17d4d7dc855fdcf06ced809dfb276ca26fa8b9f3d4"
- }
-},
-{
- "functionId": "runtime.DynamicWorkCellCompilerTest_cpp.declarations",
- "ownerUnit": "runtime",
- "requirements": [
-  "DYN-01",
-  "DYN-02",
-  "MDL-06",
-  "ARC-03"
- ],
- "sources": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "symbol": "DynamicWorkCellCompilerTest",
-   "startLine": 1,
-   "endLine": 450,
-   "sha256": "fdbbe2baa5ac6d3c56af437a5a3117a74249f72a725eb9c345ee835219a0b4fd"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "symbol": "DynamicWorkCellCompilerTest",
-   "startLine": 451,
-   "endLine": 850,
-   "sha256": "f37104d4462bb6c697455414f170c005b64128e9948699d628b95e092b9fd067"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "symbol": "DynamicWorkCellCompilerTest",
-   "startLine": 851,
-   "endLine": 1074,
-   "sha256": "b6c811597e52436bac8c52b8e429ebfcce31c3b92f88ec5f7f70e1a0aace680d"
-  }
- ],
- "targets": [
-  "sdurws_ird_runtime_test"
- ],
- "usageRole": "owner",
- "permissionRef": "ARCH:3.6.1",
- "capabilityId": "NONE",
- "decision": "business-specific",
- "status": "migrated",
- "search": {
-  "command": "rg -n \"TEST(|gtest\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-  "conclusion": "测试辅助（RT-T08既有用例＋REUSE-T30 oracle新增）不与上游重叠——上游无RNE/DWC等效测试（resourceSearch已核）；RT-STUB-0不替身、真实基线构造。"
- },
- "differences": "测试侧独立oracle（不调产品/基线映射实现）；任务私有State（setQ/setJointVelocities本地State）；仅集成模式编译（真实框架库链接——既有登记）；上游getVelocity linear参考点语义未文档化不作物理断言（登记）。",
- "inputs": [
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
-   "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-   "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
-  },
-  {
-   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
-   "sha256": "8308aefe2d78ad609ce3c251963f0ee5c3fbf5dd45a040b467d64662cbfb1e48"
-  },
-  {
-   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
-   "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
-  }
- ],
- "auditBoundary": "本功能为DynamicWorkCellCompilerTest整文件成组（文件头/工具/既有RT-T08用例/REUSE-T30新增oracle/视图用例）；无生产权限（测试目标独立）。独验待所有者另开会话。",
- "nonOverlapEvidence": {
-  "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
-  "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
- }
-}
+    {
+      "functionId": "runtime.compileDynamicWorkCell",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "DYN-01",
+        "DYN-02",
+        "MDL-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+          "symbol": "makeBodyInfo",
+          "startLine": 1,
+          "endLine": 127,
+          "sha256": "a52c2ec1a615490196f0994be573a565964111da511043c44cae05874e636f89"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+          "symbol": "compileDynamicWorkCell",
+          "startLine": 128,
+          "endLine": 518,
+          "sha256": "010ec15d47bcc54425678aca0e67d8e2cc92387d59181fe32dc1c6e928959d35"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "RUNTIME-DWC-MODEL",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"class BodyInfo|class FixedBody|class RigidDevice|class DynamicWorkCell|class MaterialDataMap|setGravity|addFrictionData\" RobWork/RobWorkSim/src/rwsim RobWork/RobWork/gtest",
+        "conclusion": "已定向实读rwsim dynamics/util公共头与实现（BodyInfo质心系惯量/RigidDevice ctor与速度接口/DWC重力与材质/摩擦material-pair载体）；保留/删除/适配及GAP-RNE-FRAME登记见REUSE-T30/suitability.md；migrated仅实施完成，未独验、不closed。"
+      },
+      "differences": "单位SI零换算（kg/m/kg·m²/N·m·s/rad）；质心/惯量为权威连杆系表达、承载帧挂连杆帧下恒等（Body.hpp body-frame契约）；q_auth=zeroOffset+q_rw（REUSE-T13既有修复复用）；固定段复合刚体裁决（Fixed不入设备关节集、下游体回溯最近上游活动关节、§8.5 4c为存在性校验）；摩擦=MaterialDataMap承载约定（fv/fc/bias参数名冻结），不接管摩擦策略；工具体=Tcp帧FixedBody不进设备连杆序列（RNE载荷经setPayload通道，WP-07消费面）；GAP-RNE-FRAME：权威轴≠z时上游RNE按关节系解释masscenter错位（2026-10-25所有者裁决登记，修复待WP-07准入提案批准）；RNE重力不入映射产物（消费方setGravity显式供给）。不代表全项目动力学已迁移。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.hpp",
+          "sha256": "78281ff660cd8004c7838911b79f07caeb16a06ce407da3c4dc4d311270fad19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+          "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
+          "sha256": "e461a26ebdd9249fe1c91fb1bee809de627b21f41a9bf64ddfd249c94de72f2e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+          "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+        }
+      ],
+      "auditBoundary": "本功能含文件头契约说明/匿名空间helper/主编译函数（整文件区段1+2）；视图实现区段归runtime.DynamicWorkCellConstView.accessors。独验待所有者另开会话。",
+      "production": {
+        "entry": "compileDynamicWorkCell",
+        "consumer": "compileDynamicWorkCell",
+        "upstream": "setGravity",
+        "target": "sdurws_ird_runtime"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.compileDynamicWorkCell.json",
+        "sha256": "b5e2de8e0b659891c7cb1ce61014933869646d0fb16bc490d3c851fe2b9535b4"
+      }
+    },
+    {
+      "functionId": "runtime.DynamicWorkCellConstView.accessors",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "ARC-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+          "symbol": "DynamicWorkCellConstView",
+          "startLine": 519,
+          "endLine": 560,
+          "sha256": "b84947fc38b6255901f43a0f1bcaaeca75ad5fee59d7e1ea8fbfbdeb03b71276"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "RUNTIME-DWC-MODEL",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"findBody|getBodies|class DynamicWorkCell\" RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp",
+        "conclusion": "已定向实读DWC查询面（findBody/getBodies）与只读包装（cast<const Body>收敛返回面）；同形访问器（ctor空句柄校验/dynamicWorkCell()/findBody/bodyCount）按audit-contract成组登记；migrated仅实施完成，未独验、不closed。"
+      },
+      "differences": "§8.2/8.3只读包装：返回面收敛const（Body写路径类型层不可达）；空Ptr构造fail-fast（robwork-error）；string_view显式转std::string（基线签名）。发布后只读共享（快照唯一规范持有者）。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.hpp",
+          "sha256": "78281ff660cd8004c7838911b79f07caeb16a06ce407da3c4dc4d311270fad19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/CanonicalModel.hpp",
+          "sha256": "a5133d156db7c389c99dbdc6d935144e6e8e8798b6dc03296ee1ee5ac6ed7d28"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/Adapter.hpp",
+          "sha256": "e461a26ebdd9249fe1c91fb1bee809de627b21f41a9bf64ddfd249c94de72f2e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+          "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+        }
+      ],
+      "auditBoundary": "本功能为DynamicWorkCellConstView实现区段（ctor/dynamicWorkCell/findBody/bodyCount同型访问器成组）；契约声明在公共头Adapter.hpp（零变更）。独验待所有者另开会话。",
+      "production": {
+        "entry": "DynamicWorkCellConstView",
+        "consumer": "DynamicWorkCellConstView",
+        "upstream": "findBody",
+        "target": "sdurws_ird_runtime"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/runtime.DynamicWorkCellConstView.json",
+        "sha256": "23676cf6f3759a1778ad4b17d4d7dc855fdcf06ced809dfb276ca26fa8b9f3d4"
+      }
+    },
+    {
+      "functionId": "runtime.DynamicWorkCellCompilerTest_cpp.declarations",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "DYN-01",
+        "DYN-02",
+        "MDL-06",
+        "ARC-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "symbol": "DynamicWorkCellCompilerTest",
+          "startLine": 1,
+          "endLine": 450,
+          "sha256": "fdbbe2baa5ac6d3c56af437a5a3117a74249f72a725eb9c345ee835219a0b4fd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "symbol": "DynamicWorkCellCompilerTest",
+          "startLine": 451,
+          "endLine": 850,
+          "sha256": "f37104d4462bb6c697455414f170c005b64128e9948699d628b95e092b9fd067"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "symbol": "DynamicWorkCellCompilerTest",
+          "startLine": 851,
+          "endLine": 1074,
+          "sha256": "b6c811597e52436bac8c52b8e429ebfcce31c3b92f88ec5f7f70e1a0aace680d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|gtest\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "conclusion": "测试辅助（RT-T08既有用例＋REUSE-T30 oracle新增）不与上游重叠——上游无RNE/DWC等效测试（resourceSearch已核）；RT-STUB-0不替身、真实基线构造。"
+      },
+      "differences": "测试侧独立oracle（不调产品/基线映射实现）；任务私有State（setQ/setJointVelocities本地State）；仅集成模式编译（真实框架库链接——既有登记）；上游getVelocity linear参考点语义未文档化不作物理断言（登记）。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+          "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelFixture.hpp",
+          "sha256": "8308aefe2d78ad609ce3c251963f0ee5c3fbf5dd45a040b467d64662cbfb1e48"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+          "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+        }
+      ],
+      "auditBoundary": "本功能为DynamicWorkCellCompilerTest整文件成组（文件头/工具/既有RT-T08用例/REUSE-T30新增oracle/视图用例）；无生产权限（测试目标独立）。独验待所有者另开会话。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+        "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+      }
+    },
+    {
+      "functionId": "runtime.DescriptionValidatorTest_cpp.decl",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-21",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+          "symbol": "DescriptionValidatorTest",
+          "startLine": 1,
+          "endLine": 450,
+          "sha256": "d2fa9a405e24da9b731e6337e043e638c27bb0e9b3484ea7f803a2828329c20f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+          "symbol": "ValidationReport",
+          "startLine": 451,
+          "endLine": 900,
+          "sha256": "cd18530425ab053d61ca1f83d9ba943a5ac97d8153f225251408564fd40b9f14"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+          "symbol": "joints",
+          "startLine": 901,
+          "endLine": 1093,
+          "sha256": "2a5cd9f751314748596839f17b5b3dba0eb646117b903f8d930d84dc0d3f5995"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|namespace\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "conclusion": "REUSE-T34 全行铺面声明行：本行只承担改动文件的非空行覆盖归属（测试/oracle 层），不构成上游复用判断，不冒充语义审计。"
+      },
+      "differences": "REUSE-T34 全行铺面（改动文件非空行全覆盖规则）：测试/独立 oracle 行归属；已知自持核心指纹零增量；语义判断见 REUSE-T34 README 与 SVD/两见证行。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+          "sha256": "025d0fb6d7388962ca30577f800b07d1a0d08f26211c517c65ed2b4b9e02409b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+        "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+      },
+      "auditBoundary": "行覆盖归属专用行；语义判断见本批 README 与复用行，不声称文件全功能语义审计。"
+    },
+    {
+      "functionId": "runtime.CanonicalModelTest_cpp.decl",
+      "ownerUnit": "runtime",
+      "requirements": [
+        "MDL-06"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+          "symbol": "CanonicalModelTest",
+          "startLine": 1,
+          "endLine": 450,
+          "sha256": "d12fe9131dc3d81c52cd7bb991fb6b20328398a137f42ea51a149232232921de"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+          "symbol": "Fixture",
+          "startLine": 451,
+          "endLine": 783,
+          "sha256": "e75c514cfae7eea4125f01d303918b3ddc60f66fb6e05b2d783f70c69d40474c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_runtime_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|namespace\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+        "conclusion": "REUSE-T34 全行铺面声明行：本行只承担改动文件的非空行覆盖归属（测试/oracle 层），不构成上游复用判断，不冒充语义审计。"
+      },
+      "differences": "REUSE-T34 全行铺面（改动文件非空行全覆盖规则）：测试/独立 oracle 行归属；已知自持核心指纹零增量；语义判断见 REUSE-T34 README 与 SVD/两见证行。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+          "sha256": "6a40c7a66e35a5721a250829733272f026baa2f4959057b83a140442d87e0496"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+          "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+        "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+      },
+      "auditBoundary": "行覆盖归属专用行；语义判断见本批 README 与复用行，不声称文件全功能语义审计。"
+    }
   ]
 }

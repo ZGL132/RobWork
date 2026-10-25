@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T34",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "runtime耦合矩阵SVD候选实测与CanonicalModel见证终审（WP-12）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22",
+    "REUSE-T33"
+  ],
+  "requirements": [
+    "MDL-06",
+    "MDL-21",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/runtime.md#4.3.4",
+    "units/runtime.md#4.3.5",
+    "reuse/migration.md#13.3",
+    "reuse/coupling-svd-migration.md",
+    "reuse/policy.md#1.1"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_runtime_test",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/run-performance.cmd",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 394d3bdee89d4a9883fe5ed7ca66114c7262c193..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json -Base 394d3bdee89d4a9883fe5ed7ca66114c7262c193 -Head HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T34.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/**",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/rpyToEaa-production.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "SVD候选按预声明判定规则实测（G8——T07同接口4.662×悬置前科点名；判定预算=无既有预算，实测退化即不落地生产交所有者单项裁决）：三规模1.94~2.60×退化（performance.log原件），σ相对差≤2.1e-15上游对照通过；σ-only直连Eigen亦1.8×慢且属未批依赖渠道——生产保持手写单侧Jacobi，判定链（σmin≤σmax×1e-12奇异/κ>1e8病态/有限性/错误token/确定性）零变更",
+    "oracle扩展：对角阵独立手算边界（取等落奇异档、nextafter严格高于分界落病态档的quantity判别面、5e-15对2e-12四量级判距、阈下健康面）＋重复校验逐位确定性；判定链扰动断开必FAIL（kSingularSigmaRatio 1e-12→1e-14突变2红例）实测在案",
+    "CanonicalModel两见证终审=带证据保留（business-specific/audited，T32先例形态）：谱解候选被probe-r6混合尺度反例证伪、Eigen::LLT直连属未批新依赖渠道（上游LinearAlgebra无LLT入口）；补齐混合尺度小正轴（1e-300/5e-324）/非法极值（半正定/Cauchy/秩1）/不对称阈两侧回归与S3/S5诊断消费者承接；保留理由与边界交独验复核"
+  ],
+  "note": "migration §13 WP-12 runtime 面（DTB WP-A；T29 blocked 不动、T33 已提交）。起点394d3bdee89d4a9883fe5ed7ca66114c7262c193。**零生产代码变更**（DescriptionValidator.cpp/CanonicalModel.cpp 原样——allowedFiles 不含生产源码）：本包交付=①候选实测与预声明判定规则的执行（性能 TU 独立 cl 编译于证据目录，不入任何 CMake 目标——G8 点名 T07 前科并对照 σ-only vs 全量 U/V：上游 svd 无 σ-only 入口、直连亦慢且未批）；②判定链 oracle 扩展与断开证据；③CanonicalModel 终审带证据保留（矩阵记录'不批准保留自持LDLT'系补证前状态，本批补齐所要求的回归后按 T32 形态登记，独验复核）。runtime.singularValuesOneSidedJacobi 保持 pending（所有者单项性能裁决，与 T07 接受悬置并列）；两见证行 business-specific/audited 化。311 passed＋1 既有 skip；断开 2 failures→恢复 0。blocked 项登记：SVD 换核候选（受影响消费者=DescriptionValidator 耦合判定链；责任=所有者性能裁决）。 DescriptionValidatorTest/CanonicalModelTest 经查无受限上游类别（rw/math 纯值），permissions.json 零新增 grant（文件随 T33 提交共用）。 rpyToEaa-production.json（REUSE-T11）随本提交携带：rpyToEaa closed 行 Template.cpp 区间刷新后的 evidence 自身摘要同步（T33 跨批机械维护尾部）。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T34.json"
+  },
+  "outputs": [
+    "SVD 候选实测与预声明判定规则执行（不落地登记）＋判定链 oracle/断开证据",
+    "CanonicalModel 两见证终审带证据保留登记与逐文件凭证，交独验"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "taskId": "REUSE-T34",
+  "wp": "migration §13 WP-12 runtime 面；DTB masterWp WP-A",
+  "base": "710890faa68dc04ee90acb75454308e6cc54ab4b",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+      "sha256": "025d0fb6d7388962ca30577f800b07d1a0d08f26211c517c65ed2b4b9e02409b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+      "sha256": "6a40c7a66e35a5721a250829733272f026baa2f4959057b83a140442d87e0496"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DescriptionValidator.cpp",
+      "sha256": "97eea4d9b5cc5009eac631eb5d9e1d70a985438dc0029c72842b125482be9e0a"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/CanonicalModel.cpp",
+      "sha256": "3abeb7bffbbdfb0b232d3037f677dea13e814b17eecbb0acfebb812fe932b890"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
+      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.cpp",
+      "sha256": "d799f7563d8efcca7f2fccbf2081f3004b60d5954e52286b6507206ce4e9a2e4"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md",
+      "sha256": "8e82a0313ff7c843f23a159dc5abb727676cc0b776630aab6ee86c0f9cbc5e09"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/performance.log",
+      "sha256": "eb2741acb4d7122f13cac9a84e20f5e94af07920fd37b1fc913c60df1e607526"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/perf.cpp",
+      "sha256": "c74efa84ebbffdb3017d9ef4fd5acc95148b8388eb1180a5753ad5a347b10cc2"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/perf-old.cpp",
+      "sha256": "b40f8c6c8161a2a0d52fd22089ecabd4e903783cd83f89d672c36bcb4a436c10"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/perf-new.cpp",
+      "sha256": "cfbc89236482389cb8eb07e7ffdfa633786632de690af6aa406499da4845225e"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/descriptionvalidator-mutated.cpp",
+      "sha256": "f22a348389c4552f1b75c6966363ece2e9fec27a52ad3721e106ee4bf1266efb"
+    }
+  ],
+  "runs": {
+    "fullSuite": {
+      "label": "final",
+      "tests": 311,
+      "failed": 0,
+      "skipped": 1,
+      "skipNote": "ContractSuite.ChildProcessWorker_RT_ID_1 既有skip",
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/final.xml"
+    },
+    "performance": {
+      "sizes": [
+        3,
+        6,
+        12
+      ],
+      "oldUs": [
+        0.2291,
+        1.4751,
+        9.698
+      ],
+      "newUs": [
+        0.5948,
+        3.1768,
+        18.8545
+      ],
+      "ratios": [
+        2.597,
+        2.154,
+        1.944
+      ],
+      "sigmaOnlyDirectEigenUs": 2.7086,
+      "sigmaRelDiffMax": 2.1e-15,
+      "verdict": "全规模退化——按预声明规则不落地生产，候选交所有者单项裁决",
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/performance.log"
+    },
+    "disconnected": {
+      "label": "boundary-disconnected",
+      "failures": 2,
+      "exitCode": 1,
+      "mutation": "kSingularSigmaRatio 1e-12→1e-14",
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/boundary-disconnected.xml"
+    },
+    "restoredGreen": {
+      "label": "restored-green",
+      "failures": 0,
+      "exitCode": 0,
+      "evidence": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/restored-green.xml"
+    }
+  },
+  "productionChange": "NONE（DescriptionValidator.cpp/CanonicalModel.cpp 原样；SVD 候选不落地；两见证带证据保留 business-specific/audited）",
+  "summary": "SVD候选实测退化不落地（G8/T07前科点名+预声明规则）＋判定链oracle扩展＋断开必红＋CanonicalModel终审登记；独立验收 NOT RUN；SVD换核候选 blocked 等所有者性能裁决。"
+}

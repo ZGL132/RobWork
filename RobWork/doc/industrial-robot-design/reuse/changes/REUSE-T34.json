@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T34",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+      "sha256": "025d0fb6d7388962ca30577f800b07d1a0d08f26211c517c65ed2b4b9e02409b",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "既有gtest供给；新增奇异分界±nextafter/四量级判距/阈下健康/逐位确定性oracle（T34断开敏感面）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+      "sha256": "6a40c7a66e35a5721a250829733272f026baa2f4959057b83a140442d87e0496",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "既有gtest供给；新增混合尺度小正轴/非法极值/不对称阈两侧见证回归（终审证据面）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/README.md"
+    }
+  ]
+}

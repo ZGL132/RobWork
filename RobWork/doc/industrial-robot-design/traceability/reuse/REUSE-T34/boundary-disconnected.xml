@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="2" disabled="0" errors="0" time="0." timestamp="2026-10-25T14:41:21.205" name="AllTests">
+  <testsuite name="CouplingValidation" tests="2" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T14:41:21.205">
+    <testcase name="SingularCBlocked_RT_CPL_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp" line="300" status="run" result="completed" time="0." timestamp="2026-10-25T14:41:21.205" classname="CouplingValidation">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:310&#x0A;Expected: (issue-&gt;comparison-&gt;threshold) &gt; (4e-12), actual: 5.0000000000000002e-14 vs 3.9999999999999999e-12&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:310
+Expected: (issue->comparison->threshold) > (4e-12), actual: 5.0000000000000002e-14 vs 3.9999999999999999e-12
+]]></failure>
+    </testcase>
+    <testcase name="ExactSingularBoundaryDiscrimination_T34" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp" line="354" status="run" result="completed" time="0." timestamp="2026-10-25T14:41:21.206" classname="CouplingValidation">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:364&#x0A;Expected equality of these values:&#x0A;  issue-&gt;comparison-&gt;quantity&#x0A;    Which is: &quot;coupling-condition-number&quot;&#x0A;  &quot;coupling-min-singular-value&quot;&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:364
+Expected equality of these values:
+  issue->comparison->quantity
+    Which is: "coupling-condition-number"
+  "coupling-min-singular-value"
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:366&#x0A;Expected: (issue-&gt;comparison-&gt;actual) &lt;= (2e-12), actual: 1000000000000 vs 2e-12&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:366
+Expected: (issue->comparison->actual) <= (2e-12), actual: 1000000000000 vs 2e-12
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:393&#x0A;Expected: (issue-&gt;comparison-&gt;threshold) &gt;= (1.9e-12), actual: 2e-14 vs 1.9e-12&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DescriptionValidatorTest.cpp:393
+Expected: (issue->comparison->threshold) >= (1.9e-12), actual: 2e-14 vs 1.9e-12
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

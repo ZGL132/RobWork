@@ -344,6 +344,84 @@ TEST(CouplingValidation, ConditionNumber1e10Blocked_RT_CPL_1)
     EXPECT_NE(issue->detail.find("条件数"), std::string::npos);
 }
 
+/** REUSE-T34 oracle（奇异分界精确判别）：对角阵奇异值＝对角元（无算法
+ *  噪声——独立手算期望）。①diag(1, 1e-12)：σmin=1e-12=σmax×1e-12 取等，
+ *  ≤ 判据含等 → 奇异分支；②diag(1, nextafter(1e-12,∞))：σmin 严格高于
+ *  分界 → 奇异分支不触发、落 κ≈1e12 的病态分支（quantity 判别面——
+ *  两档可靠分档的直接证据）；③diag(2, 5e-15)：σmin=5e-15 对分界
+ *  2e-12 四个量级判距（实现文件头注释的判别力声明）。④diag(1, 1e-6)
+ *  良态通过（κ=1e6 < 1e8 阈下健康面）。 */
+TEST(CouplingValidation, ExactSingularBoundaryDiscrimination_T34)
+{
+    // ①取等 → 奇异（≤ 含等——分界点归属奇异档）。
+    {
+        RobotDesignDescription d = makeValidDescription();
+        d.drivetrain.coupling = makeCoupling2x2(1, 1.0, 0.0, 0.0, 1e-12);
+        const ValidationReport report = validateRobotDesignDescription(d);
+        expectBlocked(report, "drivetrain.coupling.C", RuntimeErrorCode::InputInvalid);
+        const ValidationIssue* issue = findIssue(report, "drivetrain.coupling.C");
+        ASSERT_NE(issue->comparison, std::nullopt);
+        EXPECT_EQ(issue->comparison->quantity, "coupling-min-singular-value");
+        EXPECT_GE(issue->comparison->actual, 5e-13) << "σmin=1e-12（手算）";
+        EXPECT_LE(issue->comparison->actual, 2e-12);
+    }
+    // ②nextafter 严格高于分界 → 病态分支（κ≈1e12>1e8）——奇异分支不吞。
+    {
+        RobotDesignDescription d = makeValidDescription();
+        d.drivetrain.coupling =
+            makeCoupling2x2(1, 1.0, 0.0, 0.0, std::nextafter(1e-12, 2.0));
+        const ValidationReport report = validateRobotDesignDescription(d);
+        expectBlocked(report, "drivetrain.coupling.C", RuntimeErrorCode::InputInvalid);
+        const ValidationIssue* issue = findIssue(report, "drivetrain.coupling.C");
+        ASSERT_NE(issue->comparison, std::nullopt);
+        EXPECT_EQ(issue->comparison->quantity, "coupling-condition-number")
+            << "σmin 高于分界一个 ulp 即不得判奇异（分界判别力）";
+        EXPECT_GE(issue->comparison->actual, 9e11) << "κ≈1e12（手算）";
+        EXPECT_LE(issue->comparison->actual, 1.1e12);
+    }
+    // ③四量级判距：σmin=5e-15 vs 分界 2e-12（σmax=2）。
+    {
+        RobotDesignDescription d = makeValidDescription();
+        d.drivetrain.coupling = makeCoupling2x2(1, 2.0, 0.0, 0.0, 5e-15);
+        const ValidationReport report = validateRobotDesignDescription(d);
+        expectBlocked(report, "drivetrain.coupling.C", RuntimeErrorCode::InputInvalid);
+        const ValidationIssue* issue = findIssue(report, "drivetrain.coupling.C");
+        ASSERT_NE(issue->comparison, std::nullopt);
+        EXPECT_EQ(issue->comparison->quantity, "coupling-min-singular-value");
+        EXPECT_GE(issue->comparison->actual, 4e-15) << "σmin=5e-15（手算）";
+        EXPECT_LE(issue->comparison->actual, 6e-15);
+        EXPECT_GE(issue->comparison->threshold, 1.9e-12);
+        EXPECT_LE(issue->comparison->threshold, 2.1e-12);
+    }
+    // ④阈下健康面：κ=1e6 < 1e8 → 通过、无耦合 issue。
+    {
+        RobotDesignDescription d = makeValidDescription();
+        d.drivetrain.coupling = makeCoupling2x2(1, 1.0, 0.0, 0.0, 1e-6);
+        const ValidationReport report = validateRobotDesignDescription(d);
+        EXPECT_TRUE(report.ok());
+        EXPECT_EQ(findIssue(report, "drivetrain.coupling.C"), nullptr);
+    }
+}
+
+/** REUSE-T34 oracle（确定性——NFR-COR-02）：同输入重复校验的比较值逐位
+ *  一致（σmin/κ 与比较型诊断在重复调用间不得漂移）。 */
+TEST(CouplingValidation, RepeatedValidationBitwiseDeterministic_T34)
+{
+    RobotDesignDescription d = makeValidDescription();
+    d.drivetrain.coupling = makeCoupling2x2(1, 2.0, 0.0, 0.0, 5e-15);
+    const ValidationReport first = validateRobotDesignDescription(d);
+    const ValidationIssue* issueFirst = findIssue(first, "drivetrain.coupling.C");
+    ASSERT_NE(issueFirst->comparison, std::nullopt);
+    for (int i = 0; i < 3; ++i) {
+        const ValidationReport again = validateRobotDesignDescription(d);
+        const ValidationIssue* issue = findIssue(again, "drivetrain.coupling.C");
+        ASSERT_NE(issue->comparison, std::nullopt);
+        EXPECT_EQ(issue->comparison->actual, issueFirst->comparison->actual)
+            << "第 " << i << " 次重复：σmin 逐位一致";
+        EXPECT_EQ(issue->comparison->threshold, issueFirst->comparison->threshold);
+    }
+}
+
 /** §4.3.4 非方阵拒绝（诊断明示方阵要求）。 */
 TEST(CouplingValidation, NonSquareCBlocked)
 {
