@@ -949,9 +949,9 @@
 [ RUN      ] ModelingDraftRestore.ProjectStoreSaveCloseReadOnlyReopen_PM04_AT21
 [       OK ] ModelingDraftRestore.ProjectStoreSaveCloseReadOnlyReopen_PM04_AT21 (42 ms)
 [ RUN      ] ModelingDraftRestore.RejectAtomicAndRetainStaleBaseline_PM04_AT29
-��ģ�ݸ�ָ��ܾ����ݸ�JSON�𻵻�β�����ݡ�
-��ģ�ݸ�ָ��ܾ����ݸ�ģ�鲻ƥ�䣬δ�ָ���ģ��������
-��ģ�ݸ�ָ��ܾ����ݸ�������뵱ǰ�ѱ���ģ�Ͳ�ƥ�䣬δ�ָ���
+建模草稿恢复拒绝：草稿JSON损坏或含尾随数据。
+建模草稿恢复拒绝：草稿模块不匹配，未恢复建模工作集。
+建模草稿恢复拒绝：草稿根身份与当前已保存模型不匹配，未恢复。
 [       OK ] ModelingDraftRestore.RejectAtomicAndRetainStaleBaseline_PM04_AT29 (1 ms)
 [ RUN      ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21
 [       OK ] ModelingDraftRestore.ChangedPayloadWithoutSummaryRemainsPending_PM04_AT21 (0 ms)
@@ -976,12 +976,12 @@
 [ RUN      ] ModelingDraftAnchor.CleanEventReadsCompleteRevisionBeforeAdvancing_PM04_AT21
 [       OK ] ModelingDraftAnchor.CleanEventReadsCompleteRevisionBeforeAdvancing_PM04_AT21 (0 ms)
 [ RUN      ] ModelingDraftAnchor.CleanBindingFailureNeverReanchorsOldContents_PM04_AT29
-��ģ���޶�������ȡʧ�ܣ��̶��޶���ȡʧ��
-��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡ��ģ�顢��֧���޶���ƥ��
-��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡ��ģ�顢��֧���޶���ƥ��
-��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡ��ģ�顢��֧���޶���ƥ��
-��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡ���������ɾ����ߣ��ݸ����hex���Ƿ��ַ���
-��ģ���޶�������ȡʧ�ܣ���ģ�̶��޶���ȡ���������ɾ����ߣ�
+建模新修订完整读取失败：固定修订读取失败
+建模新修订完整读取失败：建模固定修订读取的模块、分支或修订不匹配
+建模新修订完整读取失败：建模固定修订读取的模块、分支或修订不匹配
+建模新修订完整读取失败：建模固定修订读取的模块、分支或修订不匹配
+建模新修订完整读取失败：建模固定修订读取不是完整干净基线：草稿对象hex含非法字符。
+建模新修订完整读取失败：建模固定修订读取不是完整干净基线：
 [       OK ] ModelingDraftAnchor.CleanBindingFailureNeverReanchorsOldContents_PM04_AT29 (2 ms)
 [ RUN      ] ModelingDraftAnchor.CleanBindingExplicitEmptyRevisionClearsWholeWorkset_PM04_AT21
 [       OK ] ModelingDraftAnchor.CleanBindingExplicitEmptyRevisionClearsWholeWorkset_PM04_AT21 (0 ms)
