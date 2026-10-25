@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-25T23:29:02.096" name="AllTests">
+  <testsuite name="SelBackfillSynthesis" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T23:29:02.096">
+    <testcase name="GoldenValuesMassComInertia_MDL16" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="237" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.096" classname="SelBackfillSynthesis" />
+    <testcase name="RotorInertiaNeverEntersSynthesis_SEL10" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="271" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.096" classname="SelBackfillSynthesis" />
+    <testcase name="RejectsNonPositiveMass_NFRCOR03" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="294" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.096" classname="SelBackfillSynthesis" />
+    <testcase name="RejectsNonFiniteInput_NFRCOR03" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="307" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.096" classname="SelBackfillSynthesis" />
+    <testcase name="RejectsNotPositiveDefinite_MDLL06A2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="323" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.097" classname="SelBackfillSynthesis" />
+    <testcase name="RejectsTriangleInequality_MDLL06A3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="343" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.097" classname="SelBackfillSynthesis" />
+    <testcase name="AcceptsDegeneratePlanarEquality_MDLL06A3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp" line="361" status="run" result="completed" time="0." timestamp="2026-10-25T23:29:02.097" classname="SelBackfillSynthesis" />
+  </testsuite>
+</testsuites>

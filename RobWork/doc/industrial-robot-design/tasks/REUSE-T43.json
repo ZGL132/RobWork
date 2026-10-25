@@ -1,0 +1,82 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T43",
+ "unit": "selection",
+ "masterWp": "WP-A",
+ "title": "WP-19批次二·selection单元复用收口：对称特征值换上游＋字节原语族决策＋全行铺面",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": [
+  "GOV-T21",
+  "GOV-T22"
+ ],
+ "requirements": [
+  "SEL-10",
+  "SEL-02",
+  "MDL-06",
+  "MDL-05",
+  "MDL-16",
+  "AT-30",
+  "CON-05",
+  "NFR-COR-03",
+  "NFR-DEP-04"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13.3",
+  "reuse/policy.md#1.1",
+  "units/selection.md#12.4"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T43.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "cmake --build build --config Release --target sdurws_ird_selection_test",
+  "build/RobWorkStudio/bin/Release/sdurws_ird_selection_test.exe（正常面 -SelPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable；oracle 面 SelBackfillSynthesis.*；四面对照证据见 traceability/reuse/REUSE-T43/run/）",
+  "cmake --build build/govt24-smoke --config Release --target sdurws_ird_selection（依赖边独立冒烟——§4 CMake/依赖行）",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T43.json -Base a445f48765215121e464f9cd9d07ad342f83ae76 -Head <送验SHA>"
+ ],
+ "allowedFiles": [
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T43.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T43.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/selection.json",
+  "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+  "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "main"
+ ],
+ "outputs": [
+  "symmetricEigenvalues3x3 换上游（MATH-EIGEN 直接 API）＋四面对照生产证据＋依赖边独立冒烟",
+  "selection.json 52 行全收口：Backfill.cpp/CMakeLists.txt 全行铺面、字节原语族决策记录、TRAJ-LINEAR 候选否决定案",
+  "catalog TRAJ-LINEAR selection usage 移除（否决同步）"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "特征值换核定案（评审缺口7回应）：上游 eigenDecompositionSymmetric（Eigen SelfAdjointEigenSolver）升序契约与产品一致；与被替换解析闭式为求解器间 ulp 级差异、非逐位相等（探针 v1 位模式断言实证——含对角/纯量阵），产品契约面为容差语义（附录 D 第 6/7 项相对 1e-12）：探针 v2 九用例容差＋升序＋迹守恒全过、normal 292 项全过、oracle 7 项（MDL-06 分类轨道＋黄金容差对照）全过、断开（返回序反转变异）2 项真实红、恢复 recheck 绿",
+  "依赖边（§4 CMake/依赖行扩大验证）：sdurw_math PRIVATE 库边为 selection 首条 rw 库链接（显式实例化符号消费，REUSE-T12 drivetrain 同款条件别名分支）；集成构建绿＋独立冒烟构建绿（build/govt24-smoke 经 find_package(RobWork) 导出包解析）；ird_gates 零命中（T-1/R-5 纪律不变）；无公共接口变化（symmetricEigenvalues3x3 为文件私有）故无对端契约回归扩大面——selection contract_test 随全量 normal 面已跑",
+  "字节原语族决策记录（评审缺口3/8回应）：Backfill 与 CombinationCheck 的复制原语统一按字节身份契约保留（F-777 显式小端承载；BINArchive 主机序/格式化长度不等价——SB/SG 检索）；Boost.Endian 候选列为所有者明确批准项（T20/T21 先例均经批准；四单元无 Boost 接线；IRD-GATE-LIB 局部目标变量先例），未批不实施；批准后落地前置＝先捕获字节基线（reporting 无既有字节 fixture——评审缺口2 顺序敏感项）；族内「复制而非共享」为文件级协议冻结决策（Backfill.cpp:109-110 明文）",
+  "TRAJ-LINEAR 候选否决定案：LinearInterpolator 为 t∈[0,1] 段内插值器，不覆盖 §6.2 四条插值规则与 §14.3 分轨；数值核仅两 flop、逐段适配零结构可删——保留产品实现并同步移除 catalog selection:adapter usage；可复用段插值已在 trajectory CartesianLine（REUSE-T26）真实消费",
+  "矩阵与凭证：selection.json 52 行（1 direct＋51 business-specific），Backfill.cpp 1243 行/CMakeLists.txt 660 行零空行遗漏全行铺面；changes/REUSE-T43.json 两文件凭证（direct＋governance）；catalog.json 仅 TRAJ-LINEAR selection usage 移除一处",
+  "三门禁：commit-lint -Range 本包base..HEAD、validate-docs -TaskFile（含全量复用检查）、verify-task-scope 显式 -Base 本包起始SHA -Head 送验SHA 全绿；PASS/FAIL/SKIP/NOT RUN 分列（1 skipped＝GUI harness 环境占位排除承载）"
+ ],
+ "note": "migration §13.3 WP-19 剩余单元批次二（selection）。masterWp=WP-A 按 T29/T30 先例。起始 SHA=a445f48765215121e464f9cd9d07ad342f83ae76（批次一收口提交）。范围＝§13.3 WP-19 行 selection 面：Backfill 特征值换核（MATH-EIGEN 直接 API）、CapabilityCurve 插值判定、字节原语族（Backfill 7 行＋CombinationCheck 7 行）决策保留、沿矩阵反查无隐藏 helper（SF/SG 检索零命中）。所有者保留裁决项：Boost.Endian 替换候选（本包按保留分支收口，决策记录 byte-primitives-decision.md 供后续包引用）；本包无新核心、无上游扩展、无性能放宽。增量验证口径：依赖边变化扩大到独立冒烟（已跑），公共接口零变化不扩对端消费者。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T43.json"
+ }
+}

@@ -1,0 +1,48 @@
+Note: Google Test filter = SelBackfillSynthesis.*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from SelBackfillSynthesis
+[ RUN      ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16
+[       OK ] SelBackfillSynthesis.GoldenValuesMassComInertia_MDL16 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10
+[       OK ] SelBackfillSynthesis.RotorInertiaNeverEntersSynthesis_SEL10 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonPositiveMass_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03
+[       OK ] SelBackfillSynthesis.RejectsNonFiniteInput_NFRCOR03 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp(335): error: Value of: o.ok
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp(336): error: Expected equality of these values:
+  o.failure
+    Which is: 4-byte object <00-00 00-00>
+  SynthesisFailure::NotPositiveDefinite
+    Which is: 4-byte object <03-00 00-00>
+
+[  FAILED  ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2 (0 ms)
+[ RUN      ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp(355): error: Value of: o.ok
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\selection\test\BackfillTest.cpp(356): error: Expected equality of these values:
+  o.failure
+    Which is: 4-byte object <00-00 00-00>
+  SynthesisFailure::TriangleInequality
+    Which is: 4-byte object <04-00 00-00>
+
+[  FAILED  ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3 (0 ms)
+[ RUN      ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3
+[       OK ] SelBackfillSynthesis.AcceptsDegeneratePlanarEquality_MDLL06A3 (0 ms)
+[----------] 7 tests from SelBackfillSynthesis (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 5 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] SelBackfillSynthesis.RejectsNotPositiveDefinite_MDLL06A2
+[  FAILED  ] SelBackfillSynthesis.RejectsTriangleInequality_MDLL06A3
+
+ 2 FAILED TESTS

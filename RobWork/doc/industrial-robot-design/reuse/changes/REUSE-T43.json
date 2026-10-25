@@ -1,0 +1,25 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T43",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T43.json",
+ "files": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/src/Backfill.cpp",
+   "sha256": "2df0d10c2b4311b38b12d3dd6cc45830a27f7798696ab35785817bd60d39e42c",
+   "mode": "direct",
+   "capabilities": [
+    "MATH-EIGEN"
+   ],
+   "boundary": "REUSE-T43/WP-19 批次二（selection）：symmetricEigenvalues3x3 换上游 rw::math::LinearAlgebra::eigenDecompositionSymmetric<double>（MATH-EIGEN 直接 API，Eigen SelfAdjointEigenSolver 升序特征值）——删除手写解析闭式平行核；保留六分量→3×3 展开薄适配；noexcept 随堆使用移除（fail-fast）。文件级：全行铺面＋全文件解决；字节原语族（ByteWriter/Reader）按字节身份契约保留（byte-primitives-decision.md），reflectRpy 类业务零变更。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/production/selection.symmetricEigenvalues3x3.json"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/selection/CMakeLists.txt",
+   "sha256": "1f9d61f09f89bd73755f3d6746c0e46fa770319303ce56cf1e60ebbec3f9d9ad",
+   "mode": "governance",
+   "capabilities": [],
+   "boundary": "REUSE-T43 构建接线：sdurws_ird_selection 增 sdurw_math PRIVATE 库边（MATH-EIGEN 显式实例化符号消费——LinearAlgebra.cpp 编译库内，须真实链接）；条件别名分支与 drivetrain REUSE-T12 同款（NOT TARGET sdurw_math→find_package(RobWork CONFIG REQUIRED)→ALIAS RW::sdurw_math），冒烟经导出包解析已实测（smoke-selection-build.log）。零新 CMake 目标变量、零构建平台变化。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T43/run/smoke-selection-build.log"
+  }
+ ]
+}

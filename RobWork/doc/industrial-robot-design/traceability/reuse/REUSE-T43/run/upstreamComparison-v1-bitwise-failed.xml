@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="1" disabled="0" errors="0" time="0.001" timestamp="2026-10-25T23:31:32.309" name="AllTests">
+  <testsuite name="ReuseT43EigenUpstream" tests="2" failures="1" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-25T23:31:32.309">
+    <testcase name="TolerantAndStructureAgreement" file="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp" line="85" status="run" result="completed" time="0." timestamp="2026-10-25T23:31:32.309" classname="ReuseT43EigenUpstream" />
+    <testcase name="DiagonalSubsetBitwise" file="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp" line="102" status="run" result="completed" time="0.001" timestamp="2026-10-25T23:31:32.309" classname="ReuseT43EigenUpstream">
+      <failure message="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109&#x0A;Value of: bitEqual(a[k], e[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;case diag-golden-link λ1&#x0A;" type=""><![CDATA[RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109
+Value of: bitEqual(a[k], e[k])
+  Actual: false
+Expected: true
+case diag-golden-link λ1
+]]></failure>
+      <failure message="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109&#x0A;Value of: bitEqual(a[k], e[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;case isotropic λ2&#x0A;" type=""><![CDATA[RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109
+Value of: bitEqual(a[k], e[k])
+  Actual: false
+Expected: true
+case isotropic λ2
+]]></failure>
+      <failure message="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109&#x0A;Value of: bitEqual(a[k], e[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;case planar-degenerate λ0&#x0A;" type=""><![CDATA[RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109
+Value of: bitEqual(a[k], e[k])
+  Actual: false
+Expected: true
+case planar-degenerate λ0
+]]></failure>
+      <failure message="RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109&#x0A;Value of: bitEqual(a[k], e[k])&#x0A;  Actual: false&#x0A;Expected: true&#x0A;case planar-degenerate λ1&#x0A;" type=""><![CDATA[RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T43\probe-eigen-upstream.cpp:109
+Value of: bitEqual(a[k], e[k])
+  Actual: false
+Expected: true
+case planar-degenerate λ1
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
