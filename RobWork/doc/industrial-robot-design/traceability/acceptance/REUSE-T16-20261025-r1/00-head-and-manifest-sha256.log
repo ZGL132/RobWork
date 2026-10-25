@@ -1,0 +1,21 @@
+# 验收现场（2026-10-25）
+branch: redesign-main
+HEAD: e8ee7d31d624ee0233210d502c1234ee8c68c262
+reviewedCommit(送验head): e128dd8e960190c29dcdd283f91b97085cab0671
+base: f378f01c5199032e08c2cce7ba0251a2f783d505
+merge-base --is-ancestor e128dd8e HEAD: 
+  yes（送验head为当前HEAD祖先）
+git status --short（验收新增产物除外应为空）:
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r2.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r2/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T13-20261025-r1/
+(以上为既有未跟踪验收产物目录，非本会话创建)
+
+# manifest sha256 比对（git show e128dd8e:<path> vs changes/REUSE-T16.json）
+e2bead1b7c601b447a0891257570574c45abbdeea7fd924406411172527eac62  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/src/Logging.cpp
+574af124ac4f927126fa122a9f105007268d41f1b04a96a0d20d1fadaca66abb  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/include/sdurws/ird/diagnostics/Logging.hpp
+089621d77b9d124418661e151c42d6e5bed859b55f54accbd4b11b3b28f7760b  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/LoggingTest.cpp
+c0f3646366b55e2325cdf275bc6fe09983283d8fc24e33f3b7dd1e9d32a018e6  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/test/TestMainReport.cpp
+6359d09721caabaccd06b52b986f0984d05bba3fc8a0dbd99bc086a4ea2bed70  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/diagnostics/CMakeLists.txt

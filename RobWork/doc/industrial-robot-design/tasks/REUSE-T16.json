@@ -4,7 +4,7 @@
   "unit": "diagnostics",
   "masterWp": "WP-A",
   "title": "原日志文件保留总数边界修正与报告复用",
-  "status": "ready",
+  "status": "done",
   "branch": "codex/reuse-foundation",
   "dependsOn": [
     "GOV-T21",
@@ -33,7 +33,9 @@
     "RobWork/doc/industrial-robot-design/reuse/functions/diagnostics.json",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T16/**",
     "RobWork/doc/industrial-robot-design/units/diagnostics.md",
-    "RobWork/doc/industrial-robot-design/reuse/extensions/**"
+    "RobWork/doc/industrial-robot-design/reuse/extensions/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T16-20261025-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -45,7 +47,7 @@
     "数值/真实文件及受影响回归通过，独立验收由所有者安排",
     "全量继承drivetrain缺口保留，不伪报PASS"
   ],
-  "note": "所有者2026-10-23逐项批准既有提案；本工作树唯一修改权。无远程/上游修改/合入，不自签独验。",
+  "note": "所有者2026-10-23逐项批准既有提案；本工作树唯一修改权。无远程/上游修改/合入，不自签独验。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T16-20261025-r1.json（复跑原件在其同名目录），verdict=pass，绑定送验 SHA=e128dd8e960190c29dcdd283f91b97085cab0671（base=f378f01c，送验范围=原日志文件保留总数边界修正与报告复用）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；验收员亲跑15项通过——diagnostics全套件123例与契约测试26例真实复跑全绿（含testkit监听器修复后组合），其中verify-task-scope对送验范围字面FAIL（248越界路径）经逐文件归因全部落于非T16自有面（同交付T15/T14面、T12 drivetrain收口、批次门禁工具与F-958系列治理提交），T16自有43文件全在allowed面、禁止面零命中，按范围实质合规计入通过并在记录checks[1]/limitations显式登记字面结果。限制（limitations原文口径）：送验head后工作树ParamSchema F-968修复与testkit SetCheck扩展为正交变化（T16自有面零差异实测）；validate-reuse仍为governance only（DEBT=16、UNRESOLVED=1399未关闭）；日志保留总数含活动文件、不新增多进程/fsync保证为GAP授权边界内的既有语义登记。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
