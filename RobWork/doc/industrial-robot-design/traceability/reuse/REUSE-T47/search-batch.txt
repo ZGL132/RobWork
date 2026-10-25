@@ -1,0 +1,4 @@
+== T47 SE1: 上游快照/切片序列化同义物
+SE1 exit=0
+== SE2: aggregateVerdict 裁定聚合同义物
+SE2 exit=0
