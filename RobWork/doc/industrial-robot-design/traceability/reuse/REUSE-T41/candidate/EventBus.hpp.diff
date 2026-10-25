@@ -1,0 +1,17 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp
+index bcc1b79cd..72c24df31 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp
+@@ -141,7 +141,11 @@ public:
+      *
+      * @param sink [in] 订阅方（非所有权——本表存裸指针，调用方保证 sink
+      *             存活期覆盖订阅期〔至句柄退订〕；同一 sink 重复订阅得到
+-     *             两个独立订阅位，各自退订——core ReferenceEventBus 同语义）
++     *             两个独立订阅位，各自独立退订。注意与 core 参考总线语义
++     *             不同：core ReferenceEventBus::removeSink 删除该 sink 的
++     *             全部订阅位（Events.cpp std::remove 全删），本实现只删
++     *             一个订阅位——生产用法单订阅位下两者等价，多订阅位语义
++     *             不互换，消费方按此差异选型）
+      * @return RAII 句柄（析构即退订；unsubscribe 幂等——文件头投递语义 4）
+      *
+      * 后置：订阅后的下一帧起收到事件（订阅前的队列残余不补投——订阅点

@@ -9755,7 +9755,7 @@
   "registeredAt": "2026-10-23",
   "title": "ReferenceEventBus测试参考实现被UI生产装配且句柄析构不退订",
   "owner": "core / execution / ui / REUSE-T01",
-  "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。"
+  "resolution": "23跑22passed1failed，原17例通过。句柄析构仍1订阅且收到回调，bus/sink全程存活。UI源码装配和MODULE注册链已核，未跑GUI/最终DLL。既有execution总线RAII通过但回调线程与重复订阅粒度不同；后续先复用既有实现并核UI线程/销毁及在投退订，不新造第三总线。T01不改产品，F967开放。REUSE-T41（2026-10-25）候选收口：生产装配换execution::DomainEventBusImpl＋投递线程转接互斥＋关停drain序候选已全量验证（execution 157+38、ui_contract 63、core 74绿；ird_gates正例零命中＋撤登记负例恰命中SUB），候选留存traceability/reuse/REUSE-T41/candidate/；blocked＝REUSE-AD对变动UiPlugin.{hpp,cpp}要求host/graphics grant→host-presentation origin→宿主例外封闭清单（恰4文件机器冻结）不含UiPlugin，结构性无合法grant——所有者2026-10-25 escalate裁决采T33/T36/T40先例，产品树HEAD零改动，F-967保持open；解阻待宿主例外治理批次（migration §13.2 REUSE-T41行）。本包开放状态：现HEAD生产装配仍为越界core::ReferenceEventBus＋同步回调读非原子m_lastStoreAdapter。"
 }
 ,
 {
@@ -9814,6 +9814,26 @@
   "owner": "验收登记流程（历史验收证据按『只写文件随任务提交』口径留痕，未入 allowedFiles 面）＋门禁所有者（验收证据目录纳入机器豁免面属所有者决策，本轮不改脚本不放宽门禁）",
   "resolution": "按 F-012 登记族口径显式登记处置：318 路径为本任务自身三轮验收登记产物，历史不可改写（AGENTS §6.3），不回写、不补 allowedFiles（GOV-SCOPE 白名单冻结，r3/r1 记录同裁决）；新轮次验收证据路径以契约 note 与本台账登记为准（GOV-T22-20261024-r1 记录与证据目录已按此口径登记）；机器核验面＝实质 12 文件全命中＋送验链 commit-lint 8/8＋登记提交段处置面。杜绝再现：后续 GOV-T22 相关登记提交沿用 note 登记路径口径，不改 allowedFiles、不动门禁脚本。",
   "fixedAt": "2026-10-24"
-}
+},
+    {
+      "id": "F-973",
+      "source": "REUSE-T41 候选态验证（traceability/reuse/REUSE-T41/sdurws_ird_ui_test.xml＋log；2026-10-25 登记）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-25",
+      "title": "ui_test 13项真实数值链用例在redesign-main未记录失败（runtime物化＋真实FK/IK；与REUSE-T41源集零交集——独立移交线索）",
+      "owner": "所有者归类（候选源疑似 T33 rpyview RPY 反向换核跨单元漂移——待证；亦可能环境性）",
+      "resolution": "sdurws_ird_ui_test 345项中14 failed：1项为预存F-560（REUSE-T17在案），其余13项全为真实数值链（NamedTcpClosureCompilesAndSolvesRealNumerics/BatchChannel_RealComputationAndOutcomes/SolveChannel_BackgroundRealSolve/方向边界族/BatchNamedTcp/约束掩码/碰撞充分性等——failure形态＝fk.ok()为假或批量outcomeState=not-run，物化断言通过）；redesign-main近期无ui_test全量记录（T17为2026-10-23旧分支344/0/1），漂移源待查。与REUSE-T41无因果的证明＝ui_test编入TU源集（test/*.cpp＋plugin/{HostCompilePort,HostPresentationAdapters,QtTextBillboard,KinEvaluationChannel,KinHostServicesAssembly}.cpp）与REUSE-T41五候选文件零交集（二进制等同HEAD）。登记后候选回退，现HEAD即可复现；归所有者归类处置，REUSE-T41不越权修复。"
+    },
+    {
+      "id": "F-974",
+      "source": "REUSE-T41 GUI冒烟归因（gui-smoke-launch.log＋gui-smoke-head-baseline-segfault.log；dev-diagnostics.log历史；2026-10-25 登记）",
+      "severity": "major",
+      "status": "open",
+      "registeredAt": "2026-10-25",
+      "title": "HEAD 41a59c670 studio启动段错误（共享面装配完成后崩，IRD_UI_PLUGIN_SMOKE全链阻断——GUI真实路径验证不可用）",
+      "owner": "所有者归类（候选源疑似同F-973的跨单元漂移或宿主启动链缺陷；10-21前后dev日志曾全程达draft applied/宿主已关闭工作单元，10-24起两次运行同早停）",
+      "resolution": "sdurws_ird_studio＋IRD_UI_PLUGIN_SMOKE=auto在『共享面装配完成』日志后段错误（exit 139）；REUSE-T41实施会话以stash五候选文件重建HEAD基线复跑同点同形崩溃——归因＝HEAD既有缺陷，非候选所致（双跑归因证据双留）。阻断面＝修订事件双sink『delivered after commit』真实GUI路径验证（REUSE-T41候选因此NOT RUN，替代证据＝execution总线契约用例＋ui_contract_test 63项）；亦影响后续任何ui插件GUI验收。归所有者归类处置。"
+    }
   ]
 }

@@ -1,0 +1,68 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp
+index ab8ad4d56..de2b38445 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp
+@@ -58,6 +58,7 @@
+ #include <QString>
+ 
+ #include <memory>
++#include <mutex>
+ #include <optional>
+ #include <future>
+ #include <string>
+@@ -66,7 +67,9 @@
+ 
+ #include <rws/RobWorkStudioPlugin.hpp>   // 框架插件基类（QDockWidget 派生＋宿主注入面）
+ 
+-#include <sdurws/ird/core/Events.hpp>             // core::ReferenceEventBus/IDomainEventBus（WP-24-T03b——修订事件总线）
++#include <sdurws/ird/core/Events.hpp>             // core::IDomainEventBus/IEventSubscription/IDomainEventSink（WP-24-T03b——
++                                                  // 修订事件总线契约面；生产总线实例＝execution::DomainEventBusImpl，
++                                                  // F-967 收口起由本插件装配，具体类型只在 UiPlugin.cpp）
+ #include <sdurws/ird/kinematics/Commands.hpp>     // kinematics::KinSessionPose/KinematicsCommandHandler（★ KIN-P4——
+                                                   // 会话姿态写点/设默认门面：值成员需完整类型）
+ #include <sdurws/ird/kinematics/Fk.hpp>           // kinematics::FkEvaluator（★ KIN-P4——位姿指标评估器值成员）
+@@ -534,6 +537,12 @@ private:
+     QDockWidget* m_optimizationDock = nullptr; ///< "IRD 优化"Dock（Left 区——ASM-PANEL 挂位，窗口树托管）
+     QStatusBar* m_hostStatusBar = nullptr; ///< 宿主状态栏（UI-T18 状态投影面——PM-11 永久位＋瞬态消息）
+     std::shared_ptr<app::StorePortAdapter> m_lastStoreAdapter; ///< 最近打开的存储适配器（T03b-2——apply 网关命令端口来源）
++    /// 事件投递线程的适配器快照互斥（F-967——修订事件回调自 execution 总线
++    /// 专用投递线程到达，与 UI 线程打开拍的 m_lastStoreAdapter 写入并发；
++    /// shared_ptr 非原子，投递线程裸读是数据竞争。声明序在 m_eventBus 之前
++    /// ——逆序销毁时本互斥晚于总线析构，总线 drain 在投回调仍可安全取锁）。
++    /// 仅护写入与投递线程快照读；纯 UI 线程读写不经锁（同线程序保证）。
++    mutable std::mutex m_eventAdapterMutex;
+     QTimer* m_drainTimer = nullptr;                           ///< Draining 轮询驱动（惰性创建）
+     QTimer* m_draftAutosaveTimer = nullptr;                   ///< 草稿周期落盘驱动（V-13/PM-04——UI-T84：宿主侧 tickAutosave 触发半区，惰性创建；控制器内 60 s 节律判定，本定时器只按秒级拍驱动入口）
+     /// 项目关闭统一清理的幂等护栏（F-910 修复面——UI-T84）。
+@@ -609,9 +618,16 @@ private:
+     /// kinematics 求解配置的 QSettings 载体（wire 拍构造——org/app 与
+     /// 宿主既有用户级设置同源；存活期覆盖面板使用期）。
+     std::unique_ptr<QSettings> m_kinConfigSettings;
+-    /// 域事件总线（WP-24-T03b 收口——修订提交事件面：store 打开请求挂接
+-    /// ＋宿主订阅转达域模块；进程内恰一次投递，core::ReferenceEventBus）
+-    std::shared_ptr<core::ReferenceEventBus> m_eventBus;
++    /// 域事件总线（WP-24-T03b 收口／F-967 生产装配收口——修订提交事件面：
++    /// store 打开请求挂接＋宿主订阅转达域模块）。接口类型＝core::IDomainEventBus
++    /// （契约归 core，Events.hpp §4.9）；生产实例＝execution::DomainEventBusImpl
++    /// （units/execution.md §10.4——专用投递线程、publish 线程安全即返、同发布
++    /// 者 FIFO、RAII 退订、drain on close；core::ReferenceEventBus 是"非生产
++    /// 组件、不进产品链接面"的测试语义钉子，2026-10-25 前被本插件越界装配，
++    /// F-967 收口换回 execution 实现）。成员序：总线声明先于两个 sink 与全部
++    /// 订阅句柄——逆序销毁＝句柄先退订、sink 次之、总线最后 drain，满足
++    /// execution"句柄存活期不得越过总线"的调用方纪律。
++    std::shared_ptr<core::IDomainEventBus> m_eventBus;
+     /// 修订事件桥（订阅目标 sink——插件存活期覆盖订阅期，成员持有）
+     std::unique_ptr<core::IDomainEventSink> m_revisionSink;
+     /// 总线订阅句柄（RAII——修订事件→域模块基线同步；析构即退订）
+@@ -621,6 +637,11 @@ private:
+     std::unique_ptr<core::IDomainEventSink> m_requirementsRevisionSink;
+     /// 需求域同步订阅句柄（RAII）
+     std::unique_ptr<core::IEventSubscription> m_requirementsRevisionSubscription;
++    /// 事件投递线程的适配器快照（F-967——修订事件 sink 的 onEvent 在 execution
++    /// 总线投递线程上执行，读取 m_lastStoreAdapter 前必须经本访问器与打开拍
++    /// 写入互斥；返回值即快照所有权的值转移，随后经队列携带进 UI 线程比对）。
++    /// 定义在 UiPlugin.cpp；返回空＝当前无打开会话（sink 侧守卫按迟到事件丢弃）。
++    std::shared_ptr<app::StorePortAdapter> snapshotEventStoreAdapter() const;
+     /// 最近一次上下文投影缓存（UI-T39——撤销/重做等"上下文值不变但命令
+     /// 可用性是时间函数"的场景，重发同一投影触发注册表谓词重估〔顶栏按
+     /// 钮/菜单使能随新 tip 修订刷新〕；nullopt＝尚无投影——打开前无重发面）。

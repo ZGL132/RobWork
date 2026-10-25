@@ -1,0 +1,11 @@
+[ird-ui-plugin] 诊断栈就绪（开发日志目录：D:\10_Source_Repos\21_robot\RobWork\ird-ui-plugin-logs）
+[ird-ui-plugin] domain assembly: plugin=modeling ok=1 panels=1 commands=12
+[ird-ui-plugin] domain assembly: plugin=requirements ok=1 panels=1 commands=9
+[ird-ui-plugin] domain assembly: plugin=kinematics ok=1 panels=2 commands=8
+[ird-ui-plugin] domain assembly: plugin=dynamics ok=1 panels=1 commands=5
+[ird-ui-plugin] domain assembly: plugin=selection ok=1 panels=1 commands=1
+[ird-ui-plugin] domain assembly: plugin=optimization ok=1 panels=1 commands=0
+[ird-ui-plugin] shared surface: modeling registered
+[ird-ui-plugin] shared surface: requirements registered
+[ird-ui-plugin] shared surface: kinematics registered
+[ird-ui-plugin] 共享面装配完成（项目树＋检查器＋选择服务；三域 Provider 注册；L1/L3 接线；NameMap 端口＝空映射二态——呈现装配随 WP-24-T08）

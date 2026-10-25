@@ -1,0 +1,142 @@
+{
+  "schemaVersion": "ird-reuse-verification/1",
+  "taskId": "REUSE-T41",
+  "generatedAt": "2026-10-25",
+  "branch": "redesign-main",
+  "baseSha": "41a59c67005ad0b0f45ccd32b3a6809fb4258154",
+  "build": {
+    "command": "cmake --build build --config Release --target sdurws_ird_ui_plugin sdurws_ird_core_test sdurws_ird_execution_test sdurws_ird_execution_contract_test sdurws_ird_ui_test sdurws_ird_ui_contract_test sdurws_ird_studio",
+    "exitCode": 0,
+    "cache": "RWS_BUILD_INDUSTRIALROBOT:BOOL=ON（build/CMakeCache.txt 实核）；集成模式 Visual Studio 17 2022",
+    "notes": "core_test 二进制未重建（core 单元输入零变化——增量口径）；execution 两测试目标因 EventBus.hpp 批注面变化重建；ui_plugin/ui_test/ui_contract_test/studio 重建"
+  },
+  "tests": [
+    {
+      "exe": "sdurws_ird_core_test",
+      "command": "pwsh -NoProfile -File run-tests.ps1 -Label sdurws_ird_core_test",
+      "exitCode": 0,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "evidence": [
+        "sdurws_ird_core_test.xml",
+        "sdurws_ird_core_test-report.json",
+        "sdurws_ird_core_test.log"
+      ],
+      "notes": "core 参考总线（ReferenceBus.*）等 74 项全过——core 单元零改动，二进制沿用今日 17:48 构建（同一提交基线）"
+    },
+    {
+      "exe": "sdurws_ird_execution_test",
+      "command": "pwsh -NoProfile -File run-tests.ps1 -Label sdurws_ird_execution_test",
+      "exitCode": 0,
+      "passed": 157,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "evidence": [
+        "sdurws_ird_execution_test.xml",
+        "sdurws_ird_execution_test-report.json",
+        "sdurws_ird_execution_test.log"
+      ],
+      "notes": "被采纳生产实现的契约回归：publish 线程安全/同发布者 FIFO/RAII 退订/drain（EX-T05 承载）——oracle 覆盖：订阅数(subscriberCount)、投递数、FIFO 序、退订后不投递、句柄析构退订、drain 后退出"
+    },
+    {
+      "exe": "sdurws_ird_execution_contract_test",
+      "command": "pwsh -NoProfile -File run-tests.ps1 -Label sdurws_ird_execution_contract_test",
+      "exitCode": 0,
+      "passed": 38,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "evidence": [
+        "sdurws_ird_execution_contract_test.xml",
+        "sdurws_ird_execution_contract_test-report.json",
+        "sdurws_ird_execution_contract_test.log"
+      ],
+      "notes": "同发布者 FIFO/家族序/并发零丢失/RAII 退订幂等/退订不与投递死锁/waitForIdle——线程交错以 waitForIdle 确定性同步，无 sleep 断言"
+    },
+    {
+      "exe": "sdurws_ird_ui_test",
+      "command": "pwsh -NoProfile -File run-tests.ps1 -Label sdurws_ird_ui_test",
+      "exitCode": 1,
+      "passed": 331,
+      "failed": 14,
+      "skipped": 0,
+      "notRun": 0,
+      "evidence": [
+        "sdurws_ird_ui_test.xml",
+        "sdurws_ird_ui_test-report.json",
+        "sdurws_ird_ui_test.log"
+      ],
+      "notes": "14 失败全部与本包无因果（ui_test 编入 TU 源集＝test/*.cpp＋plugin/{HostCompilePort,HostPresentationAdapters,QtTextBillboard,KinEvaluationChannel,KinHostServicesAssembly}.cpp——本包五个改动文件零编入，二进制等同 HEAD）：#1 F-560 预存（REUSE-T17 README 在案）；#2~#14 共 13 项为真实数值链（runtime 物化＋真实 FK/IK）未记录失败——redesign-main 近期无 ui_test 全量记录，疑似 T33 RPY 换核跨单元漂移或环境性，归所有者归类（详见 README『发现与移交』）"
+    },
+    {
+      "exe": "sdurws_ird_ui_contract_test",
+      "command": "pwsh -NoProfile -File run-tests.ps1 -Label sdurws_ird_ui_contract_test",
+      "exitCode": 0,
+      "passed": 63,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "evidence": [
+        "sdurws_ird_ui_contract_test.xml",
+        "sdurws_ird_ui_contract_test-report.json",
+        "sdurws_ird_ui_contract_test.log"
+      ],
+      "notes": "首轮 62/1：AssemblyManifest.WiredEntriesDeclareConsistentHandleSymbolAndAnchor_UI_T84 红——本包 UiPlugin.cpp 插入使清单 wiredAnchor 行号漂移（行级核对按设计红），同批更正 production-assembly-manifest.json 锚点（2781→2855、2855→2929，一致 +74）后复跑 63/63 绿；红例 XML 被复跑覆盖（机械性行号同步，红态可由旧清单复现）"
+    }
+  ],
+  "gates": [
+    {
+      "name": "ird_gates（正例：ui_plugin→execution 边已登记）",
+      "command": "cmake -DIRD_ROOT=<industrialrobot> -P cmake/ird_gates.cmake",
+      "exitCode": 0,
+      "evidence": [
+        "ird-gates-positive.log"
+      ],
+      "notes": "R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中＋自测正负例按预期"
+    },
+    {
+      "name": "ird_gates（负例：撤登记探针）",
+      "command": "同上，临时移除 L10 新登记行",
+      "exitCode": 1,
+      "evidence": [
+        "ird-gates-negative-unregistered.log"
+      ],
+      "notes": "恰一条 IRD-GATE-SUB: 表外依赖边 ui->execution（sdurws_ird_ui_plugin → sdurws_ird_execution）不在 ARCH §3.5 白名单——证明该边放行面唯一由本登记承载；探针后恢复并复验 exit 0"
+    }
+  ],
+  "guiSmoke": {
+    "status": "NOT RUN",
+    "command": "sdurws_ird_studio + IRD_UI_PLUGIN_SMOKE=auto（QT_QPA_PLATFORM=windows；PATH 四段前置）",
+    "evidence": [
+      "gui-smoke-launch.log",
+      "gui-smoke-head-baseline-segfault.log"
+    ],
+    "notes": "HEAD 既有启动段错误阻断：本包工作树运行在『共享面装配完成』后段错误（exit 139）；stash 本包五文件重建 HEAD 基线复跑同点同形段错误——归因＝HEAD 41a59c670 既有缺陷，非本包所致（dev-diagnostics.log 历史：10-21 前后运行曾全程达 draft applied/宿主已关闭工作单元，10-24 起两次运行同早停）。修订事件双 sink『delivered after commit』真实 GUI 路径验证随本阻断 NOT RUN，替代证据＝execution 总线契约用例＋ui_contract_test 63 项（PortAdapters 同源编入）。缺陷归类与修复归所有者裁决（疑似跨单元漂移，候选源 T33 RPY 换核——待证）"
+  },
+  "scope": {
+    "changedProductFiles": [
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp（候选——已回退，diff 在 candidate/）",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp（候选——已回退，diff 在 candidate/）",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt（候选——已回退，diff 在 candidate/）",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/EventBus.hpp（候选——已回退，diff 在 candidate/）",
+      "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake（候选——已回退，diff 在 candidate/）"
+    ],
+    "changedDesignFiles": [
+      "RobWork/doc/industrial-robot-design/tasks/REUSE-T41.json",
+      "RobWork/doc/industrial-robot-design/reuse/migration.md（§13.2 REUSE-T41 行）",
+      "RobWork/doc/industrial-robot-design/traceability/findings.json（F-967 候选收口＋F-973/F-974 登记）",
+      "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T41/**"
+    ]
+  },
+  "notRun": [
+    "GUI 真实生产路径（IRD_UI_PLUGIN_SMOKE=auto 全程）——HEAD 既有启动段错误阻断，双跑归因证据在案",
+    "性能微基准——本包零数值算法变化（装配换核＋线程转接；无新分配/循环/锁热点；publish 即返语义不变）",
+    "core RAII 恢复/EventsTest FIFO 契约纠正/BuildRedLineTest 禁入扫描/EventBus.cpp:66-67 注释更正——未获批不实施（tasks/REUSE-T41.json note 登记待裁决）",
+    "产品落地——blocked：解阻待所有者宿主例外治理批次（migration §13.2 REUSE-T41 行）"
+  ],
+  "status": "blocked-candidate-verified",
+  "blockedReason": "REUSE-AD 对变动 UiPlugin.{hpp,cpp} 的 host/graphics 类别 grant 结构性不可登记（hostExceptions 封闭清单恰 4 文件机器冻结）——所有者 2026-10-25 escalate 裁决采 T33/T36/T40 先例：产品树 HEAD 零改动、候选留存（candidate/*.diff 六件）、F-967 保持 open；下述全部计数为候选工作树真实执行结果（已回退，落地批按 candidate diff 复现）"
+}
