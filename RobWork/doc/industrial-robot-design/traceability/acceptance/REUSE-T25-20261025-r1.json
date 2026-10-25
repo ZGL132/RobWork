@@ -1,0 +1,94 @@
+{
+  "taskId": "REUSE-T25",
+  "baseCommit": "c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215",
+  "reviewedCommit": "507db46bba838bb170e1fbfaf5784a389ad3790d",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T07:11:28+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T25/WP-17 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；只验收不修复、不改任务状态、不推进下一任务；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（重放复用既有 build 树增量构建，结束后已恢复两产品文件并验证零差异）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 c3eb1f8d..507db46bba8 送验交付（单提交 507db46bb「[governance] REUSE-T25 保存SDK映射候选及诊断准入阻断」，22 个新增文件，纯文档/候选/证据包）：显式 Base/Head 范围复跑、候选四链 SHA256 绑定核验（patch/baseline/candidate/SDK winerror.h）、红/中间绿/最终三轮原始证据逐件核对、候选补丁本机真实重放（git apply→增量构建→31 项测试→恢复源码）、validate-docs 文档门禁复跑、红线 diff（生产库/forbiddenFiles/cmake 门禁零触碰、22 文件全为新增）、F-962/F-963 open 状态、提交规范与正文证据一致性。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查；候选重放测试计数另列（candidateReplay，31 passed/0 failed/0 skipped/0 notRun），互不相加"
+  },
+  "checks": [
+    "现场与送验对象：范围 c3eb1f8d..507db46bba8 内仅 1 个提交 507db46bb（reviewHead 系唯一提交推导，与契约 note 起点 c3eb1f8d 一致）；送验 22 个文件在当前 HEAD 树与送验树零差异（git diff 507db46..HEAD 对该 22 路径无输出），证据核对可直接读当前树原件；送验提交之后主线另有 T26—T29 等任务提交（project 单元在其间零改动，已另行核验），不影响本包证据。",
+    "范围：verify-task-scope 显式 -Base c3eb1f8d -Head 507db46bba8 exit 0，22 个路径全部在允许面（4 条 allowedRules，3 条 forbiddenRules），日志 02-scope.log。",
+    "红线零触碰：git diff --stat c3eb1f8d..507db46 对 industrialrobot/ 生产库、RobWork/RobWork/src、RobWork/RobWorkSim/src、vcpkg/、industrialrobot/cmake/（门禁目录）全部零差异；22 个文件 git diff --name-status 全为 A（新增），未修改任何既有文件，CLOSURE 冻结与历史证据自动零触碰（日志 03-redline-diff.log）。",
+    "提交链：单提交一包一组；commit-lint -Range c3eb1f8d..507db46bba8 PASS（1 个提交全部合规）exit 0（04-commit-lint.log）；[governance] 前缀合规；正文逐点与证据一致——「31通过0失败0跳过」＝final-report.json summary 31/31/0/0、「原生产2项真实失败」＝red-report.json 0 passed/2 failed、「中间旧注入失败原样留存」＝green.log「PASSED 30 / FAILED 1: Commit_FailedTxThenSuccess」＋README 表格第二行、「直接复用迁移新增0」＝reuse/changes/REUSE-T25.json files:[]、「恢复两个产品文件」＝507db46 两生产文件 blob SHA256 与基线完全一致、「不修改框架/vcpkg」＝红线 diff、「性能及独验 NOT RUN」＝verification.json performance/independentAcceptance 均 NOT RUN。",
+    "候选精确绑定（acceptance[0] 前半）：candidate.patch SHA256=6178fac5c7fb55a0fbf70d0f412dc81fde76be15cd2215b132116ff4f0a3fbfa 与 verification.json patch.sha256 一致；基线两文件 blob SHA256（git cat-file c3eb1f8d）292501fc…/c98e2ef8… 与 verification.json baselineSha256 一致；git apply --check 在基线通过（README 声明可重放实证）；apply 后两文件 LF 规范化 SHA256 f6bcf34d…/f88f1daa… 与 candidateSha256 精确一致（工作区 CRLF 差异系 core.autocrlf=true，git 存储层 LF 哈希全匹配）；SDK 侧 winerror.h rawSha256=241f475c… 与 verification.json 一致且五宏定义逐字核对命中（ERROR_ACCESS_DENIED 5L/ERROR_SHARING_PAUSED 70L/ERROR_DISK_FULL 112L/ERROR_CLOUD_FILE_ACCESS_DENIED 395L/ERROR_DISK_QUOTA_EXCEEDED 1295L）——证实旧代码 70/395 手写数字实为 SHARING_PAUSED/CLOUD_FILE_ACCESS_DENIED 的误分类（日志 08-replay-hashes.log）。",
+    "红例/绿例真实留痕（acceptance[0]）：red.xml tests=2 failures=2 skipped=0（F963_SdkWriteErrors_StableCategoryAndUnchangedBytes、F2_StageWriteFailsMidway_DiskFull_ResidueIgnoredWithDiag 两用例均 failed）、red-report.json summary total=2 passed=0 failed=2 skipped=0 notRun=0 decisive=true、red-build.log 真实构建留痕；final.xml 三个套件 TxEngineTest(21)/ProjectStoreTest(2)/CommandSubmitS6(8) 合计 31 tests failures=0、final-report.json summary total=31 passed=31 failed=0 skipped=0 notRun=0、final-build.log 含 TxEngineTest.cpp 重编与 exe 链接；中间 green.log「31 tests ran / PASSED 30 / FAILED 1」与 green-report.json 原样留存，失败用例即旧 70 注入处。三轮数字与 README 表格、verification.json runs 逐项一致。",
+    "候选数值项真实重放（验收员本人执行，非引用）：git apply candidate.patch 于基线工作区→验证候选态哈希→cmake --build build --config Release --target sdurws_ird_project_test 增量构建（TxEngine.cpp 与 TxEngineTest.cpp 均重编，exit 0，06-replay-build.log）→按 run-tests.ps1 同款 PATH/QT_QPA_PLATFORM/过滤器运行 sdurws_ird_project_test.exe：exit 0，[PASSED] 31 tests，XML 顶层 testsuites tests=31 failures=0 errors=0，ird-report summary 31/31/0/0/0（06-replay.log/06-replay.xml/06-replay-report.json）——31 passed/0 failed/0 skipped 独立复现，与实施者 final 轮一致；随后 git checkout 恢复两产品文件，git diff --exit-code HEAD 对 project/ 零差异，LF 规范化哈希恢复为基线 292501fc…/c98e2ef8…（07-replay-restore.log），重放闭环无残留。",
+    "不虚标 migrated/不放宽门禁（acceptance[1]）：reuse/changes/REUSE-T25.json files:[]（迁移 0，无任何文件虚标 migrated/closed）；GAP-PRJ-DIAG-BOUNDARY-01.md 如实登记整文件准入阻断（DiagCodes 两码 Error/Info paramSchema 空、DiagnosticsFactory 无 subject 抛 SubjectMissing、ProjectStoreImpl CollectingSink 转发未证明换正式文案、reuse-contract.ps1 changedSources 整文件准入规则），明写「保留 pending，不为本包改变规则」「以上语义/接线验证 NOT RUN」「F-962/F-963 均未关闭」，并给出否决清单（不虚造对象身份、不绕开工厂、不拆文件逃覆盖、不降门禁）；candidate.patch 仅 70/395/5→SDK 宏替换与测试，无 Qt/框架/接口变化；cmake/ 门禁目录零差异（检查 3）；架构门禁日志 architecture-gates.log 含 17 项自测（7 pass 无误报＋10 fail 按预期检出）且「R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」，README 如实注明这是候选架构检查而非复用整文件准入 PASS。",
+    "文档门禁复跑：validate-docs.ps1 -TaskFile REUSE-T25.json exit 0——validate-task: PASS (1 tasks)、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS (20 units, 12 trace entries, 404 task files, 30 registered assets…)；REUSE-AD-PENDING 各条为 AD 审计既有 pending 提示（与 GOV-T24/T25 先例同型），非本包阻断（05-validate-docs.log）。",
+    "F-962/F-963 open 与语义冲突交所有者：findings.json 当前 F-962/F-963 status 均 open，且 findings.json 与 reuse/functions/project.json 在送验范围 git diff 零差异（本包未触碰状态登记）；TxEngine 两诊断工厂权威与项目级空 subject 的语义冲突按 GAP 提案留给所有者裁决，本验收不予代裁；契约 status=ready 与 note「文档/候选交付ready，生产实施被具体诊断语义阻断」自洽，validate-task PASS 确认状态字面被入口接受。"
+  ],
+  "candidateReplay": {
+    "tests": 31,
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0,
+    "notRun": 0,
+    "exitCode": 0,
+    "reproduced": true,
+    "filter": "TxEngineTest.*:ProjectStoreTest.WriteChannel_*:ProjectStoreTest.Tx9_UncommittedRevision_*:CommandSubmitS6.*:CommandSubmitD18.*（与实施者 final 轮一致；D18 无匹配，实施者已如实登记）",
+    "build": "增量构建 sdurws_ird_project_test：TxEngine.cpp＋TxEngineTest.cpp 重编，exit 0",
+    "xml": "06-replay.xml",
+    "report": "06-replay-report.json",
+    "log": "06-replay.log",
+    "restore": "git checkout 后 project/ 对 HEAD 零差异，LF 规范化哈希=基线 292501fc…/c98e2ef8…（07-replay-restore.log）"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T25.json -Base c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215 -Head 507db46bba838bb170e1fbfaf5784a389ad3790d", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "redline-diff", "command": "git diff --stat c3eb1f8d..507db46bba8 -- industrialrobot/ 与 RobWork/RobWork/src、RobWork/RobWorkSim/src、vcpkg/、industrialrobot/cmake/ ＋ git diff --name-status（22 文件全 A）", "exitCode": 0, "passed": true, "log": "03-redline-diff.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215..507db46bba838bb170e1fbfaf5784a389ad3790d", "exitCode": 0, "passed": true, "log": "04-commit-lint.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T25.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "05-validate-docs.log" },
+    { "name": "replay-apply", "command": "git apply --check candidate.patch && git apply candidate.patch ＋ LF 规范化 sha256sum 对比 candidateSha256", "exitCode": 0, "passed": true, "log": "08-replay-hashes.log" },
+    { "name": "replay-build", "command": "cmake --build build --config Release --target sdurws_ird_project_test", "exitCode": 0, "passed": true, "log": "06-replay-build.log" },
+    { "name": "replay-test", "command": "sdurws_ird_project_test.exe --gtest_filter=TxEngineTest.*:ProjectStoreTest.WriteChannel_*:ProjectStoreTest.Tx9_UncommittedRevision_*:CommandSubmitS6.*:CommandSubmitD18.* --gtest_output=xml:…/06-replay.xml --ird_report=…/06-replay-report.json（PATH 前置 Qt/vcpkg/build DLL 目录，QT_QPA_PLATFORM=windows）", "exitCode": 0, "passed": true, "log": "06-replay.log", "xml": "06-replay.xml" },
+    { "name": "replay-restore", "command": "git checkout -- project/src/TxEngine.cpp project/test/TxEngineTest.cpp ＋ git diff --exit-code HEAD -- project/ ＋ LF 规范化 sha256 复核", "exitCode": 0, "passed": true, "log": "07-replay-restore.log" }
+  ],
+  "executionNotes": [
+    "candidateSha256 直接比对不匹配的原因是 core.autocrlf=true：git apply 后工作区文件为 CRLF，而 verification.json 哈希系 git 存储 LF 口径（与 baselineSha256 同口径，基线核对即证实）；LF 规范化（tr -d '\\r'）后两文件哈希精确匹配，候选绑定成立，已在 08-replay-hashes.log 留痕。",
+    "重放构建第一次因 Git Bash MSYS 路径转换把 /nologo /verbosity:minimal 改写为路径导致 MSB1008 失败；去掉 -- 后的 MSBuild 开关重跑即成功（构建语义不变），如实记录不改写历史。",
+    "重放输出使用独立 Label 落验收产物目录（06-replay-*），未覆盖实施者 red/green/final 原件；重放结束后两产品文件已恢复并验证零差异，仓库工作区对 industrialrobot/ 干净。",
+    "07-replay-restore.log 中两行哈希顺序为 TxEngineTest.cpp 在前、TxEngine.cpp 在后（tee 顺序），数值均与基线一致。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "全库证据索引审计（validate-docs.ps1 -DeepEvidence）",
+      "reason": "按 AGENTS §4 普通提交不要求重建全库索引；本包 22 文件全为新增且路径集中在任务/复用/证据区，validate-docs 常规校验已 PASS。"
+    },
+    {
+      "item": "性能微基准与项目级诊断语义/接线验证",
+      "reason": "实施方已如实登记 NOT RUN：前者为编译期错误身份替换、控制流/分配结构未变且候选未准入生产，不为形式另造测试；后者待所有者就诊断工厂权威与项目级空 subject 语义裁决后另发精确任务，本验收不予代跑或代裁。"
+    },
+    {
+      "item": "独立冒烟及对端契约回归",
+      "reason": "本包零生产代码/CMake/公共接口/依赖变化（红线 diff 零差异），按 AGENTS §4 增量口径不触发。"
+    }
+  ],
+  "limitations": "PASS 仅绑定送验范围 c3eb1f8d..507db46bba8（REUSE-T25 文档/候选/证据交付）：候选仍未准入生产，TxEngine 当前磁盘满误分类依旧存在，F-962/F-963 保持 open，README 明确本记录不作为已修复发布凭证；validate-docs 复跑在当前 HEAD 树执行（含 T26—T29 后续任务后的库存，changed=94/404 task files 系当前计数而非送验时点），送验 22 文件两树零差异故结论适用于送验树；候选架构 11 类零命中是 ird_gates 夹具自测＋扫描通过，不等于复用整文件准入；本验收不解除「两诊断工厂权威与项目级空 subject 语义冲突」的待裁决状态。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/03-redline-diff.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/04-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/05-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/06-replay-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/06-replay.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/06-replay.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/06-replay-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/07-replay-restore.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1/08-replay-hashes.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T25-20261025-r1.json"
+  ]
+}
