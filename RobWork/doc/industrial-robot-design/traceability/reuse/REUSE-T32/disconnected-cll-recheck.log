@@ -1,0 +1,13 @@
+Note: Google Test filter = TrjPlannerAvoidance.CollisionThenRework*:TrjPlannerAvoidance.UntrustedReviewNotTreatedAsCollision*
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from TrjPlannerAvoidance
+[ RUN      ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2
+[       OK ] TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2 (11 ms)
+[ RUN      ] TrjPlannerAvoidance.UntrustedReviewNotTreatedAsCollision_WP16T06_KIN05
+[       OK ] TrjPlannerAvoidance.UntrustedReviewNotTreatedAsCollision_WP16T06_KIN05 (0 ms)
+[----------] 2 tests from TrjPlannerAvoidance (11 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (11 ms total)
+[  PASSED  ] 2 tests.

@@ -265,6 +265,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **WP-08/FD后端供给探测**：[REUSE-T31](../tasks/REUSE-T31.json)实施完成待独验（起点`e74886dfcb972a2bbcc4f1336e22ab146037ffde`）：GAP-FD-BUILD-01供给定向探测全部只读实核——vcpkg port ode 0.16.6在位而未安装（installed零ode库、bullet3/fcl对照、BUILD_sdurwsim_ode=OFF/ODE_DIR-NOTFOUND、VCPKG_MANIFEST_MODE=OFF）、力驱动直连API链行号级核验（RigidDevice::setMotorForceTargets→ODEVelocityDevice::update Force分支setForce→ODESimulator::addDevice建ODEVelocityDevice）、Bullet/RWPhysics/RK4Integrator负面证据落位、部署握手（FindODE config包与vcpkg布局兼容；须规避RobWorkSimSetup WIN32的git网络拉取回退）；[GAP-FD-BUILD-01](GAP-FD-BUILD-01.md)已修订为可裁决供给提案（含阶段B验证设计与回滚边界），增量检索见[proposal-search.json](extensions/proposal-search.json)增量批，原始记录见[REUSE-T31](../traceability/reuse/REUSE-T31/README.md)。阶段B（安装ode＋隔离树启用BUILD_sdurwsim_ode＋力输入探针）属新依赖启用，未获所有者批准不实施；T04/WP-09阻断不变；提案裁决与独立验收由所有者安排，实施者不自签。
 
+**WP-11 trajectory 其余工具**：[REUSE-T32](../tasks/REUSE-T32.json)实施完成待独验（起点`c65ffc4fc495da0b01b2060ff3049eb127091d72`；直线已由REUSE-T26交付）：Planner三处度量手写核换上游直接消费（逐对Linf→`MetricFactory::makeInfinity`、L1路径长度→`PathAnalyzer::pathLength`折叠`makeManhattan`、直连采样L2→`makeEuclidean`单对距离），两处内联Σ|Δq|循环删除并委托pathJointLength；193项全量（含PlannerAvoidance黄金算例回归）与69项契约全过，三组断开红例（L1折叠→Linf、采样L2恒0、规划期剪枝恒真）各自真实失败后恢复复测绿；MATH-METRIC/PATH-PLANNING升verified（suitability原件＋review.version树内上游逐字节一致核验在案）；rotationAngleBetween按实测反例保留2·atan2（EAA acos分支边界4.4e-11/1.6e-10超C7容差40~160倍，原"候选EAA::angle"待核项就此结案）；ird_add_gtest定案business-specific保留薄宏（TEST-HARNESS保持candidate）；矩阵95行含三改动文件全行铺面（采样计数公式级与RRT选择序直接oracle受零模型构造红线限制未建，观测面由黄金算例与断开红例承载）。GAP-TRJ-LINEAR-01候选2定案为无上游稳定求值入口（LinearInterpolator/Ramp差分式、Rotation3D特化slerp、Polynomial Horner同构差分），候选3（SA-02 patch）待所有者裁决维持blocked，批准前不改Ptp.cpp，真实Q极值探测NOT RUN；性能微基准pathL1相对+24~41%（绝对+40ns/次，每次search仅K次键计算），接受与否交独验裁决。原件见[REUSE-T32](../traceability/reuse/REUSE-T32/README.md)。
+
 ### 13.2 交接索引与已知阻断
 
 交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。
@@ -300,7 +302,7 @@ T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功
 | WP-08 / GAP-FD-BUILD-01 | 现有 PhysicsEngine/ODE 等实际供给定向探测；核 Device、力驱动、状态/步长/确定性与部署；记录 Bullet/RWPhysics 已知不适用证据 | 仅适用性与供给提案；新依赖/扩展等未获批不实施，不把刚体积分器当关节求解器 |
 | WP-09 / T04 FD 子任务 | dynamics/src/ForwardDynamics.cpp → WP-08 已验证引擎；保留公共输入/结果、单位和错误语义，删除质量阵/消元/RK4四阶段及重复状态 | 依赖 WP-06、WP-08 及所需批准；解析基准/平衡/能量/收敛/确定性及真实业务链，无隐藏 fallback |
 | WP-10 / REUSE-T21 | R3有界实施已批；原Compare同时溢出分支接入既有Boost128/4224位，生产自查见本包原件 | 原A撤回、R2不入生产；最终性能已获本包明确接受、独验待完成，F-966保持OPEN；不拓展精确计算平台 |
-| WP-11 / T05 trajectory 子任务 | Ptp.cpp、CartesianLine.cpp；核上游 LinearInterpolator、Quaternion::slerp/路径轨迹工具；按 Ptp、直线、其余分别提交 | 保留已实施 Smooth/TimeParam Polynomial；核端点/时标/导数/连续性；时间加权 RMS 不强套 Statistics；删旧系数/转换/缓存 |
+| WP-11 / T05 trajectory 子任务 | 直线已交付（REUSE-T26待独验）；其余已实施待独验（REUSE-T32：Planner度量换核＋三文件全行铺面＋catalog两capability升verified）；Ptp.cpp仅余GAP候选3（SA-02）待所有者裁决 | 保留已实施 Smooth/TimeParam Polynomial；核端点/时标/导数/连续性；时间加权 RMS 不强套 Statistics；删旧系数/转换/缓存 |
 | WP-12 / T05 modeling 子任务 | BaseWorldTransform/DescriptionValidator 按实际 owner 定位；modeling DH/惯量能力；优先 LinearAlgebra、RPY/EAA/Transform3D 及成熟标定入口 | 保留 CouplingMath 成果；模型真值归 runtime；每个数值子包独立坐标/单位/退化 oracle；LM/差分缺口不直接新写 |
 | WP-13 / policy 子任务 | 原规则入口 F-961：合法名称 REGEX 解释问题，优先已有字面 API/单点转义；随后独立审随机/LHS 候选 | 不把未证实规则不匹配描述为碰撞漏检；保留种子/分布/线程/确定性，具体消费者正反例 |
 | WP-14 / diagnostics 子任务 | F-968 原解析入口，失败后 partial names 最小事务提交/清理；复用既有错误轨 | diagnostics 稳定码/文案唯一权威；T16 不重写；中途失败/重复调用/残留验证 |

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "trajectory.Planner.doInCollision",
+  "target": "sdurws_ird_trajectory",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+      "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
+      "sha256": "6c229db1508971fe667071d3ee490212cd6c558132c50b6b2b72cfd46586f411"
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp",
+      "sha256": "66f61439563561943f3f358b7ced694ccbdbc64c94c5c9adcc1e880dc202f59d"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp",
+      "sha256": "d46af647083283c0c660e3beb5924b931b7a5c257dd19d14850b2dbe1933295e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/QSampler.hpp",
+      "sha256": "c00c94d1902e803c8d3853ff74bcea92ad88b6220c48a6f82cb7ed6efc194765"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/QEdgeConstraint.hpp",
+      "sha256": "cd8f2417c7fc7786524cf2fa6dd36ef73cab1a73481516aa4bda215043f26ddf"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/StopCriteria.hpp",
+      "sha256": "bb139a8d54e175e422e13d035336b61bb915d8cebec8f7e5920fd5ff24500bf7"
+    },
+    {
+      "path": "RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt",
+      "sha256": "7ce494ad5bb1cad0f6a0761dc07aafe654623eb3dd5fc1a75e4ba8762b735604"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt",
+      "sha256": "8281599da35afaeaa8e20b9f834e6cf2c84d0a06f5e48edb2097c20bf043e23e"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-cll.xml",
+      "sha256": "22863157775e4615eb6d015c6867f28c059bf58b5166eeb058653704961269c8"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/disconnected-cll.log",
+      "sha256": "4a5dd9330091d06c144006ac382bc03036993d5f819d133a3f3eb7a88dc74c6a"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "originalSha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b",
+      "description": "真实生产变异：PolicySessionQConstraint::doInCollision 无碰撞发现也剪枝（规划期约束恒真）——CollisionThenReworkSucceeds 搜索未果断言真实失败（exit 1），恢复后复测绿（disconnected-cll-recheck）。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/Planner.mutated-cll.cpp",
+      "sha256": "d17c316467740a1893a88cc06037da6a5bf69cdfe4c1cdacc3b392748e7dbac0"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerAvoidance.UntrustedReviewNotTreatedAsCollision_WP16T06_KIN05",
+      "TrjPlannerAvoidance.CollisionThenReworkSucceeds_WP16T06_ACC1_ACC2"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.xml",
+      "sha256": "01fe6deefd28c0a52937c580e5707bda1a7984c20532cbfaa75d3f1553e26102"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/final.log",
+      "sha256": "654df606cd3524b0bb04c758b7ef1c1e64513f3752f3a5343f7aa691619be018"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "TrjPlannerAvoidance.SessionPassthroughNoLocalCache_WP16T06_AT19"
+    ]
+  },
+  "note": "rw::pathplanning::QConstraint 子类每查询直穿 policy 会话（④端口）；KIN-05 不可采信保守剪枝由 UntrustedReview 用例钉住。"
+}

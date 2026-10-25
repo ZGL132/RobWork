@@ -1,0 +1,16 @@
+Note: Google Test filter = TrjPlannerReuse.DirectAdopt*:TrjPlannerAvoidance.DirectClearAdoptsStraightPath*
+[==========] Running 2 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 1 test from TrjPlannerAvoidance
+[ RUN      ] TrjPlannerAvoidance.DirectClearAdoptsStraightPath_WP16T06_ACC1
+[       OK ] TrjPlannerAvoidance.DirectClearAdoptsStraightPath_WP16T06_ACC1 (0 ms)
+[----------] 1 test from TrjPlannerAvoidance (0 ms total)
+
+[----------] 1 test from TrjPlannerReuse
+[ RUN      ] TrjPlannerReuse.DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32
+[       OK ] TrjPlannerReuse.DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32 (0 ms)
+[----------] 1 test from TrjPlannerReuse (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 2 tests.

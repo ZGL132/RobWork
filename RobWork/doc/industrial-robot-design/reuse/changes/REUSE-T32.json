@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T32",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T32.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+      "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b",
+      "mode": "adapter",
+      "capabilities": [
+        "MATH-METRIC",
+        "PATH-PLANNING"
+      ],
+      "boundary": "三处度量手写核删除并直接消费上游MetricFactory（Infinity/Manhattan/Euclidean）与PathAnalyzer::pathLength；稳定选择序四键全序/词表/身份/取消预算种子纪律不变；policy三态与runtime视图借持保持；整文件逐功能实审（5 adapter行production证据＋11 business-specific audit行），独验NOT RUN。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+      "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7",
+      "mode": "governance",
+      "capabilities": [],
+      "boundary": "仅新增test/PlannerReuseTest.cpp注册（if(TARGET sdurw_kinematics)集成条件段，同既有形态）；ird_add_gtest宏与目标注册体零改动；冒烟模式不受影响（smoke-build.log）。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+      "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "新增测试：独立度量oracle/采样网格/选择序确定性/近pi反例（Quaternion半角精确构造）；端口替身只在六类边界，数值期望独立重写不调用产品匿名内部。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md"
+    }
+  ]
+}

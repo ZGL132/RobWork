@@ -34,7 +34,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
@@ -88,7 +88,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/CartesianLine.hpp",
@@ -120,7 +120,7 @@
       },
       "evidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/production.json",
-        "sha256": "8c64ce5bec2643d0f0db2f2d1765a7fe2aaba16f03e5f82b518728fc3306221a"
+        "sha256": "6bcaf833786b197a5bd2f0c1bad33f0b2d5653b4723ed7fcf01294a814e4c152"
       },
       "auditEvidence": [
         {
@@ -155,21 +155,35 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "MATH-ROT",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "audited",
       "search": {
         "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
         "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
       },
-      "differences": "已用上游Quaternion但又自持正规化/最短角，候选EAA::angle；须核0、微小角、pi及相对旋转方向，不以使用一个类型当完整正向证据",
+      "differences": "实测定案（REUSE-T32）：EAA/Rotation3DAngleMetric候选在acos分支边界系统性超C7角容差（轴对齐1e-6实测4.4e-11、一般轴pi-3e-6实测1.6e-10，超1e-12约40~160倍），产品2·atan2全网格1e-12内命中解析期望——保留手写核；EAA 0/pi邻域一阶补偿带内精确（pi-1e-9实测偏差0）已同时登记",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
-      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存"
+      "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/verification.json",
+          "sha256": "a15ae88610927ff4ce6e29db3f9eb5e4b55bf16e2d347c13679d5999a404419c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-TRJ-LINEAR-01.md",
+          "sha256": "4031a3a21901102afc16980d8e3d465ef20ef7370919ccbc9818d34164169365"
+        }
+      ]
     },
     {
       "functionId": "trajectory.contract_test.ContractTestMain.main",
@@ -203,7 +217,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "auditEvidence": [
@@ -266,7 +280,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "auditEvidence": [
@@ -307,9 +321,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
           "symbol": "ird_add_gtest",
-          "qualifiedSymbol": "ird_add_gtest",
-          "startLine": 532,
-          "endLine": 544,
+          "startLine": 539,
+          "endLine": 551,
           "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
         }
       ],
@@ -319,18 +332,18 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
         "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
       },
-      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "differences": "20单元同形薄宏（REUSE-T32定案保留）：上游ADD_RW_GTEST非CONFIG导出，不另建测试构建平台；本批仅新增PlannerReuseTest注册（集成条件段），宏体零改动",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "auditEvidence": [
@@ -355,7 +368,11 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.cancellationRequested",
@@ -367,10 +384,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "cancellationRequested",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::cancellationRequested",
           "startLine": 106,
-          "endLine": 109,
-          "sha256": "2c3b3dcb7b48e1b3658716751e94e52ff972a8cdcddab4bc435f9b7695bad302"
+          "endLine": 111,
+          "sha256": "e5805b7fb32cc9f4d44a3a4bb1acbb3e8a1af27b60cafc983aa62860360a109c"
         }
       ],
       "targets": [
@@ -378,18 +394,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"cancellationRequested|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "policy调用上下文：取消借持，alive恒真依赖调用期锚点；未证明全装配生命周期",
+      "differences": "policy调用上下文：取消借持，alive恒真依赖调用期锚点（REUSE-T32实审定案，产品契约面非上游算法消费）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -414,7 +434,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.alive",
@@ -426,10 +450,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "alive",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::AdapterCallContext::alive",
           "startLine": 112,
-          "endLine": 112,
-          "sha256": "a4c306d1cdff1afe8ea2cd884ed0cb70332787c15dd530396fe284f384963b7f"
+          "endLine": 118,
+          "sha256": "5f714c145976e9fce4475a5b8ebf281b41087caef0d69a7889c559706b46af72"
         }
       ],
       "targets": [
@@ -437,18 +460,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"alive|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "policy调用上下文：取消借持，alive恒真依赖调用期锚点；未证明全装配生命周期",
+      "differences": "policy调用上下文恒真实现（REUSE-T32实审定案）；产品生命周期锚点契约，非上游算法消费",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -473,7 +500,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.doSetLog",
@@ -485,10 +516,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "doSetLog",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doSetLog",
-          "startLine": 158,
-          "endLine": 158,
-          "sha256": "a9a037db4527c616faf920a1816ebf6b864d963228bb17b9cb1e8d57aba6b1a7"
+          "startLine": 152,
+          "endLine": 160,
+          "sha256": "cfa6ea367ce85d6e55838a46bbf559c37200c1a78fd9c3bd74e609e2d1ac8284"
         }
       ],
       "targets": [
@@ -496,18 +526,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"doSetLog|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "QConstraint纯适配policy会话，缺口保守拒绝；日志留给诊断权威，无碰撞策略副本",
+      "differences": "上游QConstraint::doSetLog钩子空实现——诊断归policy会话与组装面（REUSE-T32实审定案）；纯适配样板，无独立数值核",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -532,7 +566,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.doInCollision",
@@ -544,10 +582,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "doInCollision",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PolicySessionQConstraint::doInCollision",
           "startLine": 161,
-          "endLine": 193,
-          "sha256": "144ae336d7d439a05068a06498ce5856de5cbb7e767ab7a843e129d074353079"
+          "endLine": 195,
+          "sha256": "e0375ed3441eec5c1cdaeaf46433f727e389b38b99ec82c4b9cdad0fe8945ac9"
         }
       ],
       "targets": [
@@ -556,17 +593,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"doInCollision|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "QConstraint纯适配policy会话，缺口保守拒绝；日志留给诊断权威，无碰撞策略副本",
+      "differences": "rw::pathplanning::QConstraint子类每查询直穿policy会话（④端口）；KIN-05不可采信保守剪枝经UntrustedReview用例钉住；无碰撞策略副本",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -591,7 +632,17 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "production": {
+        "entry": "doInCollision",
+        "upstream": "QConstraint",
+        "consumer": "doInCollision",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/production-doincollision.json",
+        "sha256": "32aa27bc08cb27dde413cd985288a5e1a853f44065e152925af1144a6eb072f9"
+      }
     },
     {
       "functionId": "trajectory.Planner.parsePlannerSelection",
@@ -603,10 +654,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "parsePlannerSelection",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::parsePlannerSelection",
-          "startLine": 235,
-          "endLine": 298,
-          "sha256": "7ba858ae9b1032c89b3b496bf1e7f178bcb5f9d62ac982ed670f991d570edbc5"
+          "startLine": 206,
+          "endLine": 300,
+          "sha256": "f50398fc7f21dc8fbe4b71a83842e8490c111a39a251f1013259878f8db75e11"
         }
       ],
       "targets": [
@@ -614,18 +664,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"parsePlannerSelection|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "family/三键白名单、整串数值/正整数/有限范围是canonical配置边界，保留，不用属性缺省掩盖缺键",
+      "differences": "family/三键白名单、整串数值/正整数/有限范围是canonical配置边界，保留（REUSE-T32实审定案）；不用属性缺省掩盖缺键",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -650,7 +704,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.validateConfigPairAndBounds",
@@ -662,10 +720,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "validateConfigPairAndBounds",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::validateConfigPairAndBounds",
-          "startLine": 310,
-          "endLine": 340,
-          "sha256": "ce3474f0c217e2c8fb9180b0af42907ea45d2cf47173a413fc9511743d018f8d"
+          "startLine": 301,
+          "endLine": 345,
+          "sha256": "a8b1d711622e13c92f3ef164d81fa3aa3aa750d10a7c688da2d59167a54a7b36"
         }
       ],
       "targets": [
@@ -673,18 +730,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"validateConfigPairAndBounds|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "拒绝维度/非有限/端点越界，不用PlannerUtil::clampPosition静默改值",
+      "differences": "拒绝维度/非有限/端点越界（REUSE-T32实审定案）；不用PlannerUtil::clampPosition静默改值",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -709,7 +770,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.sampleStraightPath",
@@ -721,10 +786,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "sampleStraightPath",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::sampleStraightPath",
-          "startLine": 360,
-          "endLine": 387,
-          "sha256": "7b00c6965a7c1cec9d048fa025fa3ea9638d6235c305559d5e65c3574b4245ee"
+          "startLine": 346,
+          "endLine": 391,
+          "sha256": "b5761b1cf7742f4227e43df74dfe3498ab293f9d3fdf7bacbc4c35165ea41eb5"
         }
       ],
       "targets": [
@@ -733,17 +797,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "MATH-METRIC",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"sampleStraightPath|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "插值已委托唯一interpolateJointLinear；长度平方和可复用L2，保留等分/端点/上限/参数身份",
+      "differences": "单对L2改上游makeEuclidean直接消费（dist2逐位同式）；等分/端点/上限护栏与插值委托interpolateJointLinear保留；样本数公式经计数替身核验",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -768,7 +836,17 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "production": {
+        "entry": "sampleStraightPath",
+        "upstream": "makeEuclidean",
+        "consumer": "sampleStraightPath",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/production-samplestraightpath.json",
+        "sha256": "85930c35525c05f594ae33f23c2d84a9d1c7ea2c1f78a037a443b98f3826e74b"
+      }
     },
     {
       "functionId": "trajectory.Planner.reviewPathSequence",
@@ -780,9 +858,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "reviewPathSequence",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::reviewPathSequence",
           "startLine": 419,
-          "endLine": 462,
+          "endLine": 463,
           "sha256": "50560bf84aac5bc0ea50d5636001b2bebb730c44bfbf4dd1a5e92445ec4d6339"
         }
       ],
@@ -791,18 +868,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"reviewPathSequence|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "policy唯一路径复核，三态和finalized/Applicable硬守卫；不直链proximity、不把间距不足当碰撞",
+      "differences": "policy唯一路径复核，三态和finalized/Applicable硬守卫（REUSE-T32实审定案）；不直链proximity、不把间距不足当碰撞",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -827,7 +908,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.maxAdjacentStep",
@@ -839,10 +924,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "maxAdjacentStep",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::maxAdjacentStep",
-          "startLine": 469,
-          "endLine": 478,
-          "sha256": "93a148498960a227fab5a0d05923f878eef7b68bb23ea29daee4e1f181b579ec"
+          "startLine": 464,
+          "endLine": 482,
+          "sha256": "4fd5cff668d2560520ad7e2abf7ae04816d041804604688888b5081b1a055a71"
         }
       ],
       "targets": [
@@ -851,17 +935,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "MATH-METRIC",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"maxAdjacentStep|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "逐相邻构型Linf可复用MetricFactory::makeInfinity，再取最大；rad/m混合原口径保留",
+      "differences": "逐相邻对Linf改上游MetricFactory::makeInfinity直接消费（单对distInf逐位同式）；跨对max归约为产品选择序归约保留；无自写度量核心",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -886,7 +974,17 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "production": {
+        "entry": "maxAdjacentStep",
+        "upstream": "makeInfinity",
+        "consumer": "maxAdjacentStep",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/production-maxadjacentstep.json",
+        "sha256": "f7f4122ac016974c3a534fe54a1f629baa103fd44a8163565ee15f8b117c8458"
+      }
     },
     {
       "functionId": "trajectory.Planner.pathJointLength",
@@ -898,10 +996,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "pathJointLength",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::pathJointLength",
-          "startLine": 481,
-          "endLine": 490,
-          "sha256": "6fdbb4af35545e40588a7da2f284dbd347ed078aa81df4b0b0e3c09c90306c6c"
+          "startLine": 483,
+          "endLine": 498,
+          "sha256": "8e6fc33924636076fbb10426ed534573782ea2d484ee7203a83c9503edd9d7be"
         }
       ],
       "targets": [
@@ -910,17 +1007,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "MATH-METRIC",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"pathJointLength|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "PathAnalyzer::pathLength+Manhattan候选；保留L1，逐段归约顺序变化需回归，不能改成规划器L2",
+      "differences": "PathAnalyzer::pathLength折叠makeManhattan逐相邻对距离（单对dist1逐位同式）；逐对先归约求和序为catalog boundary在案事项（50节点实测相对差1.9e-15）；两处内联Σ|Δq|循环同日删除委托本函数",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -945,7 +1046,17 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "production": {
+        "entry": "pathJointLength",
+        "upstream": "pathLength",
+        "consumer": "pathJointLength",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/production-pathjointlength.json",
+        "sha256": "120c6f6487eb33a4145d5025d6180029b60eb79c73f67d91619334614dffdfc3"
+      }
     },
     {
       "functionId": "trajectory.Planner.minNormalizedMargin",
@@ -957,9 +1068,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "minNormalizedMargin",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::minNormalizedMargin",
-          "startLine": 494,
-          "endLine": 510,
+          "startLine": 499,
+          "endLine": 515,
           "sha256": "189fb62c9ec6071b3b9a1f442f02d72f4d66fe341ccda3b3e98f5451854ed568"
         }
       ],
@@ -968,18 +1078,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"minNormalizedMargin|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "按评价区间逐轴归一最小裕量，无界跳过；不是欧氏距离/几何clearance，保留词表权威待核",
+      "differences": "按评价区间逐轴归一最小裕量（REUSE-T32实审定案）；非欧氏度量语义，产品选择序键，保留",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1004,7 +1118,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.candidatePreferred",
@@ -1016,10 +1134,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "candidatePreferred",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::candidatePreferred",
           "startLine": 516,
-          "endLine": 533,
-          "sha256": "05ef87ace2b8eef2580bd18edb1d7e53bdd2ab8f3205d78e165b0646a57326d4"
+          "endLine": 538,
+          "sha256": "eb0de5e3e8c56b74a5ddffb519074a8d20f93e397407bd655082ae0d51970e64"
         }
       ],
       "targets": [
@@ -1027,18 +1144,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"candidatePreferred|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "延续性/归一裕量/L1长度/序号四键；仅替换内部数学原语，不改全序与身份",
+      "differences": "四键全序保留；键1/键3委托已迁移的maxAdjacentStep/pathJointLength（上游度量供给），全序与身份不变（REUSE-T32）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1063,7 +1184,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.makeAvoidFailure",
@@ -1075,10 +1200,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "makeAvoidFailure",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::makeAvoidFailure",
-          "startLine": 543,
-          "endLine": 555,
-          "sha256": "05152ff8d090435a4135f23863d0f15ebe1400e4cc6e60bff08b1c9fcfc50e09"
+          "startLine": 539,
+          "endLine": 561,
+          "sha256": "738fda7f26de67441604c4ec8055dd0afdc6f5a0dab3b8c7be3f3dfae0b66912"
         }
       ],
       "targets": [
@@ -1086,18 +1210,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"makeAvoidFailure|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "仅域payload；cause/action中文文字须再核diagnostics权威，禁止自造evidence envelope或任务判决",
+      "differences": "仅域payload（REUSE-T32实审定案）；cause/action中文与reasonToken归DiagCodes/diagnostics权威",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1122,7 +1250,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.search",
@@ -1134,10 +1266,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "search",
-          "qualifiedSymbol": "sdurws::ird::trajectory::(anonymous namespace)::PathPlannerAdapterImpl::search",
-          "startLine": 580,
-          "endLine": 819,
-          "sha256": "b4011665bd190c30824009674eff016917b85cf874d0ad4751b02b82df470b9b"
+          "startLine": 562,
+          "endLine": 826,
+          "sha256": "e241aa43bdf3d1c1261216cafc05e4cb1e29452fe435bb517fbc734b7ebc47a9"
         }
       ],
       "targets": [
@@ -1146,17 +1277,21 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"search|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "真实runtime借持模型→QConstraint/QSampler/RRT→query→policy复核→选择；零WorkCell构造；全局seed/取消/评价区间与设备bounds差异仍待运行接线核验",
+      "differences": "RRTPlanner::makeQToQPlanner/QConstraint::makeBounds+makeMerged/QEdgeConstraint::make/QSampler::makeConstrained全链真实消费经运行核验；同种子重放采纳段逐点相等；零WorkCell构造、种子纪律不变",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1181,7 +1316,17 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "production": {
+        "entry": "search",
+        "upstream": "makeQToQPlanner",
+        "consumer": "search",
+        "target": "sdurws_ird_trajectory"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/production-search.json",
+        "sha256": "32d52e8449c6ef021dd5eecef51a2f80e2ed7d84ce4ceac741d1ca600679e7c5"
+      }
     },
     {
       "functionId": "trajectory.Planner.makePathPlannerAdapter",
@@ -1193,10 +1338,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "makePathPlannerAdapter",
-          "qualifiedSymbol": "sdurws::ird::trajectory::makePathPlannerAdapter",
-          "startLine": 828,
-          "endLine": 831,
-          "sha256": "ee3353ad52545c243faa2769c62ba5589b3b65c45034421f77d2513083b6373b"
+          "startLine": 827,
+          "endLine": 840,
+          "sha256": "4ec63890419061e0b74bf2fb67927dd8f58ed448f31647b835b080c1e0c015c6"
         }
       ],
       "targets": [
@@ -1204,18 +1348,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"makePathPlannerAdapter|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "仅构造现有薄适配实例；不能扩成可插拔后端/自建场景",
+      "differences": "仅构造现有薄适配实例（REUSE-T32实审定案）；不扩可插拔后端/自建场景",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1240,7 +1388,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.Planner.planPtpWithObstacleAvoidance",
@@ -1252,10 +1404,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
           "symbol": "planPtpWithObstacleAvoidance",
-          "qualifiedSymbol": "sdurws::ird::trajectory::planPtpWithObstacleAvoidance",
-          "startLine": 837,
-          "endLine": 1088,
-          "sha256": "380e629bd9c8e4f58464457ebbbac09d6c52cb5cfaeda34a300017038c4b86cc"
+          "startLine": 841,
+          "endLine": 1091,
+          "sha256": "c123c9ffa2a55d0c6acf309c0556043bf032485812634a206780c46688f534d6"
         }
       ],
       "targets": [
@@ -1263,18 +1414,22 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "PATH-PLANNING",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"planPtpWithObstacleAvoidance|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
       },
-      "differences": "直连筛查→真实adapter→采纳构型→段构造；两处手写L1累加可复用PathAnalyzer，保留跳过适用/搜索未果素材和取消",
+      "differences": "直连筛查→adapter→采纳构型→段构造；两处手写L1累加已删除并委托pathJointLength（上游Manhattan折叠）；跳过适用/搜索未果素材/取消语义保留（REUSE-T32）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/include/sdurws/ird/trajectory/Planner.hpp",
@@ -1299,7 +1454,11 @@
           "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
         }
       ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      }
     },
     {
       "functionId": "trajectory.smoothQuinticHermiteReuse",
@@ -1341,7 +1500,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "production": {
@@ -1352,7 +1511,7 @@
       },
       "evidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-smooth.json",
-        "sha256": "acd8b4147d570a0ecf40892c96c17b2a999c659ff6b28d8769931669e22e6a57"
+        "sha256": "6029f1026f6dea48ca45e35f8139b1797c466f58e50ff3ab5d28919b2ae92160"
       }
     },
     {
@@ -1397,7 +1556,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "production": {
@@ -1408,7 +1567,7 @@
       },
       "evidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T09/production-timeparam.json",
-        "sha256": "e6a628b6c7f0eeaa422ad4d08e79bf75b0bc75eac23a2d40b869515aab46558b"
+        "sha256": "87325cd4c94783abf7d9fbf79b11610777318d5a4fed486b253aa7270a684234"
       }
     },
     {
@@ -1441,7 +1600,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1497,7 +1656,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1553,7 +1712,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1609,7 +1768,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1665,7 +1824,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1721,7 +1880,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1777,7 +1936,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1833,7 +1992,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1889,7 +2048,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -1945,7 +2104,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2001,7 +2160,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2057,7 +2216,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2113,7 +2272,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2169,7 +2328,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2225,7 +2384,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2281,7 +2440,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2337,7 +2496,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2393,7 +2552,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2449,7 +2608,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2505,7 +2664,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2561,7 +2720,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2617,7 +2776,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2673,7 +2832,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2729,7 +2888,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2785,7 +2944,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2841,7 +3000,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2897,7 +3056,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -2953,7 +3112,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3009,7 +3168,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3065,7 +3224,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3121,7 +3280,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3177,7 +3336,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3233,7 +3392,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3289,7 +3448,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3345,7 +3504,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3401,7 +3560,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3457,7 +3616,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3513,7 +3672,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3569,7 +3728,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3625,7 +3784,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3681,7 +3840,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3737,7 +3896,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3793,7 +3952,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3849,7 +4008,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3905,7 +4064,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -3961,7 +4120,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -4073,7 +4232,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
-          "sha256": "e5ce8b3639195d80d05deca90dde10f78fc103ec1c551739b764c6433d110809"
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
         }
       ],
       "nonOverlapEvidence": {
@@ -4322,6 +4481,1004 @@
           "sha256": "4e8bd835b82a752a6aa13e178199eb65f0f97a331044255771db7bf6052ca7c2"
         }
       ]
+    },
+    {
+      "functionId": "trajectory.audit-t32.Planner.header",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "symbol": "MetricFactory.hpp",
+          "startLine": 1,
+          "endLine": 105,
+          "sha256": "55459528e46b2b8d8d25570de9b4d12b70f983be4d0cb6028c07bc607d198173"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "文件头设计依据与rw基线包含面（本批新增rw/pathplanning/PathAnalyzer.hpp在原pathplanning面内——architecture-gates.log零命中）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.Planner.qconstraint-doc",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "symbol": "PolicySessionQConstraint",
+          "startLine": 119,
+          "endLine": 151,
+          "sha256": "3d567ad8aec5c616a4d9eb0bf1a15c40438a11dc76b2db8ad45dd6681b01c52c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "QConstraint适配器类注与成员（适配语义三步/保守剪枝说明——实审定案，产品契约面）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.Planner.qconstraint-members",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "symbol": "m_session",
+          "startLine": 196,
+          "endLine": 205,
+          "sha256": "6ced815ab4722e988e86bb5171e31a41df10a69274460aba4e71c5c2a139bfbb"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "适配器私有成员（会话共享只读＋取消上下文——所有权标注面）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.Planner.review-outcome",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "symbol": "ReviewOutcome",
+          "startLine": 392,
+          "endLine": 418,
+          "sha256": "babad53ce9e46389b096dbd1f0f6d8192808cb574d8ba0d66257049f9630f2ed"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "复核三态枚举与复核函数文档（§10.3样本约定/三态映射说明——实审定案）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/src/Planner.cpp",
+          "sha256": "755109ca1bd1382636c61a094ed3ddb2ae0e1335d4f260045cb0ccf8a413ee3b"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.header",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "startLine": 1,
+          "endLine": 101,
+          "sha256": "66afeb3be58d8c59d1636028457029741a488a96363179319a98787efb7c12f5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "单元CMake头注：目标清单/宏自持说明（构建面登记，零算法）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.lib",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "add_library",
+          "startLine": 102,
+          "endLine": 117,
+          "sha256": "9b965f3ab56af3dfb1d1236613dfa5ff9218702035d95a1efb77ef709966996c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "产品库目标注册与非条件源清单",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.lib-cond",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "target_sources",
+          "startLine": 118,
+          "endLine": 153,
+          "sha256": "177f9487ecffbecd6d5700beebfc377152b4d287bb164838dcfda49b951097b8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "集成条件源注册（if(TARGET sdurw_kinematics)——Planner.cpp/Ptp.cpp等gating口径）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.lib-opts",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "target_compile_options",
+          "startLine": 154,
+          "endLine": 211,
+          "sha256": "323ed67fd74a2594888a87adb9c57046532269deef516deb7e6adc575eeed95f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "C++17/UTF-8/编译选项",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.lib-link",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "sdurws_ird_core",
+          "startLine": 212,
+          "endLine": 231,
+          "sha256": "c72f1f7bbbf79039c173a297bdd2330b178c0581a3be228e45af4e0288dd9d86"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "产品库链接面（七登记边PUBLIC链）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.lib-link-cond",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "sdurw_kinematics",
+          "startLine": 232,
+          "endLine": 296,
+          "sha256": "83a801b82f80e7fe5ef5fefaca7b2274219dbc46eb70607c275a8621326e7d4a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "集成条件链接面",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.alias",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "RWS::ird::trajectory",
+          "startLine": 297,
+          "endLine": 313,
+          "sha256": "074fbead8046f30c5b45504fc8a976eb35168c59078413df87d708c0a32f813d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "别名目标与子目录豁免守卫",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.plugin",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "sdurws_ird_trajectory_plugin",
+          "startLine": 314,
+          "endLine": 396,
+          "sha256": "f40124d15aa8dd8c73348b040f83b3a1f17afbf36107b43eca54ece4c7ab1481"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "插件目标注册/选项/链接（§16.1装配门面）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.test-target",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "add_executable",
+          "startLine": 397,
+          "endLine": 424,
+          "sha256": "6f96cecef9d072bc908f00fd0505c320f53c28ce3fb4ceb3f8b37775a30d454d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "测试目标注册与非条件测试源（TestMainReport/DiagCodes/BuildRedLine/PlanConfig/EvaluationDims）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.test-reuse",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "PlannerReuseTest",
+          "startLine": 425,
+          "endLine": 444,
+          "sha256": "c7d33ab5390bfc08b955bb4862ec460f8c2dbe7b7928479c7dedb71e99685d07"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "REUSE-T32新增：PlannerReuseTest集成条件注册（本批唯一CMake生产性变更）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.test-cond",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "SmoothTest.cpp",
+          "startLine": 445,
+          "endLine": 528,
+          "sha256": "017fa317b3a1d5c13ea107031c75aa1e08486877d83338f89764cdb744032413"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "条件测试源注册段（PtpSequence/ReproBenchmark/CartesianLine/PlannerAvoidance/Smooth/Recheck/TimeParam/FailureLocate/Playback/ProcessSpeed/ContinuousProcess）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.macro-banner",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "startLine": 529,
+          "endLine": 538,
+          "sha256": "5086feefc296ae5d8b4054d6ac359ce08c12382c864d82943569a21dcde6e791"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "ird_add_gtest宏前置注（DTB §5.5/框架宏出处——business-specific定案说明）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.report-target",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "ird_add_gtest(sdurws_ird_trajectory_test)",
+          "startLine": 552,
+          "endLine": 567,
+          "sha256": "38549728dc3b719c629bdc6205af1ea07ad98005b91ffd1032372cb3530b5dc9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "宏调用＋契约测试目标前置注",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.contract",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "sdurws_ird_trajectory_contract_test",
+          "startLine": 568,
+          "endLine": 700,
+          "sha256": "6bb07733cc597789bfcbaf8af96b491973c476edfb7b5653a5fcef47a08e8614"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test",
+        "sdurws_ird_trajectory_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "契约测试目标注册/链接/定义（构建图契约＋插件零计算红线扫描）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.CMake.ctest",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "symbol": "LABELS",
+          "startLine": 701,
+          "endLine": 807,
+          "sha256": "6978148e28e3eb0ae959f53b2b48642767c41b5244e51e1f2eb45067007d1faf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test",
+        "sdurws_ird_trajectory_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "ctest LABELS与配置期守卫（ird_gates形态）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.PlannerReuseTest.decl",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "symbol": "PlannerReuseTest",
+          "startLine": 1,
+          "endLine": 60,
+          "sha256": "8826df56da9afe92914fc4c7001a47b4e8a8a08bb386405ad04f9841487a13f5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "文件头（设计依据/集成条件口径/零模型构造红线与覆盖限制登记）与包含面",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.PlannerReuseTest.oracle",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "symbol": "referenceManhattan",
+          "startLine": 61,
+          "endLine": 102,
+          "sha256": "fbb3aa163310284561d0cdfe16555d2f2fe16fec90ee41739c0c042aea4d8f4d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "独立oracle两式（dist1/dist2同序独立重写——期望来源非上游自身）与身份构造替身",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.PlannerReuseTest.boundary",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "symbol": "axisAnglePose",
+          "startLine": 103,
+          "endLine": 170,
+          "sha256": "249c5bceadcd28fdfdfc1222b626e7ec564aff43bb13d0c50b8a0ef91d85269f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "连续性角差段构造辅助＋解析期望（Quaternion半角精确构造——绕开EAA微角死区）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.PlannerReuseTest.test1",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "symbol": "DirectAdoptPathLengthMatchesIndependentOracle_REUSE_T32",
+          "startLine": 171,
+          "endLine": 230,
+          "sha256": "c013230b99088a7fea76d34f9bd773e1d83f7bbb9170b7b7b9060c8a0914a22d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "直连采纳L1独立oracle（六轴非对称端点逐位对照＋L1/L2算式区分防串线）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "trajectory.audit-t32.PlannerReuseTest.test2",
+      "ownerUnit": "trajectory",
+      "requirements": [
+        "TRJ-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "symbol": "RotationAngleCounterExampleKeepsAtan2_REUSE_T32",
+          "startLine": 231,
+          "endLine": 318,
+          "sha256": "f8b504e3b19e3a250fbe30ab47adb2b3d7a5785349e1f69a35f0b2cfcb9aabbc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_trajectory_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T32 upstream-search：定向阅读rw/math/MetricFactory.hpp、MetricUtil.hpp、rw/pathplanning/PathAnalyzer.hpp、EAA.hpp/cpp、Quaternion.hpp、rw/trajectory 全部插值器求值式（GAP候选2定案）；产品面消费接线与测试面按REUSE-T32原件",
+        "conclusion": "度量三核/规划器全链为上游直接消费或已实证的产品契约；被否候选（EAA角差、上游测试宏）以实测反例登记；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "EAA被否反例（实测4.4e-11/1.6e-10超C7）＋产品2·atan2全网格1e-12",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
+          "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/test/PlannerReuseTest.cpp",
+          "sha256": "2561162a03731eea15b76f63b9a7ca6d25c9269d810f3c4ec52fd68d8ac56d9d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T32/README.md",
+        "sha256": "1423b9fa455205e05d36951c517defbe69cdd89ffba781996bbe5a2e7d70984e"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T32）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
     }
   ]
 }
