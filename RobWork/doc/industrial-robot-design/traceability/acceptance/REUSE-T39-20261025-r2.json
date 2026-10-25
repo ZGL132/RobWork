@@ -1,0 +1,55 @@
+{
+ "taskId": "REUSE-T39",
+ "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+ "reviewedCommit": "d7874f57f1f0e2cde192a6c76e5b0f90a016306e",
+ "branch": "redesign-main",
+ "verdict": "fail",
+ "createdAt": "2026-10-25T21:55:00+08:00",
+ "supersedes": "REUSE-T39-20261025-r1.json（r1 验收记录不改写；r1 的 02 号证据〔validate-reuse 阻断与受控诊断〕与 03 号〔port 供给复验〕为本轮 issue1 处置的直接前置，本轮以门禁 exit code 判据＋口径定界接续，详见 REUSE-T37-20261025-r2.json）",
+ "independence": {
+  "implementationParticipation": false,
+  "reviewer": "WP-15 单次验收子智能体（独立验收·WP-15·第2轮）",
+  "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+  "constraints": "未参与实施；除写入三个验收产物目录与三份记录外未修改任何文件、未提交、未切分支、未改任务状态；诊断用临时 worktree（D:\\wp15r2-diag，验后已删，主仓库零改动、零远程操作）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+ },
+ "scope": "独立复验 e5364bd6c..d7874f57f 送验 WP-15 第 2 轮中 T39（摘要批 audit-only）相关面：verify-task-scope、GAP-DIGEST-01.md 本体零改动与 audit-only 零产品改动复验、b4f2d529c 提交面核对、裁决判据 validate-task exit code（pwsh 契约口径＋PS5.1 对照与口径定界）、红线与提交链（共享检查证据详见 REUSE-T37-20261025-r2 目录）。",
+ "counts": {
+  "failed": 1,
+  "passed": 9,
+  "notRun": 0,
+  "skipped": 0,
+  "unit": "10 项验收检查（1 项 fail＝裁决指定判据 exit code 在契约 pwsh 口径实测为 1，范围外 REUSE-T33 绑定）；测试计数另列共享证据，互不相加"
+ },
+ "checks": [
+  "范围：verify-task-scope -TaskFile REUSE-T39.json -Base e5364bd6c -Head d7874f57f exit 0，changed=118 全部在允许面，forbiddenRules=5（含 GAP-DIGEST-01.md 禁入）未命中（01-scope.log）。",
+  "T39-a1/a2 audit-only 复验：全范围产品侧 diff 全集 5 文件（Compare.hpp/Compare.cpp/IoUtf8.hpp/Json.cpp/Csv.cpp，均属 T37/T38 批）——T39 批次本身零产品改动维持成立（14 号证据，REUSE-T37 目录）；GAP-DIGEST-01.md 本体 diff exit 0 零改动（未批准状态与 oracle 冻结向量原样）；Digest.cpp/.hpp、T15 FNV/Identity 所在 Units.cpp 零改动；b4f2d529c 提交面经 r1 核验（零产品改动、port 版本/许可证/SHA512/未安装状态独立实读与附件吻合）沿用，r1 后新增两 governance 提交零触碰 T39 面。",
+  "T39-a3 oracle 约定登记：r1 已核验核验记录含内容 SHA 字节不变、真实批次性能基线比较约定；本批零触碰，登记面未变。",
+  "【FAIL·裁决判据实测】validate-task -TaskFile REUSE-T39.json 按契约 verify 原文命令（pwsh -NoProfile -File）实测 exit 1，唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log（02 号日志）。r1 本项定界的受控诊断（r1/02 号证据：回改后 validate-reuse 全量 PASS）经本轮以 pwsh 口径复现成立（REUSE-T37 目录 11 号证据，r1 处方预言值 622e67eb 逐字命中）——即 r1 诊断与本轮 pwsh 口径同源自洽；同时 PS5.1 口径对现值 f38b31ff exit 0 亦可复现（05 号）。两项实测并存，根因为 final.log 无效 UTF-8 字节导致门禁摘要的运行时二象性（REUSE-T37 目录 12 号证据）。按主会话裁决「以实际运行 exit code 为核销判据」：契约 pwsh 口径未核销，口径归属升级为所有者裁决项。",
+  "门禁与红线：ird_gates 直跑 exit 0 零命中；上游/vcpkg/门禁目录/runtime/UI 冻结面/migration/policy/ARCHITECTURE 零改动；H1-H6 复用约束无违反（T39 为纯文档/审计动作，changes/REUSE-T39.json 凭证 files 空数组语义核实）。",
+  "提交链：b4f2d529c[T39] 一包一组；commit-lint 全区间 exit 0 六提交合规；工作区跟踪文件零修改。"
+ ],
+ "integrationTest": {},
+ "smokeEvidence": {
+  "reviewedOnly": true,
+  "note": "T39 为 audit-only 零产品改动，无本批数值/构建面；共享检查（scope/validate/gates/lint）与 WP-15 包级测试复跑证据见 REUSE-T37/T38 的 r2 目录"
+ },
+ "commands": [
+  { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head d7874f57f1f0e2cde192a6c76e5b0f90a016306e", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+  { "name": "validate-task（裁决核销判据·契约口径）", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json", "exitCode": 1, "passed": false, "log": "02-validate-task.log（REUSE-POSITIVE : REUSE-T33/final.log）" },
+  { "name": "validate-docs 三契约（契约 verify[1]）", "command": "pwsh -NoProfile -File validate-docs.ps1 -TaskFile @(T37,T38,T39)", "exitCode": 1, "passed": false, "log": "REUSE-T37-20261025-r2/04-validate-docs-threetasks.log（共享）" },
+  { "name": "共享检查引用", "command": "validate-reuse 直跑/PS5.1 对照/诊断树/ird_gates/commit-lint/红线零改动——同一命令与日志见 REUSE-T37-20261025-r2/ 目录 03/05/09/10/11/12/14 号证据", "passed": true }
+ ],
+ "executionNotes": [
+  "r1 的受控诊断（TEMP worktree 回改 REUSE-T33 绑定）本轮以 pwsh 口径在 D:\\wp15r2-diag 诊断树复现（r1 处方值 681754d3/622e67eb 预言逐字命中，validate-reuse 全量 PASS），验后诊断树已删；两次诊断互为独立交叉验证。"
+ ],
+ "issues": [
+  "ACC-BLOCKER（同 T37/T38，唯一未核销项）：契约 pwsh 口径 validate-task/validate-reuse/validate-docs 实测 exit 1，唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log（范围外绑定，非 T39 自身——T39 批次零产品改动维持成立）；PS5.1 同命令 exit 0。口径二象性根因、三条可执行修复路径与所有者裁决归属见 REUSE-T37-20261025-r2.json issues 第 1、2 条。"
+ ],
+ "notRun": [],
+ "limitations": "本 fail 仅系范围外 REUSE-T33 绑定的契约口径门禁红灯；T39 audit-only 语义（GAP-DIGEST-01.md 零改动、零产品改动、port 供给核验在案）经复验维持成立。其余同 REUSE-T37-20261025-r2.json limitations。",
+ "newFiles": [
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2/01-scope.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2/02-validate-task.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2.json"
+ ]
+}

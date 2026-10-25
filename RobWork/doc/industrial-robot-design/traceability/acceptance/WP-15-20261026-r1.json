@@ -1,0 +1,117 @@
+{
+  "taskId": "WP-15",
+  "contracts": ["REUSE-T37", "REUSE-T38", "REUSE-T39"],
+  "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+  "reviewedCommit": "d7874f57f1f0e2cde192a6c76e5b0f90a016306e",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T12:30:00+08:00",
+  "supersedes": "REUSE-T37/T38/T39-20261025-r1（验收通过面，随 f019e7a88 纳入库）与 -r2 三记录（verdict=fail，唯一未核销项＝REUSE-T33 final.log 绑定口径二象性；r1/r2 记录按协议不改写，本轮闭合复验）",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "WP-15 单次验收子智能体（独立会话，未参与实施，只验收不修复）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作；构建在既有 build/ 树增量执行（RWS_BUILD_INDUSTRIALROBOT:BOOL=ON 在先确认）未重配构建树；所有结论仅依据本会话亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "闭合复验（历史 r2 FAIL 唯一未核销项＝范围外 REUSE-T33 final.log 绑定在 pwsh 口径 REUSE-POSITIVE；该绑定已经治理专项诊断处置——final.log 全文件 GBK→严格 UTF-8 重存、双运行时摘要唯一 c8e05abe…、绑定重钉，migration.md §13.1:310 登记核读属实——本轮以当前实测为准，按裁决口径以实际运行 exit code 为核销判据）：送验范围 0e14bf3e7..d7874f57f（冻结）；WP-15 契约口径实施区间＝e5364bd6c..d7874f57f（7 提交：e5364bd6c 前置 WP-13-T36 收口＋[WP-15-T37/T38/T39] 三实施＋[governance] 三修复/裁决）。①三契约 verify-task-scope 显式 -Base/-Head 双口径落盘；②契约 acceptance 逐项清单式增量复验（仍适用原始证据直接引用，引用条件＝产品面 d7874f57f..HEAD 零漂移本轮实测）；③红线抽查 H1—H6/架构红线/CLOSURE 冻结/无平行回流；④当前 HEAD 实跑 validate-docs -TaskFile 三契约数组（pwsh）＋PS5.1 双运行时对照。",
+  "counts": {
+    "failed": 0,
+    "passed": 14,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "14 项验收检查（checks 数组逐条）；测试计数另列（integrationTest 三 exe 本轮真实复跑 74+132+9），互不相加"
+  },
+  "checks": [
+    "现场与冻结范围：分支 redesign-main，HEAD=00086c884；送验 head d7874f57f 经 git merge-base --is-ancestor 证实为 HEAD 祖先（0e14bf3e7 亦然）；送验范围 0e14bf3e7..d7874f57f 共 7 提交（137 文件 +143607/−8186，含 r1/r2 验收记录与 T36 证据纳入）；受跟踪工作树零修改（git status 非untracked=0，本轮仅新增验收产物）。",
+    "范围（①）契约口径：verify-task-scope 显式 -Base e5364bd6c（WP-15 包起点＝T37 提交父，与契约『scope区间补记』及 r2 先例一致）-Head d7874f57f 三契约全部 exit 0——『PASS REUSE-T37/T38/T39 —— 118 个路径全部在允许面内』allowedRules=23 forbiddenRules=4/4/5，forbidden 面零命中（各契约 01-scope-T*.log）。",
+    "范围（①）ask 字面口径定界：-Base 0e14bf3e7 -Head d7874f57f 同命令实测 FAIL（19 个路径越界，01-scope-t37-base0e14.log）——逐项核对全部属范围前置提交 e5364bd6c（WP-13-T36 的 kinematics/modeling/optimization.json、tasks/REUSE-T36.json）及其后 T33/T36 治理证据（production-rpy.json/verification.json/REUSE-T36/**/findings.json），均非 WP-15 三契约授权面（其授权语义由 REUSE-T36 契约与 T33/T36 治理提交承载）；WP-15 实施面在该宽区间亦零越界。差异系 ask 的 0e14bf3e7 起点含前置包提交，非送验内容缺陷。",
+    "提交链：commit-lint -Range e5364bd6c..d7874f57f exit 0『PASS（6 个提交全部合规）』（03 号）——10fd0a130[T37]/616823ccf[T38]/b4f2d529c[T39] 三任务提交＋2fe4cd4fe（scope 联合覆盖收口）/f019e7a88（T38 凭证表述更正＋验收记录纳入）/d7874f57f（绑定裁决登记）三治理提交，一包一组可回滚；逐提交 name-only 核对：三实施提交产品文件恰为契约 5 文件（Compare.hpp/Compare.cpp、IoUtf8.hpp 新增/Json.cpp/Csv.cpp），治理提交仅触碰 Csv.cpp 1 行注释、凭证/矩阵级联与契约 note/rN 记录纳入。",
+    "T37-a1 std::isfinite 本体（H1/H2 核心面）：diff 实读——Compare.hpp +#include <cmath>，Tolerance::make 两处自持表达式（x==x && x-x==0）换 std::isfinite(relative/absolute)，中文注释登记 B31 审计建议与逐值等价论据（NaN 破坏自等、±Inf 自差非零）；Compare.cpp closeWithin 非有限前置同换 std::isfinite(value)&&std::isfinite(reference)，全文件仅此一个 hunk——C4 公式主体与 T21 同时溢出 Boost 分支零改动实测成立；聚合约束 ≥0 与 CoreError『core/compare/tolerance:』口径保留。",
+    "T37-a2 消费者面与数值行为：r1 九对 baseline/postfix XML 逐 testcase EQUAL 实读（02-baseline-postfix-xml-diff.txt：core 74＋optimization 52/215＋runtime 312＋selection 64/293＋testkit 121＋trajectory 69/193＝1393 tests、failures=0、MISMATCH_FILES=0——恰为 Compare.hpp 全部 includer 六单元消费者面）＋规范冒烟原件（wp15-t37-smoke-configure/build、smoke core_test、裸冒烟 LNK 断供留痕 wp15-t37-smoke-bare-fail.log——无双模式条件包含）；引用条件本轮实测：d7874f57f..HEAD 产品面 5 文件零漂移（git diff 空输出）；并本轮在 HEAD 树增量构建（06 号 exit 0）后真实复跑 sdurws_ird_core_test＝74/74 passed exit 0（07 号 XML failures=0）——与 r2 复跑、r1 postfix 计数一致，送验数值行为三度独立成立。",
+    "T37-a3 矩阵与凭证：core.json 抽查实读——core.Compare.closeWithin（business-specific/migrated、Compare.cpp 区段 19..61 sha=67fa5ccc…随实改刷新）、core.Tolerance.make（auditBoundary 登记『REUSE-T37全文件功能实审…std::isfinite为标准库直接原语非上游符号…Deg2Rad候选结构不可落地另行保留登记』）、core.wp15.Compare_hpp.declarations 行（行覆盖机制承载、两 sources 区段含 <cmath> 说明、inputs 含 Compare.cpp sha=18a7d2ec… 与 changes/REUSE-T37.json 凭证值一致）；changes/REUSE-T37.json 两文件凭证（Digest 口径、中文 boundary、verify 证据路径）实读；全链新鲜度/覆盖由 ④ 门禁 CheckFunctions FRESHNESS/COVERAGE 机器校验通过背书。",
+    "T37-a4 Units/Deg2Rad 降级保留：git diff 0e14bf3e7..d7874f57f -- core/src/Units.cpp exit 0 零改动实测；论据本轮亲自实读核立——上游 RobWork/RobWork/src/rw/math/Constants.hpp:31『const double Pi』与 :40『const double Deg2Rad = Pi / 180』均 const 非 constexpr，产品 core/src/Units.cpp:31『constexpr UnitRow kUnitTable[]』为冻结表——消费上游常量须动态初始化或双份表体，结构代价大于零数值收益，降级保留＋所有者待裁决口径成立（不自批合规）。",
+    "T38-a1 合流本体与等价 oracle：IoUtf8.hpp 全文实读——io/src/ 私有头（include guard、不入 include/ 公共根——R-2）、inline kUtf8Dfa 单表+kUtf8Reject+utf8Step+strictUtf8Check+mapSystemError 单实现、中文头注登记设计依据/通道差异语义/ODR/线程约束、include 仅 std+io/IoError.hpp 零 Qt；合流前等价证据 dfa-table-merged-equal.txt 实读（两副本表体 CRLF 归一后 sha256 同=a22fbf80…、mapSystemError 函数体同=758fb956…）；全库 grep 证实四符号定义唯一（仅 IoUtf8.hpp）且引用仅 io/src 两 TU，无跨单元包含；Csv.cpp:399 流式推进保持原内联转移式与 base:428 逐字同源（f019e7a88 勘误后表述与代码一致——H6 如实更正闭合）。",
+    "T38-a2/a3 差异语义与回归：io.json 抽查（IoUtf8 合流行/io.IoUtf8.mapSystemError/io.wp15.IoUtf8.hpp.declarations 行覆盖行——差异语义『JSON仅UTF-8、UTF-16 BOM入口拒』与『CSV UTF-16LE/BE 解码/流式/-2 拒绝』逐项在案）；testkit/JsonLite.cpp 范围内零触碰实测（diff exit 0）；io 回归本轮 HEAD 树真实复跑 sdurws_ird_io_test＝132/0、sdurws_ird_io_contract_test＝9/0 exit 0（08/09 号 XML）——与 r1/r2 postfix 计数一致，超长/代理区/U+10FFFF/BOM/悬空续字节黄金向量面全绿；changes/REUSE-T38.json 三凭证实读（Csv.cpp boundary 为勘误后表述）。",
+    "T39 audit-only 三件核验：gap-digest-01-attachment.md 实读——boost-hash2 port 在案（vcpkg.json version 1.92.0/BSL-1.0/依赖面全 Boost 家族、portfile vcpkg_from_github SHA512 钉源）与 openssl（3.6.5 port-version 1/Apache-2.0），『仅 port 在案、未安装、未核 API/跨平台、不编造函数签名』如实声明，许可证差异（GAP 原文 vs 实读 Apache-2.0）如实更正；supply-boost-hash2.txt/supply-openssl.txt 原文+治理口径 sha256 绑定在案；GAP-DIGEST-01.md 本体范围零改动实测（diff exit 0，路径 reuse/extensions/GAP-DIGEST-01.md 实存核实）；b4f2d529c 提交文件面＝changes/T39+tasks/T39+traceability 证据，零产品/零 CMake 实证；changes/REUSE-T39.json files=[] 与 audit-only 语义一致。",
+    "③ 红线 H1—H6：H1/H5——std::isfinite 为标准库直接原语非上游符号（core.json auditBoundary 登记口径），无最小上游扩展/新核心落地，Deg2Rad 物理换用与 Units 简化均未实施且登记待裁决（不自批）；H2/无平行回流——IoUtf8.hpp 系 io 单元内两副本去重合流（消除平行方向），Json.cpp/Csv.cpp 自持副本删除后无残留（grep 实证注释性说明除外），无 old/ 历史实现回流、无新写核心；H3——沿用上游类型与 sdurws::ird::<unit> 命名空间，中文契约注释逐文件亲读合格；H4——代码/测试/文档/矩阵/凭证/门禁全链适用且 ④ 全绿；H6——search 检索证据在案（closeWithin 行 B31/batch31+GOV-T26 R3 延续、Compare_hpp 行本批六单元 rg 检索、io.json 行上游 StringUtil 无编码校验检索结论），逐文件凭证齐备、绑定 Digest 由门禁本体（裁决指定唯一权威）exit 0 核验，独验不做自行复算（WP-01 口径陷阱先例）。",
+    "③ 架构红线与冻结面：上游禁区 git diff 0e14bf3e7..d7874f57f -- RobWork/RobWork/src|RobWorkSim/src|vcpkg 零命中（与 forbiddenRules 零命中互证）；CLOSURE 冻结面（UI-T53 Import.cpp/Template.cpp）送验范围零改动；runtime 目录零改动（模型 owner 未触碰）；io/core 范围 diff 无 +Qt 行（L2 计算库零 Qt 不破坏）；IoUtf8.hpp 无跨单元引用；产品侧 diff 全集恰为三契约 allowedFiles 产品面；三契约 status=ready 未自标 done；migration.md 范围内变化＝T36 blocked 登记与 §13.3 WP-13 行改写（范围前置提交如实登记，WP-15 行原样——WP-15 实施收口登记按先例由独验通过后治理提交执行）。",
+    "④ 门禁核销判据（当前 HEAD=00086c884 实测）：pwsh -NoProfile validate-docs.ps1 -TaskFile @('REUSE-T37.json','REUSE-T38.json','REUSE-T39.json')（PowerShell 数组传参）exit 0（04 号）——validate-task PASS (3 tasks)、validate-reuse PASS governance only（functions=1867 closedFiles=1 changed=111 DEBT=16 UNRESOLVED=1399）、validate-docs PASS (20 units, 12 trace entries, 424 task files, 30 registered assets)，日志零 REUSE-POSITIVE/零 FAIL——r2 唯一未核销项（REUSE-POSITIVE : REUSE-T33/final.log）按裁决判据核销；PS5.1 对照 validate-reuse 同 HEAD exit 0 同为 PASS（05 号，changed=111 与 pwsh 一致）——final.log 重存后双运行时摘要唯一，口径二象性不复存在；REUSE-AD-PENDING 8 条系既有 AD 审计 pending 提示（policy/CollisionQuery、reporting/ReportCodec、runtime/Snapshot、ui/HostView3D*，与 WP-12 验收登记同集），非本包新增阻断。"
+  ],
+  "integrationTest": {
+    "coreTest": {
+      "tests": 74,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "07-acc-core-test.xml",
+      "note": "本轮验收员在 HEAD 树（00086c884，产品面与送验 head 零漂移）增量构建后真实复跑；与 r1 postfix/r2 复跑 74/74 一致"
+    },
+    "ioTest": {
+      "tests": 132,
+      "passed": 132,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-acc-io-test.xml",
+      "note": "同上真实复跑；与 r1/r2 postfix 132/0 一致（黄金向量全绿）"
+    },
+    "ioContractTest": {
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "09-acc-io-contract.xml",
+      "note": "同上真实复跑；per-exe ird-test-report.json 自动输出机制留存最后 exe 报告副本（10 号，io_contract 9/9 decisive）"
+    }
+  },
+  "commands": [
+    { "name": "scope-t37", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head d7874f57f1f0e2cde192a6c76e5b0f90a016306e\"", "exitCode": 0, "passed": true, "log": "01-scope-T37.log" },
+    { "name": "scope-t38", "command": "同上，TaskFile=REUSE-T38.json", "exitCode": 0, "passed": true, "log": "01-scope-T38.log" },
+    { "name": "scope-t39", "command": "同上，TaskFile=REUSE-T39.json", "exitCode": 0, "passed": true, "log": "01-scope-T39.log" },
+    { "name": "scope-t37-ask字面口径定界", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile …/REUSE-T37.json -Base 0e14bf3e79e46a830ca1b882e4a67ecddf4335e7 -Head d7874f57f1f0e2cde192a6c76e5b0f90a016306e\"", "exitCode": 1, "passed": false, "log": "01-scope-t37-base0e14.log（FAIL 19 越界——全部属前置 WP-13-T36/T33/T36 治理证据授权面，非本包内容；定界用，不计入验收失败）" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/commit-lint.ps1' -Range e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10..d7874f57f1f0e2cde192a6c76e5b0f90a016306e\"", "exitCode": 0, "passed": true, "log": "03-commit-lint.log" },
+    { "name": "validate-docs（核销判据）", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json'); exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "04-validate-docs-threetasks.log" },
+    { "name": "validate-reuse PS5.1 对照（口径二象性核销）", "command": "powershell.exe -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-reuse.ps1' -TaskFile …/REUSE-T37.json\"", "exitCode": 0, "passed": true, "log": "05-diag-validate-reuse-ps51.log（changed=111 与 pwsh 一致——双运行时一致）" },
+    { "name": "build", "command": "MSYS_NO_PATHCONV=1 cmake --build build --config Release --target sdurws_ird_core_test sdurws_ird_io_test sdurws_ird_io_contract_test -- /nologo /verbosity:minimal", "exitCode": 0, "passed": true, "log": "06-build.log" },
+    { "name": "core-test", "command": "sdurws_ird_core_test.exe --gtest_output=xml:acc-core-test.xml（HEAD 树真实运行，XML 移入证据目录）", "exitCode": 0, "passed": true, "log": "07-acc-core-test.log", "xml": "07-acc-core-test.xml" },
+    { "name": "io-test", "command": "sdurws_ird_io_test.exe --gtest_output=xml:acc-io-test.xml（QT_QPA_PLATFORM=windows）", "exitCode": 0, "passed": true, "log": "08-acc-io-test.log", "xml": "08-acc-io-test.xml" },
+    { "name": "io-contract-test", "command": "sdurws_ird_io_contract_test.exe --gtest_output=xml:acc-io-contract.xml", "exitCode": 0, "passed": true, "log": "09-acc-io-contract.log", "xml": "09-acc-io-contract.xml", "report": "10-acc-ird-test-report-lastrun.json" },
+    { "name": "redline-zero-diffs", "command": "git diff --exit-code 0e14bf3e7..d7874f57f -- 上游/vcpkg/Units.cpp/JsonLite.cpp/GAP-DIGEST-01.md/Import.cpp/Template.cpp ＋ 产品面 d7874f57f..HEAD 零漂移 diff ＋ 全库 grep DFA/映射符号唯一实体 ＋ 逐提交 name-only 文件面核对", "exitCode": 0, "passed": true, "log": "（各命令输出已摘录入 checks 文本；grep 与 diff 均零命中/空输出）" }
+  ],
+  "executionNotes": [
+    "rN 顺位说明：工作树与 git 历史均无既有 WP-15-20261026* 落盘验收记录（既有 WP-15-T02..T20 历史文件系旧编号体系验收，与本包无关）；本记录为当前体系 WP-15 包首个落盘验收记录，按顺位命名 r1。三契约各自的历史 r1（pass 面随 f019e7a88 纳入库）与 r2（fail）记录不改写，本轮为闭合复验。",
+    "scope 双口径处理：ask 给定冻结范围 0e14bf3e7..d7874f57f 含范围前置提交 e5364bd6c（WP-13-T36，主线串行推进落点）；以该点为 -Base 的 verify-task-scope FAIL 的 19 个越界路径经逐项核对全部属 T36/T33/T36 治理授权面（kinematics/modeling/optimization.json、tasks/REUSE-T36.json、REUSE-T33 production-rpy/verification、REUSE-T36/**、findings.json），WP-15 自身实施面零越界——按契约 note『scope区间补记』与 r2 先例以包起点 e5364bd6c 为验收口径（PASS×118），字面口径定界日志一并落盘留痕，不掩盖差异。",
+    "r1 九目标全量（1393/0）与规范冒烟证据按 AGENTS §4 增量口径引用原件：引用条件＝产品面 5 文件在 d7874f57f..HEAD 零漂移（本轮 git diff 实测）；核心数值与合流面另由本轮 core/io 三 exe 真实复跑（74+132+9 全绿）独立坐实。",
+    "绑定 Digest 不做独验自行复算（主会话 2026-10-25 裁决：绑定值唯一权威＝门禁本体 exit code，自行复算摘要不构成证据——WP-01 Digest 口径陷阱先例）；changes 凭证绑定经 ④ validate-docs 内嵌 validate-reuse pwsh exit 0 与 PS5.1 对照 exit 0 双口径核验。",
+    "gtest xml: 输出路径在 Git Bash 传长路径时未落预期位置（r2 已登记同型陷阱），改短文件名输出至 exe 工作目录后移入证据目录——测试本体为同一次真实运行，计数以 XML 与控制台日志双证。",
+    "ird-test-report.json 为 per-exe 自动生成机制，本轮留存的是最后一次运行（io_contract_test）的报告；三 exe 全量计数以各自 gtest XML 为准，未重复生成前两 exe 的报告文件。",
+    "本轮构建在既有 build/ 树增量执行（缓存含后续批次 T40—T50 目标状态），仅构建三测试目标及其依赖，未重配、未触碰无关目标。"
+  ],
+  "issues": [],
+  "notRun": [],
+  "limitations": "PASS 绑定送验 head d7874f57f1f0e2c…及 WP-15 契约口径范围 e5364bd6c..d7874f57f 三契约 acceptance 面（T37 isfinite 收口＋Deg2Rad 降级保留、T38 DFA/mapSystemError 合流单实现、T39 供给核验 audit-only）；ask 字面起点 0e14bf3e7 含前置 WP-13-T36 提交，其范围授权属 REUSE-T36 契约，不在本 PASS 背书内。三契约 status=ready 未翻转，登记收口由所有者/后续治理步骤执行；本 PASS 不等于 migration §13.3 WP-15 行收口完成。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399、changed=111），不构成全库算法合规或 migration §11 算法替换放行；REUSE-AD-PENDING 8 条为既有在案提示。Deg2Rad 物理换用、Units !isfinite 可选简化、Evaluation 8 行、GAP-DIGEST-01 产品替换均为在案所有者待裁决项，未由本批自批。testkit.json 等矩阵文件在送验 head 之后被后续批次（T42—T50）触碰，其新鲜度以当前 HEAD 门禁实跑（④ exit 0）为准，不外推其他批次质量。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/01-scope-T37.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/01-scope-T38.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/01-scope-T39.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/01-scope-t37-base0e14.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/03-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/04-validate-docs-threetasks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/05-diag-validate-reuse-ps51.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/06-build.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/07-acc-core-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/07-acc-core-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/08-acc-io-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/08-acc-io-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/09-acc-io-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/09-acc-io-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-15-20261026-r1/10-acc-ird-test-report-lastrun.json"
+  ]
+}

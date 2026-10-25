@@ -1,0 +1,91 @@
+{
+ "taskId": "REUSE-T37",
+ "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+ "reviewedCommit": "d7874f57f1f0e2cde192a6c76e5b0f90a016306e",
+ "branch": "redesign-main",
+ "verdict": "fail",
+ "createdAt": "2026-10-25T21:55:00+08:00",
+ "supersedes": "REUSE-T37-20261025-r1.json（r1 验收记录不改写；上轮三项 FAIL issues 中两项本轮核销、一项经所有者裁决转为口径争议后仍以裁决指定判据实测未核销）",
+ "independence": {
+  "implementationParticipation": false,
+  "reviewer": "WP-15 单次验收子智能体（独立验收·WP-15·第2轮）",
+  "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+  "constraints": "未参与实施；除写入三个验收产物目录与三份记录外未修改任何文件、未提交、未切分支、未改任务状态；诊断用临时 worktree（D:\\wp15r2-diag，仅按 r1 处方回改范围外 REUSE-T33 三处绑定做口径定界）验后已删除，主仓库零改动、零远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+ },
+ "scope": "独立复验 e5364bd6c..d7874f57f 送验 WP-15 第 2 轮（范围不变，新增 f019e7a88/d7874f57f 两个 governance 修复提交）：①verify-task-scope ×3 复跑落盘；②上轮三项 FAIL issues 逐项核销——issue1 按主会话裁决口径以实际运行 validate-task/validate-reuse/validate-docs exit code 为判据（含 PS5.1 对照与 TEMP worktree 口径定界诊断）、issue2 修复提交登记实读、issue3 三处表述修正实读＋流式推进代码零改动复核；③契约 acceptance 清单式增量复验（core 代码 r1 后零改动引用 r1 原件＋core_test 真实复跑、ird_gates 直跑、changes 凭证经门禁两种口径核验）；④红线抽查与提交链。",
+ "counts": {
+  "failed": 1,
+  "passed": 9,
+  "notRun": 0,
+  "skipped": 0,
+  "unit": "10 项验收检查（1 项 fail＝裁决指定判据 exit code 在契约 pwsh 口径实测为 1）；测试计数另列 integrationTest，互不相加"
+ },
+ "checks": [
+  "现场：HEAD=d7874f57f（=送验 Head），分支 redesign-main；跟踪文件零修改（git status 非untracked=0）；untracked 除本轮验收产物外仅 REUSE-T33$1-report.json 等 4 个历史遗留垃圾文件（r1 时已在，非产品源码）。",
+  "范围：verify-task-scope ×3 显式 -Base e5364bd6c -Head d7874f57f 全部 exit 0，changed=118（96 原有＋22 个 r1 验收记录/证据纳入文件）全部在允许面（各契约目录 01-scope.log）；forbiddenFiles 四规则未命中。",
+  "【FAIL·裁决判据实测】按三契约 verify 原文命令（pwsh -NoProfile -File validate-task.ps1）在送验 HEAD 实测 exit 1 ×3；validate-reuse 直跑 exit 1；validate-docs 三契约联合 exit 1——五次运行唯一失败点均为 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log（validate-task:137 转抛内嵌 validate-reuse），与 r1 完全相同。按主会话裁决「r2 复验以实际运行 validate-task/validate-reuse/validate-docs 的 exit code 为核销判据」：未核销。",
+  "【口径二象性定界·本轮新证据】同一 validate-task 命令以 powershell.exe（PS5.1）运行实测 exit 0 全绿（functions=1800 changed=108，05-diag 日志）——实施方声称的 exit 0 可复现但属 PS5.1 运行时。门禁同口径 ReadText([IO.File]::ReadAllText)+Digest（validate-reuse.ps1:19/40）对同一 final.log 工作树文件：PS5.1(.NET Framework)=f38b31ff（匹配现绑定→绿）、pwsh7.6.8(.NET Core，契约规定)=681754d3（失配→红）；原始字节 sha256=e4b31849 双方一致。根因＝final.log 含无效 UTF-8 字节（严格校验于 byte 70269 处 [BD] 拒绝），两个 .NET 运行时对无效字节替换策略不同 → 摘要必然分歧 → 单一绑定值无法同时使两口径绿（12 号证据）。裁决「绑定值唯一权威＝门禁本体 exit code」因此二义；契约 verify 文本固定 pwsh，按契约口径为红。",
+  "【诊断定界】TEMP worktree（D:\\wp15r2-diag，验后已删）按 r1 处方回改三处绑定（production-rpy.json normal.log→681754d3、modeling.json 与 verification.json 级联 7db05648→622e67eb；r1 处方预言值逐字命中，独立交叉验证 r1 复算与 pwsh 口径同源）后以 pwsh 运行 validate-reuse 全量 PASS（functions=1800 closedFiles=1 changed=108，11 号证据）——即 r1 处方与 pwsh 契约口径自洽、现值与 PS5.1 运行时自洽，二者不可兼得，属所有者口径裁决项。",
+  "上轮 issue2 核销：f019e7a88 提交信息第四项如实登记双侧实测并存（「2fe4cd4fe提交信息所称…在本环境实测为exit 0通过…与验收员exit 1实测并存——分歧根因即…Digest口径偏差，本提交如实登记两侧实测与证据，不以任何一侧冒充全局结论」）；d7874f57f 登记主会话裁决全文。登记义务已履行；但「现值经门禁本体裁定为绿」的结论依赖未声明的 PS5.1 运行时（见 issues）。",
+  "上轮 issue3 核销（T38 面，详见 REUSE-T38-20261025-r2/13 号证据）：三处表述修正实读确认——Csv.cpp:97-99 注释、changes/REUSE-T38.json Csv.cpp 条目 boundary、REUSE-T38/README.md 第 3 点均改为「流式推进保持原内联转移式零改动、仅 DFA 表/kUtf8Reject 引用换共享头 inline 表、utf8Step 当前仅 strictUtf8Check 使用」；流式推进代码零改动复核 head Csv.cpp:399=base:428 逐字相同；Csv.cpp 代码级 diff 仅 +include IoUtf8.hpp / -自持表与 mapSystemError 副本；f019e7a88 级联刷新凭证与 io.json 绑定（门禁两口径核验见上）。",
+  "T37-a1/a2 增量复验：r1 验收点（2fe4cd4fe）后 core 代码零改动（git diff 2fe4cd4fe..d7874f57f -- core/ 空输出）——r1 的 Compare.hpp/Compare.cpp isfinite 改动核对、九对 baseline/postfix XML 逐 testcase EQUAL（1393/0/3）、消费者面六单元构建与真实运行、规范冒烟证据原件结论直接沿用（原始证据 REUSE-T37-20261025-r1/02/03/04/05 号）；core_test 本轮真实复跑 74/74 PASSED exit 0（08 号 XML failures=0），送验 head 树数值行为再次成立。",
+  "T37-a4 Units/Deg2Rad 红线复验：全范围 Units.cpp diff exit 0 零改动（14 号证据）；r1 对 Constants.hpp:31/40 const double 非 constexpr 与 Units.cpp:31 constexpr kUnitTable 的实读论据沿用（文件未变），保留登记＋所有者待裁决口径不变。",
+  "门禁与红线：ird_gates 直跑 exit 0，R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（09 号）；全范围禁区/冻结面 diff 全部 exit 0——上游 RobWork/RobWork|RobWorkSim/src、vcpkg/、industrialrobot/cmake/ 门禁目录、GAP-DIGEST-01.md、JsonLite.cpp、Digest.cpp/.hpp、migration.md/policy.md/ARCHITECTURE.md、UI-T53 冻结面（Import.cpp/Template.cpp）；runtime 目录零改动（runtime 唯一模型 owner 未触碰）；产品侧 diff 全集 5 文件恰为三契约 allowedFiles 产品面（14 号证据）；H2 无平行实现（isfinite 为标准库原语、IoUtf8.hpp 为去重合流）。",
+  "提交链与工作区：一包一组——10fd0a130[T37]/616823ccf[T38]/b4f2d529c[T39] 三个任务提交＋2fe4cd4fe/f019e7a88/d7874f57f 三个 [governance] 修复/裁决提交；commit-lint 全区间 exit 0 六提交全部合规（10 号）；r1 后新增两提交仅触碰 Csv.cpp 1 行注释、凭证/矩阵级联、契约 note、r1 验收记录纳入——均在三契约 allowedFiles 面内。"
+ ],
+ "integrationTest": {
+  "coreTest": {
+   "tests": 74,
+   "passed": 74,
+   "failed": 0,
+   "skipped": 0,
+   "notRun": 0,
+   "exitCode": 0,
+   "xml": "08-acc-core-test.xml",
+   "note": "r2 验收员在送验 head 树增量构建（sdurws_ird_core/sdurws_ird_core_test 等）后真实复跑；core 代码自 r1 验收点后零改动，r1 九目标 1393/0/3 逐 testcase 比对证据沿用"
+  }
+ },
+ "smokeEvidence": {
+  "reviewedOnly": true,
+  "note": "冒烟树本轮未重建（增量口径：r1 验收点后本批产品代码仅 Csv.cpp 1 行注释改动，冒烟结论不受影响）；r1 冒烟原件（configure 成功、smoke core_test 71/71、裸冒烟 LNK 断供留痕、无双模式条件包含）沿用"
+ },
+ "commands": [
+  { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head d7874f57f1f0e2cde192a6c76e5b0f90a016306e", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+  { "name": "validate-task（裁决核销判据·契约口径）", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json", "exitCode": 1, "passed": false, "log": "02-validate-task.log（REUSE-POSITIVE : REUSE-T33/final.log）" },
+  { "name": "validate-reuse 直跑（契约口径）", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -TaskFile …/REUSE-T37.json", "exitCode": 1, "passed": false, "log": "03-validate-reuse-direct.log" },
+  { "name": "validate-docs 三契约（契约口径）", "command": "pwsh -NoProfile -File validate-docs.ps1 -TaskFile @(T37,T38,T39)", "exitCode": 1, "passed": false, "log": "04-validate-docs-threetasks.log" },
+  { "name": "validate-task PS5.1 对照（定界诊断，非契约口径）", "command": "powershell.exe -NoProfile -File …/validate-task.ps1 -TaskFile …/REUSE-T37.json", "exitCode": 0, "passed": true, "log": "05-diag-validate-task-ps51.log（functions=1800 changed=108 PASS）" },
+  { "name": "诊断 worktree r1 处方＋pwsh 口径", "command": "git worktree add D:\\wp15r2-diag d7874f57f → 按 r1 处方改三处绑定 → pwsh validate-reuse -RepoRoot D:\\wp15r2-diag → 删除", "exitCode": 0, "passed": true, "log": "11-diag-worktree-pwsh-digest.log" },
+  { "name": "摘要口径分歧定界", "command": "pwsh 7.6.8 与 powershell.exe 各以门禁同一段 ReadText+Digest 代码复算同一 final.log＋严格 UTF-8 校验", "exitCode": 0, "passed": true, "log": "12-digest-divergence-boundary.txt" },
+  { "name": "build+run core_test", "command": "cmake --build build --config Release --target sdurws_ird_core sdurws_ird_core_test（含 io 三目标）；sdurws_ird_core_test.exe --gtest_output=xml:（PATH 前置框架/vcpkg DLL）", "exitCode": 0, "passed": true, "log": "08-acc-core-test.log", "xml": "08-acc-core-test.xml" },
+  { "name": "ird-gates", "command": "cmake -DIRD_ROOT=…/industrialrobot -P cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "09-ird-gates.log" },
+  { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10..d7874f57f1f0e2cde192a6c76e5b0f90a016306e", "exitCode": 0, "passed": true, "log": "10-commit-lint.log" },
+  { "name": "redline-zero-diffs", "command": "git diff --exit-code <range> -- 上游/vcpkg/门禁目录/GAP-DIGEST-01/JsonLite/Digest/Units/migration/policy/ARCHITECTURE/UI冻结面 ＋ runtime 文件计数 ＋ 产品侧 diff 全集", "exitCode": 0, "passed": true, "log": "14-redline-zero-diffs.log" }
+ ],
+ "executionNotes": [
+  "五次契约口径运行（validate-task ×3、validate-reuse、validate-docs）均以与契约 verify 逐字相同的 pwsh -NoProfile 命令行在仓库根执行；PS5.1 对照仅为定界诊断，不冒充契约口径结论。",
+  "诊断 worktree 建于 D:\\wp15r2-diag（短路径，避免 TEMP 长路径下 vcpkg 深路径检出缺失干扰）；vcpkg/installed 不入 git，按治理数据实际引用的 2 个文件按相对路径复制；验后 git worktree remove --force 已删并 prune，主仓库 HEAD 与工作区核验不变。",
+  "r2 首次测试运行时 gtest xml: 参数中的 Git Bash 风格 /d/ 路径被 Windows 程序解释为盘根相对路径，XML 落 D:\\d\\…（log 本体重定向正确）；已将三份 XML 原件移回证据目录，测试本体为同一次真实运行，未重跑。"
+ ],
+ "issues": [
+  "ACC-BLOCKER（口径二象性，唯一未核销项，需所有者裁决后按选定口径修复）：裁决指定核销判据「实际运行 validate-task/validate-reuse/validate-docs 的 exit code」在契约 verify 规定的 pwsh 口径下实测 exit 1 ×5（唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log，与 r1 相同），同一命令 powershell.exe(PS5.1) 实测 exit 0。本轮定界（12 号证据）：final.log 含无效 UTF-8 字节（byte 70269 处 [BD]），.NET Framework 与 .NET Core 的 ReadAllText 解码替换策略不同 → 同一文件两运行时摘要必然不同（PS5.1=f38b31ff 匹配现绑定；pwsh=681754d3 失配）→ 单一绑定值不可能同时使两口径绿，门禁本体的「绿」依赖运行时选择。诊断树（11 号证据）证明 r1 处方值（681754d3＋级联 622e67eb）与 pwsh 契约口径精确自洽（预言值逐字命中）。可执行修复路径三选一（均为所有者裁决项，验收员不代裁）：a) 维持契约 pwsh 口径→按 r1 处方回改 REUSE-T33 三处绑定（本轮已再次实测转绿，随后三契约 verify 即绿）；b) 维持现值 f38b31ff→将三契约 verify 与门禁运行口径统一改声明为 powershell.exe 并同步相关治理文档（改冻结口径，需重新走治理验收）；c) 根治→将 final.log 重存为严格 UTF-8 使两运行时解码一致后按双口径实测一致值刷新绑定（触碰范围外 REUSE-T33 生产证据原件，须所有者专门授权）。修复落点均在范围外 REUSE-T33/门禁口径，不在 WP-15 授权面内。",
+  "ACC-NOTE（口径声明缺失，随 issue1 一并裁决）：f019e7a88/d7874f57f 与三契约 note 登记的「validate-task/validate-reuse/validate-docs 在同 HEAD exit 0 全绿」实测仅 powershell.exe(PS5.1) 运行时成立，契约 verify 规定的 pwsh 口径为 exit 1。登记义务（如实登记双侧实测）已由 f019e7a88 第四项履行，但「绑定值唯一权威＝门禁本体 exit code」的裁决判据本身在两个运行时下结论相反，须由所有者在 issue1 裁决中同时明确口径归属，并在 REUSE-T33/T37 相关注记中补注运行时前提，避免后续会话以不同 shell 复现出相反门禁结论。"
+ ],
+ "notRun": [],
+ "limitations": "本 fail 仅系范围外 REUSE-T33 绑定在契约 pwsh 口径下的门禁红灯（口径二象性待所有者裁决）；WP-15 三契约自身代码、数值行为、矩阵与凭证经两种口径门禁核验（PS5.1 全量 PASS；pwsh 口径在诊断树全量 PASS）与本轮真实测试复跑均无发现问题。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或 REUSE-T02 放行；Deg2Rad 物理换用与 Units isfinite 简化、Evaluation 8 行仍为在案所有者待裁决项。冒烟证据沿用 r1 原件（reviewedOnly，增量口径）。",
+ "newFiles": [
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/01-scope.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/02-validate-task.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/03-validate-reuse-direct.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/04-validate-docs-threetasks.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/05-diag-validate-task-ps51.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/08-acc-core-test.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/08-acc-core-test.xml",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/09-ird-gates.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/10-commit-lint.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/11-diag-worktree-pwsh-digest.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/12-digest-divergence-boundary.txt",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/14-redline-zero-diffs.log",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2.json"
+ ]
+}

@@ -1,0 +1,10 @@
+=== 上轮 issue3（T38 凭证表述失实）三处修正实读核销（2026-10-25 r2）===
+[1] Csv.cpp:97-99 banner 注释（head 工作树实读）：
+    「仅 DFA 表/kUtf8Reject 引用换共享头 inline 表；流式推进保持原内联转移式零改动」——已如实
+[2] changes/REUSE-T38.json Csv.cpp 条目 boundary（实读）：
+    「nextUtf8/nextUtf16ToUtf8函数体零改动（流式推进保持原内联转移式，仅DFA表/kUtf8Reject引用换共享头inline表——utf8Step当前仅strictUtf8Check使用，独立验收勘误后如实更正）」——已如实
+[3] traceability/reuse/REUSE-T38/README.md 第 3 点（实读）：
+    「DecodedStream::nextUtf8/nextUtf16ToUtf8 函数体零改动（流式推进保持原内联转移式…utf8Step 助手当前仅 strictUtf8Check 使用——独立验收勘误后如实更正，2026-10-25）」——已如实
+[4] 流式推进代码零改动复核：head Csv.cpp:399 = base:428 均为 m_utf8State = kUtf8Dfa[256 + m_utf8State + kUtf8Dfa[b]];（逐字相同）
+[5] Csv.cpp 代码级 diff（base→head，剔注释）仅：+include IoUtf8.hpp、-自持 DFA 表/kUtf8Reject、-mapSystemError 副本——与 boundary 描述一致
+[6] 级联刷新：f019e7a88 同步刷新 changes 凭证、io.json 15 处绑定、声明区区段摘要 1 处（提交信息第一项）；PS5.1 口径 validate-reuse PASS changed=108 覆盖核验（05-diag log）；pwsh 口径全量核验受 REUSE-T33 绑定阻断（与 T38 凭证无关，见 T37 目录 12 号证据）

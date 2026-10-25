@@ -1,0 +1,21 @@
+=== 红线零改动核查（e5364bd6c..d7874f57f，git diff --exit-code 全部 exit 0）===
+OK 上游+vcpkg 零改动
+OK 门禁目录零改动
+OK GAP-DIGEST-01 零改动
+OK JsonLite 零改动
+OK Digest.cpp/.hpp 零改动
+OK Units.cpp 零改动
+OK migration/policy/ARCHITECTURE 零改动
+OK UI-T53 冻结面（Import/Template）零改动
+--- runtime 目录 diff 文件数（0=零改动，runtime 唯一模型 owner 未触碰）---
+0
+--- 产品侧 diff 全集（5 文件=三契约 allowedFiles 产品面）---
+ .../core/include/sdurws/ird/core/Compare.hpp       |  12 +-
+ .../rwslibs/industrialrobot/core/src/Compare.cpp   |   6 +-
+ .../src/rwslibs/industrialrobot/io/src/Csv.cpp     |  68 +---------
+ .../src/rwslibs/industrialrobot/io/src/IoUtf8.hpp  | 146 +++++++++++++++++++++
+ .../src/rwslibs/industrialrobot/io/src/Json.cpp    |  99 +-------------
+ 5 files changed, 171 insertions(+), 160 deletions(-)
+--- core/io 代码 r1 验收点后增量（f019e7a88+d7874f57f）---
+0
+2

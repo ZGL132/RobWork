@@ -1,0 +1,10 @@
+=== final.log 摘要口径分歧定界（2026-10-25 r2 验收员实测）===
+[1] 严格 UTF-8 校验（.NET UTF8Encoding throwOnInvalid=true）:
+    final.log = INVALID UTF-8: Unable to translate bytes [BD] at index 70269
+[2] 门禁同口径 ReadText([IO.File]::ReadAllText)+Digest（validate-reuse.ps1:19/40 同一实现）:
+    PowerShell 5.1 (powershell.exe, .NET Framework) worktree Digest = f38b31ffa2d6387bef8eb5e784cacdb1313f54a8483100832bc7c6c69aa8ca85  ← 匹配现绑定 → 门禁绿
+    pwsh 7.6.8 (.NET Core, 契约 verify 规定)        worktree Digest = 681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d7fe80cfd6  ← 不匹配现绑定 → REUSE-POSITIVE
+[3] 原始字节 sha256（双方一致）= e4b3184983ac568c267b4cfab7cd3f447bf4598dc0c17b2a576cdbe4a3ce58f2
+[4] 结论：同一文件、同一门禁代码，两个 PowerShell 运行时摘要必然不同（无效 UTF-8 字节的解码替换策略差异）——单一绑定值无法同时使两口径绿。
+[5] 契约 verify 命令为 pwsh -NoProfile -File（REUSE-T37/38/39.json verify[0]）→ 契约口径实测 exit 1。
+[6] 诊断 worktree（D:\wp15r2-diag，验后已删）按 r1 处方改三处绑定（681754d3+级联 622e67eb，r1 预言值逐字命中）后 pwsh validate-reuse 全量 PASS（11-diag-worktree-pwsh-digest.log）——处方值与 pwsh 契约口径自洽。

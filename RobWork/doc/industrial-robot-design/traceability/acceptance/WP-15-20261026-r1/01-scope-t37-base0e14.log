@@ -1,0 +1,21 @@
+verify-task-scope: REUSE-T37 base=0e14bf3e79e4 head=d7874f57f1f0 changed=137 allowedRules=23 forbiddenRules=4
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/functions/kinematics.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/functions/modeling.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/functions/optimization.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/reuse/migration.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/tasks/REUSE-T36.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/findings.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/verification.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/candidate/CollisionEvaluator.cpp（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/candidate/CollisionEvaluator.f961.diff（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/candidate/CollisionSessionTest.cpp（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/candidate/CollisionSessionTest.f961.diff（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/f961-green.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/f961-red.log（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/ird-test-report.json（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/sdurws_ird_policy_test.xml（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/test.log（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL REUSE-T37 —— 19 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）

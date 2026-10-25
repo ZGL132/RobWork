@@ -1,0 +1,2 @@
+verify-task-scope: REUSE-T38 base=e5364bd6ca00 head=d7874f57f1f0 changed=118 allowedRules=23 forbiddenRules=4
+verify-task-scope: PASS REUSE-T38 —— 118 个路径全部在允许面内
