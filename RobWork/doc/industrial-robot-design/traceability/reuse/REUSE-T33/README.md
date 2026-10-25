@@ -4,7 +4,7 @@
 
 ## CLOSURES 冻结阻断（A/D 未落地的原因——所有者裁决项）
 
-`reuse/closures.json` 的 UI-T53 closure（migrationCommit `a1393ad4a`）将 modeling.rpyToRotation/rpyToEaa 两 closed 行的 acceptedPaths 文件（**Import.cpp、Template.cpp、TemplateTest.cpp**、RpyMath.hpp、证据文件及其绑定）逐字节冻结（reuse-contract.ps1:339-351：与 migrationCommit 状态 Digest 比对，任何内容变化即 CLOSURE FAIL）。A（rotateInertia 换 InertiaMatrix）与 D（占位圆柱换 EAA）的生产改动、乃至其测试文件（TemplateTest.cpp/ImportTest.cpp）的任何修改均被冻结面拦截。候选实现与全套 oracle/断开证据**已完成并留存本目录**（见"候选证据"节），移交 [REUSE-T35](../../../tasks/REUSE-T35.json)（planned，吸收 A/D/C-lib）；解冻须所有者对 closed 行启动验收后推进（超实施者权限，blocked 登记）。
+`reuse/closures.json` 的 UI-T53 closure（migrationCommit `a1393ad4a`）将 modeling.rpyToRotation/rpyToEaa 两 closed 行的 acceptedPaths 文件（**Import.cpp、Template.cpp、TemplateTest.cpp**、RpyMath.hpp、证据文件及其绑定）逐字节冻结（reuse-contract.ps1:339-351：与 migrationCommit 状态 Digest 比对，任何内容变化即 CLOSURE FAIL）。A（rotateInertia 换 InertiaMatrix）与 D（占位圆柱换 EAA）的生产改动、乃至其测试文件（TemplateTest.cpp/ImportTest.cpp）的任何修改均被冻结面拦截。候选实现与全套 oracle/断开证据**已完成并留存本目录**（见"候选证据"节），移交 REUSE-T35（编号登记于 migration.md §13.1，不另立 tasks/ 契约文件）（planned，吸收 A/D/C-lib）；解冻须所有者对 closed 行启动验收后推进（超实施者权限，blocked 登记）。
 
 ## 本批落地内容（C 插件面）
 

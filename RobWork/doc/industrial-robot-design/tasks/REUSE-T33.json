@@ -6,28 +6,48 @@
   "title": "modeling直接复用收口一：RPY反解唯一实现换上游（A/D因closures冻结移交T35）",
   "status": "ready",
   "branch": "redesign-main",
-  "dependsOn": ["GOV-T21", "GOV-T22"],
-  "requirements": ["MDL-02", "NFR-COR-02"],
-  "designRefs": ["units/modeling.md#9.7.1", "reuse/migration.md#13.3", "reuse/policy.md#1.1"],
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "MDL-02",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/modeling.md#9.7.1",
+    "reuse/migration.md#13.3",
+    "reuse/policy.md#1.1"
+  ],
   "verify": [
     "cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_plugin sdurws_ird_modeling_app",
     "cmake --build build --config Release --target ird_gates",
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062..HEAD",
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json -Base 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062 -Head HEAD"
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062..09bf7d921d103e944e509bfeda7fac8911f32820",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json -Base 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062 -Head 09bf7d921d103e944e509bfeda7fac8911f32820"
   ],
   "allowedFiles": [
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
-    "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T33.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T34.json",
     "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/**",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json"
   ],
-  "forbiddenFiles": ["RobWork/RobWork/src/**", "RobWork/RobWorkSim/src/**", "vcpkg/**"],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
   "acceptance": [
     "RpyPresentation/PanelModel统一为rpyview::rotationToRpy唯一实现并换上游RPY反向换序（catalog MATH-ROT verified面）：通支roll/yaw与原公式同式同值、pitch asin→atan2路径ULP级差异（呈现精度1e-6不可见）；万向锁确定性roll=0保留（pitch取上游奇异支恰±π/2、yaw配角公式atan2(−R01,R11)两支同式——上游两支x角取号相反），PanelModel逐字同款副本删除（评审缺口G1）",
     "独立oracle：通支网格往返、与上游rw::math::RPY位级EXPECT_EQ对照（直接消费证据）、精确±π/2万向锁字面值、近奇异带（带内重建O(带宽)≤2e-6如实登记）；上游返回值扰动断开必FAIL（roll×2突变实测红）；受影响回归480项+契约17项全过；失实冒烟纪律注释同步改写（G5）",

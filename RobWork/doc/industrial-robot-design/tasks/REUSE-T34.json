@@ -29,18 +29,24 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/run-performance.cmd",
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
     "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 394d3bdee89d4a9883fe5ed7ca66114c7262c193..HEAD",
-    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json -Base 394d3bdee89d4a9883fe5ed7ca66114c7262c193 -Head HEAD"
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json -Base 394d3bdee89d4a9883fe5ed7ca66114c7262c193 -Head 09bf7d921d103e944e509bfeda7fac8911f32820"
   ],
   "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DescriptionValidatorTest.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/CanonicalModelTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T34.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T33.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T34.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
     "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/**",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/**",
-    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T11/rpyToEaa-production.json"
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
