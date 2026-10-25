@@ -253,7 +253,8 @@
      "path": "RobWork/RobWork/src/rw/math/LinearAlgebra.hpp",
      "symbols": [
       "svd",
-      "pseudoInverse"
+      "pseudoInverse",
+      "inverse"
      ],
      "target": "sdurw_math",
      "sha256": "32ce2b2c70b4ead4631644c1b1a25e59f4274f591726aba7b7c3e06391f93d7a",

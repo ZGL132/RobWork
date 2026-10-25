@@ -1,0 +1,40 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T50",
+ "unit": "drivetrain",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "drivetrain.ByteWriter.putU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteWriter.putU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteWriter.putF64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteWriter.putString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteReader.getU32",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteReader.getU64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteReader.getF64",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  },
+  {
+   "functionId": "drivetrain.ByteReader.getString",
+   "conclusion": "canonical 字节序列化为产品数据身份契约：显式移位定宽＋IEEE754 位模式（F-777），上游 BINArchive 为主机序/格式化长度容器不等价（REUSE-T43 search-batch SB/SG 检索）；Boost.Endian 候选需所有者明确批准（T20/T21 先例），未批按字节身份契约保留——族决策记录见 REUSE-T43/byte-primitives-decision.md。 行差异：与另两域低层读写重叠；显式小端；f64保留-0位模式，非有限在域入口拒绝；读失败抛invalid_argument，末端空串F-795不得取越界地址。BINArchive候选的主机序/格式化长度不等价，先查既有依赖的字节原语，不为复用改历史字节身份"
+  }
+ ]
+}
