@@ -1,0 +1,103 @@
+{
+  "taskId": "REUSE-T10",
+  "baseCommit": "54f0beda6fa6142c707b154d4d0d6ad5d5743169",
+  "reviewedCommit": "b0997f8d8f568edf7ec48b403f3f454b09cc1aaa",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T00:00:00.0000000+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T10 独立验收单次子智能体（未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与 .cache/t10-acc-20261026 临时构建区外未修改任何文件、未提交、未切分支、未建工作树、未执行任何远程操作、未触碰 REUSE-T30 等并行会话产物；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验冻结范围 54f0beda6..b0997f8d8（REUSE-T10 撤销实施提交为 base，经 reuse-t01 链至合入点）：verify-task-scope 复跑落盘、契约四条 acceptance 逐项清单式增量复验（误差网格与上游 12 例数值真实执行、治理夹具与文档门禁真实执行、modeling/runtime 大套件按增量口径引用仍适用原件）、红线抽查（H1—H6、架构红线、CLOSURE 冻结、无平行实现回流、未越权放宽）、提交链与工作区核查。",
+  "counts": {
+    "failed": 2,
+    "passed": 13,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "15 项验收检查；两项 FAIL（scope 越界清单、commit-lint 3/18）经逐项归因均非 T10 实施内容（见 checks/1、checks/14 与 limitations），不构成 T10 缺陷，判定 pass。测试计数另列（upstreamTest、errorGrid、governance），互不相加"
+  },
+  "checks": [
+    "现场与范围：分支 redesign-main，HEAD=9f58ca28e（送验 head 之后仅后续任务收口提交，非被验内容）；git status 实施侧零修改，仅验收产物目录未跟踪。verify-task-scope 按指令显式 -Base 54f0beda6 -Head b0997f8d8 复跑 exit=1 FAIL——changed=134 中 126 项越界，逐项核对全部为同链合入的 REUSE-T09/T11/T12 实施与证据、治理文档（AGENTS.md/policy.md/migration.md 等）与 lean-verification/coverage-sweep 附属件；T10 契约自身文件（EAA.cpp/EAATest.cpp、PATCHES.md、GAP-EAA-01.md、REQUIREMENTS.md、catalog.json、functions/core|modeling|foundation-governance|diagnostics.json、upstream-patches.json、tasks/REUSE-T10.json、traceability/reuse/REUSE-T10/**）全部命中 allowedFiles、零越界；禁止面 RobWork/RobWorkSim/src/** 与 vcpkg/** 经 git diff 范围过滤确认零触碰（03-blob-and-boundary-check.log 空输出）。范围 FAIL 系'多任务合并冻结范围 vs 单任务契约'口径错配，非 T10 越权。",
+    "acceptance-1（blob 恢复+0004 撤销）：git diff b12e8503 --exit-code -- EAA.cpp EAATest.cpp 退出 0（当前树对冻结上游基线零差异）；送验 head b0997f8d8、基线 b12e8503、当前 HEAD 三处 blob 完全相同（EAA.cpp=802c7debc448bd1148d623f58a34a5b19ee22088、EAATest.cpp=5b0273eafafe53fcbe238a140b7054c93fc2faea），与 original-envelope/restoration.json 登记逐位一致；patches/ 目录仅存 0001/0002/0003，PATCHES.md 无 0004 行（54f0beda6 diff 确认整行删除），upstream-patches.json 的 0004 条目同批删除（-32 行）；历史补丁以 0004-r1-original.patch 留档。范围内上游 src/gtest 零改动——无当前有效 EAA 上游补丁，无平行实现回流。",
+    "acceptance-2（决议链与放宽边界）：GAP-EAA-01.md §5 记所有者 2026-10-23 批准方案A、§6 记同日撤销决议'撤销EAA的修改补丁，保持原状，改为适当放大误差阈值'及随后'可以改为1e-6，不要因为这个卡住，加快进度'，标注为最新有效决议；REQUIREMENTS.md 附录D第13项（54f0beda6 +4 行）限矩阵→EAA、EAA→矩阵及含这些入口的往返逐元素绝对误差 ≤1e-6，类别'固定，仅表示转换'，附变更依据段明示不改第4/5项 FK/编译链/DH、不改单位/坐标/有限性/矩阵合法性/预设与错误语义、'产品测试的具体采用随完整适配能力包核对，不能批量替换所有1e-12'；原补丁独验 FAIL 原件保留（independent-eaa-20261023/report.json verdict=fail，P1 反平行轴归一化缺陷+boundary/diagnostic 日志），未改判未洗白。",
+    "acceptance-3（数值真实执行——原库误差网格复跑）：以影子 cmake 配置（.cache 内，三处补丁：去 HINTS C:\\local 绕 vcpkg 包装转义崩溃、库目录 libs/none→libs/Release、按 src/CMakeLists.txt:29 同形补 sdurw INTERFACE 聚合目标并收窄验证面至 sdurw_math）从本工作树构建并运行 original-envelope/Envelope.cpp（构建源为入库原件、未修改）：2 tests=2 passed/0 failed/0 skipped，exit 0；逐位复现登记值——matrix_to_vector samples=3156 maxElementError=1.0734242583231835e-09、vector_to_matrix samples=3156 maxElementError=9.9999899999983327e-07（<1e-6，源于原 axis() 1e-6 小角截断）、roundTripMax=9.4406087628578315e-07，与 withdrawal-acceptance.json 及附录D第13项文字完全一致。制品绑定：链接 build/RobWork/bin/Release/sdurw_math.dll（sha256=964c44d6…，见 10-mathdll-sha256.txt），该树 math 源码自 2026-09-14 零提交且 MSBuild 增量判定 DLL 与源码同步，当前 EAA.cpp blob=基线。",
+    "acceptance-3（上游回归真实执行）：以影子工程按源码原样编译上游 gtest 三文件（EAATest.cpp/RPYTest.cpp/QuaternionTest.cpp，零修改，EIGEN_DONT_ALIGN_STATICALLY=1 与上游 RobWorkSetup 一致）复跑：12 tests from 3 suites = 12 passed/0 failed/0 skipped，exit 0（11-upstream-test-run.log/.xml），与入库原件 upstream-restored.xml（tests=12 failures=0，2026-10-23T09:53）计数一致；上游源码自原件时点零变化（blob 三点比对+范围内 diff 空）。",
+    "acceptance-3（治理正负夹具真实执行）：test-reuse-governance.ps1 -OutputDir .cache/t10-acc-20261026-governance 复跑 exit 0，reuse selftests: passed=152 skipped=0 failed=0，与 original-envelope 登记的 152/0/0 一致（04-test-reuse-governance.log）。",
+    "acceptance-3（业务回归增量口径引用）：送验树 modeling 已由范围内 a1393ad4a（T11）替换为原库薄适配——其证据为范围内原件 REUSE-T11/modeling-final.xml（tests=474 failures=0，2026-10-23T10:22，晚于替换提交）与已提交独立验收 REUSE-T11-20261023.json（verdict=pass，reviewedCommit=a1393ad4a）；T10 撤销树原件 original-envelope/modeling-restored.xml 474/0、modeling-contract-restored.xml 17/0、runtime-restored.xml 302 tests（301+1 既有 worker 占位 skip）/0（2026-10-23T10:00-10:02，先于实施提交 10:04）对 runtime 继续适用（范围内 runtime 产品代码零变更）；另有 2026-10-25 中断产物 07-modeling-test-report.json（479/479/0/0）与 07-runtime-test-report.json（305+1skip/0）佐证后续树持续健康。计数均 passed/failed/skipped 分列。",
+    "acceptance-4（独立验收与不自签关闭）：本次验收即独立验收，绑定送验 head b0997f8d8；closures.json 仅含 T11 的 RpyMath 两条函数键（rpyToRotation/rpyToEaa，绑定 REUSE-T11-20261023.json），无 T10 条目——T10 未自签迁移关闭；withdrawal-acceptance.json（schema ird-independent-withdrawal-acceptance/1，verdict=pass）由治理提交 0032c8e78 登记入库、非实施提交 54f0beda6 自带，其 limits 明示'不关闭迁移债务或放行未验产品适配'；产品旋转迁移由 T11 另包承担并有独立验收。drivetrain 代码及其矩阵：54f0beda6 未触碰任何 drivetrain 文件，范围内 drivetrain 变更来自 T12 契约实施（f74f483d5/bc212f245），restoration.json reservedScopes 登记 drivetrain 与 trajectory 专属范围未重验——留给独立会话的边界成立。",
+    "文档/契约/复用门禁：validate-docs.ps1 -TaskFile REUSE-T10.json 一次过 exit 0——validate-task: PASS (1 tasks)；validate-reuse: PASS governance only（inventory=1401 units=20 changed=111 DEBT=16 UNRESOLVED=1399，非算法合规）；validate-docs: PASS（20 units、424 task files）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示（与 GOV-T24 记录同类），非本包阻断；changes/REUSE-T10.json files=[]（撤销任务无新增复用绑定）经 validate-reuse 接受，绑定由 functions/*.json 与 catalog.json 承载（07-validate-docs.log）。",
+    "红线-H1/H2/H3（复用优先/无平行实现/适配上游）：上游 EAA=基线 blob；modeling/src/RpyMath.hpp 为纯薄适配——rpyToRotation 仅换序调 rw::math::RPY(yaw,pitch,roll).toRotation3D()，rpyToEaa 仅调 EAA(R).toVector3D()，注释明示'不另展开三角公式''不保留旧四元数核或精度回退'；GAP-EAA-01 方案D（产品内手写核/fallback）明确否决且未实施；L2 计算面零 Qt（RpyMath.hpp 无 Qt include，纯值无共享状态）；命名空间 sdurws::ird::modeling::rpymath 合规。",
+    "红线-H4/H5/H6（全面适用/阶段执行/可追溯）：catalog.json/GAP-EAA-01/required-proposals/functions/core|modeling|foundation-governance|diagnostics.json 在 54f0beda6+3e8cec6ef 同批登记，validate-reuse PASS；restoration.json 逐文件 blob 绑定；误差网格固定输入、独立 sin/cos oracle、DLL 指纹、limits（'固定网格不是全输入证明'）齐备，未以文件凭证冒充语义审计。",
+    "红线-CLOSURE 冻结与未越权放宽：closures.json 无 T10 条目（未冻结自签）；附录D第13项边界原文限定仅 EAA 表示转换对照，第2项编译链 1e-9 等其余条目未动（54f0beda6 对 REQUIREMENTS.md 仅 +4 行）；BasePlacementEditTest 的阈值放宽仅 T11 范围内 EulerCompilesAndCodecRoundTrips 局部表示往返（T11 README：原 1e-12 下小角反例最大差约 1.0e-11，原始失败日志保留），普通 RPY 正向/预设/矩阵合法性/非法输入断言未改。",
+    "提交链与远程：范围内 18 提交中 commit-lint 3/18 不合规（9e1fe9c2e、340dc88a4 标题前缀 [REUSE-T09] 不在合法前缀集；3e8cec6ef 无前缀——该合入提交承载 T10 撤销与 policy 文本并入主线，注明'按所有者指令'）；T10 实施提交 54f0beda6 标题 [governance] 合规；3 项瑕疵均为范围冻结前合入链历史提交，AGENTS 禁止改写历史，登记备查不阻断。远程核查：本地引用 origin/codex/reuse-foundation 于 2026-10-23 18:06 由 push 更新至 6fb26b31d（含送验 head）——该时点 AGENTS.md（a1393ad4a/b0997f8d8 两处时点版本）尚无远程同步禁令（禁令为后续治理批写入当前 AGENTS §0），推送主体为 T12 drivetrain 收口同步链而非 T10 实施操作；禁令生效后无新 push 痕迹（该 ref reflog 末条即 10-23 18:06）；本次验收全程零远程操作（FETCH_HEAD mtime 2026-10-22 19:22 未变化）。",
+    "工作区与产物：验收结束时 git status 实施侧零修改，仅验收产物目录未跟踪（含本目录）；REUSE-T30-* 等并行验收产物未触碰；本次仅新建 .cache/t10-acc-20261026（影子 cmake/构建/测试运行区）与本证据目录，未提交未推送。"
+  ],
+  "errorGrid": {
+    "reviewedOnly": false,
+    "rerunByReviewer": true,
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "skipped": 0,
+    "samplesPerEntry": 3156,
+    "matrixToVectorMaxElementError": 1.0734242583231835e-9,
+    "vectorToMatrixMaxElementError": 9.9999899999983327e-7,
+    "roundTripMaxElementError": 9.4406087628578315e-7,
+    "bitwiseMatchWithRegistered": true,
+    "mathDllSha256": "964c44d6dc84f48e8783ffdda5aafd1e057325e582fa6a987ecf99f88029793c",
+    "log": "10-envelope-run.log",
+    "xml": "10-envelope-run.xml"
+  },
+  "upstreamTest": {
+    "rerunByReviewer": true,
+    "tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "suites": "EAA(9)+RPY(1)+Quaternion(2)",
+    "exitCode": 0,
+    "matchesArchivedEvidence": "upstream-restored.xml tests=12 failures=0",
+    "log": "11-upstream-test-run.log",
+    "xml": "11-upstream-run.xml"
+  },
+  "governanceFixtures": {
+    "rerunByReviewer": true,
+    "passed": 152,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "log": "04-test-reuse-governance.log"
+  },
+  "integrationEvidence": {
+    "reviewedOnly": true,
+    "method": "增量口径引用范围内原件+已提交独验，未重跑大套件",
+    "t10WithdrawalTree": "modeling-restored.xml 474/0；modeling-contract-restored.xml 17/0；runtime-restored.xml 302（301 passed+1 既有 worker 占位 skipped）/0（2026-10-23T10:00-10:02，先于实施提交）",
+    "t11ReplacedTree": "REUSE-T11/modeling-final.xml 474/0（2026-10-23T10:22）+ REUSE-T11-20261023.json verdict=pass（reviewedCommit=a1393ad4a）",
+    "laterTreeCorroboration": "2026-10-25 中断产物 07-modeling-test-report.json 479/479/0/0、07-runtime-test-report.json 305+1skip/0（树晚于送验 head，仅作持续健康佐证）"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/verify-task-scope.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T10.json' -Base 54f0beda6fa6142c707b154d4d0d6ad5d5743169 -Head b0997f8d8f568edf7ec48b403f3f454b09cc1aaa\"", "exitCode": 1, "passed": false, "log": "02-scope.log", "note": "FAIL 126 越界，逐项归因均非 T10 文件（checks/1）；未越 forbidden 面" },
+    { "name": "blob-boundary", "command": "git diff b12e8503 --exit-code -- EAA.cpp EAATest.cpp；git rev-parse 三点 blob；git diff --name-only 54f0beda6..b0997f8d8 -- RobWork/RobWork/ RobWork/RobWorkSim/ vcpkg/；grep 0004 PATCHES.md；grep REUSE-T10 closures.json", "exitCode": 0, "passed": true, "log": "03-blob-and-boundary-check.log" },
+    { "name": "envelope-rerun", "command": "cmake -S original-envelope -B .cache/t10-acc-20261026/envelope-build -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_TOOLCHAIN_FILE=vcpkg -DRobWork_DIR=.cache/t10-acc-20261026/rw-cmake-shadow（影子配置见 executionNotes）→ cmake --build --config Release → PATH 前置 build/RobWork/bin/Release 运行 eaa_original_envelope.exe --gtest_output=xml", "exitCode": 0, "passed": true, "log": "10-envelope-run.log", "xml": "10-envelope-run.xml" },
+    { "name": "upstream-test-rerun", "command": "影子工程按源码原样编译 RobWork/RobWork/gtest/math/{EAATest,RPYTest,QuaternionTest}.cpp（零修改）→ 运行 t10_upstream_math_test.exe --gtest_output=xml", "exitCode": 0, "passed": true, "log": "11-upstream-test-run.log", "xml": "11-upstream-run.xml" },
+    { "name": "governance-fixtures", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1 -OutputDir .cache/t10-acc-20261026-governance", "exitCode": 0, "passed": true, "log": "04-test-reuse-governance.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T10.json'\"", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 54f0beda6fa6142c707b154d4d0d6ad5d5743169..b0997f8d8f568edf7ec48b403f3f454b09cc1aaa", "exitCode": 1, "passed": false, "log": "05-commit-lint.log", "note": "3/18 历史合入链瑕疵（checks/13），T10 实施提交合规" }
+  ],
+  "executionNotes": [
+    "误差网格与上游测试复跑使用 .cache/t10-acc-20261026/rw-cmake-shadow 影子 cmake 目录（复制自 RobWork/RobWork/cmake，未修改仓库任何跟踪文件），三处必要补丁：① RobWorkConfig.cmake:112 去 HINTS \"C:\\local\"——绕开 vcpkg find_package 包装对裸转义路径的解析崩溃（GOV-T24 探针1同型已知问题）；② RobWorkBuildConfig_none.cmake 库目录 libs/none→libs/Release（VS 多配置树真实库位置）；③ 按 RobWork/RobWork/src/CMakeLists.txt:29-30 同形补 sdurw INTERFACE 聚合目标并将验证面收窄至本测试实际链接的 sdurw_math——仅影响 CONFIG 包的组件验证面，链接与数值行为完全由真实 sdurw_math 库承载，无任何制品伪造。",
+    "主构建树 sdurw_math.dll 增量重建判定为已同步（math 源码 2026-09-14 以来零提交；本次 cmake --build --target sdurw_math 无重编），其 sha256 与当时验收登记值不同属跨 worktree 构建实例字节差异，已以'源码零提交+MSBuild 同步判定+当前 blob=基线'三重论证替代制品 SHA 等值。",
+    "上次中断产物 REUSE-T10-20261025-r1/ 经核查不并入本记录：其 02-scope.log 对应已废弃旧范围 e453006..54f0beda 且 FAIL（coverage-sweep 11 文件，该批已含于新 base 祖先、不在冻结范围 diff 中）；07-* 测试对应 2026-10-25 更晚树（含 T30/T33 等），非送验树。旧目录保持原样（未跟踪），仅其 07-modeling/runtime-test-report.json 被引用为后续树佐证。本次改用当日命名 REUSE-T10-20261026-r1。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "modeling/runtime 大套件与 modeling 契约测试未在本轮重跑",
+      "reason": "增量口径：送验树 runtime 与撤销树零变更（范围内 diff 空）→ original-envelope 原件直接适用；modeling 的替换后状态由范围内 T11 原件与已提交独立验收（REUSE-T11-20261023.json pass）承载；另有 10-25 后续树佐证。数值/性能核心（误差网格、上游 12 例、治理 152）均已本人真实执行。"
+    }
+  ],
+  "limitations": "PASS 仅覆盖冻结范围 54f0beda6..b0997f8d8 内 REUSE-T10 的撤销/容差登记语义与证据；两项非阻断 FAIL（scope 126 越界、commit-lint 3/18）经逐项归因均为同链 T09/T11/T12 及治理批内容——T11 已核实独立验收 pass，T09 有已提交验收证据目录（REUSE-T09-20261025-r1-fix），T12 收口有范围内治理提交，其完整合规性由各自任务验收承载，本记录不代为放行。误差网格为固定网格非全输入证明（原件 limits 维持）；T10 不关闭迁移债务、不构成算法替换（migration §11）或 REUSE-T02 放行；REUSE-AD-PENDING 为 AD 审计既有 pending；远程现状依禁令未验证，仅核查本地引用与 reflog。base 提交 54f0beda6 本身（T10 实施内容）不在 diff 区间内，其内容经送验树状态（blob/文件现状）与入库证据间接核验。"
+}

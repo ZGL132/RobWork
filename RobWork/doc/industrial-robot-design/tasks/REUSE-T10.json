@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-A",
   "title": "撤销EAA补丁并按原库实测登记局部转换容差",
-  "status": "ready",
+  "status": "done",
   "branch": "reuse-t01",
   "dependsOn": [
     "GOV-T21",
@@ -46,7 +46,9 @@
     "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
     "RobWork/doc/industrial-robot-design/units/modeling.md",
     "RobWork/doc/industrial-robot-design/units/runtime.md",
-    "RobWork/doc/industrial-robot-design/reuse/functions/core.json"
+    "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261026-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWorkSim/src/**",
@@ -58,7 +60,7 @@
     "原上游EAA/RPY/Quaternion回归、原库独立误差网格、受影响业务回归与治理正负夹具真实执行，passed/failed/skipped分列",
     "完整回滚及局部容差登记独立验收；不自签迁移关闭，不合入或同步远程；drivetrain代码及其矩阵留给独立会话"
   ],
-  "note": "最新所有者决议撤销上游EAA补丁并适当放宽转换阈值；本契约转为撤销/原库测量范围，旧实施可从e453006追溯。ready是本撤销包可执行，不是原补丁已验收或生产迁移完成。禁止触碰drivetrain代码及其矩阵。",
+  "note": "最新所有者决议撤销上游EAA补丁并适当放宽转换阈值；本契约转为撤销/原库测量范围，旧实施可从e453006追溯。ready是本撤销包可执行，不是原补丁已验收或生产迁移完成。禁止触碰drivetrain代码及其矩阵。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T10-20261026-r1.json（复跑原件在其同名目录），verdict=pass（15项检查13 pass/2 fail/notRun=0/skipped=0；两项FAIL经逐项归因均非T10实施内容——verify-task-scope对多任务合并冻结范围exit 1的126项越界全为同链T09/T11/T12实施与治理文档，T10契约文件全部命中allowedFiles零越界、RobWork/RobWorkSim与vcpkg禁触面零触碰；commit-lint 3/18为范围冻结前合入链历史瑕疵，禁改历史仅登记备查——不构成T10缺陷）；测试计数另列互不相加：原库独立误差网格2/0/0真实复跑且逐位复现登记值（3156样本，matrix→vector 1.0734242583231835e-09、vector→matrix 9.9999899999983327e-07<1e-6、roundTrip 9.4406087628578315e-07）、上游EAA/RPY/Quaternion回归12/0/0、治理正负夹具152/0/0，modeling/runtime大套件按增量口径引用范围内原件与已提交T11独验（记录notRun段说明）。绑定送验 SHA=b0997f8d8f568edf7ec48b403f3f454b09cc1aaa（base=54f0beda6fa6142c707b154d4d0d6ad5d5743169，冻结范围54f0beda6..b0997f8d8）；授权口径＝所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。核对全过：EAA.cpp/EAATest.cpp对冻结上游基线b12e8503零差异（三点blob一致）、0004补丁与upstream-patches.json条目同批撤销且无当前有效EAA上游补丁、GAP-EAA-01与REQUIREMENTS附录D第13项的撤销决议及1e-6局部容差登记可追溯且原补丁独验FAIL原件保留、closures.json无T10条目未自签迁移关闭、drivetrain代码及其矩阵留给独立会话边界成立、validate-docs -TaskFile 三合一exit 0；limitations：误差网格为固定网格非全输入证明，T10不关闭迁移债务、不构成migration §11算法替换或REUSE-T02放行。旧中断产物REUSE-T10-20261025-r1经核查不并入本记录，保持未跟踪原样。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",

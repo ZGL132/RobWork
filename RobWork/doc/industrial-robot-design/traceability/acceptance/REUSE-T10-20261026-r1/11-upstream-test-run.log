@@ -1,0 +1,39 @@
+Running main() from D:\10_Source_Repos\21_robot\RobWork\vcpkg\buildtrees\gtest\src\v1.18.0-e6987f02b9.clean\googletest\src\gtest_main.cc
+[==========] Running 12 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 9 tests from EAA
+[ RUN      ] EAA.Test_ADL
+[       OK ] EAA.Test_ADL (0 ms)
+[ RUN      ] EAA.CastTest
+[       OK ] EAA.CastTest (0 ms)
+[ RUN      ] EAA.CrossProductTest
+[       OK ] EAA.CrossProductTest (0 ms)
+[ RUN      ] EAA.MiscTest
+[       OK ] EAA.MiscTest (0 ms)
+[ RUN      ] EAA.scalarOperatorTest
+[       OK ] EAA.scalarOperatorTest (0 ms)
+[ RUN      ] EAA.Vector3DOperatorTest
+[       OK ] EAA.Vector3DOperatorTest (0 ms)
+[ RUN      ] EAA.EAAOperatorTest
+[       OK ] EAA.EAAOperatorTest (0 ms)
+[ RUN      ] EAA.EigenOperatorTest
+[       OK ] EAA.EigenOperatorTest (0 ms)
+[ RUN      ] EAA.MathOperators
+[       OK ] EAA.MathOperators (0 ms)
+[----------] 9 tests from EAA (1 ms total)
+
+[----------] 1 test from RPYTest
+[ RUN      ] RPYTest.Test
+[       OK ] RPYTest.Test (0 ms)
+[----------] 1 test from RPYTest (0 ms total)
+
+[----------] 2 tests from QuaternionTest
+[ RUN      ] QuaternionTest.Conversion
+[       OK ] QuaternionTest.Conversion (148 ms)
+[ RUN      ] QuaternionTest.MiscTest
+[       OK ] QuaternionTest.MiscTest (0 ms)
+[----------] 2 tests from QuaternionTest (148 ms total)
+
+[----------] Global test environment tear-down
+[==========] 12 tests from 3 test suites ran. (149 ms total)
+[  PASSED  ] 12 tests.

@@ -1,0 +1,18 @@
+# blob 三点比对（acceptance-1）：git diff b12e8503 --exit-code -- EAA.cpp EAATest.cpp（当前树）
+exit=0
+# blobs: head b0997f8d8 / baseline b12e8503 / worktree HEAD
+802c7debc448bd1148d623f58a34a5b19ee22088
+5b0273eafafe53fcbe238a140b7054c93fc2faea
+802c7debc448bd1148d623f58a34a5b19ee22088
+5b0273eafafe53fcbe238a140b7054c93fc2faea
+802c7debc448bd1148d623f58a34a5b19ee22088
+5b0273eafafe53fcbe238a140b7054c93fc2faea
+# 范围内上游/禁止面触碰（空=零触碰）
+(end-empty)
+# PATCHES.md 0004 残留（空=已撤销）
+0001-rwslibs-entry-option.patch
+0002-rwsimulator-plugin-nominmax.patch
+0003-industrial-robot-ci-entry-scripts.patch
+PATCHES.md
+# closures.json 中的 T10 条目（空=未自签关闭）
+(end-no-t10-closure)
