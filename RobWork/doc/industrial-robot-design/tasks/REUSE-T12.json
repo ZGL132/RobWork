@@ -4,7 +4,7 @@
   "unit": "drivetrain",
   "masterWp": "WP-A",
   "title": "传动映射数值核复用上游线性代数并删除自写SVD/求逆",
-  "status": "ready",
+  "status": "done",
   "branch": "codex/reuse-drivetrain-linalg",
   "dependsOn": [
     "REUSE-T07"
@@ -45,7 +45,9 @@
     "RobWork/doc/industrial-robot-design/reuse/drivetrain-linalg-migration.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/drivetrain-linalg/**",
     "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1.json",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/**"
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T12-20261025-r2/**"
   ],
   "outputs": [
     "上游svd/inverse生产接线与自写核删除（MappingCore.cpp singularValues→LinearAlgebra::svd、invertSquareMatrix→::inverse，MappingCore.hpp确定性口径同步，CMakeLists PRIVATE sdurw_math链接）",
@@ -69,7 +71,7 @@
     "虚功、功率、交叉耦合、反射惯量与窗口映射语义不变（矩阵转置/轴序/单位核对）；独立解析oracle（伴随法逆、解析谱）、阈值邻界、极端尺度用例与既有R2黄金回归及对端契约回归通过；断开上游调用真实失败",
     "受影响集成/独立冒烟构建、drivetrain测试、ird_gates、复用证据与文档门禁通过；固定条件性能前后测量记录实际调用场景与预算；完整冻结能力包由所有者独立会话验收，实施者不自签"
   ],
-  "note": "所有者2026-10-23授权与主重构会话并行实施传动模块复用RobWork线性代数、删除自写SVD及求逆核心。原拟编号REUSE-T11已被modeling契约占用（独立验收在途），按所有者裁决停用并改用全链路空闲的REUSE-T12；如所有者另有分配，凭证改名迁移即可。隔离起点8e4a08ac8并已按指令并入reuse-t01最新进展（EAA撤销与policy文本）。上游pseudoInverse仅作候选评估，不用于放行奇异/病态矩阵。共享catalog只读：MATH-SVD补登inverse符号的整合建议见迁移说明。functions/drivetrain.json为本任务专属整合文件，主会话整合时避开并发修改。2026-10-25 r1独立验收FAIL返工（verdict=fail由acceptance5两项实锤缺口触发，记录traceability/acceptance/REUSE-T12-20261025-r1.json，其余13项检查实测通过按AGENTS §4增量口径直接引用原件）：①ISSUE-1契约缺outputs字段（validate-task.ps1:75 ready必需字段F-855两态校验，validate-docs实跑exit 1）——本批增补outputs数组，并把r1验收产物两条补入allowedFiles（T09先例同型，forbiddenFiles零改动不放宽）；②ISSUE-2性能前后测量NOT RUN——新增DtMappingR2LinalgPerf.FixedInputLatency_SvdInverseProducers（深良态/解析谱/病态分界邻界良态/极端尺度归一四组2×2窗口C矩阵，对singularValues与invertSquareMatrix真实生产入口端到端计时：validate(R2)谱条件数检查与反射惯量窗口投影两唯一调用点），Release集成树实测p95≤1.2μs（预算登记≤50μs/次，余量>40×；条件数跨4个数量级无系统性漂移），旧自写核基线exe未留存如实登记对比口径（当版实测即替换后基线起点），测量条件/数据/预算登记traceability/reuse/drivetrain-linalg/README.md返工性能实测节＋rework-20261025/证据；③ISSUE-3 MappingCore.cpp:1085过时注释（Gauss-Jordan提法）更正为上游LinearAlgebra::inverse（Eigen LU）确定性口径——仅注释零实现变化。随批：production两报告与functions/drivetrain.json、changes/REUSE-T12.json全链绑定摘要按当前树真实重跑刷新（normal全量复跑、断链两处同形态变异重建各1用例1失败断言exit 1、源码恢复后Digest一致复跑全绿43+15，rework-20261025/04号证据）；drivetrain测试计数42→43（新增Perf用例1项）。status保持ready，实施完成待所有者独立复验，独验不由实施者自签。",
+  "note": "所有者2026-10-23授权与主重构会话并行实施传动模块复用RobWork线性代数、删除自写SVD及求逆核心。原拟编号REUSE-T11已被modeling契约占用（独立验收在途），按所有者裁决停用并改用全链路空闲的REUSE-T12；如所有者另有分配，凭证改名迁移即可。隔离起点8e4a08ac8并已按指令并入reuse-t01最新进展（EAA撤销与policy文本）。上游pseudoInverse仅作候选评估，不用于放行奇异/病态矩阵。共享catalog只读：MATH-SVD补登inverse符号的整合建议见迁移说明。functions/drivetrain.json为本任务专属整合文件，主会话整合时避开并发修改。2026-10-25 r1独立验收FAIL返工（verdict=fail由acceptance5两项实锤缺口触发，记录traceability/acceptance/REUSE-T12-20261025-r1.json，其余13项检查实测通过按AGENTS §4增量口径直接引用原件）：①ISSUE-1契约缺outputs字段（validate-task.ps1:75 ready必需字段F-855两态校验，validate-docs实跑exit 1）——本批增补outputs数组，并把r1验收产物两条补入allowedFiles（T09先例同型，forbiddenFiles零改动不放宽）；②ISSUE-2性能前后测量NOT RUN——新增DtMappingR2LinalgPerf.FixedInputLatency_SvdInverseProducers（深良态/解析谱/病态分界邻界良态/极端尺度归一四组2×2窗口C矩阵，对singularValues与invertSquareMatrix真实生产入口端到端计时：validate(R2)谱条件数检查与反射惯量窗口投影两唯一调用点），Release集成树实测p95≤1.2μs（预算登记≤50μs/次，余量>40×；条件数跨4个数量级无系统性漂移），旧自写核基线exe未留存如实登记对比口径（当版实测即替换后基线起点），测量条件/数据/预算登记traceability/reuse/drivetrain-linalg/README.md返工性能实测节＋rework-20261025/证据；③ISSUE-3 MappingCore.cpp:1085过时注释（Gauss-Jordan提法）更正为上游LinearAlgebra::inverse（Eigen LU）确定性口径——仅注释零实现变化。随批：production两报告与functions/drivetrain.json、changes/REUSE-T12.json全链绑定摘要按当前树真实重跑刷新（normal全量复跑、断链两处同形态变异重建各1用例1失败断言exit 1、源码恢复后Digest一致复跑全绿43+15，rework-20261025/04号证据）；drivetrain测试计数42→43（新增Perf用例1项）。status保持ready，实施完成待所有者独立复验，独验不由实施者自签。 【验收登记（2026-10-26收口）】第2轮独立验收PASS：记录 traceability/acceptance/REUSE-T12-20261025-r2.json（复跑原件在其同名目录），verdict=pass，绑定送验 SHA=e8ee7d31d624ee0233210d502c1234ee8c68c262（base=3e8cec6ef，送验范围=返工提交9058d6906＋e8ee7d31d，r1三issues核销）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；验收员亲跑13/13项通过——r1 ISSUE-1 outputs字段（validate-docs exit 0）、ISSUE-2 固定输入性能真实执行（DtMappingR2LinalgPerf实测p95最差1.1μs≤登记1.2μs≤预算50μs）、ISSUE-3 MappingCore.cpp:1085注释纯注释diff核验，逐项核销；受影响验证增量重跑（43/43＋15/15＋ird_gates＋validate-reuse/validate-docs）。限制（limitations原文口径）：validate-reuse仍为governance only（DEBT=16、UNRESOLVED=1399未关闭）；commit-lint 2个FAIL属T09历史提交（F-012豁免）、verify-task-scope字面FAIL系主线混编已归因，均不列issues；全库证据索引审计NOT RUN。据此登记 done。",
   "interUnit": false,
   "reuseGateAcceptance": {
     "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
