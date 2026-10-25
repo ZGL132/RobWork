@@ -21,11 +21,11 @@
     },
     {
       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md",
-      "sha256": "350cd638b33561a84d496eb2a41436f8a4c16d38ff7ff22644a5ab607e9a1d01"
+      "sha256": "fccb39acb856e64d29007b1e9eb796d9078019947e9ecd58f24fcab3781bf43f"
     },
     {
       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json",
-      "sha256": "9a7a747ffd8765d666087a5ea5d5df2f735074ec045383d61597b8e5a3bbc141"
+      "sha256": "622e67eb9d98513f98affcb4a3229426b4040ed9a2c4daa40a8b65823f58ae24"
     },
     {
       "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
@@ -110,5 +110,6 @@
     ]
   },
   "blocked": "A（Import.cpp rotateInertia）与 D（Template.cpp 占位圆柱）被 UI-T53 closures 冻结面拦截（acceptedPaths 逐字节比对），候选+oracle+断开证据已完成留存本目录，移交 REUSE-T35；解冻须所有者对 closed 行启动验收（超实施者权限）。",
-  "summary": "落地 rotationToRpy→adapter（MATH-ROT verified 面）与 G1 收口；A/D closures-blocked 移交 T35。独立验收 NOT RUN。"
+  "summary": "落地 rotationToRpy→adapter（MATH-ROT verified 面）与 G1 收口；A/D closures-blocked 移交 T35。独立验收 NOT RUN。",
+  "candidateEvidenceNotLanded": "A/D/C-lib 候选实现与全套 oracle/断开证据原件存 git 历史 01b770ae6（production-rotateinertia/production-template 含旧树 final.log 绑定已从 tip 移除，防孤儿绑定触发 POSITIVE）；REUSE-T35 落地时按同 SHA 恢复"
 }

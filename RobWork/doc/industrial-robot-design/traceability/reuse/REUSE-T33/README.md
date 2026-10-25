@@ -24,9 +24,9 @@
 | 恢复复绿 | restored-green.xml/.log | 0 failures / exit=0 |
 | production 证据 | production-rpy.json | ird-reuse-production/1 四面＋绑定 |
 
-## 候选证据（A/D，未落地——移交 T35/所有者）
+## 候选证据（A/D 与 C-lib，未落地——移交 T35/所有者；原件存 git 历史）
 
-import-rotated-*（rotateInertia 上游返回值扰动断开必红＋rotateinertia-oracle 字面期望）、template-oracle/template-disconnected（EAA 双向量构造字面期望＋吞轴带/近极点边界；含一次无效突变 ux×0.9 的废弃重做留痕）、canonicalbridge-fold/dhconvert-order/dhconvert-disconnected（C-lib 值代数突变预演）。这些证明对应候选实现正确性；候选代码文本见各 *-mutated.cpp/hpp 的反向（即 T35 待落地形态）与 T35 契约 note。
+A（rotateInertia 上游返回值扰动断开必红+独立字面期望 oracle）、D（EAA 双向量构造字面期望+吞轴带/近极点边界，含一次无效突变 ux×0.9 的废弃重做留痕）、C-lib 预演（折叠角扰动/乘法序交换突变即红；EAA→identity 突变对本批过滤器不敏感的教训在案）的候选实现与全套证据文件**已从工作树 tip 移除**（其中 production-rotateinertia/production-template 两份孤儿证据含旧树 final.log 绑定，触重装alln POSITIVE），原件可考于提交 `01b770ae6`（`git show 01b770ae6:RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/<文件名>`），随 [REUSE-T35]（登记于 migration.md §13.1）落地时按同 SHA 恢复为起始证据。本目录仅保留缩减批活证据（见上表）。
 
 ## 评审缺口（G1–G8）最终处置
 
