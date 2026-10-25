@@ -1,0 +1,81 @@
+commit 0801488bcf864ccac152af10786b906df35ff642
+Author: zgl132 <1970760101@qq.com>
+Date:   Sun Oct 25 05:12:21 2026 +0800
+
+    [governance] REUSE-T17返工：补allowedFiles收口范围门禁并对齐acceptance字面
+    
+    r1独立验收FAIL三issues逐项处置（判定原件REUSE-T17-20261025-r1.json随本提交入库）：
+    
+    - ISSUE-1范围门禁：allowedFiles增补designRefs自引的REUSE-T01/runtime-boundary-audit.md、
+      audit摘要联动的reuse/functions/runtime.json、validation-batch/20261023-recheck/**
+      （先前独验备注A增补授权模式同款）及验收产物路径；GAP-CORE-C4-01.md混入的C4 R2
+      待决风险段撤回选项经论证不可行——该文件已被C4轨道GOV-T26/REUSE-T21按各自契约
+      授权并实质演进，不改写历史约束下任何显式Base/Head复跑区间的树diff必含该文件，
+      改为登记性授权并在条目注记内容归属C4轨道，本包不对其语义负责。
+    - ISSUE-2：acceptance[4]文字修订与已登记替代证据口径对齐——GUI不新增换绑单例，
+      以既有48 GUI用例提交驱动族全程经新锚提交路径为面板回归证据，换绑/保活/State
+      隔离语义由ui_test executor级真实编译快照用例承载（README验证表与单元卡v0.37③
+      原登记即此口径）。
+    - ISSUE-3：acceptance[3]文字明示评估器层KIN-NO-DEVICE族诊断码与params来源标注
+      移至承接包REUSE-T19承载（其acceptance登记NoDevice值面，v0.39 §9.2 @pre），
+      本包以提交拍两分拒绝承载，kinematics/src/**维持forbiddenFiles。
+    - changes凭证删除第7条同文件重复登记（中间态hash与送验blob不一致），其值委托
+      空锚用例语义并入第6条boundary描述，保留6唯一路径凭证。
+    
+    验证：两JSON解析通过；三门禁实测见后续补登提交。status保持ready待重新送验，
+    独验不由实施者自签。migration §13.1 未动。不推送。
+
+diff --git a/RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json b/RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json
+index 51459e33b..99fbce752 100644
+--- a/RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json
++++ b/RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json
+@@ -48,15 +48,7 @@
+       "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485",
+       "mode": "business",
+       "capabilities": [],
+-      "boundary": "executor级锚语义用例（真实编译快照）：同源转发/换绑不动旧任务/两任务State隔离/锚释放可析构。",
+-      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/normal/ui.xml"
+-    },
+-    {
+-      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
+-      "sha256": "c6b4f2a62d83ae42e655c09e712e0e55a6594068f3a67cf4c138baba1acbb734",
+-      "mode": "business",
+-      "capabilities": [],
+-      "boundary": "值委托空锚转发用例（能力缺席如实传递）；rebind同拍切换。",
++      "boundary": "executor级锚语义用例（真实编译快照）：同源转发/换绑不动旧任务/两任务State隔离/锚释放可析构（RebindKeepsOldTaskModelAndLifetime_REUSE_T17）；值委托空锚如实转发与rebind同拍切换（ValueDelegateExposesNullAnchor_REUSE_T17）。",
+       "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/normal/ui.xml"
+     }
+   ]
+diff --git a/RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json b/RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json
+index 5e9c88c1d..e26da68d3 100644
+--- a/RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json
++++ b/RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json
+@@ -42,7 +42,13 @@
+     "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T17.json",
+     "RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json",
+-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/**"
++    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T17/**",
++    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
++    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
++    "RobWork/doc/industrial-robot-design/traceability/reuse/validation-batch/20261023-recheck/**",
++    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-CORE-C4-01.md（内容归C4轨道GOV-T26/REUSE-T21送验面，本条为登记性授权覆盖送验区间残留树diff，混入段处置见note 2026-10-25返工段）",
++    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r1.json",
++    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r1/**"
+   ],
+   "forbiddenFiles": [
+     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/**",
+@@ -55,10 +61,10 @@
+   "acceptance": [
+     "IKinRuntimeView 表尾追加 runtimeModelView()（缺省返回空＝纯值视图）；接口契约版本 /2 入单元卡，全体 8 实现者同步，虚表序登记；不声称二进制 ABI 不变，公共头零新依赖（runtime::IRuntimeModelView 前置声明）",
+     "FrozenRuntimeView 整类删除，IK/workspace 两处提交路径直接捕获 runtimeModelView() 锚；executor 级并发用例实证：提交后 UI 换绑旧任务仍用原模型、原宿主释放后锚保活、两任务 State 互不污染、任务结束锚可释放",
+-    "attachView 值视图路径行为逐位不变（MA-03 清碰撞场景/纪元推进/账面清空/取消旗标）；缺编译产物＝KIN-NO-DEVICE 族两分错误（params 标注来源），禁止旧手写链 fallback；5 个值替身零语义改动",
+-    "真实验证：sdurws_ird_kinematics_test、sdurws_ird_ui_test、sdurws_ird_kinematics_contract_test 目标构建通过并留 gtest XML＋ird-test-report 原件；GUI 仅 sdurws_ird_kinematics_gui_test 之 KinematicsPanelSessionGuiTest 增提交后换绑单例（VS x64/windows 插件/单 exe）；实施者只自查并交接确切 SHA，不自签独验、不合入、不远程"
++    "attachView 值视图路径行为逐位不变（MA-03 清碰撞场景/纪元推进/账面清空/取消旗标）；缺编译产物＝提交拍两分拒绝（状态行文案承载；kinematics/src/** 系本契约 forbiddenFiles，评估器层不在本包可达面）；评估器层 KIN-NO-DEVICE 族稳定诊断码与 params 来源标注移至承接包 REUSE-T19 承载并验证收口回填映射（其 acceptance 已登记锚缺失/设备名未命中→NoDevice 值面，units/kinematics.md v0.39 §9.2 @pre 运行期承载；README 实施偏离记录同口径），禁止旧手写链 fallback；5 个值替身零语义改动",
++    "真实验证：sdurws_ird_kinematics_test、sdurws_ird_ui_test、sdurws_ird_kinematics_contract_test 目标构建通过并留 gtest XML＋ird-test-report 原件；GUI 验证以 sdurws_ird_kinematics_gui_test 既有 48 用例（NonBlocking/StaleResult/HostLoop 提交驱动族迁移后全程经新锚捕获提交路径）为面板提交路径回归证据，不新增 GUI 换绑单例；提交后换绑/旧任务模型保持/宿主释放锚保活/两任务 State 隔离语义由 sdurws_ird_ui_test executor 级真实编译快照用例承载（RebindKeepsOldTaskModelAndLifetime_REUSE_T17 与 ValueDelegateExposesNullAnchor_REUSE_T17；VS x64/windows 插件/单 exe 执行口径不变；README 验证表与单元卡 v0.37 ③ 已按此替代口径登记）；实施者只自查并交接确切 SHA，不自签独验、不合入、不远程"
+   ],
+-  "note": "所有者2026-10-23确认三项推荐决定（'按照推荐的决定进行'）：方案二锚能力入口签名、编号T17、TCP帧命名＝模型事实归runtime/tcpKey选择参数留kinematics消费侧；据此转ready并实施。接口签名、三方案比较、四条数据流、FK/Jacobian后续准备清单见 runtime-boundary-audit.md 2026-10-23 设计增量节。零 runtime 侧改动（IRuntimeModelView 四入口已足够——上轮边界核查结论直接引用）；不修改生产数值核心；与 C4 R2 无依赖。实施者只自查并交接确切 SHA，独验由所有者授权的独立子智能体执行，不自签、不合入、不远程。",
++  "note": "所有者2026-10-23确认三项推荐决定（'按照推荐的决定进行'）：方案二锚能力入口签名、编号T17、TCP帧命名＝模型事实归runtime/tcpKey选择参数留kinematics消费侧；据此转ready并实施。接口签名、三方案比较、四条数据流、FK/Jacobian后续准备清单见 runtime-boundary-audit.md 2026-10-23 设计增量节。零 runtime 侧改动（IRuntimeModelView 四入口已足够——上轮边界核查结论直接引用）；不修改生产数值核心；与 C4 R2 无依赖。实施者只自查并交接确切 SHA，独验由所有者授权的独立子智能体执行，不自签、不合入、不远程。 2026-10-25 r1独立验收FAIL（traceability/acceptance/REUSE-T17-20261025-r1.json，送验范围adaf890031190c71d7705335bcac220c3e31780f..1f4a871a889995eadeae1621a0715bdc29858295）返工处置：①ISSUE-1范围门禁——allowedFiles增补designRefs自引的REUSE-T01/runtime-boundary-audit.md、audit摘要联动的reuse/functions/runtime.json、validation-batch/20261023-recheck/**（先前独验备注A增补授权模式同款）及验收产物与返工证据路径；GAP-CORE-C4-01.md混入的C4 R2待决风险段（+9行）撤回选项经论证不可行——该文件已被C4轨道GOV-T26/REUSE-T21按各自契约allowedFiles授权并实质演进（R3批准与T21实施记录），不改写历史约束下任何显式Base/Head复跑区间的树diff必含该文件，故改为登记性授权并在条目注记内容归属C4轨道，本包不对其语义负责；修订后契约对送验区间显式Base/Head复跑exit 0（rework-20261025/02-scope.log 第一段）。②ISSUE-2——acceptance[4]文字修订与已登记替代证据口径对齐：GUI不新增换绑单例，以既有48 GUI用例提交驱动族全程经新锚提交路径为面板回归证据，换绑/保活/State隔离语义由ui_test executor级真实编译快照用例承载（README验证表与单元卡v0.37③原登记即此口径，无需改动）。③ISSUE-3——acceptance[3]文字明示评估器层KIN-NO-DEVICE族诊断码与params来源标注移至承接包REUSE-T19承载（其acceptance登记NoDevice值面，v0.39 §9.2 @pre运行期承载），本包以提交拍两分拒绝承载。④changes/REUSE-T17.json删除第7条同文件重复登记（中间态hash c6b4f2a6…与送验blob不一致；保留6唯一路径凭证，送验blob重算6/6 MATCH见r1验收09号原件，被删条目的值委托空锚用例语义并入第6条boundary描述）。status保持ready待所有者按原送验区间+本返工登记重新送验，独验不由实施者自签。返工验证证据：traceability/reuse/REUSE-T17/rework-20261025/。",
+   "interUnit": false,
+   "governanceAcceptance": {
+     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",

@@ -1,0 +1,30 @@
+== R1: FrozenRuntimeView 于 HEAD 在 industrialrobot 全部命中（定性：注释留痕=合规，生产类型/调用=违规）==
+0ca544e4:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:67:// REUSE-T17：原 FrozenRuntimeView（提交期值复制视图）整类删除——提交冻结
+-- 命中总数: 1 个文件
+
+== R2: L2 零 Qt——kinematics include/src Qt 头包含命中 ==
+零命中——L2 零 Qt 成立
+
+== R3: CLOSURE 冻结祖先关系 ==
+OK e63cfaf8f(实施冻结核) 是送验head祖先——未改写历史
+OK 1f4a871a8(r1归档) 是送验head祖先
+
+== R4: 冻结 ui_test 源两 executor 级用例 ==
+1739:TEST(KinSessionAnchor, ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17)
+1838:TEST(KinAnchorCapture, RebindKeepsOldTaskModelAndLifetime_REUSE_T17)
+
+== R5: 冻结版 KinematicsPanelWidget 两处提交拍捕获与拒绝文案（无 fallback）==
+68:// 改为捕获 runtimeModelView() 锚（RuntimeSnapshot 为真实 owner 的
+78: * runtime §8.3），runtimeModelView() 返回同源锚。构造后不可变、并发只读
+100:    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+1257:        showStatusText(tr("求解失败：提交时没有可用的模型快照"));
+1265:    auto modelAnchor = m_services.modelView->runtimeModelView();
+1269:        showStatusText(tr("求解失败：提交时没有可用的模型快照"));
+1683:        auto modelAnchor = m_services.modelView->runtimeModelView();
+1685:            showStatusText(tr("采样失败：当前模型视图无已编译产物"));
+
+== R6: README 自冻结零 diff ==
+（上行空=零 diff）
+
+== R7: 返工两提交未触碰 cmake/scripts/permissions/门禁 ==
+（各仅剩提交头行=零触碰）

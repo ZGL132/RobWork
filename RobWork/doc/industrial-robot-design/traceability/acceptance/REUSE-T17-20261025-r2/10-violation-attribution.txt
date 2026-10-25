@@ -1,0 +1,11 @@
+== 越界路径引入提交归因（1f4a871a8..e8ee7d31d 中最后触碰该路径的提交）==
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt => df0b35fc2 [governance] WP-01/GOV-T24：修复主线IRD-GATE-LIB三变量阻断与冒烟RobWork导出包供给
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp => 19f394a59 [governance] REUSE-T21 以成熟定宽原语修正C4同时溢出误判
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp => 19f394a59 [governance] REUSE-T21 以成熟定宽原语修正C4同时溢出误判
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp => 20522f776 [governance] REUSE-T18 FK/Jacobian上游复用：经T17锚消费已编译模型并删除kinematics重复计算核
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp => 20522f776 [governance] REUSE-T18 FK/Jacobian上游复用：经T17锚消费已编译模型并删除kinematics重复计算核
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/TestMainReport.cpp => e128dd8e9 [governance] F-958协调收口：REUSE-T18登记、29处注释订正与ird_gates转绿
+AGENTS.md => 4f0a01e25 [governance] 落地主工作树串行复用计划与增量验证入口
+RobWork/scripts/industrialrobot/validate-task.ps1 => 4f0a01e25 [governance] 落地主工作树串行复用计划与增量验证入口
+RobWork/doc/industrial-robot-design/units/testkit.md => 354b9bebf [governance] REUSE-T19登记：SetCheck匹配内核复用协调批（第三方词表/契约修订/矩阵处置/ird_gates转绿）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake => e128dd8e9 [governance] F-958协调收口：REUSE-T18登记、29处注释订正与ird_gates转绿

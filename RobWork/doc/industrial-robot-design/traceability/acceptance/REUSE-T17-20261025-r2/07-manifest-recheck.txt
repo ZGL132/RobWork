@@ -1,0 +1,10 @@
+== changes/REUSE-T17.json 六凭证 sha256 重算（冻结 e63cfaf8f blob，即实施冻结核）==
+MATCH  f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp
+MATCH  40a76ed6819feb2ca99044ae02088a52a3a360b6eeb484346bbc311f208b0178  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp
+MATCH  8d3daf53b04c3f10658078cebde2579d74517b87c5e1670a664c0134162f4ba5  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp
+MATCH  27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp
+MATCH  8c0e9d906031700e7390c614d34489bbd75a038ae1f07ef7195ccb221d9d3e51  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp
+MATCH  48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485  RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp
+entries=6 match=6
+== 同一重算对 r1 送验 head 1f4a871a8（应一致）==
+f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc *-

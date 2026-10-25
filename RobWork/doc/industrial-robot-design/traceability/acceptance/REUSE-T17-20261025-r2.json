@@ -1,0 +1,82 @@
+{
+  "taskId": "REUSE-T17",
+  "baseCommit": "adaf890031190c71d7705335bcac220c3e31780f",
+  "reviewedCommit": "0ca544e493813441ff03bfc701757ee7ae496095",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T05:31:29+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T17 单次验收子智能体（工作流内独立会话，第 2 轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建构建树；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件（冻结版代码内容经 git show <sha>:<path> 对象读取，不依赖工作树当前态）；只验收不修复、不改任务 status、不推进下一任务。"
+  },
+  "scope": "第 2 轮独立复验（r1 FAIL 后返工核销）。REUSE-T17 包＝五提交：原实施三提交（bf45f69a5 契约草案与接口设计增量、e63cfaf8f 实施冻结核、1f4a871a8 先前归档）＋返工两提交（0801488bc allowedFiles 收口范围门禁并对齐 acceptance 字面、0ca544e49 补登返工后三门禁实测证据），送验 head=0ca544e4。本轮实测：①送验指令字面区间 verify-task-scope（adaf8900..0ca544e4，横跨串行战役 68 提交/1055 文件）复跑落证＋归因分析、r1 失败区间修订契约复跑（adaf8900..1f4a871a8）、返工区间复跑（e8ee7d31d..0ca544e4）；②r1 三 issues 逐项核销（契约返工 diff 审查、acceptance[3]/[4] 修订文字与登记证据交叉实证）；③红线抽查（FrozenRuntimeView 残留、L2 零 Qt、CLOSURE 冻结祖先与六 blob 哈希、无旧链 fallback、门禁引擎当前态、返工零触门禁）；④commit-lint 返工/全区间两档、validate-docs 一次过、凭证 6/6 重算、实现者清点、四套件原件分列重提（原件自 r1 送验 head 零变化）。增量口径：返工仅触文档/契约/凭证/验收产物（10+4 文件），零 C++ 改动，按 AGENTS §4 无构建/测试重跑触发条件。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 1,
+    "skipped": 0,
+    "unit": "10 项验收检查全过（checks[1]—[10]）＋1 项引用不重跑（notRun[0]，同 r1 口径）；checks[0] 为送验指令字面区间的诊断性实测（exit 1，经归因非本包范围结论，不计入 passed/failed，归因单列于 checks[0] 与 10 号证据）；四套件 gtest 计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "诊断实测（送验指令字面命令，非本包范围结论）：verify-task-scope -TaskFile REUSE-T17.json -Base adaf8900… -Head 0ca544e4… exit 1——changed=1055 中 1009 越界（6 forbidden＋1003 out-of-scope）。归因证明：本区间横跨整个串行战役（1f4a871a8..0ca544e4 共 65 个后继提交）；由 checks[1]（r1 区间 34 路径全在允许面）与 checks[2]（返工区间 14 路径全在允许面）两 PASS 做集合论证——任一越界路径若其内容变更落在 r1 区间或返工区间 diff 内，则对应检查必 FAIL，两检查 PASS ⇒ 全部 1009 个越界路径的内容变更必落于 1f4a871a8..e8ee7d31d 的 63 个非本包提交（REUSE-T18/T19/T20-T29/GOV-T21..T26/WP-00/01/T07/T01/T09/T12 各包，各有各契约与范围证据）。6 个 forbidden 命中抽查归因（10 号证据）：kinematics/src/{Fk.cpp,JointMapping.hpp}←REUSE-T18(20522f776)、core/{CMakeLists.txt,src/Compare.cpp,test/CompareTest.cpp}←WP-01/GOV-T24(df0b35fc2)与REUSE-T21(19f394a59)、runtime/test/TestMainReport.cpp←F-958收口(e128dd8e9)；AGENTS.md、scripts/validate-task.ps1、cmake/ird_gates_whitelist.cmake、units/testkit.md 等越界样本归因同出示。结论：本包五提交在任何受检区间引入零越界，exit 1 系跨包区间口径产物而非 T17 缺陷。",
+    "ISSUE-1 核销（过）：r1 失败区间 adaf8900..1f4a871a8 以修订后契约复跑 exit 0——changed=34 allowedRules=22（r1 时 16）『34 个路径全部在允许面内』（02 号证据，本人重跑）。r1 的 8 个越界路径（GAP-CORE-C4-01.md、functions/runtime.json、REUSE-T01/runtime-boundary-audit.md、validation-batch/20261023-recheck 5 文件）在 01 号证据全文中零命中＝已全部落入增补 allowedFiles 条目。r1 ISSUE-1 修复条件『修复后显式 Base/Head 复跑须 exit 0』成立；实施者 rework-20261025/02a 同款结论独立复核一致。",
+    "返工区间（过）：verify-task-scope -Base e8ee7d31d -Head 0ca544e4 exit 0——changed=14（0801488bc 10 文件＋0ca544e49 4 证据文件）全部在允许面内（03 号证据，本人重跑；实施者 02b 在 0ca544e49 落盘前只能覆盖 10 路径，本跑补齐 4 证据文件路径）。",
+    "契约返工 diff 审查（过）：0801488bc 对 tasks/REUSE-T17.json 实测 diff（09 号 patch）——allowedFiles 表尾 +6 条目与 r1 ISSUE-1 清单一一对应；GAP-CORE-C4-01.md 条目带注记『内容归C4轨道GOV-T26/REUSE-T21送验面，本条为登记性授权覆盖送验区间残留树diff』；登记性授权的事实基础实证：该文件在送验区间内被 bf45f69a5（T17 草案混入 +9 行）与 GOV-T26(2136a89d5)、REUSE-T21(19f394a59) 先后触碰，GOV-T26.json（2 处）/REUSE-T21.json（3 处）allowedFiles 均授权该文件——不改写历史约束下撤回不可行，登记＋内容归属注记为唯一可收口路径；acceptance[3]/[4] 修订文字与 r1 两 issue 的修复选项（契约文字与已登记证据口径对齐）一致；note 增补 2026-10-25 返工段①—④与实际处置逐条相符；status 保持 ready、interUnit/governanceAcceptance/reuseGateAcceptance 未动。",
+    "ISSUE-2 核销（过）：修订后 acceptance[4]（不新增 GUI 换绑单例；换绑/保活/State 隔离语义由 ui_test executor 级真实编译快照用例承载）与登记证据对齐——冻结 ui_test 源（1f4a871a8 blob）实证两用例在档：KinEvaluationChannelTest.cpp:1739 TEST(KinSessionAnchor, ValueDelegateExposesNullAnchor_DefaultPreserved_REUSE_T17)、:1838 TEST(KinAnchorCapture, RebindKeepsOldTaskModelAndLifetime_REUSE_T17)（08 号证据 R4）；REUSE-T17/README.md 自冻结 e63cfaf8f 零 diff（v0.37 ③ 替代口径登记原样，08 R6）；units/kinematics.md v0.37 历史行「GUI 既有提交驱动用例（NonBlocking/StaleResult/HostLoop 求解点击族）现在全程走新锚提交路径，48/48 通过＝面板路径证据」在档；GUI 48/48 原件分列在档（11 号证据）。",
+    "ISSUE-3 核销（过）：修订后 acceptance[3] 明示「评估器层 KIN-NO-DEVICE 族稳定诊断码与 params 来源标注移至承接包 REUSE-T19 承载并验证收口回填映射」——交叉引用实证：units/kinematics.md v0.39（2026-10-24）②「错误码面 4 值不变；锚缺失/设备名未命中→NoDevice 值面（§9.2 @pre 运行期承载）」、tasks/REUSE-T19.json:62 acceptance「新增锚缺失/设备未命中→NoDevice 值面（§9.2 @pre 运行期承载）」同口径登记；本包承载面冻结源实证：KinematicsPanelWidget.cpp IK 提交 :1265 捕获 runtimeModelView() 锚＋空锚两分拒绝文案「求解失败：提交时没有可用的模型快照」、workspace 提交 :1683 捕获＋「采样失败：当前模型视图无已编译产物」，grep 零 fallback 命中（08 R5）；kinematics/src/** 维持 forbiddenFiles 与 r1 结论一致。",
+    "r1 低危备注 b 核销（过）：changes/REUSE-T17.json 现 6 唯一路径凭证、同文件重复的第 7 条已删除、其值委托空锚用例语义并入第 6 条 boundary（ValueDelegateExposesNullAnchor 字样在第 6 条 boundary 在档）；六 blob sha256 对实施冻结核 e63cfaf8f 重算 6/6 MATCH（07 号证据，含 r1 送验 head 1f4a871a8 同值抽查）——凭证钉死送验面，CLOSURE 冻结内容未变。",
+    "CLOSURE 冻结与提交链（过）：git merge-base --is-ancestor 实证 e63cfaf8f（实施冻结核）与 1f4a871a8（r1 归档）均为送验 head 0ca544e4 祖先——历史未改写（08 R3）；六冻结 blob 哈希 6/6 吻合（07 号）；返工两提交合计仅触契约/凭证/r1 验收产物/返工证据（10+4 文件），cmake、scripts、permissions.json 零触碰（08 R7）＝未越权放宽门禁/权限；commit-lint -Range e8ee7d31d..0ca544e4 PASS（2 提交）、-Range adaf8900..0ca544e4 PASS（68 提交全合规，04/05 号）；两提交正文与实际处置逐条相符（0801488bc 正文 ISSUE-1/2/3＋凭证第 7 条处置四段、0ca544e49 四证据文件清单与 REUSE-AD-PENDING 口径登记），一包一组成立（0801488bc=契约+凭证+r1 归档收口、0ca544e49=门禁实测原件补登）。",
+    "文档/复用门禁（过）：validate-docs.ps1 -TaskFile REUSE-T17.json exit 0——validate-task: PASS (1 tasks)、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS（20 units, 12 trace entries, 404 task files…）（06 号证据，本人重跑）；REUSE-AD-PENDING（policy/CollisionQuery、reporting/ReportCodec、runtime/Snapshot、trajectory/Planner、ui/HostView3D* 在途 AD 审计）与实施者 rework-20261025/03 原件逐行一致，为既有全局 pending 非本包阻断（REUSE-T12 返工登记同口径）。",
+    "红线抽查（过）：①FrozenRuntimeView 于 HEAD 在 industrialrobot 全部命中仅 1 处注释留痕（KinematicsPanelWidget.cpp:67「原 FrozenRuntimeView…整类删除」），生产类型/调用零残留（08 R1）；②L2 计算库零 Qt——kinematics include/src 对 #include <Qt|\"Q 零命中（08 R2）；③无平行实现回流——AnchorRuntimeView 纯转发桥/TestAnchor 值面替身（r1 实证，六个冻结 blob 哈希未变＝相关结论直接引用）；④runtime 唯一模型 owner（锚 owner＝RuntimeSnapshot、shared_ptr 真实引用计数，r1 executor 级用例实证，冻结源未变）；⑤门禁引擎当前态 exit 0（ird_gates.cmake 直跑：自测 fail_* 按预期检出＋R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中，13 号）且返工零触门禁面；⑥H1-H6：返工未引入新复用面与权限变更（10+4 文件零生产代码），H6 凭证 6/6 可追溯；⑦r1 低危备注 a（契约/单元卡「8 实现者」与直接派生 10 的计数口径差）未变化——12 号清点与 r1 同口径复跑（AnchorRuntimeView:82/:100、TestView:428/:441、SnapshotViewAdapter cpp:79、KinSessionModelView hpp:133 纯转发、AnchorlessValueView :1744/:1752 缺省空断言在档），维持为登记口径备注非缺陷。",
+    "四套件原件分列重提（过）：normal/ 四套件原件自 r1 送验 head 1f4a871a8 零变化（git diff 1f4a871a8..0ca544e4 -- normal/ 空输出，11 号证据）——ird-test-report summary 本人对原件重提取：kinematics total=289 passed=288 failed=0 skipped=0 notRun=0 envUnavailable=1；ui total=345 passed=344 failed=1（唯一失败 DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560 预存，UiPlugin.cpp/DefectPinningTest.cpp 在送验范围零变化已由 r1 核对）；kinematics-contract 57/57；kinematics-gui 48/48——与 r1 记录逐格一致，passed/failed/skipped/notRun/envUnavailable 分列未混列。"
+  ],
+  "integrationTest": {
+    "note": "同 r1：未以送验 SHA 重跑四套件（理由见 notRun[0]）；以下为送验时原件（traceability/reuse/REUSE-T17/normal/）ird-test-report summary 本轮对原件重提取结果（原件自 1f4a871a8 零变化已核），r1 曾机器核对与 README/单元卡逐格一致，先前独立会话曾在冻结核增量构建复跑且计数一致（acceptance-20261023.md 第 4 条）。",
+    "kinematics": { "total": 289, "passed": 288, "failed": 0, "skipped": 0, "notRun": 0, "envUnavailable": 1 },
+    "ui": { "total": 345, "passed": 344, "failed": 1, "failedCase": "DefectPinning.HostRegionPreviewEmptySet_ClearsCachesAndDeliversNulloptLayers_F560（预存，r1 已核对被扫描文件零变化）", "skipped": 0, "notRun": 0 },
+    "kinematicsContract": { "total": 57, "passed": 57, "failed": 0, "skipped": 0, "notRun": 0 },
+    "kinematicsGui": { "total": 48, "passed": 48, "failed": 0, "skipped": 0, "notRun": 0 }
+  },
+  "commands": [
+    { "name": "scope-campaign-literal（送验指令字面命令）", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json -Base adaf890031190c71d7705335bcac220c3e31780f -Head 0ca544e493813441ff03bfc701757ee7ae496095", "exitCode": 1, "passed": false, "log": "01-scope-campaign-adaf8900-0ca544e4.log", "note": "诊断性实测：changed=1055（68 提交跨包区间）1009 越界，经 checks[0] 集合论证＋10 号证据抽查归因，100% 由 63 个非本包提交引入；本包范围结论以 commands[1]/[2] 两 PASS 为准（AGENTS §6.2『本包 -Base <起始SHA> -Head <送验SHA>』与 r1 先例同口径）" },
+    { "name": "scope-r1-range-revised-contract（ISSUE-1 核销）", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json -Base adaf890031190c71d7705335bcac220c3e31780f -Head 1f4a871a889995eadeae1621a0715bdc29858295", "exitCode": 0, "passed": true, "log": "02-scope-r1range-adaf8900-1f4a871a8.log" },
+    { "name": "scope-rework-range", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json -Base e8ee7d31d624ee0233210d502c1234ee8c68c262 -Head 0ca544e493813441ff03bfc701757ee7ae496095", "exitCode": 0, "passed": true, "log": "03-scope-rework-e8ee7d31d-0ca544e4.log" },
+    { "name": "commit-lint-rework", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e8ee7d31d624ee0233210d502c1234ee8c68c262..0ca544e493813441ff03bfc701757ee7ae496095", "exitCode": 0, "passed": true, "log": "04-commit-lint-rework.log" },
+    { "name": "commit-lint-campaign", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range adaf890031190c71d7705335bcac220c3e31780f..0ca544e493813441ff03bfc701757ee7ae496095", "exitCode": 0, "passed": true, "log": "05-commit-lint-campaign.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "06-validate-docs.log" },
+    { "name": "manifest-sha256-recompute", "command": "node 解析 changes/REUSE-T17.json 六条目；git show e63cfaf8f:<path> | sha256sum 逐条比对", "exitCode": 0, "passed": true, "log": "07-manifest-recheck.txt" },
+    { "name": "redline-checks", "command": "git grep FrozenRuntimeView / '#include <Qt' 0ca544e4；git merge-base --is-ancestor；git show 1f4a871a8:<ui_test> 提取两用例；git diff e63cfaf8f..0ca544e4 -- README；返工提交 stat 单列", "exitCode": 0, "passed": true, "log": "08-redline-checks.txt" },
+    { "name": "contract-manifest-rework-diff", "command": "git show 0801488bc -- tasks/REUSE-T17.json changes/REUSE-T17.json", "exitCode": 0, "passed": true, "log": "09-contract-manifest-rework-diff.patch" },
+    { "name": "violation-attribution", "command": "git log 1f4a871a8..e8ee7d31d -- <越界路径>（10 条抽查）", "exitCode": 0, "passed": true, "log": "10-violation-attribution.txt" },
+    { "name": "suite-originals-summaries", "command": "git diff 1f4a871a8..0ca544e4 -- normal/（零变化）；node 提取四套件 ird-test-report summary", "exitCode": 0, "passed": true, "log": "11-suite-originals-summaries.txt" },
+    { "name": "implementers-census-freeze", "command": "git grep -n -E 'public IKinRuntimeView|runtimeModelView' 1f4a871a8 -- industrialrobot/", "exitCode": 0, "passed": true, "log": "12-implementers-census-freeze.txt" },
+    { "name": "gate-engine-head", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=$TEMP/reuse-t17-r2-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "13-gate-engine-head.log" }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "四套件（sdurws_ird_kinematics_test/ui_test/kinematics_contract_test/kinematics_gui_test）以送验 SHA 源码的真实构建与执行",
+      "reason": "同 r1 notRun[0]：返工两提交（0801488bc/0ca544e49）仅触契约/凭证/验收产物/返工证据 14 个文档面文件，零 C++ 改动，无重跑触发条件（AGENTS §4 增量口径：文档/治理改动跑文档门禁与事实核对）；送验冻结核六个交付 blob 经 sha256 重算 6/6 MATCH 钉死，normal/ 四套件原件自 r1 送验 head 1f4a871a8 零变化已核——按送验指令「已有且输入/工具链/范围仍适用的原始证据直接引用」采信原件＋r1 机器核对＋先前独立会话在冻结核的增量构建复跑（acceptance-20261023.md 第 4 条）。"
+    }
+  ],
+  "limitations": "PASS 绑定送验 head 0ca544e493813441ff03bfc701757ee7ae496095：REUSE-T17 包范围结论＝五提交（bf45f69a5/e63cfaf8f/1f4a871a8/0801488bc/0ca544e49）全部在修订后契约允许面内（commands[1] r1 区间 34 路径＋commands[2] 返工区间 14 路径两 PASS 覆盖包内全部 diff，r1 ISSUE-1 修复条件『显式 Base/Head 复跑须 exit 0』成立）。送验指令字面区间复跑（commands[0]，adaf8900..0ca544e4）exit 1 的 1009 个越界经集合论证（两 PASS ⇒ 越界内容变更必落于两区间之外）＋10 路径抽查归因，100% 由 1f4a871a8..e8ee7d31d 的 63 个非本包提交引入（各包各有契约与范围证据）；该结果系跨包区间口径产物，不计为本包范围结论——若所有者意图以全战役区间作为 T17 送验面则需另行裁定，本记录 01/10 号证据已备齐归因数据。validate-reuse 为 governance only（DEBT=16、UNRESOLVED=1399 未关闭），不构成算法替换（migration §11）或 REUSE-T02 放行；REUSE-AD-PENDING 为全局在途 AD 审计提示非本包阻断；GAP-CORE-C4-01.md 的 allowedFiles 条目为登记性授权，内容语义归 C4 轨道（GOV-T26/REUSE-T21），本包不对其负责。r1 低危备注 a（实现者计数口径 8 vs 直接派生 10）未变化，维持登记备注。本记录与证据目录只写文件、不提交（由登记步骤统一提交）；不改任务 status、不推进下一任务。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/01-scope-campaign-adaf8900-0ca544e4.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/02-scope-r1range-adaf8900-1f4a871a8.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/03-scope-rework-e8ee7d31d-0ca544e4.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/04-commit-lint-rework.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/05-commit-lint-campaign.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/06-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/07-manifest-recheck.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/08-redline-checks.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/09-contract-manifest-rework-diff.patch",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/10-violation-attribution.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/11-suite-originals-summaries.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/12-implementers-census-freeze.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T17-20261025-r2/13-gate-engine-head.log"
+  ]
+}

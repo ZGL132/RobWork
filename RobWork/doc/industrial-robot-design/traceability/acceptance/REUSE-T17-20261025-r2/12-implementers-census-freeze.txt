@@ -1,0 +1,30 @@
+== 实现者清点（冻结 1f4a871a8，与 r1 同口径复跑）==
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp:145: * 批准方案二）：表尾追加 runtimeModelView() 可域能力入口（带缺省体，
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp:147: * worldToBase, runtimeModelView。
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp:177:    virtual std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:68:// 改为捕获 runtimeModelView() 锚（RuntimeSnapshot 为真实 owner 的
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:78: * runtime §8.3），runtimeModelView() 返回同源锚。构造后不可变、并发只读
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:82:class AnchorRuntimeView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:100:    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:1265:    auto modelAnchor = m_services.modelView->runtimeModelView();
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:1683:        auto modelAnchor = m_services.modelView->runtimeModelView();
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp:428:class TestView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp:441:    std::shared_ptr<const rt::IRuntimeModelView> runtimeModelView() const override
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.cpp:79:    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp:131:    /// 锚能力（REUSE-T17）——纯转发委托的 runtimeModelView()；委托为纯值
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp:133:    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/KinEvaluationChannel.hpp:135:        return m_delegate->runtimeModelView();
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:87:class FixtureView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:965:    class ObservedView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1723:/** 无锚值替身（不覆盖 runtimeModelView——缺省空＝能力缺席如实表达）。 */
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1744:    EXPECT_EQ(session.runtimeModelView(), nullptr)
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1752:    EXPECT_EQ(session.runtimeModelView(), nullptr);
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1830: *   ①attachSnapshot 包装视图经 runtimeModelView() 暴露同源锚（模型身份与
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1898:    auto taskAnchor = executor.sessionView()->runtimeModelView();
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:1901:    EXPECT_EQ(taskAnchor.get(), executor.sessionView()->runtimeModelView().get());
+
+== 直接派生类清点 ==
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp:82:class AnchorRuntimeView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp:428:class TestView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:87:class FixtureView final : public IKinRuntimeView {
+1f4a871a8:RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp:965:    class ObservedView final : public IKinRuntimeView {
