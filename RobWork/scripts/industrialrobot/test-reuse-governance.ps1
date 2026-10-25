@@ -20,7 +20,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 152
+$driverFailure = ''; $expectedTests = 155
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -121,6 +121,16 @@ function ProbeMatrix([string]$decision='business-specific',[string]$status='migr
 function ProbeGrant([string]$origin,[string[]]$categories,[string[]]$ops) {
     $g=Grant $origin $ops;$g.source.path=$script:probePath;$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)));$g.categories=$categories
     $p=GetJson ($reuse+'permissions.json');$p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+}
+function TestFixtureChange([string]$source) {
+    # test-fixture 夹具例外（REUSE-T36 治理批）专用：与 FunctionalChange 同构，
+    # 但 probe 落在产品树 /test/ 路径——该 origin 仅对此路径合法。
+    $path=$product+'kinematics/test/PermissionProbeTest.cpp';$script:probePath=$path;Put $path $source
+    $accept=[pscustomobject]@{commit=$script:fixtureAcceptanceCommit;path=($design+'traceability/acceptance/GOV-T22-fixture.json');reviewedCommit=$script:fixtureReviewedCommit}
+    $t=[pscustomobject]@{taskId='KIN-T99';status='ready';allowedFiles=@($path);forbiddenFiles=@();governanceAcceptance=(GetJson ($design+'tasks/GOV-T22.json')).governanceAcceptance;reuseGateAcceptance=$accept;
+        reuse=[pscustomobject]@{policy='H1-H6';manifest=($reuse+'changes/KIN-T99.json')}}
+    PutJson ($design+'tasks/KIN-T99.json') $t
+    PutJson ($reuse+'changes/KIN-T99.json') ([pscustomobject]@{schemaVersion='ird-reuse-change/1';taskId='KIN-T99';taskFile=($design+'tasks/KIN-T99.json');files=@([pscustomobject]@{path=$path;sha256=(Hash $source);mode='business';boundary='隔离权限夹具';verify='fixture';capabilities=@()})})
 }
 function WriteProduction($fixture) {
     PutJson $fixture.path $fixture.report
@@ -416,6 +426,25 @@ try {
         $p=GetJson ($reuse+'permissions.json');$g=Grant 'runtime-borrow' @('query') 'sdurws_ird_kinematics_fake'
         $txt=[IO.File]::ReadAllText((Join-Path $sandbox $g.build.path))+"`n# add_library(sdurws_ird_kinematics_fake STATIC src/Fk.cpp)`n"
         Put $g.build.path $txt;$g.build.sha256=Hash $txt;$p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+    }
+    # test-fixture 夹具例外（REUSE-T36 治理批）：/test/ 路径+夹具 grant 正例，
+    # 非 test 路径冒用该 origin 与 test 文件模型操作无 grant 两个负例。
+    Case 'fixture-test-fixture-grant-positive' 'PASS' {
+        TestFixtureChange ('#include <rw/models/WorkCell.hpp>'+"`n"+'void probe(){ auto cell = std::make_shared<rw::models::WorkCell>("fixture"); cell->addDevice(nullptr); }'+"`n")
+        ProbeMatrix 'business-specific' 'migrated'
+        $p=GetJson ($reuse+'permissions.json');$g=Grant 'test-fixture' @('query','construct-model','mutate-model') 'sdurws_ird_kinematics_test'
+        $g.source.path=$script:probePath;$g.source.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.source.path)))
+        $g.categories=@('model')
+        $g.build.path=$product+'kinematics/CMakeLists.txt';$g.build.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.build.path)))
+        $p.grants=@($g);PutJson ($reuse+'permissions.json') $p
+    }
+    Case 'fixture-test-fixture-origin-outside-test-rejected' 'REUSE-AD' {
+        FunctionalChange '#include <rw/models/WorkCell.hpp>'
+        ProbeGrant 'test-fixture' @('model') @('query')
+    }
+    Case 'fixture-test-model-operation-without-grant-rejected' 'REUSE-AD' {
+        TestFixtureChange ('#include <rw/models/WorkCell.hpp>'+"`n"+'void probe(){ auto cell = std::make_shared<rw::models::WorkCell>("fixture"); cell->addDevice(nullptr); }'+"`n")
+        $p=GetJson ($reuse+'permissions.json');$p.grants=@();PutJson ($reuse+'permissions.json') $p
     }
     Case 'closure-new-file-no-independent-record' 'REUSE-MIGRATION : new/current file lacks independent closure' { IsolateFinalClosureMatrices;FunctionalChange 'void probe(){}';ProbeMatrix 'business-specific' 'closed' } @('-RequireMigrationComplete')
     Case 'closure-baseline-cannot-use-absent' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].baselineBlob='absent';PutJson ($reuse+'closures.json') $c }

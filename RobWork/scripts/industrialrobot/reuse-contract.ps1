@@ -78,7 +78,14 @@ function CheckPermissions {
         if (-not $path.StartsWith($product) -or $grants.ContainsKey($path) -or $g.usageRole -notin @('owner','adapter')) { Fail 'PERMISSIONS' $path }
         CheckPermissionRef $g.permissionRef
         $unit = ($path.Substring($product.Length) -split '/')[0]
-        if ($g.origin -notin @('runtime-owner','runtime-borrow','task-private','host-presentation','value')) { Fail 'PERMISSIONS' "$path : origin" }
+        if ($g.origin -notin @('runtime-owner','runtime-borrow','task-private','host-presentation','value','test-fixture')) { Fail 'PERMISSIONS' "$path : origin" }
+        # 测试夹具例外（2026-10-26 所有者落地授权脉络，REUSE-T36 登记）：产品树
+        # /test/ 路径的测试脚手架构造/装配模型输入（gtest 夹具建 WorkCell 等）
+        # 是任务输入装配而非模型所有权主张——ARCH §3.6/SA-19 的 runtime owner
+        # 红线约束产品代码路径，本例外不放宽之；非 test 路径用 test-fixture 一律
+        # 拒绝，防止借夹具名义洗白生产代码的模型操作。
+        $isTestFixturePath = $path -match '(^|/)test/'
+        if ($g.origin -eq 'test-fixture' -and -not $isTestFixturePath) { Fail 'AD' "$path : test-fixture origin outside /test/" }
         if (@($g.categories | Where-Object { $_ -in @('host','graphics') }).Count -and $g.origin -ne 'host-presentation') { Fail 'AD' "$path : presentation requires exact host exception" }
         if ($g.origin -eq 'value' -and (@($g.categories | Where-Object { $_ -ne 'value' }).Count -or @($g.operations | Where-Object { $_ -ne 'value' }).Count)) { Fail 'AD' "$path : value is not an ownership bypass" }
         if ($g.origin -eq 'runtime-owner' -and ($unit -ne 'runtime' -or $g.usageRole -ne 'owner')) { Fail 'AD' "$path : runtime is model owner" }
@@ -89,7 +96,9 @@ function CheckPermissions {
         foreach ($category in $g.categories) { if ($category -notin @('value','model','state','solver','collision','simulation','loader','graphics','host')) { Fail 'PERMISSIONS' $path } }
         foreach ($op in $g.operations) {
             if ($op -notin @('value','query','construct-model','load-model','clone-model','mutate-model','publish-model','write-state','construct-session','render','borrow')) { Fail 'PERMISSIONS' "$path : $op" }
-            if ($op -match '^(construct|load|clone|mutate|publish)-model$' -and $g.origin -ne 'runtime-owner') { Fail 'AD' "$path : model ownership operation $op" }
+            # 模型所有权操作默认归 runtime-owner；唯一豁免＝test-fixture 且
+            # 文件确在 /test/ 路径（见上方例外注释）。
+            if ($op -match '^(construct|load|clone|mutate|publish)-model$' -and $g.origin -ne 'runtime-owner' -and -not ($g.origin -eq 'test-fixture' -and $isTestFixturePath)) { Fail 'AD' "$path : model ownership operation $op" }
             if ($op -eq 'write-state' -and $g.origin -notin @('task-private','host-presentation','runtime-owner')) { Fail 'AD' "$path : shared State write" }
         }
         RequireFields $g @('build') 'PERMISSIONS'
