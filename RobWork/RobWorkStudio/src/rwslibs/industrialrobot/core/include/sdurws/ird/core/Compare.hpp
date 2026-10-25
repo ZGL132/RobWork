@@ -27,6 +27,7 @@
 #ifndef SDURWS_IRD_CORE_COMPARE_HPP
 #define SDURWS_IRD_CORE_COMPARE_HPP
 
+#include <cmath>
 #include <optional>
 #include <vector>
 
@@ -53,13 +54,16 @@ struct Tolerance {
 
     /**
      * @brief 工厂：两分量均须 ≥0 且有限，否则抛 CoreError（"core/compare/tolerance:"）。
+     *
+     * 有限检测用标准库 std::isfinite 直接原语（REUSE-T37/WP-15 批次A，B31 审计
+     * 建议）——替换原自持表达式 x==x && x-x==0（NaN 破坏自等、±Inf 破坏自差为
+     * 零，两式对全部 double 逐值等价）；std::isfinite 声明于 <cmath>，本头显式
+     * 包含，不依赖传递包含。
      */
     static Tolerance make(double relative, double absolute)
     {
-        const bool relOk = relative >= 0.0 && relative == relative
-                        && relative - relative == 0;
-        const bool absOk = absolute >= 0.0 && absolute == absolute
-                        && absolute - absolute == 0;
+        const bool relOk = relative >= 0.0 && std::isfinite(relative);
+        const bool absOk = absolute >= 0.0 && std::isfinite(absolute);
         if (!relOk || !absOk) {
             throw CoreError("core/compare/tolerance: 两分量均须 ≥0 且有限"
                             "（相对 " + std::to_string(relative) + "，绝对 "

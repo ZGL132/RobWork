@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T37",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+      "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "WP-15批次A/T37：Tolerance::make 有限检测自持表达式（x==x && x-x==0）换标准库std::isfinite直接原语（B31审计建议，逐值等价：NaN破坏自等、±Inf破坏自差为零）；补#include <cmath>（公共头显式包含不依赖传递包含）；聚合约束≥0与CoreError口径、C4公式与C7转写零改动",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/wp15-t37-consumer-rebuild.log"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+      "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "WP-15批次A/T37：closeWithin 非有限前置（NFR-COR-03）同换std::isfinite；等值相减恒精确为零无溢出路径，两式逐值等价；T21同时溢出Boost分支与noexcept契约零改动",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/postfix-sdurws_ird_core_test.log"
+    }
+  ]
+}

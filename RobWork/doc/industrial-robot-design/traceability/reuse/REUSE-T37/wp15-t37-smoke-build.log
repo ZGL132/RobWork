@@ -1,0 +1,44 @@
+适用于 .NET Framework MSBuild 版本 17.12.6+db5f6012c
+
+  1>Checking Build System
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  Core.cpp
+  Identity.cpp
+  Digest.cpp
+  Provenance.cpp
+  Units.cpp
+  Compare.cpp
+  Evaluation.cpp
+  DiagData.cpp
+  Events.cpp
+  正在生成代码...
+  sdurws_ird_core.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t37-smoke\core\Release\sdurws_ird_core.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt
+  TestPaths.cpp
+  JsonLite.cpp
+  Fault.cpp
+  Dataset.cpp
+  ToleranceProfile.cpp
+  Check.cpp
+  ContractCheck.cpp
+  Fixture.cpp
+  Report.cpp
+  ProcessRunner.cpp
+  SetCheckMatch.cpp
+  正在生成代码...
+  sdurws_ird_testkit.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t37-smoke\testkit\Release\sdurws_ird_testkit.lib
+  Building Custom Rule D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt
+  TestMainReport.cpp
+  BuildRedLineTest.cpp
+  IdentityTest.cpp
+  DigestTest.cpp
+  ConventionValueSemanticsTest.cpp
+  ProvenanceTest.cpp
+  UnitsTest.cpp
+  CompareTest.cpp
+  EvaluationTest.cpp
+  DiagDataTest.cpp
+  EventsTest.cpp
+  正在生成代码...
+  sdurws_ird_core_test.vcxproj -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t37-smoke\core\Release\sdurws_ird_core_test.exe
+  D:\10_Source_Repos\21_robot\RobWork\vcpkg\installed\x64-windows\bin\gtest.dll -> D:\10_Source_Repos\21_robot\RobWork\build\wp15-t37-smoke\core\Release\gtest.dll done

@@ -158,11 +158,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -323,8 +323,8 @@
           "symbol": "bool closeWithin(",
           "qualifiedSymbol": "sdurws::ird::core::closeWithin",
           "startLine": 19,
-          "endLine": 59,
-          "sha256": "ba89ca98255032065177b716bf9b904e484c36b04c10b7c3f8d8642d5af98a72"
+          "endLine": 61,
+          "sha256": "67fa5ccccf319f7f71857d4a3032fc4d35ce643a15b4eb5a37bbdad12e8595c5"
         }
       ],
       "targets": [
@@ -351,11 +351,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -460,8 +460,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
           "symbol": "bool allCloseWithin(const std::vector",
           "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const std::vector<double>&, const std::vector<double>&, Tolerance)",
-          "startLine": 61,
-          "endLine": 77,
+          "startLine": 63,
+          "endLine": 79,
           "sha256": "031cee042adba57b99a0b3ff79666fb4c89e8d2a3e4c89e5aa94e066c1f738c0"
         }
       ],
@@ -489,11 +489,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -596,10 +596,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "symbol": "bool allCloseWithin(const rw::math::Q&",
+          "symbol": "bool allCloseWithin(const rw::math::Q",
           "qualifiedSymbol": "sdurws::ird::core::allCloseWithin(const rw::math::Q&, const rw::math::Q&, Tolerance)",
-          "startLine": 80,
-          "endLine": 92,
+          "startLine": 82,
+          "endLine": 94,
           "sha256": "12fc8e06989b20838bd6926dce52176fef7a7432b526f3fef7ae11d512823826"
         }
       ],
@@ -627,11 +627,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -736,8 +736,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
           "symbol": "std::optional<double> runtimeAbsoluteTolerance(",
           "qualifiedSymbol": "sdurws::ird::core::runtimeAbsoluteTolerance",
-          "startLine": 95,
-          "endLine": 111,
+          "startLine": 97,
+          "endLine": 113,
           "sha256": "9608cac2c49bf41e713358750e88efaef289976d46a8f2197fb6fc8faf38d861"
         }
       ],
@@ -765,11 +765,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -874,9 +874,9 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
           "symbol": "static Tolerance make(",
           "qualifiedSymbol": "sdurws::ird::core::Tolerance::make",
-          "startLine": 57,
-          "endLine": 72,
-          "sha256": "25a6c19d307bda7f46cce6c18947fd36dafeb9a01b7c29ddba4098b5a33aeae6"
+          "startLine": 63,
+          "endLine": 76,
+          "sha256": "1d62fa3006d7717984360f2706ce18675f03bfd56d99d80005c3d5eca8a002ee"
         }
       ],
       "targets": [
@@ -885,13 +885,13 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
-      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正 REUSE-T37/WP-15批次A：有限检测换标准库std::isfinite直接原语（B31审计建议，x==x与x-x==0对NaN/±Inf/有限值逐值等价），<cmath>显式包含；聚合约束≥0与CoreError口径不变。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
@@ -903,11 +903,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -960,35 +960,15 @@
           "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
-          "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
-          "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
-          "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
-          "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
-          "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
-          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
-          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+          "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
         }
       ],
-      "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+      "auditBoundary": "REUSE-T37全文件功能实审与实施自查：make区段随实改刷新；保留自持值语义与错误口径，std::isfinite为标准库直接原语非上游符号，capabilityId保持NONE；Deg2Rad候选结构不可落地另行保留登记。行覆盖机制由wp15.Compare_hpp.declarations承载，不替代语义实审。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+        "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
+      }
     },
     {
       "functionId": "core.Tolerance.operator==",
@@ -1002,10 +982,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "symbol": "bool operator==(",
+          "symbol": "bool operator==(const Tolerance&",
           "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator==",
-          "startLine": 74,
-          "endLine": 77,
+          "startLine": 78,
+          "endLine": 81,
           "sha256": "51b49f4d7161c3cc473f6bd8e95f58ac2176e1a4cd4f41e9a6e336710edccb34"
         }
       ],
@@ -1015,13 +995,13 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
-      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正 REUSE-T37/WP-15批次A：区段随头文件位移刷新，代码零改动；随文件触碰按B31审计结论解决为business-specific/migrated。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
@@ -1033,11 +1013,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -1090,35 +1070,15 @@
           "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
-          "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
-          "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
-          "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
-          "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
-          "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
-          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
-          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+          "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
         }
       ],
-      "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+      "auditBoundary": "REUSE-T37文件触碰的行覆盖收口：逐位精确等值语义保持自持（rw::math::Q::operator==为逐项精确等值、语义不同源——B31实测），无上游复用主张。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+        "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
+      }
     },
     {
       "functionId": "core.Tolerance.operator!=",
@@ -1134,8 +1094,8 @@
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
           "symbol": "bool operator!=(",
           "qualifiedSymbol": "sdurws::ird::core::Tolerance::operator!=",
-          "startLine": 78,
-          "endLine": 78,
+          "startLine": 82,
+          "endLine": 82,
           "sha256": "859765a3e3a5e206a96b1080f11eabfaeb0daec333e5aa4d0b9fbfd8a68720b7"
         }
       ],
@@ -1145,13 +1105,13 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "batch31/search.json + batch31/r2/search.json",
         "conclusion": "见core-units-compare-audit，最小math常量/DOMcore候选和产品契约分开；C4反例保持OPEN"
       },
-      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正",
+      "differences": "量纲/冻结token与C4/C7由core权威承载；基础常量/有限检查优先已有原语，DOM不提供完整语义。F966极值误绿，次正规下溢仅观察，未授修正 REUSE-T37/WP-15批次A：区段随头文件位移刷新，代码零改动；随文件触碰按B31审计结论解决为business-specific/migrated。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
@@ -1163,11 +1123,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -1220,35 +1180,15 @@
           "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
         },
         {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/search.json",
-          "sha256": "4a25fc7949bbc1a9d5ac478ef6f902607002ef42ecff70ce31faa16419b39933"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/verification.json",
-          "sha256": "633722d4e6ed311fa39f2059307077f9d95958eacd0e24e87d31748035d36c28"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/oracle-result.json",
-          "sha256": "30a3d8d0a08469bb7bfe8292aa021de46ec7a48d97f939c1b9a9dd4b644ce20e"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/gtest.xml",
-          "sha256": "2996d0eeb54c646ea6f3dac9b2826e6c39b15bd76a48932810600ba517b4f555"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/run/ird-test-report.json",
-          "sha256": "2a4feb59902f4e5d3ed4610d073c362e7be3b6010bcbb6f337bba7daf3a7fe80"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/search.json",
-          "sha256": "f2d13d2151703aac1675b72d93725a7e969a4559207137be5be5dbd1ecad43b6"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/r2/verification.json",
-          "sha256": "04b4120a6fbf0f071fb2b4ca9c508c77b8dcd374864865eb027f616391b2bcae"
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+          "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
         }
       ],
-      "auditBoundary": "原Units/Compare15例及新增7例真实22跑19passed3failed0skipped；显式启用真实Q。全消费者/跨平台/数值修正未完成；非生产迁移"
+      "auditBoundary": "REUSE-T37文件触碰的行覆盖收口：取反语义保持自持，无上游复用主张。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+        "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
+      }
     },
     {
       "functionId": "core.audit-b28.Provenance.toToken.ProvenanceKind",
@@ -8042,11 +7982,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8172,11 +8112,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8302,11 +8242,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8432,11 +8372,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8562,11 +8502,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8692,11 +8632,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8822,11 +8762,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -8952,11 +8892,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9082,11 +9022,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9212,11 +9152,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9342,11 +9282,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9472,11 +9412,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9602,11 +9542,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9732,11 +9672,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9862,11 +9802,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -9992,11 +9932,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10122,11 +10062,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10252,11 +10192,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10382,11 +10322,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10512,11 +10452,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10642,11 +10582,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10772,11 +10712,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -10902,11 +10842,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11032,11 +10972,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11162,11 +11102,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11292,11 +11232,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11422,11 +11362,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11552,11 +11492,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11682,11 +11622,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11812,11 +11752,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -11942,11 +11882,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12072,11 +12012,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12202,11 +12142,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12332,11 +12272,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12470,11 +12410,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12608,11 +12548,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12746,11 +12686,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -12884,11 +12824,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -13022,11 +12962,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -13160,11 +13100,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -13298,11 +13238,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -13436,11 +13376,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -13582,11 +13522,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -19956,11 +19896,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20094,11 +20034,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20232,11 +20172,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20370,11 +20310,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20508,11 +20448,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20615,7 +20555,8 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "symbol": "/**",
+          "symbol": "@file   Compare.cpp",
+          "qualifiedSymbol": "Compare.cpp 声明/注释/条件编译区",
           "startLine": 1,
           "endLine": 17,
           "sha256": "23a8b149bbb42809ec49c6e92ed64a5af0aa331d472b261c52e879765a2ffe15"
@@ -20623,22 +20564,25 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
           "symbol": "#ifdef IRD_CORE_HAS_RW_Q",
-          "startLine": 79,
-          "endLine": 79,
+          "qualifiedSymbol": "Compare.cpp Q条件编译",
+          "startLine": 81,
+          "endLine": 81,
           "sha256": "85ae7c8cbc313f7ec5a0a39582d3947ecbd55e5b4c926a3feb8c98ca42f0fb88"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
           "symbol": "#endif",
-          "startLine": 93,
-          "endLine": 93,
+          "qualifiedSymbol": "Compare.cpp 条件编译闭合",
+          "startLine": 95,
+          "endLine": 95,
           "sha256": "9a349bbd1a21104f051e34b2c8a9e70cc7fbb50bc19a67781f2a140c386d9438"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
           "symbol": "}  // namespace sdurws::ird::core",
-          "startLine": 113,
-          "endLine": 113,
+          "qualifiedSymbol": "Compare.cpp 命名空间闭合",
+          "startLine": 115,
+          "endLine": 115,
           "sha256": "814c67bbb9f4c0d932c75c91c3250a940c083f54d7e57af2a64407e4192367e4"
         }
       ],
@@ -20666,11 +20610,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20894,11 +20838,11 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
-          "sha256": "d9f458559214fb7d36bf70e82cfdb0917bc2780154ee6abed884b1499f9857bc"
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
-          "sha256": "756451676a3fd4287f82cd68295487878ec5017b96cae549a60d0a4f7d9dcb8d"
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
@@ -20987,6 +20931,124 @@
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/README.md",
         "sha256": "e9adab617a41c6fabd5efa9fb3e85027aa2f50953b377ccdcc2f6b5fd68d20b1"
+      }
+    },
+    {
+      "functionId": "core.wp15.Compare_hpp.declarations",
+      "ownerUnit": "core",
+      "requirements": [
+        "NFR-COR-01",
+        "NFR-COR-03",
+        "KIN-12",
+        "DYN-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "symbol": "SDURWS_IRD_CORE_COMPARE_HPP",
+          "qualifiedSymbol": "Compare.hpp 头注释/include/Q条件编译/struct声明区",
+          "startLine": 1,
+          "endLine": 62,
+          "sha256": "419faaf0a3865df074688617181cf73927959b37e0b3c4932256f29dc0422ff2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "symbol": "runtimeAbsoluteTolerance",
+          "qualifiedSymbol": "Compare.hpp 声明/命名空间闭合区",
+          "startLine": 83,
+          "endLine": 123,
+          "sha256": "58df8ba662781e201a4cddcfb68c944b218fa814fc97fd99ab6e88c71c53d258"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_core"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T37 本批全文件核对（Compare.hpp 六单元消费者 rg 检索）＋B31/batch31/r2 search 延续",
+        "conclusion": "触碰文件须全行覆盖（reuse-contract CheckFunctions COVERAGE）；头内声明/注释/条件编译区与函数体分属不同行，本行仅承载行覆盖机制，语义实审由 make/operator 行与 B31 审计承载。"
+      },
+      "differences": "文件头设计依据注释、include（含REUSE-T37新增<cmath>）、IRD_CORE_HAS_RW_Q条件编译、struct声明与各函数声明注释、命名空间开合；无隐藏helper/核心/运行时所有者。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Units.cpp",
+          "sha256": "fe4098ab7128dbdaba5cb7fa49aba36d2ba15b1f939738b22a34e55fcd67a08f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Units.hpp",
+          "sha256": "ab08b2726bccc156b9781ef61b278dad36d9776148e22ce7053eb4448fc43a68"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+          "sha256": "18a7d2ecf8ce39eb2f3904c4beb87879285b72b8ff427bccdbb9a701e64860f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
+          "sha256": "75ee94a769be0d9944069cae7fdc29ab9009627e3ace3cff911b8dd34a37b624"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Errors.hpp",
+          "sha256": "cb519acb4d93bc344f0bf924238c0e348f18baa22de6aff89260abf95023112b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/UnitsTest.cpp",
+          "sha256": "2b1015533823416020db1f1e2c297b6895f30e9568e377a84dc9c3d0ce4768f3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/CompareTest.cpp",
+          "sha256": "ea6c490e3dac3683f1d64e622f20473c57d0b0aeade898c1e76472bfd54b8444"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/test/TestMainReport.cpp",
+          "sha256": "3946da35642de86723bea788056d5fa3fd89e421176d4c93a91553c0105be11f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/CMakeLists.txt",
+          "sha256": "687b120dfa8635b1fed6b7f21522c70d8d82da57c80d7dcea06cea2c6b93b377"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/units/core.md",
+          "sha256": "dd2e6f92701494bcbc8be475a505012ddcb5affd471db6c465340425b551373c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/REQUIREMENTS.md",
+          "sha256": "47a368b4a4f6bf3baa8e8aeba171c871182d7eaeff3457623decab5d549a04a8"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/CMakeLists.txt",
+          "sha256": "74a27743b0303bc8994dd6c21b6e7dfb8a8d2ed66ec3b29b0bc41962fb8202ee"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/CMakeLists.txt",
+          "sha256": "2072452c019cdb8644801bc8d8918b72102375b4cfd7df7e5c6328d68c1a965b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch31/UnitsSuitabilityTest.cpp",
+          "sha256": "e0092ee4b27a9d0842cd2c7089c8f06c77514f3005ed7e4f255432a59859ea5f"
+        },
+        {
+          "path": "RobWork/doc/sphinx/tutorials/basic.rst",
+          "sha256": "f1042b3b2af4c0ac555cb1cd34e25500d6c44858ae3135e09e5f8992994e437a"
+        }
+      ],
+      "auditBoundary": "REUSE-T37/WP-15批次A文件触碰的行覆盖收口；不替代逐功能语义实审。",
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/reuse/core-units-compare-audit.md",
+          "sha256": "453529fa76f91a91d1e0fb1f0f1dfe803d57441ae25e77830591cf5ffff5686b"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+          "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/README.md",
+        "sha256": "2df9482234f8150dd0b87e1e8a118e7f505a858d75236430f759ed11579ab15d"
       }
     }
   ]

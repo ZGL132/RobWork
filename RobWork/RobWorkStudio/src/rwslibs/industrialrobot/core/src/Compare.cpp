@@ -19,8 +19,10 @@ namespace sdurws::ird::core {
 bool closeWithin(double value, double reference, Tolerance t) noexcept
 {
     // 非有限输入 → false（不抛、不静默通过——NFR-COR-03；noexcept 契约）。
-    const bool inputsFinite = value == value && reference == reference
-                           && value - value == 0 && reference - reference == 0;
+    // 有限前置用标准库 std::isfinite（REUSE-T37/WP-15 批次A，B31 审计建议）：
+    // 与原自持 x==x && x-x==0 对全部 double 逐值等价（NaN 破坏自等、±Inf 破坏
+    // 自差为零）；<cmath> 已在本 TU 包含，T21 同时溢出分支零改动。
+    const bool inputsFinite = std::isfinite(value) && std::isfinite(reference);
     if (!inputsFinite) {
         return false;
     }
