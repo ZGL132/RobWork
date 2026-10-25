@@ -25,13 +25,27 @@
  "allowedFiles": [
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/include/sdurws/ird/core/Compare.hpp",
   "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core/src/Compare.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
   "RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json",
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json",
   "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T37.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T38.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T39.json",
   "RobWork/doc/industrial-robot-design/reuse/functions/core.json",
   "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/io.json",
   "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T37/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T39/**",
   "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1.json",
-  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/**"
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/**"
  ],
  "forbiddenFiles": [
   "RobWork/RobWork/src/**",
@@ -49,7 +63,7 @@
   "逐功能矩阵按绑定新鲜度同步：core.json closeWithin 区段摘要刷新、三个 Tolerance pending 行按 B31 结论解决为 business-specific/migrated＋nonOverlapEvidence、新增 Compare_hpp 声明区段行（触碰文件须全行覆盖）；core.json/testkit.json 全部引用 Compare.hpp/Compare.cpp 的 inputs 摘要全链刷新；changes/REUSE-T37.json 逐文件凭证（Digest 口径）",
   "Units.cpp 本批零改动；Units 角度因子 rw::math::Deg2Rad 候选的不可落地证据（RobWork/RobWork/src/rw/math/Constants.hpp:31/40 const double 非 constexpr vs Units.cpp:31 constexpr 冻结表；gate-all 第4步冒烟无 RobWork_DIR）实测留痕并入 README，物理换用列所有者待裁决"
  ],
- "note": "WP-15（migration.md:312，§13.3 行）三类分批之一：本契约＝基础数值批。原侦察拟用任务号 REUSE-T30/T31/T32 已被其他工作包会话占用（tasks/REUSE-T30~T34、T36 现存，T35 由 WP-12 内联登记），本包改用 T37/T38/T39。评审缺口逐条处置：①〔高·Deg2Rad 双模式〕不实施条件包含+回退方案——本次实测 RobWork/RobWork/src/rw/math/Constants.hpp:31/40 上游 Pi/Deg2Rad 为 const double 非 constexpr，无法进入常量表达式，而产品侧 Units.cpp:31 kUnitTable 为 constexpr 冻结表（token 索引冻结、core 权威）；消费上游常量必须把冻结表降级为动态初始化或维护双份表体（双模式初始化语义分裂），结构代价大于零数值收益（B31 已实测两式双精度舍入逐位一致），故本批保留字面量并登记保留证据，把『接受冻结表动态初始化以物理换用 Deg2Rad』列为所有者裁决项（不自批）。该处置使评审担心的冒烟编译失败/两分支位模式漂移/矩阵与冒烟树编译来源不符三个失效模式整体不成立，另补规范冒烟（无 RobWork_DIR，gate-all 第4步同形态）验证。②〔中·closeWithin 凭证〕core.json closeWithin 行 sources 区段摘要随实改刷新（reuse-contract.ps1 CheckFunctions 的 FRESHNESS 机器校验每次运行都会核区段 Digest，评审『仅文件级校验』判断不准，实际门禁会拦过期区段）。③〔中·cmath〕Compare.hpp 补 #include <cmath>（std::isfinite 声明于 <cmath>），并以六单元消费者面增量构建兜住公共头编译面。④〔低·Units isnan||isinf→!isfinite 可选简化〕评估后不纳入：触碰 Units.cpp 触发 COVERAGE 门禁要求该文件全行覆盖且全部覆盖行 resolved——即须把 core.json 内 17 个 audit-b31 Units pending 行全部解决，其中含 F-966 OPEN 语境下 B31 明示『独立验收只可授本批局部结论』的未授权结论面，超出本包局部授权，登记给后续 Units 审计批。⑤〔低·Evaluation 8 行〕本批零触碰，维持 pending，不借批顺带标 migrated（migration.md:316 红线）。⑥〔低·引用失准〕『每子包确定符号后准入』实际在 migration.md:312（§13.3 WP-15 行），非 §13.4；『暂不合流』注释实际在 Json.cpp:107-109（评审核实成立，本包 T38 契约按此登记）。⑦〔低·JsonLite 定性〕testkit/JsonLite.cpp 非 UTF-8 DFA 第三副本（其合法性由装载层保证），T38 契约按『转义/代理对语义与 io appendUtf8 潜在重叠』表述登记给 WP-19。已定不动：C4 公式主体/C7 机械转写/单位表与冻结 token（core 权威）、T15 FNV/Identity、Compare.cpp T21 Boost 同时溢出分支、F-965/F-966。数值 oracle＝改前/改后同向量行为逐位一致（含 CompareTest 既有 NonFiniteInputsFalse/FractionRejectedScalingCases/FiniteOverflowBoundary 断言与 B31 oracle.py Fraction 极值集冻结结论引用）。验证命令与分批口径按根 AGENTS.md §4 增量范围执行；实施完成待独验，不自签、不置 done。",
+ "note": "WP-15（migration.md:312，§13.3 行）三类分批之一：本契约＝基础数值批。原侦察拟用任务号 REUSE-T30/T31/T32 已被其他工作包会话占用（tasks/REUSE-T30~T34、T36 现存，T35 由 WP-12 内联登记），本包改用 T37/T38/T39。评审缺口逐条处置：①〔高·Deg2Rad 双模式〕不实施条件包含+回退方案——本次实测 RobWork/RobWork/src/rw/math/Constants.hpp:31/40 上游 Pi/Deg2Rad 为 const double 非 constexpr，无法进入常量表达式，而产品侧 Units.cpp:31 kUnitTable 为 constexpr 冻结表（token 索引冻结、core 权威）；消费上游常量必须把冻结表降级为动态初始化或维护双份表体（双模式初始化语义分裂），结构代价大于零数值收益（B31 已实测两式双精度舍入逐位一致），故本批保留字面量并登记保留证据，把『接受冻结表动态初始化以物理换用 Deg2Rad』列为所有者裁决项（不自批）。该处置使评审担心的冒烟编译失败/两分支位模式漂移/矩阵与冒烟树编译来源不符三个失效模式整体不成立，另补规范冒烟（无 RobWork_DIR，gate-all 第4步同形态）验证。②〔中·closeWithin 凭证〕core.json closeWithin 行 sources 区段摘要随实改刷新（reuse-contract.ps1 CheckFunctions 的 FRESHNESS 机器校验每次运行都会核区段 Digest，评审『仅文件级校验』判断不准，实际门禁会拦过期区段）。③〔中·cmath〕Compare.hpp 补 #include <cmath>（std::isfinite 声明于 <cmath>），并以六单元消费者面增量构建兜住公共头编译面。④〔低·Units isnan||isinf→!isfinite 可选简化〕评估后不纳入：触碰 Units.cpp 触发 COVERAGE 门禁要求该文件全行覆盖且全部覆盖行 resolved——即须把 core.json 内 17 个 audit-b31 Units pending 行全部解决，其中含 F-966 OPEN 语境下 B31 明示『独立验收只可授本批局部结论』的未授权结论面，超出本包局部授权，登记给后续 Units 审计批。⑤〔低·Evaluation 8 行〕本批零触碰，维持 pending，不借批顺带标 migrated（migration.md:316 红线）。⑥〔低·引用失准〕『每子包确定符号后准入』实际在 migration.md:312（§13.3 WP-15 行），非 §13.4；『暂不合流』注释实际在 Json.cpp:107-109（评审核实成立，本包 T38 契约按此登记）。⑦〔低·JsonLite 定性〕testkit/JsonLite.cpp 非 UTF-8 DFA 第三副本（其合法性由装载层保证），T38 契约按『转义/代理对语义与 io appendUtf8 潜在重叠』表述登记给 WP-19。已定不动：C4 公式主体/C7 机械转写/单位表与冻结 token（core 权威）、T15 FNV/Identity、Compare.cpp T21 Boost 同时溢出分支、F-965/F-966。数值 oracle＝改前/改后同向量行为逐位一致（含 CompareTest 既有 NonFiniteInputsFalse/FractionRejectedScalingCases/FiniteOverflowBoundary 断言与 B31 oracle.py Fraction 极值集冻结结论引用）。验证命令与分批口径按根 AGENTS.md §4 增量范围执行；实施完成待独验，不自签、不置 done。 scope区间补记（验收FAIL修复）：verify-task-scope对本包三契约统一按\"WP-15包起点→送验HEAD\"区间核对（T37越界27=T38的21+T39的6；T38越界75=T37的69+T39的6；T39越界90=T37的69+T38的21），故三契约allowedFiles同取包足迹联合覆盖（本包三批全部路径+各自验收预留位），各契约自身实施面语义不变；跨批路径的授权语义由对应批契约与changes凭证承载。",
  "governanceAcceptance": {
   "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
   "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
