@@ -1,0 +1,6 @@
+candidate CPP digest : 8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8
+product  CPP digest  : 8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8
+candidate TEST digest: 589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600
+product  TEST digest : 589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600
+CPP bitwise equal: True   TEST bitwise equal: True
+base blob (45e3e80ea): 64ad2088b0ddfcd2693c8bcaf2264479d6ae0310

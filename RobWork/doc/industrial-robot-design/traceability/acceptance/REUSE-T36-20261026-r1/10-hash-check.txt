@@ -1,0 +1,11 @@
+policy/src/CollisionEvaluator.cpp => 8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8  MATCH-claimed
+policy/test/CollisionSessionTest.cpp => 589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600  MATCH-claimed
+production-buildPolicyProximitySetup.json => 77cd10b0c47b7d757193fe63e7227039c92b26e29bf86919ac961dccfac9108e  MATCH-claimed
+production-RobWorkCollisionEvaluator.json => f28383d51c0d3c5cc4f271ec665700a582711d2f659acd591149dc5c605d06f7  MATCH-claimed
+runtime/src/NameMap.cpp (inputs) => 152e35ac0ab3821924d7e789e11c0921d3fca57b97af40ab05ee5a200dbaea53
+policy/CMakeLists.txt (inputs) => 4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220
+include CollisionEvaluator.hpp (inputs) => 0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9
+--- REUSE-T33 cross-batch hygiene ---
+REUSE-T33/final.log Digest = c8e05abea1f8e35fe286f3c4d630e263606eef818a119bc34c093205c6943bec
+--- catalog COLLISION review evidence ---
+collision-capability-review.json Digest = 85a5763e091f6c305f0c3dc48f5e911ba49ff1cd7d98e874c01afafca669b918

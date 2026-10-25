@@ -1,0 +1,73 @@
+=== catalog COLLISION ===
+props: id, search, boundary, upstream, build, usages, limits, ownerUnit, examples, docs, operations, review, tests, resourceSearch
+status: 
+baseline/version fields: 
+upstream entries: 7
+ - RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp | target=sdurw_proximity | sha=9f1938197c15a8758412cbc1e66d50147bd341d211fea67c9ded340aaaba0104
+ - RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp | target=sdurw_proximity | sha=6036e3a5df16c3fe1c724547fc0c186ae9a7362286ae4f44dd6e669082508172
+ - RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp | target=sdurw_proximity | sha=4a62b9f99f841229b02d74b0798bccd4d5d668485ad4511ee593a7b5eee04650
+ - RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp | target=sdurw_proximity | sha=c44184668f172bd401b5fd747ed07117c59a438f2551724374c9fcb8aa74b6bf
+ - RobWork/RobWork/src/rw/proximity/ProximitySetup.hpp | target=sdurw_proximity | sha=5aec8e54347cec1b50cbe88152d43ed9807585c2881002c022b64bf3d94be8a5
+ - RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp | target=sdurw_proximity | sha=2fa1b7816b71f427504d35dd4e4ec4e8d7c3b5600fc26d0096013679b21a7bb5
+ - RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp | target=sdurw_proximity | sha=0852bd1c056c03c53d61e4e46996fe11021be5dc6ca51aed3892e70953b1c839
+
+=== kinematics/optimization random-LHS rows ===
+[kinematics] matched rows:
+ - kinematics.orientSampleRotation | pending/pending
+   search: rg -n "orientSampleRotation|toRotation3D" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest
+ - kinematics.generateRandomPositions | pending/pending
+   search: rg -n "generateRandomPositions|seed|ran|ranI" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest
+[optimization] matched rows:
+ - optimization.generateSeededLhsCandidates | business-specific/migrated
+   search: rg -n "generateSeededLhsCandidates|seed|ran|ranI" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S6（QSampler种子面、LHS词边界反证、sandbox构建注册、math采样器清单，命令与输出见REUSE-T36/random-lhs-search.md）
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.nextU64 | business-specific/migrated
+   search: rg -n "seed|generator|ranI|shuffle|Latin|latin|SplitMix" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.nextUnit | business-specific/migrated
+   search: rg -n "seed|generator|ranI|shuffle|Latin|latin|SplitMix" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.makeLayerPermutation | business-specific/migrated
+   search: rg -n "seed|generator|ranI|shuffle|Latin|latin|SplitMix" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.generateStageDJointCandidates | business-specific/migrated
+   search: rg -n "seed|generator|ranI|shuffle|Latin|latin|SplitMix" RobWork/RobWork/src/rw/math/Random.cpp RobWork/RobWork/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.contract_test.ContractTestMain.main | business-specific/migrated
+   search: rg -n "main\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md; sha256=bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e}
+ - optimization.perf_test.TestMainPerf.main | business-specific/migrated
+   search: rg -n "main\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md; sha256=bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e}
+ - optimization.test.TestMainReport.main | business-specific/migrated
+   search: rg -n "main\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md; sha256=bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e}
+ - optimization.CMake.ird_add_gtest | business-specific/migrated
+   search: rg -n "main\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.Pareto.slotValue | business-specific/migrated
+   search: rg -n "slotValue|RRT|QSampler|TrapMethod|Optimizer" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.Pareto.notWorse | business-specific/migrated
+   search: rg -n "notWorse|RRT|QSampler|TrapMethod|Optimizer" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+ - optimization.Pareto.strictlyBetter | business-specific/migrated
+   search: rg -n "strictlyBetter|RRT|QSampler|TrapMethod|Optimizer" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Pareto.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest
+   nonOverlap: @{path=RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json; sha256=6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896}
+
+=== findings.json F-961 ===
+{
+  "id": "F-961",
+  "source": "traceability/reuse/REUSE-T01/policy-boundary-audit.md / probe-r18",
+  "severity": "major",
+  "status": "fixed",
+  "registeredAt": "2026-10-23",
+  "title": "policy会话将合法REGEX前缀完整名传入上游模式API，产出的排除规则无法匹配原对象名",
+  "owner": "policy / REUSE-T05",
+  "resolution": "原policy CMake目标和原会话夹具真实编译，新2项1passed/1failed。runtime合法字符集允许REGEXarm，ProximitySetupRule把REGEX前缀后的字符串当正则；setup规则原名匹配false。仅证实公开setup输出错误，evaluate当前按scope直接逐对query，不声称已复现碰撞误判。T05用既有模式接口的最小字面适配，保留名称真值和上游API，先补原会话回归；不改上游或另建规则引擎。2026-10-25 REUSE-T36（WP-13）按本路线完成修复候选并验证：上游无字面API实核（makeExclude/makeInclude全走convertToRegEx）后单点字面适配（toUpstreamRulePattern镜像上游REGEX分支条件+ECMAScript全集转义，普通名透传零扰动），B18反例未修复码红（1 failed）修复后转绿（3用例）+候选构建全量214项回归；因复用门禁对改动文件要求全文件解决（超出WP-13边界，COLLISION capability仍candidate）经所有者裁决按T33 blocked先例留存候选（traceability/reuse/REUSE-T36/candidate/），产品未改；evaluate仍不消费setup，不声称碰撞误判修复；保持open至候选随policy单元迁移包落地并独立验收。2026-10-26 REUSE-T36落地批（所有者批量批准落地裁决表第1~4项，解阻原全文件解决批blocked）：候选diff对45e3e80ea干净应用（产品文件与候选全文件摘要逐位一致），policy全量214/214＋受影响四消费者全绿；全文件解决批一次收口（18行migrated＋2 helper＋20 audit铺面＋三grant＋COLLISION verified升级）；disconnected-bps真实生产变异红例复验（去适配即回F-961同型反例）＋恢复复测绿（final-recheck）。实证范围仍止于公开setup规则输出正字性（REGEX前缀完整名规则match原名、存储pattern字面化），evaluate不消费setup过滤，不声称碰撞误判修复；独立验收另行执行。"
+}
+base functions: 56
+base status migrated: 1
+base status pending: 55
+base decision business-specific: 1
+base decision pending: 55

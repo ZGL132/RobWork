@@ -4,7 +4,7 @@
   "unit": "policy",
   "masterWp": "WP-C",
   "title": "policy名称规则F-961修正候选（blocked已解阻）落地（复用门禁全文件解决批）与随机/LHS候选独立审查",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "GOV-T21",
@@ -50,6 +50,8 @@
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/verification.json",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/**",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
     "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp"
   ],
@@ -74,7 +76,7 @@
     "治理schema扩展（实施中发现同型死锁：policy测试文件既有模型构造面construct/mutate-model被:92 model-ownership与:84 runtime-owner双规则夹死无合法origin，且为WP-04/05/07测试落地必然障碍；经主会话按2026-10-26所有者落地授权脉络裁决批准、治理批独立提交可回退、待所有者追认）：reuse-contract.ps1新增origin=test-fixture（仅/test/路径合法，仅豁免夹具装配所必需model操作；host/graphics与worker边界不变），test-reuse-governance.ps1正负例三用例（正例=test路径+test-fixture PASS；负例=非test路径冒用拒；负例=test文件模型操作无grant拒）155全绿，ARCH §3.6.2.1+v0.16登记",
     "F-961收口口径：findings.json resolution改fixed的实证范围止于公开setup规则输出正字性（REGEX前缀完整名规则match原名/存储pattern字面化）；evaluate逐对直查不消费setup过滤，不声称碰撞误判修复"
   ],
-  "note": "migration §13.3 WP-13 policy子任务（T05 policy精确子任务，T05父任务planned不阻断——T18/T26/T27/T28先例同型）。**blocked已解阻（2026-10-26所有者批量批准落地裁决表第1~4项，原包边界扩至全文件解决批）**：候选按candidate/*.diff对45e3e80ea落地，全文件解决批（18行migrated＋逐行证据＋grant＋COLLISION verified＋区段铺面）一次收口。**披露义务（治理schema扩展）**：落地实施中发现policy测试文件（CollisionSessionTest.cpp既有夹具make_shared<WorkCell>/addDevice）触发IRD-GATE-AD死锁（construct/mutate-model强制origin=runtime-owner→unit必须runtime），probe-ad-extract.ps1逐字复刻门禁提取实测在案；经主会话escalate按所有者落地授权脉络裁决批准test-fixture例外（ARCH §3.6.2.1、门禁实现、自测正负例三用例、独立[governance]提交可整体回退），待所有者追认——此死锁同为WP-04/05/07测试落地必然障碍。F-961证据链：findings.json(major/open/owner policy REUSE-T05)、REUSE-T01/policy-boundary-audit.md §F-961、B18独验(1passed/1failed独立复现)、本批disconnected-bps变异红例同型。随机/LHS独立审查为原批准范围内交付（零生产改动，矩阵维持pending）。跨批治理卫生（production-rpy.json陈旧绑定同步）见acceptance第4项。原起始0e14bf3e79e46a830ca1b882e4a67ecddf4335e7（blocked批）；落地批起始45e3e80ea08fd65e564501212347cfdc9d9a356b。",
+  "note": "migration §13.3 WP-13 policy子任务（T05 policy精确子任务，T05父任务planned不阻断——T18/T26/T27/T28先例同型）。**blocked已解阻（2026-10-26所有者批量批准落地裁决表第1~4项，原包边界扩至全文件解决批）**：候选按candidate/*.diff对45e3e80ea落地，全文件解决批（18行migrated＋逐行证据＋grant＋COLLISION verified＋区段铺面）一次收口。**披露义务（治理schema扩展）**：落地实施中发现policy测试文件（CollisionSessionTest.cpp既有夹具make_shared<WorkCell>/addDevice）触发IRD-GATE-AD死锁（construct/mutate-model强制origin=runtime-owner→unit必须runtime），probe-ad-extract.ps1逐字复刻门禁提取实测在案；经主会话escalate按所有者落地授权脉络裁决批准test-fixture例外（ARCH §3.6.2.1、门禁实现、自测正负例三用例、独立[governance]提交可整体回退），待所有者追认——此死锁同为WP-04/05/07测试落地必然障碍。F-961证据链：findings.json(major/open/owner policy REUSE-T05)、REUSE-T01/policy-boundary-audit.md §F-961、B18独验(1passed/1failed独立复现)、本批disconnected-bps变异红例同型。随机/LHS独立审查为原批准范围内交付（零生产改动，矩阵维持pending）。跨批治理卫生（production-rpy.json陈旧绑定同步）见acceptance第4项。原起始0e14bf3e79e46a830ca1b882e4a67ecddf4335e7（blocked批）；落地批起始45e3e80ea08fd65e564501212347cfdc9d9a356b。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T36-20261026-r1.json（复跑原件在其同名目录 29 件：环境/范围定界/构建与ird_gates/policy 全量与 gtest XML/四消费者/治理自测/commit-lint/validate-task/validate-docs 45 契约/全语料定性/Digest 复算/候选同一性/红线合集/外部删除事件处置），verdict=pass（19 项验收检查 failed=0/skipped=0/notRun=3——变异不现场重放静态核证/DeepEvidence 不要求/359 老契约逐份不跑；测试计数另列互不相加：policy 214/214 含 3 个 F961 用例全 passed、四消费者 kinematics 292=291+1 既有环境 skip/trajectory 193/modeling 480/optimization 215=214+1 既有环境 skip，本轮 HEAD 树真实复跑），绑定送验 SHA=d8508b1ccd4cb3e033e0638e277aa36f0000e137（base=45e3e80ea08fd65e564501212347cfdc9d9a356b，冻结范围恰 2 提交：3d5753861 治理批＋d8508b1cc 落地批）；授权口径＝所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。核对要点（验收记录 checks 19 项）：verify-task-scope 显式 Base/Head 复跑 exit 0（36 路径全在允许面，零 forbidden 命中）；候选/产品逐位一致（8ddfbb5d…/589599905…，基线 blob 64ad2088b 吻合，落地 diff 与 candidate/*.diff 逐行同一）；红转绿 oracle 链与 disconnected 变异红例原件静态核证成立；上游镜像条件实核（ProximitySetupRule.cpp:30 逐字镜像）；evaluate 不消费 setup 收口口径核立；全文件解决批行账闭环（56→78 行算术严丝合缝，2 adapter 四套证据、changes 凭证 Digest 一致）；三 grant 与 catalog verified 升级核验（upstream 冻结版一致性抽样）；随机/LHS 审查与矩阵维持 pending 核立；findings/migration 三处同步核立；治理批 diff 恰三处语义变更零扩权、ARCH §3.6.2.1 在案、自测 155/155 验收员亲跑；红线 H1—H6/CLOSURE 冻结/上游-vcpkg 零触及抽查全过；当前 HEAD validate-task T36＋validate-docs 现行治理 45 契约全量 PASS。非阻断发现三条在案（nonBlockingFindings）：①契约 acceptance 第 4 项 f38b31ff… 文字为 blocked 批中间值（先于 base 的 13680ab87 已重钉 c8e05abe…，事实链 migration §13.2 完整记载，文档陈旧非状态缺陷，建议所有者后续修订）；②语料级 359 份老契约缺 reuse 字段＋聚合文件陈旧条目致全语料 validate-docs 结构性失败——先于本批存在、与本批正交，交所有者裁决老契约世代处置；③test-fixture 例外维持待所有者追认（追认前治理批 3d5753861 可整体回退）。验收期间外部删除事件（9 文件）经 git restore 自送验 HEAD 逐字节恢复，对结论零影响（15-incident-note.md）。limitations（验收记录原文）：PASS 仅绑定送验范围；不解除 test-fixture 追认义务；不构成 policy 单元迁移包（REUSE-T05 父任务）收口；validate-reuse 仍 governance only。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",

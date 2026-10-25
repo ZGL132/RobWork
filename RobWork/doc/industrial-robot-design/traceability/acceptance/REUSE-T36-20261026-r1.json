@@ -1,0 +1,143 @@
+{
+  "taskId": "REUSE-T36",
+  "baseCommit": "45e3e80ea08fd65e564501212347cfdc9d9a356b",
+  "reviewedCommit": "d8508b1ccd4cb3e033e0638e277aa36f0000e137",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T06:30:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T36/WP-13 单次验收子智能体（独立验收员，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何产品/治理/文档文件、未提交、未切分支、未建工作树、未远程操作。验收期间发生一次外部删除事件（9 个 git 跟踪文件被非本会话方删除），本会话以 git restore 从送验 HEAD 逐字节恢复（见 15-incident-note.md 与 executionNotes）；变异断开实验不做现场重放（不触碰生产源码），仅静态核证原件链；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 45e3e80ea08fd65e564501212347cfdc9d9a356b..d8508b1ccd4cb3e033e0638e277aa36f0000e137（2 提交：3d5753861 治理批 test-fixture 例外＋d8508b1cc 落地批，冻结范围）送验实现：verify-task-scope 显式 Base/Head 复跑、契约九条 acceptance 逐项清单式增量复验（policy 214 套件与四消费者 1180 项真实重跑；候选既有证据引用但关键项抽验——候选/产品逐位一致、红转绿链、变异红例原件、生产证据 Digest 全复算）、红线抽查（H1—H6、架构红线、closures 冻结、无平行回流、宿主例外治理批边界与 ARCH 登记、上游冻结版一致性）、当前 HEAD 门禁实测（validate-task T36＋validate-docs 现行复用治理 45 契约全量 PASS；全语料结构性失败集定性）。",
+  "counts": {
+    "failed": 0,
+    "passed": 19,
+    "notRun": 3,
+    "skipped": 0,
+    "unit": "19 项验收检查；集成/消费者测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场：HEAD=d8508b1cc 恰为送验 head（01-environment.txt），分支 redesign-main，base 为 head 直接祖先（merge-base --is-ancestor），base..head 恰 2 提交与冻结范围一致；验收全程工作区与 HEAD 零差异（多次复核），未跟踪仅验收产物目录；构建缓存 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON。验收期间外部删除事件见 checks 19。",
+    "范围（ask ①）：verify-task-scope 显式 -Base 45e3e80ea -Head d8508b1cc exit 0，changed=36 allowedRules=19 forbiddenRules=3，36 路径全部在契约允许面内（02-scope.log）；逐名核对 36 文件（02b-range-files.txt）零 RobWork/RobWork/src/**、零 RobWorkSim/src/**、零 vcpkg/**、零 patches/、零 old/ 路径。",
+    "提交链：3d5753861『[governance] 新增test-fixture测试夹具权限例外解除IRD-GATE-AD死锁（待所有者追认）』＋d8508b1cc『[WP-13-T36] F-961 policy名称规则修复落地与全文件解决批收口』标题前缀合规、正文与 diff 内容逐点对应；commit-lint -Range 45e3e80ea..d8508b1cc exit 0『PASS（2 个提交全部合规）』（07-commit-lint.log），同时覆盖契约 verify[1]。",
+    "policy 全量数值复验（真实重跑，ask ②数值真实执行）：构建 sdurws_ird_policy_test＋ird_gates exit 0；run-tests.ps1 -Regex '^sdurws_ird_policy_test$' exit 0，ird-test-report.json total=214 passed=214 failed=0 skipped=0 notRun=0 decisive=true（04-policy-test.log、04-policy-ird-test-report.json）；另以 exe 直跑 --gtest_output 固化 XML=214 testcase、0 failure、0 skipped（04-policy-gtest.xml）。3 个 F961 用例在本人重跑中全部 passed：RegexPrefixedNamesExcludeRuleMatchesLiteral_F961/PlainDottedNamesPassThroughLiterally_F961/RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961。211 基线＋3 F961=214 与实现方口径一致。",
+    "受影响四消费者真实重跑：kinematics 292=291 passed＋1 既有环境 skip（PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1）/trajectory 193 全过/modeling 480 全过/optimization 215=214 passed＋1 既有环境 skip（OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable），全部 exit 0、XML testcase 计数 292/193/480/215、failures=0、skipped 恰为上述 1/0/0/1（05-consumer-*.log/.xml）——与实现方及契约 acceptance 第6项计数逐一吻合。",
+    "ird_gates 静态门禁：目标构建运行 exit 0，『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』＋fail_* 自测按预期检出（03-build-ird-gates.log，GBK 控制台编码同 T30 先例）；R-5 豁免表实读（ird_gates.cmake:676-684——rw/proximity 仅许 policy 目标）与本包 policy 内包含 ProximitySetupRule.hpp 一致且无越界。构建期 validate-reuse PASS governance only（changed=113 DEBT=16 UNRESOLVED=1399；REUSE-AD-PENDING 命中 runtime-Snapshot/ui 等他包既有债务，非本包 36 路径）。",
+    "候选→产品逐位一致（acceptance ⑥抽验①）：candidate/CollisionEvaluator.cpp 与产品文件按治理 Digest 口径同为 8ddfbb5d…、candidate/CollisionSessionTest.cpp 与产品同为 589599905…，-ceq 逐位比较均 True；基线 blob 实证 45e3e80ea:CollisionEvaluator.cpp=64ad2088b0ddfcd2693c8bcaf2264479d6ae0310 与契约『blob 64ad2088b』吻合；落地 diff 与 candidate/*.diff 逐行同一（剥离 index 行后 diff 为空，11-candidate-identity.txt）——『候选复核干净应用』成立。",
+    "红转绿 oracle 链原件抽验（acceptance ②/⑥）：f961-red.log 未修复码恰以 F-961 缺陷形态红（存储 pattern=原名 'REGEXarm.link_1' ≠ 期望 'REGEXREGEXarm\\.link_1'，RegexPrefixedNamesExcludeRuleMatchesLiteral_F961 FAILED）；f961-green.log 3/3 绿；final-recheck.log/xml 214/214 真实执行；disconnected-bps.xml=2 tests/1 failure（恰 F961 用例红）、disconnected-ctor.xml=1 test/1 failure（会话 fail-fast 面）；production/CollisionEvaluator.mutated-bps.cpp 对落地版 diff 恰 2 行（:841/:847 toUpstreamRulePattern 适配点回退原名直传）——『去适配即回 F-961 同型反例』真实生产变异成立。变异不现场重放（验收会话不触碰生产源码），以原件链静态核证。",
+    "上游镜像条件实核（H6）：RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp:30 convertToRegEx 条件 `ex.size () > 5 && ex.substr (0, 5) == \"REGEX\"` 与产品 toUpstreamRulePattern `name.size() > 5 && name.compare(0, 5, \"REGEX\") == 0` 逐字镜像；ProximitySetupRule.hpp:147-178 makeExclude/makeInclude 全经构造函数（无字面 API）；rw/core/StringUtil.cpp:283-298 patternToRegEx 实读（转义集合与产品 escapeRegexLiteral 注释声明相符，REGEX 分支绕过该函数故产品转义自足）——代码注释三处上游引用全部真实。",
+    "evaluate 不消费 setup 过滤（acceptance ⑤收口口径）：CollisionQuery.cpp:550 evaluate 逐 scope 对直查 m_strategy->inCollision(frameA,wTa,frameB,wTb)，无 ProximitySetup 过滤消费路径；findings.json F-961 status=fixed 的 resolution 明示『实证范围止于公开 setup 规则输出正字性，evaluate 不消费 setup 过滤，不声称碰撞误判修复』，与 B18/audit 口径一致——『不把未证实规则不匹配描述为碰撞漏检』成立。",
+    "全文件解决批行账闭环（acceptance ⑦）：policy.json base→head 56 行（1 migrated/55 pending）→78 行（41 migrated/37 pending）：18 既有碰撞链行 pending→migrated＋新增 2 helper 行（escapeRegexLiteral/toUpstreamRulePattern）＋20 audit-t36 铺面行（CE 空洞×6＋CollisionSessionTest 全文件×14）＋TestMainReport.main 既有——四项算术严丝合缝；2 adapter 行（buildPolicyProximitySetup/RobWorkCollisionEvaluator 构造）各持 evidence.path 绑定 production json，两件 production json Digest 实算 77cd10b0…/f28383d5… 与登记相符（含 normal/disconnected/oracle/upstreamComparison 四套，disconnected 即 checks 8 变异红例）；changes/REUSE-T36.json 两文件凭证 sha256=8ddfbb5d…/589599905… 与工作区实测一致；矩阵 inputs 抽样（NameMap.cpp 152e35ac、CMakeLists 4865932a、CollisionEvaluator.hpp 0f672f0e）全部 MATCH。",
+    "permissions.json 三 grant（acceptance ⑦）：11→14 恰新增 3 条——policy-collision-evaluator（task-private/collision+model/query/adapter，source sha 8ddfbb5d）、policy-collision-backend（task-private/collision/query/adapter，source sha 9c6dac00 实算相符）、policy-collision-test-fixture（test-fixture/collision+model+state/query+construct-model+mutate-model，路径在产品树 /test/ 下，lifetime 明示 ARCH §3.6.2.1 与待追认）；无扩散、无生产文件冒用 test-fixture。",
+    "catalog COLLISION candidate→verified（acceptance ⑧）：catalog review.status=verified、review.version=b12e8503、review.evidence sha=85a5763e… 实算相符；collision-capability-review.json 实读（upgrade=basis 五条＋limits 四条——makeExclude 非字面 API/REGEX 约定镜像复核义务/无 DistanceStrategy/evaluate 不消费 setup 不声称碰撞误判修复，reviewer 如实标注实施自检＋本包独验覆盖）；catalog upstream 7 文件工作区 Digest 与登记全符，冻结版一致性经 `git cat-file blob b12e8503:path` 复算 2 件抽样 frozen==worktree（其余由门禁 SUITABILITY 对 verified 能力的机器核对承重且已 PASS）。",
+    "随机/LHS 独立审查（acceptance ③）：random-lhs-search.md 实读 S1—S8 结构完整（rw::math::Random 进程级 boost mt19937 全局态/Random.cpp:50-53 seed(unsigned) 32 位截断实读相符/S4r 词边界修正诚实登记假阳性作废/S8 sandbox 无优化目标结论）；矩阵 kinematics.orientSampleRotation/generateRandomPositions 维持 pending/pending 持真实检索命令，optimization.generateSeededLhsCandidates 行 search 追加 REUSE-T36 补检 S3/S4r/S5/S6——零生产改动、维持 pending 与契约口径一致。",
+    "findings/migration 收口同步（acceptance ⑤⑨）：findings.json F-961 resolution 完整记载 blocked→落地批历史且口径三处一致（findings/契约/collision-capability-review limits）；migration.md §13.1 WP-13 段、§13.2 阻断表行、§13.3 WP-13 行三处同步『已落地』并保持『独立验收另行执行』未假关；§13.2 另行完整记载 REUSE-T33 final.log GBK 双运行时二象根治（681754d3→f38b31ff→c8e05abe 重钉链）。",
+    "治理批核验（ask 定向项）：reuse-contract.ps1 diff 恰三处语义变更——origin 白名单加 test-fixture、非 /test/ 路径用该 origin Fail 'AD'、模型所有权操作豁免条件 `($g.origin -eq 'test-fixture' -and $isTestFixturePath)`；host/graphics 强制 host-presentation 规则、write-state 规则、runtime-owner→unit=runtime 规则零改动（ARCH §3.6.1 红线未放宽）；CheckProductionEvidence 处一处为纯行尾 LF→CRLF 归一零语义；foundation-governance.json 10 处 inputs 绑定全部携带新摘要 e431903b…（实算相符）；ARCHITECTURE.md §3.6.2.1 新增＋v0.16 变更记录在案（范围/理由/与 SA-19 关系/授权脉络/待追认）；test-reuse-governance.ps1 本人重跑 exit 0『passed=155 skipped=0 failed=0』（06-governance-selftest.log），三个新用例在案：fixture-test-fixture-grant-positive PASS／fixture-test-fixture-origin-outside-test-rejected 恰检出 REUSE-AD／fixture-test-model-operation-without-grant-rejected 恰检出 REUSE-AD。",
+    "红线合集：H1——上游无字面名 API 经实核（checks 9），采用薄适配（H1 序列次级）且 findings.resolution 已批路线，非新实现；H2——无第二规则引擎，仅模式串单点转写，产品名称真值保持；H3——沿用 rw::proximity 上游类型/接口与 gtest 规范，产品中文契约注释齐备；H4/H5——范围 36 文件对框架/vcpkg/patches 零触及，无新核心/上游扩展，ird_gates SA02 框架工作区零未登记改动零命中；H6——capability/矩阵/凭证/production/upstream 五层 Digest 抽样全符（10/11/12/13 号证据）；CLOSURE 冻结——closures.json 范围 diff 零输出（13-redline-check.txt）；无 old/ 回流；宿主例外未扩越权（checks 16），test-fixture 不适用于非 test 路径且豁免仅 model 构造型操作、不含 load/clone/publish/write-state（门禁规则与三用例负例实证）。",
+    "当前 HEAD 门禁实测（ask ④）：validate-task T36 exit 0『PASS (1 tasks)』（08-validate-task.log，含全量复用检查 PASS governance only）；validate-docs -TaskFile 现行复用治理全量 45 契约（tasks 75 单文件＋foundation 349 单文件中 status∈ready/done 且持 H1-H6 reuse 契约的全部）exit 0：validate-task PASS (45 tasks)＋validate-reuse PASS governance only＋文档门禁 PASS (20 units, 12 trace entries, 424 task files…)（09-validate-docs-modern45.log）。",
+    "全语料定性（ask ④的诚实边界）：对 424 份单文件契约全量传参时 validate-docs 于 DOC-T01 失败『reuse contract required』（validate-reuse.ps1:73 要求 ready/done 契约持 reuse 字段）；语料扫描（14-corpus-reuse-scan.txt）定性：404 份 ready/done 单文件契约中 359 份为复用治理之前世代（DOC-T/foundation CORE·DIAG·EV·EX·IO·POL·PRJ·RPT·RT·TK·UI/早期 WP-*）缺 reuse 字段，均不在本批范围且文件与规则在本范围零改动——该失败先于本批存在、与本批正交；聚合文件 foundation-tasks.json 首元素 CORE-T01（status=ready、allowedFiles=null）同样触发既有规则（validate-task.ps1:87 F-855，单独复现在案）。现行治理适用集 45 契约全量 PASS 即本包门禁义务的满足面（checks 17）。",
+    "验收期间外部删除事件处置：05:39:29/05:40:02 两波共 9 个 git 跟踪文件被非本会话方删除（恰为本验收 Digest 复核对象集；删除前本会话已成功读取其中多件），05:43:53 以 git restore 从送验 HEAD 逐字节恢复，恢复后全部 Digest 复算与登记 MATCH、工作区与 HEAD 零差异且无复发；删除前 git status 快照固存 incident-git-status-before-restore.txt，全程见 15-incident-note.md。事件对本验收结论零影响。"
+  ],
+  "integrationTest": {
+    "policy": {
+      "tests": 214,
+      "passed": 214,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "evidence": "04-policy-test.log、04-policy-ird-test-report.json（decisive=true）、04-policy-gtest.xml（214 testcase/0 failure）",
+      "binding": "运行于当前 HEAD 树＝送验 head d8508b1cc 本尊（无后继提交），结果直接绑定送验 SHA；含 3 个 F961 用例全 passed"
+    },
+    "consumers": {
+      "kinematics": { "tests": 292, "passed": 291, "failed": 0, "skipped": 1, "skippedCase": "PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1（既有 GUI 环境 skip，与本包无关）" },
+      "trajectory": { "tests": 193, "passed": 193, "failed": 0, "skipped": 0 },
+      "modeling": { "tests": 480, "passed": 480, "failed": 0, "skipped": 0 },
+      "optimization": { "tests": 215, "passed": 214, "failed": 0, "skipped": 1, "skippedCase": "OptPanelGui.WidgetPresentationDeferredToHarnessEnvUnavailable（既有环境 skip，与本包无关）" },
+      "exitCode": 0,
+      "evidence": "05-consumer-{kinematics,trajectory,modeling,optimization}.log/.xml（XML failures=0，skipped 恰 1/0/0/1）",
+      "binding": "四套件运行于送验 head 本尊树，绑定 d8508b1cc"
+    }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T36.json -Base 45e3e80ea08fd65e564501212347cfdc9d9a356b -Head d8508b1ccd4cb3e033e0638e277aa36f0000e137", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 45e3e80ea08fd65e564501212347cfdc9d9a356b..d8508b1ccd4cb3e033e0638e277aa36f0000e137", "exitCode": 0, "passed": true, "log": "07-commit-lint.log" },
+    { "name": "build-policy-gates", "command": "cmake --build build --config Release --target sdurws_ird_policy_test ird_gates（另单独重跑 --target ird_gates 固化日志）", "exitCode": 0, "passed": true, "log": "03-build-ird-gates.log" },
+    { "name": "policy-test-full", "command": "pwsh -NoProfile -File RobWork/scripts/industrial-robot/run-tests.ps1 -Configuration Release -BuildDirectory build -NoConfigure -Regex '^sdurws_ird_policy_test$'", "exitCode": 0, "passed": true, "log": "04-policy-test.log", "report": "04-policy-ird-test-report.json" },
+    { "name": "policy-test-xml", "command": "sdurws_ird_policy_test.exe --gtest_output=xml:04-policy-gtest.xml（PATH 前置 build/RobWork bin|libs/Release＋vcpkg installed/x64-windows/bin；QT_QPA_PLATFORM=windows）", "exitCode": 0, "passed": true, "xml": "04-policy-gtest.xml" },
+    { "name": "build-consumers", "command": "cmake --build build --config Release --target sdurws_ird_kinematics_test sdurws_ird_trajectory_test sdurws_ird_modeling_test sdurws_ird_optimization_test", "exitCode": 0, "passed": true },
+    { "name": "consumer-tests", "command": "sdurws_ird_{kinematics,trajectory,modeling,optimization}_test.exe --gtest_output=xml:05-consumer-<unit>.xml（四套件顺序直跑，同 policy 的 PATH/QT 环境）", "exitCode": 0, "passed": true, "log": "05-consumer-*.log", "xml": "05-consumer-*.xml" },
+    { "name": "governance-selftest", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "06-governance-selftest.log（passed=155 skipped=0 failed=0）" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T36.json", "exitCode": 0, "passed": true, "log": "08-validate-task.log" },
+    { "name": "validate-docs-modern45", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; $tf=@(现代治理 45 契约相对路径数组); & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile $tf; exit $LASTEXITCODE\"（PowerShell 数组传参）", "exitCode": 0, "passed": true, "log": "09-validate-docs-modern45.log" },
+    { "name": "validate-docs-all-individual", "command": "同上数组形式传 424 份单文件契约（75＋349）", "exitCode": 1, "passed": false, "log": "09-validate-docs-all.log", "note": "于 DOC-T01 失败『reuse contract required』——359 份复用治理前老契约缺 reuse 字段（14-corpus-reuse-scan.txt），规则 validate-reuse.ps1:73 与相关文件均不在本范围，先于本批存在；非本包缺陷，登记为语料级非阻断发现" },
+    { "name": "corpus-scan", "command": "pwsh 扫描 404 份 ready/done 契约的 reuse 字段在位性＋聚合文件 CORE-T01 单独 validate-task 复现", "exitCode": 0, "passed": true, "log": "14-corpus-reuse-scan.txt" },
+    { "name": "digest-verify", "command": "pwsh 按 validate-reuse.ps1:40 Digest 同口径（BOM 剥除/CRLF→LF/尾单换行）复算：产品两文件/两 production json/矩阵 inputs 抽样/两 grant source/catalog evidence/upstream 7 文件及冻结版 cat-file 抽样/reuse-contract.ps1 新摘要 10 绑定", "exitCode": 0, "passed": true, "log": "10-hash-check.txt、11-candidate-identity.txt、12-catalog-matrix-check.txt" }
+  ],
+  "executionNotes": [
+    "验收全程在 HEAD=d8508b1cc 本尊树上执行（未切分支未重建配置），全部数值结果直接绑定送验 SHA，无树间转引。",
+    "现场事件：验收中段发生一次外部删除事件（9 文件，05:39:29/05:40:02，非本会话所为），本会话以 git restore 自送验 HEAD 恢复后继续；恢复后 Digest 全部 MATCH、零差异多次复核无复发。另登记验收员自身两处 PowerShell 调用瑕疵造成的假读数（无括号 [IO.File]::ReadAllText 方法组字符串化→伪值 c0e69b8f…；函数名 RD 撞内置别名）——均非现场异动，详见 15-incident-note.md。",
+    "契约 acceptance 第4项文字引用『同步为 tip 实际摘要 f38b31ff…』与 HEAD 现状不符：production-rpy.json 现绑定 c8e05abe…（本验收 Digest 复算一致）。事实链＝该跨批治理卫生修复完成于 blocked 批（e5364bd6c，先于 base 45e3e80ea），其后所有者派遣治理诊断在 13680ab87（亦先于 base）根治愈 GBK 双运行时摘要二象并将 final.log 重存严格 UTF-8、绑定重钉 f38b31ff→c8e05abe（migration §13.2 完整记载）；契约文字未随 13680ab87 级联更新，属文档陈旧非状态缺陷——本范围内 production-rpy.json/final.log 零改动，『validate-docs HEAD 全量复用检查不再因该文件必红』的实质主张已由本人 validate-docs 实跑证实。登记为非阻断发现（见 nonBlockingFindings）。",
+    "ird_gates 与 validate-reuse 输出为 GBK 控制台编码，03 日志中文段呈转码痕迹，关键结论行（零命中/全检查通过/PASS governance only）可辨读。",
+    "validate-reuse 在当前 HEAD 为 changed=113 DEBT=16 UNRESOLVED=1399 governance only；REUSE-AD-PENDING 命中 runtime-Snapshot/ui 等他包既有文件，非本包 36 路径，不构成算法合规放行。",
+    "全语料 validate-docs 的结构性失败（359 老契约＋聚合文件）非本批引入：范围 36 文件不含任何老契约、validate-reuse.ps1:73/validate-task.ps1:87 规则先于 base 存在（-S 溯源与范围 diff 为空双证）。ask 要求的『全部契约』实测已尽：能通过的最大契约集（现行治理 45 契约）全量 PASS，失败集完整定性落盘（14-corpus-reuse-scan.txt、09-validate-docs-all.log），交所有者裁决老契约世代处置。",
+    "test-fixture 治理例外按契约口径『待所有者追认』：本验收核验其实现边界未扩权、正负例与 ARCH 登记齐备、授权脉络（2026-10-26 所有者落地授权）在案，按该授权脉络接受其在门禁中生效；追认本身不在验收裁决范围内。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "变异断开实验现场重放（disconnected-bps/ctor）",
+      "reason": "重放须临时改动生产源码，与验收会话『除产物目录外不修改任何文件』约束冲突；以证据链静态核证替代（mutated-bps 对落地版恰 2 行差异＋disconnected.xml 真实失败面＋final-recheck 恢复绿，三面相符）。"
+    },
+    {
+      "item": "validate-docs -DeepEvidence 深度证据索引审计",
+      "reason": "AGENTS.md §4：深查显式运行，普通收口不要求重建全库索引；本包证据核对已按契约逐项 Digest 实算。"
+    },
+    {
+      "item": "359 份老契约逐份 validate-task 运行",
+      "reason": "失败为规则性结构失败（validate-reuse.ps1:73 reuse 字段缺失），语料扫描已完整枚举失败集（14-corpus-reuse-scan.txt）；逐份运行无信息增量，且聚合文件失败已单独复现在案。"
+    }
+  ],
+  "nonBlockingFindings": [
+    "契约 REUSE-T36.json acceptance 第4项引用的 final.log 摘要 f38b31ff… 为 blocked 批中间值，已被先于 base 的 13680ab87（所有者派遣治理诊断）重钉为 c8e05abe…（HEAD 实测相符、migration §13.2 完整记载）；建议所有者后续修订该契约文字（不在本批范围，不影响本批 pass）。",
+    "语料级：404 份 ready/done 单文件契约中 359 份缺 reuse 字段（validate-reuse.ps1:73 必败）＋聚合文件 foundation-tasks.json 陈旧条目（CORE-T01 ready 无 allowedFiles，validate-task.ps1:87 必败）——『全语料 validate-docs』在先于本批的任意提交上同样失败；现行治理适用集（45 契约）全量 PASS。老契约世代（DOC-T/foundation/早期 WP-*）的 reuse 契约补登记或状态口径，须所有者另行裁决。",
+    "治理批 test-fixture 例外维持『待所有者追认』状态（契约/ARCH/permissions lifetime 三处一致登记）；追认前该例外处于可整体回退的独立治理提交（3d5753861）。"
+  ],
+  "limitations": "PASS 仅绑定送验范围 45e3e80ea08fd65e564501212347cfdc9d9a356b..d8508b1ccd4cb3e033e0638e277aa36f0000e137（head=d8508b1ccd4cb3e033e0638e277aa36f0000e137）：F-961 policy 名称规则修复落地＋全文件解决批收口＋test-fixture 治理批＋随机/LHS 审查交付＋跨批卫生登记。实施完成待独验状态经本独立验收转正为本记录 pass；不解除 test-fixture 例外的所有者追认义务（追认前治理批可整体回退）；不构成 policy 单元迁移包（REUSE-T05 父任务）收口，不解除 migration §13 对其他单元 blocked 包的既有阻断；validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399），全语料级老契约失败集为先行存在条件（见 nonBlockingFindings），不在本包 pass 授信范围内。变异断开实验未现场重放（静态核证）；『validate-docs 全部契约』以现行治理 45 契约全量 PASS＋失败集完整定性交付。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/01-environment.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/02b-range-files.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/03-build-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/04-policy-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/04-policy-ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/04-policy-gtest.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-kinematics.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-kinematics.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-trajectory.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-trajectory.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-modeling.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-modeling.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-optimization.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/05-consumer-optimization.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/06-governance-selftest.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/07-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/08-validate-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/09-validate-docs-all.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/09-validate-docs-modern45.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/10-hash-check.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/11-candidate-identity.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/12-catalog-matrix-check.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/12-catalog-matrix-check.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/13-redline-check.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/14-corpus-reuse-scan.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/15-incident-note.md",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/hash-check.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T36-20261026-r1/incident-git-status-before-restore.txt"
+  ]
+}
