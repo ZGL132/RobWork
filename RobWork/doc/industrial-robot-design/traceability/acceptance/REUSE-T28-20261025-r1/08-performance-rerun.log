@@ -1,0 +1,22 @@
+perf.cpp
+perf-old.cpp
+perf-new.cpp
+perf-old-check.cpp
+perf-new-check.cpp
+正在生成代码...
+MSVC /O2 /MD /DNDEBUG; separate translation units; 1000000 iterations + 10000 warmup; us/call; alternating old/new order
+round=1 scene=0 old=0.00826710 new=0.01783760 ratio=2.1577 checksum=70026944.00000000
+round=1 scene=1 old=0.00882210 new=0.02097020 ratio=2.3770 checksum=67441287.68002722
+round=1 scene=2 old=0.00971860 new=0.01890760 ratio=1.9455 checksum=61647544.88912559
+round=1 scene=3 old=0.00258950 new=0.00227800 ratio=0.8797 checksum=152397897.99990493
+round=1 scene=4 old=0.66765680 new=0.71296520 ratio=1.0679 checksum=1010000.00000000
+round=2 scene=0 old=0.00931080 new=0.01824750 ratio=1.9598 checksum=70026944.00000000
+round=2 scene=1 old=0.00933280 new=0.01898890 ratio=2.0346 checksum=67441287.68002722
+round=2 scene=2 old=0.00919340 new=0.01907010 ratio=2.0743 checksum=61647544.88912559
+round=2 scene=3 old=0.00263230 new=0.00200760 ratio=0.7627 checksum=152397897.99990493
+round=2 scene=4 old=0.64814100 new=0.64640790 ratio=0.9973 checksum=1010000.00000000
+round=3 scene=0 old=0.00863900 new=0.01826500 ratio=2.1142 checksum=70026944.00000000
+round=3 scene=1 old=0.00929820 new=0.01864520 ratio=2.0052 checksum=67441287.68002722
+round=3 scene=2 old=0.00790680 new=0.01755610 ratio=2.2204 checksum=61647544.88912559
+round=3 scene=3 old=0.00246030 new=0.00185560 ratio=0.7542 checksum=152397897.99990493
+round=3 scene=4 old=0.71581700 new=0.67523780 ratio=0.9433 checksum=1010000.00000000
