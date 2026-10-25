@@ -1,0 +1,2 @@
+verify-task-scope: REUSE-T22 base=19f394a593f6 head=4585a59b9783 changed=3 allowedRules=3 forbiddenRules=3
+verify-task-scope: PASS REUSE-T22 —— 3 个路径全部在允许面内
