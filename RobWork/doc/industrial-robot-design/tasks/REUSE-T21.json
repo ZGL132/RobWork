@@ -4,7 +4,7 @@
   "unit": "core",
   "masterWp": "WP-A",
   "title": "C4同时溢出分支的成熟定宽原语适配",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "GOV-T21",
@@ -36,7 +36,9 @@
     "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-CORE-C4-01.md",
     "RobWork/doc/industrial-robot-design/reuse/extensions/required-proposals.md",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T21/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T21-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T21-20261025-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -50,7 +52,7 @@
     "完整Compare.cpp功能实审，C7/逐元素/长度错误保留原owner；同包不保留R2折叠/哨兵或平行fallback",
     "如实登记第三方来源及catalog表达债务，不以过渡机器标签冒充RobWork适配或整体合规；独验由所有者另行安排，不自签完成"
   ],
-  "note": "主工作树redesign-main串行，本轮起点2136a89d5cd65e7183c734956df68291862e0fc0；所有者2026-10-24明确答复“批准 R3 有界实施，最终性能另验”。批准对象为GAP-CORE-C4-01.md在2136a89d5的R3，规范SHA256=7c5d1ec99982215bffc1b41b21988e884b60c69499c7ccbccf36e6e64bc55f06。仅Compare私有Boost和同时溢出最小适配、第三方表达债务保留；不批准最终性能、正常语义变化、上游或新核心。外单元矩阵只刷新真实变动输入，不改变pending及原审计结论。不操作远程，不自签独验。 本轮实施自查：Fraction22831组、core74及受影响消费者/冒烟通过；真实库结果扰动3项预期FAIL并原字节恢复。最终性能已获本包明确接受，独验NOT RUN、F-966 OPEN；原始证据traceability/reuse/REUSE-T21/README.md。 所有者2026-10-24针对同轮旧/新正常及溢出计时明确答复“接受本次开销，交独验”；不外推其他能力包。",
+  "note": "主工作树redesign-main串行，本轮起点2136a89d5cd65e7183c734956df68291862e0fc0；所有者2026-10-24明确答复“批准 R3 有界实施，最终性能另验”。批准对象为GAP-CORE-C4-01.md在2136a89d5的R3，规范SHA256=7c5d1ec99982215bffc1b41b21988e884b60c69499c7ccbccf36e6e64bc55f06。仅Compare私有Boost和同时溢出最小适配、第三方表达债务保留；不批准最终性能、正常语义变化、上游或新核心。外单元矩阵只刷新真实变动输入，不改变pending及原审计结论。不操作远程，不自签独验。 本轮实施自查：Fraction22831组、core74及受影响消费者/冒烟通过；真实库结果扰动3项预期FAIL并原字节恢复。最终性能已获本包明确接受，独验NOT RUN、F-966 OPEN；原始证据traceability/reuse/REUSE-T21/README.md。 所有者2026-10-24针对同轮旧/新正常及溢出计时明确答复“接受本次开销，交独验”；不外推其他能力包。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T21-20261025-r1.json（12件复跑原件及测试XML在其同名目录），verdict=pass（14项检查failed=0；产品级最终独验、性能计时复跑、红例重放、全库深查按增量口径如实登记NOT RUN=4），绑定送验 SHA=19f394a593f67d19e6a6c6a0bc754c165581ad06（base=2136a89d5cd65e7183c734956df68291862e0fc0）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；核对全过——verify-task-scope显式Base/Head复跑exit 0（77路径全在允许面）、production-oracle零修改副本真实复跑22831组（overflow=13291/fixed=3494/溢出与未变路径错误均为0，production-new-calls=0，与实施原件f576345d…完全一致）、受影响8目标增量重建0警告＋9组测试core74/冒烟71/消费者239全PASS、红例原件核对（旧生产4项/库扰动3项预期FAIL留痕，原字节恢复SHA一致）、Compare.cpp全文实审无R2哨兵/fallback、ird_gates 11类零命中、validate-docs三合一exit 0、commit-lint PASS、manifest逐文件SHA按Digest口径复算MATCH、红线抽查（H1—H6/L2零Qt/CLOSURE冻结）全过；limitations：validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399），business/migrated为过渡标签，产品级最终数值/性能独验仍未完成（NOT RUN），F-966保持OPEN。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
