@@ -8,7 +8,7 @@
  "branch": "redesign-main",
  "dependsOn": ["GOV-T21", "GOV-T22"],
  "requirements": ["REP-01", "NFR-COR-01", "NFR-COR-02"],
- "designRefs": ["reuse/migration.md#13.3", "reuse/policy.md#1.2", "units/reporting.md"],
+ "designRefs": ["reuse/migration.md#13.3", "reuse/policy.md#1.2", "units/reporting.md#3"],
  "verify": [
   "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T45.json",
   "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
