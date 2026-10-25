@@ -4,7 +4,7 @@
   "unit": "testkit",
   "masterWp": "WP-A",
   "title": "F-958 testkit监听器所有权修复收口与29处消费者注释订正",
-  "status": "ready",
+  "status": "done",
   "branch": "codex/reuse-testkit-listener",
   "dependsOn": [
     "GOV-T21",
@@ -65,7 +65,9 @@
         "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/**",
         "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
         "RobWork/doc/industrial-robot-design/traceability/findings.json",
-        "RobWork/doc/industrial-robot-design/development-task-breakdown.md"
+        "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+        "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T18-20261025-r1.json",
+        "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T18-20261025-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -77,7 +79,7 @@
     "ird_gates复跑转绿；29处消费者注释订正仅动注释行",
     "实施与测试层面独立验收记录见listener-ownership/acceptance-sub1；整体准入由所有者裁决"
   ],
-  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned）。实施与定向测试已于fbd51e765完成并经acceptance-sub1独立验收（实施与测试层面）；本契约承接协调批共享文件落地：29处注释订正、功能矩阵整文件行覆盖登记、lsnchild白名单/DTB §4.5登记、changes清单与绑定刷新。lsnchild为test-only工具（tools/安装排除面），不入产品安装面。catalog/permissions无真实变化不改。不自签整体准入，不push。 2026-10-23合入登记：所有者裁决合入，Merge 658e0feb2（双亲c5a22b209+e128dd8e9，合并树＝交付树d34a0eeb）已并入redesign-main，合入后validate-reuse复跑PASS；远程同步另行处理。",
+  "note": "migration §12.11 精确能力子任务（父任务REUSE-T05保持planned）。实施与定向测试已于fbd51e765完成并经acceptance-sub1独立验收（实施与测试层面）；本契约承接协调批共享文件落地：29处注释订正、功能矩阵整文件行覆盖登记、lsnchild白名单/DTB §4.5登记、changes清单与绑定刷新。lsnchild为test-only工具（tools/安装排除面），不入产品安装面。catalog/permissions无真实变化不改。不自签整体准入，不push。 2026-10-23合入登记：所有者裁决合入，Merge 658e0feb2（双亲c5a22b209+e128dd8e9，合并树＝交付树d34a0eeb）已并入redesign-main，合入后validate-reuse复跑PASS；远程同步另行处理。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/REUSE-T18-20261025-r1.json（7件复跑原件在其同名目录），verdict=pass，绑定送验 SHA=658e0feb2e7becb4bc0d35090a54aeba998ae415（base=c5a22b209a94475d92e89bd6bddd86fb1c40f77c，合并树＝交付树 d34a0eeb5657 亲核零差异）；授权口径＝所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」与 2026-10-25/26 补救落地指令，授权工作流内单次验收子智能体（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签；12项检查全过——gtest公开契约原文亲核（Append/Release监听器所有权）、ird_gates对HEAD树与658e0feb2交付树（git archive导出）双复跑全绿、29处消费者剥注释等价核验 non-comment-only changes=0、acceptance-sub1原件核对（testkit 115/115双配置、core 69/69 failures=0，testkit/core源码对送验head零变化已证）、红线抽查H1—H6（fbd51e765仅两hunk接缝修注释+所有权移交；白名单纯新增未放宽）、commit-lint 9/9一包一组；verify-task-scope对merge全量diff字面exit 1的281越界路径经逐提交溯源与T18自身95文件零交集，全部归于随批基础平台REUSE-T13/T15/T16（各有契约与20261025-r1独验记录），T18自身95文件100%命中allowedFiles、forbidden零命中，本PASS不构成对随批包的范围豁免，记录scopeVerdict/limitations已显式登记字面结果与归因。limitations：validate-reuse仍governance only（DEBT=16、UNRESOLVED=1399未关闭）；交付树测试冒烟复跑NOT RUN（vcpkg×RobWorkConfig已知转义环境坑08-smoke-configure.log留痕，按AGENTS §4引用acceptance-sub1原件）；F-958已fixed且resolution维持「不宣称存量Release退出崩溃已复现」边界。据此登记 done。",
   "interUnit": true,
   "knownPitfalls": [
     "CR-07",

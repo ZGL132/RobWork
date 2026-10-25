@@ -1,0 +1,77 @@
+{
+  "taskId": "REUSE-T18",
+  "baseCommit": "c5a22b209a94475d92e89bd6bddd86fb1c40f77c",
+  "reviewedCommit": "658e0feb2e7becb4bc0d35090a54aeba998ae415",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T05:54:36+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T18 单次验收子智能体（独立验收工作流内，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施（实施由另一串行会话完成，实施本体 fbd51e765 经 acceptance-sub1 独验）；除写入本验收产物目录与本记录外未修改任何被跟踪文件、未提交、未切分支、未建工作树、未远程操作、未重配或重建主构建树缓存（build/acc-t18/* 为本次新建临时目录，含验收自建脚本与交付树 git-archive 导出，不属于任何产品/治理登记面）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 c5a22b209..658e0feb2 送验范围（Merge 658e0feb2，双亲 c5a22b209+e128dd8e9，合并树＝交付树 d34a0eeb5657 已亲核）：verify-task-scope 复跑与越界路径逐提交溯源分类、T18 自身 95 文件 allowedFiles 匹配、契约三条 acceptance 逐项（gtest 公开契约接缝亲核、ird_gates 双树复跑、29 处消费者剥注释等价核验、acceptance-sub1 原件核对）、红线抽查（H1—H6、架构红线、forbidden 面、CLOSURE/门禁未放宽、PASS/FAIL 未混列）、提交链（commit-lint 9/9 与正文证据一致性）。merge 全量 diff 含随批基础平台 REUSE-T13/T15/T16（各有契约与 r1 独验记录），其 283 文件不在本包 allowedFiles 属既定随批结构，非本包越界（详见 checks 第 2/3 条与 scopeVerdict 字段）。",
+  "scopeVerdict": {
+    "rawExitCode": 1,
+    "outOfScopePaths": 281,
+    "classification": "281 越界路径与 T18 自身 95 文件交集为 0（comm 派生核对）；378 全量 diff 文件＝T18 自身 95（100% 命中 allowedFiles）＋随批 283（其中 281 越界，2 个 core.json/diagnostics.json 恰落 T18 的 reuse/functions/*.json 通配）；随批 283 文件引入提交溯源仅 f378f01c5(102)/091e53353(103)/439f410c7(78) 三个随批提交，零一来自 F-958 链；T13/T15/T16 各有契约与 REUSE-T13/T15/T16-20261025-r1 验收记录。本包自身交付零越界、零 forbidden 面命中。",
+    "conclusion": "verify-task-scope 对 merge 全量 diff 的 FAIL 为随批结构使然（任务分支 codex/reuse-testkit-listener 上 f378f01c5→091e53353→439f410c7 随批提交先于 6fb26b31d 合并主线 c5a22b209，故 Base 取 merge 首父时全量 diff 必然含随批文件）；REUSE-T18 本包净改动（6fb26b31d..e128dd8e9＝F-958 四提交）100% 在 allowedFiles 内，范围门禁对交付本体实质通过。"
+  },
+  "counts": {
+    "failed": 0,
+    "passed": 12,
+    "notRun": 1,
+    "skipped": 0,
+    "unit": "12 项验收检查；testkit 测试证据按 ask 口径引用 acceptance-sub1 原件（输入/工具链/范围零变化亲核），其测试计数另列于 acceptanceSub1Evidence，互不相加"
+  },
+  "checks": [
+    "现场：分支 redesign-main；HEAD=0ca544e493（其后仅 T17/T19 等后续提交，验收对象为 658e0feb2 送验 SHA 本身）；git status --short 仅历史任务未跟踪验收产物与本验收产物目录，无被跟踪文件改动。",
+    "范围复跑：verify-task-scope -TaskFile REUSE-T18.json -Base c5a22b209a94475d92e89bd6bddd86fb1c40f77c -Head 658e0feb2e7becb4bc0d35090a54aeba998ae415 exit 1（changed=378，281 越界，日志 02-scope.log）——越界逐提交溯源分类见 scopeVerdict：281 路径与 T18 自身 95 文件零交集，全部来自随批 T13/T15/T16 提交（f378f01c5/091e53353/439f410c7），随批包各有契约与 20261025-r1 独验记录；T18 自身 95 文件（diff 6fb26b31d..e128dd8e9）程序化匹配 allowedFiles 100% 命中（ALL 95 FILES MATCH）。",
+    "合并树＝交付树：git diff e128dd8e960190c29dcdd283f91b97085cab0671 658e0feb2e7becb4bc0d35090a54aeba998ae415 零差异（merge 未引入额外改动）；e128dd8e9^{tree}＝d34a0eeb5657478b48f87e51192053c581dc9646，与契约 note「合并树＝交付树 d34a0eeb」逐字一致。",
+    "acceptance 1（接缝与 gtest 公开契约一致）：亲核 vcpkg/installed/x64-windows/include/gtest/gtest.h 行 1031-1033 原文「Google Test assumes the ownership of the listener (i.e. it will delete the listener when the test program finishes)」，与 RecordListener.hpp 交付注释引用逐字一致（Release 契约 1037-1040 同核）；fbd51e765 对 RecordListener.hpp 的全部改动仅两 hunk——注释块订正＋static TestRecordListener 改为 listeners().Append(new TestRecordListener(reportPath)) 所有权移交；函数签名 installTestRecordListener(int& argc, char** argv)、--ird_report 摘除循环（kept/argv 置空）、缺省路径逻辑、写盘时序（OnTestProgramEnd）、每进程一次契约均未触碰；Report.cpp 仅订正注释。",
+    "acceptance 2 之一（ird_gates 复跑转绿——HEAD 树）：cmake -DIRD_ROOT=<industrialrobot> -DIRD_SELFTEST_DIR=build/acc-t18/selftest-head -P ird_gates.cmake exit 0，输出「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」，引擎自测 pass_*/fail_* 全部按预期（日志 06-gate-engine-head.log）。",
+    "acceptance 2 之一（ird_gates 复跑转绿——658e0feb2 交付树）：git archive 658e0feb2 导出 build/acc-t18/delivery-tree 后，cmake -P 该树内 ird_gates.cmake（-DIRD_ENABLE_GIT=OFF 因 archive 非 git 树、-DIRD_GRAPH_FILE 显式指向 archive 内 dependency-graph.json）exit 0 同样全绿（日志 06-gate-engine-delivery-tree.log；SA02 工作区核对因非 git 环境显式关闭，已在 HEAD 树由第 5 条完整覆盖）。",
+    "acceptance 2 之二（29 处消费者注释订正仅动注释行）：对 e128dd8e9 相对 46cb03430 的 29 个 TestMain*/ContractTestMain* 文件执行字符串感知的剥注释等价核验（// 与 /* */ 剥除＋字符串/字符字面量防护＋空白归一后逐字节比较）：consumer files checked: 29，non-comment-only changes: 0（脚本与输出留档 build/acc-t18/check-comment-only.py；结论转录于记录）。抽样 diff 与之吻合（仅静态对象声明注释→gtest Append 接管契约注释，+3/-2 型）。",
+    "acceptance 3（acceptance-sub1 记录与证据核对）：traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md 存在，验收人为独立会话（非实施者，2026-10-23），HEAD=f7bb53943、基线=6fb26b31d；testkit 源码 fbd51e765..658e0feb2 零变化、core 源码 6fb26b31d..658e0feb2 零变化（git diff 均为空）→ 其测试证据输入对送验 head 仍适用；XML 原件亲核 tk-rel.xml tests=\"115\" failures=\"0\"、tk-dbg.xml 115/0、core-rel.xml tests=\"69\" failures=\"0\"，对应 JSON failed=0——PASS/FAIL/SKIP 计数未混列；testkit CMake pin 哈希 bdf5362e…ea0d 与 sub1 §5a 记载吻合；46cb03430 即该验收记录的 [ACC] 登记提交。整体准入未由实施者自签：契约 note 明文「不自签整体准入」，所有者已于 2026-10-23 裁决合入（Merge 658e0feb2 并入 redesign-main），与 acceptance 第 3 条「整体准入由所有者裁决」一致。",
+    "契约 verify/门禁复跑（HEAD 树）：validate-reuse.ps1 -TaskFile REUSE-T18.json exit 0——validate-reuse: PASS governance only; inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399（日志 07-validate-reuse.log；REUSE-AD-PENDING 为 AD 审计既有 pending 提示，GOV-T24 先例同口径，非本包阻断）；validate-task.ps1 -TaskFile REUSE-T18.json exit 0——validate-task: PASS (1 tasks)（日志 09-validate-task.log）。",
+    "红线抽查（H1—H6）：H1 直接使用 gtest 公开 API 契约薄修复、缺口证据＝findings F-958；H2 无平行实现——legacy 模式仅存于 lsnchild 取证载体（--lsn_mode=legacy，文件头明示仅取证/独验用），产品接缝无旧实现 fallback；H3 沿用上游 TestEventListener 类型与接口，中文契约注释保留；H4 forbidden 面 git diff --stat c5a22b209..658e0feb2 -- RobWork/RobWork/src RobWork/RobWorkSim/src vcpkg 零输出（全程零触碰，vcpkg/gtest.h 为只读亲核）；H5 非新核心/上游扩展——lsnchild 为 test-only 工具（tools/ 安装排除面，CMakeLists 注释与 whitelist 登记一致）；H6 reuse/changes/REUSE-T18.json 逐文件凭证经 validate-reuse PASS（schema/permission/function evidence checked; functions=1764）。",
+    "红线抽查（架构红线/CLOSURE/门禁未放宽）：T18 产品 diff 零 Qt 行（grep 亲核，R-3）；业务域零互链（R-1 零命中）；testkit 仅依赖 core（T-2 零命中）；runtime 仅 test/TestMainReport.cpp 注释订正（runtime 模型 owner 面零触碰）；catalog.json/permissions.json 不在 T18 自身 95 文件清单（与 note「无真实变化不改」一致）；ird_gates_whitelist.cmake diff 为纯新增（IRD_TOOL_TARGET_EDGES 增 lsnchild→testkit 一条＋IRD_T1_EXEMPT_TARGETS 增形态豁免一条，testdata_lint 同型登记），未删除任何既有条目、未放宽既有检查语义；findings.json F-958 status=fixed（fixedAt 2026-10-23），resolution 措辞与 sub1 边界诚实性一致（不宣称存量 Release 退出崩溃已复现）。",
+    "提交链：commit-lint.ps1 -Range c5a22b209..658e0feb2 exit 0，9 个提交全部合规（日志 05-commit-lint.log）；T18 链五提交一包一组（fbd51e765 [units] 实施+定向测试 → f7bb53943 [governance] 首跑留证与四态区分 → 46cb03430 [ACC] 子代理独验登记 → e128dd8e9 [governance] 协调收口（29 注释/白名单/矩阵/转绿） → 658e0feb2 Merge 并入主线），中文前缀合规；正文与证据一致——fbd51e765 正文 115/115 双配置、69/69、legacy Debug CRT 904/908 断言与 sub1 原件吻合，e128dd8e9 正文 29 处注释/whitelist/矩阵行覆盖/ird-gates-run2-final 留证与 diff 及原件吻合，f7bb53943 正文四态（实施✅/测试✅定向/门禁❌/独验❌未开始）与当时事实一致且后续提交如实推进收口。"
+  ],
+  "acceptanceSub1Evidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/",
+    "referenceBasis": "ask 授权「已有且输入/工具链/范围仍适用的原始证据直接引用」——testkit 源码 fbd51e765..658e0feb2 零变化、core 源码 6fb26b31d..658e0feb2 零变化、vcpkg 全程零触碰（输入/工具链适用性亲核）",
+    "testkitRelease": "tests=115 failures=0（tk-rel.xml 亲核；LSN 契约回归 5 用例在内）",
+    "testkitDebug": "tests=115 failures=0（tk-dbg.xml 亲核）",
+    "coreRelease": "tests=69 failures=0（core-rel.xml 亲核）",
+    "legacyCounterExample": "legacy 反例 Debug CRT 堆断言 904/908 留痕、Release 静默 exit 0，两配置症状如实登记，未混入测试通过计数"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json -Base c5a22b209a94475d92e89bd6bddd86fb1c40f77c -Head 658e0feb2e7becb4bc0d35090a54aeba998ae415", "exitCode": 1, "passed": true, "log": "02-scope.log", "note": "exit 1 系 merge 全量 diff 含随批 T13/T15/T16 文件（281 越界）；越界逐提交溯源分类后本包自身交付零越界（scopeVerdict），实质通过" },
+    { "name": "merge-tree-identity", "command": "git diff e128dd8e960190c29dcdd283f91b97085cab0671 658e0feb2e7becb4bc0d35090a54aeba998ae415（零差异）＋ git rev-parse e128dd8e9^{tree}（=d34a0eeb5657）＋ T18 净改动 git diff 6fb26b31d..e128dd8e9 95 文件 allowedFiles 匹配（ALL 95 FILES MATCH）", "exitCode": 0, "passed": true },
+    { "name": "gate-engine-head", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=D:/10_Source_Repos/21_robot/RobWork/build/acc-t18/selftest-head -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine-head.log" },
+    { "name": "gate-engine-delivery-tree", "command": "git archive 658e0feb2 → build/acc-t18/delivery-tree；cmake -DIRD_ROOT=<archive>/industrialrobot -DIRD_ENABLE_GIT=OFF -DIRD_GRAPH_FILE=<archive>/traceability/dependency-graph.json -DIRD_SELFTEST_DIR=build/acc-t18/selftest-delivery -P <archive>/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine-delivery-tree.log", "note": "SA02 因 archive 非 git 树显式关闭（其 HEAD 树覆盖由 gate-engine-head 承担），其余 R-1~R-5/T-1/T-2/SUB/GRAPH/LIB/SELF 全绿" },
+    { "name": "comment-only-equivalence", "command": "D:/software/Miniconda3/python.exe build/acc-t18/check-comment-only.py（29 文件剥注释等价核验：consumer files checked: 29，non-comment-only changes: 0）", "exitCode": 0, "passed": true },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-reuse.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "07-validate-reuse.log" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-task.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "09-validate-task.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range c5a22b209a94475d92e89bd6bddd86fb1c40f77c..658e0feb2e7becb4bc0d35090a54aeba998ae415", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "gtest-contract-read", "command": "sed -n '1025,1045p' vcpkg/installed/x64-windows/include/gtest/gtest.h（Append/Release 所有权契约原文亲核）；git diff fbd51e765^..fbd51e765 -- RecordListener.hpp Report.cpp testkit/CMakeLists.txt（接缝零变化亲核）", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "冒烟复跑尝试（对 658e0feb2 交付树的 testkit 测试增量重建）三次 configure 均止于已知环境坑：vcpkg.cmake:830 × RobWork/RobWork/cmake/RobWorkConfig.cmake:108 的 find_package(Boost … HINTS \"C:\\local\") 在 vcpkg toolchain 包装下报 Invalid character escape '\\l'（configure 日志 08-smoke-configure.log 真实留痕，失败冒烟树已清理）。该坑与 GOV-T24 验收记录 probeChain 第一步（rwprobe-default-toolchain-fail.log 含 Invalid character escape）同型；其「前置绑定后配置成功」序列本次未复刻。依 ask「已有且输入/工具链/范围仍适用的原始证据直接引用，不重跑无关全库夹具，不做全库重配」口径，测试证据引用 acceptance-sub1 原件并完成输入一致性亲核（checks 第 8 条），冒烟复跑如实登记 NOT RUN。此为验证手段层的 NOT RUN，不改变交付测试已有原件证据的有效性。",
+    "交付树 ird_gates 复跑采用 git archive 导出（零工作树/零 git 状态写入）；-DIRD_ENABLE_GIT=OFF 的取舍与影响如实登记于 commands 与 notRun。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "658e0feb2 交付树 testkit 测试冒烟复跑（构建+运行）",
+      "reason": "三次 configure 均止于 vcpkg×RobWorkConfig 已知转义环境坑（Invalid character escape '\\l'，与 GOV-T24 probeChain 已登记问题同型，08-smoke-configure.log 留痕），未复刻其前置绑定序列；按 ask 授权引用 acceptance-sub1 原件（tests=115/115/69 failures=0，XML/JSON 原件亲核，且 testkit/core 源码对送验 head 零变化已证）。不构成阻断。"
+    },
+    {
+      "item": "交付树 ird_gates 的 SA02 工作区核对项",
+      "reason": "git archive 导出树非 git 仓库，SA02 显式 -DIRD_ENABLE_GIT=OFF 关闭；该项由 HEAD 树复跑（gate-engine-head，SA02 正常执行零命中）覆盖。"
+    }
+  ],
+  "limitations": "PASS 绑定送验 head 658e0feb2e7becb4bc0d35090a54aeba998ae415（合并树＝交付树 d34a0eeb5657，亲核零差异）。范围门禁 verify-task-scope 原始 exit 1 的 281 越界路径经逐提交溯源全部归于随批基础平台 REUSE-T13/T15/T16（各有独立契约与 20261025-r1 独验记录），REUSE-T18 自身 95 文件 100% 在 allowedFiles 内且零 forbidden 面命中——本 PASS 不构成对随批包的范围豁免，随批包验收以其自身记录为准。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭），不构成算法替换（migration §11）或后续包的放行。findings F-958 已 fixed，其 resolution 维持「不宣称存量 Release 退出崩溃已复现」边界。"
+}
