@@ -1,0 +1,264 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T49",
+ "unit": "testkit",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "testkit.parseJson",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：自持递归下降Parser；继续核上游XML/PropertyTree与现有依赖是否满足JSON类型、重复键、BOM及定位；不能用testkit边界豁免重复工具"
+  },
+  {
+   "functionId": "testkit.dumpJson",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：自持JSON writer；与io生产JSON不可直接跨层互链。优先成熟依赖，经薄profile保留确定性键序/数值格式"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseObject",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseArray",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseString",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseUnicodeEscape",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseHex4",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.utf8Encode",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.Parser.parseNumber",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：测试受限DOM保留数值/布尔/null/空数组与空对象区别，重复键/BOM拒绝、深度上限与路径行列；不能因test-only豁免自持解析。ptree公开DOM类型丢失，detail回调不是稳定公共接口。成熟JSON同渠道候选尚未供给，不先写新核"
+  },
+  {
+   "functionId": "testkit.JsonLite.dumpEscaped",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：确定性序列化仍需成熟公开JSON候选；保持插入键序、std::to_chars最短double、负零与转义规则。不得将io生产接口链接进testkit或另造通用DOM平台"
+  },
+  {
+   "functionId": "testkit.JsonLite.dumpNumber",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：确定性序列化仍需成熟公开JSON候选；保持插入键序、std::to_chars最短double、负零与转义规则。不得将io生产接口链接进testkit或另造通用DOM平台"
+  },
+  {
+   "functionId": "testkit.JsonLite.dumpValue",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：确定性序列化仍需成熟公开JSON候选；保持插入键序、std::to_chars最短double、负零与转义规则。不得将io生产接口链接进testkit或另造通用DOM平台"
+  },
+  {
+   "functionId": "testkit.test.TestMain.main",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。保存argv供ProcessRunnerTest定位，安装先于GTest。"
+  },
+  {
+   "functionId": "testkit.JsonLite.run",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：BOM/空/尾随守卫加一次parseValue，PropertyTree拒绝差异沿B8实证"
+  },
+  {
+   "functionId": "testkit.JsonLite.skipWs",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：四种JSON空白和行列定位，不用泛Unicode空白改变拒绝语义"
+  },
+  {
+   "functionId": "testkit.JsonLite.expect",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：结构字符消费及数据错误出口，不是新通用语法平台"
+  },
+  {
+   "functionId": "testkit.JsonLite.fail",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：行列/字段路径组织TestKitError，不自造生产稳定码"
+  },
+  {
+   "functionId": "testkit.JsonLite.parseValue",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：递归深度200和类型分派；注释/NaN/Infinity拒绝，不能用ptree类型擦除替换"
+  },
+  {
+   "functionId": "testkit.JsonLite.expectLiteral",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：true/false/null逐字消费，配合父级结构及尾随检查"
+  },
+  {
+   "functionId": "testkit.JsonLite.eof",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：游标组eof/peek/advance共用pos/col；必须按上层边界使用peek，不把游标重复计作新解析核"
+  },
+  {
+   "functionId": "testkit.JsonLite.JsonValue.find",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：对象查找与强类型递归比较，数字±0位区别/NaN拒等/对象键序无关；ptree不能直接保类型"
+  },
+  {
+   "functionId": "testkit.JsonLite.JsonValue.deepEquals",
+   "conclusion": "产品最小 JSON/文本协议面（testkit 测试夹具专用）：上游无内建 JSON 库（REUSE-T01 检索；DOMParser 为 XML 面且重依赖）——Boost.JSON 属新依赖渠道需所有者批准（T20/T21 先例），未批保留产品实现。 行差异：对象查找与强类型递归比较，数字±0位区别/NaN拒等/对象键序无关；ptree不能直接保类型"
+  },
+  {
+   "functionId": "testkit.Check.nonFinite",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.makeDetail",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.checkCloseWithin",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.checkAllCloseWithin",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.checkAtMost",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.checkIdentical",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：core::closeWithin/UnitToken现有单点消费或失败payload；不换GTest公式，不造第二报告/比较框架；sourceTag和字符串详情边界需核"
+  },
+  {
+   "functionId": "testkit.Check.checkIdentical.int64",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：int64重载精确比较；失败投double可能失低位，非比较依据，不将GTest当数据报告序列化"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.toWin32Wait",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：薄封装系统等待/编码/父环境；非法UTF8/大小写/异常安全是待核风险，未复现，不引入第二渠道依赖"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.utf8ToWide",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：薄封装系统等待/编码/父环境；非法UTF8/大小写/异常安全是待核风险，未复现，不引入第二渠道依赖"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.buildEnvironmentBlock",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：薄封装系统等待/编码/父环境；非法UTF8/大小写/异常安全是待核风险，未复现，不引入第二渠道依赖"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.quoteWindowsArg",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Windows命令行转义与空参数/尾反斜杠；ThreadTask不提供命令行编码，execution私有worker CLI不可跨层引用"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.TestProcessRunner.start",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.TestProcessRunner.outcome",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.TestProcessRunner.kill",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.TestProcessRunner.DestructorTestProcessRunner",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.EventWatch.awaitFile",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.EventWatch.awaitLineInFile",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：Win32薄封装+四态/缓存/文件事件deadline，ThreadPool/ThreadTask/TimerUtil不等价；禁止依赖execution私有进程层"
+  },
+  {
+   "functionId": "testkit.ProcessRunner.DestructorImpl",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：PImpl析构按Job→Process回收，TempDir成员随后清理；生命周期而非新进程算法"
+  },
+  {
+   "functionId": "testkit.Dataset.failField",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：统一TestKitError DatasetInvalid机器详情，非用户诊断文案权威"
+  },
+  {
+   "functionId": "testkit.Dataset.requireStringArray",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：JSON类型/个数/元素类型检查；minCount0缺失或非数组均返回空，勿称严格同必填"
+  },
+  {
+   "functionId": "testkit.Dataset.requireBool",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：须布尔而非字符串，类型保真依赖JsonLite"
+  },
+  {
+   "functionId": "testkit.Dataset.allCharsIn",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：std::all_of字符白名单，非自写正则引擎"
+  },
+  {
+   "functionId": "testkit.Dataset.readFileBytes",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：std::ifstream/ostringstream整文件读，打开失败EnvUnavailable，后续read错误检查待核"
+  },
+  {
+   "functionId": "testkit.Dataset.sha256HexOf",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：真实core ContentDigester；手写hex可查Boost hex_lower，不能称SHA核心已成熟复用"
+  },
+  {
+   "functionId": "testkit.Dataset.toToken",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：五类枚举词表/未知unknown，归测试schema"
+  },
+  {
+   "functionId": "testkit.Dataset.datasetKindFromToken",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：五token逆映射/未知nullopt，非通用枚举框架"
+  },
+  {
+   "functionId": "testkit.Dataset.parseSemanticVersion",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：仅M.m.p数字/分隔/尾随校验，std::stoi溢出错误转译待核"
+  },
+  {
+   "functionId": "testkit.Dataset.DatasetManifest.operator==",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：逐字段深比较，包括来源/producer/edge/history；不新建序列化绕比较"
+  },
+  {
+   "functionId": "testkit.Dataset.GoldenDataset.load",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：解析/schema/单位/独立性/来源/完整性；inputs/expected覆盖有核，generatorCommitted覆盖仅注释未额外核，整数转换和路径边界待证"
+  },
+  {
+   "functionId": "testkit.Dataset.GoldenDataset.resolveInput",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只许manifest inputs membership后join，不等价规范化真实沙箱"
+  },
+  {
+   "functionId": "testkit.Dataset.GoldenDataset.resolveExpected",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只许manifest expected membership后join，不验证相对路径全安全"
+  },
+  {
+   "functionId": "testkit.Dataset.requireString.prefix",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：必填字符串类型守卫；plain委托prefix空前缀，不复制解析器"
+  },
+  {
+   "functionId": "testkit.Dataset.requireString.plain",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：必填字符串类型守卫；plain委托prefix空前缀，不复制解析器"
+  },
+  {
+   "functionId": "testkit.Dataset.ReferenceSource.operator==",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.Producer.operator==",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.Producer.operator!=",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.IntegrityEntry.operator==",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.HistoryEntry.operator==",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.HistoryEntry.operator!=",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.DatasetManifest.operator!=",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只字段精确值转发/!=委托==，契约模型不另建包装；不表示schema验证已执行"
+  },
+  {
+   "functionId": "testkit.Dataset.GoldenDataset.manifest",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：不可变快照const引用访问，生命周期由GoldenDataset实例持有"
+  },
+  {
+   "functionId": "testkit.Dataset.GoldenDataset.toleranceProfileRef",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：返回已加载manifest中的id/version对，不自动加载或验证profile"
+  }
+ ]
+}
