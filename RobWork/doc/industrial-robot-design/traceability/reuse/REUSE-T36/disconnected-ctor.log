@@ -1,0 +1,17 @@
+Note: Google Test filter = CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from CollisionSessionScope
+[ RUN      ] CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1
+unknown file: error: C++ exception with description "policy/policy-object-invalid: 浼氳瘽鏋勫缓锛氭娴嬪櫒鍚庣瀹炰緥涓虹┖锛堣閰嶈繚绾︹€斺€斅?.4 妫€娴嬪櫒涓ゅ崐锛? thrown in the test body.
+
+[  FAILED  ] CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1 (0 ms)
+[----------] 1 test from CollisionSessionScope (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] CollisionSessionScope.SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1
+
+ 1 FAILED TEST

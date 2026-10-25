@@ -337,6 +337,83 @@
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/trajectory/CMakeLists.txt",
         "sha256": "f64cff76018af95741cf0c217b78d0762912aadd362e9c2aa93f867de22b10f7"
       }
+    },
+    {
+      "id": "policy-collision-evaluator",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+        "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+      },
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "categories": [
+        "collision",
+        "model"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "task-private",
+      "lifetime": "policy 会话任务私有（构建期只读；会话构造后只读可重入）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "policy-collision-backend",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/RobWorkCollisionEvaluator.cpp",
+        "sha256": "9c6dac0001316f6dddabcf9a2858fd5a413a26f219aca71305b0d39895a82d09"
+      },
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "categories": [
+        "collision"
+      ],
+      "operations": [
+        "query"
+      ],
+      "origin": "task-private",
+      "lifetime": "policy 会话任务私有（评估器持后端实例与查询互斥，会话共享）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "policy-collision-test-fixture",
+      "usageRole": "owner",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+        "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+      },
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "categories": [
+        "collision",
+        "model",
+        "state"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "测试夹具装配任务输入（gtest 会话内构造 WorkCell/FakeDevice 驱动解析链；ARCH §3.6.2.1——2026-10-26 所有者落地授权脉络批准，待追认）",
+      "permissionRef": "ARCH:3.6",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+        "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
     }
   ]
 }

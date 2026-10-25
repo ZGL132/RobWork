@@ -1143,3 +1143,143 @@ TEST(CollisionSessionGuards, MandatoryOnUnlistedMatrixComboRejected_F808)
 
     EXPECT_THROW((void)buildSession(policy, scene, names), PolicyError);
 }
+
+// =====================================================================
+// F-961 回归组（REUSE-T36/WP-13）：上游 ProximitySetupRule 的模式语义
+// 与生产会话规则产物——合法 REGEX 前缀完整名的字面适配。
+//
+// 依据：findings.json F-961（major/open，owner policy/REUSE-T05）；
+// REUSE-T01/policy-boundary-audit.md §F-961 与 B18 独验（1passed/1failed
+// 独立复现）；修复路线＝既有模式接口最小字面适配（findings.resolution
+// 已批）。runtime 合法字符集 [A-Za-z0-9_.-]（NameMap isLegalNameChar）
+// 允许 REGEXarm 等前缀名；上游 convertToRegEx（ProximitySetupRule.cpp
+// :28-36）对 size>5 且前 5 字节为 REGEX 的串去前缀直取正则，其余走
+// StringUtil::patternToRegEx（点号转义）。场景装配复用 probe-r18 探针
+// 的最小相邻对形态（objects 收缩为 link1×link2——相邻默认过滤产出恰
+// 1 条 EXCLUDE 规则）；只检查公开 proximitySetup() 产物，不运行碰撞
+// 数值查询（evaluate 按 scope 逐对直查后端、不消费 setup 过滤——不把
+// 未证实规则不匹配描述为碰撞漏检，B18 影响边界同源）。
+// =====================================================================
+
+/**
+ * F-961 主回归（B18 反例红转绿 oracle）：REGEX 前缀设备名＋同前缀帧名
+ * 的生产会话 EXCLUDE 规则必须全匹配原名字面；对称方向 match(B,A) 同真
+ * （上游 match 语义 ProximitySetupRule.hpp:77-81）；原名延长变体不得
+ * 误伤（regex_match 全匹配）；适配后存储 pattern 为"REGEX 前缀＋转义
+ * 原名"字面串（convertToRegEx 去一个前缀后余串即字面正则）。
+ */
+TEST(CollisionSessionNameRules, RegexPrefixedNamesExcludeRuleMatchesLiteral_F961)
+{
+    const SceneIds ids;
+    const TestValidationContext ctx = makeContext(ids);
+    // 名称替身：设备与两连杆帧换 REGEX 前缀完整名（合法字符集内——
+    // probe-r18 最终一致场景同款）；byName 按 byId 重建保持双向一致。
+    TestNameContext names = makeNames(ids, "REGEXarm");
+    names.byId[ids.link1] = "REGEXarm.link_1";
+    names.byId[ids.link2] = "REGEXarm.link_2";
+    names.byName.clear();
+    for (const auto& entry : names.byId) {
+        names.byName.emplace(entry.second, entry.first);
+    }
+    // WorkCell 替身：设备以 REGEX 前缀名注册（findDevice 存在性核对），
+    // 两帧名与 byId 逐字一致（§7.5 Frame 定位核对——存在性即满足）。
+    auto workcell = std::make_shared<rw::models::WorkCell>("BoundaryAuditWC");
+    workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("REGEXarm")));
+    for (const std::string& frameName :
+         {names.byId.at(ids.link1), names.byId.at(ids.link2)}) {
+        workcell->addFrame(rw::core::ownedPtr(
+            new rw::kinematics::FixedFrame(frameName, rw::math::Transform3D<>::identity())));
+    }
+    // 场景收缩为相邻对：excludeAdjacentLinksByDefault（baseInput 缺省开）
+    // 使 (link1,link2) 产出恰 1 条 EXCLUDE 规则——公开 setup 最小可核面。
+    CollisionScene scene = makeScene(ids);
+    scene.workcell = workcell;
+    scene.objects.resize(2);
+    const EngineeringPolicySet policy = publishPolicy(baseInput(ids), ctx);
+    const std::shared_ptr<const CollisionEvaluationSession> session =
+        buildSession(policy, scene, names);
+
+    const std::vector<rw::proximity::ProximitySetupRule>& rules =
+        session->proximitySetup().getProximitySetupRules();
+    ASSERT_EQ(rules.size(), std::size_t{1});
+    EXPECT_EQ(rules.front().type(), rw::proximity::ProximitySetupRule::EXCLUDE_RULE);
+    // 修复目标（B18 反例红转绿）：规则全匹配原名字面，对称方向同真。
+    EXPECT_TRUE(rules.front().match("REGEXarm.link_1", "REGEXarm.link_2"));
+    EXPECT_TRUE(rules.front().match("REGEXarm.link_2", "REGEXarm.link_1"));
+    EXPECT_TRUE(rules.front().matchOne("REGEXarm.link_1"));
+    // 全匹配语义：原名延长变体不得匹配（排除规则不得误伤相邻名）。
+    EXPECT_FALSE(rules.front().matchOne("REGEXarm.link_11"));
+    // 适配后存储 pattern 字面断言：REGEX 前缀名经单点字面转义后携带上游
+    // REGEX 约定前缀＋ECMAScript 特殊字符转义的原名（点号加反斜杠——
+    // 上游去一个前缀后余串为字面正则，regex_match 全匹配原名成立）。
+    EXPECT_EQ(rules.front().getPatterns().first, "REGEXREGEXarm\\.link_1");
+    EXPECT_EQ(rules.front().getPatterns().second, "REGEXREGEXarm\\.link_2");
+}
+
+/**
+ * F-961 零扰动面：无 REGEX 前缀的普通点号名经产品会话原样透传——
+ * 存储 pattern 保持原名（既有 patterns 断言面不变，本用例独立钉住），
+ * 规则对原名精确匹配（点号按字面、不按正则任意字符解释），对称方向
+ * 同真。上游依据：patternToRegEx 对普通名字面化点号（StringUtil.cpp
+ * :283-298），产品适配不得改变该既有正确行为。
+ */
+TEST(CollisionSessionNameRules, PlainDottedNamesPassThroughLiterally_F961)
+{
+    const SceneIds ids;
+    const TestValidationContext ctx = makeContext(ids);
+    // 名称替身：普通点号完整名（设备保持缺省 "Robot"），双向映射重建。
+    TestNameContext names = makeNames(ids);
+    names.byId[ids.link1] = "Robot.link_1";
+    names.byId[ids.link2] = "Robot.link_2";
+    names.byName.clear();
+    for (const auto& entry : names.byId) {
+        names.byName.emplace(entry.second, entry.first);
+    }
+    auto workcell = std::make_shared<rw::models::WorkCell>("BoundaryAuditWC");
+    workcell->addDevice(rw::core::Ptr<rw::models::Device>(new FakeDevice("Robot")));
+    for (const std::string& frameName :
+         {names.byId.at(ids.link1), names.byId.at(ids.link2)}) {
+        workcell->addFrame(rw::core::ownedPtr(
+            new rw::kinematics::FixedFrame(frameName, rw::math::Transform3D<>::identity())));
+    }
+    CollisionScene scene = makeScene(ids);
+    scene.workcell = workcell;
+    scene.objects.resize(2);
+    const EngineeringPolicySet policy = publishPolicy(baseInput(ids), ctx);
+    const std::shared_ptr<const CollisionEvaluationSession> session =
+        buildSession(policy, scene, names);
+
+    const std::vector<rw::proximity::ProximitySetupRule>& rules =
+        session->proximitySetup().getProximitySetupRules();
+    ASSERT_EQ(rules.size(), std::size_t{1});
+    EXPECT_EQ(rules.front().type(), rw::proximity::ProximitySetupRule::EXCLUDE_RULE);
+    // 零扰动：普通名存储 pattern＝原名（无前缀拼接、无转义改写）。
+    EXPECT_EQ(rules.front().getPatterns().first, "Robot.link_1");
+    EXPECT_EQ(rules.front().getPatterns().second, "Robot.link_2");
+    // 点号字面精确：原名互配、对称同真；点号作正则任意字符的近名不匹配。
+    EXPECT_TRUE(rules.front().match("Robot.link_1", "Robot.link_2"));
+    EXPECT_TRUE(rules.front().match("Robot.link_2", "Robot.link_1"));
+    EXPECT_FALSE(rules.front().matchOne("RobotXlink_1"));
+}
+
+/**
+ * F-961 边界钉（直连上游语义，REUSE-T36/WP-13）：上游 REGEX 分支条件
+ * 是 size>5 且前 5 字节为 REGEX（ProximitySetupRule.cpp:30）——恰 5 字
+ * 节全名 "REGEX" 走 patternToRegEx 字面分支（无前缀剥离、点号转义）；
+ * 6 字节起才触发前缀正则解释（未适配时即 F-961 缺陷形态：完整名被当
+ * 正则丢失字面）。产品适配精确镜像该分支条件，本用例钉住其边界不漂移。
+ */
+TEST(CollisionSessionUpstreamSemantics, RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961)
+{
+    // 恰 5 字节全名：上游字面分支——规则匹配全名 "REGEX"，延长变体不匹配。
+    const auto exactFive =
+        rw::proximity::ProximitySetupRule::makeExclude("REGEX", "Scene.table");
+    EXPECT_TRUE(exactFive.match("REGEX", "Scene.table"));
+    EXPECT_FALSE(exactFive.matchOne("REGEXX"));
+    // 6 字节起：上游去前缀直取正则（上游语义实证）——原名失配即 F-961
+    // 根因（产品侧由 buildPolicyProximitySetup 单点字面适配承担，不改上
+    // 游——H2/H4）。
+    const auto sixBytes = rw::proximity::ProximitySetupRule::makeExclude("REGEXx", "y");
+    EXPECT_TRUE(sixBytes.match("x", "y"));
+    EXPECT_FALSE(sixBytes.match("REGEXx", "y"));
+}

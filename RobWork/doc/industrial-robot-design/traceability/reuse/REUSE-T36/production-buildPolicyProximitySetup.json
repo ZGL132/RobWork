@@ -1,0 +1,141 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
+  "target": "sdurws_ird_policy",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+      "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+      "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/CollisionEvaluator.hpp",
+      "sha256": "0f672f0e04fb3e2a387a6eb097f642b370842d9deca4423b117d36102301e8c9"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/JointLimits.hpp",
+      "sha256": "5592455c084046c16972c62d30c5347c24ce432a56311648b15c2263b1eb7fa1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/include/sdurws/ird/policy/PolicyParsing.hpp",
+      "sha256": "5ab3409d5b5a6769ff63cd771e31282168df85b6ebdb97865485258a3039da86"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Diagnostics.cpp",
+      "sha256": "99cd52fe39b08a2dc92eb3513ffd42bf1b650ed1960ae266583c6c91c75a1da1"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/Errors.cpp",
+      "sha256": "7826f1d8f8bf01bfe43295505b1694bdf8203084a5caccc7e199a3554de110d7"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/NameMap.cpp",
+      "sha256": "152e35ac0ab3821924d7e789e11c0921d3fca57b97af40ab05ee5a200dbaea53"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/CollisionDetector.hpp",
+      "sha256": "9f1938197c15a8758412cbc1e66d50147bd341d211fea67c9ded340aaaba0104"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp",
+      "sha256": "6036e3a5df16c3fe1c724547fc0c186ae9a7362286ae4f44dd6e669082508172"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp",
+      "sha256": "4a62b9f99f841229b02d74b0798bccd4d5d668485ad4511ee593a7b5eee04650"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
+      "sha256": "c44184668f172bd401b5fd747ed07117c59a438f2551724374c9fcb8aa74b6bf"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/ProximitySetup.hpp",
+      "sha256": "5aec8e54347cec1b50cbe88152d43ed9807585c2881002c022b64bf3d94be8a5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.hpp",
+      "sha256": "2fa1b7816b71f427504d35dd4e4ec4e8d7c3b5600fc26d0096013679b21a7bb5"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/ProximitySetupRule.cpp",
+      "sha256": "0852bd1c056c03c53d61e4e46996fe11021be5dc6ca51aed3892e70953b1c839"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/proximity/CMakeLists.txt",
+      "sha256": "481c533c91001b52902bd286c5e8c0850b15c34848aef6add7cf8962b543cf66"
+    }
+  ],
+  "normal": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.xml",
+      "sha256": "22cfe4be0e9b298848eacc972ecdca74d08c1ceae105b18c0cb10628a69c4dfa"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.log",
+      "sha256": "e5b5ed949f722ad12d7d05d9c2ab182e997daec8f02db1eddb2be87d97f410ea"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/disconnected-bps.xml",
+      "sha256": "f8a878e9db5d7a1e9861b537d8a7200acf577ed610f50fb679c6c9f922087012"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/disconnected-bps.log",
+      "sha256": "5f813a330a1b4e16299e38c0b9c60fe11bf2412428b435c6b78155dbee206eef"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "originalSha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8",
+      "description": "真实生产变异：buildPolicyProximitySetup 的 F-961 唯一适配点断开（toUpstreamRulePattern 透传改为原名直传——恢复上游会按 REGEX 前缀解释完整名的缺陷形态）——CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961 真实失败（EXCLUDE 规则 match 原名 false、存储 pattern 未适配，exit 1；与 B18 独验/f961-red.log 同型反例），恢复最终源码后重建复测绿（final-recheck 214/214）。"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/production/CollisionEvaluator.mutated-bps.cpp",
+      "sha256": "88808c57bc4c2c18c093b4e46f3563b3d6fb01eb0147aeb6d07512b302a808b5"
+    }
+  },
+  "oracle": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.xml",
+      "sha256": "22cfe4be0e9b298848eacc972ecdca74d08c1ceae105b18c0cb10628a69c4dfa"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.log",
+      "sha256": "e5b5ed949f722ad12d7d05d9c2ab182e997daec8f02db1eddb2be87d97f410ea"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "CollisionSessionGuards.ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2",
+      "CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961"
+    ]
+  },
+  "upstreamComparison": {
+    "command": "VS x64: pwsh -NoProfile -File RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label <label> -Filter <filter>",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.xml",
+      "sha256": "22cfe4be0e9b298848eacc972ecdca74d08c1ceae105b18c0cb10628a69c4dfa"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/final-recheck.log",
+      "sha256": "e5b5ed949f722ad12d7d05d9c2ab182e997daec8f02db1eddb2be87d97f410ea"
+    },
+    "exitCode": 0,
+    "selectedCases": [
+      "CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961",
+      "CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961"
+    ]
+  },
+  "note": "ProximitySetup 真实消费：setUseExcludeStaticPairs(false)/setUseIncludeAll(true)/addProximitySetupRule+ProximitySetupRule::makeExclude/makeInclude 经唯一适配点 toUpstreamRulePattern（F-961 修复——REGEX 前缀完整名改传 REGEX+字面转义，规则 regex_match 全匹配原名；普通名透传零扰动）。oracle 钉排除规则留痕与必检不可过滤；upstreamComparison 钉上游 REGEX 分支边界（恰 5 字节走字面分支）与普通名行为不变。"
+}

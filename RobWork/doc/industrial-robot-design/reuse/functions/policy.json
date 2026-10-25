@@ -24,8 +24,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"inCollision \\(|distance \\(|createModel|class ProximityStrategyRW\" RobWork/RobWork/src/rw/proximity/CollisionStrategy.hpp RobWork/RobWork/src/rw/proximity/DistanceStrategy.hpp RobWork/RobWork/src/rw/proximity/rwstrategy/ProximityStrategyRW.hpp",
         "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
@@ -37,7 +37,11 @@
           "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
         }
       ],
-      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
+      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluationSession.evaluate",
@@ -470,7 +474,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -2845,10 +2849,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "sceneObjectRoleToken",
-          "qualifiedSymbol": "sdurws::ird::policy::sceneObjectRoleToken",
-          "startLine": 59,
-          "endLine": 73,
-          "sha256": "5acf6e32d72c9a5c67764d02688a8f4acf807bacf7d3fedf0dd28fbe01e8e8fc"
+          "startLine": 54,
+          "endLine": 74,
+          "sha256": "29fd27eb4ad8b13133c2bbe16b58bd54ceb39fd54645d4bc0f67d31434a81ef0"
         }
       ],
       "targets": [
@@ -2857,8 +2860,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2895,7 +2898,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -2912,7 +2915,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.trySceneObjectRole",
@@ -2927,10 +2934,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "trySceneObjectRole",
-          "qualifiedSymbol": "sdurws::ird::policy::trySceneObjectRole",
           "startLine": 75,
-          "endLine": 87,
-          "sha256": "2a83baaee8211052bf9e301c7dc7b0521693d9e2f731aab791b6dcec28b80330"
+          "endLine": 88,
+          "sha256": "8a9da091c8ef9968c62fa6f1832beb0ed034af2faf7479136fdfd1a04ec88e91"
         }
       ],
       "targets": [
@@ -2939,8 +2945,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -2977,7 +2983,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -2994,7 +3000,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.detail.canonicalPair",
@@ -3009,10 +3019,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "canonicalPair",
-          "qualifiedSymbol": "sdurws::ird::policy::detail::canonicalPair",
-          "startLine": 109,
-          "endLine": 116,
-          "sha256": "fdbd487add3182a14e815fe15d1d498a2a2aa708d06aa7fa7e88f917155272bd"
+          "startLine": 103,
+          "endLine": 117,
+          "sha256": "7628c2943bb966ca59f1feed61b8c900a455d05815dde1a44111b64e8fb63773"
         }
       ],
       "targets": [
@@ -3021,8 +3030,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3059,7 +3068,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3076,7 +3085,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.detail.classifyDomainPair",
@@ -3091,10 +3104,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "classifyDomainPair",
-          "qualifiedSymbol": "sdurws::ird::policy::detail::classifyDomainPair",
-          "startLine": 133,
-          "endLine": 180,
-          "sha256": "84229d894e8009eab7967ef8dfa8a4afa860994bd0c5ee7d8fb32141e9277f4e"
+          "startLine": 118,
+          "endLine": 181,
+          "sha256": "5274cdfffab29b54c473ffd2a2e353098024d9676f4026df66e26e8f65c0d74b"
         }
       ],
       "targets": [
@@ -3103,8 +3115,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3141,7 +3153,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3158,7 +3170,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.detail.computeSessionIdentity",
@@ -3173,10 +3189,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "computeSessionIdentity",
-          "qualifiedSymbol": "sdurws::ird::policy::detail::computeSessionIdentity",
-          "startLine": 196,
-          "endLine": 228,
-          "sha256": "aff0762fdbe7cd1a328383145682d4abddefc0b3c3d52971758f3f3859b0def9"
+          "startLine": 182,
+          "endLine": 229,
+          "sha256": "89b0ba46106e0c3c804c19582461f0c751138f33ab41ecdb154797f4bf54278e"
         }
       ],
       "targets": [
@@ -3185,8 +3200,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3223,7 +3238,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3240,7 +3255,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.detail.makeBuiltinBackendDescriptor",
@@ -3255,10 +3274,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "makeBuiltinBackendDescriptor",
-          "qualifiedSymbol": "sdurws::ird::policy::detail::makeBuiltinBackendDescriptor",
-          "startLine": 240,
-          "endLine": 254,
-          "sha256": "caf51711c1c0117a11421dac4d40dd6f355395889a04e75859ded55ca7f137ad"
+          "startLine": 232,
+          "endLine": 257,
+          "sha256": "09e7cff3845569594dae595a44c91e7d2f63358ab48dbda74adf1cffebebbeff"
         }
       ],
       "targets": [
@@ -3267,8 +3285,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3305,7 +3323,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3322,7 +3340,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.all",
@@ -3337,10 +3359,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "ResolvedCollisionScope::inScopePairCount",
-          "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::inScopePairCount",
-          "startLine": 262,
-          "endLine": 273,
-          "sha256": "d4c491006c53921c06938b23722f78d67fa2dafb3052b6cae92b69b8513f9326"
+          "startLine": 258,
+          "endLine": 274,
+          "sha256": "f5caf50b06cea91c7107a3ff38fee2d520d2eee4d38befe5143728a8f95a38de"
         }
       ],
       "targets": [
@@ -3349,8 +3370,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3387,7 +3408,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3404,7 +3425,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.inScopePairCount.domain",
@@ -3419,10 +3444,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "ResolvedCollisionScope::inScopePairCount",
-          "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::inScopePairCount",
           "startLine": 287,
-          "endLine": 298,
-          "sha256": "3b358546c339ab62198ddeba93829fecc3590b7cb5da34a98684a7eda3d4679b"
+          "endLine": 299,
+          "sha256": "66ea8d49c1621b626d34df314df7ea29df76c3ed3b56daa0c4ce158033c07fd4"
         }
       ],
       "targets": [
@@ -3431,8 +3455,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3469,7 +3493,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3486,7 +3510,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.ResolvedCollisionScope.excludedPairCount",
@@ -3501,10 +3529,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "ResolvedCollisionScope::excludedPairCount",
-          "qualifiedSymbol": "sdurws::ird::policy::ResolvedCollisionScope::excludedPairCount",
           "startLine": 275,
-          "endLine": 285,
-          "sha256": "e84534eef6dcbc12b66ce89baad0a03ac202f159e6099fdb9a9dcecdf92918e1"
+          "endLine": 286,
+          "sha256": "15a930e30d0bf1cec1f3cd33a2ad993d8ca8170d0310aef98d41767d78cdbffb"
         }
       ],
       "targets": [
@@ -3513,8 +3540,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3551,7 +3578,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3568,7 +3595,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.(anonymous namespace).validateSceneAndPolicy",
@@ -3583,10 +3614,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "validateSceneAndPolicy",
-          "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::validateSceneAndPolicy",
-          "startLine": 324,
-          "endLine": 451,
-          "sha256": "b20fe9d5cc2cc64cd202aec19a501fab8fd578eb4beb9740d113980bb69c32e8"
+          "startLine": 314,
+          "endLine": 452,
+          "sha256": "7f813f6e5c22c4c600ad446f0256fb45dd4ea3824ea196e4960483883374be32"
         }
       ],
       "targets": [
@@ -3595,8 +3625,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3633,7 +3663,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3650,7 +3680,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRuleTarget",
@@ -3665,10 +3699,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "expandRuleTarget",
-          "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRuleTarget",
-          "startLine": 462,
-          "endLine": 490,
-          "sha256": "c3b1eb679d0231e9954d35da0da8b3285451a4b9a2daa94019cde04fc17ef812"
+          "startLine": 453,
+          "endLine": 491,
+          "sha256": "814f3f2ff76fa8e851ce908528d89bf2e566aae96b89a9e061cfd07ea1b3cfdf"
         }
       ],
       "targets": [
@@ -3677,8 +3710,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3715,7 +3748,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3732,7 +3765,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.(anonymous namespace).expandRulesAndCheckConflicts",
@@ -3747,10 +3784,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "expandRulesAndCheckConflicts",
-          "qualifiedSymbol": "sdurws::ird::policy::(anonymous namespace)::expandRulesAndCheckConflicts",
-          "startLine": 508,
-          "endLine": 560,
-          "sha256": "40dabbf6f886bc8547c718d204c7d156d3d325830e1561d0de6f6c14bcc49420"
+          "startLine": 492,
+          "endLine": 561,
+          "sha256": "fb14b8206bc8c407441402d627479cd49111466ab2f2b28e737df26ba4c43ac3"
         }
       ],
       "targets": [
@@ -3759,8 +3795,8 @@
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3797,7 +3833,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3814,7 +3850,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.CollisionEvaluationSession",
@@ -3829,9 +3869,8 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "CollisionEvaluationSession::CollisionEvaluationSession",
-          "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::CollisionEvaluationSession",
-          "startLine": 568,
-          "endLine": 729,
+          "startLine": 640,
+          "endLine": 801,
           "sha256": "3577ee69d5753bdd32aeb8df2fb5e65cde830b620dd7cbe214601b33ba9d8e25"
         }
       ],
@@ -3841,8 +3880,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -3879,7 +3918,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3896,7 +3935,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionEvaluator.CollisionEvaluationSession.buildPolicyProximitySetup",
@@ -3911,10 +3954,9 @@
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
           "symbol": "CollisionEvaluationSession::buildPolicyProximitySetup",
-          "qualifiedSymbol": "sdurws::ird::policy::CollisionEvaluationSession::buildPolicyProximitySetup",
-          "startLine": 731,
-          "endLine": 777,
-          "sha256": "288c6acece446901ad2b18bd66a76071cbd50b499ae6fbad16d17ab16d8154a7"
+          "startLine": 802,
+          "endLine": 851,
+          "sha256": "e3b3952b17a269e98ef1ea02dbd593f5b568af459487b3702c5555756f1627c7"
         }
       ],
       "targets": [
@@ -3923,13 +3965,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
       },
-      "differences": "真实上游setup关闭静态默认过滤并include-all，再按名称转规则；makeExclude不是字面API，合法REGEX前缀已原policy实测匹配失败F-961；setup目前公开输出，evaluate逐scope对直接query，不能据此声称碰撞实际误判",
+      "differences": "真实上游setup关闭静态默认过滤并include-all，再按名称经toUpstreamRulePattern唯一适配点转规则（F-961修复：REGEX前缀完整名改传REGEX+字面转义，上游regex_match全匹配原名；普通名透传零扰动）；makeExclude不是字面API（REUSE-T36实核）；setup公开输出，evaluate逐scope对直接query，不据此声称碰撞实际误判",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
@@ -3961,7 +4003,7 @@
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
-          "sha256": "d7fd7e7fc0f85ab536542be0d880ceeb83e538995d487b2876b7f502a13766b2"
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
         }
       ],
       "auditEvidence": [
@@ -3978,7 +4020,17 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "production": {
+        "entry": "CollisionEvaluationSession::buildPolicyProximitySetup",
+        "upstream": "addProximitySetupRule",
+        "consumer": "CollisionEvaluationSession::buildPolicyProximitySetup",
+        "target": "sdurws_ird_policy"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/production-buildPolicyProximitySetup.json",
+        "sha256": "77cd10b0c47b7d757193fe63e7227039c92b26e29bf86919ac961dccfac9108e"
+      }
     },
     {
       "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator",
@@ -4005,13 +4057,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
       },
-      "differences": "原ProximityStrategyRW直接构造，所有会话共享一个后端和一把锁，descriptor单点；无第二碰撞核心",
+      "differences": "内置后端实例化：构造rw::proximity::ProximityStrategyRW（仅CollisionStrategy能力——距离能力归运行期dynamic_cast探测）＋评估器级查询互斥＋复现要素冻结值注入（detail::makeBuiltinBackendDescriptor单点）；构造不做几何注册（模型注册归会话构建期POL-T07）；REUSE-T36变异证明断开后端实例即全会话构建fail-fast",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
@@ -4060,7 +4112,17 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "production": {
+        "entry": "RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
+        "upstream": "ProximityStrategyRW",
+        "consumer": "RobWorkCollisionEvaluator::RobWorkCollisionEvaluator",
+        "target": "sdurws_ird_policy"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/production-RobWorkCollisionEvaluator.json",
+        "sha256": "f28383d51c0d3c5cc4f271ec665700a582711d2f659acd591149dc5c605d06f7"
+      }
     },
     {
       "functionId": "policy.RobWorkCollisionEvaluator.RobWorkCollisionEvaluator.backend",
@@ -4087,8 +4149,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -4142,7 +4204,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.RobWorkCollisionEvaluator.makeRobWorkCollisionEvaluator",
@@ -4169,8 +4235,8 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "COLLISION",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "见batch18-search.json六组实际检索与COLLISION/MODEL-BOUNDS具体候选",
         "conclusion": "按policy域权威/上游会话适配分开；闭区间原语不替代业务裕量，复用框架模型不产生结构写权限；未授新核心"
@@ -4224,7 +4290,11 @@
           "sha256": "519d69dd47bf511af8502c5c280beb913054acb109078316c88c216f79b3f0bc"
         }
       ],
-      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+      "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      }
     },
     {
       "functionId": "policy.CollisionQuery.CollisionEvaluationSession.buildEvaluationHalf",
@@ -4307,6 +4377,974 @@
         }
       ],
       "auditBoundary": "原policy目标真实编译2探测1passed/1failed；全policy回归、数值/并发/性能、诊断正式消费链未跑；无grant和生产迁移通过"
+    },
+    {
+      "functionId": "policy.CollisionEvaluator.escapeRegexLiteral",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-MNT-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "escapeRegexLiteral",
+          "startLine": 562,
+          "endLine": 609,
+          "sha256": "f0ded2305c616fd295066fea85c4cfde2b06083402bec750ea0dc220197a4b26"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "ECMAScript特殊字符全集字面化转写（产品自持，覆盖并补齐上游patternToRegEx未覆盖集合——REGEX分支绕过patternToRegEx故转义必须自足）；纯串变换无失败路径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.CollisionEvaluator.toUpstreamRulePattern",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "toUpstreamRulePattern",
+          "startLine": 610,
+          "endLine": 632,
+          "sha256": "36bb10dbdcabf90dcdeb7a6cbac3e3fbf4914774977db1887aaea08ffa51a3f9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "F-961唯一适配点：分支条件逐字镜像上游convertToRegEx REGEX判定（size>5且前5字节REGEX），命中传REGEX+字面转义原名，否则透传零扰动；恰5字节REGEX走上游字面分支（边界用例钉住）；镜像不调用上游，上游调整约定时须同批复核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.header",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "CollisionEvaluator.cpp",
+          "startLine": 1,
+          "endLine": 53,
+          "sha256": "eaccf606fc20fde6ecfd31b8b2f5dd163e00a34f6d0a2e5a21d4063ff0ac3043"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "文件头设计依据（§6.4三步/CR-04/R-4纪律）与包含面（本批新增<string>——F-961适配返回串）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.identity-form",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "kSessionIdentityForm",
+          "startLine": 89,
+          "endLine": 102,
+          "sha256": "bd81d4fb111c25b56ec9ec9a4cce8422f02c2c41aed6d0784e0e68722986283f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "detail注释＋会话身份形态代/魔数常量（身份组成升代纪律）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.detail-close",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "namespace detail",
+          "startLine": 230,
+          "endLine": 231,
+          "sha256": "c267872457240b46cd20042dd5cebfc71c2a51f717e16ffdb7c08afdbb0d95ef"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "detail命名空间收尾",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.anon-head",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "SceneObjectIndex",
+          "startLine": 300,
+          "endLine": 313,
+          "sha256": "5e66b6b72e04dad7021f780ed765dabd8345f2d2a174b2af225e0c8022254086"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "会话三步注释＋匿名空间头与对象索引/对键类型别名",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.anon-close",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "会话构造",
+          "startLine": 633,
+          "endLine": 639,
+          "sha256": "45bb979b8b3f93bb214ebcff793b0cb99829f50b2f01b2a5f2ec1d56ed4c8ce3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "匿名空间收尾＋会话构造编排注释",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionEvaluator.tail",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "symbol": "namespace sdurws::ird::policy",
+          "startLine": 852,
+          "endLine": 853,
+          "sha256": "fd0726978c356ee22bdc72c60c9d1e215925df36c007c46323bddd97d51dcb8c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "文件尾命名空间收尾",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+          "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.head",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "taggedContentIdentity",
+          "startLine": 1,
+          "endLine": 96,
+          "sha256": "00dc88462ecb17c752450a04271314ea569652473f6ae5567066a08f8fa7b320"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "测试文件头（设计依据/零Qt红线/集成条件）＋对象/内容身份打标替身",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.contexts",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "TestNameContext",
+          "startLine": 97,
+          "endLine": 153,
+          "sha256": "34bbb11092e9772ee38161d0c7b129a8c2b4461dc6fe4699e5ac2293bb016493"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "名称上下文/校验上下文测试替身（IPolicyNameContext/IPolicyValidationContext 实现面）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.fakedevice",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "FakeDevice",
+          "startLine": 154,
+          "endLine": 228,
+          "sha256": "e0d34c2afd5a1c162acb0c8f0709bd8fc44c6dd0e7f52c72501ea04c4c8c187b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "FakeDevice测试替身（rw::models::Device最小实现——§7.5设备解析链夹具）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.sceneids",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "SceneIds",
+          "startLine": 229,
+          "endLine": 251,
+          "sha256": "d9ebe7ce0356127a84d38e718e02f84090c8f98f7d4e26cba2c2c776ea922880"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "标准场景对象身份集（字节打标——跨用例稳定定位）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.fixture",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "makeScene",
+          "startLine": 252,
+          "endLine": 311,
+          "sha256": "ab13c6b438671ede7b12f0f43679fb29d85d03515a9a253f7e2c4c16a8161b8a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "addObjectFrames/makeScene场景装配（WorkCell构造＋对象帧——test-fixture例外授权面；测试脚手架装配任务输入非模型所有权主张）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.builders",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "makeNames",
+          "startLine": 312,
+          "endLine": 384,
+          "sha256": "1d80a27e5bd9e4202babe11a19d7e4fe1e16973544fe2eb6bf88c01c51e6e458"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "makeNames/makeContext/baseInput/publishPolicy标准装配（七段解析管线唯一发布路径）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.helpers",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "buildSession",
+          "startLine": 385,
+          "endLine": 410,
+          "sha256": "76771b19994dcbbd5e9690ade35d4a63ee05f48c73f654f59d2235e2c1af6820"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "buildSession便捷入口（唯一实现入口makeRobWorkCollisionEvaluator——§6.5）与findPair断言辅助",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.scope1",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-1"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1",
+          "startLine": 411,
+          "endLine": 596,
+          "sha256": "7f86aa1da16be74376122248b9148cb83d48eb4249e955af505f07a9c7e45d23"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "POL-SCOPE-1作用域矩阵三用例（Self域/三域逐行/Scene域必检）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.scope2",
+      "ownerUnit": "policy",
+      "requirements": [
+        "POL-SCOPE-2"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "ExcludedByRuleKeepsTraceAndSetupExclude_POL_SCOPE_2",
+          "startLine": 597,
+          "endLine": 789,
+          "sha256": "2cdcb5f8a8a60274e31377c7d08347c527c1b4541db550aeb073bcc49d94e3ab"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "POL-SCOPE-2守卫四用例（排除留痕+setup排除/相邻默认过滤/解析期冲突/场景展开冲突同码复核）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.guards",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "RuleReferenceMissingFromSceneRejected",
+          "startLine": 790,
+          "endLine": 989,
+          "sha256": "c05791d5214f5673ed7579884fceb5f00b81c2da1cef78fe9896ad42124a06e7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "场景守卫八用例（规则引用/身份重复/场景身份/空workcell/主链不可解析/Group保守拒绝/空后端/域禁用）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.identity",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "SameInputsYieldEqualSessionIdentity",
+          "startLine": 990,
+          "endLine": 1067,
+          "sha256": "76f81b5ad8cc7d7c53962ebc0747b1ebe50d3cadb36207ced11f7813207538b3"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "会话身份三用例（同输入等价/组成敏感性/承载序无关——§6.4确定性）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.detector",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "UniqueEntryProducesBuiltinBackend",
+          "startLine": 1068,
+          "endLine": 1146,
+          "sha256": "dd07aaa1d672f657bc99086d64fee0f85dd7f40c98d3ca422cc705ea81ab54fc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "唯一实现入口/词表环回/F-808必检不隐藏（矩阵未列组合保守拒绝）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.f961-banner",
+      "ownerUnit": "policy",
+      "requirements": [
+        "NFR-MNT-03"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "F-961",
+          "startLine": 1147,
+          "endLine": 1170,
+          "sha256": "ad38e94c5298a8e1dad9d80f9f40b27eba078d4edf94cb41bace62ba339f557f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "F-961名规则用例段注释（上游REGEX约定与字面适配说明）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
+    },
+    {
+      "functionId": "policy.audit-t36.CollisionSessionTest.f961-cases",
+      "ownerUnit": "policy",
+      "requirements": [
+        "ARC-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "symbol": "RegexPrefixedNamesExcludeRuleMatchesLiteral_F961",
+          "startLine": 1171,
+          "endLine": 1285,
+          "sha256": "72656f61e5ad3463b6faccd0ae498daae0847a32e1e20705e458681d05b98e46"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_policy_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T36 F-961落地：REUSE-T01 policy-boundary-audit §F-961＋B18独验反例＋上游ProximitySetupRule/convertToRegEx实读（candidate/目录红转绿oracle）；audit/helper区段为结构性或产品自持面",
+        "conclusion": "上游无字面名API（makeExclude/makeInclude全经convertToRegEx）实核；适配单点toUpstreamRulePattern镜像上游REGEX分支；audit区段为结构性/产品契约面，非上游算法核"
+      },
+      "differences": "F-961三用例（REGEX前缀排除规则match原名+存储pattern字面断言/普通点号名透传零扰动/恰5字节REGEX上游字面分支边界钉）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
+          "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+          "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+        "sha256": "ef79ce2ceb8c2db865271f8c356fad12b8f2d7e9e792de7c321da20a8477b6c3"
+      },
+      "auditBoundary": "逐区段实审（REUSE-T36落地批）；结构性/产品契约面登记，非上游算法消费；不授予源码修改权"
     }
   ]
 }

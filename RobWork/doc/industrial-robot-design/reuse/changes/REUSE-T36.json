@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T36",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T36.json",
+  "files": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp",
+      "sha256": "8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8",
+      "mode": "adapter",
+      "capabilities": [
+        "COLLISION"
+      ],
+      "boundary": "F-961 单点字面适配落地（所有者 2026-10-26 批量批准裁决表第 1~4 项，解阻原全文件解决批 blocked）：匿名空间新增 escapeRegexLiteral（ECMAScript 全集自足转写，REGEX 分支绕过上游 patternToRegEx 故转义必须自足）与 toUpstreamRulePattern 唯一适配点（分支条件逐字镜像上游 convertToRegEx REGEX 判定，命中传 REGEX+字面转义原名，否则透传零扰动；恰 5 字节 REGEX 走上游字面分支）；buildPolicyProximitySetup 调用点换经适配点并订正不实注释。名称真值保留（对象身份/名称映射不变）、不改上游、无接口/CMake 变化；<string> include 新增。整文件逐功能实审（1 adapter 行四套生产证据＋15 business-specific 行＋2 helper 行＋6 audit 行铺面）。evaluate 逐 scope 对直查不消费 setup 过滤——不声称碰撞误判修复，F-961 对碰撞结果影响面止于公开 setup 规则输出。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/test/CollisionSessionTest.cpp",
+      "sha256": "589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600",
+      "mode": "business",
+      "capabilities": [],
+      "boundary": "F961 三用例（REGEX 前缀名生产会话 EXCLUDE 规则 match 原名＋对称＋全匹配＋存储 pattern 字面断言；普通点号名透传零扰动＋近名不匹配；恰 5 字节 REGEX 上游字面分支与 6 字节起前缀解释边界钉）。模型构造面（既有 makeScene/FakeDevice 夹具）按 ARCH §3.6.2.1 test-fixture 例外授权（origin=test-fixture，2026-10-26 所有者落地授权脉络批准，待追认）——测试脚手架装配任务输入非模型所有权主张。",
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md"
+    }
+  ]
+}

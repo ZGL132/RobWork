@@ -1,9 +1,24 @@
-# REUSE-T36／WP-13：policy 名称规则 F-961 修正候选（blocked）与随机/LHS 候选独立审查原始记录
+# REUSE-T36／WP-13：policy 名称规则 F-961 修正候选（blocked→已落地）与随机/LHS 候选独立审查原始记录
 
-实施日期：2026-10-25；分支 redesign-main；起始 SHA `0e14bf3e79e46a830ca1b882e4a67ecddf4335e7`。
-任务契约：[REUSE-T36](../../../tasks/REUSE-T36.json)。**状态＝blocked（所有者 2026-10-25 escalate 裁决，采 T33 blocked 先例：产品树保持 HEAD 零改动，修复候选留存本目录待 policy 单元迁移包批准后落地）**；随机/LHS 审查部分按批准范围正常交付。
+实施日期：2026-10-25（blocked 批，起点 `0e14bf3e79e46a830ca1b882e4a67ecddf4335e7`）；**2026-10-26 落地批（所有者批量批准落地裁决表第 1~4 项，解阻原全文件解决批 blocked，起始 SHA `45e3e80ea08fd65e564501212347cfdc9d9a356b`）**；分支 redesign-main。
+任务契约：[REUSE-T36](../../../tasks/REUSE-T36.json)。**状态＝ready（实施完成待独立验收）**：F-961 修复候选已按 candidate/*.diff 落地产品树并完成全文件解决批（见 §1a）；随机/LHS 审查部分按批准范围正常交付（§2）。
 
-## 1. F-961 修复候选（已验证，未落产品）
+## 0. 落地批记录（2026-10-26）
+
+- **候选应用**：两份 diff 对 `45e3e80ea` 复核（`git apply --check` 干净、CE blob `64ad2088b` 逐位一致）后应用；产品文件与候选全文件摘要逐位一致（CollisionEvaluator.cpp=`8ddfbb5d2a3cc9c15820feee2e98c8298eaa2a7439f325ce588988a2912e5dd8`、CollisionSessionTest.cpp=`589599905ea17ccbe5d3e2865de523ffc8152c6925792a0fc5b91f6d6b422600`，治理 Digest 口径）。
+- **全量与消费者**：`sdurws_ird_policy_test` 全量 214/214（211 基线＋3 F961 用例，`final-recheck`/`final-recheck.xml|log` 真实执行）；受影响消费者 kinematics 292（291 passed＋1 既有 GUI 环境 skip）/trajectory 193/modeling 480/optimization 215（214 passed＋1 既有环境 skip）全绿零失败。
+- **disconnected 变异复验**（adapter 行四套证据的红半区，`production/` 目录留存变异副本与运行 xml/log）：
+  - `disconnected-bps`：buildPolicyProximitySetup 的 F-961 唯一适配点断开（toUpstreamRulePattern 改回原名直传）→ `RegexPrefixedNamesExcludeRuleMatchesLiteral_F961` 真实失败（exit 1，与 B18/f961-red.log 同型反例）；
+  - `disconnected-ctor`：RobWorkCollisionEvaluator 构造的内置后端实例化断开（m_strategy 置空）→ 全部 buildSession 会话构建 fail-fast，`SelfDomainOnlyExpandsLinkPairsOnly_POL_SCOPE_1` 真实失败（exit 1）；
+  - 恢复最终源码后重建复测绿（final-recheck 214/214）。
+- **全文件解决批**：policy.json 碰撞实现链 18 个既有功能行全部 migrated——`buildPolicyProximitySetup`（upstream=addProximitySetupRule）与 `RobWorkCollisionEvaluator` 构造（upstream=ProximityStrategyRW 类型构造符号）2 行 adapter 各持 `ird-reuse-production/1` 四套生产证据（production-buildPolicyProximitySetup.json / production-RobWorkCollisionEvaluator.json），其余 16 行 business-specific 持 nonOverlapEvidence；新增 helper 2 行（escapeRegexLiteral/toUpstreamRulePattern，产品自持字面化转写）＋audit 铺面 20 行（CE 空洞×6＋测试文件全文件×14），累计 78 行；CE 14 行 inputs 摘要全链同步；[changes 凭证](../../../reuse/changes/REUSE-T36.json) 登记（mode：CE=adapter／Test=business）。
+- **权限**：[permissions.json](../../../reuse/permissions.json) 三 grant——CE/RCE（task-private，collision/model，query）；CollisionSessionTest（test-fixture，见下）。
+- **catalog COLLISION candidate→verified**：[collision-capability-review.json](collision-capability-review.json) 为升级审查证据（两行真实四套证据＋限制登记：makeExclude 非字面 API、REGEX 约定镜像复核义务、内置 RW 无 DistanceStrategy、evaluate 不消费 setup 不声称碰撞误判修复）；ProximityStrategyRW.hpp 补类型构造符号（RigidObject/QConstraint 先例同型）；review.version 保持 b12e8503（SUITABILITY 对 verified 能力执行 git show 版本一致性核对，上游只读未变）。**本包独立验收覆盖该升级。**
+- **治理 schema 扩展（披露义务，待所有者追认）**：落地实施中发现 policy 测试文件既有模型构造面（`make_shared<rw::models::WorkCell>`/`addDevice`——改动前已存在，非本批新增）触发 IRD-GATE-AD 死锁：construct/mutate-model 强制 `origin=runtime-owner`（reuse-contract.ps1:92）而 runtime-owner 强制 `unit=runtime`（:84），policy 单元测试文件无合法 grant 形态（probe-ad-extract.ps1 逐字复刻门禁提取实测：cats=collision,model,state＋ops=construct-model,mutate-model）；此死锁同为 WP-04/05/07 测试落地必然障碍。经主会话按 2026-10-26 所有者落地授权脉络裁决批准 **test-fixture 例外**（ARCH §3.6.2.1＋v0.16 登记；reuse-contract.ps1 新增 origin=test-fixture——仅 `/test/` 路径合法、仅豁免夹具装配所必需 model 操作，host/graphics 与 worker 边界不变；test-reuse-governance.ps1 正负例三用例：正例=test 路径＋test-fixture PASS、负例=非 test 路径冒用拒、负例=test 文件模型操作无 grant 拒，155/155 全绿）；治理批独立提交、可整体回退。级联同步：foundation-governance.json 10 处对 reuse-contract.ps1 的 inputs 绑定刷新（246c1aed…→e431903b…）。
+- **收口登记**：findings.json F-961 status=open→fixed（resolution 追加落地批记录；实证范围止于公开 setup 规则输出正字性）；migration §13.1/§13.2/§13.3 三处更新为已落地；契约 status=blocked→ready、acceptance 补落地项、allowedFiles 扩至落地批实际改动面。
+
+
+## 1. F-961 修复候选（blocked 批验证记录；已于落地批应用产品树）
 
 ### 证据链与准入
 
@@ -51,4 +66,4 @@
 | test.log / sdurws_ird_policy_test.xml / ird-test-report.json | 候选构建全量 214/214 |
 | random-lhs-search.md | S1-S8 检索命令与输出 |
 
-独验/后续：blocked 状态由所有者裁决解阻；候选落地随 policy 单元迁移包另立精确任务；随机/LHS 行维持 pending。
+独验/后续：blocked 已由所有者 2026-10-26 批量批准解阻并完成落地批（§0）；独立验收由所有者另行执行（覆盖 catalog COLLISION verified 升级与 test-fixture 治理例外追认）；随机/LHS 行维持 pending。
