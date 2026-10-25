@@ -1,0 +1,11 @@
+MATCH RobWork/RobWork/src/rw/math/MetricFactory.hpp
+MATCH RobWork/RobWork/src/rw/pathplanning/PathAnalyzer.hpp
+MATCH RobWork/RobWork/src/rw/math/CMakeLists.txt
+MATCH RobWork/RobWork/src/rw/pathplanning/CMakeLists.txt
+MATCH RobWork/RobWork/src/rwlibs/pathplanners/CMakeLists.txt
+MATCH RobWork/RobWork/src/rwlibs/pathplanners/rrt/RRTPlanner.hpp
+MATCH RobWork/RobWork/src/rw/pathplanning/QConstraint.hpp
+MATCH RobWork/RobWork/src/rw/pathplanning/QSampler.hpp
+MATCH RobWork/RobWork/src/rw/pathplanning/QEdgeConstraint.hpp
+MATCH RobWork/RobWork/src/rw/pathplanning/StopCriteria.hpp
+ALL-MATCH

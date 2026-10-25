@@ -1,0 +1,182 @@
+[==========] Running 69 tests from 13 test suites.
+[----------] Global test environment set-up.
+[----------] 6 tests from TrjBuildGraph
+[ RUN      ] TrjBuildGraph.UnitEdgesSevenRegisteredAndClosed_WP16T03_ACC1
+[       OK ] TrjBuildGraph.UnitEdgesSevenRegisteredAndClosed_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.PluginTargetPresent_WP16T03_ACC1
+[       OK ] TrjBuildGraph.PluginTargetPresent_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.SevenRegisteredEdgesPresent_WP16T03_ACC1
+[       OK ] TrjBuildGraph.SevenRegisteredEdgesPresent_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP16T03_ACC2
+[       OK ] TrjBuildGraph.NoBusinessUnitOrExtraPlatformEdge_WP16T03_ACC2 (0 ms)
+[ RUN      ] TrjBuildGraph.NoTestkitEdgeOnProductTarget_WP16T03_ACC1
+[       OK ] TrjBuildGraph.NoTestkitEdgeOnProductTarget_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjBuildGraph.IncludeFaceMatchesRegisteredEdges_WP16T03_ACC2
+[       OK ] TrjBuildGraph.IncludeFaceMatchesRegisteredEdges_WP16T03_ACC2 (10 ms)
+[----------] 6 tests from TrjBuildGraph (15 ms total)
+
+[----------] 3 tests from TrjPluginAssembly
+[ RUN      ] TrjPluginAssembly.DescriptorMatchesUiRegistrations_WP16T03_ACC1
+[       OK ] TrjPluginAssembly.DescriptorMatchesUiRegistrations_WP16T03_ACC1 (0 ms)
+[ RUN      ] TrjPluginAssembly.PluginFaceHasZeroComputationSymbols_WP16T03_ACC2
+[       OK ] TrjPluginAssembly.PluginFaceHasZeroComputationSymbols_WP16T03_ACC2 (2 ms)
+[ RUN      ] TrjPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2
+[       OK ] TrjPluginAssembly.PluginFaceHasNoDirectFileOrProjectAccess_WP16T03_ACC2 (1 ms)
+[----------] 3 tests from TrjPluginAssembly (3 ms total)
+
+[----------] 3 tests from TrjPlanConfigContract
+[ RUN      ] TrjPlanConfigContract.EntryMatchesSnapshotFreezeContract_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryMatchesSnapshotFreezeContract_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfigContract.EntryIdentitySensitiveToConfigChange_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryIdentitySensitiveToConfigChange_WP16T04_ACC2 (0 ms)
+[ RUN      ] TrjPlanConfigContract.EntryRejectedForIllegalConfig_WP16T04_ACC2
+[       OK ] TrjPlanConfigContract.EntryRejectedForIllegalConfig_WP16T04_ACC2 (0 ms)
+[----------] 3 tests from TrjPlanConfigContract (0 ms total)
+
+[----------] 2 tests from TrjPathPlannerContract
+[ RUN      ] TrjPathPlannerContract.ProductFaceHasZeroProximity_WP16T06_R5
+[       OK ] TrjPathPlannerContract.ProductFaceHasZeroProximity_WP16T06_R5 (21 ms)
+[ RUN      ] TrjPathPlannerContract.PlannerHeaderPinsDeliveredFace_WP16T06_ACC1
+[       OK ] TrjPathPlannerContract.PlannerHeaderPinsDeliveredFace_WP16T06_ACC1 (0 ms)
+[----------] 2 tests from TrjPathPlannerContract (22 ms total)
+
+[----------] 5 tests from TrjRecheckContract
+[ RUN      ] TrjRecheckContract.P06FrozenParametersMatchFrozenTable_WP16T07_ACC1
+[       OK ] TrjRecheckContract.P06FrozenParametersMatchFrozenTable_WP16T07_ACC1 (0 ms)
+[ RUN      ] TrjRecheckContract.ParameterValidationFailsFast_WP16T07_ACC2
+[       OK ] TrjRecheckContract.ParameterValidationFailsFast_WP16T07_ACC2 (0 ms)
+[ RUN      ] TrjRecheckContract.At06CounterExampleMaterialPins_WP16T07_ACC1
+[       OK ] TrjRecheckContract.At06CounterExampleMaterialPins_WP16T07_ACC1 (0 ms)
+[ RUN      ] TrjRecheckContract.NoPrivateThresholdField_WP16T07_ACC2
+[       OK ] TrjRecheckContract.NoPrivateThresholdField_WP16T07_ACC2 (0 ms)
+[ RUN      ] TrjRecheckContract.RecheckSmoothHeaderPinsDeliveredFace_WP16T07_ACC3
+[       OK ] TrjRecheckContract.RecheckSmoothHeaderPinsDeliveredFace_WP16T07_ACC3 (0 ms)
+[----------] 5 tests from TrjRecheckContract (2 ms total)
+
+[----------] 5 tests from TrajectoryCommandsBoundary
+[ RUN      ] TrajectoryCommandsBoundary.AcceptAllSevenTokensWithZeroRevisionContract
+[       OK ] TrajectoryCommandsBoundary.AcceptAllSevenTokensWithZeroRevisionContract (0 ms)
+[ RUN      ] TrajectoryCommandsBoundary.RejectUnknownTokenCaseSensitive
+[       OK ] TrajectoryCommandsBoundary.RejectUnknownTokenCaseSensitive (0 ms)
+[ RUN      ] TrajectoryCommandsBoundary.RejectPayloadTokenMismatch
+[       OK ] TrajectoryCommandsBoundary.RejectPayloadTokenMismatch (0 ms)
+[ RUN      ] TrajectoryCommandsBoundary.T10FacesZeroRevisionAndNoCommandAuthoritySymbols
+[       OK ] TrajectoryCommandsBoundary.T10FacesZeroRevisionAndNoCommandAuthoritySymbols (1 ms)
+[ RUN      ] TrajectoryCommandsBoundary.ExportFieldDictionaryFrozen
+[       OK ] TrajectoryCommandsBoundary.ExportFieldDictionaryFrozen (0 ms)
+[----------] 5 tests from TrajectoryCommandsBoundary (1 ms total)
+
+[----------] 2 tests from TrjEvaluationDimsContract
+[ RUN      ] TrjEvaluationDimsContract.KindTokenAndItemIdsSingleWriteSite_WP16T11_ACC2
+[       OK ] TrjEvaluationDimsContract.KindTokenAndItemIdsSingleWriteSite_WP16T11_ACC2 (106 ms)
+[ RUN      ] TrjEvaluationDimsContract.InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC1
+[       OK ] TrjEvaluationDimsContract.InterfaceDeliveryFaceVocabularyShape_WP16T11_ACC1 (0 ms)
+[----------] 2 tests from TrjEvaluationDimsContract (106 ms total)
+
+[----------] 8 tests from FailureLocateContractTest
+[ RUN      ] FailureLocateContractTest.FourFailureClassesProduceErr01CompleteEntries
+[       OK ] FailureLocateContractTest.FourFailureClassesProduceErr01CompleteEntries (0 ms)
+[ RUN      ] FailureLocateContractTest.LocateContextCarriesSegmentPhaseAndPathParameter
+[       OK ] FailureLocateContractTest.LocateContextCarriesSegmentPhaseAndPathParameter (0 ms)
+[ RUN      ] FailureLocateContractTest.SeverityFromCodeTableDrivesBlockingLevel
+[       OK ] FailureLocateContractTest.SeverityFromCodeTableDrivesBlockingLevel (0 ms)
+[ RUN      ] FailureLocateContractTest.SubjectBindingPrefersRecordThenFallbackThenRejects
+[       OK ] FailureLocateContractTest.SubjectBindingPrefersRecordThenFallbackThenRejects (0 ms)
+[ RUN      ] FailureLocateContractTest.CodeFaceViolationsFailFastAndNamesProject
+[       OK ] FailureLocateContractTest.CodeFaceViolationsFailFastAndNamesProject (0 ms)
+[ RUN      ] FailureLocateContractTest.RecordViolationsFailFastAndEmptyInputIsLegal
+[       OK ] FailureLocateContractTest.RecordViolationsFailFastAndEmptyInputIsLegal (0 ms)
+[ RUN      ] FailureLocateContractTest.DeterministicOutputOrderEqualsInputOrder
+[       OK ] FailureLocateContractTest.DeterministicOutputOrderEqualsInputOrder (0 ms)
+[ RUN      ] FailureLocateContractTest.EntryContextCarriesEvaluationIdentity
+[       OK ] FailureLocateContractTest.EntryContextCarriesEvaluationIdentity (0 ms)
+[----------] 8 tests from FailureLocateContractTest (0 ms total)
+
+[----------] 8 tests from TrjUiRegistration
+[ RUN      ] TrjUiRegistration.TranslateFieldsMatchUiFrozenShapes_WP16T12_ACC1
+[       OK ] TrjUiRegistration.TranslateFieldsMatchUiFrozenShapes_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrjUiRegistration.RegisterSubmitsDescriptorToHostRegistrar_WP16T12_ACC1
+[       OK ] TrjUiRegistration.RegisterSubmitsDescriptorToHostRegistrar_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrjUiRegistration.RegisterOutcomePassthroughZeroLocalVerdict_WP16T12_ACC1
+[       OK ] TrjUiRegistration.RegisterOutcomePassthroughZeroLocalVerdict_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrjUiRegistration.NullRegistrarFailsFast_WP16T12_ACC1
+[       OK ] TrjUiRegistration.NullRegistrarFailsFast_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrjUiRegistration.SessionContractAnchoredToUiView3DContract_WP16T12
+[       OK ] TrjUiRegistration.SessionContractAnchoredToUiView3DContract_WP16T12 (0 ms)
+[ RUN      ] TrjUiRegistration.ModuleProjectionAndDraftHalf_WP16T12_ACC1
+[       OK ] TrjUiRegistration.ModuleProjectionAndDraftHalf_WP16T12_ACC1 (0 ms)
+[ RUN      ] TrjUiRegistration.T12FacesZeroRegistrarConstructionAndVerdict_WP16T12_ACC2
+[       OK ] TrjUiRegistration.T12FacesZeroRegistrarConstructionAndVerdict_WP16T12_ACC2 (1 ms)
+[ RUN      ] TrjUiRegistration.CommandCatalogMatchesTokenWordlist_WP16T12_ACC1
+[       OK ] TrjUiRegistration.CommandCatalogMatchesTokenWordlist_WP16T12_ACC1 (0 ms)
+[----------] 8 tests from TrjUiRegistration (1 ms total)
+
+[----------] 9 tests from TrjAt06GoldenContract
+[ RUN      ] TrjAt06GoldenContract.ManifestRegistration_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.ManifestRegistration_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.IntegrityCoversAllFiles_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.IntegrityCoversAllFiles_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.P06FrozenProtocolMaterialization_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.P06FrozenProtocolMaterialization_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseRecheckCollision_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseRecheckCollision_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseBudgetExhausted_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseBudgetExhausted_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseReplanSuccess_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseReplanSuccess_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.CaseLimitExceeded_WP16T13_ACC1
+[       OK ] TrjAt06GoldenContract.CaseLimitExceeded_WP16T13_ACC1 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.ToleranceProfileChannel_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.ToleranceProfileChannel_WP16T13_ACC2 (0 ms)
+[ RUN      ] TrjAt06GoldenContract.DataRootLayout_WP16T13_ACC2
+[       OK ] TrjAt06GoldenContract.DataRootLayout_WP16T13_ACC2 (0 ms)
+[----------] 9 tests from TrjAt06GoldenContract (4 ms total)
+
+[----------] 7 tests from TrjKinPortContract
+[ RUN      ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2
+[       OK ] TrjKinPortContract.ProductFaceHasZeroKinematicsIncludes_WP16T05_ACC2 (7 ms)
+[ RUN      ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortHeaderDeclaresInjectedInterface_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PlanProjectsRequestFieldsIntoPort_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2
+[       OK ] TrjKinPortContract.SameSeedSameConfigEquivalentRequestSequence_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortErrorSurfacesWithStableTokenPrefix_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2
+[       OK ] TrjKinPortContract.PortCancelPropagatesAsNonError_WP16T05_ACC2 (0 ms)
+[ RUN      ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2
+[       OK ] TrjKinPortContract.FkRequestCarriesBranchSolution_WP16T05_ACC2 (0 ms)
+[----------] 7 tests from TrjKinPortContract (7 ms total)
+
+[----------] 5 tests from TrjProcessSpeedContract
+[ RUN      ] TrjProcessSpeedContract.SegmentConstraintExtensionVersionShape_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.SegmentConstraintExtensionVersionShape_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjProcessSpeedContract.ReusedLimitExceededCodeMetadata_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.ReusedLimitExceededCodeMetadata_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjProcessSpeedContract.VelocityUnitTokenRegistered_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.VelocityUnitTokenRegistered_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjProcessSpeedContract.FailFastTokenPrefixFamily_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.FailFastTokenPrefixFamily_WP16T15_ACC2 (0 ms)
+[ RUN      ] TrjProcessSpeedContract.EvaluationDimsV3ConsumerOrder_WP16T15_ACC2
+[       OK ] TrjProcessSpeedContract.EvaluationDimsV3ConsumerOrder_WP16T15_ACC2 (0 ms)
+[----------] 5 tests from TrjProcessSpeedContract (0 ms total)
+
+[----------] 6 tests from TrjContinuousProcessContract
+[ RUN      ] TrjContinuousProcessContract.BodyTypesNoExtensionSlots_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.BodyTypesNoExtensionSlots_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.SegmentSpaceTypeVocabularyShape_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.SegmentSpaceTypeVocabularyShape_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.ReusedContinuityBrokenCodeMetadata_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.ReusedContinuityBrokenCodeMetadata_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.AngularVelocityUnitTokenRegistered_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.AngularVelocityUnitTokenRegistered_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.FailFastTokenPrefixFamily_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.FailFastTokenPrefixFamily_WP16T16_ACC2 (0 ms)
+[ RUN      ] TrjContinuousProcessContract.EvaluationDimsV4ConsumerOrder_WP16T16_ACC2
+[       OK ] TrjContinuousProcessContract.EvaluationDimsV4ConsumerOrder_WP16T16_ACC2 (0 ms)
+[----------] 6 tests from TrjContinuousProcessContract (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 69 tests from 13 test suites ran. (166 ms total)
+[  PASSED  ] 69 tests.
