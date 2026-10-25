@@ -1,0 +1,44 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T46",
+ "unit": "workflow",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "workflow.PureStageGateService.evaluate",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：七阶段门控消费投影与事件，不重算领域阈值。通用事件/状态工具仍需查，不能把整个workflow判业务专属"
+  },
+  {
+   "functionId": "workflow.contract_test.ContractTestMain.main",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。"
+  },
+  {
+   "functionId": "workflow.CMake.ird_add_gtest",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议"
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.running",
+   "conclusion": "上游 rw::common ThreadPool/ThreadTask 为通用线程池原语；产品承载业务关停协议（监督循环/关停序/生命周期契约），ThreadTask 不表达业务协议语义——通用原语不替代业务协议（policy §1.2 产品业务规则保留面），适配无收益。 行差异：getter组running/storeClosedObserved/abandonDiagObserved/gaveUp：running为当前运行态，start置true、stop/自然退出清false；其余三个保留历史观测事实，原子acquire只读，不产生第二状态权威"
+  }
+ ]
+}

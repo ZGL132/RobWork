@@ -1,0 +1,66 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T46",
+ "unit": "workflow",
+ "masterWp": "WP-A",
+ "title": "WP-19批次五·workflow单元审计收口：关停监督/门禁服务business-specific定案",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": [
+  "GOV-T21",
+  "GOV-T22"
+ ],
+ "requirements": [
+  "WF-01",
+  "WF-03",
+  "NFR-COR-01"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13.3",
+  "reuse/policy.md#1.2",
+  "units/workflow.md#1"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T46.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T46.json -Base 1400b4a20668a86296cdcd0db2c59f3aacbef40c -Head <送验SHA>"
+ ],
+ "allowedFiles": [
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T46.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T46.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/workflow.json",
+  "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-GEN/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "main"
+ ],
+ "outputs": [
+  "workflow.json 9 行 pending 全量收口（business-specific，零产品变更）"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "零产品变更审计收口：pending 行按族判定（字节身份契约/业务协议保留/上游无同义物/测试骨架定案）处置为 business-specific，逐 functionId nonOverlap 条目＋检索记录在案；不洗绿（ui 20 行/testkit F-959 保持 pending/blocked 并登记结构墙与解阻路径）",
+  "catalog 同步（如涉本批）：REUSE-T50 MATH-SVD LinearAlgebra.hpp symbols 补 inverse（T12 §5.1 建议落实，符号在位实证）；其余批次零 catalog 变化",
+  "门禁：validate-docs -TaskFile（含全量复用检查）与 verify-task-scope 显式 Base/Head 全绿；ird_gates 零命中（零产品变更无构建扩大面）"
+ ],
+ "note": "migration §13.3 WP-19 批次（workflow）。masterWp=WP-A 按 T29/T30 先例。起始 SHA=1400b4a20668a86296cdcd0db2c59f3aacbef40c（上一批次收口提交）。范围＝§13.3 WP-19 行 workflow 面。CloseSupervisor 关停监督 6 行（UTIL-THREAD）＋Gate 评估服务＋测试骨架/构建宏——上游 ThreadPool/ThreadTask 为通用原语，不承载业务关停协议（监督循环/关停序），policy §1.2 业务协议保留面；零产品变更。。所有者保留裁决项：。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T46.json"
+ }
+}

@@ -1,547 +1,583 @@
 {
-  "schemaVersion": "ird-reuse-functions/1",
-  "unit": "workflow",
-  "functions": [
+ "schemaVersion": "ird-reuse-functions/1",
+ "unit": "workflow",
+ "functions": [
+  {
+   "functionId": "workflow.PureStageGateService.evaluate",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
     {
-      "functionId": "workflow.PureStageGateService.evaluate",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
-          "symbol": "PureStageGateService::evaluate",
-          "qualifiedSymbol": "sdurws::ird::workflow::PureStageGateService::evaluate",
-          "startLine": 134,
-          "endLine": 297,
-          "sha256": "55d56e9b1cc1bce3aa074a734f66f778f66da224b01c357b31796020fb0efd08"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "owner",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
-        "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
-      },
-      "differences": "七阶段门控消费投影与事件，不重算领域阈值。通用事件/状态工具仍需查，不能把整个workflow判业务专属",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        }
-      ],
-      "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合"
-    },
-    {
-      "functionId": "workflow.contract_test.ContractTestMain.main",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "NFR-COR-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp",
-          "symbol": "main",
-          "qualifiedSymbol": "::main",
-          "startLine": 19,
-          "endLine": 26,
-          "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow_contract_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-      },
-      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-        }
-      ],
-      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-    },
-    {
-      "functionId": "workflow.test.TestMainReport.main",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "NFR-COR-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
-          "symbol": "main",
-          "qualifiedSymbol": "::main",
-          "startLine": 1,
-          "endLine": 41,
-          "sha256": "37509b3a5201d59c520e9c233914e24c1133544c9225c32cd0443bc9a8cd8915"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "NONE",
-      "decision": "business-specific",
-      "status": "migrated",
-      "search": {
-        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-      },
-      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-        }
-      ],
-            "nonOverlapEvidence": {
-        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
-        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
-      },
-      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-    },
-    {
-      "functionId": "workflow.CMake.ird_add_gtest",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "NFR-COR-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "symbol": "ird_add_gtest",
-          "qualifiedSymbol": "ird_add_gtest",
-          "startLine": 374,
-          "endLine": 386,
-          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow_test",
-        "sdurws_ird_workflow_contract_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-      },
-      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-        }
-      ],
-      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
-          "symbol": "StoreCloseSupervisor::StoreCloseSupervisor",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor",
-          "startLine": 25,
-          "endLine": 47,
-          "sha256": "5626af94092754c9ef9b03cb62619d3628bbf56cc4990e99095823dbb045a370"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
-          "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
-          "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
-          "symbol": "StoreCloseSupervisor::~StoreCloseSupervisor",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor",
-          "startLine": 49,
-          "endLine": 53,
-          "sha256": "b044fcb94f252a77a2cb20eaf3e39e3a0a797ed6d27fd15f2480ebff325150a0"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
-          "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
-          "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
-          "symbol": "StoreCloseSupervisor::start",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::start",
-          "startLine": 55,
-          "endLine": 78,
-          "sha256": "cf788862ad4cb5b920a36d0c3b7bd88055e1d91016ab10af5898ab58fd50b2a3"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
-          "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
-          "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
-          "symbol": "StoreCloseSupervisor::stop",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::stop",
-          "startLine": 80,
-          "endLine": 93,
-          "sha256": "6af8b742020cd244ecbbc15132bb1d177078f2c8a8931ba660b7ed4ed55f6adf"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
-          "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
-          "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
-          "symbol": "StoreCloseSupervisor::superviseLoop",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop",
-          "startLine": 95,
-          "endLine": 177,
-          "sha256": "8711ae8088d734793063958a445e07c28e561e4c9e48fa2fa7854185381aa3e5"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
-          "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
-          "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
-    },
-    {
-      "functionId": "workflow.CloseSupervisor.running",
-      "ownerUnit": "workflow",
-      "requirements": [
-        "UX-12"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp",
-          "symbol": "running",
-          "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::running",
-          "startLine": 162,
-          "endLine": 178,
-          "sha256": "de02a644d98652a8ded74b07874b0916a5a473106d104cc2e9c0ea67d7b4c4cb"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_workflow"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "UTIL-THREAD",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
-        "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
-      },
-      "differences": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp：running为当前运行态，start置true、stop/自然退出清false；其余三个保留历史观测事实，原子acquire只读，不产生第二状态权威",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
-          "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
-          "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
-          "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
-        }
-      ],
-      "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭"
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/Gate.cpp",
+     "symbol": "PureStageGateService::evaluate",
+     "qualifiedSymbol": "sdurws::ird::workflow::PureStageGateService::evaluate",
+     "startLine": 134,
+     "endLine": 297,
+     "sha256": "55d56e9b1cc1bce3aa074a734f66f778f66da224b01c357b31796020fb0efd08"
     }
-  ]
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"StableCodeRegistry|aggregateVerdict|AnalysisSnapshot|RequiredEvidenceProfile|SamplingPlanBuilder|ReportArchiveCoordinator|PureStageGateService\" RobWork/RobWork/src RobWork/RobWorkSim/src -g \"*.hpp\" -g \"*.cpp\"",
+    "conclusion": "定向审读的候选/权威边界登记；未完成所有生产消费者、测试/构建和替代排除审计，不授予源码修改权"
+   },
+   "differences": "七阶段门控消费投影与事件，不重算领域阈值。通用事件/状态工具仍需查，不能把整个workflow判业务专属",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditBoundary": "仅当前源区段登记，非整个文件或单元结项；正向生产证据未闭合",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.contract_test.ContractTestMain.main",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/ContractTestMain.cpp",
+     "symbol": "main",
+     "qualifiedSymbol": "::main",
+     "startLine": 19,
+     "endLine": 26,
+     "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_contract_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "TEST-HARNESS",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.test.TestMainReport.main",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/TestMainReport.cpp",
+     "symbol": "main",
+     "qualifiedSymbol": "::main",
+     "startLine": 1,
+     "endLine": 41,
+     "sha256": "37509b3a5201d59c520e9c233914e24c1133544c9225c32cd0443bc9a8cd8915"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+   },
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+  },
+  {
+   "functionId": "workflow.CMake.ird_add_gtest",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "NFR-COR-01"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "symbol": "ird_add_gtest",
+     "qualifiedSymbol": "ird_add_gtest",
+     "startLine": 374,
+     "endLine": 386,
+     "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow_test",
+    "sdurws_ird_workflow_contract_test"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "TEST-HARNESS",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+   },
+   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+    }
+   ],
+   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.StoreCloseSupervisor",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+     "symbol": "StoreCloseSupervisor::StoreCloseSupervisor",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::StoreCloseSupervisor",
+     "startLine": 25,
+     "endLine": 47,
+     "sha256": "5626af94092754c9ef9b03cb62619d3628bbf56cc4990e99095823dbb045a370"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+     "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+     "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.DestructorStoreCloseSupervisor",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+     "symbol": "StoreCloseSupervisor::~StoreCloseSupervisor",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::~StoreCloseSupervisor",
+     "startLine": 49,
+     "endLine": 53,
+     "sha256": "b044fcb94f252a77a2cb20eaf3e39e3a0a797ed6d27fd15f2480ebff325150a0"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+     "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+     "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.start",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+     "symbol": "StoreCloseSupervisor::start",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::start",
+     "startLine": 55,
+     "endLine": 78,
+     "sha256": "cf788862ad4cb5b920a36d0c3b7bd88055e1d91016ab10af5898ab58fd50b2a3"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+     "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+     "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.stop",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+     "symbol": "StoreCloseSupervisor::stop",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::stop",
+     "startLine": 80,
+     "endLine": 93,
+     "sha256": "6af8b742020cd244ecbbc15132bb1d177078f2c8a8931ba660b7ed4ed55f6adf"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+     "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+     "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.StoreCloseSupervisor.superviseLoop",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/src/CloseSupervisor.cpp",
+     "symbol": "StoreCloseSupervisor::superviseLoop",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::superviseLoop",
+     "startLine": 95,
+     "endLine": 177,
+     "sha256": "8711ae8088d734793063958a445e07c28e561e4c9e48fa2fa7854185381aa3e5"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "只观察ProjectStore关闭，不tick scheduler；闭合优先/一次Dev日志/阈值宽限/恒join与历史观测，ThreadTask不替代业务协议",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/test/HostAdapterTest.cpp",
+     "sha256": "5da43cbf3ef9d47681b2600bbf3559c623f0b76c7d586d7e75be38834f5d0abf"
+    },
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/contract_test/HostAssemblyContractTest.cpp",
+     "sha256": "a6dcabaa93f0c1ebe7a15aeadc11b69a4922d70b1c00cbd850f94a3ca564a279"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  },
+  {
+   "functionId": "workflow.CloseSupervisor.running",
+   "ownerUnit": "workflow",
+   "requirements": [
+    "UX-12"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/include/sdurws/ird/workflow/CloseSupervisor.hpp",
+     "symbol": "running",
+     "qualifiedSymbol": "sdurws::ird::workflow::StoreCloseSupervisor::running",
+     "startLine": 162,
+     "endLine": 178,
+     "sha256": "de02a644d98652a8ded74b07874b0916a5a473106d104cc2e9c0ea67d7b4c4cb"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_workflow"
+   ],
+   "usageRole": "adapter",
+   "permissionRef": "ARCH:3.6",
+   "capabilityId": "UTIL-THREAD",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "见batch12-search.json真实参数与输出；全文审读本区段/邻接调用和候选API，非同名未命中即缺口",
+    "conclusion": "审计判断及适配边界见differences与说明；当前不是生产迁移证据"
+   },
+   "differences": "getter组running/storeClosedObserved/abandonDiagObserved/gaveUp：running为当前运行态，start置true、stop/自然退出清false；其余三个保留历史观测事实，原子acquire只读，不产生第二状态权威",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/workflow/CMakeLists.txt",
+     "sha256": "4975223ec7758d216e53db8829fd7b79518794393b1f2cb1e69f22f8e6123826"
+    }
+   ],
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch12-search.json",
+     "sha256": "9faed621cd6f4b09f512aaf016ef61f573a982143c5d3034920b92a59c7732f7"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-tools-lifecycle-audit.md",
+     "sha256": "53ed395bbff49d7535aaf4d3292751b1d35a19ffc8829e67e5669f78dcd48a10"
+    }
+   ],
+   "auditBoundary": "仅明确列明功能/分组及已绑定测试；无C++运行或全文件关闭",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T46/nonoverlap-workflow.json",
+    "sha256": "e0fd2908afc9105066881f8a6a2f3497fe185c625a592d49afa81fedda00fc72"
+   }
+  }
+ ]
 }
