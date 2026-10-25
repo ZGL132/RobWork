@@ -1,0 +1,117 @@
+{
+  "taskId": "REUSE-T30",
+  "baseCommit": "c816a2c482088b9d03d537c103cf9ac314259187",
+  "reviewedCommit": "e74886dfcb972a2bbcc4f1336e22ab146037ffde",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T03:35:24+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T30/WP-06 单次验收子智能体（独立验收员，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未触碰生产源码（变异断开实验不做现场重放，仅静态核证原件链）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 c816a2c482088b9d03d537c103cf9ac314259187..e74886dfcb972（单提交 e74886dfc，冻结范围）送验实现：verify-task-scope 显式 Base/Head 复跑、契约七条 acceptance 逐项清单式增量复验（runtime 全量 312 项与 modeling 消费者 ACC5 真实重跑；实现方仍适用原件静态核证，不重跑无关夹具）、红线抽查（H1—H6、架构红线、closures.json 冻结、上游+vcpkg 净零、门禁零改动、无平行实现回流、无越权放宽）、RNE 消费假设缺口（GAP-RNE-FRAME）处置一致性、提交链与工作区核查、上次中断产物（REUSE-T30-20261025-r1/）核查处置。",
+  "counts": {
+    "failed": 0,
+    "passed": 16,
+    "notRun": 3,
+    "skipped": 0,
+    "unit": "16 项验收检查；集成/消费者测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场：git status --short 仅未跟踪验收产物（REUSE-T10/30/37/38/39 各轮目录），零已跟踪文件改动；HEAD=9f58ca28e（送验 head e74886dfc 的后继 governance 收口提交），git merge-base --is-ancestor 确认送验 head 在 HEAD 链上；送验范围 base=c816a2c4 为 e74886dfc 直接父提交，base..head 恰 1 个提交，与冻结范围一致（01-environment.txt）。",
+    "范围：verify-task-scope 显式 -Base c816a2c4 -Head e74886dfcb972 exit 0，changed=20 allowedRules=9 forbiddenRules=4，20 路径全部在允许面内（02-scope.log）；20 文件中无 RobWork/RobWork/src/**、无 RobWorkSim/src/**、无 vcpkg/**、无 patches/、无 scripts/、无 industrialrobot/cmake/ 路径（逐名 grep 零命中）。",
+    "提交链：单提交 e74886dfc 标题『[WP-06-T30] runtime动力学模型映射复用上游：定向核与oracle收口』前缀合规、正文四段与 diff 内容一致（注释级裁决/3个oracle/矩阵凭证/GAP裁决登记）；commit-lint -Range c816a2c4..e74886dfcb972 exit 0『PASS（1 个提交全部合规）』（07-commit-lint.log）。",
+    "门禁引擎直跑（随构建目标）：cmake --build build --config Release --target sdurws_ird_runtime_test ird_gates exit 0；ird_gates 输出『全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中』，17 项自测（fail_* 按预期检出＋pass_* 无误报）在案（03-build-runtime-gates.log，GBK 控制台编码原样留痕）。",
+    "runtime 全量数值复验（真实重跑）：run-tests.ps1 -Regex '^sdurws_ird_runtime_test$' exit 0；ird-test-report.json total=312 passed=311 failed=0 skipped=1 notRun=0 decisive=true；唯一 skipped=ContractSuite.ChildProcessWorker_RT_ID_1（显式 GTEST_SKIP 预存项，与本包无关）；DynamicWorkCellCompilerTest 全部 13 项＋DynamicWorkCellConstView 1 项 passed，含本包 3 个新 oracle（DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1/DwcFixedSegmentCompositeRigidBody_REUSE_T30/DwcProductConsumableByUpstreamRne_REUSE_T30）与摩擦面 FrictionCarriedViaMaterialDataMap_R2（04-runtime-test.log、04-runtime-ird-test-report.json、04-runtime-t30-cases.txt）。计数与实现方 309=308+1skipped 的差异＝送验 head 之后 T31+ 对 CanonicalModelTest.cpp/DescriptionValidatorTest.cpp 的增测（git diff 实证），本包两文件（编译器＋DynamicWorkCellCompilerTest.cpp）与送验 head 逐字一致。",
+    "消费者回归（真实重跑）：cmake --build sdurws_ird_modeling_test exit 0（告警均为 ModelingCommandFlowsTest.cpp 预存 C4834）；sdurws_ird_modeling_test.exe --gtest_filter=MdlPackageWorkCell.* exit 0，2/2 passed＝WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5（41ms，断言 DWC 导出体名/质量/重力−9.81 的建模消费者）＋PreviewExportsFourKinds_UI_T59（06-modeling-consumer-test.log、06-modeling-mdlpackageworkcell.xml failures=0、06-modeling-ird-test-report.json total=2 passed=2）。契约 verify 第 4 条字面参数 -GTestFilter 在 run-tests.ps1 不存在（20261025-r1 中断日志 06-modeling-consumer-test.log 同款报错在案），改用等价直跑机制执行，属机制更正非降格。",
+    "公共视图零变更（acceptance ⑤）：git diff --stat base..head 对 runtime/include/ 全目录与 runtime/src/Snapshot.cpp 输出为空（exit 0）——Adapter.hpp/Snapshot.hpp 零变更，按契约无需扩大 modeling/kinematics 受影响目标。",
+    "acceptance ①能力裁决：RUNTIME-WC-MODEL 条目 upstream 9 文件全部 rw/models+rw/kinematics（target=sdurw_models/sdurw_kinematics，逐文件实读）零 rwsim/dynamics 符号——『原样复用被否』成立；新登记 RUNTIME-DWC-MODEL review.status=verified、evidence suitability.md sha256 实测匹配（099ba7dc…）、baseline=c816a2c4；capability upstream 9 文件（rwsim/dynamics 6＋rw 3）经治理 Digest 规范化（BOM 剥除/CRLF→LF/尾单换行）逐一实算 9/9 MATCH 工作区上游文件（10-upstream-hash-check.txt）——『复核版本与工作区上游逐字一致』实证。",
+    "acceptance ②oracle 测试：三个新测试体逐段实读与契约表述逐点对应——①非零 zeroOffset 夹具（j1=0.4/j2=−0.25rad）默认 State q_rw=0 断言、bounds=权威限位−offset（−2.97−0.4/2.97−0.4/−π+0.25/π+0.25）、RigidDevice getKinematicModel()==WC findDevice 指针同一、getJointVelocities 默认零、承载帧全位姿对 canonical 独立 FK 复合（锚点位置＋Z 列）；②固定段 j1→jF→j2 夹具 DOF=2、body→关节多重集 {j1,j1,j2}（3 项去重 2 项——std::set 同构盲区实证）、同段 lF/l1 角速度逐元素相等＝独立期望 (0,0,1.5)、跨段 l2＝两关节贡献独立期望（Rz(0.1)·(0,−0.8,0)）、linear 参考点语义未文档化如实登记不作物理断言；③RNE 单 z 轴（R_align=I）非退化夹具 validate()/solve 返回 DOF+1 wrench、静止 (F=(0,0,4g),T=(0.05,−0.1,0)·4g) 全分量、ddq=2.0 合成含切向力与 (I_zz+m(rx²+ry²))·α、setPayload 读回、Tcp 工具体不入 getLinks。三测试在本人重跑中全部 passed（检查 5）。",
+    "acceptance ③GAP-RNE-FRAME 处置一致性：suitability.md §6（所有者 2026-10-25 裁决＝接受为登记缺口、包内不实施修复；探针 τ_x=±5.886＝R_align 混入量级 0.2×3×9.81；B1/薄适配两落点提案参考；WP-07/WP-09 处置前不得实施依赖部分）、migration §13.1 新增 WP-06/T02 行（实施完成待独验）与 §13.2 新增交接行（f296c73e 锚点、受影响消费者 WP-07 RNE/WP-09 FD、阻断登记）逐字核对一致；catalog boundary/limits、functions differences、production scope 四处登记同口径；编译器 diff 实为 14 行纯注释（3c 复合刚体裁决＋4c 存在性校验语义，零代码变更）——『包内不实施修复』实证；父任务 REUSE-T02 status 仍＝planned 未假关。次要发现（RNE 重力须 setGravity 显式传递、payload 力矩 cross(dr−com,F_p) 偏差、getVelocity linear 参考点）已按契约归 WP-07 深核，测试侧以角速度面钉住不冒充线速度物理断言。",
+    "acceptance ④摩擦承载面：runtime.compileDynamicWorkCell 条目 differences 含『摩擦=MaterialDataMap 承载约定（fv/fc/bias 参数名冻结），不接管摩擦策略——rwsim 无逐关节摩擦一等职』；FrictionCarriedViaMaterialDataMap_R2 既有用例在本人重跑中 passed（正向证据）；RNE 仅经 RigidDevice ctor＋setPayload 消费的载荷边界在测试注释与矩阵条目双面登记。",
+    "acceptance ⑥矩阵与凭证：functions/runtime.json 新增 runtime.compileDynamicWorkCell（decision=adapter/status=migrated，sources 1—518 行整文件两区段覆盖，capabilityId=RUNTIME-DWC-MODEL，production 证据 runtime.compileDynamicWorkCell.json sha256 实测匹配，ird-reuse-production/1 四面齐全 normal exit0/disconnected exit1/oracle/upstreamComparison）＋runtime.DynamicWorkCellConstView.accessors 同形成组条目（adapter/migrated，ctor/dynamicWorkCell/findBody/bodyCount）；tryDynamicWorkCell 既有条目 capabilityId 已纠正为 RUNTIME-DWC-MODEL、search/conclusion 改 DWC 面、decision/status 保持 pending 未假关；permissions.json 恰好新增 2 条 grant（REUSE-T30-DynamicWorkCellCompiler.cpp＝query/borrow/construct-model/mutate-model；…Test.cpp 另含 write-state——任务私有 State），均以精确 sha256 绑定单文件、usageRole=owner、permissionRef=ARCH:3.6.1，无扩散；changes/REUSE-T30.json 两文件逐文件凭证 sha256 与送验树实测一致（f296c73e/e1f22eb9）。",
+    "断开实验证据链静态核证（变异不现场重放——验收会话不触碰生产源码）：disconnected.source.originalSha256=f296c73e… 经治理 Digest 实算与送验 head 编译器一致；disconnected-source.txt 对送验版 diff 恰 2 行＝makeBodyInfo 质量置 0.0（:116）＋setGravity 加 (0,0,0.01) 偏移（:371），注释标记 MUTATION-T30；disconnected.xml 实测 DynamicWorkCellCompilerTest tests=13 failures=2 errors=0＋ConstView tests=1 failures=0，失败用例＝CompiledPathBodiesAndExplicitValues_RT_T08（6 条）＋DwcProductConsumableByUpstreamRne_REUSE_T30（9 条）共 15 个 <failure> 元素、断言行号互异且含 RNE oracle 面（11-disconnected-verify.txt）——『作用于登记生产源码、改变内容、真实失败断言』成立。",
+    "红线合集：H1 直接 API——编译器 include rwsim/dynamics 五头直构造（Body/FixedBody/MaterialDataMap/RigidBody/RigidDevice），RNE 测试零包装直用 RecursiveNewtonEuler 公共 API；H2 无平行数值核心——S7 映射代码零变更（diff 仅注释）、新增面全部测试侧；H3 沿用上游类型/State/目标与测试规范（产品中文契约注释在案）；H4/H5 无新核心/上游扩展——范围 diff 对 RobWork/RobWork/src、RobWorkSim/src、vcpkg、patches/ 零路径，industrialrobot/cmake/ git diff --exit-code 零差异，治理脚本零改动；H6 追溯链闭合——capability/矩阵/凭证/production 四层 sha256 全部实测相符（9/9 上游＋2/2 凭证＋1/1 suitability＋1/1 production）；架构红线——runtime 单元收口（测试 include 零他单元私有头 grep 零命中）、L2 零 Qt（ird_gates R-1 零命中＋RuntimeBuild.NoQtInclude_RT_BUILD_NFR_MNT_01 passed）；CLOSURE 冻结——reuse/closures.json 对范围 git diff 零差异；无 old/ 回流；无越权放宽（ird_gates/validate-reuse 实测通过，阈值与权限未动）。",
+    "上次中断产物处置：REUSE-T30-20261025-r1/ 含 02—09 共 9 份日志、无裁决记录——02-scope/03-build/04-runtime/05-build/07-lint/08-task/09-docs 结果与本人本日重跑同向；06-modeling-consumer-test.log 为失败尝试原件（run-tests.ps1 无 -GTestFilter 参数），其后 06-modeling-mdlpackageworkcell.log 以直跑 2 用例通过补正。处置＝保留原样作历史留痕、不并入不删除，本记录全部结论仅依据本日 r1 目录下本人重跑证据。",
+    "RNE 消费假设缺口与 migration §13.2 交接索引核对（ask 定向项）：契约 note、suitability §6、migration §13.1/§13.2、catalog boundary、production scope 五处对 GAP-RNE-FRAME 的处置表述（登记不修复、两落点提案待批、WP-07/WP-09 依赖部分阻断、本包按已完成事实收口待独验）逐条一致；REUSE-T07/REUSE-T13 等依赖任务契约文件暂未携带该 GAP 行——阻断登记点按契约即为 migration §13.2（在案），依赖包领取时须按交接索引读取，本包无登记缺位。"
+  ],
+  "integrationTest": {
+    "runtime": {
+      "tests": 312,
+      "passed": 311,
+      "failed": 0,
+      "skipped": 1,
+      "notRun": 0,
+      "skippedCase": "ContractSuite.ChildProcessWorker_RT_ID_1（显式 GTEST_SKIP 预存项，与本包无关）",
+      "exitCode": 0,
+      "evidence": "04-runtime-test.log、04-runtime-ird-test-report.json、04-runtime-t30-cases.txt；实现方原件 runtime-t30.xml tests=308 failures=0（显式排除上述 skipped 项——309=308+1 口径吻合）",
+      "binding": "本包两文件（DynamicWorkCellCompiler.cpp/DynamicWorkCellCompilerTest.cpp）与送验 head 逐字一致（git diff 实证），本项结果绑定 e74886dfcb972；312−309=+3 为送验 head 后 T31+ 增测，与本包无关"
+    },
+    "modelingConsumer": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "cases": "MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5、MdlPackageWorkCell.PreviewExportsFourKinds_UI_T59",
+      "xml": "06-modeling-mdlpackageworkcell.xml（failures=0）、06-modeling-ird-test-report.json",
+      "binding": "运行于当前 HEAD 树（编译器与消费路径与送验 head 一致已核实）；全量 modeling 479 项不属 acceptance ⑤ 必核面，未复跑（见 notRun）"
+    }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json -Base c816a2c482088b9d03d537c103cf9ac314259187 -Head e74886dfcb972", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build-runtime-gates", "command": "cmake --build build --config Release --target sdurws_ird_runtime_test ird_gates", "exitCode": 0, "passed": true, "log": "03-build-runtime-gates.log" },
+    { "name": "runtime-test-full", "command": "pwsh -NoProfile -File RobWork/scripts/industrial-robot/run-tests.ps1 -Configuration Release -BuildDirectory build -NoConfigure -Regex '^sdurws_ird_runtime_test$'", "exitCode": 0, "passed": true, "log": "04-runtime-test.log", "report": "04-runtime-ird-test-report.json" },
+    { "name": "build-modeling", "command": "cmake --build build --config Release --target sdurws_ird_modeling_test", "exitCode": 0, "passed": true, "log": "05-build-modeling.log" },
+    { "name": "modeling-consumer", "command": "sdurws_ird_modeling_test.exe --gtest_filter=MdlPackageWorkCell.* --gtest_output=xml:06-modeling-mdlpackageworkcell.xml（PATH 前置 build/RobWork bin|libs/Release＋vcpkg installed/x64-windows/bin；QT_QPA_PLATFORM=windows）", "exitCode": 0, "passed": true, "log": "06-modeling-consumer-test.log", "xml": "06-modeling-mdlpackageworkcell.xml", "report": "06-modeling-ird-test-report.json" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range c816a2c482088b9d03d537c103cf9ac314259187..e74886dfcb972", "exitCode": 0, "passed": true, "log": "07-commit-lint.log" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json", "exitCode": 0, "passed": true, "log": "08-validate-task.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json'); exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "09-validate-docs.log" },
+    { "name": "upstream-hash-9", "command": "pwsh Digest 规范化实算（BOM/CRLF/尾换行）capability upstream 9 文件＋suitability.md＋production json sha256", "exitCode": 0, "passed": true, "log": "10-upstream-hash-check.txt" },
+    { "name": "disconnected-chain-verify", "command": "git show e74886dfcb972:<compiler> 经 Digest 实算比对 originalSha256；diff 送验版↔disconnected-source.txt；[xml] 解析 disconnected.xml 失败面", "exitCode": 0, "passed": true, "log": "11-disconnected-verify.txt" }
+  ],
+  "executionNotes": [
+    "构建与测试在当前 HEAD=9f58ca28e 树上执行（未切分支、未重建配置）：本包两文件与送验 head 经 git diff 实证逐字一致，T30 相关结果绑定送验 head；套件总数 312 与实现方 309 的 +3 差异全部归因送验 head 后 T31+ 对 CanonicalModelTest.cpp/DescriptionValidatorTest.cpp 的增测（动态面无交集）。",
+    "契约 verify 第 4 条字面命令的 -GTestFilter 参数在 run-tests.ps1 中不存在（20261025 中断会话同款报错原件在案）；本轮以同一 exe 直跑 --gtest_filter='MdlPackageWorkCell.*' 等价执行并落 XML/报告，契约要求的消费者用例 ACC5 真实通过。",
+    "mutation 断开实验未现场重放：验收会话约束禁止触碰生产源码，改为静态核证证据链（originalSha256 实算相符＋变异 diff 恰 2 行登记内容＋disconnected.xml 真实失败面）。次要发现：XML 实录 15 个 <failure> 元素（6+9，含 :290 循环 3 次实例），实现方表述『2 项14条』计数与机器记录不符（15≠14，两种口径均非 14）——不影响『真实失败断言于登记生产源码』的实质成立，登记为非阻断记录偏差。",
+    "ird_gates 与 validate-reuse 输出为 GBK 控制台编码，03 日志中文段呈转码痕迹，关键结论行（零命中/全检查通过/PASS governance only）可辨读；validate-reuse 在当前 HEAD 为 changed=111 DEBT=16 UNRESOLVED=1399 governance only（REUSE-AD-PENDING 命中 policy/reporting/runtime-Snapshot/ui 等他包既有文件，非本包 20 路径），不构成算法合规放行。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "modeling 全量 479 项套件复跑",
+      "reason": "acceptance ⑤ 必核面为消费者测试 ACC5（已真实重跑通过）；479 全过为实现方 note 表述，仓库证据目录无对应建模全量 XML 原件，增量范围规则下不重跑不受影响夹具，亦不以其冒称本轮证据。"
+    },
+    {
+      "item": "mutation 断开实验现场重放",
+      "reason": "重放需临时改动生产源码 DynamicWorkCellCompiler.cpp，与验收会话『除产物目录外不修改任何文件』约束冲突；以证据链静态核证替代（originalSha256/变异 diff/失败 XML 三面相符）。"
+    },
+    {
+      "item": "GAP-RNE-FRAME 探针（probe.xml）重放",
+      "reason": "探针为登记缺口的存在性证据（suitability §6 实录 τ_x=±5.886），所有者 2026-10-25 已裁决接受为登记缺口且包内不实施修复；重放无验收增量，原件与多处登记交叉一致即足。"
+    }
+  ],
+  "limitations": "PASS 仅绑定送验范围 c816a2c482088b9d03d537c103cf9ac314259187..e74886dfcb972（head=e74886dfcb972a2bbcc4f1336e22ab146037ffde）：runtime 动力学映射定向核＋oracle 收口＋矩阵凭证。实施完成待独验状态经本独立验收转正为本记录 pass；不解除 migration §13.2 对 WP-07/WP-09 依赖部分的阻断（GAP-RNE-FRAME 修复须所有者提案批准），不构成 REUSE-T02（planned）收口，不构成 WP-07 RNE/FD 生产接线放行。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399）。runtime 全量结果在当前 HEAD 树实测，本包两文件与送验 head 逐字一致已实证；实现方『modeling 479 项全过』无仓库原件、断开实验『14条』与机器实录 15 条偏差，均已如实登记不冒称。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/01-environment.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/03-build-runtime-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/04-runtime-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/04-runtime-ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/04-runtime-t30-cases.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/05-build-modeling.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/06-modeling-consumer-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/06-modeling-mdlpackageworkcell.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/06-modeling-ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/07-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/08-validate-task.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/09-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/10-upstream-hash-check.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/11-disconnected-verify.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1.json"
+  ]
+}

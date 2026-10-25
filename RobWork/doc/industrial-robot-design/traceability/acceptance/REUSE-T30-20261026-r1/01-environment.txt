@@ -1,0 +1,14 @@
+9f58ca28e0a1608a43478cec255a9bdbb7ad7712
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T10-20261026-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261025-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T30-20261026-r1/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r2/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r2.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r2/
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2.json
+?? RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r2/
+9f58ca28e [governance] 登记REUSE-T28独立验收通过并收口任务
+d368eb7a5 [governance] 登记REUSE-T27独立验收通过并收口任务
+323769161 [governance] 登记REUSE-T26独立验收通过并收口任务
