@@ -269,6 +269,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **WP-11 trajectory 其余工具**：[REUSE-T32](../tasks/REUSE-T32.json)实施完成待独验（起点`c65ffc4fc495da0b01b2060ff3049eb127091d72`；直线已由REUSE-T26交付）：Planner三处度量手写核换上游直接消费（逐对Linf→`MetricFactory::makeInfinity`、L1路径长度→`PathAnalyzer::pathLength`折叠`makeManhattan`、直连采样L2→`makeEuclidean`单对距离），两处内联Σ|Δq|循环删除并委托pathJointLength；193项全量（含PlannerAvoidance黄金算例回归）与69项契约全过，三组断开红例（L1折叠→Linf、采样L2恒0、规划期剪枝恒真）各自真实失败后恢复复测绿；MATH-METRIC/PATH-PLANNING升verified（suitability原件＋review.version树内上游逐字节一致核验在案）；rotationAngleBetween按实测反例保留2·atan2（EAA acos分支边界4.4e-11/1.6e-10超C7容差40~160倍，原"候选EAA::angle"待核项就此结案）；ird_add_gtest定案business-specific保留薄宏（TEST-HARNESS保持candidate）；矩阵95行含三改动文件全行铺面（采样计数公式级与RRT选择序直接oracle受零模型构造红线限制未建，观测面由黄金算例与断开红例承载）。GAP-TRJ-LINEAR-01候选2定案为无上游稳定求值入口（LinearInterpolator/Ramp差分式、Rotation3D特化slerp、Polynomial Horner同构差分），候选3（SA-02 patch）待所有者裁决维持blocked，批准前不改Ptp.cpp，真实Q极值探测NOT RUN；性能微基准pathL1相对+24~41%（绝对+40ns/次，每次search仅K次键计算），接受与否交独验裁决。原件见[REUSE-T32](../traceability/reuse/REUSE-T32/README.md)。
 
+**WP-16 project（2026-10-25，blocked）**：[REUSE-T40](../tasks/REUSE-T40.json)（正式编号，REUSE-T30~T39已占用后查重定号；起点`d7874f57f1f0e2cde192a6c76e5b0f90a016306e`）按T33/T36 blocked先例收口（产品树保持HEAD零改动）：F-962修复候选已完成并真实验证——候选scanForRecovery实算HEAD指向清单字节摘要与head.manifestDigest严格比对（复用既有codec::contentVersionOf/core摘要，与commit路径同口径，非GAP-DIGEST-01、不新建哈希、不自写摘要）＋用户诊断cause首败钉扎；候选五用例未修复码5/5红（错误HEAD摘要/合法时间字节篡改/公开open三反例全放行——B20独立复现同型）修复后project_test 287/287＋contract_test 32/32绿零回归，候选成品/测试/四diff/红绿证据留存[原始记录](../traceability/reuse/REUSE-T40/README.md)；blocked原因＝复用门禁对改动文件全文件解决要求（TxEngine.cpp 22功能行全pending＋四文件铺面，超出WP-16批准边界，同T36结构）；解阻待project单元迁移包（T05-project父任务）批准后按candidate/低成本落地；F-962保持open。
+
 ### 13.2 交接索引与已知阻断
 
 交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。
@@ -310,7 +312,7 @@ T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功
 | WP-13 / [REUSE-T36](../tasks/REUSE-T36.json) policy 子任务 | blocked（所有者2026-10-25裁决采T33先例，产品树HEAD零改动）：F-961单点字面适配修复候选已完成并红转绿验证，候选留存[原始记录](../traceability/reuse/REUSE-T36/README.md)待policy单元迁移包落地；随机/LHS候选独立审查已交付（矩阵维持pending）；不把未证实规则不匹配描述为碰撞漏检 | 门禁对改动文件要求全文件解决（18行resolved＋grant＋COLLISION verified）超出本包边界；保留种子/分布/线程/确定性（Random全局态/32位种子/QSampler无分层已实核登记矩阵） |
 | WP-14 / diagnostics 子任务 | F-968 原解析入口，失败后 partial names 最小事务提交/清理；复用既有错误轨 | diagnostics 稳定码/文案唯一权威；T16 不重写；中途失败/重复调用/残留验证 |
 | WP-15 / core、io 工具子任务 | 摘要、基础数值、JSON/CSV/UTF-8 三类分批；SHA 按 GAP-DIGEST-01 验证同渠道成熟供给，先查既有 codec/工具/测试 | T15 FNV 保留；不新建序列化框架/新依赖渠道；业务公式与独立 oracle 不为凑复用而替换；每子包确定符号后准入 |
-| WP-16 / project 子任务 | F-962 恢复 scan 的 manifest/内容摘要；复用 codec::contentVersionOf/core 摘要 | project 唯一修订/写 owner；摘要供给有前置先说明；篡改/缺失/合法恢复/历史兼容，不自写摘要 |
+| WP-16 / [REUSE-T40](../tasks/REUSE-T40.json) project 子任务 | blocked（所有者T33/T36先例，产品树HEAD零改动）：F-962修复候选已完成并红转绿验证（scanForRecovery实算HEAD清单摘要比对＋首败钉扎，五用例证据链齐），候选留存[原始记录](../traceability/reuse/REUSE-T40/README.md)待project单元迁移包落地；摘要供给前置已说明＝复用既有codec::contentVersionOf（H1直接API），非GAP-DIGEST-01 | project 唯一修订/写 owner；篡改/缺失/合法恢复/历史兼容四面候选已验；不自写摘要；门禁对TxEngine.cpp改动要求全文件解决（22行全pending＋铺面）超出本包边界——解阻须所有者批准项目单元迁移批 |
 | WP-17 / io 子任务 | F-963 磁盘满错误映射，核现有 SDK 与转换入口，删除错误硬编码 | SDK 正确映射与可控故障注入验证，不再建数字表，不制造无必要磁盘耗尽 |
 | WP-18 / execution、ui 两子任务 | F-964 既有状态机先验证再赋值，修拒 Completed 后半写；F-967 核 ReferenceEventBus 生产装配，优先 execution 现有总线与订阅生命周期 | 两项独立回滚；不重造状态机/第三总线；拒绝前后状态、退订/销毁、线程及真实 UI 接线 |
 | WP-19 / 剩余单元子任务 | 依次 requirements→selection→optimization→reporting→workflow→evidence→ui→testkit，附 drivetrain 遗留；沿已有矩阵反查隐藏 helper/工具/脚本/构建 | 保留合理适配和业务规则；不把业务搬 core；不扩宿主例外/模型多 owner；F-959 黄金生成脚本先修契约再审差异，不能洗绿 |

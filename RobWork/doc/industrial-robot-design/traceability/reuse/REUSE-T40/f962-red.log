@@ -1,0 +1,70 @@
+Note: Google Test filter = *RecoveryScan_WrongHeadDigest*:*RecoveryScan_LegalManifestByteTamper*:*RecoveryScan_HeadManifestMissing*:*RecoveryScan_TamperThenRestore*:*Open_WrongHeadManifestDigest*
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1452): error: Value of: scan.headIntegrityVerified
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1453): error: Value of: m_sink->hasUserCode("PRJ-STORE-CORRUPT")
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1454): error: Value of: m_sink->reports.empty()
+  Actual: true
+Expected: false
+
+[  FAILED  ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt (31 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1482): error: Value of: scan.headIntegrityVerified
+  Actual: true
+Expected: false
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1483): error: Value of: m_sink->hasUserCode("PRJ-STORE-CORRUPT")
+  Actual: false
+Expected: true
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1484): error: Value of: m_sink->devContains("recovery-head-manifest-digest-mismatch")
+  Actual: false
+Expected: true
+
+[  FAILED  ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt (34 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1505): error: Expected: (m_sink->reports.back().cause.find("缺失 path=")) != (std::string::npos), actual: 18446744073709551615 vs 18446744073709551615
+cause 未定位缺失清单: project/tx-engine: 闭包行走失败 detail=project/revindex: 闭包行走遇未注册修订 revision=rev-684e489d3ad51b751d1d4f5fba01f5c4
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1507): error: Value of: m_sink->devContains("recovery-head-manifest-missing")
+  Actual: false
+Expected: true
+
+[  FAILED  ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt (14 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\TxEngineTest.cpp(1527): error: Value of: tampered.scanForRecovery().headIntegrityVerified
+  Actual: true
+Expected: false
+
+[  FAILED  ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen (17 ms)
+[----------] 4 tests from TxEngineTest (99 ms total)
+
+[----------] 1 test from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\project\test\ProjectStoreTest.cpp(189): error: Failed
+期望 StoreError(6) 未抛出
+
+unknown file: error: C++ exception with description "expectStoreError: action did not throw" thrown in the test body.
+
+[  FAILED  ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected (22 ms)
+[----------] 1 test from ProjectStoreTest (22 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (130 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 5 tests, listed below:
+[  FAILED  ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+[  FAILED  ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+[  FAILED  ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+[  FAILED  ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+[  FAILED  ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected
+
+ 5 FAILED TESTS

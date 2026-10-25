@@ -5778,7 +5778,7 @@
         "command": "见batch20-search.json六组真实检索及UTIL-FILE/MATH-RANDOM候选具体绑定",
         "conclusion": "区分project写协议/SDK与标准库薄适配/上游工具候选；没有同名API不证明无能力；待调用链与语义完整审查，不发grant"
       },
-      "differences": "tmp清理/未提交事务报告/局部索引闭包/对象校验/悬挂计数；清单仅parse未核HEAD摘要，F962真实反例；目录错误/残缺分类待回归",
+      "differences": "tmp清理/未提交事务报告/局部索引闭包/对象校验/悬挂计数；清单仅parse未核HEAD摘要，F962真实反例；目录错误/残缺分类待回归。2026-10-25 REUSE-T40（WP-16）修复候选已验证留存（traceability/reuse/REUSE-T40/candidate/——实算HEAD清单摘要比对经既有codec::contentVersionOf与本行消费同链＋首败钉扎；五用例红转绿在案）：改动触发门禁全文件解决要求（本文件22行全pending＋四文件铺面）超出包边界，blocked待project单元迁移包落地；行摘要绑定产品HEAD零改动仍有效",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/CMakeLists.txt",
