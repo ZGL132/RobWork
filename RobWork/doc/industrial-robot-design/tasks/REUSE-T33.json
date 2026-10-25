@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T33",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "modeling直接复用收口一：RPY反解唯一实现换上游（A/D因closures冻结移交T35）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": ["GOV-T21", "GOV-T22"],
+  "requirements": ["MDL-02", "NFR-COR-02"],
+  "designRefs": ["units/modeling.md#9.7.1", "reuse/migration.md#13.3", "reuse/policy.md#1.1"],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_modeling_test sdurws_ird_modeling_contract_test sdurws_ird_modeling_plugin sdurws_ird_modeling_app",
+    "cmake --build build --config Release --target ird_gates",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json -Base 2f0ee6dcc581da0e0f18ffacbdfa60080af5b062 -Head HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T33.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T33.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/**"
+  ],
+  "forbiddenFiles": ["RobWork/RobWork/src/**", "RobWork/RobWorkSim/src/**", "vcpkg/**"],
+  "acceptance": [
+    "RpyPresentation/PanelModel统一为rpyview::rotationToRpy唯一实现并换上游RPY反向换序（catalog MATH-ROT verified面）：通支roll/yaw与原公式同式同值、pitch asin→atan2路径ULP级差异（呈现精度1e-6不可见）；万向锁确定性roll=0保留（pitch取上游奇异支恰±π/2、yaw配角公式atan2(−R01,R11)两支同式——上游两支x角取号相反），PanelModel逐字同款副本删除（评审缺口G1）",
+    "独立oracle：通支网格往返、与上游rw::math::RPY位级EXPECT_EQ对照（直接消费证据）、精确±π/2万向锁字面值、近奇异带（带内重建O(带宽)≤2e-6如实登记）；上游返回值扰动断开必FAIL（roll×2突变实测红）；受影响回归480项+契约17项全过；失实冒烟纪律注释同步改写（G5）",
+    "插件链接面经STATIC库$<LINK_ONLY>传递以集成构建plugin/app实证、独立冒烟树无插件目标如实登记（G4/G6）；A（Import.cpp惯量旋转）与D（Template.cpp占位圆柱）候选因UI-T53 closures冻结面（acceptedPaths逐字节比对）未落地，候选代码/独立oracle/扰动断开证据已完成留存本目录，blocked移交REUSE-T35（解冻须所有者对closed行启动验收）"
+  ],
+  "note": "migration §13 WP-12 modeling 面第一子批（缩减批；DTB WP-E；T27/T28 ready待独验、T29 blocked、T34 runtime 同批另提交）。起点2f0ee6dcc581da0e0f18ffacbdfa60080af5b062。**blocked 登记（所有者裁决项）**：UI-T53 closures（migrationCommit a1393ad4a）将 modeling.rpyToRotation/rpyToEaa 两 closed 行 acceptedPaths（Import.cpp/Template.cpp/TemplateTest.cpp/RpyMath.hpp/证据文件）逐字节冻结——A（rotateInertia→InertiaMatrix）与 D（占位圆柱→EAA）生产改动被 CLOSURE FAIL 拦截，候选实现+独立oracle+断开证据已完成留存本目录（候选证据节），随 T35 落地；解冻须所有者对 closed 行启动验收后推进，实施者不解冻。本批实际落地=C 插件面：G1 收口（PanelModel 副本删除+唯一 rpyview 换上游 RPY 反向换序、万向锁 roll=0 保留——上游两支 x 角取号相反不宜换算的实现结论）；G4 插件链接面=STATIC $<LINK_ONLY> 集成实证、冒烟树无插件目标不外推；G5 两文件注释改写；G6 证据链=modeling 库面直接证据；G8 归 T34。位级预核存档（T35 复用）：上游 Rotation3D::multiply 与手写循环同序同和（Rotation3D.cpp:112-156）、inverse()=精确转置（Rotation3D.hpp:461-474）。480项回归（基线479+rpy oracle 1）+17契约全过；断开 roll×2 突变红→恢复绿。宿主侧 rpyview 消费点零改码。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T33.json"
+  },
+  "outputs": [
+    "RPY反解唯一实现换上游直接消费与PanelModel副本删除（G1收口）",
+    "独立oracle/扰动断开/插件链接面实证/逐文件凭证与A/D closures-blocked移交登记，交独验"
+  ]
+}

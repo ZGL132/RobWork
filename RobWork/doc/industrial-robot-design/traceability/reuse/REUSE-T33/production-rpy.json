@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "ird-reuse-production/1",
+  "functionId": "modeling.rotationToRpy",
+  "target": "sdurws_ird_modeling_plugin",
+  "bindings": [
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+      "sha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+      "sha256": "d20522e50446e3227865dedff16ff881194b5a94b31d72564fde6248e94e0655"
+    },
+    {
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+      "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+      "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+      "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+      "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+      "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+      "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+      "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+      "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+      "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+      "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+    },
+    {
+      "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+      "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+    },
+    {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-mutated.hpp",
+      "sha256": "f5d01353abd21200ba62767151e551ff3c845ad765ff31dfdf0d68169076d714"
+    }
+  ],
+  "normal": {
+    "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:final.xml（缩减树全量回归480项）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.xml",
+      "sha256": "d485728c55e7b9958fc2a7f691f0fa3c26378421192efb7151401cff75d8b584"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.log",
+      "sha256": "681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d7fe80cfd6"
+    },
+    "exitCode": 0
+  },
+  "disconnected": {
+    "command": "sdurws_ird_modeling_test.exe --gtest_filter=MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33（突变构建）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-disconnected.xml",
+      "sha256": "b0d5797655817984242934e10918b9e1f9ec71f3b6c0d16ac1234bfce47ad5b4"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-disconnected.log",
+      "sha256": "daef26bbe0c999fb49fd43864a2c132622040bcc799bf7fffae6c3d2fa05e988"
+    },
+    "exitCode": 1,
+    "mutation": {
+      "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+      "originalSha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2",
+      "description": "通支输出扰动：roll 翻倍（丢弃上游 RPY 换序保真——往返/位级对照必红）"
+    },
+    "mutatedSource": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-mutated.hpp",
+      "sha256": "f5d01353abd21200ba62767151e551ff3c845ad765ff31dfdf0d68169076d714"
+    }
+  },
+  "oracle": {
+    "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:rpy-oracle.xml（独立oracle定向跑）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-oracle.xml",
+      "sha256": "ba1fb0df166cb6f88bdb2478f14f047236a0bcb80ad17b3c426ed6a1e4507ebb"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-oracle.log",
+      "sha256": "b9012779c8a30fde368ec2f9d1d2dfbf51dab47eab036be23df2fcae6af1c60b"
+    },
+    "exitCode": 0
+  },
+  "upstreamComparison": {
+    "command": "sdurws_ird_modeling_test.exe --gtest_output=xml:rpy-oracle.xml（上游RPY位级对照同跑）",
+    "xml": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-oracle.xml",
+      "sha256": "ba1fb0df166cb6f88bdb2478f14f047236a0bcb80ad17b3c426ed6a1e4507ebb"
+    },
+    "log": {
+      "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/rpy-oracle.log",
+      "sha256": "b9012779c8a30fde368ec2f9d1d2dfbf51dab47eab036be23df2fcae6af1c60b"
+    },
+    "exitCode": 0
+  }
+}

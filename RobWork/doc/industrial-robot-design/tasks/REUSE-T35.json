@@ -1,0 +1,71 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T35",
+  "unit": "modeling",
+  "masterWp": "WP-E",
+  "title": "modeling直接复用收口二：A/D候选落地、DH值代数/CanonicalBridge换核与MATH-DH终审",
+  "status": "planned",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22",
+    "REUSE-T33"
+  ],
+  "requirements": [
+    "MDL-06",
+    "MDL-10",
+    "NFR-COR-02"
+  ],
+  "designRefs": [
+    "units/modeling.md#7.4",
+    "reuse/migration.md#13.3",
+    "reuse/policy.md#1.1"
+  ],
+  "verify": [
+    "开包时登记起始 SHA、增量构建目标与验证命令（本批未实施，未运行）"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/DhConvert.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/CanonicalBridge.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/DhConvertEquivalenceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/GoldenDhEquivalenceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/CanonicalBridgeTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T35.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/modeling.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T35/**",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Import.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/src/Template.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/ImportTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/TemplateTest.cpp"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "acceptance": [
+    "planned 未准入：实施前须补确切起始 SHA、逐函数保留/删除/适配判断、验证命令与 oracle 设计；当前仅登记范围与评审缺口处置责任"
+  ],
+  "note": "WP-12 modeling 面第二子批（REUSE-T33 note 登记的拆批；T33 缩减批已落地 C 插件面）。范围：①**A/D 候选落地（closures-blocked——前置=所有者对 UI-T53 closed 行启动解冻/验收）**：rotateInertia→InertiaMatrix 值运算与占位圆柱通支→EAA 双向量构造，候选代码/独立oracle/断开证据已留存 REUSE-T33 目录（import-rotated-*、template-*），TemplateTest.cpp/ImportTest.cpp 同在冻结面故其 oracle 用例随本批落地；②DhConvert/CanonicalBridge 值代数换核（G2 两侧同批）与 MATH-DH（catalog candidate）终审；③rotationAngleBetween 保留登记（T32 先例）；④所需全行铺面（含 closed 行 acceptedPaths 解冻后的矩阵处理——解冻方式与验收由所有者裁决）。G3 移交：requirements/plugin/RequirementsCommandFlows.cpp:75 第三份同族反解属 requirements 单元批次。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T35.json"
+  },
+  "outputs": [
+    "planned 登记：DH 值代数/CanonicalBridge 同款换核与 MATH-DH 终审的后续批次范围（未实施）"
+  ]
+}

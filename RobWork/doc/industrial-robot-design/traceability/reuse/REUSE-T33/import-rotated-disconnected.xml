@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="1" disabled="0" errors="0" time="0." timestamp="2026-10-25T14:28:39.768" name="AllTests">
+  <testsuite name="MdlImport" tests="1" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T14:28:39.768">
+    <testcase name="InertialRpy_FullTensorRotation_IndependentLiteral_T33" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp" line="1781" status="run" result="completed" time="0." timestamp="2026-10-25T14:28:39.768" classname="MdlImport">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp:1811&#x0A;The difference between rotated.ixx and 3.0 is 2.9999999995311555e-07, which exceeds 1e-12, where&#x0A;rotated.ixx evaluates to 3.0000003,&#x0A;3.0 evaluates to 3, and&#x0A;1e-12 evaluates to 9.9999999999999998e-13.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\ImportTest.cpp:1811
+The difference between rotated.ixx and 3.0 is 2.9999999995311555e-07, which exceeds 1e-12, where
+rotated.ixx evaluates to 3.0000003,
+3.0 evaluates to 3, and
+1e-12 evaluates to 9.9999999999999998e-13.
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

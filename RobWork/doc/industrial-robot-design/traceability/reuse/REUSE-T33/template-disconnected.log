@@ -1,0 +1,82 @@
+Note: Google Test filter = MdlTemplate.PlaceholderCylinder_EaaBoundary_NearPoleAndLiteral_T33
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlTemplate
+[ RUN      ] MdlTemplate.PlaceholderCylinder_EaaBoundary_NearPoleAndLiteral_T33
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(972): error: The difference between R(0, 0) and 0.8 is 0.0080000000000000071, which exceeds 1e-15, where
+R(0, 0) evaluates to 0.79200000000000004,
+0.8 evaluates to 0.80000000000000004, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(973): error: The difference between R(0, 2) and 0.6 is 0.010521088906845222, which exceeds 1e-15, where
+R(0, 2) evaluates to 0.6105210889068452,
+0.6 evaluates to 0.59999999999999998, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(975): error: The difference between R(2, 0) and -0.6 is 0.010521088906845222, which exceeds 1e-15, where
+R(2, 0) evaluates to -0.6105210889068452,
+-0.6 evaluates to -0.59999999999999998, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(976): error: The difference between R(2, 2) and 0.8 is 0.0080000000000000071, which exceeds 1e-15, where
+R(2, 2) evaluates to 0.79200000000000004,
+0.8 evaluates to 0.80000000000000004, and
+1e-15 evaluates to 1.0000000000000001e-15.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(991): error: The difference between R(r, c) and (r == c) ? 1.0 : 0.0 is 0.010000000000004894, which exceeds 1e-6, where
+R(r, c) evaluates to 0.98999999999999511,
+(r == c) ? 1.0 : 0.0 evaluates to 1, and
+1e-6 evaluates to 9.9999999999999995e-07.
+θ≈1e-7 吞轴带→恒等（REUSE-T33 登记包络）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(991): error: The difference between R(r, c) and (r == c) ? 1.0 : 0.0 is 0.14106735979669319, which exceeds 1e-6, where
+R(r, c) evaluates to 0.14106735979669319,
+(r == c) ? 1.0 : 0.0 evaluates to 0, and
+1e-6 evaluates to 9.9999999999999995e-07.
+θ≈1e-7 吞轴带→恒等（REUSE-T33 登记包络）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(991): error: The difference between R(r, c) and (r == c) ? 1.0 : 0.0 is 0.14106735979669319, which exceeds 1e-6, where
+R(r, c) evaluates to -0.14106735979669319,
+(r == c) ? 1.0 : 0.0 evaluates to 0, and
+1e-6 evaluates to 9.9999999999999995e-07.
+θ≈1e-7 吞轴带→恒等（REUSE-T33 登记包络）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(991): error: The difference between R(r, c) and (r == c) ? 1.0 : 0.0 is 0.010000000000004894, which exceeds 1e-6, where
+R(r, c) evaluates to 0.98999999999999511,
+(r == c) ? 1.0 : 0.0 evaluates to 1, and
+1e-6 evaluates to 9.9999999999999995e-07.
+θ≈1e-7 吞轴带→恒等（REUSE-T33 登记包络）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(1003): error: The difference between R(0, 2) and 1e-5 / len is 0.14105736014404635, which exceeds 1e-12, where
+R(0, 2) evaluates to 0.14106736014404586,
+1e-5 / len evaluates to 9.9999999995000007e-06, and
+1e-12 evaluates to 9.9999999999999998e-13.
+R·z0=u（带外微旋转）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(1004): error: The difference between R(2, 2) and 1.0 / len is 0.0099999999994999644, which exceeds 1e-12, where
+R(2, 2) evaluates to 0.98999999995050003,
+1.0 / len evaluates to 0.99999999995, and
+1e-12 evaluates to 9.9999999999999998e-13.
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(1015): error: The difference between R(0, 2) and 1e-6 / len is 0.14106635980013291, which exceeds 1e-9, where
+R(0, 2) evaluates to 0.14106735980013291,
+1e-6 / len evaluates to 9.9999999999949999e-07, and
+1e-9 evaluates to 1.0000000000000001e-09.
+近 −z：R·z0=u
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\TemplateTest.cpp(1016): error: The difference between R(2, 2) and -1.0 / len is 0.0099999999999950129, which exceeds 1e-9, where
+R(2, 2) evaluates to -0.98999999999950494,
+-1.0 / len evaluates to -0.99999999999949996, and
+1e-9 evaluates to 1.0000000000000001e-09.
+近 −z：z 列指向 −z
+
+[  FAILED  ] MdlTemplate.PlaceholderCylinder_EaaBoundary_NearPoleAndLiteral_T33 (0 ms)
+[----------] 1 test from MdlTemplate (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlTemplate.PlaceholderCylinder_EaaBoundary_NearPoleAndLiteral_T33
+
+ 1 FAILED TEST

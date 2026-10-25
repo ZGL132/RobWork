@@ -1205,12 +1205,18 @@
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
           "symbol": "rotationToRpy",
-          "qualifiedSymbol": "sdurws::ird::modeling::(anonymous namespace)::rotationToRpy",
-          "startLine": 72,
-          "endLine": 81,
-          "sha256": "5b609e8c5cc27a039ae44a6ad09a9782b8bb2c7e1a430c660d92f7f9005f007a"
+          "startLine": 56,
+          "endLine": 71,
+          "sha256": "9fa8bd3c09114fcdc3b1f631240efd6f643d2655943b5a969753ba62a8ad8ffc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+          "symbol": "formatPose",
+          "startLine": 69,
+          "endLine": 87,
+          "sha256": "49fe9c1a74ddce154990311ba63b40a3d17344edb85a5ef303b25ba567b38bd1"
         }
       ],
       "targets": [
@@ -1219,13 +1225,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "MATH-ROT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"RPY|toRotation3D|isProperRotation|operator\\*|angle\" RobWork/RobWork/src/rw/math/RPY.hpp RobWork/RobWork/src/rw/math/RPY.cpp RobWork/RobWork/src/rw/math/Rotation3D.hpp RobWork/RobWork/src/rw/math/EAA.hpp",
-        "conclusion": "已读列明源区段和公共候选；未完成适用性、全部调用者与测试构建审计，不视为无对应上游能力"
+        "conclusion": "REUSE-T33 定案：反解直接消费上游 RPY(R)（RPY.cpp 外联，probe-r6 近奇异/精确±π/2 旋转往返正确在案），上游 (z,y,x)→产品 (roll,pitch,yaw) 反向换序；万向锁 roll=0 产品确定性约定保留（pitch 取上游奇异支恰±π/2、yaw 配角 atan2(−R01,R11) 两支同式）；上游 1e-5 带内呈现规范化形式，带内重建 O(带宽) 如实登记。PanelModel 逐字同款副本删除（G1）——唯一实现 rpyview。"
       },
-      "differences": "呈现私有公式同样应复用RPY；不得为冒烟header-only重写，候选换序和奇异往返需验证；probe-r6实测RPY近奇异及精确±pi/2均旋转往返正确，奇异时上游yaw=0与产品roll=0表示不同，需保持规范化字段/摘要约定；不需要据此改上游或重写通用反解",
+      "differences": "呈现层唯一实现；零业务判定；通支 roll/yaw 与原公式同式同值、pitch asin→atan2 路径 ULP 级差异（呈现精度 1e-6 不可见）；上游位级对照（EXPECT_EQ）与扰动断开实测见 production-rpy.json。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
@@ -1242,7 +1248,17 @@
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/UpstreamSuitabilityTest.cpp",
           "sha256": "fd5c20b680cd1db82826e4dbf0a4f7c9755d0add6f6f9b7b6bf366abc6c46d03"
         }
-      ]
+      ],
+      "production": {
+        "entry": "rotationToRpy",
+        "upstream": "RPY",
+        "consumer": "formatPose",
+        "target": "sdurws_ird_modeling_plugin"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json",
+        "sha256": "622e67eb9d98513f98affcb4a3229426b4040ed9a2c4daa40a8b65823f58ae24"
+      }
     },
     {
       "functionId": "modeling.makeLinkPlaceholderCylinder",
@@ -1461,7 +1477,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -7367,6 +7383,166 @@
         }
       ],
       "differences": "只含文件头/注释/include/namespace/别名/常量；所有有体函数、lambda及生产局部暂存结构另行登记，无未审核心藏声明区。"
+    },
+    {
+      "functionId": "modeling.RpyPresentation_hpp.decl",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+          "symbol": "RpyPresentation",
+          "startLine": 1,
+          "endLine": 74,
+          "sha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|namespace\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "conclusion": "REUSE-T33 全行铺面声明行：仅承担改动文件非空行覆盖归属，不构成上游复用判断，不冒充语义审计。"
+      },
+      "differences": "REUSE-T33 全行铺面（缩减批：A/D 因 UI-T53 closures 冻结面移交 T35）；已知自持核心指纹零增量。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/RpyPresentation.hpp",
+          "sha256": "515b941198602601f5ad341b1901ded32086a6bd9aeec798631c28a42c2addc2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md",
+        "sha256": "350cd638b33561a84d496eb2a41436f8a4c16d38ff7ff22644a5ab607e9a1d01"
+      },
+      "auditBoundary": "行覆盖归属专用行。"
+    },
+    {
+      "functionId": "modeling.PanelModel_cpp.decl",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+          "symbol": "PanelModel",
+          "startLine": 1,
+          "endLine": 450,
+          "sha256": "e11d98600384b4fe9e3f0761572f4ae51b04565f4027ab82a72ad69eb470fd48"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+          "symbol": "FieldEnablement",
+          "startLine": 451,
+          "endLine": 669,
+          "sha256": "15b038ae2e79101741c6dc0a4f1bdcd388a7f77922250d3ee7433a25ea744165"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|namespace\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "conclusion": "REUSE-T33 全行铺面声明行：仅承担改动文件非空行覆盖归属，不构成上游复用判断，不冒充语义审计。"
+      },
+      "differences": "REUSE-T33 全行铺面（缩减批：A/D 因 UI-T53 closures 冻结面移交 T35）；已知自持核心指纹零增量。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/plugin/PanelModel.cpp",
+          "sha256": "d20522e50446e3227865dedff16ff881194b5a94b31d72564fde6248e94e0655"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md",
+        "sha256": "350cd638b33561a84d496eb2a41436f8a4c16d38ff7ff22644a5ab607e9a1d01"
+      },
+      "auditBoundary": "行覆盖归属专用行。"
+    },
+    {
+      "functionId": "modeling.PluginPanelTest_cpp.decl",
+      "ownerUnit": "modeling",
+      "requirements": [
+        "MDL-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+          "symbol": "PluginPanelTest",
+          "startLine": 1,
+          "endLine": 450,
+          "sha256": "a3e63f5c1faf33a8476b16e2e5d8e0ec52d9bd178f20b302d78c734aaa2eee4b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+          "symbol": "checker",
+          "startLine": 451,
+          "endLine": 900,
+          "sha256": "a7f3d063e0c1b3293552334595ff41d05fb24a667cab39fbc3402a52d2b3a3dd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+          "symbol": "modelingPanelRegistration",
+          "startLine": 901,
+          "endLine": 1350,
+          "sha256": "9d099c1afcd79c0c6c70e3607e13a0a031fc77a367b3d4c4d5ad7f2ae92064fb"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+          "symbol": "EXPECT_FALSE",
+          "startLine": 1351,
+          "endLine": 1787,
+          "sha256": "a548cb0cc24cdc3090c6f63c5126b3c6495c6747d199997d023f974c9f67cf3d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_modeling_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"TEST(|namespace\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "conclusion": "REUSE-T33 全行铺面声明行：仅承担改动文件非空行覆盖归属，不构成上游复用判断，不冒充语义审计。"
+      },
+      "differences": "REUSE-T33 全行铺面（缩减批：A/D 因 UI-T53 closures 冻结面移交 T35）；已知自持核心指纹零增量。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/test/PluginPanelTest.cpp",
+          "sha256": "0d49064f439164f740673ca05e54eab7945f19c81d86de91b4a830927621de0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+          "sha256": "638d9bddea4bc592b45b5e1a594bbdb4645d093f6667c18ebd2c6834537ae52a"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/README.md",
+        "sha256": "350cd638b33561a84d496eb2a41436f8a4c16d38ff7ff22644a5ab607e9a1d01"
+      },
+      "auditBoundary": "行覆盖归属专用行。"
     }
   ]
 }

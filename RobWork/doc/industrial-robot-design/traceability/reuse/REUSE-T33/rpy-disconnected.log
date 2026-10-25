@@ -1,0 +1,54 @@
+Note: Google Test filter = MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from MdlPanelRpy
+[ RUN      ] MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1723): error: The difference between back[0] and rpy[0] is 0.29999999999999999, which exceeds 1e-12, where
+back[0] evaluates to 0.59999999999999998,
+rpy[0] evaluates to 0.29999999999999999, and
+1e-12 evaluates to 9.9999999999999998e-13.
+roll 往返
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1728): error: Expected equality of these values:
+  back[0]
+    Which is: 0.6
+  upstream[2]
+    Which is: 0.3
+roll＝上游 x 角（位级）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1723): error: The difference between back[0] and rpy[0] is 1.1000000000000001, which exceeds 1e-12, where
+back[0] evaluates to 2.2000000000000002,
+rpy[0] evaluates to 1.1000000000000001, and
+1e-12 evaluates to 9.9999999999999998e-13.
+roll 往返
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1728): error: Expected equality of these values:
+  back[0]
+    Which is: 2.2
+  upstream[2]
+    Which is: 1.1
+roll＝上游 x 角（位级）
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1723): error: The difference between back[0] and rpy[0] is 2, which exceeds 1e-12, where
+back[0] evaluates to -4,
+rpy[0] evaluates to -2, and
+1e-12 evaluates to 9.9999999999999998e-13.
+roll 往返
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\modeling\test\PluginPanelTest.cpp(1728): error: Expected equality of these values:
+  back[0]
+    Which is: -4
+  upstream[2]
+    Which is: -2
+roll＝上游 x 角（位级）
+
+[  FAILED  ] MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33 (0 ms)
+[----------] 1 test from MdlPanelRpy (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] MdlPanelRpy.RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33
+
+ 1 FAILED TEST

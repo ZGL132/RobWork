@@ -47,6 +47,11 @@
 #include "plugin/PanelCommandCatalog.hpp"  // 命令目录/装配记录/L-7（ACC4——插件私有头，经单元根解析）
 #include "plugin/PanelEditFlow.hpp"        // L-2/L-8 编辑流（ACC3）
 #include "plugin/PanelModel.hpp"           // 五区投影（ACC2/ACC5）
+#include "plugin/RpyPresentation.hpp"  // REUSE-T33 oracle：rpyview::rotationToRpy（上游 RPY 反解）
+
+#include <rw/math/RPY.hpp>  // REUSE-T33 oracle：上游 RPY 位级对照
+#include <array>
+#include <cmath>
 #include "plugin/PanelRefresh.hpp"         // 刷新协调器/线程守卫（ACC5）
 #include "plugin/PanelSelection.hpp"       // L-1 会话选中（ACC3）
 #include <sdurws/ird/modeling/Codec.hpp>
@@ -1671,4 +1676,111 @@ TEST(PluginPanel, JointRowsIncludeVelocityAccelerationEditable_MDL01_WP13T25)
     EXPECT_EQ(acceleration.fieldKey, "max-acceleration") << "关节行缺最大加速度投影（F01）";
     EXPECT_EQ(acceleration.enablement, FieldEnablement::Editable)
         << "加速度为关节一等权威字段——可编辑行";
+}
+
+/**
+ * REUSE-T33 oracle（rpyview::rotationToRpy 换上游 RPY 反解——呈现层唯一
+ * 实现的面）：①通支往返网格（含 yaw=0/roll=0/一般姿态）——正解合成
+ * R＝Rz(y)Ry(p)Rx(r)（测试侧独立三角合成），反解输出与原 (r,p,y) 1e-12
+ * 内一致，且与上游 rw::math::RPY(R) 换序逐位相等（直接消费的位级证据）；
+ * ②精确 ±π/2 万向锁（字面矩阵）——roll=0、pitch=±π/2、yaw 字面值
+ * （产品确定性约定保留——上游奇异支清零 z 角经取负映回），反解值重配
+ * Rz·Ry·Rx 重建同旋转（1e-12）；③近奇异带（π/2−1e-6，上游 1e-5 带内）
+ * ——规范化 roll=0 形式且往返仍正确（probe-r6 结论的产品面）。
+ */
+TEST(MdlPanelRpy, RotationToRpy_UpstreamReversedOrderAndGimbalRollZero_T33)
+{
+    IRD_TEST_INFO(std::vector<std::string>{"MDL-02"},
+                  std::vector<std::string>{});
+
+    // 测试侧独立正解合成（不消费被测实现）：R＝Rz(yaw)·Ry(pitch)·Rx(roll)。
+    auto composeRzyx = [](double roll, double pitch, double yaw) {
+        const double cr = std::cos(roll), sr = std::sin(roll);
+        const double cp = std::cos(pitch), sp = std::sin(pitch);
+        const double cy = std::cos(yaw), sy = std::sin(yaw);
+        return rw::math::Rotation3D<double>(
+            cy * cp, cy * sp * sr - sy * cr, cy * sp * cr + sy * sr,
+            sy * cp, sy * sp * sr + cy * cr, sy * sp * cr - cy * sr,
+            -sp, cp * sr, cp * cr);
+    };
+    auto expectNearRot = [](const rw::math::Rotation3D<double>& a,
+                            const rw::math::Rotation3D<double>& b) {
+        for (int r = 0; r < 3; ++r) {
+            for (int c = 0; c < 3; ++c) {
+                EXPECT_NEAR(a(r, c), b(r, c), 1e-12) << "(" << r << "," << c << ")";
+            }
+        }
+    };
+
+    // ①通支网格：一般 / yaw=0 / roll=0 / 负 pitch。
+    for (const std::array<double, 3>& rpy
+         : std::vector<std::array<double, 3>>{
+             {0.3, -0.4, 0.7}, {0.0, 0.25, 0.0}, {1.1, 0.0, -0.6},
+             {-2.0, 1.2, 0.45}}) {
+        const rw::math::Rotation3D<double> R =
+            composeRzyx(rpy[0], rpy[1], rpy[2]);
+        const std::array<double, 3> back = rpyview::rotationToRpy(R);
+        EXPECT_NEAR(back[0], rpy[0], 1e-12) << "roll 往返";
+        EXPECT_NEAR(back[1], rpy[1], 1e-12) << "pitch 往返";
+        EXPECT_NEAR(back[2], rpy[2], 1e-12) << "yaw 往返";
+        // 直接消费上游的位级证据：反解＝上游 RPY(R) 换序（通支不触奇异支）。
+        const rw::math::RPY<double> upstream(R);
+        EXPECT_EQ(back[0], upstream[2]) << "roll＝上游 x 角（位级）";
+        EXPECT_EQ(back[1], upstream[1]) << "pitch＝上游 y 角（位级）";
+        EXPECT_EQ(back[2], upstream[0]) << "yaw＝上游 z 角（位级）";
+    }
+
+    // ②精确 +π/2 万向锁（字面矩阵——R20＝−1 精确）：
+    // R＝Rz(y)Ry(π/2)Rx(r) 只依赖 (r−y)：取 y=0.7, r=0.3 → R01=sin(r−y)、
+    // R11=cos(r−y)；期望 {0, π/2, −atan2(R01,R11)}＝{0, π/2, y−r}。
+    {
+        const double r = 0.3, y = 0.7;
+        const double d = r - y;  // r−y＝−0.4
+        const rw::math::Rotation3D<double> R(
+            0.0, std::sin(d), std::cos(d),
+            0.0, std::cos(d), -std::sin(d),
+            -1.0, 0.0, 0.0);
+        const std::array<double, 3> back = rpyview::rotationToRpy(R);
+        EXPECT_EQ(back[0], 0.0) << "+π/2 万向锁：roll=0（产品确定性约定）";
+        EXPECT_EQ(back[1], kPi / 2) << "pitch＝+π/2 精确";
+        EXPECT_NEAR(back[2], y - r, 1e-15) << "yaw＝y−r（字面合成角）";
+        // 重建同旋转：Rz(0)·Ry(π/2)·Rx(反解 roll) 与输入一致。
+        expectNearRot(composeRzyx(back[0], back[1], back[2]), R);
+    }
+    // −π/2：R20＝+1 精确（Rz(y)Ry(−π/2)Rx(r) 同族字面矩阵）。
+    {
+        const double r = 0.3, y = 0.7;
+        // Rz(y)Ry(−π/2)Rx(r) 字面展开（测试侧独立三角恒等式）。
+        const double ssum = r + y;
+        const rw::math::Rotation3D<double> R(
+            0.0, -std::sin(ssum), -std::cos(ssum),
+            0.0, std::cos(ssum), -std::sin(ssum),
+            1.0, 0.0, 0.0);
+        const std::array<double, 3> back = rpyview::rotationToRpy(R);
+        EXPECT_EQ(back[0], 0.0) << "−π/2 万向锁：roll=0";
+        EXPECT_EQ(back[1], -kPi / 2) << "pitch＝−π/2 精确";
+        expectNearRot(composeRzyx(back[0], back[1], back[2]), R);
+    }
+
+    // ③近奇异带（pitch=π/2−1e-6，上游 1e-5 带内）：规范化 roll=0 形式，
+    // 且反解值重配后重建同旋转（呈现等价分解——probe-r6 往返结论）。
+    {
+        const double pitch = kPi / 2 - 1e-6;
+        const rw::math::Rotation3D<double> R = composeRzyx(0.3, pitch, 0.7);
+        const std::array<double, 3> back = rpyview::rotationToRpy(R);
+        EXPECT_EQ(back[0], 0.0) << "1e-5 带内规范化 roll=0（确定性呈现约定）";
+        // 带内规范化代价如实登记：pitch 被规范为恰 π/2，重建与原旋转的
+        // 元素差 O(带宽)＝≤2e-6（probe-r6 的旋转往返在带内即此量级——
+        // 呈现层等价分解，非 1e-12 位级等价）。
+        {
+            const rw::math::Rotation3D<double> rebuilt =
+                composeRzyx(back[0], back[1], back[2]);
+            for (int r = 0; r < 3; ++r) {
+                for (int c = 0; c < 3; ++c) {
+                    EXPECT_NEAR(rebuilt(r, c), R(r, c), 2e-6)
+                        << "带内重建 O(带宽)（" << r << "," << c << ")";
+                }
+            }
+        }
+    }
 }
