@@ -6,9 +6,21 @@
  "title": "WP-19批次三·optimization单元审计收口：种子化LHS/Pareto/扰动策略business-specific定案",
  "status": "ready",
  "branch": "redesign-main",
- "dependsOn": ["GOV-T21", "GOV-T22"],
- "requirements": ["OPT-01", "OPT-03", "NFR-COR-01", "NFR-COR-02"],
- "designRefs": ["reuse/migration.md#13.3", "reuse/policy.md#1.2", "units/optimization.md#3"],
+ "dependsOn": [
+  "GOV-T21",
+  "GOV-T22"
+ ],
+ "requirements": [
+  "OPT-01",
+  "OPT-03",
+  "NFR-COR-01",
+  "NFR-COR-02"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13.3",
+  "reuse/policy.md#1.2",
+  "units/optimization.md#3"
+ ],
  "verify": [
   "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T44.json",
   "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
@@ -20,9 +32,15 @@
   "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
   "RobWork/doc/industrial-robot-design/reuse/catalog.json",
   "RobWork/doc/industrial-robot-design/reuse/migration.md",
-  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/**"
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-GEN/**"
  ],
- "forbiddenFiles": ["RobWork/RobWork/src/**", "RobWork/RobWorkSim/src/**", "vcpkg/**", "main"],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "main"
+ ],
  "outputs": [
   "optimization.json 22 行 pending 全量收口（business-specific，零产品变更）",
   "catalog MATH-RANDOM 移除 optimization:adapter usage（T36 审查结论同步）"
