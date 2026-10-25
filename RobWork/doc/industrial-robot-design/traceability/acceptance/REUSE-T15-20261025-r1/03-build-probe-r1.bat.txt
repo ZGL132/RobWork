@@ -1,0 +1,13 @@
+@echo off
+rem REUSE-T15 r1 独立验收：以真实生产 Identity.cpp 编译 FNV 探针（/O2 /DNDEBUG 对齐 Release 口径）
+cd /d D:\10_Source_Repos\21_robot\RobWork
+call "D:\software\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars64.bat"
+if not defined VCToolsInstallDir (echo VCVARS-FAILED & exit /b 1)
+cl /nologo /std:c++17 /O2 /DNDEBUG /EHsc /utf-8 ^
+  /I RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\include ^
+  /I vcpkg\installed\x64-windows\include ^
+  /Fo.cache\t15-accept\ ^
+  RobWork\RobWorkStudio\src\rwslibs\industrialrobot\core\src\Identity.cpp ^
+  RobWork\doc\industrial-robot-design\traceability\reuse\REUSE-T15\FnvProbe.cpp ^
+  /Fe:.cache\t15-accept\fnv-production-r1.exe /link /MACHINE:X64
+exit /b %ERRORLEVEL%
