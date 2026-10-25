@@ -10,12 +10,12 @@
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "strictUtf8Check",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::strictUtf8Check",
-          "startLine": 145,
-          "endLine": 162,
-          "sha256": "40c66f0c7a2be2796d2711a5b909d3e78e1bbf4975d7f1b9d9ea95b5b589389a"
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "symbol": "inline bool strictUtf8Check(",
+          "qualifiedSymbol": "sdurws::ird::io::strictUtf8Check",
+          "startLine": 85,
+          "endLine": 114,
+          "sha256": "fdf5d3a2a0eb21509782f1a124c8d5f6224fc276c8d50704080136702458632c"
         }
       ],
       "targets": [
@@ -24,20 +24,20 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"strictUtf8Check|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "与Csv.cpp的UTF-8 DFA表/实现重复；先检索上游StringUtil及同渠道已安装编码工具，保留拒绝超长/代理区/BOM语义",
+      "differences": "与Csv.cpp的UTF-8 DFA表/实现重复；先检索上游StringUtil及同渠道已安装编码工具，保留拒绝超长/代理区/BOM语义 REUSE-T38/WP-15批次B：函数收编至单元私有共享头 src/IoUtf8.hpp（与Csv副本合流单实现；表体/函数体逐字节一致证据与141项行为回归见REUSE-T38 README）；JSON仅UTF-8、UTF-16 BOM入口拒的通道差异保持在parseBytes不变。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
           "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "auditBoundary": "REUSE-T38合流实审：DFA语义唯一实现点；头位于src/不入公共头根（R-2），inline ODR单实体；行覆盖由IoUtf8声明区/表区行分域承载。",
       "designRefs": [
         "units/io.md §5.9.1 编码约定（仅UTF-8/拒绝非法编码）",
         "tasks/foundation/IO-T04.json acceptance 1"
@@ -59,7 +59,11 @@
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/ird-test-report.json",
           "sha256": "c8dc19b710e09a27a3290cefaaf2ef8d13945b999a61ddaa4b5f1d725d9c81f8"
         }
-      ]
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.canonicalizeJson",
@@ -70,10 +74,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "canonicalizeJson",
-          "qualifiedSymbol": "sdurws::ird::io::canonicalizeJson",
-          "startLine": 1651,
-          "endLine": 1678,
+          "symbol": "IoResult<IoString> canonicalizeJson(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::canonicalizeJson",
+          "startLine": 1564,
+          "endLine": 1591,
           "sha256": "b366d6c386dee4c0f36bb08d320dce5dcd78acf2df4bd0bd26b3cdea86412def"
         }
       ],
@@ -83,20 +87,20 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6.1",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"canonicalizeJson|SHA.?256|crypto|json|PropertyTree|StringUtil|Levenberg|Marquardt|NumericalDerivative\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "canonical writer属于产品身份规则，底层JSON编码仍需查复用；不能把身份专属语义作为手写parser全部保留理由",
+      "differences": "canonical writer属于产品身份规则，底层JSON编码仍需查复用；不能把身份专属语义作为手写parser全部保留理由 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
           "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "auditEvidence": [
         {
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
@@ -114,7 +118,11 @@
           "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/ird-test-report.json",
           "sha256": "c8dc19b710e09a27a3290cefaaf2ef8d13945b999a61ddaa4b5f1d725d9c81f8"
         }
-      ]
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.parseObject",
@@ -125,10 +133,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "parseObject",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseObject",
-          "startLine": 995,
-          "endLine": 1074,
+          "symbol": "IoResult<JsonValue> parseObject(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::parseObject",
+          "startLine": 908,
+          "endLine": 987,
           "sha256": "6589d8d0760dfdda24bd03b077f36a1360ae30493e2d37c84499858d58089240"
         }
       ],
@@ -138,13 +146,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -176,7 +184,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.parseArray",
@@ -187,10 +199,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "parseArray",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseArray",
-          "startLine": 1077,
-          "endLine": 1121,
+          "symbol": "IoResult<JsonValue> parseArray(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::parseArray",
+          "startLine": 990,
+          "endLine": 1034,
           "sha256": "4d126233401e13f4b9612934429316d6f984d86a93a24ab903b50db3f9768455"
         }
       ],
@@ -200,13 +212,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -238,7 +250,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.parseString",
@@ -249,10 +265,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "parseString",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseString",
-          "startLine": 604,
-          "endLine": 720,
+          "symbol": "IoResult<JsonValue> parseString(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::parseString",
+          "startLine": 517,
+          "endLine": 633,
           "sha256": "c28ad910929974624aaafb5378cb37a355a54d44689a15369c066f349a7140c4"
         }
       ],
@@ -262,13 +278,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -300,7 +316,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.readHex4",
@@ -311,10 +331,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "readHex4",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::readHex4",
-          "startLine": 723,
-          "endLine": 747,
+          "symbol": "bool readHex4(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::readHex4",
+          "startLine": 636,
+          "endLine": 660,
           "sha256": "0aafea170b8523491cc3c8a45584848bcea661af38bc7c4c9709aea0597c2100"
         }
       ],
@@ -324,13 +344,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -362,7 +382,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.appendUtf8",
@@ -373,10 +397,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "appendUtf8",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::appendUtf8",
-          "startLine": 750,
-          "endLine": 767,
+          "symbol": "static void appendUtf8(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::appendUtf8",
+          "startLine": 663,
+          "endLine": 680,
           "sha256": "e1644c1c93726fec9ecaa8175edaf47f1e55d15dbef39261139a4269366b482b"
         }
       ],
@@ -386,13 +410,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -424,7 +448,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Json.Parser.parseNumber",
@@ -435,10 +463,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "parseNumber",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::Parser::parseNumber",
-          "startLine": 788,
-          "endLine": 907,
+          "symbol": "IoResult<JsonValue> parseNumber(",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::Parser::parseNumber",
+          "startLine": 701,
+          "endLine": 820,
           "sha256": "73b5330fa4364a0aca0468b45cfc95877fef436330bbdb1dbe1da278f2103219"
         }
       ],
@@ -448,13 +476,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留",
+      "differences": "生产受限解析另持核心，须保留每值SourceSpan/UTF8字节列、重复键/深度/字符串预算与64KiB取消窗口。上游默认XML不适配，公开ptree类型丢失；不得重写parser补差或因规范专属就整文件保留 REUSE-T38/WP-15批次B：函数体零改动，区段随文件位移刷新；受限parser主体按B8检索结论保留（上游XML DOM不适配受限JSON、公开ptree丢类型），随文件触碰解决为business-specific。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -486,7 +514,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Csv.DecodedStream.nextUtf8",
@@ -497,10 +529,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
-          "symbol": "nextUtf8",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf8",
-          "startLine": 409,
-          "endLine": 447,
+          "symbol": "int nextUtf8()",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::DecodedStream::nextUtf8",
+          "startLine": 380,
+          "endLine": 418,
           "sha256": "5dbdd5467862949404855ccb30a8f2f1c5690a852bf1a9ad705c59c877c019c1"
         }
       ],
@@ -510,13 +542,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "CSV流式严格UTF8与UTF16代理对→UTF8另持状态机，JSON同DFA表及testkit/JSON码点编码重叠；保持BOM/无猜测、残缺与非法=-2、字节预算和回灌顺序。StringUtil无该契约；同渠道Unicode库尚未安装/验证",
+      "differences": "CSV流式严格UTF8与UTF16代理对→UTF8另持状态机，JSON同DFA表及testkit/JSON码点编码重叠；保持BOM/无猜测、残缺与非法=-2、字节预算和回灌顺序。StringUtil无该契约；同渠道Unicode库尚未安装/验证 REUSE-T38/WP-15批次B：函数体零改动（DFA表引用改共享头，推进表达式逐字相同）；随文件触碰按B8既有检索证据解决。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -548,7 +580,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口：流式UTF-8透传/整组放行/-2拒绝语义保持自持；Csv副本删除由CSV map行删除承载。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.Csv.DecodedStream.nextUtf16ToUtf8",
@@ -559,10 +595,10 @@
       "sources": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
-          "symbol": "nextUtf16ToUtf8",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::DecodedStream::nextUtf16ToUtf8",
-          "startLine": 450,
-          "endLine": 516,
+          "symbol": "int nextUtf16ToUtf8()",
+          "qualifiedSymbol": "sdurws::ird::io::(anon)::DecodedStream::nextUtf16ToUtf8",
+          "startLine": 421,
+          "endLine": 487,
           "sha256": "282a7b3b5775f97ec3016764f0a3318450e9166a677905e8a83bb6d9a52bde9b"
         }
       ],
@@ -572,13 +608,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "UTIL-TEXT",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "CSV流式严格UTF8与UTF16代理对→UTF8另持状态机，JSON同DFA表及testkit/JSON码点编码重叠；保持BOM/无猜测、残缺与非法=-2、字节预算和回灌顺序。StringUtil无该契约；同渠道Unicode库尚未安装/验证",
+      "differences": "CSV流式严格UTF8与UTF16代理对→UTF8另持状态机，JSON同DFA表及testkit/JSON码点编码重叠；保持BOM/无猜测、残缺与非法=-2、字节预算和回灌顺序。StringUtil无该契约；同渠道Unicode库尚未安装/验证 REUSE-T38/WP-15批次B：函数体零改动（不消费DFA表——UTF-16解码+现场编码路径）；随文件触碰按B8既有检索证据解决。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -610,22 +646,26 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38文件触碰的行覆盖收口：BOM判定字节序/代理对合成/四形态编码/RFC3629边界语义保持自持。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
-      "functionId": "io.Json.mapSystemError",
+      "functionId": "io.IoUtf8.mapSystemError",
       "ownerUnit": "io",
       "requirements": [
         "IO-T04"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
-          "symbol": "mapSystemError",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
-          "startLine": 174,
-          "endLine": 190,
-          "sha256": "92f048416d4ef1b633649541f8ab638c5519d98b2bb54eae394a9285a0d49ff9"
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "symbol": "inline IoErrorCode mapSystemError(",
+          "qualifiedSymbol": "sdurws::ird::io::mapSystemError",
+          "startLine": 116,
+          "endLine": 146,
+          "sha256": "fd0736ed35976c1731aa362c126d65e35613bf3bb8368ab3be4f85665bf841de"
         }
       ],
       "targets": [
@@ -634,13 +674,13 @@
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
         "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
         "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
       },
-      "differences": "与CSV同原生error_code分类重复；std::errc直接比较已用标准库，不应建公共错误平台。仅在同io私有薄映射合流，保留四分类与诊断owner",
+      "differences": "与CSV同原生error_code分类重复；std::errc直接比较已用标准库，不应建公共错误平台。仅在同io私有薄映射合流，保留四分类与诊断owner REUSE-T38/WP-15批次B：与Csv同名助手合流为共享头单实现（原两份函数体逐行一致——README证据）；四分类与诊断码语义不变；Csv侧重复行删除。",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
@@ -672,69 +712,11 @@
       "designRefs": [
         "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
       ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
-    },
-    {
-      "functionId": "io.Csv.mapSystemError",
-      "ownerUnit": "io",
-      "requirements": [
-        "IO-T03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
-          "symbol": "mapSystemError",
-          "qualifiedSymbol": "sdurws::ird::io::(anonymous namespace)::mapSystemError",
-          "startLine": 1066,
-          "endLine": 1082,
-          "sha256": "92f048416d4ef1b633649541f8ab638c5519d98b2bb54eae394a9285a0d49ff9"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_io"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"class DOMParser|make \\(|hasDOMParser|getDOMParser|XML|BoostXMLParser\" RobWork/RobWork/src/rw/core/DOMParser.hpp RobWork/RobWork/src/rw/core/DOMParser.cpp",
-        "conclusion": "读取产品内部功能及上游默认DOM/字符串工具；后续依赖适用性/供给确认与消费链审查尚未结项"
-      },
-      "differences": "与JSON同原生error_code分类重复；底层已经复用std::errc，未来同io私有薄映射可合流，不能跨单元重建诊断码解释权",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
-          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch8-search.json",
-          "sha256": "1b050dcd590cc8c2e8c03522987ad2a53d3906d43eb5b9154d3b07b8c5975583"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/DependencySuitabilityTest.cpp",
-          "sha256": "b9b3188b05fa74ce660031c4315f2c9ff5bbab74f2f1ca7c46dce8fb1c588dba"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/environment-artifacts.json",
-          "sha256": "af51127d81e9dd0690fbe411f497087c3aa28a590698c42148310048902c17ae"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/gtest.xml",
-          "sha256": "ad6dd8795e835addcf9a385ee5b6f4d635dbc68627bb14a9cb14534bf5556ec2"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r8/ird-test-report.json",
-          "sha256": "c8dc19b710e09a27a3290cefaaf2ef8d13945b999a61ddaa4b5f1d725d9c81f8"
-        }
-      ],
-      "designRefs": [
-        "units/io.md §5.9.1 / tasks/foundation/IO-T04.json"
-      ],
-      "auditBoundary": "仅指定内部语义功能；不批准保留手写解析核、不关闭整文件，也不扩大任何owner权限"
+      "auditBoundary": "REUSE-T38合流实审：系统错误映射唯一实现点（io单元内）；行覆盖由本行承载map区段，文件其余由声明区行承载。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     },
     {
       "functionId": "io.contract_test.ContractTestMain.main",
@@ -852,7 +834,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -917,6 +899,2006 @@
         }
       ],
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+    },
+    {
+      "functionId": "io.wp15.IoUtf8.hpp.declarations",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-COR-01",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "symbol": "IoUtf8.hpp",
+          "qualifiedSymbol": "sdurws::ird::io::(私有共享头声明区)",
+          "startLine": 1,
+          "endLine": 35,
+          "sha256": "4ed62706358cb2fee99145aba4465f659d4336fd592fe1560a73c1997944c766"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T38 本批全文件核对（rg kUtf8Dfa|strictUtf8Check|mapSystemError io/src）＋B8/B10 search 延续",
+        "conclusion": "新头仅收纳编副本；上游StringUtil无编码校验（rg无命中），无上游codec可复用——合流为单元内去重（H2方向），非新依赖/新框架。"
+      },
+      "differences": "头注释/包含/include guard/命名空间开合；私有性=src/不入公共头根（R-2红线）；inline符号ODR单实体；通道差异语义文档化于头注释。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "sha256": "2409586d026238df2ec5e989650fd5fd63699abd7bdbfa6f0b4fa98567b9c307"
+        }
+      ],
+      "auditBoundary": "REUSE-T38新增文件的行覆盖收口；语义实审由strictUtf8Check/mapSystemError/table行承载。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
+    },
+    {
+      "functionId": "io.wp15.IoUtf8.table",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-COR-01",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "symbol": "kUtf8Reject = 12",
+          "qualifiedSymbol": "sdurws::ird::io::kUtf8Reject/kUtf8Dfa/utf8Step",
+          "startLine": 36,
+          "endLine": 84,
+          "sha256": "7a4deec33c28893c2f101dab922f8d2c2c504f7d52d8a165df2769e02e8b18bb"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T38 dfa-table-merged-equal.txt（删除前两副本提取比对）＋git show 10fd0a130 三方表体核对",
+        "conclusion": "Björn Höhrmann公共域压缩DFA（WHATWG等价语义）；合流后单表，表体sha256治理口径=38d42d66a535b9ad76ee360e9eb34a6bb1df51c7707be7d4037d9677c91df9c7（与Json/Csv删除前副本逐字节一致）。"
+      },
+      "differences": "状态表数据+utf8Step推进式；表驱动选型理由（转移逻辑唯一/无分支误写）随合流保留；非上游符号、capabilityId=NONE。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/IoUtf8.hpp",
+          "sha256": "2409586d026238df2ec5e989650fd5fd63699abd7bdbfa6f0b4fa98567b9c307"
+        }
+      ],
+      "auditBoundary": "REUSE-T38合流等价oracle的表体承载行；逐字节一致证据见REUSE-T38 README与dfa-table-merged-equal.txt。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
+    },
+    {
+      "functionId": "io.wp15.Json_cpp.declarations",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-COR-01",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1,
+          "endLine": 30,
+          "sha256": "174a86da8e5df16f1aa183bb3293a70e4271c14d0909632dbb47a2294f0b2208"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "#include <sdurws/ird/io/Json.hpp>",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 32,
+          "endLine": 32,
+          "sha256": "df53b37638900afe6791a1ce5720f1a184cb02d6c7fd325e8dc2a4f94a1083cd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "#include <sdurws/ird/io/Budget.hpp>",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 34,
+          "endLine": 35,
+          "sha256": "ae03120613d92e04e5f683f75ebdb9299320e75bb57b1d176fa08d695aead1a8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "#include \"IoUtf8.hpp\"   // 单元私有共享头：UTF-8 DFA/严格校验/",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 37,
+          "endLine": 37,
+          "sha256": "82f98f5dc811b87ebedc4f3f33de727436f0a645a832d6da7d17c420ed2afa7a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "#include <algorithm>",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 39,
+          "endLine": 56,
+          "sha256": "4ba7bdf8aa5d1b4715adacf42feae4783a8fa6b01f306148cd0a184077e787a1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "namespace sdurws::ird::io {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 58,
+          "endLine": 58,
+          "sha256": "13df774968721767af96004b9a6e33cf3916f8aebf434a7f7d134e1ab2f8a867"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// JsonValue::findMember —— 线性查找（对象成员数受文档预算约束；解析保",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 60,
+          "endLine": 73,
+          "sha256": "421f8a18d2d9e287acfa73c55b6d00d5a4a082cdaa1c0620f5267bd09aa56bc4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "namespace {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 75,
+          "endLine": 75,
+          "sha256": "cf04d99c0f5d3521f67f7c587d20dd3592a5024b903529e1e468844f7fae8135"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 77,
+          "endLine": 79,
+          "sha256": "e69a5f5e06b4c51bc108292b02665fbcf49b9c24159e98e79912353e8d414e33"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 取消检查点窗口，单位字节。64 KiB＝预算上限量级（512 MiB）的万分之一",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 81,
+          "endLine": 85,
+          "sha256": "b31ed22538717db290a29cadc9d1b238f7ab3326644441454dfb639522a72507"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 文件读取循环的块大小，单位字节。64 KiB＝常规文件系统缓冲的整数倍、",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 87,
+          "endLine": 89,
+          "sha256": "af31f9e6df84bbaf27cbab4685db9bf5acd76fb0d830886beb15b38809e37d66"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 版本字段键名（§5.9.2 版本字段行原文 \"schemaVersion\"）。产品 JSON",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 91,
+          "endLine": 93,
+          "sha256": "149c8fe4dcea606d5dac215b16ab2113b2b5a25f6249c2f0ee51f7c53ab84e48"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// UTF-8 BOM 字节序列（EF BB BF——§5.9.1 编码行\"容忍剥离\"）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 95,
+          "endLine": 96,
+          "sha256": "36862c75fbb11de4f83449a0ffbddbf2cbe0c298ce76bed38fa3161eac0a74bd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 98,
+          "endLine": 103,
+          "sha256": "08f76e3e169932f9785960075b1d9f3ceeeaf9b482a28f7fae58411f85921d17"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 105,
+          "endLine": 107,
+          "sha256": "8958b47220a1bed94e3a5d3f946885a80ba77723541d53ab1182bbe1a9f1d859"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 当前读取位置（1 起行列——与 JsonSourceSpan 同口径）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 109,
+          "endLine": 113,
+          "sha256": "1f10faae72cc9d6b5be3367221cedcfcecee149aeb73ddc27216fdc4a012dcea"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 115,
+          "endLine": 125,
+          "sha256": "23b79dce9c64c36a73ec7632c3f7381891dd49e2b28fb21c96e04cd75026cc1a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::size_t pos() const noexcept { return m_pos; }",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 127,
+          "endLine": 132,
+          "sha256": "3a780c30abf81f7bbf39063936450c55c7fc0f934ae1f9b7692efc0e91cd9645"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 全缓冲视图（词法 token 原文截取——数值 from_chars 输入）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 134,
+          "endLine": 137,
+          "sha256": "5969a39dac7410e2b11d9b5fdc0e5ac9febc87bf38e048291a689641c5ec6feb"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 消费一字节并推进行列坐标。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 139,
+          "endLine": 152,
+          "sha256": "a9bb10bee5b59bad5fc275a25b0e48ef25e813fdc8fa17ea9104c4d855497435"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 快进 n 字节（词法扫描数字/字面量 token 用——坐标语义同 advance）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 154,
+          "endLine": 160,
+          "sha256": "9475a7b2f35dfbc7e6d6b21f8ee393bf6eb96c3a77a2ac8ac10dbceb0adf7393"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 162,
+          "endLine": 167,
+          "sha256": "e883b2c19bd07dbcc30536af4960c10393c832e137aaa9862992f501e4bf3e2b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 169,
+          "endLine": 171,
+          "sha256": "8cf2329a8ad838f3290104a6e26a82e558b7c4bb1feb3134f3fbfb81d8411ddf"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 173,
+          "endLine": 188,
+          "sha256": "e8c91b3c64f330bf16affb1dddb8a2d9773bd7c5d8fe06460fe36b8909c37773"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "void pushKey(IoString key) { m_segs.push_back(Segm",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 190,
+          "endLine": 192,
+          "sha256": "08a4e5450074ad433905a31c73b0e1dc73ba6034b86409b0ed20863547432ca3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 渲染为稳定文本（同路径同串——NFR-COR-02）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 194,
+          "endLine": 225,
+          "sha256": "6082975ec282a4bb702c7b40f8e4a75ba2883687154190f75a555e26db79b02a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 227,
+          "endLine": 242,
+          "sha256": "43621d848212c8bbeab57e6d3ee10b7411b422e69de073956ca2c6133776c1d2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::vector<Segment> m_segs;   ///< 根到当前位置的段栈（文件序）",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 244,
+          "endLine": 245,
+          "sha256": "1ea20e78e5462f113eacbaef28697650ca4b95e2a9b4d5caaf5ccc5dfe9be7c2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 位置区间装配（起点/闭端→JsonSourceSpan）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 247,
+          "endLine": 256,
+          "sha256": "1e7ef37abd280b5e18187a9161c671991f6a1668288f1902cad9138587ef0fb7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// JSON 家族错误构造（params 键序 path/row/column——与 ioCod",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 258,
+          "endLine": 275,
+          "sha256": "67ca1f7c356d2b60a0034121f36114b332f47f08e48c56329d849ba64bf3a125"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 版本族错误构造（params 键序 file-version/supported——与 io",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 277,
+          "endLine": 292,
+          "sha256": "7fb729d63d29947239f1930c82396faac5d6c1b0489708c0fa297310d04671d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 294,
+          "endLine": 296,
+          "sha256": "44be9fa885155975d7c5c51867c7b4b308b3c36b0cebbb7b25745391951c69c9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 解析期生效的安全限制（来源＝BudgetSpec::productDefault()——§4",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 298,
+          "endLine": 304,
+          "sha256": "67969bd2293c9510fcb871e7073e9c04d8875d2ad2a777d68b6b5ff5e1c253bd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 306,
+          "endLine": 318,
+          "sha256": "03f067d517a8dd59468a45a9b1190b8adaf74cf00e9bbead7daedc958d509672"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 320,
+          "endLine": 349,
+          "sha256": "0b787f0e2acfa1329d1d7c725622ac0459b4b0351ae73bde79a147d07a1c5895"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// BOM 剥离标记（run 前由调用方处置——报告回填）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 351,
+          "endLine": 352,
+          "sha256": "f45ef762d53bbcc7081e8ef49e5701187ab911540379740c9329c7f931d838ab"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 354,
+          "endLine": 355,
+          "sha256": "2fd0a940a3cb72102a2ac026eb614988ce0b69b0f57e2024a6d1c8cfc44fbbe2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 跳过空白（space/\\t/\\n/\\r——RFC 8259 ws）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 357,
+          "endLine": 368,
+          "sha256": "d2cff337b2722e5df5c0fa74cccb3103296f30f838a753a6068a247de92bdd63"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 取消检查点：每个值节点解析前轮询（§9.5 取消行为行\"流式解析每块",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 370,
+          "endLine": 385,
+          "sha256": "c79b3198ff7d2d3531f0c580b02d6263b2fc0eb7745890c93daae01ce830648d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 语法错误快捷构造（当前位置单字节区间）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 387,
+          "endLine": 392,
+          "sha256": "f216fd0a132d22538270b9ebacc6283aa5dad1f72c306e520e35cb69e82c9034"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ---- 值解析（dispatch——语法层第一站）----",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 394,
+          "endLine": 394,
+          "sha256": "793c64aee9508fce26c6a457f0633cd74c26520f6cbe03c686725e4e93dbf4ad"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 396,
+          "endLine": 453,
+          "sha256": "c37c27ccd03d09082034dd41fbb4c0894e8d5939d9119442d2911acbb0528cdf"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 具名非有限记号（NaN/Infinity/-Infinity——非法 JSON，§5.9.1",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 455,
+          "endLine": 480,
+          "sha256": "bd8d6a10a1e148f8f0ed9bd2c1c06efcb2899fc92afff2a557df9146b0e52282"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 字面量（true/false/null——精确匹配；前缀命中但尾随不符＝语法错）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 482,
+          "endLine": 501,
+          "sha256": "c00c6fe6c708d5ecb3bac880a590c5d61ea0997690de2e20e0e77e57a2353f5a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ---- 字符串（转义解码＋码点预算＋控制字符拒绝）----",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 503,
+          "endLine": 503,
+          "sha256": "e4703772d444b7dcc182f3eec2b94c3d1b18980e58e7dd6e95b407fbd9045f19"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 505,
+          "endLine": 516,
+          "sha256": "3a692eb61800a8e40c9e9d13e8588bcc95e58980383acd6ece2ab996903a09f9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 读恰好 4 个十六进制位（大小写均可；失败原因入 err.detail）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 635,
+          "endLine": 635,
+          "sha256": "25fde0f5de9d98b780ad9007364b463dd01d221a6deeaa0f0fea456544c66cee"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 码点 UTF-8 编码追加（1~4 字节——标准映射，无代理区输入）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 662,
+          "endLine": 662,
+          "sha256": "01f32550b466dd22ca6cf3b7a4359eade51048cf408bbb257afe7d7645cebd0a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 附加 err.detail 到文本（detail 拼接小助手——错误信息可读性）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 682,
+          "endLine": 686,
+          "sha256": "84adf9f1ff0140fe495435222d5f2ef53946dd97400517fa0a10f8fc75c8f007"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ---- 数值（语法扫描→Integer/Real 二分→溢出拒绝/超范围透传）----",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 688,
+          "endLine": 688,
+          "sha256": "64a4d21e0cba14dfc7d100c442a4f0a64596702b5271bf3d8232ed896e64031e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 690,
+          "endLine": 700,
+          "sha256": "95c69d556040def58721481cd83b377ab11fe78853fff7a2d15eb29a199f18a5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 822,
+          "endLine": 899,
+          "sha256": "4a7198ba228d0cc4745611422a8a5dfcfd73ccc0a4802b4f45f8005a410c8b99"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ---- 容器（对象/数组——深度递归＋重复键拒绝）----",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 901,
+          "endLine": 901,
+          "sha256": "1f023572dbf96e884d708289f0019eb7cf8dc27d140e866f891e064ecc3a9c5b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 903,
+          "endLine": 907,
+          "sha256": "fbd4969998f46c7dd1ea2518b4851cf28f42940daa1ec1e68abdb00c30946f61"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 解析数组（元素递归；路径段＝下标；深度+1——栈安全同对象）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 989,
+          "endLine": 989,
+          "sha256": "c7efe18df6cf79ca415148349e24fec34eeb6e411a4f08826f6b96599484ac41"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ---- 状态 ----",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1036,
+          "endLine": 1036,
+          "sha256": "19b8fbf8d73dfc513c8ac54b043d1288cced07f5753cf50537754eb034f17d28"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "ByteCursor m_cur;             ///< 字节游标（BOM 剥离后缓冲）",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1038,
+          "endLine": 1046,
+          "sha256": "3b29ba74038050c908b266a7fce292d23592064b48a6c1514e062340d2be3acb"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1048,
+          "endLine": 1050,
+          "sha256": "d044049e2cb345c6faeeedd37a68e1843ac88dee077e65f0776577b94e54c9b9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1052,
+          "endLine": 1118,
+          "sha256": "0931c9722e767463820e717bc8a267c0c98a9a336112c064fdc233d4046e9f0e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1120,
+          "endLine": 1122,
+          "sha256": "48aa4bb410c2dccaf9f00b27cdcf8997ae92b8b38f6e8a1f190adcc822d65906"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// profile 形态约束的稳定 token（TYPE 错误 expected 参数的确定性文",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1124,
+          "endLine": 1138,
+          "sha256": "981aa1d2c9bd962032b55da55e37537175e74daf9e75b6348f90120da0ecd6ca"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// DOM 值形态的稳定 token（TYPE 错误 actual 参数）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1140,
+          "endLine": 1153,
+          "sha256": "ee481838fa5e26594ad55147fc0a196cb122eb02272f2ac5d6beea7e26989132"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1155,
+          "endLine": 1169,
+          "sha256": "53caf90fe17a116d67df199958bf7272944a0242c2e2f483147044ac84b3d480"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ① 形态约束（Any 跳过；Number 命中 Integer/Real 双形态——1 与 1",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1171,
+          "endLine": 1190,
+          "sha256": "7136957993a5b6572c005d2bad07fa06020ded877f501d04838995416dff35cf"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ② 值域枚举（String 字节比对/Integer 数值比对——enum 注）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1192,
+          "endLine": 1229,
+          "sha256": "d219166d6dca922faa3556299729060bda6304219bc8a190caecded501485190"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ③ 数值范围（§5.9.2 类型/范围行\"比较型：实际/期望/单位\"——闭区间）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1231,
+          "endLine": 1251,
+          "sha256": "643f70479c5c3203975682c1f596332bda9a6a9aa4a26acec6b9c6f1e77c4528"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ④ 数组长度约束（越界归 RANGE 比较型——unit=count）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1253,
+          "endLine": 1266,
+          "sha256": "d39e9d49bc24d9bab1c967d32aa90824fa1c1ac2c9f357ae7f90ab0d3be49dee"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ⑤ 子结构递归。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1268,
+          "endLine": 1338,
+          "sha256": "08a9e35df4a5ddc3ae6fa66e113e4e19e8c04d72e1a05971fdc642574e0acd3c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1340,
+          "endLine": 1357,
+          "sha256": "661c66442e8c65063e20139303bfbd30993730e2e8ca04b92aef064a9cf62832"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1359,
+          "endLine": 1361,
+          "sha256": "fe1f13ead07d28181570cfa2654c6e3deb47fc6985a421dcc60d8ec2b9407783"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 缩进单位（§5.9.3\"缩进固定 2 空格\"——canonical 版面恒定）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1363,
+          "endLine": 1364,
+          "sha256": "418999d338aeac48f2cf7197fb8ae149fccb0fcebdfe42b3bb2a9eacaf71f27b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 行尾（§5.9.3\"LF 行尾\"——canonical 版面恒定）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1366,
+          "endLine": 1367,
+          "sha256": "6e84460514535129dc26cd39968b06baeddda7514bbdd4ca06b30ba9cefa6163"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1369,
+          "endLine": 1379,
+          "sha256": "d3e5696985648cc806accc3a99f158cbe6a6c09257024d23e78675d621289a00"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1381,
+          "endLine": 1413,
+          "sha256": "9e89b32abc66773e0c1d16ceccaf4deefa77cc4418f301d58d3d4088ef681f6e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1415,
+          "endLine": 1450,
+          "sha256": "35de1902bbe645d3773b3a94842c7e0bcb32fe923751e98c8aa1de1a41a8bb75"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1452,
+          "endLine": 1560,
+          "sha256": "c59f2dbfe3b87572aa8d009410274b61d29ef11e073bc50c54183e16e002e961"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "} // namespace（解析/校验/序列化实现段收口——下方为公共实现实体）",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1562,
+          "endLine": 1562,
+          "sha256": "831c0c206fccc4349471eab939a032ade3ea960c69510092e8fc46e0a3cd8238"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "IoResult<core::Digest256> digestCanonicalJson(cons",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1593,
+          "endLine": 1609,
+          "sha256": "f2124340296934c343ef0d432383a02141237ff82b5addab6827c4dab5aaf025"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "namespace {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1611,
+          "endLine": 1611,
+          "sha256": "cf04d99c0f5d3521f67f7c587d20dd3592a5024b903529e1e468844f7fae8135"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1613,
+          "endLine": 1615,
+          "sha256": "e41f97f37c9143b0cda03294fb79c41a9045542282c1a9fc1c7652dc76379da4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// profile 速断（注册期契约校验的公共文本——两处注册期拒绝共用）。",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1617,
+          "endLine": 1618,
+          "sha256": "72af972e8e518dd3f9e4fa2a1b0c81d9400fd06007a2097677b498689f2e980c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "} // namespace",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1620,
+          "endLine": 1620,
+          "sha256": "533f16bca7d58f44b3103b92e3485d22cfbb34bbad5ea3f3fa3b5a9dcb24ec89"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "struct JsonProfileRegistry::Impl {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1622,
+          "endLine": 1625,
+          "sha256": "af4e1fe258a55d7f944e987056b666564de556ac178ce64760e650d299f205dd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "void JsonProfileRegistry::registerProfile(JsonProf",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1627,
+          "endLine": 1653,
+          "sha256": "66ee2b2b3670223584207d4cfc99635eec02be111f1c009747e617440928fdac"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "const JsonProfile* JsonProfileRegistry::find(std::",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1655,
+          "endLine": 1660,
+          "sha256": "e5004a6c1f90e705f2cfc9f4ad38051d1dda2110e207a70369b07a2b6efc8be4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::size_t JsonProfileRegistry::size() const",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1662,
+          "endLine": 1666,
+          "sha256": "f64c0245ee9be150fefb7f5cdc300d9f173b6851a205f536b3a8825586dd8d02"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "JsonProfileRegistry::JsonProfileRegistry() : m_imp",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1668,
+          "endLine": 1668,
+          "sha256": "67df499e190e8b789f1cc048dbfdf787fc5a8fb0ffe2ce21622bb4a91dbec158"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "JsonProfileRegistry::~JsonProfileRegistry() = defa",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1670,
+          "endLine": 1670,
+          "sha256": "0443ca337b5dc30692cbab1fe556fdf5797193b683cf303e831664e31a5ee880"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "namespace {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1672,
+          "endLine": 1672,
+          "sha256": "cf04d99c0f5d3521f67f7c587d20dd3592a5024b903529e1e468844f7fae8135"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1674,
+          "endLine": 1676,
+          "sha256": "c5d8056c3ac704e55f2407c277788ec7908ca141908fc917df0f87430620fd4b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 解析安全限额（恒为产品默认规格——§4.5.1 表默认值；guard 非 null 时",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1678,
+          "endLine": 1686,
+          "sha256": "5d7269eb5d5eff9eecc2c15e8a7086286edc390ffa1ecd9c172fe1d8ce03a15d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1688,
+          "endLine": 1752,
+          "sha256": "8eea7f10cd56a1a6a27711df6cb59a09fbfef84b19045ac800ec2d576276e780"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1754,
+          "endLine": 1766,
+          "sha256": "036b7915719909327b4daef42548ae451c37932d71ef5a556ed74708085852d5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "IoResult<JsonDocument> parse(const std::filesystem",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1768,
+          "endLine": 1842,
+          "sha256": "6095a4f397a6cad665425c955a51d82c843dd5930d4b47569a995734b3bd7581"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "IoResult<JsonDocument> parseBytes(std::string_view",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1844,
+          "endLine": 1850,
+          "sha256": "2b5c0713c861ca772c9306dfef11b881475e889b1c3e39e55fafd02816339d30"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "IoResult<void> validate(const JsonDocument& doc, c",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1852,
+          "endLine": 1875,
+          "sha256": "ff925d2589ea88136b1466c2a92c741c7f59364bf99fd41f38494416aaa1e4e3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1877,
+          "endLine": 1992,
+          "sha256": "4e67a8b2a5f07631bfe94df7d07150633972e398390441375d860678a18b0c08"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::shared_ptr<const JsonProfileRegistry> m_regis",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1994,
+          "endLine": 1995,
+          "sha256": "1b793a279d239982d0f804ef2b07845e009ab67fb77642f8873c503f5ea891a4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 1997,
+          "endLine": 1999,
+          "sha256": "1a887ae67d5453d5c52706891dbae5f07fc69d9220a72894907f636740cce252"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "/// 暂存文件后缀（同目录同卷 rename 前提——与 Csv 的 .ird-csv-tmp 同",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2001,
+          "endLine": 2003,
+          "sha256": "3ea0c31ae9e88ec714cdb50b8aeb28d0dfc5a8fbd9f8911985e2b777b3313270"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "class JsonWriter final : public IJsonWriter {",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2005,
+          "endLine": 2072,
+          "sha256": "a0889f801e5f79062d98a840f77f2bd113484efad1173fa3b73b100832143e18"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "} // namespace",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2074,
+          "endLine": 2074,
+          "sha256": "533f16bca7d58f44b3103b92e3485d22cfbb34bbad5ea3f3fa3b5a9dcb24ec89"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2076,
+          "endLine": 2078,
+          "sha256": "092b11a515a2891127e3b44ae69efcfae67b2ccd683dd1a354f316b3d3c03d71"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::unique_ptr<IStructuredDataReader>",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2080,
+          "endLine": 2084,
+          "sha256": "84a04919fc5ef497a0177df1851ff15a3ab0095c9c797a0c81f6f0c670ba3666"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "std::unique_ptr<IJsonWriter> makeJsonWriter()",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2086,
+          "endLine": 2089,
+          "sha256": "ceaef591d59bb9d7bd7446733a4a05bb4a57bcc0b04da72b0ec8cb9fd0c0648b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Json.cpp",
+          "symbol": "} // namespace sdurws::ird::io",
+          "qualifiedSymbol": "Json.cpp 文件头/常量/入口与未逐功能登记区段 区段",
+          "startLine": 2091,
+          "endLine": 2091,
+          "sha256": "f71cf00c05ee4902b630719a84fd178c4b18c9af9b4dd45a5477987458e91fc6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T38 本批触碰文件全行覆盖（reuse-contract COVERAGE）＋B8/B10 search 延续",
+        "conclusion": "改动文件每个非空行须有区段归属；本行承载未由逐功能行覆盖的声明/注释/实现区段，不替代逐功能语义实审。"
+      },
+      "differences": "Json.cpp 文件头/常量/入口与未逐功能登记区段；无隐藏helper/核心/运行时所有者（与audit-t21 Compare_cpp.declarations同型行覆盖机制行）。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        }
+      ],
+      "auditBoundary": "REUSE-T38触碰文件的行覆盖收口；区段归属≠语义完备（独立验收核对）。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
+    },
+    {
+      "functionId": "io.wp15.Csv_cpp.declarations",
+      "ownerUnit": "io",
+      "requirements": [
+        "NFR-COR-01",
+        "NFR-COR-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1,
+          "endLine": 27,
+          "sha256": "4c053e3b81c23b5bcfd4aefe3bb44aa5cef85583d38d381fce64a8778e79cba8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "#include <sdurws/ird/io/Csv.hpp>",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 29,
+          "endLine": 29,
+          "sha256": "11320bcb695fb250751b62ddff9a0105ba1572b929ac6bed59e46a00b708d2c9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "#include <sdurws/ird/io/Budget.hpp>",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 31,
+          "endLine": 32,
+          "sha256": "ae03120613d92e04e5f683f75ebdb9299320e75bb57b1d176fa08d695aead1a8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "#include \"IoUtf8.hpp\"   // 单元私有共享头：UTF-8 DFA/流式推进/",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 34,
+          "endLine": 34,
+          "sha256": "d9980abd62e35b45c07d1c874887a8d05d5c6a04226b033f4f92a9c728c46146"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "#include <array>",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 36,
+          "endLine": 48,
+          "sha256": "20d2959ca77d0ef1359fcf1374d7b5a8d22c4af71b65cf0832eb8f4249cf4382"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "namespace sdurws::ird::io {",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 50,
+          "endLine": 50,
+          "sha256": "13df774968721767af96004b9a6e33cf3916f8aebf434a7f7d134e1ab2f8a867"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "namespace {",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 52,
+          "endLine": 52,
+          "sha256": "cf04d99c0f5d3521f67f7c587d20dd3592a5024b903529e1e468844f7fae8135"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 54,
+          "endLine": 56,
+          "sha256": "035bbdebf693617ac27fbb1f846ace41d7b019c1e227f5b7945df6fcfc5b6bd6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 首物理行（方言标识行捕获）的扫描上限，单位字节。1 MiB＝CsvFieldChars",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 58,
+          "endLine": 63,
+          "sha256": "a05058c2c719e5be8132435a2d705034077bc0f0d30d977b46e48cc2867d5baf"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 单字段累积的防御上限，单位字节。1 MiB＝CsvFieldChars 硬上限",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 65,
+          "endLine": 71,
+          "sha256": "cdf4cfa55ed44d5711b632f6863ce3f6ee9cc9739abd1ac3f529871849503b61"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 单行字段数的防御上限。Budget.hpp SecBudgetField 注释同样覆盖\"字段",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 73,
+          "endLine": 75,
+          "sha256": "b43e3b2962d7a7081f38917bfb6d8a6c1748cf731424233272b8986bbd97d264"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 行错误原文片段的截断长度，单位字节（§5.6 rawSnippet；IoDiagnostic",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 77,
+          "endLine": 80,
+          "sha256": "ffe7548a567e148675aa4da0ebe0888245b337bf67fc106d6fefc0b335273ecc"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 嗅探采样的逻辑行数上限：表头行＋后续至多 100 行（§5.2 分隔符行原文",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 82,
+          "endLine": 84,
+          "sha256": "4510c91071f2c1a3385477c2208179fa0ba350b7de860f864f8996cee84420c7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 编码预检窗口（probe 的嗅探只严格校验前 64 KiB——§5.2 编码行\"全文",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 86,
+          "endLine": 88,
+          "sha256": "2619ba176601f1e43f81c2e51eff56090adff17297f62b65221b062269b28359"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// v1 方言标识记号（§5.1 原文：#rwcsv1——rwcsv＝格式标识，1＝方言版本，",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 90,
+          "endLine": 94,
+          "sha256": "8ac09d7a8a0346a7e8ff534d58af3d9da87604713fde11d7f90f9f1daae11d73"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 96,
+          "endLine": 100,
+          "sha256": "19eb63cb334a9c2a1a2ef417a35dcc28714e41e5219a33aa396983e8f3150cbe"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 102,
+          "endLine": 104,
+          "sha256": "77d8770319844c4a38a347fe74dc522af87ff3ccae33e9bf7d38fc817d0bc58b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 106,
+          "endLine": 122,
+          "sha256": "4d33861f5f449b4e116f073ce15f22242cfe5471125e764e526c0cebbc6a0a9b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// ASCII 大小写折叠相等（DUPCOL 判定——§5.4\"折叠大小写后同名\"；折叠域",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 124,
+          "endLine": 142,
+          "sha256": "42d7bd591dc6131aa1e2385fd26d83a72731c5efd00c28d1a9468e748d568419"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 首个重复列名出现的列号（1 起；DUPCOL 定位——AT-02 口径；无重复返 0）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 144,
+          "endLine": 155,
+          "sha256": "5dc27c41853b112fb9b3772603c688ce687225462a07d2ff8e972bd831967c3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 行原文拼接（诊断片段用——分隔符连接，仅作片段截断输入，非结构还原）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 157,
+          "endLine": 168,
+          "sha256": "b20e369f48718fba1385194608fb18940bbadb4b81a3775d7d8512d8c389bd37"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 170,
+          "endLine": 172,
+          "sha256": "0d1a6ad4eea59b861b849e6faebd7def07c45cff722d31132c7df558cfd9ddf1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 174,
+          "endLine": 196,
+          "sha256": "2dcd7b3b1568b2e2930ffe81817cd5dabf5f46d63f55a7ce741dcb9635a8ef37"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 198,
+          "endLine": 221,
+          "sha256": "e8a248571f7ac2a744293b373d3f5aed85069b723835024ca4996d07fb863d34"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 是否存在并剥离了 BOM（§5.1\"与 BOM\"行/§5.2 编码行①——报告面）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 223,
+          "endLine": 224,
+          "sha256": "2046475b19b6a5697343264062e6f29762c35153e00bcafff1fd3e6f306dc370"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 226,
+          "endLine": 255,
+          "sha256": "d62da003032ab209636de5c45ced06a37c8f73dde139af06ecef29e5e536ff18"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 前瞻一字节（不消费）；返回值语义同 next()。实现＝读入回退槽。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 257,
+          "endLine": 265,
+          "sha256": "ab62da5deab4798aed9ab7d748f61d02a0fc17dabfdbde430f62d3047dfff04c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 标识行判定未命中时回灌捕获前缀（仅 prologue 调用一次）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 267,
+          "endLine": 293,
+          "sha256": "ccaf35b1b7b497713da74b83ff18d832e6c02cd1682a069a29e21061dc8b43d5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 已消费的原始文件字节数（预算对账——声明大小 vs 实际读入）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 295,
+          "endLine": 296,
+          "sha256": "558fb2536cf150f7884a39192e90a67b22fc92cfb5925de33482478a6cd5c1d9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 298,
+          "endLine": 299,
+          "sha256": "61befe2cea96b9ed022cf13f1ac262b12f302087546399feb3fd87263a35f30f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 绕过回退槽的直接取数（peek 的实现核心——不许递归占槽）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 301,
+          "endLine": 311,
+          "sha256": "ba9fbb0bbf81e8a0f7848f08e59d27cf55c1809a7c0a7228a04dbf49a3df3449"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 313,
+          "endLine": 357,
+          "sha256": "b148a3319303bda783d4c50209e240e31812d8a4aff312e3236bf9110689d73d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 原始字节读取（带 64 KiB 缓冲；-1＝EOF）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 359,
+          "endLine": 377,
+          "sha256": "6540e8a1950416b40bb1a1788f4f4f10f78b44f5a2f205dbc003c7bf023816c2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// UTF-8 形态：DFA 逐字节校验后透传（合法序列的组成字节原样产出）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 379,
+          "endLine": 379,
+          "sha256": "4b775dc3a56f7cec1840021f3bb50b5f7d232d742df40873fa9e7f618a04cc3b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// UTF-16 形态：码元解码（含代理对合成）→ 现场编码为 UTF-8 产出。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 420,
+          "endLine": 420,
+          "sha256": "59ba1ddd77ac289b9d26ad9b3df98a1b161d279af867f4a2ffe7bd1d281de20d"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "std::ifstream m_in;                               ",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 489,
+          "endLine": 512,
+          "sha256": "6e38ba0ae316ae53c05c0ef69dc04cb9709cddeb167fae9f9418cda0ec0b32a5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 514,
+          "endLine": 516,
+          "sha256": "ecf2c8fb142f84ff9c11309c90cb4af9ba7344fae3d5698ee061c86765567f25"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 518,
+          "endLine": 547,
+          "sha256": "ed293fb382ffc965a5d7e6e67ae28259654da0fa239282e62739ecc16eb4e0df"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "RowScanner(DecodedStream& src, char delimiter) noe",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 549,
+          "endLine": 552,
+          "sha256": "74d7f798dd9932a4e3311981c7ad1c40c0c34d8e181c37235b21ae2198581150"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 是否已判出\"引号不闭合\"（EOF 仍处引号内——§5.4 引号不闭合行）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 554,
+          "endLine": 555,
+          "sha256": "0895dbc4f9bf366ab6feae2aaa32ad4e0c9f97ed83fd7b2cc9e6b0b90afe4403"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 引号不闭合字段的起始物理行号（定位起始行——§5.4 处置列）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 557,
+          "endLine": 558,
+          "sha256": "4ecd3b5595d2967f787c3a6b774575c4e76cdc19da78001a1f7274ff1d240a4b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 流中判出编码非法（-2——读出侧转 IO-FORMAT-CSV-ENCODING 致命错）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 560,
+          "endLine": 561,
+          "sha256": "4fe1ec3cc1b8efda3d8da4c9bcff896e3b733ee1c65f7e33922509eecb933fdb"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 单字段超长防御上限命中标志（读出侧转 IO-SEC-BUDGET-FIELD）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 563,
+          "endLine": 564,
+          "sha256": "4492643de18173fa7a18025c323b5a4d035d014eb4a89845982d2c30b0badfb7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 命中超长防御的字段的计长（含未吸收部分——诊断 actual 值）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 566,
+          "endLine": 567,
+          "sha256": "3e84b591e35a1142c47e8f629b0d2760dc472502d63424731e874387fbb54128"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 单行字段数防御上限命中标志（同上码面）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 569,
+          "endLine": 570,
+          "sha256": "5cb8d858ec585675549b5f2f5d7794244379f0adc51c741cd956e138eefd6916"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 读出侧同步当前物理行号（引号不闭合\"定位起始行\"的依据）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 572,
+          "endLine": 573,
+          "sha256": "720db5f2789f53e524dba5dab62e236d77d40c290cb207f47b5766b2fc1fe84f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 575,
+          "endLine": 616,
+          "sha256": "c213ee34b70e869803463fb7f5e3c6a118a76e090602ec6255a2e4d0ec8a2e77"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 618,
+          "endLine": 619,
+          "sha256": "dd6466a72e28fa8b7ecedd95431b9fa8bcad4de66eed36a5e17f115d8a490878"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 消费一字节并计入行字节（行存在性判定依据——见 nextRow Eof 分支）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 621,
+          "endLine": 629,
+          "sha256": "92cd3812668cbd0bb6dc99b840c058b844c243632a84a542633e4336e7a97b37"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 631,
+          "endLine": 714,
+          "sha256": "395ae22e05c9da6e3d690569c2ca36ad771cc6bd73d982482969f98dffbf1784"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 字段内容追加（超长防御：越过 kFieldScanCapBytes 后只计长不存储——",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 716,
+          "endLine": 729,
+          "sha256": "016621bde5cdb735b1ca948331349e6d08b53bccd2dd5eef77d1c2b5f3e6e99a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "DecodedStream& m_src;                    // 下游字节流（",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 731,
+          "endLine": 742,
+          "sha256": "7efba4f5bd3f5ad06ee57291c47f9c73a2768d3f4e883affab62e69fbeeca427"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 744,
+          "endLine": 746,
+          "sha256": "d3a00bebc088a9aff3f97e95711ac8f901c645907397ffab1b1fe14696a7d750"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 标识行判定结果（三分——不标记/合法标记/带记号但语法损坏）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 748,
+          "endLine": 753,
+          "sha256": "df9591122c22026d55517fddd094ac3d8a75b855bb68c059f3126f839f0a2074"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 755,
+          "endLine": 791,
+          "sha256": "a7ffb736a1dc0ded7808026fedbbe6c09b0734f573452e379a26e5f5f4cb2f0b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 键值序列解析：以单个空格切分；任何空记号（双空格/尾空格）即损坏。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 793,
+          "endLine": 885,
+          "sha256": "cdab7099868438c5c7e8af18845ebdf1aad893fbab2f1a6852afd3d8ab12cadd"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 887,
+          "endLine": 889,
+          "sha256": "af3b414644c4a0e4a8fdbaf2346760600fb43f15771f0003c32d95327909f299"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 嗅探结果：win＝胜出分隔符；summary＝候选统计摘要（诊断 detail 用）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 891,
+          "endLine": 897,
+          "sha256": "ece657554a4177a83d727a7cb2597c9dff6b8a5eb7eb8913f75bc3ea849417fa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 899,
+          "endLine": 930,
+          "sha256": "ebbf7a9a9014cdee987e33742ab3e951787b87e000d0300bc5ad43ebb19a7b25"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 行末折叠：把本行计数并入积累（局部函数形式——保持嗅探循环连贯）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 932,
+          "endLine": 943,
+          "sha256": "c428a51e45aa495f3bd4e2e4044d4d8dc32bc3af077f16fd487140aea9a20351"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "SniffOutcome o;",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 945,
+          "endLine": 996,
+          "sha256": "199831bf5eab5c22ee8ae901fcdeb99ac5a162106c4f39353f6141d97fc1f50b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 决胜：一致（每采样行 ≥1 次）且总次数严格最多；并列＝无唯一结果。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 998,
+          "endLine": 1023,
+          "sha256": "cc1d3d2a737f29be7180a84ae27d02a77262441879d1a014dc2dfbfb413fe274"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1025,
+          "endLine": 1028,
+          "sha256": "697b6e315e10c83acacd3007f0bbc8ca33ff5ecd65129ab11173e82c29a4a36c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1030,
+          "endLine": 1032,
+          "sha256": "3bd8e358161ab21ff020bd39709dbcb1418190b01c0ceedac5150061ed8ab6f2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1034,
+          "endLine": 1046,
+          "sha256": "c181a26609fb186bb94ec0673e45998ac3f98fcb2f45458c7012d8643f4cef7a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "BudgetScopeSession(const BudgetScopeSession&) = de",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1048,
+          "endLine": 1049,
+          "sha256": "34cb9ab499a238debf0d3db16b0da532b8f63a6067bb6784e6cbd7893f4f76df"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 进入会话：开 scope（内部模式）或采用调用方句柄（外部模式）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1051,
+          "endLine": 1072,
+          "sha256": "f57b8d1148fc208899bdb0e4ff2844d1290b92fe06358c08ec9293e4ac456a46"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 离开会话：内部 scope 回收关闭（父超限的错误向上传播——§4.5.2）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1074,
+          "endLine": 1083,
+          "sha256": "646fdb513677d5637f56976a0d3e77b2f0895c685eb3c0f9fb0d20f93ff98749"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 记账一笔（饱和加法在 guard 内完成——失败状态不变，调用方中止）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1085,
+          "endLine": 1092,
+          "sha256": "75e5683d3d28e9717722bd5840cd6ecdbde428015da2358b64740bf6295fd703"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 取该维生效限额（诊断三要素的 limit 值——§4.5.2 比较型三要素）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1094,
+          "endLine": 1107,
+          "sha256": "2dc2b255a8c85325f893bd55424f36f1293146da911657f45fd759cb8871e940"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 析构兜底关闭（正常路径经 leave()；异常路径防 scope 泄漏——关闭",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1109,
+          "endLine": 1116,
+          "sha256": "aea1a19d478640f33efa43da4576e5ea3245232f4704eee7a369affff9db0144"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1118,
+          "endLine": 1122,
+          "sha256": "f748e0938fa6aa04cd3662de0a0fe3efbda00446ba4ab9a2fbac432a62cfb3c6"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1124,
+          "endLine": 1126,
+          "sha256": "e0490f3554aebc83a3eaf493441b7e539fb93ffcd8c50e0f5d5863690a912f4a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// prologue 产物：编码预检与首物理行标识判定之后的会话状态。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1128,
+          "endLine": 1132,
+          "sha256": "4611fe2746018a0c4ae8c77cbdc1ceb866a19dcd806ea2b5b3fb9669276a0f5a"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1134,
+          "endLine": 1177,
+          "sha256": "59648d91d8e10099269bf9568726a19193a7b019be1043f9f332aef758129e7b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 第二步：标识判定。判定对象＝行内容（剥离行尾字节组）；溢出形态没",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1179,
+          "endLine": 1209,
+          "sha256": "b3b65fb267740779df591312cf0c696b3bfd66cb2188cc59fda4000783e52633"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 第三步：未标记——捕获前缀整组回灌（含行尾字节组——回灌后行界与",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1211,
+          "endLine": 1217,
+          "sha256": "53e106c3bb1559d9c2fca5578dad044cc0ab7dd2251c05228ca9e5063b813943"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1219,
+          "endLine": 1221,
+          "sha256": "61f706ace0c2a00c08d28db152d09c5815eba8e92324480d53b1d40f53d02619"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1223,
+          "endLine": 1301,
+          "sha256": "0f0da2bc80c4424b5bb60da0cb94748d5b3e1fd4bbb905c165a234b1bf78dc47"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoResult<RawTable> read(const std::filesystem::pat",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1303,
+          "endLine": 1367,
+          "sha256": "c5f52fc554d73e033c893e371baeba9f20d99aad8bfa25e2647b017889386a5b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ② 交付遍：重开文件单遍流式（deliver 内再次 prologue——同字",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1369,
+          "endLine": 1398,
+          "sha256": "d5c0b47b50a876c49e55132ee6ce398a829095e50475245c0f7e1ce1b31b0e70"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1400,
+          "endLine": 1414,
+          "sha256": "82857c5d7bb7f0e4a6d3ef64f1a671149a1852eaa4b4a952f0303c4ecd79bf77"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "RowScanner scanner(src, dialect.delimiter);",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1416,
+          "endLine": 1428,
+          "sha256": "ff9bc2a1e42b93d5a608d40f0656715aa260200c2d0613e856c3cce8c8062d7f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "for (;;) {",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1430,
+          "endLine": 1443,
+          "sha256": "570cd7651089a37f59f6bb444c6c67ea23a6a41ba6e7c6a89651c74430c03303"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 编码致命错优先（-2 不得被当成结构/数据处理——稳定拒",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1445,
+          "endLine": 1452,
+          "sha256": "1a1161eada9b964f0b01bc27abe0ee25755508d49eba8eae0234fbc8bfc4b6ae"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 行预算检查点（每行一笔——§4.4⑤；超限即中止读会话，",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1454,
+          "endLine": 1459,
+          "sha256": "3208a318d0b75c1deb9868e3b995842031c82628a8f076aa9d5586321afe6ef7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 防御上限（字段超长/字段数超限）→ IO-SEC-BUDGET-FIELD",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1461,
+          "endLine": 1479,
+          "sha256": "49d286ad45a0f590e4c9375efb348b4c975c9cf8c473d9044ebb5a16246cf1ee"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 进度回调（done＝已消费数据行号；total＝0 流式未知）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1481,
+          "endLine": 1484,
+          "sha256": "b99e9cf8be0f1f00ed27fd5cfc0560716a9c8be2720f389bb13b843f024ed6f9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 单字段预算检查点（§4.5.1\"CSV 单字段字符数\"——该维是",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1486,
+          "endLine": 1511,
+          "sha256": "b1c53edf796a8ea84d42f495436d3a023cb06bf1e2b40057b9f9cafcc7d959ba"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 致命结构错误：引号不闭合（§5.4——定位起始行；自该行",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1513,
+          "endLine": 1521,
+          "sha256": "50aa024aa30c3ccb234b702085360002ff016e3d73d778941f3d7ab0c8892a93"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- NUL 检查（§5.4 非法字符行：仅 NUL 拒绝——无法往返于文",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1523,
+          "endLine": 1541,
+          "sha256": "b22c30f8ec7a6f565d632e936dc639994b84db4af051b3ef0babaa70b1809d50"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 空行处置（§5.4：完全空行＝零字段语义的单空字段行；判",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1543,
+          "endLine": 1560,
+          "sha256": "c1907432bf1c1a3e2459da4502dc9702f2fc8a83f7622a4ed080b2c72a2f101f"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 转义还原（§5.3：仅带标识文件剥离前缀；无标识零改写——",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1562,
+          "endLine": 1570,
+          "sha256": "cfcf4152484cec1e627ee847bb62b9a1a866d9d48c01e54fae074c8706dcd8e7"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 表头行处置（§5.4 表头行：由调用方指定哪一行是表头）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1572,
+          "endLine": 1597,
+          "sha256": "a95e575e695421b0ec33b5459a9bc4af069e59031287b7685a346ba28dfbf7e9"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 行列数处置（§5.4 缺失列/多余列——默认拒绝并定位，策略",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1599,
+          "endLine": 1636,
+          "sha256": "c9dd89ed72b60a17f4ee13d2f77aed76b604187e628b637f0343cab101c62aa4"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ---- 交付正确行（§5.6：行视图仅在回调内有效；错误行不走此",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1638,
+          "endLine": 1655,
+          "sha256": "5b5eea66b0efcac8dad4f36b701de3a4c474a41e25b260dc77eac68682e61c8b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// 会话收尾：原始字节对账入账（探测遍＋交付遍累计——SingleFile",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1657,
+          "endLine": 1666,
+          "sha256": "ec97a0cf0160f4af9508530fad51a92bede6e2b2ace1a1306996394a46983da3"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// -----------------------------------------------",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1668,
+          "endLine": 1670,
+          "sha256": "132241f2f3a4270ee2ea27419e94bc9acedc277c14076078da3b1e4a53adf999"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1672,
+          "endLine": 1697,
+          "sha256": "8f83cb20431812c2727e9b71e952427ffc6b13b47c3d7d168e0d8f7f668eff48"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 行列数失配的行错误（ARITY——params 追加 expected/actual 比较对",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1699,
+          "endLine": 1723,
+          "sha256": "8bc2e1542f544ebae22a9a4050a2eb40a6ab8373bb8ad07d8a68b1ccba5e940e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// -----------------------------------------------",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1725,
+          "endLine": 1727,
+          "sha256": "b25f81ba4589a2433a0dceaabccbbb61d8281f7a777af44426b002cecbd73663"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 一遍读入字节入账：SingleFileBytes（本遍文件维）＋TotalBytes（会",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1729,
+          "endLine": 1741,
+          "sha256": "95515977ccfe9909f00a9e76a18524ec55c0f36820d8399db5d379551b1d35b5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "static IoResult<CsvDialect> dialectOk(CsvDialect d",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1743,
+          "endLine": 1781,
+          "sha256": "f0d372646c7802dfe7f22f1e4d0d45f67eee70a4f59644ed7eee8b9349b694e5"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1783,
+          "endLine": 1785,
+          "sha256": "b36ae12c146a72753573e94cec098a3eafb8e5e66d8b35df41fe80e9991ad036"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/**",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1787,
+          "endLine": 1816,
+          "sha256": "8f85b112d5917180bc150b041c99441637eecc05763069727f616f4a6eb87244"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoResult<void> open(CsvOutputTarget&& target, cons",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1818,
+          "endLine": 1905,
+          "sha256": "2d70d5b7c1cb6f8990f96f6e0c0150aa20f635cebe80b8fa544b6da4406ea06b"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoResult<void> writeHeader(const std::vector<IoStr",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1907,
+          "endLine": 1923,
+          "sha256": "7b923653976210174cc67cf87437ac88eeef58d06cc3d9b90f9be324cb3980fa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoResult<void> writeRow(const std::vector<CsvCell>",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1925,
+          "endLine": 1985,
+          "sha256": "17fd45c7fdcae1c68b7d45fd832ee7ca41f1c0a149719fb73d916ebfecc23502"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoResult<void> finish() override",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 1987,
+          "endLine": 2038,
+          "sha256": "519b92cc97415d3138be7ce80445174de1a69cf29e33e5843532c40f3e61f3aa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "private:",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2040,
+          "endLine": 2055,
+          "sha256": "9bb4c8ffb43a46c004338f1902aa5afbdce50039fd74b7721ac24a717dcc8041"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 字段文本落缓冲：含分隔符/引号/行尾字节即整体引号化（RFC4180——",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2057,
+          "endLine": 2077,
+          "sha256": "2dd9583f92766fc9c0cffaac4fd0b1c4800d4c44cd5b3b2ca6acfa2a65e588d1"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 表头/文本行整体编码（writeHeader 专用——逐名 NUL 检查后编码）。",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2079,
+          "endLine": 2093,
+          "sha256": "bb4923bd0cb0a11b3e43ceca6f272330c9f30e6c7499d02b77dcf2ea200bb2d8"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "/// 调用方契约违约的防御性拒绝（§9.4 非法调用行；io 对外非抛出约束",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2095,
+          "endLine": 2102,
+          "sha256": "8fca4ce2ae762a2bf870c6997d86568cc465efd51375ba02e36480c4f1c72a43"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "static IoResult<void> writeInternal(const char* wh",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2104,
+          "endLine": 2110,
+          "sha256": "be01e170907b1b4d1b94c82e0d922a4309117c4898f14f4e9925a3ddcdf4c985"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "CsvWriteOptions m_options;                  ///< o",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2112,
+          "endLine": 2120,
+          "sha256": "d27c49682e1ca4b28e65723acad5367b4e5fbf7c6cc48bed25d5737b8d843bf2"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "} // namespace",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2122,
+          "endLine": 2122,
+          "sha256": "533f16bca7d58f44b3103b92e3485d22cfbb34bbad5ea3f3fa3b5a9dcb24ec89"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2124,
+          "endLine": 2127,
+          "sha256": "c46bb3815afce9b09924c9ef9582d4df24302e2c491fef1a41f2ceb8557dcf9c"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoString escapeCsvText(const IoString& text)",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2129,
+          "endLine": 2141,
+          "sha256": "1032f8b72a63a2643c9c5b7d1cda157faa1498101704c547efe2a5f90637d99e"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoString unescapeCsvText(const IoString& field)",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2143,
+          "endLine": 2152,
+          "sha256": "ff4bcf8582cc870556142b32dc7f8006a8b91b88b50e39e1e627794ee0082614"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "IoString renderDialectMarker(const CsvDialect& dia",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2154,
+          "endLine": 2174,
+          "sha256": "d02f426bb57e59c15a01e396fa6932541f1326200d31f2c8a95d9efdad332d95"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "// ===============================================",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2176,
+          "endLine": 2178,
+          "sha256": "c8dba8d6bd821a58e70307b6a38dd534aaf2f07acf6245c110c73b98796eeab0"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "std::unique_ptr<ICsvReader> makeCsvReader()",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2180,
+          "endLine": 2183,
+          "sha256": "e02d507e2ba98a8ab4aa0ed406b4fa2ea9418bc0287139e8c0f68d6d04f0e421"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "std::unique_ptr<ICsvWriter> makeCsvWriter()",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2185,
+          "endLine": 2188,
+          "sha256": "26d1ad0bd5040bd41caaa5e5e55ada4378645873fe0e4bd77a6ff6410755ba41"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
+          "symbol": "} // namespace sdurws::ird::io",
+          "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
+          "startLine": 2190,
+          "endLine": 2190,
+          "sha256": "f71cf00c05ee4902b630719a84fd178c4b18c9af9b4dd45a5477987458e91fc6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_io"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "REUSE-T38 本批触碰文件全行覆盖（reuse-contract COVERAGE）＋B8/B10 search 延续",
+        "conclusion": "改动文件每个非空行须有区段归属；本行承载未由逐功能行覆盖的声明/注释/实现区段，不替代逐功能语义实审。"
+      },
+      "differences": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段；无隐藏helper/核心/运行时所有者（与audit-t21 Compare_cpp.declarations同型行覆盖机制行）。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/CMakeLists.txt",
+          "sha256": "c741e0e1f087bd6765473669813ffb648532a0871229d99c83c6c3c713502805"
+        }
+      ],
+      "auditBoundary": "REUSE-T38触碰文件的行覆盖收口；区段归属≠语义完备（独立验收核对）。",
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
+        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+      }
     }
   ]
 }
