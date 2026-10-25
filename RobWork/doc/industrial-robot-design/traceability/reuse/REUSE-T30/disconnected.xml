@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="14" failures="2" disabled="0" errors="0" time="0.004" timestamp="2026-10-25T08:46:16.094" name="AllTests">
+  <testsuite name="DynamicWorkCellCompilerTest" tests="13" failures="2" disabled="0" skipped="0" errors="0" time="0.004" timestamp="2026-10-25T08:46:16.094">
+    <testcase name="AllLinksNoPhysicsSkipsDwc_RT_CPX_2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="153" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.094" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="PartialMissingPhysicsSkipsWithPreciseList_RT_CPX_2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="193" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.095" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="ProvidedIllegalIsNotCapabilityMissing_S5_6" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="232" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.095" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="CompiledPathBodiesAndExplicitValues_RT_T08" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="263" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.095" classname="DynamicWorkCellCompilerTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290&#x0A;Expected equality of these values:&#x0A;  body-&gt;getInfo().mass&#x0A;    Which is: 0&#x0A;  *link.mass.tryValue()&#x0A;    Which is: 5&#x0A;连杆体质量与权威不符（§8.2 显式设值）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290
+Expected equality of these values:
+  body->getInfo().mass
+    Which is: 0
+  *link.mass.tryValue()
+    Which is: 5
+连杆体质量与权威不符（§8.2 显式设值）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290&#x0A;Expected equality of these values:&#x0A;  body-&gt;getInfo().mass&#x0A;    Which is: 0&#x0A;  *link.mass.tryValue()&#x0A;    Which is: 4&#x0A;连杆体质量与权威不符（§8.2 显式设值）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290
+Expected equality of these values:
+  body->getInfo().mass
+    Which is: 0
+  *link.mass.tryValue()
+    Which is: 4
+连杆体质量与权威不符（§8.2 显式设值）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290&#x0A;Expected equality of these values:&#x0A;  body-&gt;getInfo().mass&#x0A;    Which is: 0&#x0A;  *link.mass.tryValue()&#x0A;    Which is: 3&#x0A;连杆体质量与权威不符（§8.2 显式设值）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:290
+Expected equality of these values:
+  body->getInfo().mass
+    Which is: 0
+  *link.mass.tryValue()
+    Which is: 3
+连杆体质量与权威不符（§8.2 显式设值）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:313&#x0A;Expected equality of these values:&#x0A;  toolBody-&gt;getInfo().mass&#x0A;    Which is: 0&#x0A;  *tool.mass.tryValue()&#x0A;    Which is: 1.2&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:313
+Expected equality of these values:
+  toolBody->getInfo().mass
+    Which is: 0
+  *tool.mass.tryValue()
+    Which is: 1.2
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:320&#x0A;Expected equality of these values:&#x0A;  g[a]&#x0A;    Which is: -9.8000000000000007&#x0A;  gExpected[a]&#x0A;    Which is: -9.8100000000000005&#x0A;重力分量 2（m/s²，世界系）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:320
+Expected equality of these values:
+  g[a]
+    Which is: -9.8000000000000007
+  gExpected[a]
+    Which is: -9.8100000000000005
+重力分量 2（m/s²，世界系）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:322&#x0A;Expected equality of these values:&#x0A;  g[2]&#x0A;    Which is: -9.8000000000000007&#x0A;  -9.81&#x0A;    Which is: -9.8100000000000005&#x0A;重力应取 canonical 默认 −9.81（非基线 −9.82）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:322
+Expected equality of these values:
+  g[2]
+    Which is: -9.8000000000000007
+  -9.81
+    Which is: -9.8100000000000005
+重力应取 canonical 默认 −9.81（非基线 −9.82）
+]]></failure>
+    </testcase>
+    <testcase name="DeviceConsistencyJointsCrossCheck_RT_T08" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="330" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.096" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="FrictionCarriedViaMaterialDataMap_R2" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="374" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.096" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="ToolAndFrictionMissingStillCompiles_RT_T08" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="415" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.096" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="525" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.096" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="DwcFixedSegmentCompositeRigidBody_REUSE_T30" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="635" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.097" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="DwcProductConsumableByUpstreamRne_REUSE_T30" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="809" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.097" classname="DynamicWorkCellCompilerTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:866&#x0A;The difference between rest.at(0).force()[2] and 4.0 * kG is 39.240000000000002, which exceeds kT30Tolerance, where&#x0A;rest.at(0).force()[2] evaluates to 0,&#x0A;4.0 * kG evaluates to 39.240000000000002, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;支撑力＝m·g&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:866
+The difference between rest.at(0).force()[2] and 4.0 * kG is 39.240000000000002, which exceeds kT30Tolerance, where
+rest.at(0).force()[2] evaluates to 0,
+4.0 * kG evaluates to 39.240000000000002, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+支撑力＝m·g
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:867&#x0A;The difference between rest.at(0).torque()[0] and 0.05 * 4.0 * kG is 1.9620000000000002, which exceeds kT30Tolerance, where&#x0A;rest.at(0).torque()[0] evaluates to 0,&#x0A;0.05 * 4.0 * kG evaluates to 1.9620000000000002, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;τ_x＝com_y·F_z（cross(com,F) 独立手算）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:867
+The difference between rest.at(0).torque()[0] and 0.05 * 4.0 * kG is 1.9620000000000002, which exceeds kT30Tolerance, where
+rest.at(0).torque()[0] evaluates to 0,
+0.05 * 4.0 * kG evaluates to 1.9620000000000002, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+τ_x＝com_y·F_z（cross(com,F) 独立手算）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:869&#x0A;The difference between rest.at(0).torque()[1] and -0.1 * 4.0 * kG is 3.9240000000000004, which exceeds kT30Tolerance, where&#x0A;rest.at(0).torque()[1] evaluates to 0,&#x0A;-0.1 * 4.0 * kG evaluates to -3.9240000000000004, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;τ_y＝−com_x·F_z&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:869
+The difference between rest.at(0).torque()[1] and -0.1 * 4.0 * kG is 3.9240000000000004, which exceeds kT30Tolerance, where
+rest.at(0).torque()[1] evaluates to 0,
+-0.1 * 4.0 * kG evaluates to -3.9240000000000004, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+τ_y＝−com_x·F_z
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:882&#x0A;The difference between accel.at(0).force()[0] and -0.4 is 0.40000000000000002, which exceeds kT30Tolerance, where&#x0A;accel.at(0).force()[0] evaluates to 0,&#x0A;-0.4 evaluates to -0.40000000000000002, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;切向力 m·(αẑ×r)_x＝−m·α·r_y&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:882
+The difference between accel.at(0).force()[0] and -0.4 is 0.40000000000000002, which exceeds kT30Tolerance, where
+accel.at(0).force()[0] evaluates to 0,
+-0.4 evaluates to -0.40000000000000002, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+切向力 m·(αẑ×r)_x＝−m·α·r_y
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:884&#x0A;The difference between accel.at(0).force()[1] and 0.8 is 0.80000000000000004, which exceeds kT30Tolerance, where&#x0A;accel.at(0).force()[1] evaluates to 0,&#x0A;0.8 evaluates to 0.80000000000000004, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;切向力 y 分量&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:884
+The difference between accel.at(0).force()[1] and 0.8 is 0.80000000000000004, which exceeds kT30Tolerance, where
+accel.at(0).force()[1] evaluates to 0,
+0.8 evaluates to 0.80000000000000004, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+切向力 y 分量
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:885&#x0A;The difference between accel.at(0).force()[2] and 4.0 * kG is 39.240000000000002, which exceeds kT30Tolerance, where&#x0A;accel.at(0).force()[2] evaluates to 0,&#x0A;4.0 * kG evaluates to 39.240000000000002, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:885
+The difference between accel.at(0).force()[2] and 4.0 * kG is 39.240000000000002, which exceeds kT30Tolerance, where
+accel.at(0).force()[2] evaluates to 0,
+4.0 * kG evaluates to 39.240000000000002, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:886&#x0A;The difference between accel.at(0).torque()[0] and 0.05 * 4.0 * kG - 0.02 * 0.8 is 1.9460000000000002, which exceeds kT30Tolerance, where&#x0A;accel.at(0).torque()[0] evaluates to 0,&#x0A;0.05 * 4.0 * kG - 0.02 * 0.8 evaluates to 1.9460000000000002, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:886
+The difference between accel.at(0).torque()[0] and 0.05 * 4.0 * kG - 0.02 * 0.8 is 1.9460000000000002, which exceeds kT30Tolerance, where
+accel.at(0).torque()[0] evaluates to 0,
+0.05 * 4.0 * kG - 0.02 * 0.8 evaluates to 1.9460000000000002, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:887&#x0A;The difference between accel.at(0).torque()[1] and -0.1 * 4.0 * kG - 0.02 * 0.4 is 3.9320000000000004, which exceeds kT30Tolerance, where&#x0A;accel.at(0).torque()[1] evaluates to 0,&#x0A;-0.1 * 4.0 * kG - 0.02 * 0.4 evaluates to -3.9320000000000004, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:887
+The difference between accel.at(0).torque()[1] and -0.1 * 4.0 * kG - 0.02 * 0.4 is 3.9320000000000004, which exceeds kT30Tolerance, where
+accel.at(0).torque()[1] evaluates to 0,
+-0.1 * 4.0 * kG - 0.02 * 0.4 evaluates to -3.9320000000000004, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:888&#x0A;The difference between accel.at(0).torque()[2] and (0.05 + 0.03) * 2.0 is 0.10000000000000001, which exceeds kT30Tolerance, where&#x0A;accel.at(0).torque()[2] evaluates to 0.059999999999999998,&#x0A;(0.05 + 0.03) * 2.0 evaluates to 0.16, and&#x0A;kT30Tolerance evaluates to 1.0000000000000001e-09.&#x0A;沿轴力矩＝(I_zz＋m·(rx²+ry²))·α＝0.16 N·m（惯量项 I·(αẑ) 的 z 分量与 cross(com,F)_z 合成——平行轴定理）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:888
+The difference between accel.at(0).torque()[2] and (0.05 + 0.03) * 2.0 is 0.10000000000000001, which exceeds kT30Tolerance, where
+accel.at(0).torque()[2] evaluates to 0.059999999999999998,
+(0.05 + 0.03) * 2.0 evaluates to 0.16, and
+kT30Tolerance evaluates to 1.0000000000000001e-09.
+沿轴力矩＝(I_zz＋m·(rx²+ry²))·α＝0.16 N·m（惯量项 I·(αẑ) 的 z 分量与 cross(com,F)_z 合成——平行轴定理）
+]]></failure>
+    </testcase>
+    <testcase name="DwcConstructionFailureIsAtomic_RT_CPX_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="913" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.097" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="NullWorkCellRejected_RT_T08" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="944" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.098" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="DestructionOrderDwcBeforeWorkCell_RT_AD_3" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="974" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.098" classname="DynamicWorkCellCompilerTest" />
+  </testsuite>
+  <testsuite name="DynamicWorkCellConstView" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-25T08:46:16.098">
+    <testcase name="ViewQueriesAndNullRejection_RT_T08" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="1037" status="run" result="completed" time="0." timestamp="2026-10-25T08:46:16.098" classname="DynamicWorkCellConstView" />
+  </testsuite>
+</testsuites>

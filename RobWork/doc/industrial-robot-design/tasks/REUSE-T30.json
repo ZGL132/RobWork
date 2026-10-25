@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T30",
+  "unit": "runtime",
+  "masterWp": "WP-A",
+  "title": "runtime动力学模型映射复用上游（WP-06/T02子任务）",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-02",
+    "MDL-06"
+  ],
+  "designRefs": [
+    "units/runtime.md#5.2",
+    "reuse/migration.md#13.3",
+    "reuse/policy.md#1.1"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json",
+    "cmake --build build --config Release --target sdurws_ird_runtime_test ird_gates",
+    "pwsh -NoProfile -File RobWork/scripts/industrial-robot/run-tests.ps1 -Configuration Release -BuildDirectory build -NoConfigure -Regex '^sdurws_ird_runtime_test$'",
+    "cmake --build build --config Release --target sdurws_ird_modeling_test && pwsh -NoProfile -File RobWork/scripts/industrial-robot/run-tests.ps1 -Configuration Release -BuildDirectory build -NoConfigure -Regex '^sdurws_ird_modeling_test$' -GTestFilter 'MdlPackageWorkCell.*'",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json -Base c816a2c482088b9d03d537c103cf9ac314259187 -Head <送验SHA>"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T30.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T30.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/**"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "acceptance": [
+    "定向核结论（capabilityId裁决——评审缺口1）：S7 映射已直接构造上游 rwsim::dynamics 对象（BodyInfo/FixedBody/RigidDevice/DynamicWorkCell/MaterialDataMap 经 RigidDevice 内部 RigidBody），无平行数值核心可删；RUNTIME-WC-MODEL 原样复用被否——其 upstream 全部为 rw/models+rw/kinematics（targets=sdurw_models/sdurw_kinematics）零 rwsim/dynamics 符号，与本包上游 rwsim::dynamics（target=sdurwsim）不符；新登记 capability RUNTIME-DWC-MODEL（verified＋suitability 证据＋复核版本与工作区上游逐字一致），upstream/targets/检索证据按 audit-contract §3 登记",
+    "测试 oracle 补齐（评审缺口3/4/5）：①Device/State——非零 zeroOffset 夹具（j1=0.4rad、j2=−0.25rad）默认 State（q_rw=0⟺q_auth=zeroOffset）下连杆承载帧世界位姿对 canonical 独立几何期望（期望取值点＝q_auth=zeroOffset+q_rw 与 T13 WorkCellCompilerTest 先例同口径），RigidDevice 运动学模型与 WC 设备指针同一（无双补偿第二 owner）、默认 State getQ=0、bounds＝权威限位−offset（T13 语义读回）、getJointVelocities 默认零；②固定段——含 Fixed 关节夹具按 body→关节多重集/计数断言（不用 std::set 同构冒充逐体校验），复合刚体语义显式裁决：Fixed 关节编译为 FixedFrame 不入设备关节集，固定段下游连杆体回溯最近上游活动关节（基线 RigidLink findParentFrom<Joint> 构造语义），固定关节零速度贡献（对照 RigidDevice.cpp getSubPart(0,_jointIdx+1) 速度积语义——角速度面：同刚体段两体角速度逐元素相等＋独立期望 (0,0,q̇1)，跨段 l2＝两关节贡献独立期望；上游 getVelocity linear 分量参考点语义未文档化〔AD 变换附加项，探针定标〕如实登记不作物理断言）；③RNE 可消费性为必核项（migration §12.5 探测许可——严格限原公共 API、仅测试不接生产，生产接线归 WP-07）：单 z 轴非退化夹具（R_align=I 假设成立面）全分量独立手算 oracle——validate()、solve 返回 DOF+1 wrench、静止 cross(com,F)、ddq 合成 (I_zz+m(rx²+ry²))·α、setPayload 通道读回；工具体（Tcp 帧 FixedBody）不进设备连杆序列、RNE 仅经 RigidDevice ctor＋setPayload 消费——差异与 WP-07 消费边界如实登记",
+    "GAP-RNE-FRAME 登记与裁决（评审缺口5 的定向核产出，2026-10-25 所有者裁决＝接受为登记缺口、包内不实施修复）：权威轴≠z 时上游 RecursiveNewtonEuler/RigidLink 把 BodyInfo.masscenter 乘关节帧旋转（含 T13 轴对齐 R_align），与 S7 承载帧系（权威连杆系、Body.hpp body-frame 契约）错位——质心世界位置错位（探针实证：j2 轴 y、com=(0,0,0.2) 时静止 τ_x=±5.886 恰为 R_align 混入量级、com 沿 z 时 Rz(q) 不动它）。修复提案须比较两落点：①S7 改填 R_alignᵀ 变换值（动 §8.2 逐字断言＋modeling DWC 导出＋RigidLink 速度参考面）；②RNE 消费边界薄适配（H3）——逐项列全消费者（WP-07 RNE、WP-09 FD、modeling 导出、速度参考点）并经提案批准；WP-07/WP-09 在处置前不得实施依赖部分（migration §13.2 交接索引已登记）",
+    "摩擦承载子路径矩阵覆盖（评审缺口6）：runtime.compileDynamicWorkCell 条目 differences/auditBoundary 含 3g 摩擦承载面（MaterialDataMap 直接 API——add/addFrictionData），differences 表述『不接管摩擦策略——rwsim 无逐关节摩擦一等职，数据承载为 §8.8 无补丁方案，摩擦消费语义归 dynamics』；既有 FrictionCarriedViaMaterialDataMap_R2 用例引用为正向证据",
+    "消费者回归（评审缺口2）：本包编译器产物结构/行为面变化触发 modeling 消费者测试——MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5（断言 DWC 导出体名/质量/重力 −9.81）真实运行；公共视图 Adapter.hpp/Snapshot.hpp 力争零变更，若变更增跑 modeling/kinematics 受影响目标",
+    "矩阵与凭证：runtime.json 新增 runtime.compileDynamicWorkCell（adapter/migrated，sources 全文件行覆盖，production evidence ird-reuse-production/1 含 normal/disconnected/oracle/upstreamComparison 四面——disconnected 变异作用于登记生产源码并改变内容且有真实失败断言）＋DynamicWorkCellConstView 同形访问器成组条目；tryDynamicWorkCell 既有条目纠正 capabilityId=RUNTIME-DWC-MODEL 与 search/conclusion 为 DWC 面（原 KIN-FK/setQ|baseTframe|baseJframe 系历史错配——评审缺口7），decision 保持 pending 不假关；permissions.json 补两文件精确 grant；changes/REUSE-T30.json 逐文件凭证",
+    "三门禁：commit-lint -Range 本包base..HEAD、validate-docs -TaskFile（含全量复用检查）、verify-task-scope 显式 -Base 本包起始SHA -Head 送验SHA 全绿；PASS/FAIL/SKIP/NOT RUN 如实分列"
+  ],
+  "note": "migration §13.3 WP-06/T02 动力学映射子任务（父任务 REUSE-T02 保持 planned 不假关）；实际 owner runtime、DTB WP-A。起始 SHA=c816a2c482088b9d03d537c103cf9ac314259187。范围＝migration.md:293 行：runtime/src/DynamicWorkCellCompiler.cpp 及现有公共视图；定向核 Body/Device/State、质心/惯量/固定段/载荷/重力映射；复用 offset 既有修复（REUSE-T13 f378f01c5 已在 HEAD 生产代码）。边界条款逐字：runtime 唯一模型 owner、任务私有 State；不接管摩擦/时间策略，不跨进程传指针；接口变化先明确消费者并确认语义——本包零公共接口变化（Adapter.hpp/Snapshot.hpp 不改）。上游复用 H1=直接 API：全部映射符号已在 RT-T08 生产使用，本包定向核语义（BodyInfo.inertia＝body frame around masscenter 与 canonical M-2 基准同义零换算；RigidDevice ctor(base,objects,dev)/getJointVelocities/setJointVelocities 经 State——RigidDevice.hpp:78,94）＋补 Device/State/固定段/offset 参考点/RNE 可消费性 oracle。无数值核心删除（映射无自写重复核心）；评审缺口3 裁决＝固定段复合刚体语义成立（回溯最近上游活动关节、固定关节零速度贡献），生产 §8.5 4c set 同构保留存在性校验语义、逐体多重集钉测试侧，中文契约注释同步（注释级、代码零变更）。载荷/工具边界：有物性工具为 Tcp 帧 FixedBody 不进 RigidDevice 连杆序列（canonical 未声明耦合语义），RNE 载荷通道=setPayload（工具物性不自动进入求解）——WP-07 消费时按此边界接线。2026-10-25 定向核发现并经所有者裁决（escalate）：GAP-RNE-FRAME＝权威轴≠z 时上游 RNE 按关节系解释 masscenter 与 S7 承载帧系（权威连杆系）错位——接受为登记缺口，包内不实施修复；S7 映射符合 Body.hpp/§8.2 契约自洽无缺陷，本包按已完成事实正常收口（实施完成待独验）；B1/薄适配两落点比较已写入 suitability.md 供 WP-07 准入提案，WP-07/WP-09 处置前不得实施依赖部分；次要发现（RNE 重力须 setGravity 显式传递、getJointForces payload 传递项与直接手算有差、RigidLink::getVelocity linear 参考点语义未文档化）归 WP-07 深核。验证实测：全量 runtime 309 项（308 passed＋1 既有 skipped ContractSuite.ChildProcessWorker_RT_ID_1＋0 failed）、modeling 479 项全过（含 MdlPackageWorkCell.WorkCellDwcXmlExportFromSnapshotView_WP13T13_ACC5）、mutation 聚合断开（mass 置零＋重力偏移→2 项真实失败→恢复复验 308 passed）。所有者保留裁决项：本包无接口变化、无新核心、无上游扩展、无性能放宽；若实施中发现映射实质缺口或需接口变化，置 blocked 登记原因与受影响消费者（WP-07 RNE/FD），不强推。独立验收由所有者另开会话，实施者不自签。masterWp=WP-A 按 T29 先例（unit=runtime）。 独立验收由所有者另开会话，实施者不自签；本 note 不解除任何常规禁令。",
+  "interUnit": false,
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "S7 映射定向核结论与 RUNTIME-DWC-MODEL 能力登记（upstream rwsim::dynamics 全套检索证据）",
+    "Device/State/固定段复合刚体/offset 参考点/RNE 可消费性 oracle 测试与 production 四面证据",
+    "runtime.compileDynamicWorkCell adapter/migrated 矩阵条目＋tryDynamicWorkCell 错配纠正＋逐文件凭证"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T30.json"
+  }
+}

@@ -253,6 +253,64 @@
     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
    }
-  }
+  },
+{
+ "id": "REUSE-T30-DynamicWorkCellCompiler.cpp",
+ "source": {
+  "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/DynamicWorkCellCompiler.cpp",
+  "sha256": "f296c73e438cf11e0eeb8bb7ec739cddd98e9dad1380c09e9aba86f54c3c81ee"
+ },
+ "targets": [
+  "sdurws_ird_runtime"
+ ],
+ "categories": [
+  "model",
+  "state",
+  "simulation"
+ ],
+ "operations": [
+  "query",
+  "borrow",
+  "construct-model",
+  "mutate-model"
+ ],
+ "origin": "runtime-owner",
+ "lifetime": "ARCH 3.6.1既有runtime模型owner；S7编译调用期独占构造Body/RigidDevice/DWC与addFrame材质注册，发布后受控只读；无跨单元/跨进程所有权扩展。",
+ "permissionRef": "ARCH:3.6.1",
+ "usageRole": "owner",
+ "build": {
+  "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+  "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+ }
+},
+{
+ "id": "REUSE-T30-DynamicWorkCellCompilerTest.cpp",
+ "source": {
+  "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/test/DynamicWorkCellCompilerTest.cpp",
+  "sha256": "e1f22eb9e45dca15e72cc8911bf71923153c0900672f0126f84adf38a38b5c5a"
+ },
+ "targets": [
+  "sdurws_ird_runtime_test"
+ ],
+ "categories": [
+  "model",
+  "state",
+  "simulation"
+ ],
+ "operations": [
+  "query",
+  "borrow",
+  "write-state",
+  "mutate-model"
+ ],
+ "origin": "runtime-owner",
+ "lifetime": "ARCH 3.6.1测试侧任务私有State（setQ/setJointVelocities于本地State）与真实DWC构造读回；仅集成模式测试目标；无生产权限扩散。",
+ "permissionRef": "ARCH:3.6.1",
+ "usageRole": "owner",
+ "build": {
+  "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+  "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+ }
+}
  ]
 }

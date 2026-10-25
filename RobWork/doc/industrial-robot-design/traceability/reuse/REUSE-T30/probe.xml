@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="2" disabled="0" errors="0" time="0.001" timestamp="2026-10-25T08:22:54.807" name="AllTests">
+  <testsuite name="DynamicWorkCellCompilerTest" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-25T08:22:54.807">
+    <testcase name="DwcDefaultStatePosesAtZeroOffsetReference_REUSE_T30_RT_EQ_1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="522" status="run" result="completed" time="0." timestamp="2026-10-25T08:22:54.807" classname="DynamicWorkCellCompilerTest" />
+    <testcase name="DwcFixedSegmentCompositeRigidBody_REUSE_T30" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="631" status="run" result="completed" time="0." timestamp="2026-10-25T08:22:54.807" classname="DynamicWorkCellCompilerTest">
+      <failure message="unknown file&#x0A;C++ exception with description &quot;runtime/input-invalid: chain.joints[1].axis：零向量非法（MDL-11——任意有限非零轴）&quot; thrown in the test body.&#x0A;" type=""><![CDATA[unknown file
+C++ exception with description "runtime/input-invalid: chain.joints[1].axis：零向量非法（MDL-11——任意有限非零轴）" thrown in the test body.
+]]></failure>
+    </testcase>
+    <testcase name="DwcProductConsumableByUpstreamRne_REUSE_T30" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp" line="804" status="run" result="completed" time="0." timestamp="2026-10-25T08:22:54.808" classname="DynamicWorkCellCompilerTest">
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:832&#x0A;The difference between rest.at(i).torque()[a] and 0.0 is 5.8860000000000001, which exceeds 1e-9, where&#x0A;rest.at(i).torque()[a] evaluates to 5.8860000000000001,&#x0A;0.0 evaluates to 0, and&#x0A;1e-9 evaluates to 1.0000000000000001e-09.&#x0A;静止零构型 wrench[0] 力矩分量 0（质心共轴——虚假惯性/科氏项判别）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:832
+The difference between rest.at(i).torque()[a] and 0.0 is 5.8860000000000001, which exceeds 1e-9, where
+rest.at(i).torque()[a] evaluates to 5.8860000000000001,
+0.0 evaluates to 0, and
+1e-9 evaluates to 1.0000000000000001e-09.
+静止零构型 wrench[0] 力矩分量 0（质心共轴——虚假惯性/科氏项判别）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:832&#x0A;The difference between rest.at(i).torque()[a] and 0.0 is 5.8860000000000001, which exceeds 1e-9, where&#x0A;rest.at(i).torque()[a] evaluates to 5.8860000000000001,&#x0A;0.0 evaluates to 0, and&#x0A;1e-9 evaluates to 1.0000000000000001e-09.&#x0A;静止零构型 wrench[1] 力矩分量 0（质心共轴——虚假惯性/科氏项判别）&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:832
+The difference between rest.at(i).torque()[a] and 0.0 is 5.8860000000000001, which exceeds 1e-9, where
+rest.at(i).torque()[a] evaluates to 5.8860000000000001,
+0.0 evaluates to 0, and
+1e-9 evaluates to 1.0000000000000001e-09.
+静止零构型 wrench[1] 力矩分量 0（质心共轴——虚假惯性/科氏项判别）
+]]></failure>
+      <failure message="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:853&#x0A;The difference between std::abs(bent.at(1).torque()[1]) and 3.0 * 9.81 * 0.2 is 5.8860000000000001, which exceeds 1e-6, where&#x0A;std::abs(bent.at(1).torque()[1]) evaluates to 0,&#x0A;3.0 * 9.81 * 0.2 evaluates to 5.8860000000000001, and&#x0A;1e-6 evaluates to 9.9999999999999995e-07.&#x0A;j2 沿轴（y）重力矩独立手算值&#x0A;" type=""><![CDATA[D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\runtime\test\DynamicWorkCellCompilerTest.cpp:853
+The difference between std::abs(bent.at(1).torque()[1]) and 3.0 * 9.81 * 0.2 is 5.8860000000000001, which exceeds 1e-6, where
+std::abs(bent.at(1).torque()[1]) evaluates to 0,
+3.0 * 9.81 * 0.2 evaluates to 5.8860000000000001, and
+1e-6 evaluates to 9.9999999999999995e-07.
+j2 沿轴（y）重力矩独立手算值
+]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

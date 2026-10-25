@@ -3573,6 +3573,180 @@
    }
   },
   {
+   "id": "RUNTIME-DWC-MODEL",
+   "search": {
+    "command": "rg -n \"class BodyInfo|class Body |class FixedBody|class RigidDevice|class DynamicWorkCell|class MaterialDataMap|class RecursiveNewtonEuler\" RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkSim/src/rwsim/util",
+    "baseline": "c816a2c482088b9d03d537c103cf9ac314259187",
+    "conclusion": "定向实读Body/BodyInfo/FixedBody/RigidDevice/DynamicWorkCell/MaterialDataMap/RecursiveNewtonEuler公共头与实现（基线消费先例SerialDeviceController.cpp:586）；上游无RNE直接测试，适用范围与失败原件见REUSE-T30/suitability.md"
+   },
+   "boundary": "CanonicalModel到DynamicWorkCell的结构映射与物性承载（Body/Device/State/质心/惯量/固定段/载荷/重力/摩擦承载）；不含RNE/FD生产接线；GAP-RNE-FRAME（权威轴≠z质心表达系）登记为WP-07准入前阻断。",
+   "upstream": [
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/dynamics/Body.hpp",
+     "sha256": "ac355a760a4370ef0f0b3215584ee93fa3647a0c90c69e70f0c8ed25c8d51f56",
+     "symbols": [
+      "BodyInfo",
+      "Body",
+      "getInfo",
+      "getName",
+      "getBodyFrame"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/dynamics/FixedBody.hpp",
+     "sha256": "de61f348dbd595d114c55c6b03700c0ed3e832708696c9d9022766b31c15ce86",
+     "symbols": [
+      "FixedBody"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/dynamics/RigidDevice.hpp",
+     "sha256": "5a7459723a2cd571724327bc133efb2ef4667f986ecb26efb74d99671995cae9",
+     "symbols": [
+      "RigidDevice",
+      "getLinks",
+      "getJointVelocities",
+      "setJointVelocities"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/dynamics/DynamicWorkCell.hpp",
+     "sha256": "a8fcd0deb58255f48f2de48e8c3d0dd0ee372782b36586a1a9d2652f88fab96a",
+     "symbols": [
+      "DynamicWorkCell",
+      "setGravity",
+      "getGravity",
+      "getMaterialData",
+      "findBody",
+      "getBodies",
+      "getDynamicDevices",
+      "getWorkCell"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/dynamics/MaterialDataMap.hpp",
+     "sha256": "f77abee659fb6524fce7c86cef4ef0e3987f8ed8bce7b924ea6e0d3f35de1385",
+     "symbols": [
+      "MaterialDataMap",
+      "FrictionData",
+      "add",
+      "addFrictionData",
+      "getFrictionData",
+      "hasFrictionData",
+      "getMaterials"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
+     "sha256": "ddb4b8b72b8dac6788b33349faeb3f17b76d452819177aa99dfae22df2b02c93",
+     "symbols": [
+      "RecursiveNewtonEuler",
+      "solve",
+      "setPayload",
+      "setGravity",
+      "validate",
+      "getPayloadMass"
+     ],
+     "target": "sdurwsim",
+     "targetFile": "RobWork/RobWorkSim/src/rwsim/CMakeLists.txt",
+     "targetSha256": "4674b8b2d8d5bf9a90cb62cea11091a8804d05386be23f585b926181f6a402ec"
+    },
+    {
+     "path": "RobWork/RobWork/src/rw/kinematics/MovableFrame.hpp",
+     "sha256": "65eff255249ca4da933116fceb79731a747f848444aa4d0cc818c9bfdf77ec3d",
+     "symbols": [
+      "MovableFrame"
+     ],
+     "target": "sdurw_kinematics",
+     "targetFile": "RobWork/RobWork/src/rw/kinematics/CMakeLists.txt",
+     "targetSha256": "68d4b6ca96e0f2d40883b1fdf641797685bd8caeaf5d70a09d9067440396fd4c"
+    },
+    {
+     "path": "RobWork/RobWork/src/rw/models/RigidObject.hpp",
+     "sha256": "819a5ee372f64e88bfb7c5422756d7fff015964ddf3b8a832e4742daa3c4eff5",
+     "symbols": [
+      "RigidObject"
+     ],
+     "target": "sdurw_models",
+     "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+     "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+    },
+    {
+     "path": "RobWork/RobWork/src/rw/models/JointDevice.hpp",
+     "sha256": "07c97647cf5d309d6f340ab5c76967d3fd67a838ab6f6d7c6607fc72bc4b1769",
+     "symbols": [
+      "JointDevice"
+     ],
+     "target": "sdurw_models",
+     "targetFile": "RobWork/RobWork/src/rw/models/CMakeLists.txt",
+     "targetSha256": "58a541ffcfe7ba95f67d9a16a8e6dbc72f6b1443f958260332af7f66b88e9eae"
+    }
+   ],
+   "build": {
+    "targets": [
+     "sdurwsim",
+     "sdurw_models",
+     "sdurw_kinematics"
+    ],
+    "constraints": "沿既有runtime目标与sdurwsim/sdurw_models/sdurw_kinematics PUBLIC依赖；不改上游、vcpkg或产品CMake。本面仅集成编译（冒烟不进构建——RT-T08既有登记）。"
+   },
+   "usages": [
+    {
+     "consumerUnit": "runtime",
+     "usageRole": "owner",
+     "permissionRef": "ARCH:3.6.1",
+     "operations": [
+      "construct",
+      "query",
+      "mutate",
+      "publish"
+     ]
+    }
+   ],
+   "limits": {
+    "semantics": "CanonicalModel到DynamicWorkCell的结构映射；BodyInfo物性按权威连杆系逐字（Body.hpp body-frame契约）与承载帧=连杆帧下恒等；q_auth=zeroOffset+q_rw（REUSE-T13）；摩擦为material-pair承载约定，不接管摩擦策略；GAP-RNE-FRAME：权威轴≠z时上游RNE按关节系解释masscenter产生错位（2026-10-25所有者裁决登记，修复待WP-07准入提案批准）。",
+    "lifetime": "runtime唯一模型owner；任务私有State；不跨进程传指针；编译失败RAII析构不发布半成品（MDL-06）。",
+    "determinism": "同输入重复编译产出结构相等DWC（RT-EQ面）；材质id/摩擦参数名经映射确定性派生；无随机/时钟/locale依赖。"
+   },
+   "ownerUnit": "runtime",
+   "examples": [],
+   "docs": [],
+   "operations": [
+    "construct",
+    "query",
+    "mutate",
+    "publish"
+   ],
+   "review": {
+    "status": "verified",
+    "version": "c816a2c482088b9d03d537c103cf9ac314259187",
+    "evidence": {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/suitability.md",
+     "sha256": "099ba7dcd498edf119f57d6229dfe2b789ba9471ce846dbd8c94510d0b640a2a"
+    }
+   },
+   "tests": [],
+   "resourceSearch": {
+    "command": "rg -ln \"RecursiveNewtonEuler|RigidDevice\" RobWork/RobWorkSim/gtest RobWork/RobWorkSim/example",
+    "conclusion": "上游无RNE直接单元测试；gtest/example命中为DWC XML夹具与SimTaskPlugin间接引用，不冒充上游测试证据。产品独立oracle与实际生产输入限定本能力。"
+   }
+  },
+  {
    "id": "RUNTIME-AXIS-ALIGN",
    "search": {
     "command": "rg -n \"makeLookAt|inverse|cross|normalize\" RobWork/RobWork/src RobWork/RobWork/gtest RobWork/RobWork/example",

@@ -261,6 +261,8 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 
 **WP-12当前精确子包**：[REUSE-T27](../tasks/REUSE-T27.json)惯量特征值、[REUSE-T28](../tasks/REUSE-T28.json)惯量旋转/长方体及获批相对自检已实施待独验，均未将WP-12标完成。后继[REUSE-T29](../tasks/REUSE-T29.json)为实际runtime owner的基座世界数学候选：GAP-BW-EAA-01方案A及第三方表达债务已批，53项runtime/19项直接消费者和3组扰动自查有效；所有者暂不接受本包性能，保持blocked，生产恢复起点，候选见[原始记录](../traceability/reuse/REUSE-T29/README.md)，不计已完成直接迁移。下一动作按依赖选择其他独立直接复用包；WP-12仍余本包性能、DescriptionValidator/DH等，T13仍不放行普通IK/RNE。
 
+**WP-06/T02动力学映射**：[REUSE-T30](../tasks/REUSE-T30.json)实施完成待独验（起点`c816a2c482088b9d03d537c103cf9ac314259187`）：S7映射定向核＋3个oracle测试（非零offset参考点/固定段复合刚体多重集/RNE可消费性单z轴全分量手算），全量runtime 309项（308passed＋1既有skipped）、modeling消费者479项全过、mutation聚合断开在案；capability RUNTIME-DWC-MODEL（verified）与runtime.compileDynamicWorkCell等矩阵/凭证见[原始记录](../traceability/reuse/REUSE-T30/README.md)。2026-10-25所有者escalate裁决：GAP-RNE-FRAME（权威轴≠z时上游RNE按关节系解释masscenter错位）接受为登记缺口、包内不实施修复；B1/薄适配两落点见suitability §6供WP-07准入提案。
+
 ### 13.2 交接索引与已知阻断
 
 交接适用版本为本节参考起点及其包含的集成提交；历史 README 的“下一任务/未提交/待整合”结合后续提交判断，不复制完整证据。
@@ -275,6 +277,7 @@ pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1 -Head H
 | T19/integration-20261024/a-build.log | kinematics 三个局部 CMake 目标变量被 IRD-GATE-LIB 静态扫描拒绝；实际链接成功不代替门禁通过 | WP-01 |
 | T20：traceability/reuse/REUSE-T05/setcheck-max-matching/README.md §8.3/后续集成记录 | Boost 来源表达、稠密场景约220倍退化和最终独验未闭合；不得伪装 RobWork API/NONE 或恢复自写 fallback | WP-02；性能接受及独验由所有者决定 |
 | 主线集成/冒烟原记录 | 冒烟 RobWork 导出包路径/供给失败；UI F-560 字符串钉扎历史失败保留 | WP-01 定向核供给；未受影响 UI 不返工 |
+| REUSE-T30 `f296c73e`；tasks/REUSE-T30.json、traceability/reuse/REUSE-T30/suitability.md §6、functions/runtime.json GAP-RNE-FRAME 登记及 migration §13.1 | 上游 RNE/RigidLink 消费假设（body frame=关节帧）与产品承载帧结构（权威连杆系承载帧）错配：权威轴≠z 时质心世界位置错位（探针 τ_x=±5.886 在案）；S7 映射本身符合 Body.hpp/§8.2 契约（所有者 2026-10-25 裁决接受为登记缺口） | B1（S7 改填 R_alignᵀ 变换值）或 RNE 消费边界薄适配（H3）须经提案批准后实施；WP-07/WP-09 在缺陷处置前不得实施依赖部分 |
 
 T11 EAA 上游补丁保持撤销，局部旋转转换 1e-6 不推广到其他功能。T17/T19 一次集成裁决不等于 T13 已独验，也不自动放行未来依赖。T18 为监听器、T19 为 FK、T20 为 SetCheck，历史测试别名不作为再次占号理由。
 
