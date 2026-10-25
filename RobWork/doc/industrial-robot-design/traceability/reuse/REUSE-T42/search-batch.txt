@@ -1,0 +1,11 @@
+== S1: 上游模板阵列/网格生成语义检索（预期无业务同义命中）
+S1 exit=1
+
+== S2: 上游 ValueProvenance/生成器方法标记检索
+S2 exit=1
+
+== S3: 上游采样计划规范化/计划摘要检索
+S3 exit=1
+
+== S4: 上游 RPY/R.matMul/反射矩阵语义检索（MATH-ROT 面复核）
+S4 exit=1

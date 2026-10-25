@@ -1,0 +1,116 @@
+{
+ "schemaVersion": "ird-reuse-production/1",
+ "functionId": "requirements.rotationFromRpy",
+ "target": "sdurws_ird_requirements",
+ "bindings": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+   "sha256": "c8aad592120393c16040426d599d999e49db7a665286a3dc34fbb1e5eed8cfff"
+  },
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/CMakeLists.txt",
+   "sha256": "c2ac4f7e5d4b98db84f51fa1ec7643989c5f0bf3b22afef423870752a5e5612f"
+  },
+  {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/disconnected-source.cpp",
+   "sha256": "abcd86d80da97a9475ca3729ccd2eaa5723be698205ca3ccf1bcdc5cf26235c2"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/EAA.hpp",
+   "sha256": "350475534f0bc0f78890a187b9a93e0815768d37d7804efc6c1637ae96fef2ad"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/RPY.hpp",
+   "sha256": "97386026ba5b2ca3a1ff24e1786d30dcdb42a36da940073e31c75619f583ab8e"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/Rotation3D.hpp",
+   "sha256": "49ea6d56f4bd10aa74a43a0b888451fdaf035061f30c3c3954f509f062eb22c2"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/Transform3D.hpp",
+   "sha256": "04846877723c5cdcb6b62d3c0d34f1bf2fafceb4575ca2968b099af0303b2027"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/Vector3D.hpp",
+   "sha256": "cb90beb6dfdb8c84ff0f2862bc9d46abb4d7a419b2f43aa274217dc1476832eb"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/RPY.cpp",
+   "sha256": "202899374e6d1607b4ea0c2974cd61ac1885fc1f8dc5e6080b7c0be9608829a2"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/EAA.cpp",
+   "sha256": "0b98113f1bb57f4496bcc482ebc718b330bc96af4ff57127fee1afe9413dac47"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/Quaternion.hpp",
+   "sha256": "f71684029999f6f14a1d1040ce3e3e1f4dca317d5184534d86c15ecdc87ebd63"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/Quaternion.cpp",
+   "sha256": "da7f120ca5f2838215d3c47b6a4a71329b2d4fdf0f232a4da72536a20f637f15"
+  },
+  {
+   "path": "RobWork/RobWork/src/rw/math/CMakeLists.txt",
+   "sha256": "ca583b2b8c8d97f950c2eca6cb8e0a90086284ab451e7388bfe01dc62a597a7d"
+  }
+ ],
+ "normal": {
+  "command": "D:/10_Source_Repos/21_robot/RobWork/build/RobWorkStudio/bin/Release/sdurws_ird_requirements_test.exe --gtest_filter=-GuiRegistration.V22RegisteredNotExecuted_ACC1（GUI进程占位用例排除，同T30先例；其余全量） --gtest_output=xml:<E>/run/normal.xml --ird_report=<E>/run/normal-report.json",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/normal.xml",
+   "sha256": "0c64dd3360d3936ca5b372200cf9b653955409883532c524524c9139eea8639f"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/normal.log",
+   "sha256": "3d37a94091d44c5d4d6e9619b09d4162346311cbd4b11b133232bf41fa7d0f55"
+  },
+  "exitCode": 0
+ },
+ "disconnected": {
+  "command": "同上 exe --gtest_filter=ReqTemplateArray.*（变异构建：RPY(yaw,pitch,roll)→RPY(roll,pitch,yaw) 字段换序断裂） --gtest_output=xml:<E>/run/disconnected.xml",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/disconnected.xml",
+   "sha256": "09bcecc22711089344cf6d94d669e4feb4d6a662e080c5d43f9df58c938d25a8"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/disconnected.log",
+   "sha256": "2ad0a0b477736f80b51015a05207b9ddc6158e5b950389b1609605984e060030"
+  },
+  "exitCode": 1,
+  "mutation": {
+   "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+   "originalSha256": "c8aad592120393c16040426d599d999e49db7a665286a3dc34fbb1e5eed8cfff",
+   "description": "真实生产源字段换序变异：上游调用 RPY(yaw,pitch,roll)→RPY(roll,pitch,yaw)，破坏 Z-Y-X 字段序边界；ReqTemplateArray 22 项中 MirrorGoldenNormalY/Z 两项 4 断言真实失败（黄金反射期望失配），其余 20 项通过；恢复后 recheck 22 项全绿（run/recheck.xml）。"
+  },
+  "mutatedSource": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/disconnected-source.cpp",
+   "sha256": "abcd86d80da97a9475ca3729ccd2eaa5723be698205ca3ccf1bcdc5cf26235c2"
+  }
+ },
+ "oracle": {
+  "command": "同上 exe --gtest_filter=ReqTemplateArray.MirrorGolden*（解析黄金镜像——独立解析期望，非实现互证） --gtest_output=xml:<E>/run/oracle.xml --ird_report=<E>/run/oracle-report.json",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/oracle.xml",
+   "sha256": "3b2a6ed249c9e51a0b1042d346888d1a824b6697262bba28bea250630264da7f"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/oracle.log",
+   "sha256": "9790d22fa2824bd07dac12cb099a7b29cd43a67a8919d395f8f49390fffe261b"
+  },
+  "exitCode": 0
+ },
+ "upstreamComparison": {
+  "command": "REUSE-T42/run/probe-upstream-forward.exe（独立探针：基线 b12e8503 原手写展开逐字摘录 vs 生产同款上游调用 RPY(yaw,pitch,roll).toRotation3D()，12 用例含 ±π/2 与近万向锁边界，IEEE754 位模式逐位断言） --gtest_output=xml:<E>/run/upstreamComparison.xml",
+  "xml": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/upstreamComparison.xml",
+   "sha256": "477124ecea06ff761570b16f4cff3531066539a87d482dceaa719537a6f50449"
+  },
+  "log": {
+   "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/run/upstreamComparison.log",
+   "sha256": "b127078a07d6658af90950ba20386aa3037b2de3b508854acf1a4d5ad45aca64"
+  },
+  "exitCode": 0
+ }
+}

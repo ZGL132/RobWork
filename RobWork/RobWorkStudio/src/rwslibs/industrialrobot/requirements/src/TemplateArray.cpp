@@ -25,6 +25,9 @@
 #include <sdurws/ird/requirements/Editor.hpp>  // RequirementWorkingSet 完整类型——regenerate 入参
 #include <sdurws/ird/requirements/DiagCodes.hpp>  // T07 派生族稳定码常量（REQ-DERIVE-*——唯一书写点）
 
+#include <rw/math/RPY.hpp>  // Z-Y-X 欧拉↔旋转正变换直接复用（MATH-ROT——REUSE-T42）
+#include <rw/math/Rotation3D.hpp>  // rw::math::Rotation3D 值类型（fixedRpy 组装）
+
 #include <algorithm>
 #include <cmath>
 #include <charconv> // 配方整数要求全串解析；禁止atoi将损坏后缀截成合法数量。
@@ -230,16 +233,19 @@ rw::math::Vector3D<double> reflectPosition(const rw::math::Vector3D<double>& p,
 void rotationFromRpy(double roll, double pitch, double yaw,
                      double r[3][3])
 {
-    const double cr = std::cos(roll);
-    const double sr = std::sin(roll);
-    const double cp = std::cos(pitch);
-    const double sp = std::sin(pitch);
-    const double cy = std::cos(yaw);
-    const double sy = std::sin(yaw);
-    // R = Rz·Ry·Rx 的逐元素展开（解析式——确定性乘加序）。
-    r[0][0] = cy * cp;               r[0][1] = -sy * cr + cy * sp * sr;  r[0][2] = sy * sr + cy * sp * cr;
-    r[1][0] = sy * cp;               r[1][1] = cy * cr + sy * sp * sr;   r[1][2] = -cy * sr + sy * sp * cr;
-    r[2][0] = -sp;                   r[2][1] = cp * sr;                  r[2][2] = cp * cr;
+    // 上游正变换直接复用（MATH-ROT@sdurw_math，REUSE-T42）：RobWork RPY
+    // 构造顺序为 (绕Z,绕Y,绕X)=(yaw,pitch,roll)，与产品字段序的换序边界
+    // 在此单点承载（modeling/rpymath::rpyToRotation 同型，REUSE-T11 已闭）。
+    // 上游 toRotation3D 的逐元素解析式与原手写 Rz·Ry·Rx 展开恒等且乘加序
+    // 一致（逐位相同——黄金模板/数据集摘要不受影响；对照证据见
+    // traceability/reuse/REUSE-T42 上游对照探针）。
+    const rw::math::Rotation3D<double> rotation =
+        rw::math::RPY<double>(yaw, pitch, roll).toRotation3D();
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            r[i][j] = rotation(i, j);
+        }
+    }
 }
 
 /// 反射矩阵 M = I − 2nnᵀ（n 单位化；对称且 M²=I——反射的对合性）。
@@ -315,7 +321,8 @@ rw::math::Vector3D<double> reflectRpy(const rw::math::Vector3D<double>& rpy,
         return rw::math::Vector3D<double>(roll, pitch, yaw);
     }
     // 万向锁退化：roll'=0、pitch'=±π/2。yaw' 提取随 pitch 符号分支——
-    // cp=0 时按本文件 rotationFromRpy 展开：R11=cosψ、R12=sinψ·sign(pitch)
+    // cp=0 时按 Z-Y-X 正变换元素恒等式（上游 RPY::toRotation3D 同式）：
+    // R[1][1]=cosψ、R[1][2]=sinψ·sign(pitch)
     // （roll'=0 消去 roll 项）——pitch=+π/2 时 R12=+sinψ（重建取
     // atan2(+R12,R11)）、pitch=−π/2 时 R12=−sinψ（atan2(−R12,R11)）。
     // F-582（P1——audit/unit-code-review-20261009）：原实现对两种符号统一

@@ -1,0 +1,17 @@
+{
+ "schemaVersion": "ird-reuse-change/1",
+ "taskId": "REUSE-T42",
+ "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T42.json",
+ "files": [
+  {
+   "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/requirements/src/TemplateArray.cpp",
+   "sha256": "c8aad592120393c16040426d599d999e49db7a665286a3dc34fbb1e5eed8cfff",
+   "mode": "direct",
+   "capabilities": [
+    "MATH-ROT"
+   ],
+   "boundary": "REUSE-T42/WP-19 批次一（requirements）：rotationFromRpy 正变换换上游 rw::math::RPY<double>(yaw,pitch,roll).toRotation3D()（MATH-ROT 直接 API；modeling/rpymath::rpyToRotation 同型、REUSE-T11 已闭）；换序边界单点承载＋中文契约注释。逐元素解析式与原手写展开恒等且乘加序一致（REUSE-T42 探针 12 用例位模式逐位对照）。文件级：全行铺面＋全文件解决（business-specific 行 nonOverlap 见 REUSE-T42/nonoverlap-requirements.json）。reflectRpy 反解/F-582/mirrorPoint 等业务面零变更。",
+   "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T42/production/requirements.rotationFromRpy.json"
+  }
+ ]
+}
