@@ -1,0 +1,52 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T45",
+ "unit": "reporting",
+ "masterWp": "WP-A",
+ "title": "WP-19批次四·reporting单元审计收口：Archive/构建宏定案＋ReportCodec 64行AD结构墙登记",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": ["GOV-T21", "GOV-T22"],
+ "requirements": ["REP-01", "NFR-COR-01", "NFR-COR-02"],
+ "designRefs": ["reuse/migration.md#13.3", "reuse/policy.md#1.2", "units/reporting.md"],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T45.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T45.json -Base 4d9ac4777d833af5eb0efdea6eabe5ace77ccd75 -Head <送验SHA>"
+ ],
+ "allowedFiles": [
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T45.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T45.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/reporting.json",
+  "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T45/**",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-GEN/**"
+ ],
+ "forbiddenFiles": ["RobWork/RobWork/src/**", "RobWork/RobWorkSim/src/**", "vcpkg/**", "main"],
+ "outputs": [
+  "reporting.json 66 行 pending 处置（2 收口＋64 AD 结构墙 pending 登记）",
+  "ReportCodec 借用类 grant 解阻路径与字节基线前置登记（评审缺口2）"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "ReportCodec.cpp 64 行保持 pending 的结构墙登记（T36/T41 结构同型）：真实受限类别命中＝ReportCodec.cpp:127 借用 rw::kinematics::State 只读指针；REUSE-AD 对已解决记录要求精确 grant 而权限表无 reporting 授权——解阻＝所有者批准借用类 grant（origin 审查）；不得以 resolves 洗绿",
+  "字节原语族 64 行处置引用跨包决策记录（REUSE-T43 byte-primitives-decision.md）：按字节身份契约保留；Boost.Endian 批准前置＝先在旧实现上捕获字节基线（reporting 无既有字节 fixture——评审缺口2 顺序敏感项已登记）",
+  "Archive.cpp publish（UTIL-FILE）与构建宏（TEST-HARNESS）business-specific 收口：发布编排为产品证据契约、上游 IOUtil 不承载；构建宏 T32 定案同族",
+  "零产品变更；门禁 validate-docs -TaskFile（含全量复用检查）与 verify-task-scope 显式 Base/Head 全绿；ird_gates 零命中"
+ ],
+ "note": "migration §13.3 WP-19 批次四（reporting）。masterWp=WP-A 按 T29/T30 先例。起始 SHA=4d9ac4777d833af5eb0efdea6eabe5ace77ccd75（批次三 scope 修正提交）。范围＝§13.3 WP-19 行 reporting 面：src/ReportCodec.cpp 93 项（矩阵 64 行）大端原语族＋Archive.cpp publish＋CMakeLists。所有者保留裁决项：①ReportCodec 借用类 grant（REUSE-AD 解阻）②Boost.Endian 字节原语替换渠道（跨包决策记录 REUSE-T43）。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T45.json"
+ }
+}
