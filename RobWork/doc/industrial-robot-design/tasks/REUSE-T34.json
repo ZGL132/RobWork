@@ -4,7 +4,7 @@
   "unit": "runtime",
   "masterWp": "WP-A",
   "title": "runtime耦合矩阵SVD候选实测与CanonicalModel见证终审（WP-12）",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "GOV-T21",
@@ -46,6 +46,8 @@
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/**",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/WP-12-20261026-r1/**",
     "RobWork/doc/industrial-robot-design/tasks/REUSE-T35.json"
   ],
   "forbiddenFiles": [
@@ -58,7 +60,7 @@
     "oracle扩展：对角阵独立手算边界（取等落奇异档、nextafter严格高于分界落病态档的quantity判别面、5e-15对2e-12四量级判距、阈下健康面）＋重复校验逐位确定性；判定链扰动断开必FAIL（kSingularSigmaRatio 1e-12→1e-14突变2红例）实测在案",
     "CanonicalModel两见证终审=带证据保留（business-specific/audited，T32先例形态）：谱解候选被probe-r6混合尺度反例证伪、Eigen::LLT直连属未批新依赖渠道（上游LinearAlgebra无LLT入口）；补齐混合尺度小正轴（1e-300/5e-324）/非法极值（半正定/Cauchy/秩1）/不对称阈两侧回归与S3/S5诊断消费者承接；保留理由与边界交独验复核"
   ],
-  "note": "migration §13 WP-12 runtime 面（DTB WP-A；T29 blocked 不动、T33 已提交）。起点394d3bdee89d4a9883fe5ed7ca66114c7262c193。**零生产代码变更**（DescriptionValidator.cpp/CanonicalModel.cpp 原样——allowedFiles 不含生产源码）：本包交付=①候选实测与预声明判定规则的执行（性能 TU 独立 cl 编译于证据目录，不入任何 CMake 目标——G8 点名 T07 前科并对照 σ-only vs 全量 U/V：上游 svd 无 σ-only 入口、直连亦慢且未批）；②判定链 oracle 扩展与断开证据；③CanonicalModel 终审带证据保留（矩阵记录'不批准保留自持LDLT'系补证前状态，本批补齐所要求的回归后按 T32 形态登记，独验复核）。runtime.singularValuesOneSidedJacobi 保持 pending（所有者单项性能裁决，与 T07 接受悬置并列）；两见证行 business-specific/audited 化。311 passed＋1 既有 skip；断开 2 failures→恢复 0。blocked 项登记：SVD 换核候选（受影响消费者=DescriptionValidator 耦合判定链；责任=所有者性能裁决）。 DescriptionValidatorTest/CanonicalModelTest 经查无受限上游类别（rw/math 纯值），permissions.json 零新增 grant（文件随 T33 提交共用）。 rpyToEaa-production.json（REUSE-T11）随本提交携带：rpyToEaa closed 行 Template.cpp 区间刷新后的 evidence 自身摘要同步（T33 跨批机械维护尾部）。",
+  "note": "migration §13 WP-12 runtime 面（DTB WP-A；T29 blocked 不动、T33 已提交）。起点394d3bdee89d4a9883fe5ed7ca66114c7262c193。**零生产代码变更**（DescriptionValidator.cpp/CanonicalModel.cpp 原样——allowedFiles 不含生产源码）：本包交付=①候选实测与预声明判定规则的执行（性能 TU 独立 cl 编译于证据目录，不入任何 CMake 目标——G8 点名 T07 前科并对照 σ-only vs 全量 U/V：上游 svd 无 σ-only 入口、直连亦慢且未批）；②判定链 oracle 扩展与断开证据；③CanonicalModel 终审带证据保留（矩阵记录'不批准保留自持LDLT'系补证前状态，本批补齐所要求的回归后按 T32 形态登记，独验复核）。runtime.singularValuesOneSidedJacobi 保持 pending（所有者单项性能裁决，与 T07 接受悬置并列）；两见证行 business-specific/audited 化。311 passed＋1 既有 skip；断开 2 failures→恢复 0。blocked 项登记：SVD 换核候选（受影响消费者=DescriptionValidator 耦合判定链；责任=所有者性能裁决）。 DescriptionValidatorTest/CanonicalModelTest 经查无受限上游类别（rw/math 纯值），permissions.json 零新增 grant（文件随 T33 提交共用）。 rpyToEaa-production.json（REUSE-T11）随本提交携带：rpyToEaa closed 行 Template.cpp 区间刷新后的 evidence 自身摘要同步（T33 跨批机械维护尾部）。 【验收登记（2026-10-26收口）】独立验收PASS：记录 traceability/acceptance/WP-12-20261026-r1.json（复跑原件在其同名目录），verdict=pass（12项检查failed=0/skipped=0/notRun=0；测试计数另列互不相加：runtime全量312独验复跑＝311 passed＋1既有 ChildProcessWorker skip，含 ExactSingularBoundaryDiscrimination_T34/RepeatedValidationBitwiseDeterministic_T34/InertiaWitnessMixedScaleAndExtremes_T34 三新用例 [OK]；性能复跑另列），绑定送验 SHA=0e14bf3e79e46a830ca1b882e4a67ecddf4335e7（base=2f0ee6dcc581da0e0f18ffacbdfa60080af5b062，冻结范围恰4提交）；授权口径＝所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。核对全过：verify-task-scope 显式 -Base/-Head 两契约复跑 exit 0（49 路径全部在允许面，forbidden 面零命中）；commit-lint PASS；本契约 acceptance 逐项清单式增量复验——SVD 候选实测不落地（G8）：独验复跑 run-performance.cmd exit 0，比值 2.439/1.985/1.989× 与原件 2.597/2.154/1.944× 同量级退化、σ相对差 7.48e-16/1.07e-15/2.10e-15 与原件逐位一致（确定性成立），预声明判定规则『任何退化即不落地生产』结论可复现，singularValuesOneSidedJacobi 保持 pending 交所有者单项裁决，perf TU 不入任何 CMake 目标 grep 零引用实证；判定链 oracle 扩展与断开原件核对（boundary-disconnected 2 failures＝kSingularSigmaRatio 1e-12→1e-14 突变，恢复绿）；CanonicalModel 两见证带证据保留终审（symmetrizedSpdWitness/relativeAsymmetry business-specific/audited，auditEvidence 绑定 probe-r6 反例三件＋T34 README Digest 8e82a031 相符，T32 先例形态）；runtime 生产 DescriptionValidator.cpp/CanonicalModel.cpp 送验范围零改动（绑定钉 Digest 逐一吻合）实证；红线抽查 H1—H6/架构红线/无平行回流全过；当前 HEAD validate-docs -TaskFile 双契约数组传参 exit 0。limitations（验收记录原文）：性能复跑为同一台机器当前状态实测，SVD 判定接受仍归所有者单项裁决，仅适用本包测量不外推预算；本 PASS 不等于 WP-12 整体完成；validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399）。T34 verification.json base=710890faa 系缩减批前身时点（不在送验链祖先上）已如实登记，最终联合范围以验收显式 -Base/-Head 复跑 PASS 为准。据此登记 done。",
   "interUnit": false,
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
