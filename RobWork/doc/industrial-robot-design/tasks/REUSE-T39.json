@@ -1,0 +1,61 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T39",
+ "unit": "core",
+ "masterWp": "WP-A",
+ "title": "WP-15批次C·摘要供给核验（audit-only）：GAP-DIGEST-01同渠道vcpkg boost-hash2/openssl port在案核验与证据附件（不改其未批准状态）",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": [],
+ "requirements": [
+  "NFR-COR-02"
+ ],
+ "designRefs": [
+  "reuse/migration.md#13",
+  "reuse/extensions/GAP-DIGEST-01.md",
+  "reuse/policy.md"
+ ],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json')"
+ ],
+ "allowedFiles": [
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T39.json",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T39/**",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/**"
+ ],
+ "forbiddenFiles": [
+  "RobWork/RobWork/src/**",
+  "RobWork/RobWorkSim/src/**",
+  "vcpkg/**",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/**",
+  "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-DIGEST-01.md",
+  "main"
+ ],
+ "outputs": [
+  "WP-15批次C（audit-only）：按 GAP-DIGEST-01 待确认项『成熟依赖选择与安装验证范围』做同渠道供给核验——实读 vcpkg/ports/boost-hash2 与 openssl 的 vcpkg.json/portfile（版本/许可证/依赖面/共享消费者）并留痕；产出核验记录作为 GAP-DIGEST-01 证据附件，其未批准状态与待所有者逐项确认清单零改动"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "核验记录含两 port 的版本/许可证/依赖面原文摘要与文件绑定（Digest 口径）；明确记录二者仅 port 在案、未安装、未核 API/跨平台，不编造函数签名；摘要产品替换（Digest.cpp/.hpp 私有状态、core/CMakeLists.txt 链接、DigestTest 边界补强、units/core.md §3.2 与 D-05 修订）单列待批准后子任务，本批零产品改动",
+  "GAP-DIGEST-01.md 本体零改动（其未批准状态、B30 既有证据与 oracle 冻结向量原样）；T15 FNV/Identity 与 F-965 公开 hash 零触碰",
+  "获批后实施路径的 oracle 约定登记：内容 SHA 字节完全不变（B30 oracle.py+跨平台黄金数据+分块无关+finalize 禁复用），性能以真实批次与原基线比较"
+ ],
+ "note": "WP-15（migration.md:312）三类分批之三：摘要批按 §13.4『某提案受阻只停止相关改动』降级为供给核验＋证据＋契约，不阻断整包（GAP-DIGEST-01.md:3 未批准、:13 『可继续完成其他审计』为降级依据）。ownerDecision 登记形态沿用 REUSE-T27/verification.json 先例。本批为纯文档/审计动作：零产品源码、零 CMake、零依赖安装；changes/REUSE-T39.json 凭证 files 为空数组（audit-only 语义）。若所有者后续批准产品替换，另立实施子任务并按 GAP-DIGEST-01 验收/回滚条款执行，不在本契约内自批。实施完成待独验，不自签、不置 done。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T39.json"
+ }
+}
