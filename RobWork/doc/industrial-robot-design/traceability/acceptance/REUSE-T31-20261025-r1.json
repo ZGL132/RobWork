@@ -1,0 +1,61 @@
+{
+  "taskId": "REUSE-T31",
+  "baseCommit": "e74886dfcb972a2bbcc4f1336e22ab146037ffde",
+  "reviewedCommit": "e078984b29ba2a2862120e346db6a23712b750ba",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T10:52:15+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T31/WP-08 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未安装任何依赖（vcpkg ode 保持未安装）、未配置或重建构建树；所有结论仅依据本人亲自重跑的命令输出（02/03/04/05 号日志）与亲自读取的原件。"
+  },
+  "scope": "独立复验 e74886df..e078984b2 送验范围（[WP-08-T31] 两个提交）：现场与显式 Base/Head 范围门禁、三门禁直跑（verify-task-scope／validate-docs -TaskFile 含全量复用检查／commit-lint）、契约五条 acceptance 逐项增量复验（§A—§G 供给事实/API 链/负面证据/部署握手/承接面全部只读重跑行号级抽验、Digest 哈希复算、文档同步三处、所有者裁决项保留）、红线抽查（H1—H6、架构红线、runtime 唯一模型 owner、CLOSURE/catalog/inventory 冻结零触碰、无平行实现回流、未越权放宽）、提交链与工作区。",
+  "counts": {
+    "failed": 0,
+    "passed": 16,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "16 项验收检查；本包阶段 A 零产品代码/零 C++ 构建，无数值/性能测试属适用（契约 acceptance 未列任何需真实执行的测试），不另设测试计数"
+  },
+  "checks": [
+    "现场：分支 redesign-main，HEAD=e078984b29ba 与送验 head 一致；git status --porcelain 已跟踪文件改动 0（仅 35 个未跟踪项，均为历次独立验收产物目录/记录，属『只写不提交』惯例，非本包送验内容）。",
+    "范围：verify-task-scope 显式 -Base e74886dfc -Head e078984b2 exit 0，『8 个路径全部在允许面内』（changed=8 allowedRules=10 forbiddenRules=5）；本人另以 git diff --name-only 列出 8 路径，全为契约/凭证/提案/矩阵/迁移文档/证据 README，逐一落在 allowedFiles，无 RobWork/RobWorkStudio/src/**、无 RobWork/RobWork/src/**、无 RobWork/RobWorkSim/src/**、无 vcpkg/**。",
+    "validate-docs -TaskFile tasks/REUSE-T31.json exit 0 一次过：validate-task PASS（1 tasks）、validate-reuse PASS governance only（inventory=1401 units=20 changed=96 DEBT=16 UNRESOLVED=1399）、validate-docs PASS（20 units, 12 trace entries, 406 task files）；REUSE-AD-PENDING 共 10 条均系 policy/reporting/runtime/trajectory/ui 既有 pending（state/model 写权未授予），非本包 dynamics 面且本包零产品改动，非阻断。",
+    "commit-lint -Range e74886dfc..e078984b2 PASS（2 个提交全部合规）exit 0；两提交均 [WP-08-T31] 前缀，一包一组，正文改动/验证/影响与实际 diff 及本人复跑门禁一致。",
+    "acceptance①-供给事实（§A）：本人重跑 cat vcpkg/ports/ode/vcpkg.json＝ode 0.16.6、license=BSD-3-Clause OR LGPL-2.1-or-later、supports=!uwp、host 依赖 vcpkg-cmake/vcpkg-cmake-config；portfile.cmake 含 vcpkg_from_bitbucket(SHA512 锁定)、-DODE_WITH_DEMOS=OFF -DODE_WITH_TESTS=OFF、vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/ode-${VERSION}) 且安装后清除 lib/cmake——config 包落 share/ode；port 树 grep DOUBLE/PRECISION 零命中（未覆盖精度＝上游默认）。全部与 README §A 及 GAP §1a 一致。",
+    "acceptance①-安装状态（§B）：installed/x64-windows/lib grep -i ode 零命中、share/ 仅 bullet3 与 fcl（ode 无）——ODE 未安装、bullet3 在位对照成立；build/CMakeCache.txt:240 BUILD_sdurwsim_ode:BOOL=OFF、:600/:603/:606 ODE_DIR/ODE_INCLUDE_DIR/ODE_LIBRARY_TMP 均 NOTFOUND、:2771 RW_SUBSYS_BUILD_sdurwsim_ode=FALSE、:942 VCPKG_MANIFEST_MODE=OFF、:953 triplet x64-windows、:834 RW_USE_PQP=ON、:228 BUILD_sdurwsim_bullet=ON——集成缓存『环境未供给』事实逐行命中，GAP §2『若该渠道当前无适用port』不确定项收窄成立。",
+    "acceptance①-API 链（§C，行号级）：RigidDevice.cpp:234 setMotorForceTargets（写 _target 并逐关节 modes[i]=1）、:260 setJointVelocities（经 State 写速度并 clamp 速度限位）；RigidDevice.hpp:105-108 MotorControlMode 枚举 Force=0/Velocity=1；本人加验 RigidDevice.cpp:188-199 getMotorModes——State 原始 char 约定 0→Velocity/非0→Force，modes=1 经其翻译为 Force，故 ODEVelocityDevice.cpp:113 每步 getMotorModes 同步 _modes 后 :157 分支（==Velocity 走 setVelocity，else 力模式）:166 setForce 路由成立——『setMotorForceTargets→ODEVelocityDevice::update Force 分支 setForce』直连链语义经双路径实核确认；ODESimulator.cpp:1214 RigidDevice dynamic_cast→new ODEVelocityDevice 入 _odeDevices；PhysicsEngine.hpp:99/105/110/115/120 step/resetScene/initPhysics/exitPhysics/getTime 全纯虚。",
+    "acceptance①-负面证据（§D）：BtSimulator.cpp:584-586 addDevice 体仅 RW_THROW(\"BtSimulator (addDevice): not implemented yet!\")；RWSimulator.cpp:132-133 RigidDevice 分支仅打印 \"NO SUPPORT FOR RIGID DEVICES!\"（KinematicDevice 同型 NO SUPPORT）；RK4Integrator.hpp:22-26 class RK4Integrator : public BodyIntegrator、构造收 dynamics::RigidBody*——单刚体 BodyIntegrator 而非关节 ODE 求解器，『不把刚体积分器当关节求解器』约束在文档中如实成立。",
+    "acceptance①-部署握手（§E）：FindODE.cmake:10-15 find_package(ODE QUIET PATHS …/lib/cmake/ode-* … NO_MODULE) config 包优先（:16 恢复 ODE_DIR）；:150-157 else 分支 set(ODE_BUILD_WITH \"DOUBLE\")＋ODE_INCLUDE_DIR 取 ODE_INCLUDE_DIRS（config 命中路径）；rwsimlibs/ode/CMakeLists.txt:19 set(DEFAULT ${RWSIM_HAVE_ODE})、:65-86 检测 ODE_WITH_THREADING_IMPL、:117-124 手工 dDOUBLE/dSINGLE 仅 NOT ODE_WITH_THREADING_IMPL（<0.13）时编译定义——0.16.6 不触发手工宏；RobWorkSimSetup.cmake:206-221 WIN32 未命中 ExternalProject 从 bitbucket git 拉 0.16.2 网络构建（README §E 如实登记为 GAP §2 明令禁止路径、阶段 B 须先经 vcpkg 安装规避）、:230 附近未命中禁用静默 \"RobWorkSim: ODE disabled.\"（当前集成树即此状态）。",
+    "acceptance①/③-承接面与资产（§F/§G）：DynamicWorkCellCompiler.cpp 文件头＝S7 编译器（CanonicalModel＋S6→rwsim DWC，集成模式编译，SI 单位纪律）；ForwardDynamics.hpp:303 class ForwardDynamicsValidator 公契约在位；units/dynamics.md:345 forwardCheck.integratorToken 封闭词表锁定 rk4-fixed（本提案不改词表）；gtest/CMakeLists.txt:63 if(TARGET sdurwsim_ode) 门控 sdurwsim_ode-gtest（ODEControlTest.cpp:45 ODEControlDeviceTest＝movePTP 速度控制＋ODESimpleTest）——既有资产无关节力输入用例的判断与原件一致，阶段 B 探针须新设计不冒充；tasks/REUSE-T04.json:7 status=planned 且范围 diff 零触碰。",
+    "acceptance②-提案可裁决：GAP-FD-BUILD-01.md 修订 diff 亲读——§1a 供给事实（port 版本/许可/构建选项/精度未覆盖＋未安装证据＋经典模式安装命令草拟＋部署握手与 WIN32 git 回退规避）、§2 阶段 B 验证设计（先跑既有 sdurwsim_ode-gtest 作回归底噪并如实标注非力输入，再新增单自由度力输入探针：解析单摆/移动质量 oracle＋RNE 反算交叉验证＋能量守恒＋确定性重复，独立于产品 RK4；resetScene 清速后经 setJointVelocities 恢复初速须实测）、回滚边界（仅关 BUILD_sdurwsim_ode/RWSIM_DISABLE_ODE＋移除 vcpkg 安装物，零产品接线）、明确不实施项（不安装依赖/不改 vcpkg/上游/不接生产/不动 integratorToken 词表）全部在位；自 8a7174945 创建以来的原边界（不 vendor、不网络另装、不改上游 CMake、不预授权框架 patch）未被放宽反而补强行号与规避条款。",
+    "acceptance③-零产品代码/零依赖变更：git diff --exit-code base..head 对 RobWork/RobWorkStudio/src/、RobWork/RobWork/src/、RobWork/RobWorkSim/src/、vcpkg/ 退出 0（SRC-VCPKG-ZERO-DIFF-OK）；industrialrobot/cmake/ 门禁目录退出 0（GATE-DIR-ZERO-DIFF-OK）；reuse/changes/REUSE-T31.json files=[]（ird-reuse-change/1 凭证清单，零产品变更口径一致，且按契约 note 澄清其非 -TaskFile 契约输入——三门禁均以 tasks/REUSE-T31.json 运行）。",
+    "acceptance③-Digest 复算：dynamics.json 仅两处 proposal 绑定（dynamics.evalAcceleration 与 dynamics.ForwardDynamicsValidator.validate.rk4Stages）刷新为 f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b；本人以 git show <head>:GAP-FD-BUILD-01.md | sha256sum 复算＝同值；工作区文件因 core.autocrlf=true 为 CRLF，tr -d '\\r' 归一后亦＝同值——哈希为真实文件口径非编造；solveLinearSystem 行（capabilityId=DYN-FD）status=pending、无 proposal 绑定、未被触碰，与契约『三条中两条刷新、一条不动』一致。",
+    "acceptance④-文档同步：required-proposals.md GAP-FD 行补 2026-10-25 定向实核收窄（port 在位未安装/API 链/负面证据/部署握手与 git 回退禁令）；migration.md §13.1 新增 WP-08/FD后端供给探测登记（起点 SHA、探测结论、阶段 B 待批准、T04/WP-09 阻断不变、实施者不自签）；proposal-search.json increments[taskId=REUSE-T31] 增量批六条命令＋输出摘要＋fullLog 指针与 README §A—§G 一一对应；migration §13.3:298 WP-08 行未被改动（diff 仅 §13.1 两行新增）。",
+    "acceptance⑤-所有者裁决项保留：契约 status=ready（实施完成待独验，未伪装 done）；GAP 文档与 migration 登记均明示阶段 B（安装 ode＋隔离树＋探针）属新依赖启用未获批不实施；本人现场实核 vcpkg ode 仍为未安装、未触发任何网络拉取、零构建产物——未签发批准、未解除 WP-09/T04 阻断、未自我裁决。",
+    "红线抽查：H1（复用来源全为直接 API：PhysicsEngine/ODESimulator/ODEVelocityDevice/RigidDevice/DynamicWorkCellLoader，提案首选现成 ODE 后端）成立；H2（零产品代码、无平行实现，SRC 零 diff）成立；H3（阶段 B 设计复用 FindODE/导出目标、不改上游 CMake）成立；H5（阶段 B 新依赖启用显式门控于所有者批准）成立；H6（proposal-search 增量＋README 行号记录＋changes 凭证＋dynamics.json Digest 绑定四层可追溯）成立；架构红线与 runtime 唯一模型 owner（提案 §2 明文 runtime 持真实 DWC/State 物化、业务不获权威模型写权；本包零代码故 L2 零 Qt/端口纪律零触碰）成立；CLOSURE 冻结（reuse/closures.json）＋catalog.json＋inventory.json 范围 diff 退出 0（FROZEN-ZERO-DIFF-OK）；门禁脚本零改动、三门禁以未放宽口径全绿——无越权放宽。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T31.json -Base e74886dfcb972a2bbcc4f1336e22ab146037ffde -Head e078984b29ba2a2862120e346db6a23712b750ba", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T31.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "03-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e74886dfcb972a2bbcc4f1336e22ab146037ffde..e078984b29ba2a2862120e346db6a23712b750ba", "exitCode": 0, "passed": true, "log": "04-commit-lint.log" },
+    { "name": "probe-reverify", "command": "§A—§G 行号级只读抽验（cat/grep/sed 读 vcpkg port、installed 树、build/CMakeCache.txt、RobWorkSim 源/cmake、产品承接面、T04 契约）＋ sha256sum Digest 复算＋ git diff --exit-code 门禁目录/产品树/vcpkg/closures/catalog/inventory/T04 零差异断言（详见 05 号日志，全部标记命中）", "exitCode": 0, "passed": true, "log": "05-probe-reverify.log" }
+  ],
+  "executionNotes": [
+    "验收员独立重跑 §A—§G 抽验时对『modes=1（Force）』做双路径语义核验：State 原始 char（0=velocity/非0=force，RigidDevice.cpp:188-199 getMotorModes 翻译）与 MotorControlMode 枚举数值（Force=0/Velocity=1，hpp:105-108）是两套口径，ODEVelocityDevice 经 getMotorModes 同步后 :157 分支正确路由 :166 setForce——README/GAP 结论成立，非文档缺陷，仅作口径注记。",
+    "05-probe-reverify.log 由验收员在仓库根直接重跑命令生成（非转录实施方输出）；三道门禁日志 02/03/04 为 tee 原样输出。"
+  ],
+  "issues": [],
+  "notRun": [],
+  "limitations": "PASS 仅绑定送验 head e078984b29ba2a2862120e346db6a23712b750ba 的阶段 A 范围（探测/证据/提案，零产品代码）：不构成阶段 B（vcpkg 安装 ode、隔离树 BUILD_sdurwsim_ode、力输入探针）的批准或实施许可，不解除 WP-09/T04 阻断，不改变 REUSE-AD-PENDING 存量与 validate-reuse governance only 口径（DEBT=16、UNRESOLVED=1399）。本包无数值/性能测试项，阶段 A 无 C++ 构建属契约口径（T19 冒烟链接缺口与 py313 DLL 等已知无关全局阻断不适用于本包）。proposal-search.json 增量批中 README 未逐字留存的命令输出（如 BUILD_sdurwsim_bullet:BOOL=ON@:228）已由验收员独立复跑证实。提案的技术可裁决性验收≠提案获批：阶段 B 启用与否由所有者裁决。"
+  ,
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1/03-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1/04-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1/05-probe-reverify.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T31-20261025-r1.json"
+  ]
+}

@@ -1,0 +1,202 @@
+# REUSE-T31 独立验收第 1 轮——定向探测只读复验留痕（验收员独立重跑，非实施方转录）
+# 日期：2026-10-25；范围 e74886dfc..e078984b2；验收运行目录为仓库根
+
+## §A vcpkg ode port 事实
+$ cat vcpkg/ports/ode/vcpkg.json
+{
+  "name": "ode",
+  "version": "0.16.6",
+  "description": "Open Dynamics Engine",
+  "homepage": "https://bitbucket.org/odedevs/ode/src/master/",
+  "license": "BSD-3-Clause OR LGPL-2.1-or-later",
+  "supports": "!uwp",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}
+$ head -40 vcpkg/ports/ode/portfile.cmake（关键段）
+1:vcpkg_from_bitbucket(
+5:    SHA512 c9160d9b7419c74c700d9efe5cdb82e70cab867a10f03fe8b99c32ed946ee4ecb50e055a6c11495dd9ed4754110ef0d071fbcfbf4cc6b67841607ed90b1ce35b
+14:        -DODE_WITH_DEMOS=OFF
+15:        -DODE_WITH_TESTS=OFF
+19:vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/ode-${VERSION})
+35:file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/lib/cmake")
+36:file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib/cmake")
+$ grep -rn "DOUBLE\|PRECISION" vcpkg/ports/ode/ （预期零命中）
+(zero hits — port 未覆盖精度选项)
+
+## §B 安装状态与集成缓存
+$ ls vcpkg/installed/x64-windows/lib/ | grep -i ode（预期零命中）
+(zero hits — ODE 未安装)
+$ ls vcpkg/installed/x64-windows/share/ | grep -iE "^(bullet3|fcl|ode)$"
+bullet3
+fcl
+$ grep -n "BUILD_sdurwsim_ode\|ODE_DIR:\|ODE_INCLUDE_DIR\|ODE_LIBRARY_TMP" build/CMakeCache.txt
+240:BUILD_sdurwsim_ode:BOOL=OFF
+600:ODE_DIR:PATH=ODE_DIR-NOTFOUND
+603:ODE_INCLUDE_DIR:PATH=ODE_INCLUDE_DIR-NOTFOUND
+606:ODE_LIBRARY_TMP:FILEPATH=ODE_LIBRARY_TMP-NOTFOUND
+2771:RW_SUBSYS_BUILD_sdurwsim_ode:INTERNAL=FALSE
+$ grep -n "VCPKG_MANIFEST_MODE\|VCPKG_TARGET_TRIPLET:" build/CMakeCache.txt | head -3
+942:VCPKG_MANIFEST_MODE:BOOL=OFF
+953:VCPKG_TARGET_TRIPLET:STRING=x64-windows
+3534://Making sure VCPKG_MANIFEST_MODE doesn't change
+$ grep -n "RW_USE_PQP\|BUILD_sdurwsim_bullet" build/CMakeCache.txt | head -3
+228:BUILD_sdurwsim_bullet:BOOL=ON
+834:RW_USE_PQP:BOOL=ON
+2763:RW_SUBSYS_BUILD_sdurwsim_bullet:INTERNAL=TRUE
+
+## §C 力驱动直连 API 链（行号级）
+$ sed -n "234p;260p" RigidDevice.cpp
+void RigidDevice::setMotorForceTargets (const rw::math::Q& q, rw::kinematics::State& state)
+void RigidDevice::setJointVelocities (const rw::math::Q& q, rw::kinematics::State& state)
+$ sed -n "238,246p" RigidDevice.cpp（modes[i]=1 写入）
+    char* modes  = _mode.getArray (state);
+
+    for (int i = 0; i < std::min (_target.getN (), (int) q.size ()); i++) {
+        vals[i]  = q[i];
+        modes[i] = 1;
+    }
+}
+
+void RigidDevice::setMotorVelocityTargets (const rw::math::Q& q, rw::kinematics::State& state)
+$ sed -n "104,108p" RigidDevice.hpp（MotorControlMode 枚举）
+        //! @brief Possible control modes for the motors in each joint.
+        typedef enum {
+            Force,      //!< For force control.
+            Velocity    //!< For velocity control.
+        } MotorControlMode;
+$ sed -n "188,199p" RigidDevice.cpp（getMotorModes：arr==0→Velocity, arr!=0→Force——modes=1 经翻译为 Force，链语义成立）
+RigidDevice::getMotorModes (const rw::kinematics::State& state)
+{
+    std::vector< RigidDevice::MotorControlMode > res (_mode.getN (), RigidDevice::Velocity);
+    char* arr = _mode.getArray (state);
+    for (int i = 0; i < _mode.getN (); i++) {
+        if (arr[i] == 0) {
+            res[i] = RigidDevice::Velocity;
+        }
+        else {
+            res[i] = RigidDevice::Force;
+        }
+    }
+$ sed -n "157,167p" ODEVelocityDevice.cpp（==Velocity 走 setVelocity；else 力模式 setForce:166）
+        if (_modes[qi] == RigidDevice::Velocity) {
+            if (motormodesChanged)
+                _odeJoints[i]->setMotorEnabled (true);
+            _odeJoints[i]->setVelocity (targets[qi]);
+        }
+        else {
+            // mode is force mode
+            if (motormodesChanged)
+                _odeJoints[i]->setMotorEnabled (false);
+            _odeJoints[i]->setForce (targets[qi]);
+            // std::cout << targets[qi] << " ; ";
+$ sed -n "1214p" ODESimulator.cpp（RigidDevice→new ODEVelocityDevice）
+    if (RigidDevice* rdev = dynamic_cast< RigidDevice* > (device)) {
+$ sed -n "99,120p" PhysicsEngine.hpp（五纯虚）
+99:        virtual void step (double dt, rw::kinematics::State& state) = 0;
+105:        virtual void resetScene (rw::kinematics::State& state) = 0;
+110:        virtual void initPhysics (rw::kinematics::State& state) = 0;
+115:        virtual void exitPhysics () = 0;
+120:        virtual double getTime () = 0;
+
+## §D 负面证据
+$ sed -n "584,587p" BtSimulator.cpp
+
+void BtSimulator::addDevice (DynamicDevice::Ptr dev, State& nstate)
+{
+    RW_THROW ("BtSimulator (addDevice): not implemented yet!");
+$ sed -n "131,136p" RWSimulator.cpp
+    // construct nodes from
+    for (DynamicDevice::Ptr dev : _dwc->getDynamicDevices ()) {
+        if (dynamic_cast< RigidDevice* > (dev.get ())) {
+            std::cout << "NO SUPPORT FOR RIGID DEVICES!" << std::endl;
+        }
+        else if (dynamic_cast< KinematicDevice* > (dev.get ())) {
+$ sed -n "22,27p" RK4Integrator.hpp
+        RK4Integrator (dynamics::RigidBody* body);
+
+        virtual ~RK4Integrator (){};
+
+        void updatePosition (double h, rw::kinematics::State& state);
+
+
+## §E 部署握手
+$ sed -n "10,16p" FindODE.cmake（config 包优先）
+find_package(
+    ODE QUIET
+    PATHS "$ENV(ODE_ROOT)/lib/cmake/ode-*" "${ODE_ROOT}/lib/cmake/ode-*" ${ODE_DIR}
+          "$ENV(ODE_DIR)/lib/cmake/ode-*" "${ODE_DIR}/lib/cmake/ode-*"
+    NO_MODULE
+)
+set(ODE_DIR ${RW_ODE_DIR})
+$ sed -n "151,158p" FindODE.cmake（config 命中 else 分支：ODE_BUILD_WITH=DOUBLE、ODE_INCLUDE_DIR=ODE_INCLUDE_DIRS）
+        set(ODE_LIBRARIES ${ODE_LIBRARY})
+    endif(ODE_LIBRARY_TMP AND ODE_INCLUDE_DIR)
+else()
+    set(ODE_BUILD_WITH "DOUBLE")
+    if("${ODE_INCLUDE_DIR}" STREQUAL "")
+        set(ODE_INCLUDE_DIR ${ODE_INCLUDE_DIRS})
+    endif()
+endif()
+$ sed -n "19p" rwsimlibs/ode/CMakeLists.txt（DEFAULT=RWSIM_HAVE_ODE）
+set(DEFAULT ${RWSIM_HAVE_ODE})
+$ sed -n "117,124p" rwsimlibs/ode/CMakeLists.txt（手工 dDOUBLE/dSINGLE 仅 NOT ODE_WITH_THREADING_IMPL）
+
+    if(NOT ODE_WITH_THREADING_IMPL) # version below 0.13
+        if("${ODE_BUILD_WITH}" STREQUAL "DOUBLE")
+            target_compile_definitions(sdurwsim_ode PUBLIC dDOUBLE)
+        else()
+            target_compile_definitions(sdurwsim_ode PUBLIC dSINGLE)
+        endif()
+    endif()
+$ grep -n "ExternalProject_Add\|GIT_TAG\|bitbucket\|ODE disabled" RobWork/RobWorkSim/cmake/RobWorkSimSetup.cmake
+208:            ExternalProject_Add(
+210:                GIT_REPOSITORY https://bitbucket.org/odedevs/ode.git
+211:                GIT_TAG 0.16.2
+231:    message(STATUS "RobWorkSim: ODE disabled.")
+
+## §F/§G 承接面与既有测试资产
+$ sed -n "303p" ForwardDynamics.hpp
+class ForwardDynamicsValidator {
+$ grep -n "integratorToken" RobWork/doc/industrial-robot-design/units/dynamics.md | head -2
+94:> **WP-17-T05 实现落位登记（2026-10-08，正动力学一致性检查——§6/§10.2 落地面与实现口径）**：新增公共头 `ForwardDynamics.hpp`（§10.2 检查器＋§4.2 forwardCheck 六字段域内 DTO ForwardCheckSettings＋ForwardCheckRequest/ForwardCheckOutcome）与 `src/ForwardDynamics.cpp`（CMake 源码集增列）；DiagCodes.hpp/.cpp 表尾增行 16 `DYN-FD-NUMERIC-ANOMALY`（§9.4 增量修订随本批——v1 表 15 码→16 码，DiagCodesTest 登记数组同批同步）。**实现口径与契约形态的微调（DTB §5.4 登记）**：①§10.2 `IForwardDynamicsValidator` 抽象接口以域内**具体类** ForwardDynamicsValidator 落地（T03/T04 先例——evidence 适配与注册面随 T10 装配冻结）；②request 为域内 DTO——参考段以激励样本数组注入（同 T03 数据面），τ_ref 由检查器内部经公共 `InverseDynamicsEvaluator::evaluate` 产出（§6.1 时序图第①步检查器内化——调用方不可注入外部力矩序列，"用另一工况的负载做仿真"的共源违约在本接口面结构上不可表达，§10.2 非法示例）；③outcome 的 `tOfMaxErr` 单字段增列为 `tOfMaxErrQ`/`tOfMaxErrQd` 两位（§6.1 ④"各最大误差发生时间"逐量承载）；payload 扩展块（误差序列）不进本结构——DYN-08 回放数据面归 T08；④DynConfig.hpp 全量配置面与 canonical 编码随 T10 装配落位（forwardCheck 六字段随本头承载，§4.2 canonical 编码与 configDigest→sliceId 身份链归装配层）；⑤**正动力学引擎选型（P-DYN-7 落位锁定，见 §6.1 登记注）＝同源 RNEA 质量阵/偏置力提取＋固定步长四阶龙格—库塔积分**，integratorToken 封闭词表锁定值 `rk4-fixed`（§4.2 回填）；RobWorkSim 物理引擎（rwsim::simulator::PhysicsEngine 工厂）经实测不落位，四条依据：ODE 依赖未启用（集成构建缓存 ODE_DIR-NOTFOUND 实测）、Bullet 引擎为 RW_ADD_PLUGIN 动态插件机制（BtPlugin.cpp 实测——L2 进程内计算库无插件加载入口，直连 BtSimulator＝依赖 rwsimlibs 私有实现头非 rwsim 公共契约）、工况条件负载需向引擎场景注入负载体（运行中 addBody——rwsim 公共 API 无此消费先例，注入即自建第二套关节链违反 CM-0/D-DYN-2）、迭代约束求解器容差内漂移与 §10.2 确定性行"同配置同输入→等价误差序列"冲突＋冒烟零外联符号纪律（rwsim 引擎符号为框架 .cpp 外联，冒烟配置树无框架库可链——本实现全链零外联，双模式同源可构建）；⑥仿真变体一致性：M/h 单样本提取调用一律传**参考样本区间起点时刻**——evaluate 内部事件时间线"样本时刻 t≥tEvent 生效"（§5.4 保守边界）使正动力学侧变体与 τ_ref(t_j) 严格同变体，变体切换只发生在采样保持区间边界（⑤共源强制的结构性实现）；⑦发散检出界 1e10（rad/m、rad/s、m/s）与质量阵奇异判据 1e-14×‖M‖∞ 为实现常量（异常检测判据非工程判定阈值，黄金算例锁定面）；relTolerance 在固定步长实现下为记录性身份/审计分量（无自适应消费点——如实登记，积分器换自适应实现时接手语义）；⑧**测试期间发现并修复 T03 既有缺陷一处（产品缺陷，回归用例全绿）**：RNEA 物性提取对 NotProvided 惯量的分支未显式置零——`RneaBody.inertia` 保留 `Mat3` 默认构造值（单位阵，旋转恒元语义）＝"每个缺失惯量的连杆/负载自带 1 kg·m² 惯量"的静默错误值；T03 降级用例只测标记面未测数值面故未检出，本任务零物性黄金算例（质量阵奇异检测）暴露——修复为连杆缺失分支与点质量路径（extractEndComponent）显式零张量，T03/T04 既有 39 用例回归通过。测试面：`test/ForwardDynamicsTest.cpp` 11 用例（DynForward——解析黄金算例〔伸直构型 q₂≡0 匀加速：τ_ref 恒定→采样保持零误差→RK4 对二次多项式轨迹精确，误差机器精度量级<1e-12，toleranceQ=1e-9 判 Passed＋独立解析界双重对照〕/一致性超阈值 Failed＋比较型素材/发散检出 DYN-FD-DIVERGED/质量阵奇异 DYN-FD-NUMERIC-ANOMALY〔即上述缺陷的检出用例〕/NotRun 空与单样本与初始态非有限/NotApplicable Skip 短路/取消语义/确定性复现/负载事件共源〔中段 Grasp 两路同变体 Passed＋摩擦缺失素材透传〕/fail-fast 十项边界）；`contract_test/ForwardDynamicsBoundaryContractTest.cpp` 2 用例（DynForwardBoundary——P-DYN-7 落位选型静态钉扎〔正动力学面零 rwsim 物理引擎消费符号词表扫描：PhysicsEngine/BtSimulator/DynamicWorkCell/RigidDevice/makeState/namespace rwsim〕＋公共契约形态编译期核对〔词表锁定值/四态枚举同源/默认 Skip〕）。
+345:| `forwardCheck.integratorToken` | string（封闭词表；**WP-17-T05 落位锁定值＝`rk4-fixed`**——同源 RNEA＋固定步长 RK4，见 §6.1 登记注与 P-DYN-7 行；扩展新积分器先本表增量修订词表再追加常量，既有值不重排） | 积分器标识（进身份） |
+$ grep -n "if(TARGET sdurwsim_ode)" RobWork/RobWorkSim/gtest/CMakeLists.txt
+63:if(TARGET sdurwsim_ode)
+81:if(TARGET sdurwsim_ode)
+99:if(TARGET sdurwsim_ode)
+129:if(TARGET sdurwsim_ode)
+$ sed -n "45,46p" ODEControlTest.cpp（movePTP 速度控制，非力输入）
+TEST(ODEControlTest, ODEControlDeviceTest )
+{
+$ grep -n "\"status\"" RobWork/doc/industrial-robot-design/tasks/REUSE-T04.json
+7:  "status": "planned",
+
+## Digest 口径哈希复算
+$ git show HEAD文件 | sha256sum（blob/LF 口径）
+f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b *-
+$ 工作区文件 tr -d "\r" | sha256sum（CRLF→LF 归一后应同值；core.autocrlf=true）
+f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b *-
+登记值（dynamics.json 两处 proposal.sha256）：f81ae341ea29b527059c2bb58f16c750183587bc4e74ac54d2520c391121fd7b
+
+## 范围红线零 diff
+$ git diff --exit-code base..head -- industrialrobot/cmake/ && GATE-DIR-ZERO-DIFF-OK
+GATE-DIR-ZERO-DIFF-OK
+$ git diff --exit-code base..head -- RobWorkStudio/src/ RobWork/src/ RobWorkSim/src/ vcpkg/ && SRC-VCPKG-ZERO-DIFF-OK
+SRC-VCPKG-ZERO-DIFF-OK
+$ git diff --exit-code base..head -- reuse/closures.json reuse/catalog.json reuse/inventory.json tasks/REUSE-T04.json && FROZEN-ZERO-DIFF-OK
+FROZEN-ZERO-DIFF-OK
+
+## 契约状态
+$ grep -n "\"status\"" tasks/REUSE-T31.json
+7:  "status": "ready",
+$ git status --porcelain 中已跟踪文件改动数（预期 0）
+0
