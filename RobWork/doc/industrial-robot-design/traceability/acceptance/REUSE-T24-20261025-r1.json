@@ -1,0 +1,89 @@
+{
+  "taskId": "REUSE-T24",
+  "baseCommit": "d1e416b00433bbd3e62903e583b2ee2b103e0396",
+  "reviewedCommit": "c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T07:01:40+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T24/WP-14 单次验收子智能体",
+    "authorization": "所有者2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何受版本控制文件、未提交、未切分支、未建工作树、未远程操作；性能对照的旧版源码由 git show 从 base 提取至产物目录并仅改符号名，编译运行在 build/acc-reuset24-perf-tmp（已清理，不入库）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 d1e416b0..c3eb1f8d7 送验实现（唯一提交 [governance] REUSE-T24 修正诊断参数解析失败输出，22 文件）：verify-task-scope 显式 Base/Head、契约三条 acceptance 逐项实测（增量构建、全量 123 项与 green 口径 24 项测试复跑、validate-docs 一次过、ird_gates 11 类含自测直跑、性能同轮原入口对照独立重跑）、证据原件 SHA 绑定核对（verification.json inputs 8/8 rawSha256 与送验树工作区文件一致，c3eb1f8d..HEAD 未触碰 diagnostics）、红线抽查（H1—H6、L2 零 Qt、单一解析点、CLOSURE/F-968 登记面零触碰、cmake 门禁目录与上游/vcpkg 零差异、PASS/FAIL/SKIP/NOT RUN 分列）与提交链核查。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查；测试计数另列（integrationTest），互不相加"
+  },
+  "checks": [
+    "现场：分支 redesign-main、HEAD=0ca544e49（c3eb1f8d7 之后另有其他任务的 [governance] 补登提交）；git status --short 仅含既有未跟踪验收产物（REUSE-T10..T23 各轮）与本轮产物目录，无受版本控制文件被改；merge-base 确认 c3eb1f8d7 在当前分支历史内。",
+    "范围：verify-task-scope 显式 -Base d1e416b0 -Head c3eb1f8d7 exit 0，changed=22 路径全部在允许面（allowedRules=6 forbiddenRules=3）；22 文件中产品侧仅 ParamSchema.cpp（+9/-4）与 StableCodeRegistryTest.cpp（+38），其余为任务契约/changes 凭证/functions 矩阵/traceability 证据，无 RobWork/RobWork/src/**、RobWorkSim/src/**、vcpkg/**、industrialrobot/cmake/ 文件。",
+    "构建：cmake --build build --config Release --target sdurws_ird_diagnostics_test exit 0（集成树 RWS_BUILD_INDUSTRIALROBOT=ON；diagnostics 源在 c3eb1f8d..HEAD 未变，属增量重链接）。",
+    "测试全量：sdurws_ird_diagnostics_test.exe 123 tests from 23 suites＝123 passed/0 failed/0 skipped/0 notRun，exit 0；XML tests=123 failures=0（12-diagnostics-test.xml）；F-968 新例 DiagCodesRegistry.DtReg5_ParamSchemaFailureClearsNames_F968 在列 OK，含 12 种拒绝输入（空模式/非数组/大小写与全等重复/空槽/尾部多余字符/未闭合引号/缺失闭括号/缺逗号/数字元素/\\u 转义/换行尾）同槽交替成功失败回归＋成功清错＋声明序＋空模式。",
+    "测试 green 口径：按实施同 filter 'DiagCodesRegistry.*:DiagCatalogFactory.*' 复现＝24 tests/24 passed/0 failed/0 skipped，exit 0（13-diagnostics-green-filter.xml）；测试名单与实施 green.xml 逐项 diff 完全一致；实施红例 red.xml tests=1 failures=1 留痕真实，失败信息正是 F-968 本体（names.empty() Actual: false，「失败输出不得保留局部参数」）。",
+    "文档/任务/复用一次过：validate-docs -TaskFile REUSE-T24.json exit 0——validate-task: PASS (1 tasks)、validate-reuse: PASS governance only（inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399）、validate-docs: PASS (20 units, 12 trace entries, 404 task files)；REUSE-AD-PENDING 为 AD 审计既有 pending 提示（先例同型），非本包阻断；「NOT RUN: 全库证据索引审计」为脚本按需口径声明，非混列。",
+    "架构门禁直跑：cmake -P ird_gates.cmake（IRD_ROOT 显式，含 SELFTEST）exit 0，「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」＝11 类 PASS；自测 17 项全按预期（fail_* 检出、pass_* 无误报），日志 15-ird-gates.log。",
+    "性能独立重跑（真实执行，非引用）：从 base 提取旧版 ParamSchema.cpp 仅改名 tryParseParamSchema→baselineTryParseParamSchema（16-baseline-from-d1e416b0.cpp 留痕，diff 仅定义行 1 处），与送验树新 ParamSchema.cpp、原 perf.cpp（SHA fd0478f8 与 verification.json 登记一致）按登记参数 MSVC x64 /std:c++17 /EHsc /utf-8 /O2 /DNDEBUG /MD 编译链接，3 轮交替次序 100 万次/样本：fresh 旧 0.100760–0.111198、新 0.108364–0.109172 µs/次；reuse 旧 0.055259–0.060676、新 0.058846–0.062912 µs/次。与实施原始数据同量级区间重叠；新实现相对差约 -2%～+7.5%（fresh）与 +2%～+4%（reuse），亚微秒微基准噪声量级，实施仅声明观测不宣称改善/无端到端承诺——独验复测无超出声明的退化，acceptance 3 性能项按同轮原入口对照成立。",
+    "红线与冻结面：H2/框架只读——git diff --exit-code base..head 对 RobWork/RobWork/src/＋RobWorkSim/src/＋vcpkg/ 零差异；门禁未放宽——industrialrobot/cmake/ 零差异且 ird_gates 11 类零命中；CLOSURE/登记冻结面——reuse/closures.json、traceability/findings.json、reuse/catalog.json、reuse/inventory.json 零差异，F-968 在 findings.json:9762-9769 仍 status=open（severity minor，owner diagnostics/REUSE-T01），与契约「不关闭 F-968」一致；L2 零 Qt——rg 证实 diagnostics 单元无 Qt include/Q_OBJECT；单一私有解析点——detail::tryParseParamSchema 唯一定义（ParamSchema.cpp:55）＋生产调用仅注册（DiagCodes.cpp:154）与工厂（Factory.cpp:143），测试经同单元私有头 ../src/ParamSchema.hpp 访问 detail，不跨单元私有头；无平行实现——无新解析核心/包装类/fallback，diagnostics 无 Qt、无上游调用新增；H6 凭证——changes/REUSE-T24.json 两文件 sha256（06894116/ac395837）与 git show 送验提交内容哈希一致，verification.json inputs 8/8 rawSha256 与送验树工作区文件一致，功能矩阵 auditBoundary 明确「独验 NOT RUN、F-968 open，非closed」；PASS/FAIL/SKIP/NOT RUN 分列——verification.json red(0/1/0)/green(24/0/0) 独立分列、independentAcceptance=NOT RUN 单列，实施自查未被标为独验。",
+    "提交链：范围仅 1 个提交（一包一组）；commit-lint -Range d1e416b0..c3eb1f8d7 PASS（[governance] 前缀合规）exit 0；正文数字逐项对证——24 passed 与本轮复现一致、红例 0/1/0 与 red.xml 一致、三轮微基准区间与 verification.json 一致、11 类架构门禁与 ird_gates 一致、独验 NOT RUN/任务 ready/F-968 open/不操作远程与契约及 findings 一致。"
+  ],
+  "integrationTest": {
+    "target": "sdurws_ird_diagnostics_test",
+    "full": { "tests": 123, "passed": 123, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "xml": "12-diagnostics-test.xml" },
+    "greenFilter": { "filter": "DiagCodesRegistry.*:DiagCatalogFactory.*", "tests": 24, "passed": 24, "failed": 0, "skipped": 0, "notRun": 0, "exitCode": 0, "xml": "13-diagnostics-green-filter.xml" },
+    "f968Case": "DtReg5_ParamSchemaFailureClearsNames_F968 OK（12 种拒绝输入同槽回归＋成功清错＋空模式）"
+  },
+  "performanceEvidence": {
+    "independentlyRerun": true,
+    "method": "git show base 提取旧版仅改符号名 ＋ 送验树新版 ＋ 原 perf.cpp（SHA 一致），MSVC /O2 同轮对照，3 轮交替，1000000 次/样本",
+    "freshOldUs": [0.10076, 0.107757, 0.111198],
+    "freshNewUs": [0.108364, 0.108189, 0.109172],
+    "reusedOldUs": [0.057871, 0.055259, 0.060676],
+    "reusedNewUs": [0.059186, 0.058846, 0.062912],
+    "conclusion": "与实施原始数据同量级区间重叠；新实现相对差约 -2%～+7.5%（fresh）、+2%～+4%（reuse），微基准噪声量级；实施未声明性能改善或端到端吞吐，无超出声明的退化",
+    "log": "17-perf-independent.log",
+    "baselineCopy": "16-baseline-from-d1e416b0.cpp"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T24.json -Base d1e416b00433bbd3e62903e583b2ee2b103e0396 -Head c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215", "exitCode": 0, "passed": true, "log": "02-scope.log" },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_diagnostics_test", "exitCode": 0, "passed": true },
+    { "name": "test-full", "command": "sdurws_ird_diagnostics_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin、build/RobWorkStudio/libs、vcpkg installed/x64-windows 的 Release）", "exitCode": 0, "passed": true, "log": "12-diagnostics-test.log", "xml": "12-diagnostics-test.xml" },
+    { "name": "test-green-filter", "command": "sdurws_ird_diagnostics_test.exe --gtest_filter='DiagCodesRegistry.*:DiagCatalogFactory.*' --gtest_output=xml:", "exitCode": 0, "passed": true, "log": "13-diagnostics-green-filter.log", "xml": "13-diagnostics-green-filter.xml" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"[Console]::OutputEncoding=[Text.Encoding]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T24.json'; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "14-validate-docs.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=$TEMP/reuset24-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "15-ird-gates.log" },
+    { "name": "perf-independent", "command": "cl /nologo /std:c++17 /EHsc /utf-8 /O2 /DNDEBUG /MD /I diagnostics\\src perf.cpp ParamSchema.cpp baseline.cpp /Fe:perf.exe && perf.exe（bat：run-perf.bat 于 build/acc-reuset24-perf-tmp，已清理）", "exitCode": 0, "passed": true, "log": "17-perf-independent.log" },
+    { "name": "redline-zero-diff", "command": "git diff --exit-code d1e416b0..c3eb1f8d7 -- industrialrobot/cmake/ ＋ RobWork/RobWork/src/＋RobWorkSim/src/＋vcpkg/ ＋ closures.json＋findings.json＋catalog.json＋inventory.json（三组均零差异）", "exitCode": 0, "passed": true, "log": "18-zero-diff-redline.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range d1e416b00433bbd3e62903e583b2ee2b103e0396..c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215", "exitCode": 0, "passed": true, "log": "19-commit-lint.log" }
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "全库证据索引深查（validate-docs -DeepEvidence）",
+      "reason": "脚本按需口径声明；本包证据已按任务面核对（verification.json inputs 8/8 SHA 绑定＋红绿/门禁/性能原件标记命中），普通提交不要求重建全库索引（AGENTS §4）。"
+    },
+    {
+      "item": "无关单元构建、GUI、全量契约、跨 locale 词形、端到端性能",
+      "reason": "实施 NOT RUN 登记属实：无公共接口/CMake/依赖/核心数值变化，直接消费者已覆盖（增量口径 AGENTS §4）；跨 locale 为 B33 既有未决不在本包改变 cctype；端到端性能实施未声明承诺。独验未重跑这些与本包无关项。"
+    }
+  ],
+  "limitations": "PASS 仅绑定送验 SHA c3eb1f8d7a4b9dadccbf6fca275fd4fb1fbc2215（d1e416b0..c3eb1f8d7 范围）。按契约与实施声明：本验收不关闭 F-968（仍 open，关闭属所有者/后续流程）、任务状态仍为 ready、不构成其他包或 WP 的放行；validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399 未关闭，含既有 REUSE-AD-PENDING）。性能结论限于该微基准口径（成功路径、单机同轮对照），不外推吞吐。ird-test-report.json 为测试运行机制自动副产物，一并留痕。验收记录与证据仅落盘未提交（由登记步骤统一提交）。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/02-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/12-diagnostics-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/12-diagnostics-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/13-diagnostics-green-filter.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/13-diagnostics-green-filter.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/14-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/15-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/16-baseline-from-d1e416b0.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/17-perf-independent.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/18-zero-diff-redline.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/19-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1/ird-test-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T24-20261025-r1.json"
+  ]
+}
