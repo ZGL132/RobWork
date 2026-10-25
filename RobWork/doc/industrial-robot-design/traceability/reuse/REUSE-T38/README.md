@@ -7,7 +7,7 @@
 
 1. `io/src/IoUtf8.hpp`（新增）：io 单元私有共享头（src/，不入 include/ 公共头根——R-2 红线）——`inline kUtf8Dfa` 表、`kUtf8Reject`、`utf8Step` 单步推进、`strictUtf8Check` 全文校验、`mapSystemError` 四分类映射。
 2. `io/src/Json.cpp`：删除自持第二份 DFA 表/strictUtf8Check/mapSystemError（原 95-190 行段），改引共享头；原"暂不合流"预留（合流前 Json.cpp:107-109 注释）由本批收口。
-3. `io/src/Csv.cpp`：删除自持 DFA 表/kUtf8Reject 与 mapSystemError 副本，改引共享头；`DecodedStream::nextUtf8` 流式状态转移改经 `utf8Step`（推进表达式与原内联式逐字相同）。
+3. `io/src/Csv.cpp`：删除自持 DFA 表/kUtf8Reject 与 mapSystemError 副本，改引共享头；`DecodedStream::nextUtf8`/`nextUtf16ToUtf8` 函数体零改动（流式推进保持原内联转移式，仅 DFA 表/kUtf8Reject 引用换共享头 inline 表；`utf8Step` 助手当前仅 `strictUtf8Check` 使用——独立验收勘误后如实更正，2026-10-25）。
 
 ## 合流等价 oracle
 

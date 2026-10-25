@@ -1,0 +1,58 @@
+{
+  "taskId": "REUSE-T39",
+  "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+  "reviewedCommit": "2fe4cd4fe8170b03a1d206d4ac12a87b7def331c",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-25T19:20:04.601423+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "WP-15 单次验收子智能体（独立验收·WP-15·第1轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入三个验收产物目录与三份记录外未修改任何文件、未提交、未切分支、未改任务状态；validate-reuse 阻断定界所用的临时 worktree（TEMP 下，仅范围外 REUSE-T33 绑定回改）验后已删除，主仓库零改动、零远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 e5364bd6c..2fe4cd4fe 送验 WP-15 批次C（摘要批供给核验 audit-only：GAP-DIGEST-01 同渠道 vcpkg port 在案核验，三契约包的第 3 批，与 T37/T38 同轮验收）：scope 复跑、GAP-DIGEST-01.md 本体零改动、port 在案性/版本/许可证/来源固定/未安装状态独立实读、audit-only 零产品改动核对、validate-docs 三契约 verify 复跑（发现范围外绑定失配阻断并完成定界与受控诊断）。",
+  "counts": {
+    "failed": 1,
+    "passed": 8,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "9 项验收检查（1 项 fail＝validate-docs 三契约在送验 HEAD 必红，范围外根因，同 T37/T38）"
+  },
+  "checks": [
+    "范围：verify-task-scope -TaskFile REUSE-T39.json -Base e5364bd6c -Head 2fe4cd4fe exit 0，changed=96 全部在允许面（01-scope.log）；forbiddenFiles 五规则（含 GAP-DIGEST-01.md 禁入与 vcpkg/**）零命中。",
+    "T39-a2 GAP 本体冻结：git diff --exit-code e5364bd6c..2fe4cd4fe -- reuse/extensions/GAP-DIGEST-01.md exit 0 零改动——未批准状态、B30 证据与 oracle 冻结向量原样。",
+    "T39-a1 供给核验独立实读（非仅核对附件）：vcpkg/ports/boost-hash2/vcpkg.json 实读 version=1.92.0、license=BSL-1.0；portfile.cmake 实读 vcpkg_from_github SHA512=1555de1c8c0e…da17ef（与 supply-boost-hash2.txt 及 README 摘录逐字吻合）；vcpkg/ports/openssl/vcpkg.json 实读 version=3.6.5、port-version=1、license=Apache-2.0。安装状态核验：vcpkg/installed/x64-windows/share 与 include 下 grep hash2/openssl 零命中（未安装，exit 1 符合申报）——与 GAP:6『仅 port 在案』纪律一致，未编造 API/签名。",
+    "T39-a1 audit-only 零产品改动：b4f2d529c（[WP-15-T39]）提交面实测 6 文件全为治理/凭证/证据（changes/REUSE-T39.json、tasks/REUSE-T39.json、traceability/reuse/REUSE-T39/ 四件），零产品源码/CMake/依赖安装；changes/REUSE-T39.json files=[]（audit-only 凭证语义）。",
+    "T39-a2 冻结面扩展：范围内 Digest.cpp/Digest.hpp（T15 FNV/Identity 与 F-965 公开 hash 所在核心）零改动（git diff exit 0）；gap-digest-01-attachment.md 冻结面声明（Digest.cpp 自持 FIPS、Digest.hpp 私有状态、core/CMakeLists.txt、DigestTest.cpp、units/core.md §3.2/D-05）与 diff 事实一致；『摘要产品替换单列待批准后子任务』在契约 acceptance 与附件均在案，无自批。",
+    "T39-a3 oracle 约定登记：契约 acceptance 第 3 条＋附件『获批后 oracle 约定』节引用 GAP:8-11 原文条款（内容 SHA 字节完全不变、B30 oracle.py＋跨平台黄金数据＋分块无关＋finalize 禁复用；性能以真实批次与原基线比较），登记完整。",
+    "ownerDecision 形态：待所有者裁决三项（成熟依赖选择与安装验证范围/core 依赖面变更与私有状态替换/ABI 与验收面）与 GAP 待确认清单衔接，未因核验视为已批——降级口径（migration §13.4『某提案受阻只停止相关改动』）与 REUSE-T27/verification.json 先例同型，合规。",
+    "提交链与共同面：b4f2d529c [WP-15-T39] 前缀合规，与 10fd0a130/616823ccf/2fe4cd4fe 构成一包一组（commit-lint -Range 全区间 exit 0）；ird_gates 零命中、上游/vcpkg 零改动、runtime 唯一模型 owner 红线（本批零产品改动，无模型对象写入面）等共同证据与 T37/T38 记录共享。",
+    "FAIL 项：REUSE-T39 verify 第 2 条 validate-docs -TaskFile @('REUSE-T37.json','REUSE-T38.json','REUSE-T39.json') 在送验 HEAD 实测 exit 1，唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log——范围外 base 提交 e5364bd6c（[WP-13-T36]）误改绑定所致（681754d3 为脚本 Digest 口径正确值，被换成无法复现的 f38b31ff）。完整定界、责任溯源与受控诊断（修复后 validate-reuse 全量 PASS functions=1800）见 02-validate-reuse-blocker-and-diag.txt。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T39.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head 2fe4cd4fe8170b03a1d206d4ac12a87b7def331c", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "gap-frozen", "command": "git diff --exit-code e5364bd6c..2fe4cd4fe -- RobWork/doc/industrial-robot-design/reuse/extensions/GAP-DIGEST-01.md", "exitCode": 0, "passed": true },
+    { "name": "port-supply-recheck", "command": "grep version/license boost-hash2 与 openssl 的 vcpkg.json、portfile SHA512；ls vcpkg/installed/x64-windows/{share,include} 核未安装", "exitCode": 0, "passed": true, "log": "03-port-supply-recheck.txt（实读要点与附件一致性）" },
+    { "name": "t39-commit-audit-only", "command": "git show b4f2d529c --stat（6 文件全治理/证据，零产品）", "exitCode": 0, "passed": true },
+    { "name": "digest-fnv-frozen", "command": "git diff --exit-code e5364bd6c..2fe4cd4fe -- core/src/Digest.cpp core/include/sdurws/ird/core/Digest.hpp", "exitCode": 0, "passed": true },
+    { "name": "validate-docs-threetasks", "command": "pwsh -NoProfile -File validate-docs.ps1 -TaskFile @('REUSE-T37.json','REUSE-T38.json','REUSE-T39.json')（经由 validate-reuse）", "exitCode": 1, "passed": false, "log": "../REUSE-T37-20261025-r1/06-validate-docs-threetasks.log" },
+    { "name": "validate-reuse-blocker-diagnosis", "command": "validate-reuse 复跑（主树 exit 1 REUSE-POSITIVE；TEMP 诊断 worktree 仅回改范围外 REUSE-T33 绑定后 exit 0 全量 PASS functions=1800，验后删除）", "exitCode": 0, "passed": true, "log": "02-validate-reuse-blocker-and-diag.txt" }
+  ],
+  "executionNotes": [
+    "validate-reuse 的 -Head 冻结树模式不可用于本现场：catalog upstream/inputs 绑定含 vcpkg/installed 未跟踪文件（REUSE-MISSING eigen3 头实测），故主树以无 -Head 模式复跑（失败复现）并以临时 worktree＋按需补两枚被引用 eigen 头完成受控诊断。",
+    "诊断修改仅限 TEMP worktree 内三处（production-rpy.json normal.log 绑定＋modeling.json/verification.json 两处文件级绑定），未触碰主仓库任何文件；worktree 已 remove＋prune。"
+  ],
+  "issues": [
+    "ACC-BLOCKER（范围外根因，同 REUSE-T37/T38 记录）：validate-docs 三契约（REUSE-T39 verify 第 2 条）在 2fe4cd4fe 实测 exit 1，唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log；base 提交 e5364bd6c（[WP-13-T36]）将 production-rpy.json normal.log 绑定误改为 f38b31ff…（正确值为脚本 Digest 口径实测 681754d3c2f694fc…）。可执行修复：normal.log sha256 回改 681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d7fe80cfd6，级联 functions/modeling.json 与 REUSE-T33/verification.json 的 production-rpy.json 文件级绑定（7db05648…→622e67eb9d98513f…，诊断实测）；修复后本契约 verify 第 2 条即绿，audit-only 各项已全部实测通过。",
+    "送验声明核对（同 T37 记录 issues 第 2 条）：2fe4cd4fe 提交信息声称 validate-docs 三契约『随后终检』，实测同 HEAD exit 1；要求实施方在修复提交中如实登记。"
+  ],
+  "notRun": [],
+  "limitations": "本记录仅覆盖 REUSE-T39/WP-15 批次C 送验范围。port 核验为在案性/版本/许可证/来源固定/未安装状态的实读核对；安装后 API 面/跨平台行为按 GAP 纪律未核（不在本批范围）。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399）；本核验与附件不构成 GAP-DIGEST-01 任何批准。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/02-validate-reuse-blocker-and-diag.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1/03-port-supply-recheck.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T39-20261025-r1.json"
+  ]
+}

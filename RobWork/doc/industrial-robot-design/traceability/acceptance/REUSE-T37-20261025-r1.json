@@ -1,0 +1,85 @@
+{
+  "taskId": "REUSE-T37",
+  "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+  "reviewedCommit": "2fe4cd4fe8170b03a1d206d4ac12a87b7def331c",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-25T19:20:04.601423+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "WP-15 单次验收子智能体（独立验收·WP-15·第1轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入三个验收产物目录与三份记录外未修改任何文件、未提交、未切分支、未改任务状态；诊断用临时 worktree（TEMP 下，仅范围外 REUSE-T33 绑定回改验证）验后已删除，主仓库零改动、零远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 e5364bd6c..2fe4cd4fe 送验 WP-15 批次A（core 基础数值收口，三契约包的第 1 批，与 T38/T39 同轮验收）：verify-task-scope 显式 Base/Head 三契约复跑、九对 baseline/postfix gtest XML 逐 testcase 比对、core_test 真实复跑、ird_gates 引擎直跑、changes 凭证 Digest 核对、validate-task/validate-reuse 复跑（发现范围外绑定失配阻断并以受控诊断定界）、Units.cpp/Deg2Rad 红线核验、提交链与工作区。",
+  "counts": {
+    "failed": 1,
+    "passed": 9,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查（1 项 fail＝validate-task 在送验 HEAD 必红，范围外根因）；测试计数另列 integrationTest，互不相加"
+  },
+  "checks": [
+    "范围：verify-task-scope -TaskFile REUSE-T37.json -Base e5364bd6c -Head 2fe4cd4fe exit 0，changed=96 全部在允许面（01-scope.log）；forbiddenFiles 四规则未命中。",
+    "T37-a1 产品改动核对：Compare.hpp 补 #include <cmath>，Tolerance::make 两自持表达式（x==x && x-x==0）换 std::isfinite；Compare.cpp closeWithin inputsFinite 换 std::isfinite(value)&&std::isfinite(reference)；语义等价论据（NaN 破坏自等、±Inf 自差非零）写入两处注释；diff 确认 C4 公式主体与 T21 同时溢出 Boost 分支零改动。",
+    "T37-a1/a2 数值 oracle 独立比对：九对 baseline/postfix XML 以脚本逐 testcase（classname.name|status|failure 计数）比对全部 EQUAL（02-baseline-postfix-xml-diff.txt），合计 tests=1393 failures=0 errors=0；skipped=3（OptPanelGui/ContractSuite.ChildProcessWorker/SelPanelGui 各 1，环境性，改前改后同集）；关键断言 CompareFormula.NonFiniteInputsFalse_UT_UNIT、FractionRejectedScalingCases_UT_UNIT、FiniteOverflowBoundary_UT_UNIT、ToleranceMake.Validation_UT_UNIT 在 postfix 中 status=run fail=0（03/04 证据）。",
+    "T37-a2 数值真实复跑：cmake --build build --config Release --target sdurws_ird_core sdurws_ird_core_test exit 0；PATH 前置框架/vcpkg DLL 后真实运行 sdurws_ird_core_test.exe，74 tests 全 PASSED exit 0，XML 落盘（05-acc-core-test.xml tests=74 failures=0），与 postfix 同计数——送验 head 树数值行为复验通过。",
+    "T37-a2 消费者面与冒烟（引用原始证据＋核对）：六单元九目标 postfix XML 原件在案（REUSE-T37/）；规范冒烟（vcpkg toolchain＋Qt＋RobWork_DIR＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME）configure 成功、smoke core_test XML 71/71；裸冒烟失败（modeling:383 find_package(RobWork) 断供）以 wp15-t37-smoke-bare-fail.log 如实留痕；head 与 base 的 Compare.hpp 条件编译均 3 处（实测 grep -c 相等），本批未引入双模式条件包含。",
+    "T37-a3 凭证与矩阵：changes/REUSE-T37.json 两文件 sha256 与 head 树逐一 MATCH（Compare.hpp/Compare.cpp，实测 git show|sha256sum）；core.json/testkit.json 的 FRESHNESS/COVERAGE/inputs 全链机器核查由 validate-reuse 覆盖——主树跑被范围外 REUSE-POSITIVE 遮断（modeling.json 先于 testkit.json），以受控诊断 worktree（仅回改范围外 REUSE-T33 绑定）实测 validate-reuse 全量 PASS（functions=1800 changed=108）证明送验树上本包治理数据机器绿（证据见 REUSE-T39 目录 02 文件第 4/5 节）。",
+    "T37-a4 Deg2Rad 红线：范围内 Units.cpp 零改动（git diff exit 0）；实读 RobWork/RobWork/src/rw/math/Constants.hpp:31 const double Pi、:40 const double Deg2Rad = Pi/180（非 constexpr，候选结构不可落地论据成立）；实读 core/src/Units.cpp:31 constexpr UnitRow kUnitTable[]（冻结表）——保留登记＋所有者待裁决口径与实测一致。",
+    "门禁与红线：ird_gates 引擎直跑 exit 0，R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中（07-ird-gates.log）；范围 diff 无 cmake/ 门禁文件、无上游 RobWork/RobWork|RobWorkSim/src 与 vcpkg/ 文件（count=0）、无 migration.md/policy.md/ARCHITECTURE.md、无 UI-T53 closures 冻结路径（Import.cpp/Template.cpp/TemplateTest.cpp/RpyMath.hpp，diff exit 0）、无 Digest.cpp/.hpp 与 JsonLite.cpp；H2 无平行实现回流（isfinite 为标准库原语替换等价自持式，非重写上游核心）。",
+    "提交链：一包一组——10fd0a130 [WP-15-T37]（本批）＋616823ccf [WP-15-T38]＋b4f2d529c [WP-15-T39]＋2fe4cd4fe [governance] scope 收口，4 提交全部合规（commit-lint -Range exit 0，08-commit-lint.log）；工作区 41 项 untracked 全部位于 traceability/（历史会话验收留痕与 REUSE-T33 旧产物），跟踪文件零修改、无产品源码未提交改动（untracked-product-src=0）。",
+    "FAIL 项：validate-task -TaskFile REUSE-T37.json 在送验 HEAD 实测 exit 1——REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log（validate-task:137 转抛内嵌 validate-reuse 失败）。定性与可执行修复见 REUSE-T39-20261025-r1.json issues 与 02-validate-reuse-blocker-and-diag.txt：绑定 f38b31ff 由范围外 base 提交 e5364bd6c（[WP-13-T36]）写入，实测 681754d3 才为脚本 Digest 口径正确值；T37 契约 verify 第 1 条因此无法在送验 SHA 上通过，且送验侧未登记该阻断。"
+  ],
+  "integrationTest": {
+    "coreTest": {
+      "tests": 74,
+      "passed": 74,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "05-acc-core-test.xml",
+      "note": "验收员在送验 head 树增量构建后真实复跑；九目标改前/改后 1393/0/3 同集以九对 XML 逐 testcase 比对成立（02 证据）"
+    }
+  },
+  "smokeEvidence": {
+    "reviewedOnly": true,
+    "configure": "wp15-t37-smoke-configure.log 配置成功（GOV-T24 标准配方）",
+    "coreTest": "smoke-sdurws_ird_core_test.xml tests=71 failures=0（与集成 74 差 3 例＝IRD_CORE_HAS_RW_Q 既有条件编译 Q 重载用例，两模式如实分记）",
+    "bareSmoke": "wp15-t37-smoke-bare-fail.log 如实留痕（modeling:383 find_package(RobWork) 断供）；本批无双模式条件包含引入（base/head 条件编译均 3 处实测相等），评审担心的两分支位模式漂移不成立"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head 2fe4cd4fe8170b03a1d206d4ac12a87b7def331c", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "xml-nine-pairs-diff", "command": "pwsh（XML SelectNodes 逐 testcase 比对九对 baseline/postfix）", "exitCode": 0, "passed": true, "log": "02-baseline-postfix-xml-diff.txt" },
+    { "name": "key-assertions", "command": "pwsh（postfix XML 关键断言/notrun/skipped 抽取）", "exitCode": 0, "passed": true, "log": "03-key-assertions-and-notrun.txt、04-skipped-and-tolerancemake.txt" },
+    { "name": "build-core", "command": "cmake --build build --config Release --target sdurws_ird_core sdurws_ird_core_test", "exitCode": 0, "passed": true },
+    { "name": "run-core-test", "command": "sdurws_ird_core_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin|libs/Release＋RobWorkStudio/bin/Release＋vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "05-acc-core-test.log", "xml": "05-acc-core-test.xml" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T37.json", "exitCode": 1, "passed": false, "log": "06-validate-docs-threetasks.log（三契约联合跑首次捕获；单契约复跑同样 exit 1）" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "07-ird-gates.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10..2fe4cd4fe8170b03a1d206d4ac12a87b7def331c", "exitCode": 0, "passed": true, "log": "08-commit-lint.log" },
+    { "name": "frozen-zero-diffs", "command": "git diff --exit-code e5364bd6c..2fe4cd4fe -- Units.cpp、JsonLite.cpp、Digest.cpp/.hpp、industrialrobot/cmake/、GAP-DIGEST-01.md、migration.md、policy.md、ARCHITECTURE.md、UI-T53 冻结四路径、RobWork/RobWork/src、RobWork/RobWorkSim/src、vcpkg/", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "第 5 步 core_test 首跑后核验 XML 计数时因上一命令 cd 落在 build/RobWorkStudio/bin/Release 导致相对路径未命中，回到仓库根重跑核对，测试本体未重复执行（XML 与 log 为同一次真实运行原件）。",
+    "validate-task 首次失败后未重跑无关全库夹具：以 validate-reuse 源码实读定位 REUSE-POSITIVE 检查链（CheckBinding Digest 口径），用脚本同口径独立复算 final.log 摘要，并在 TEMP 临时 worktree 做受控回改诊断定界；诊断树已删除，主仓库零改动。"
+  ],
+  "issues": [
+    "ACC-BLOCKER（范围外根因，修复后在送验 SHA 或其后代上复验即可转绿）：validate-task -TaskFile REUSE-T37.json 在 2fe4cd4fe 实测 exit 1，唯一失败点 REUSE-POSITIVE : RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/final.log。根因：base 提交 e5364bd6c（[WP-13-T36]，非本包 96 文件）将 production-rpy.json normal.log 绑定由 681754d3c2f694fc…（实为脚本 ReadText+Digest 口径正确值，验收员独立复算证实）改为无法由现树任何口径导出的 f38b31ffa2d6387…。可执行修复（后续 governance 提交）：production-rpy.json normal.log sha256 回改 681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d7fe80cfd6，并级联 functions/modeling.json 与 REUSE-T33/verification.json 中 production-rpy.json 文件级绑定（7db05648…→回改后 Digest 622e67eb9d98513f…，已在诊断 worktree 实测 validate-reuse 全量 PASS）；随后 REUSE-T37 verify 第 1 条即绿，本包其余各项已全部实测通过。",
+    "送验声明核对：2fe4cd4fe 提交信息声称「commit-lint全区间与validate-docs三契约随后终检」，实测 validate-docs 三契约在同 HEAD exit 1（上项阻断）——终检不可能通过，要求实施方在修复提交中如实登记该阻断与终检实况，不得以未通过的终检充当验证证据。"
+  ],
+  "notRun": [],
+  "limitations": "本 PASS 面仅覆盖 REUSE-T37/WP-15 批次A 送验范围（e5364bd6c..2fe4cd4fe）内 T37 相关检查；fail 由范围外 base 提交引入的 REUSE-T33 production 绑定失配所致（T37/T38/T39 共用同一 validate-reuse 入口，三契约同受累），WP-15 自身代码、数值行为、矩阵与凭证经实测（含受控诊断全量 validate-reuse PASS）无发现问题。validate-reuse 仍为 governance only（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或 REUSE-T02 放行；Deg2Rad 物理换用与 Units isfinite 简化、Evaluation 8 行均为在案所有者待裁决项，不在本验收授权内。冒烟证据为实施方原件核对（reviewedOnly），未重建冒烟树。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/02-baseline-postfix-xml-diff.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/03-key-assertions-and-notrun.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/04-skipped-and-tolerancemake.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/05-acc-core-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/05-acc-core-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/06-validate-docs-threetasks.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/07-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1/08-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T37-20261025-r1.json"
+  ]
+}

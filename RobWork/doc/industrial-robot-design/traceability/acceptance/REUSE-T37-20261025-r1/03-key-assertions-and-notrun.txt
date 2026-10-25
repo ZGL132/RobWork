@@ -1,0 +1,4 @@
+NOTRUN_TOTAL=0
+KEY CompareFormula.NonFiniteInputsFalse_UT_UNIT status=run fail=0
+KEY CompareFormula.FractionRejectedScalingCases_UT_UNIT status=run fail=0
+KEY CompareFormula.FiniteOverflowBoundary_UT_UNIT status=run fail=0

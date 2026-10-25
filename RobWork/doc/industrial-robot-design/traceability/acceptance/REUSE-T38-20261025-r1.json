@@ -1,0 +1,84 @@
+{
+  "taskId": "REUSE-T38",
+  "baseCommit": "e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10",
+  "reviewedCommit": "2fe4cd4fe8170b03a1d206d4ac12a87b7def331c",
+  "branch": "redesign-main",
+  "verdict": "fail",
+  "createdAt": "2026-10-25T19:20:04.601423+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "WP-15 单次验收子智能体（独立验收·WP-15·第1轮）",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型），实施者不得自签。",
+    "constraints": "未参与实施；除写入三个验收产物目录与三份记录外未修改任何文件、未提交、未切分支、未改任务状态；诊断用临时 worktree 验后已删除，主仓库零改动、零远程操作；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 e5364bd6c..2fe4cd4fe 送验 WP-15 批次B（io 工具收口：JSON/CSV 双通道 UTF-8 DFA 与 mapSystemError 合流至 io 单元私有共享头，三契约包的第 2 批，与 T37/T39 同轮验收）：scope 复跑、DFA 表与 mapSystemError 三方归一化独立比对（base Json.cpp/base Csv.cpp/head IoUtf8.hpp）、io 测试真实复跑、两对 XML 比对、差异语义与流式推进逐项核对、JsonLite 零触碰、凭证表述与代码一致性、提交链与工作区。",
+  "counts": {
+    "failed": 2,
+    "passed": 8,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "10 项验收检查（2 项 fail＝validate-task 送验 HEAD 必红【范围外根因，同 T37】＋changes 凭证 utf8Step 表述与代码不符）；测试计数另列 integrationTest"
+  },
+  "checks": [
+    "范围：verify-task-scope -TaskFile REUSE-T38.json -Base e5364bd6c -Head 2fe4cd4fe exit 0，changed=96 全部在允许面（01-scope.log）。",
+    "T38-a1 合流等价独立核验（验收员重做，非引用实施方 dfa-table-merged-equal.txt）：从 base 提取 Json.cpp/Csv.cpp 各自 kUtf8Dfa 表体与 mapSystemError 函数体，与 head IoUtf8.hpp 三方归一化（剥注释与空白）比对——表体 sha256 前 16 位 716ff003321bf151（1084 字符）三方一致，mapSystemError 前 16 位 effbbc7af3b1f894（449 字符）三方一致（03-dfa-map-threeway-check.txt）；首跑 len 差 6 字符恰为共享头声明行 inline 修饰符，排除声明行后逐字节一致。共享头位于 io/src/（不入 include/ 公共头根，R-2 红线实测路径成立），符号 inline 单实体。",
+    "T38-a3 构建与真实复跑：cmake --build build --config Release --target sdurws_ird_io sdurws_ird_io_test sdurws_ird_io_contract_test exit 0；PATH 前置框架/vcpkg DLL 后真实运行 sdurws_ird_io_test.exe（132 tests 全 PASSED exit 0）与 sdurws_ird_io_contract_test.exe（9 tests 全 PASSED exit 0），XML 落盘（04-acc-io-test.xml/04-acc-io-contract-test.xml）。",
+    "T38-a3 行为等价 oracle：两对 baseline/postfix XML 逐 testcase 比对全部 EQUAL（io_test 132、io_contract_test 9，02-baseline-postfix-xml-diff.txt）；既有编码黄金向量（超长/代理区/U+10FFFF/BOM/悬空续字节，CsvEncoding/JsonEncoding 族）含于 132 项且合流前后同集同果。",
+    "T38-a2 矩阵与 COVERAGE：io.json FRESHNESS/COVERAGE/inputs 全链机器核查通过——主树 validate-reuse 虽被范围外 REUSE-POSITIVE 遮断，但 functions/*.json 枚举序 core<…<io<…<modeling，io.json 在 throw 前已通过；受控诊断 worktree（仅回改范围外 REUSE-T33 绑定）实测全量 validate-reuse PASS（functions=1800），含 testkit.json 等被遮断单元。受限 JSON parser 主体按矩阵逐符号解决、非整文件豁免，与 io.json 实际行一致（诊断全绿佐证）。",
+    "T38-a4 零触碰面：范围内 testkit/JsonLite.cpp 零改动（git diff exit 0），『转义/代理对语义与 io appendUtf8 潜在重叠』已按表述登记 WP-19（README 在案）；ird_add_gtest 宏共享只登记处置，无实施越权。",
+    "差异语义抽查：JSON 仅 UTF-8/UTF-16 BOM 入口拒语义保持在 parseBytes 入口（Json.cpp 内注释与结构未移动，diff 确认仅删副本段与加 include）；CSV UTF-16LE/BE、流式 -2 状态、预算/回灌、SourceSpan 相关代码不在 diff 中（零改动）；mapSystemError 四分类与诊断码三方逐行一致（03 证据）。",
+    "凭证 Digest：changes/REUSE-T38.json 三文件 sha256 与 head 树逐一 MATCH（IoUtf8.hpp/Json.cpp/Csv.cpp 实测）。",
+    "FAIL 项一（范围外根因，同 T37）：validate-task -TaskFile REUSE-T38.json 在送验 HEAD 实测 exit 1，REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log；修复见 REUSE-T39 目录 02 证据与 REUSE-T37 记录 issues 第 1 条。",
+    "FAIL 项二（凭证表述失实）：changes/REUSE-T38.json Csv.cpp boundary 与 REUSE-T38 README 及 Csv.cpp:99 注释声称「nextUtf8 流式状态转移改经 utf8Step（推进表达式与原内联式逐字相同）」，实测 head Csv.cpp:399 仍为内联 m_utf8State = kUtf8Dfa[256 + m_utf8State + kUtf8Dfa[b]]，与 base:428 逐字相同——流式推进零改动、仅 DFA 表引用换共享头 inline 表，并未调用 utf8Step（utf8Step 仅被 strictUtf8Check 使用）。行为完全等价（三方表体一致＋132+9 全绿佐证），但逐文件凭证 boundary 必须如实（H6 纪律），须修正该三处表述。"
+  ],
+  "integrationTest": {
+    "ioTest": {
+      "tests": 132,
+      "passed": 132,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "04-acc-io-test.xml",
+      "note": "验收员在送验 head 树增量构建后真实复跑"
+    },
+    "ioContractTest": {
+      "tests": 9,
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "04-acc-io-contract-test.xml"
+    }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json -Base e5364bd6ca0000eae7a1d6f394ca63ba2e79ba10 -Head 2fe4cd4fe8170b03a1d206d4ac12a87b7def331c", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "xml-two-pairs-diff", "command": "pwsh（XML 逐 testcase 比对两对 baseline/postfix）", "exitCode": 0, "passed": true, "log": "02-baseline-postfix-xml-diff.txt" },
+    { "name": "dfa-map-threeway", "command": "git show base:Json.cpp/base:Csv.cpp/head:IoUtf8.hpp 提取＋归一化 sha256 三方比对", "exitCode": 0, "passed": true, "log": "03-dfa-map-threeway-check.txt" },
+    { "name": "build-io", "command": "cmake --build build --config Release --target sdurws_ird_io sdurws_ird_io_test sdurws_ird_io_contract_test", "exitCode": 0, "passed": true },
+    { "name": "run-io-tests", "command": "sdurws_ird_io_test.exe 与 sdurws_ird_io_contract_test.exe --gtest_output=xml:（PATH 前置框架/vcpkg DLL）", "exitCode": 0, "passed": true, "log": "04-acc-io-test.log、04-acc-io-contract-test.log", "xml": "04-acc-io-test.xml、04-acc-io-contract-test.xml" },
+    { "name": "validate-task", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T38.json", "exitCode": 1, "passed": false, "log": "/tmp/vt-T38.log（REUSE-POSITIVE 阻断，同 T37 根因）" },
+    { "name": "jsonlite-frozen", "command": "git diff --exit-code e5364bd6c..2fe4cd4fe -- testkit/src/JsonLite.cpp", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "三方比对首次以含声明行口径提取出现 6 字符 len 差（inline 修饰符），修正提取口径（自 { 行起、排除声明行）后三方逐字节一致；两次原始输出均保留在 03 证据文件中以便复核。",
+    "Csv.cpp nextUtf8 表述核对：head:399 与 base:428 推进表达式逐字相同（git show 实读），推翻凭证『改经 utf8Step』表述，记为 FAIL 项二。"
+  ],
+  "issues": [
+    "ACC-BLOCKER（范围外根因，同 REUSE-T37 记录 issues 第 1 条）：validate-task -TaskFile REUSE-T38.json 在 2fe4cd4fe 实测 exit 1，唯一失败点 REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log；base 提交 e5364bd6c（[WP-13-T36]）误改绑定所致。可执行修复：production-rpy.json normal.log sha256 回改 681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d7fe80cfd6，级联 functions/modeling.json 与 REUSE-T33/verification.json 的 production-rpy.json 文件级绑定（诊断实测修复后 validate-reuse 全量 PASS）；修复后 T38 verify 第 1 条即绿。",
+    "凭证表述修正：changes/REUSE-T38.json 中 Csv.cpp 条目的 boundary『nextUtf8流式推进改经utf8Step（表达式逐字相同）』、traceability/reuse/REUSE-T38/README.md 第 3 点同表述、Csv.cpp:97-99 注释『DecodedStream 的流式状态转移经 utf8Step 推进』——实测流式推进表达式零改动（base:428=head:399 逐字相同，内联 kUtf8Dfa[256+state+kUtf8Dfa[b]]），仅 DFA 表/kUtf8Reject 引用换共享头 inline 表。三处表述修正为『流式推进零改动、表引用换共享头』（文档/注释级修正，可与上项阻断修复同一 governance 提交顺带，不需要产品行为改动）。"
+  ],
+  "notRun": [],
+  "limitations": "本记录仅覆盖 REUSE-T38/WP-15 批次B 送验范围；io 测试为验收员真实复跑（132+9），冒烟面无 io 冒烟树要求（契约 verify 为集成三目标）。validate-reuse 在送验 HEAD 的失败与受控诊断全量 PASS 的完整定界见 REUSE-T39-20261025-r1/02-validate-reuse-blocker-and-diag.txt。io.json 的机器核查在主树被 modeling.json 遮断前的执行顺序基于 validate-reuse/reuse-contract.ps1 源码实读（ReuseFiles 枚举序）与诊断 worktree 全量 PASS 双重佐证。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/02-baseline-postfix-xml-diff.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/03-dfa-map-threeway-check.txt",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/04-acc-io-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/04-acc-io-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/04-acc-io-contract-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1/04-acc-io-contract-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T38-20261025-r1.json"
+  ]
+}

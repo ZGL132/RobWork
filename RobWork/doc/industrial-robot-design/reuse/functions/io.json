@@ -62,7 +62,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -121,7 +121,7 @@
       ],
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -187,7 +187,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -253,7 +253,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -319,7 +319,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -385,7 +385,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -451,7 +451,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -517,7 +517,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口；不批准保留手写解析核之外的上游替换，不扩大owner权限；语义实审仍由独立验收核对。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -583,7 +583,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口：流式UTF-8透传/整组放行/-2拒绝语义保持自持；Csv副本删除由CSV map行删除承载。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -649,7 +649,7 @@
       "auditBoundary": "REUSE-T38文件触碰的行覆盖收口：BOM判定字节序/代理对合成/四形态编码/RFC3629边界语义保持自持。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -715,7 +715,7 @@
       "auditBoundary": "REUSE-T38合流实审：系统错误映射唯一实现点（io单元内）；行覆盖由本行承载map区段，文件其余由声明区行承载。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -943,7 +943,7 @@
       "auditBoundary": "REUSE-T38新增文件的行覆盖收口；语义实审由strictUtf8Check/mapSystemError/table行承载。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -989,7 +989,7 @@
       "auditBoundary": "REUSE-T38合流等价oracle的表体承载行；逐字节一致证据见REUSE-T38 README与dfa-table-merged-equal.txt。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -1871,7 +1871,7 @@
       "auditBoundary": "REUSE-T38触碰文件的行覆盖收口；区段归属≠语义完备（独立验收核对）。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     },
     {
@@ -2008,7 +2008,7 @@
           "qualifiedSymbol": "Csv.cpp 文件头/常量/解码/写出与未逐功能登记区段 区段",
           "startLine": 96,
           "endLine": 100,
-          "sha256": "19eb63cb334a9c2a1a2ef417a35dcc28714e41e5219a33aa396983e8f3150cbe"
+          "sha256": "b831c1efd28cc3d0626bfdae96013ff4b47c24a36939d1f3e471161f384b9e15"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/io/src/Csv.cpp",
@@ -2897,7 +2897,7 @@
       "auditBoundary": "REUSE-T38触碰文件的行覆盖收口；区段归属≠语义完备（独立验收核对）。",
       "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T38/README.md",
-        "sha256": "3fa54f757785a6a55e9be82fc629638921e5e024e91b8eb6f6fb352e045ee1c1"
+        "sha256": "891ebebbe3b40bff4fd948aad89d5581d198107b22aeebfd122814b3a3aa94df"
       }
     }
   ]

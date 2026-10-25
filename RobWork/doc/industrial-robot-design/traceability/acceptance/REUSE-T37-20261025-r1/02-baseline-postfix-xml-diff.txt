@@ -1,0 +1,10 @@
+EQUAL baseline-sdurws_ird_core_test.xml (tests=74 failures=0 errors=0 disabled=0 -> tests=74 failures=0 errors=0 disabled=0) testcase 对象=74
+EQUAL baseline-sdurws_ird_optimization_contract_test.xml (tests=52 failures=0 errors=0 disabled=0 -> tests=52 failures=0 errors=0 disabled=0) testcase 对象=52
+EQUAL baseline-sdurws_ird_optimization_test.xml (tests=215 failures=0 errors=0 disabled=0 -> tests=215 failures=0 errors=0 disabled=0) testcase 对象=215
+EQUAL baseline-sdurws_ird_runtime_test.xml (tests=312 failures=0 errors=0 disabled=0 -> tests=312 failures=0 errors=0 disabled=0) testcase 对象=312
+EQUAL baseline-sdurws_ird_selection_contract_test.xml (tests=64 failures=0 errors=0 disabled=0 -> tests=64 failures=0 errors=0 disabled=0) testcase 对象=64
+EQUAL baseline-sdurws_ird_selection_test.xml (tests=293 failures=0 errors=0 disabled=0 -> tests=293 failures=0 errors=0 disabled=0) testcase 对象=293
+EQUAL baseline-sdurws_ird_testkit_test.xml (tests=121 failures=0 errors=0 disabled=0 -> tests=121 failures=0 errors=0 disabled=0) testcase 对象=121
+EQUAL baseline-sdurws_ird_trajectory_contract_test.xml (tests=69 failures=0 errors=0 disabled=0 -> tests=69 failures=0 errors=0 disabled=0) testcase 对象=69
+EQUAL baseline-sdurws_ird_trajectory_test.xml (tests=193 failures=0 errors=0 disabled=0 -> tests=193 failures=0 errors=0 disabled=0) testcase 对象=193
+MISMATCH_FILES=0

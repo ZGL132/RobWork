@@ -1,0 +1,27 @@
+validate-reuse 全量机器核查在送验 HEAD 上的真实状态（验收员实测）：
+
+1. 阻断事实：validate-reuse / validate-task(T37/T38/T39) / validate-docs(三契约) 均以
+   exit 1 失败，唯一失败点＝REUSE-POSITIVE : traceability/reuse/REUSE-T33/final.log
+   ——production-rpy.json normal 绑定 sha256=f38b31ff…，而 final.log（树内/工作树同）
+   脚本 Digest 口径实测＝681754d3c2f694fc…。绑定与内容失配。
+2. 责任溯源：绑定 f38b31ff 由送验范围之外、本包 base 提交 e5364bd6c（[WP-13-T36]
+   2026-10-25 17:23）写入；其提交信息声称原值 681754d3 为"重生成前陈旧值…致
+   HEAD 上 validate-docs 必红"，实测相反——681754d3 恰为脚本 ReadText+Digest 口径
+   下树内 final.log 的正确摘要（验收员以脚本同口径独立复算证实），f38b31ff 无法由
+   任何口径从现树内容导出（原始字节 sha256 工作树=e4b31849…、树内=837f7e8e…、
+   Digest 口径=681754d3…三口径均≠f38b31ff）。该提交将正确绑定改错。
+3. 范围归因：96 文件送验 diff 不含 REUSE-T33 任何文件（git diff --stat 全列核对）；
+   REUSE-T33/final.log 内容自 01b770ae6 后零改动。非 WP-15 引入。
+4. 遮断范围：CheckFunctions 按 functions/*.json 枚举序执行，throw 于 modeling.json
+   （REUSE-T33 行）——core.json/io.json 及此前所有单元矩阵已通过；testkit.json 及
+   之后单元被遮断未执行。
+5. 受控诊断（临时 worktree，主仓库零改动，验后已移除）：仅将 production-rpy.json
+   normal.log 绑定回改为 681754d3…并级联 modeling.json/verification.json 两处
+   production-rpy.json 文件级绑定（7db05648→新 Digest 622e67eb…）后，validate-reuse
+   全量 PASS（governance only；functions=1800 closedFiles=1 changed=108 DEBT=16
+   UNRESOLVED=1399；REUSE-AD-PENDING 为既有 AD 审计 pending 提示，GOV-T24 先例同判
+   非阻断）。证明送验 HEAD 上 WP-15 自身全部治理数据机器绿，唯一红灯即上项绑定。
+6. 可执行修复（后续 governance 提交，非本验收授权动作）：production-rpy.json
+   normal.log sha256 回改 681754d3c2f694fc1a012b499bdfff1d4c3d5eb5a59febad4cf8c4d
+   7fe80cfd6，并同步 modeling.json 与 REUSE-T33/verification.json 中 production-rpy
+   .json 的文件级绑定 Digest；随后 validate-docs 三契约即绿。
