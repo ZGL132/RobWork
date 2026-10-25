@@ -1,0 +1,18 @@
+Note: Google Test filter = CollisionSessionNameRules.*:CollisionSessionUpstreamSemantics.*
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from CollisionSessionNameRules
+[ RUN      ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961
+[       OK ] CollisionSessionNameRules.RegexPrefixedNamesExcludeRuleMatchesLiteral_F961 (0 ms)
+[ RUN      ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961
+[       OK ] CollisionSessionNameRules.PlainDottedNamesPassThroughLiterally_F961 (0 ms)
+[----------] 2 tests from CollisionSessionNameRules (0 ms total)
+
+[----------] 1 test from CollisionSessionUpstreamSemantics
+[ RUN      ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961
+[       OK ] CollisionSessionUpstreamSemantics.RegexPrefixBoundaryExactlyFiveBytesStaysLiteral_F961 (0 ms)
+[----------] 1 test from CollisionSessionUpstreamSemantics (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 3 tests.

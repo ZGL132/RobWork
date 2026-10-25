@@ -25,7 +25,7 @@
     },
     {
       "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T33/production-rpy.json",
-      "sha256": "622e67eb9d98513f98affcb4a3229426b4040ed9a2c4daa40a8b65823f58ae24"
+      "sha256": "7db05648408b388878d2c30e91520d6dce3cf86ebd8f3c56009ec1149daca1fd"
     },
     {
       "path": "RobWork/RobWork/src/rw/math/RPY.hpp",

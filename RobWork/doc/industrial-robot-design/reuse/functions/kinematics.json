@@ -360,17 +360,27 @@
    "decision": "pending",
    "status": "pending",
    "search": {
-    "command": "rg -n \"splitmix64|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+    "command": "rg -n \"splitmix64|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S2/S4r/S7（rw::math::Random全表面、rw 64位随机反证、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：上游rw::math::Random为进程级全局boost::mt19937单例（Random.cpp:31）且seed(unsigned)入参32位截断（Random.cpp:53），无任务私有64位流/LHS——本函数64位任务私有流无上游直接等价入口"
    },
-   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：64位种子空间（上游seed(unsigned)天然32位，A06缺陷同型）、任务私有确定性序列（§3.4——全局单流被任意reseed污染）、多消费流独立——维持pending，实施归WP-19/后续精确子任务",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
      "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+     "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+     "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+    }
+   ],
+   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
   },
   {
    "functionId": "kinematics.streamSeedFor",
@@ -397,17 +407,27 @@
    "decision": "pending",
    "status": "pending",
    "search": {
-    "command": "rg -n \"streamSeedFor|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+    "command": "rg -n \"streamSeedFor|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S3/S4r/S7（QSampler种子面、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw::pathplanning::QSampler无种子参数（QSampler.cpp:104走Math::ranQ全局均匀采样），无任务私有64位流派生入口——(seed,index)二元组流种子派生无上游直接等价"
    },
-   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移",
+   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：流隔离（随机初值/采样/包络探针各自独立流，全局态互耦）、64位种子avalanche（A06）、§3.4确定性——维持pending，实施归WP-19/后续精确子任务",
    "inputs": [
     {
      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
      "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
     }
    ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+   "auditEvidence": [
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+     "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+    },
+    {
+     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+     "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+    }
+   ],
+   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
   },
   {
    "functionId": "kinematics.transposeOf",

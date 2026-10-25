@@ -1,0 +1,131 @@
+diff --git a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp
+index 64ad2088b..d6e2939a8 100644
+--- a/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp
++++ b/RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/src/CollisionEvaluator.cpp
+@@ -46,6 +46,7 @@
+ #include <map>
+ #include <set>
+ #include <stdexcept>
++#include <string>
+ #include <utility>
+ 
+ namespace sdurws::ird::policy {
+@@ -559,6 +560,77 @@ void expandRulesAndCheckConflicts(const EngineeringPolicySet& policy,
+     }
+ }
+ 
++// =====================================================================
++// F-961 单点字面适配（REUSE-T36/WP-13；findings F-961、B18 独验复现）：
++// 上游 ProximitySetupRule 无字面名 API——makeExclude/makeInclude 全部经
++// 构造函数 convertToRegEx 解释 pattern（ProximitySetupRule.hpp:147-178、
++// ProximitySetupRule.cpp:28-36），其 REGEX 约定分支会把 size>5 且前 5
++// 字节为 "REGEX" 的串去前缀直取正则；runtime 合法字符集允许此类完整名
++// （NameMap isLegalNameChar），直传原名产出无法匹配原对象的规则（F-961
++// 反例：REGEXarm 同前缀帧对 match=false）。适配只发生在传给上游的
++// pattern 串上：命中上游分支条件的名改传 "REGEX 前缀＋字面转义原名"，
++// 上游去一个前缀后余串为纯字面正则，regex_match 全匹配原名成立；其余
++// 名称原样透传（patternToRegEx 已字面化点号等——普通名行为零变化）。
++// 产品侧对象身份与名称映射保持原名真值，不重命名对象、不改上游
++// （H2/H4）、不建第二规则引擎；上游版本核对以矩阵上游引用为准。
++// =====================================================================
++
++/**
++ * @brief ECMAScript 正则特殊字符全集转义（字面化单点）。
++ *
++ * @param name [in] 待字面化的完整 runtime 名（UTF-8 窄串；可含任意字节
++ *                  ——名称经 IPolicyNameContext 注入，测试替身/宿主注入
++ *                  面不受 NameMap 合法字符集约束，故按全集转义而非仅
++ *                  点号）。
++ * @return 字面正则串：每个正则特殊字符（\\ ^ $ . * + ? ( ) [ ] { } |）
++ *         前置反斜杠，其余字节原样；regex_match 语义下恰匹配 name 本身。
++ *
++ * 覆盖面取上游 patternToRegEx（StringUtil.cpp:283-298）已转义集合再补
++ * 其未覆盖的 * + ? { }（REGEX 分支绕过 patternToRegEx，转义必须自足）；
++ * 反斜杠最先入表保证转义序列自身不被二次解释。
++ */
++std::string escapeRegexLiteral(const std::string& name)
++{
++    std::string literal;
++    literal.reserve(name.size() * 2);
++    for (const char c : name) {
++        switch (c) {
++        case '\\': case '^': case '$': case '.': case '*': case '+':
++        case '?': case '(': case ')': case '[': case ']': case '{':
++        case '}': case '|':
++            literal += '\\';
++            break;
++        default:
++            break;
++        }
++        literal += c;
++    }
++    return literal;
++}
++
++/**
++ * @brief 完整名 → 上游规则 pattern 的唯一适配点（F-961 修复）。
++ *
++ * @param name [in] 经名称上下文解析的完整 runtime 名。
++ * @return 上游 ProximitySetupRule pattern：名称命中上游 REGEX 分支条件
++ *         时返回 "REGEX"+字面转义原名（上游 convertToRegEx 去一个前缀后
++ *         余串为字面正则，regex_match 全匹配原名）；否则原样返回（上游
++ *         patternToRegEx 已按字面处理）。
++ *
++ * 分支条件与上游 convertToRegEx 的 REGEX 判定逐字镜像
++ * （ProximitySetupRule.cpp:30——size()>5 且前 5 字节=="REGEX"）；恰 5
++ * 字节全名 "REGEX" 走上游字面分支故透传（边界用例钉住）；上游若调整
++ * 该约定，此处镜像条件与回归用例须同批复核（矩阵 COLLISION 行
++ * differences 登记）。无失败路径（纯串变换，不抛）。
++ */
++std::string toUpstreamRulePattern(const std::string& name)
++{
++    if (name.size() > 5 && name.compare(0, 5, "REGEX") == 0) {
++        return "REGEX" + escapeRegexLiteral(name);
++    }
++    return name;
++}
++
+ }  // namespace
+ 
+ // =====================================================================
+@@ -744,10 +816,10 @@ CollisionEvaluationSession::buildPolicyProximitySetup(const IPolicyNameContext&
+         if (!isExclude && !isInclude) {
+             continue;   // 域默认必检对——无 RobWork 层规则（语义默认已含）
+         }
+-        // 完整名精确匹配（§6.4"规则经名称上下文以完整名精确匹配转为
+-        // RobWork 规则，不做模式拼接"——R-4：只转发解析结果，无任何前缀
+-        // 拼接/剥离）。解析失败＝场景 Frame↔对象 ID 断链（§7.5）→ 会话
+-        // 构建失败（POLICY-CLL-NAME-UNRESOLVED）——不猜测。
++        // 完整名经名称上下文解析为 runtime 名（解析失败＝场景 Frame↔对象
++        // ID 断链（§7.5）→ 会话构建失败（POLICY-CLL-NAME-UNRESOLVED）——
++        // 不猜测）。产品侧对象身份与名称映射保持原名真值（R-4：只转发
++        // 解析结果，无业务前缀拼接/剥离）。
+         const std::optional<std::string> nameA = names.tryRuntimeName(pair.objectA);
+         if (!nameA.has_value()) {
+             throw PolicyError(PolicyErrorCode::NameUnresolved,
+@@ -760,17 +832,19 @@ CollisionEvaluationSession::buildPolicyProximitySetup(const IPolicyNameContext&
+                               "会话构建：作用域对端 B 经名称上下文不可解析（§7.5——"
+                               "不猜测，ARC-04; obj=" + pair.objectB.toCanonical() + "）");
+         }
+-        // 精确名规则（非通配/正则模式——词面即完整名，regex 精确匹配语义
+-        // 下等价于全等；ProximitySetupRule 的 pattern 即完整名字面量）。
++        // 规则 pattern 经唯一适配点转出（F-961——上游对 REGEX 前缀完整名
++        // 按正则解释而非字面，单点字面适配保证规则全匹配原名；普通名透
++        // 传零扰动）。R-4 禁止的业务模式拼接不涉及此转写——"REGEX"前缀
++        // 是上游自有约定的字面载体（转义译码键），非产品语义拼接。
+         if (isExclude) {
+-            setup.addProximitySetupRule(
+-                rw::proximity::ProximitySetupRule::makeExclude(*nameA, *nameB));
++            setup.addProximitySetupRule(rw::proximity::ProximitySetupRule::makeExclude(
++                toUpstreamRulePattern(*nameA), toUpstreamRulePattern(*nameB)));
+         }
+         else {
+             // 必检对显式 INCLUDE（RobWork 层 include 规则优先于排除——必检
+             // "不可被过滤覆盖"在基线过滤层同样成立，纵深防御）。
+-            setup.addProximitySetupRule(
+-                rw::proximity::ProximitySetupRule::makeInclude(*nameA, *nameB));
++            setup.addProximitySetupRule(rw::proximity::ProximitySetupRule::makeInclude(
++                toUpstreamRulePattern(*nameA), toUpstreamRulePattern(*nameB)));
+         }
+     }
+     return setup;

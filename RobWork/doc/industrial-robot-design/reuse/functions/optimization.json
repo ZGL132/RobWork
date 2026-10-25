@@ -27,17 +27,27 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"generateSeededLhsCandidates|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+        "command": "rg -n \"generateSeededLhsCandidates|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/EvaluatorPorts.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S6（QSampler种子面、LHS词边界反证、sandbox构建注册、math采样器清单，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw全库无LHS/拉丁超立方/分层采样（S4r词边界检索零有效命中），QSampler为无种子均匀采样（QSampler.cpp:104），RobWorkSim sandbox无优化目标注册（src/CMakeLists.txt无sandbox）——LHS无上游直接等价入口"
       },
-      "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份",
+      "differences": "自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份；REUSE-T36复核保留理由：LHS分层正交空间填充（均匀QSampler不等价）、种子确定性唯一随机源、变量授权/量化/候选身份产品语义——sandbox待实测不外推，维持pending，实施归WP-19/后续精确子任务",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
           "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
         }
       ],
-      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+          "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+          "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
     },
     {
       "functionId": "optimization.nextU64",
@@ -757,10 +767,10 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+        "command": "rg -n \"strategyId|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5（QSampler种子面、LHS词边界反证、sandbox注册，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：均匀QSampler不等价结论成立（无种子/无分层，QSampler.cpp:104），上游无LHS等价物"
       },
-      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：LHS分层/种子确定性/封闭词表无上游等价，实施归WP-19/后续精确子任务",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
@@ -820,10 +830,10 @@
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+        "command": "rg -n \"generateNextBatch|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/src/Generator.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S3/S4r/S5/S7（QSampler种子面、LHS词边界反证、sandbox注册、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项；REUSE-T36定向复核：批次生成依赖Fisher-Yates层序置换＋层内均匀（EvaluatorPorts.cpp:404-528），上游无分层采样/批次生成等价入口"
       },
-      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台",
+      "differences": "seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：换均匀QSampler破坏LHS正交性与候选确定性身份，实施归WP-19/后续精确子任务",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
