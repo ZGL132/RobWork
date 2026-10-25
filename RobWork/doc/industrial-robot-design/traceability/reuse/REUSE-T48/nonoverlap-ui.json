@@ -1,0 +1,120 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T48",
+ "unit": "ui",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "ui.HostView3DPreviewBackend.ensureSessionPreviewAnchor",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.currentTcpPose",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：TCP 位姿查询经 runtime/KIN 端口值传递——宿主呈现消费面，授权结构同上。"
+  },
+  {
+   "functionId": "ui.SampleGridRender.draw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.contract_test.TestMainReport.main",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。子进程分派先于GTest/Qt，不能抹平。"
+  },
+  {
+   "functionId": "ui.gui_test.TestMainReport.main",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。"
+  },
+  {
+   "functionId": "ui.CMake.ird_add_gtest",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台"
+  },
+  {
+   "functionId": "ui.HostView3DPreviewBackend.HostView3DPreviewBackend",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DPreviewBackend.draw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DPreviewBackend.clear",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.PreviewColorScope.constructor",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.PreviewColorScope.destructor",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.anonymous.applyCellColor",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.anonymous.tintColor",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.StationMarkerRender.draw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.RegionOutlineRender.draw",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：见行 differences。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.HostView3DGateway",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.handleViewDoubleClick",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.applyPresentation",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.releasePresentation",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.onSceneCleared",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.applyPreview",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.HostView3DGateway.removePreview",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：宿主呈现面（WorkCellScene@sdurw_graphics）——HOST-RENDER 例外封闭清单授权面；行保持 pending（REUSE-AD 对已解决记录要求精确 grant，宿主文件 state/model 类别命中无授权——T41 结构同型）。"
+  },
+  {
+   "functionId": "ui.QtTextBillboard.QtTextBillboard",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：只持冻结UTF8字符串，现有QImage/QPainter供CJK不是新文字算法"
+  },
+  {
+   "functionId": "ui.QtTextBillboard.rasterizeAndUpload",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：Qt字体栅格化/纹理上传，成熟工具已复用；UNPACK_ALIGNMENT/context/分配失败与缓存预算待核"
+  },
+  {
+   "functionId": "ui.QtTextBillboard.drawBillboard",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：真实用inverse/Rotation构造相机朝向，RenderText候选CJK受限；静态map按context指针重置，不删纹理/无界文本缓存未证安全；GL进入状态恢复待核"
+  },
+  {
+   "functionId": "ui.QtTextBillboardRender.QtTextBillboardRender",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：Frame Ptr为非owning借持，需场景WC保活，不可因此扩展四个HOST例外"
+  },
+  {
+   "functionId": "ui.QtTextBillboardRender.draw",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：m_frame::wTf当前RenderInfo State，向drawBillboard消费；受限Frame的精确文件/target权限需核，未授grant"
+  },
+  {
+   "functionId": "ui.audit-b32.eventBus.productionWiring",
+   "conclusion": "行保持 pending 原因＝REUSE-AD 结构墙：该文件存在受限类别命中（宿主/State 类别），已解决记录要求精确 grant 而宿主例外封闭清单/权限表无对应授权（T41 结构同型）——所有者裁决前置；本批仅补强检索证据，不洗绿。 族面：生产装配事件总线面属 F-967/T41 blocked 候选（REUSE-AD 对 UiPlugin 变动结构性无 grant——所有者裁决前置），行保持 pending 不洗绿。"
+  }
+ ]
+}

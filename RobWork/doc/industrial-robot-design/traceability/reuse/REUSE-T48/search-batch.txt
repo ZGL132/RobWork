@@ -1,0 +1,2 @@
+== T48 SU1: Qt 文本公告板/位图文本同义物（HOST-TEXT 候选面）
+SU1 exit=0
