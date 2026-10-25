@@ -1,0 +1,102 @@
+{
+  "taskId": "REUSE-T26",
+  "baseCommit": "507db46bba838bb170e1fbfaf5784a389ad3790d",
+  "reviewedCommit": "704667b598967d9849dd02f113dd28ec3ad93a8e",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-25T07:20:33+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T26/WP-11 单次验收子智能体",
+    "authorization": "所有者 2026-10-24 /workflow 指令「基于现状创建工作流完成所有任务」，授权工作流内单次验收子智能体（GOV-T23/T24 先例同型）；实施者不得自签。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未建工作树、未远程操作、未重配构建树（仅对既有 build 增量构建本包两个测试目标）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 507db46b..704667b5 送验实现（唯一提交 704667b59）：现场与提交链、显式 Base/Head 范围门禁、契约三条 acceptance 逐项（代码 diff 实审＋Eigen slerp 语义等价核对＋独立 oracle/上游对照/边界用例审阅＋原容差基线对比）、bindings sha256 绑定核验、增量构建与受影响测试真实复跑（trajectory 单元 191、contract 69，含 REUSE-T26 两个新用例）、性能微基准真实复跑对照所有者接受量级、ird_gates 架构门禁直跑、validate-docs/commit-lint、红线抽查（H1—H6、L2 零 Qt、六类端口、runtime owner、closures 冻结、平行实现回流、计数分列）。",
+  "counts": {
+    "failed": 0,
+    "passed": 10,
+    "notRun": 4,
+    "skipped": 0,
+    "unit": "10 项验收检查；集成测试计数另列（integrationTest），互不相加；notRun 为引用原件或维持实施 NOT RUN 登记的 4 项"
+  },
+  "checks": [
+    "现场与提交链：git status --short 仅既有验收产物 untracked（无本包相关脏改）；HEAD=0ca544e49；507db46b..704667b5 恰 1 个提交 704667b59[governance]；trajectory/ 在 704667b5 之后至 HEAD 零改动（git diff 为空），工作区代码＝送验码；704667b5 之后其他提交仅触及其他单元（drivetrain/modeling 等），与 gates/scripts 无关。",
+    "范围：verify-task-scope 显式 -Base 507db46b -Head 704667b5 exit 0，42 路径全在允许面（01-scope.log）；diff 含产品码仅 CartesianLine.cpp/CartesianLineContinuityTest.cpp 两文件，其余为契约/catalog/functions/凭证证据，无 RobWork/RobWork/src/**、无 vcpkg/**、无 industrialrobot/cmake/、无治理脚本——门禁/性能/权限无越权改动。",
+    "acceptance 第 1 条（删除手写核心、上游直接消费、无备用核心）：diff 实审删除 safeAcos/quatDot/QuatComponents/normalizedQuat/rotationAngleBetween（CartesianLine.cpp 内无调用方版）及手写 slerp 翻转/三角权重/极小角三分支；现文件仅 qa.normalize()+qb.normalize()+qa.slerp(qb,s).toRotation3D()（CartesianLine.cpp:160-166）与 rw::math::dot（isOrthogonal :66-71、参考轴范数 :295）；rg 确认生产 trajectory 无手写 slerp 残留、无 fallback（Continuity.cpp:51 同名 rotationAngleBetween 为 base 既有独立函数、有调用方 :214、属连续性功能，范围内零改动，非平行实现回流）；上游语义等价核对：Eigen Quaternion.h:852-878 slerp 以 d<0→scale1 取负等价最短弧翻转、absD≥1-ε 线性分支替代 safeAcos 防护（acos 仅在 absD<1-ε 调用，不可能越界）。",
+    "acceptance 第 2 条（oracle/上游对照/原容差/素材契约保留）：新增 SlerpIndependentAxisOracle_REUSE_T26（测试内 rodrigues 闭式 lambda，不共享生产实现；3 初态×5 轴×7 角×7 采样=735 位姿，旋转矩阵元素 1e-12）与 SlerpUpstreamAndBoundary_REUSE_T26（真实 qa.slerp 对照、微小角 1e-12、π、2π-0.2、极值位置凸组合、NaN s 抛错）；原 V-04 端点还原（1e-12 m）与 V-05 最短弧（yaw 1e-12）基线容差对比确认未降低，未引用 EAA 局部 1e-6；位置凸组合（:149-155）、IK/FK 端口消费（:428/:604）、取消轮询（:344/:417/:439）、SampleUnreachable/BranchJump 素材契约在源码保留。",
+    "acceptance 第 3 条（扰动/消费者/性能/实审/独验状态）：生产扰动原件 disconnected.xml tests=3 failures=3（InterpolateSlerpShortestArc/SlerpIndependentAxisOracle/SlerpUpstreamAndBoundary 全部预期失败，mutation=qa.slerp(qb,0) 丢失行程参数，CartesianLine.mutated.cpp 原件+production.json 双 sha256 绑定），随后恢复重建 23 passed；受影响消费者契约测试复跑 69 tests 全 passed（实施筛选口径 16 项亦 tests=16 failures=0）；性能实际对照真实复跑（见 commands 09）；CartesianLine.cpp 全文实审（含文件头设计依据、§8.2-8.5 分节、端口纪律、确定性注释）；契约 status==ready 非 done、note 载明起点 SHA 与独验 NOT RUN——未越权收口。",
+    "bindings 真实性：verification.json/production.json 8 项绑定 sha256 与送验提交 blob 字节逐一匹配（CartesianLine.cpp 7fa55d57…、测试 db9eaaba…、Quaternion.hpp f7168402…、Vector3D.hpp cb90beb6…、Eigen Quaternion.h 647bee17…）；差异仅为 core.autocrlf=true 下工作区 CRLF checkout 与 blob LF 字节口径（测试文件与 vcpkg 未跟踪文件直接匹配佐证）；CMakeCache.txt 绑定 1ceac342 为实施时磁盘快照，现 8e6a2c3d（后续任务构建更新），已实测确认 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON、VS 17 2022。",
+    "构建与测试复跑：cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test exit 0（重建 sdurws_ird_trajectory 库+两测试 exe）；sdurws_ird_trajectory_test 191 tests=191 passed/0 failed/0 skipped exit 0（含 SlerpIndependentAxisOracle_REUSE_T26、SlerpUpstreamAndBoundary_REUSE_T26 result=completed，及原 V-04/V-05 用例）；sdurws_ird_trajectory_contract_test 69 tests=69 passed/0 failed/0 skipped exit 0；gtest XML 原件落产物目录。",
+    "性能真实复跑：run-performance.cmd（MSVC /O2，200000 次×4 场景×3 轮 old/new 交替）exit 0——场景 0/1（同姿态/微小角）new 全轮更快；场景 2（一般角）old 0.0534-0.0571µs vs new 0.0576-0.0594µs，慢 3.9%-9.9%；场景 3（近 π）old 0.0580-0.0598µs vs new 0.0562-0.0603µs，-3.3%~+1.5%；四场景 checksum old/new 全等（新旧数值结果一致）；量级与 note 登记的『一般角约 6-10%/近 π 约 0.3-2.7%』一致，perf-new.cpp 与生产函数逐行一致（仅命名空间不同）——所有者『接受本次具体开销，交独验』裁决覆盖的正是该项，独验此测后确认。",
+    "门禁与文档：ird_gates 直跑 exit 0，17 行自测正负例（10 fail 按预期检出＋7 pass 无误报）＋R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 11 类零命中（LIB＝L2 零 Qt，trajectory 源码亦无 Qt include）；validate-docs -TaskFile REUSE-T26.json 一次过 exit 0（validate-task PASS 1 tasks、validate-reuse PASS governance only inventory=1401 units=20 changed=94 DEBT=16 UNRESOLVED=1399、validate-docs PASS 20 units/404 task files；REUSE-AD-PENDING 为 AD 审计既有 pending，命中文件非本包）。",
+    "提交链与凭证：commit-lint -Range 507db46b..704667b5 PASS（[governance] 前缀合规）；提交正文数字与证据一致（单元 23/0/0、契约 16/0/0、扰动 0/3/0、一般角 6-10%、近 π 0.3-2.7% 均可与 final.xml/contract.xml/disconnected.xml/performance.log 对账）；H6 凭证齐备：changes/REUSE-T26.json 两文件逐文件凭证（CartesianLine.cpp adapter+TRAJ-SLERP）、functions/trajectory.json TRAJ-SLERP pending→adapter/migrated、catalog.json TRAJ-SLERP verified＋上游 Quaternion.hpp 符号级绑定＋baseline 507db46b、upstream-search.log 为真实 rg 检索原件；closures.json 冻结零触碰（git diff --exit-code 退出 0）；README/verification.json 中 PASS/FAIL/NOT RUN 分列如实（上游测试、内存分配计数、线程压力、全库测试显式 NOT RUN，未混列冒充）。"
+  ],
+  "integrationTest": {
+    "trajectory": {
+      "tests": 191,
+      "passed": 191,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-int-trajectory-test.xml",
+      "note": "全量 trajectory 单元 exe（实施筛选口径 23 项含 T26 两新用例与 V-04/V-05，全部内含且通过）"
+    },
+    "trajectoryContract": {
+      "tests": 69,
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0,
+      "notRun": 0,
+      "exitCode": 0,
+      "xml": "08-int-trajectory-contract.xml",
+      "note": "全量 trajectory 契约消费者 exe（实施筛选口径 16 项）"
+    }
+  },
+  "performanceEvidence": {
+    "rerunByReviewer": true,
+    "command": "run-performance.cmd（cmd /c，MSVC /O2 /MD /DNDEBUG，200000 次×四场景×三轮 old/new 交替）",
+    "log": "09-performance-rerun.log",
+    "result": "同姿态/微小角 new 更快；一般角慢 3.9%-9.9%；近 π -3.3%~+1.5%；checksum old/new 全等——与实施登记量级一致，属所有者已接受的开销口径"
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json -Base 507db46bba838bb170e1fbfaf5784a389ad3790d -Head 704667b598967d9849dd02f113dd28ec3ad93a8e", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "build", "command": "cmake --build build --config Release --target sdurws_ird_trajectory_test sdurws_ird_trajectory_contract_test", "exitCode": 0, "passed": true },
+    { "name": "int-trajectory-test", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_test.exe --gtest_output=xml:（PATH 前置 build/RobWork/bin|libs/Release、build/RobWorkStudio/bin/Release、vcpkg installed/x64-windows/bin）", "exitCode": 0, "passed": true, "log": "08-int-trajectory-test.log", "xml": "08-int-trajectory-test.xml" },
+    { "name": "int-trajectory-contract", "command": "build/RobWorkStudio/bin/Release/sdurws_ird_trajectory_contract_test.exe --gtest_output=xml:（同上 PATH）", "exitCode": 0, "passed": true, "log": "08-int-trajectory-contract.log", "xml": "08-int-trajectory-contract.xml" },
+    { "name": "performance-rerun", "command": "cmd /c RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T26/run-performance.cmd", "exitCode": 0, "passed": true, "log": "09-performance-rerun.log" },
+    { "name": "gate-engine", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -DIRD_SELFTEST_DIR=$TEMP/reuseT26-acc-selftest -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "06-gate-engine.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T26.json", "exitCode": 0, "passed": true, "log": "07-validate-docs.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 507db46bba838bb170e1fbfaf5784a389ad3790d..704667b598967d9849dd02f113dd28ec3ad93a8e", "exitCode": 0, "passed": true, "log": "05-commit-lint.log" },
+    { "name": "closures-frozen-zero-diff", "command": "git diff --exit-code 507db46b..704667b5 -- RobWork/doc/industrial-robot-design/reuse/closures.json", "exitCode": 0, "passed": true },
+    { "name": "bindings-verify", "command": "git show 704667b5:<path> | sha256sum（对 CartesianLine.cpp/测试/Quaternion.hpp/Vector3D.hpp 四项抽查，全部命中 verification.json/production.json 绑定值）", "exitCode": 0, "passed": true }
+  ],
+  "executionNotes": [
+    "性能复跑使用实施自包含脚本 run-performance.cmd（vcvars64+cl 编译 perf-old/perf-new+运行），输出写入 build/t26-perf.exe（构建树，非仓库跟踪内容）；本轮一般角慢 3.9%-9.9%、近 π -3.3%~+1.5%，与登记『一般角约 6-10%/近 π 约 0.3-2.7%』同量级（微基准逐轮波动内），四场景 checksum old/new 全等证明数值等价。",
+    "bindings sha256 初看不匹配经判明为 core.autocrlf=true 行尾口径：bindings 为 git blob（LF）字节哈希，4 项 blob 抽查全中；CMakeCache.txt 为磁盘快照绑定，已被后续任务构建更新，不属代码绑定，配置项已单独实测。",
+    "集成构建对既有 build 树增量进行（未重配）；build/CMakeCache.txt 实测 RWS_BUILD_INDUSTRIALROBOT:BOOL=ON。"
+  ],
+  "issues": [],
+  "notRun": [
+    {
+      "item": "生产扰动重放（mutation 后重编译复跑）",
+      "reason": "引用实施原件 disconnected.xml（tests=3 failures=3）/disconnected.log/CartesianLine.mutated.cpp/production.json mutation 双 sha256 绑定；工作区生产码与送验码零差异、工具链未变，原件输入/范围仍适用；验收方真实复跑了恢复后最终态的全部测试与性能。"
+    },
+    { "item": "上游 gtest 目标（QuaternionTest/LinearInterpolatorTest）", "reason": "实施与 catalog 均登记为引用不运行（未改上游、不重跑无关目标），维持 NOT RUN 登记。" },
+    { "item": "内存分配计数、线程压力、整机端到端性能", "reason": "实施如实登记 NOT RUN（未引入共享状态/缓存/模型，不以微基准冒充）；本验收未扩大范围。" },
+    { "item": "全库测试/其余 21 单元复跑", "reason": "AGENTS §4 增量口径：改动仅 trajectory/CartesianLine.cpp，受影响面=trajectory 单元+契约消费者（已全量复跑）；validate-reuse governance only 不构成算法合规结论。" }
+  ],
+  "limitations": "PASS 仅覆盖 REUSE-T26/WP-11 送验范围（507db46b..704667b5）：CartesianLine 手写 slerp 核心删除与上游 Quaternion/Vector3D 直接复用。validate-reuse 仍 governance only（DEBT=16、UNRESOLVED=1399）；性能开销为所有者明确接受的微基准口径，不外推其他能力、不等于整机加速；T13 未独验仍不放行普通 IK/RNE；本 PASS 不构成进入 REUSE-T02 或算法替换（migration §11）的放行。上游框架/vcpkg 只读未触碰；记录与证据仅落盘未提交，由登记步骤统一提交。",
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/01-scope.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/05-commit-lint.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/06-gate-engine.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/07-validate-docs.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/08-int-trajectory-test.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/08-int-trajectory-test.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/08-int-trajectory-contract.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/08-int-trajectory-contract.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T26-20261025-r1/09-performance-rerun.log"
+  ]
+}
