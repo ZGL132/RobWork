@@ -1,0 +1,52 @@
+{
+ "schemaVersion": "ird-task/1",
+ "taskId": "REUSE-T44",
+ "unit": "optimization",
+ "masterWp": "WP-A",
+ "title": "WP-19批次三·optimization单元审计收口：种子化LHS/Pareto/扰动策略business-specific定案",
+ "status": "ready",
+ "branch": "redesign-main",
+ "dependsOn": ["GOV-T21", "GOV-T22"],
+ "requirements": ["OPT-01", "OPT-03", "NFR-COR-01", "NFR-COR-02"],
+ "designRefs": ["reuse/migration.md#13.3", "reuse/policy.md#1.2", "units/optimization.md#3"],
+ "verify": [
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T44.json",
+  "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T44.json -Base feaf93dc33a19afdaf7a4a7a3bf60dc85fb4d2b5 -Head <送验SHA>"
+ ],
+ "allowedFiles": [
+  "RobWork/doc/industrial-robot-design/tasks/REUSE-T44.json",
+  "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T44.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+  "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+  "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/**"
+ ],
+ "forbiddenFiles": ["RobWork/RobWork/src/**", "RobWork/RobWorkSim/src/**", "vcpkg/**", "main"],
+ "outputs": [
+  "optimization.json 22 行 pending 全量收口（business-specific，零产品变更）",
+  "catalog MATH-RANDOM 移除 optimization:adapter usage（T36 审查结论同步）"
+ ],
+ "interUnit": false,
+ "acceptance": [
+  "零产品变更审计收口：22 行 pending（MATH-RANDOM 6＋NONE 15＋TEST-HARNESS 1）按 T36 随机/LHS 独立审查结论＋本批 S1—S4 检索定案 business-specific——SplitMix64 公开规范种子化 LHS（身份进 digest）上游无满足契约能力（Random 全局态/32 位种子截断/QSampler 无分层），Pareto 支配排序上游无同义物（S1 命中为变量名巧合已核），扰动策略/测试夹具/构建宏为产品面",
+  "catalog 修正（评审缺口4回应）：MATH-RANDOM 移除 optimization:adapter usage——预绑与本批判定冲突的同步落位；usage 收敛为 kinematics/execution/trajectory 三处真实消费",
+  "矩阵与凭证：optimization.json 25 行（22 business-specific migrated＋3 既有 resolved）；changes/REUSE-T44.json 空产品变更清单（纯审计批次）；nonoverlap-optimization.json 逐 functionId 条目",
+  "门禁：validate-docs -TaskFile（含全量复用检查）与 verify-task-scope 显式 Base/Head 全绿；ird_gates 零命中（零产品变更，无构建扩大面）"
+ ],
+ "note": "migration §13.3 WP-19 批次三（optimization）。masterWp=WP-A 按 T29/T30 先例。起始 SHA=feaf93dc33a19afdaf7a4a7a3bf60dc85fb4d2b5（批次二收口提交）。范围＝§13.3 WP-19 行 optimization 面：Generator（SplitMix64/WP-13 边界按 T36 划界——种子/LHS 契约产品保留）、Pareto（沙箱 pathoptimizer 不等价）、JointStrategy、EvaluatorPorts、ParetoTest；零产品变更、零接口变化、无数值行为变化（纯审计登记）。与 WP-13 划界：T36 随机/LHS 候选审查结论（矩阵维持 pending 待本批）由本批收口为 business-specific，其证据（REUSE-T36 candidate 记录）直接引用。所有者保留裁决项：本批无；若所有者后续批准 Boost.JSON/新随机渠道，按 policy 重开对应行。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "governanceAcceptance": {
+  "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+  "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+ },
+ "reuseGateAcceptance": {
+  "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+  "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+  "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+ },
+ "reuse": {
+  "policy": "H1-H6",
+  "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T44.json"
+ }
+}

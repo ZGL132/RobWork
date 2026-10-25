@@ -1,0 +1,26 @@
+== S1: 上游多目标 Pareto/支配排序同义物检索
+RobWork/RobWork/src\rw\math\VectorND.hpp:495:        // #                    Comparetors                  #
+RobWork/RobWork/src\rw\math\Vector3D.hpp:550:        // #                    Comparetors                  #
+RobWork/RobWork/src\rw\math\EAA.hpp:730:        // #                    Comparetors                  #
+S1 exit=0
+
+== S2: 上游 LHS/分层采样/种子化策略检索
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:184:        bool GT(R lhs,double rhs){
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:185:            return lhs.norm2() > rhs; 
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:188:        bool GT(double lhs,double rhs){
+RobWork/RobWork/src\rw\trajectory\ParabolicBlend.hpp:189:            return lhs > rhs;
+S2 exit=0
+
+== S3: 上游随机源契约（REUSE-T36 已审查，此处复核登记面）
+35:    class Random
+53:        static void seed (unsigned seed);
+60:        static void seed ();
+74:        static int ranI (int from, int to);
+S3 exit=0
+
+== S4: 上游基线扰动/候选生成策略同义物
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.hpp:89:		 * @brief Creates a new task with perturbed targets
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.hpp:94:		 * @param perturbations [in] number of perturbed grasps to generate
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\TaskGenerator.hpp:96:		static rwlibs::task::GraspTask::Ptr addPerturbations(rwlibs::task::GraspTask::Ptr tasks, double sigma_p, double sigma_a, int perturbations);
+RobWork/RobWorkSim/src\sandbox\grippers\GraspPlugin\GraspTaskQualityCalc.cpp:38:int calcPerturbedQuality(GraspTask::Ptr gtask, std::string outfile, int pertubations ){
+S4 exit=0

@@ -1413,14 +1413,6 @@
      ]
     },
     {
-     "consumerUnit": "optimization",
-     "usageRole": "adapter",
-     "permissionRef": "ARCH:3.6",
-     "operations": [
-      "value"
-     ]
-    },
-    {
      "consumerUnit": "execution",
      "usageRole": "adapter",
      "permissionRef": "ARCH:3.6",

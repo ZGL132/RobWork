@@ -1,0 +1,96 @@
+{
+ "schemaVersion": "ird-reuse-audit-evidence/1",
+ "taskId": "REUSE-T44",
+ "unit": "optimization",
+ "description": "business-specific 判定的 nonOverlap 证据（族判定＋行级差异引用；族检索记录与决策文件见批目录）。",
+ "entries": [
+  {
+   "functionId": "optimization.generateSeededLhsCandidates",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：自持SplitMix64与Fisher-Yates/LHS；继续查sandbox优化/采样能力，保留基线首位、变量授权/量化和候选身份；REUSE-T36复核保留理由：LHS分层正交空间填充（均匀QSampler不等价）、种子确定性唯一随机源、变量授权/量化/候选身份产品语义——sandbox待实测不外推，维持pend"
+  },
+  {
+   "functionId": "optimization.nextU64",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策"
+  },
+  {
+   "functionId": "optimization.nextUnit",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：与EvaluatorPorts独立复制SplitMix64，注释非复制不是H2许可；候选Random为全局32位种子，需核任务私有64位流、样本身份、跨平台重放再决策"
+  },
+  {
+   "functionId": "optimization.makeLayerPermutation",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：自持Fisher-Yates取模洗牌，随机消耗n-1及偏差和任务种子是既有契约；候选上游Random及已有标准算法，不能改序列而沿用旧身份"
+  },
+  {
+   "functionId": "optimization.generateStageDJointCandidates",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：阶段D组合规范化/轮转是业务编排；内部连续维LHS随机小核需对照StageB及上游采样工具，不整函数business-specific"
+  },
+  {
+   "functionId": "optimization.CMake.ird_add_gtest",
+   "conclusion": "GTest 与现有 testkit 薄入口（REUSE-T32 ird_add_gtest 定案保留；上游宏非 CONFIG 导出）——保留原生 JSON/XML/退出码，不建测试构建平台。 行差异：20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台"
+  },
+  {
+   "functionId": "optimization.Pareto.slotValue",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现"
+  },
+  {
+   "functionId": "optimization.Pareto.notWorse",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现"
+  },
+  {
+   "functionId": "optimization.Pareto.strictlyBetter",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现"
+  },
+  {
+   "functionId": "optimization.Pareto.dominates",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现"
+  },
+  {
+   "functionId": "optimization.Pareto.ParetoFrontBuilder.buildFront",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：已消费core::closeWithin参考元b/方向词表；sandbox单目标优化与几何pathoptimizer不等价多目标支配/身份排名；通用排序核是否保留仍待T05，不因无同名批准新实现"
+  },
+  {
+   "functionId": "optimization.Generator.SeededLhsGenerator.strategyId",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：LHS分层/种子确定性/封闭词表无上游等价，实施归WP-19/后续精确子任务"
+  },
+  {
+   "functionId": "optimization.Generator.SeededLhsGenerator.generateNextBatch",
+   "conclusion": "产品需种子化确定性分层采样（LHS）且身份进 digest；上游 rw::math::Random 为进程级全局 boost 态、seed(unsigned) 32 位截断、无任务私有流，QSampler 无种子均匀采样、rw 全库无 LHS/分层采样（REUSE-T36 独立审查在案）——上游不满足契约，SplitMix64（公开规范）产品保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台；REUSE-T36复核维持pending：换均匀QSampler破坏LHS正交性与候选确定性身份，实施归WP-19/后续精确子任务"
+  },
+  {
+   "functionId": "optimization.Generator.validateBaselinePerturbParams",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台"
+  },
+  {
+   "functionId": "optimization.Generator.BaselinePerturbGenerator.strategyId",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台"
+  },
+  {
+   "functionId": "optimization.Generator.BaselinePerturbGenerator.generateNextBatch",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台"
+  },
+  {
+   "functionId": "optimization.Generator.builtInStrategyIds",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台"
+  },
+  {
+   "functionId": "optimization.Generator.generateWithBuiltInStrategy",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：seeded路径委托已有LHS单点，原PRNG债不关闭；其余为OFAT/授权锁定/基线首位/预算/合法补丁与封闭词表，均匀QSampler不等价。只读映射，不建通用优化平台"
+  },
+  {
+   "functionId": "optimization.ParetoTest.makeCid",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：测试身份以种子填非零字节，不是ContentDigest算法；限Pareto单测输入，不能当真实内容寻址生产身份"
+  },
+  {
+   "functionId": "optimization.ParetoTest.makeCandidate",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：两目标槽DTO装配，其余nullopt；实际调用生产Pareto接口，不含第二支配核心"
+  },
+  {
+   "functionId": "optimization.ParetoTest.makeTwoObjectives",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：复用生产makeObjectiveSet，只装配min包络/max裕量零容差"
+  },
+  {
+   "functionId": "optimization.ParetoTest.idsOf",
+   "conclusion": "上游无同义能力（批目录检索记录）；产品业务/契约面保留。 行差异：遍历实际entries投影ID供断言，不排序、不重建前沿"
+  }
+ ]
+}
