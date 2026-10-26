@@ -1,0 +1,97 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T53",
+  "unit": "dynamics",
+  "masterWp": "WP-A",
+  "title": "WP-09 正动力学 FD 迁移（GAP-FD-BUILD-01 提案执行）——ForwardDynamics 消费 ODE 物理引擎会话与自持核删除",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T31",
+    "REUSE-T52"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-05",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.3",
+    "reuse/extensions/GAP-FD-BUILD-01.md",
+    "traceability/reuse/REUSE-T31/README.md",
+    "units/dynamics.md#4.2",
+    "units/dynamics.md#6",
+    "units/runtime.md#3.2",
+    "reuse/policy.md#1.1"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T53.json",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "cmake --build build --config Release --target sdurws_ird_runtime sdurws_ird_dynamics sdurws_ird_dynamics_test sdurws_ird_dynamics_contract_test sdurws_ird_runtime_test ird_gates",
+    "RobWork/build/bin/Release/sdurws_ird_dynamics_test.exe（gtest 全量＋XML/ird-test-report 落 traceability/reuse/REUSE-T53/）",
+    "RobWork/build/bin/Release/sdurws_ird_dynamics_contract_test.exe（契约面全量）",
+    "RobWork/build/bin/Release/sdurws_ird_runtime_test.exe（runtime 消费者回归）",
+    "build/RobWorkSim/bin/Release/sdurwsim_ode-gtest.exe（GAP-FD-BUILD-01 阶段 B 回归底噪——ODEControlTest/ODESimpleTest 真实运行，不冒充力输入验证）",
+    "独立冒烟：cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build/wp09-smoke -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_TOOLCHAIN_FILE=\"$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake\" -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64 -DRobWork_DIR=\"$PWD/RobWork/RobWork/cmake\" -DVCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package ＋ --build --config Release --target sdurws_ird_dynamics sdurws_ird_dynamics_test（REUSE-T51/T52 同款导出包供给；sdurwsim/sdurwsim_ode 经直含 targets/*.cmake 导入目标）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range e21d61714..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T53.json -Base e21d61714467d826ab6f919bcb25a94682b64cb4 -Head HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T53.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/ForwardDynamicsTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp",
+    "RobWork/doc/industrial-robot-design/units/dynamics.md",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/development-task-breakdown.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T53.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-FD-BUILD-01.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T53-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T53-20261026-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T53.json"
+  },
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "outputs": [
+    "WP-09 FD 迁移：runtime FdEngineSession 受控引擎会话工厂（ODE 后端承载）＋dynamics ForwardDynamics 换核（质量阵/消元/RK4 旧核删除）＋oracle 测试批与阶段 B 供给证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "阶段 B 供给按提案执行：vcpkg install ode:x64-windows（0.16.6，ode_double 双精度在案）→ 集成树 ODE_DIR 命中 share/ode config 包 → 显式 BUILD_sdurwsim_ode=ON（缓存残留 OFF 需显式）→ sdurwsim_ode 库与 sdurwsim_ode-gtest 真实构建/运行留痕；规避 RobWorkSimSetup WIN32 git 网络拉取回退（find_package 先命中所装 config 包）；vcpkg 树零改动",
+    "runtime 公共工厂 buildFdEngineSession（模型构造权归 runtime——REUSE-T52 构造面裁决同墙复利）：S6+S7 复用编译私有物化副本＋法兰组合替代（tool/负载并入末体——与 RNE composeFlangeVariant 同源数学）＋请求 gravityBase 经 R_world_base 投影为世界系显式设值（旧实现 request.gravityBase 治理语义保留）＋initPhysics→resetScene 位形传入＋初速度经 Velocity 伺服单子步播种（上游 resetScene 清速且 ODEJoint.cpp TODO 不回种——实核在案）＋声明摩擦三元组逐子步补偿驱动输入（上游关节摩擦消费为死代码——ODEJoint.hpp:63/ODESimulator.cpp:1372 在案）；业务侧只提交 SI 广义力/步长，无隐藏 fallback；会话 RAII exitPhysics",
+    "dynamics/src/ForwardDynamics.cpp 换核（全文件解决批）：删除 callRneaSample 的 M 提取消费/solveLinearSystem 高斯消元/RK4 四阶段与 massFlat 等重复状态；保留公共输入/结果/单位/错误语义（τ_ref 产出、事件变体重建会话、四态判定、诊断码面）；移动关节链 fail-fast 稳定诊断（上游 ODEJoint::setForce 仅转动——ODEJoint.hpp:57-66 在案），零静默错误结果",
+    "词表按单元卡增量修订程序扩展：units/dynamics.md §4.2 修订＋ForwardDynamics.hpp kForwardIntegratorToken ode-fixed（rk4-fixed 退役登记）＋kForwardCheckAlgorithmVersion /1→/2（换核数值结果不混比——T52 kRnea 先例）＋契约测试词表同步放行（治理取代 P-DYN-7 自持约束后 ForwardDynamicsBoundaryContractTest 按 GOV-T21 约束改为真实上游调用/行为契约测试：旧核符号断开钉扎＋会话消费钉扎，不删不放宽）",
+    "oracle：解析基准（伸直构型匀加速解析界对照）、平衡（静平衡力矩零漂移）、能量（无摩擦单摆能量守恒漂移界）、收敛（步长减半误差下降）、确定性（同输入双跑逐位）＋真实业务链（τ_ref 回放黄金轨迹）＋负载事件共源重建；dynamics 全量＋contract＋runtime 消费者回归＋ird_gates 零命中；PASS/FAIL/SKIP/NOT RUN 如实分列，证据落 traceability/reuse/REUSE-T53/"
+  ],
+  "note": "migration §13.3 WP-09 / T04 FD 子任务（父任务 REUSE-T04 不在本包归位——收口批统一处理）。依赖 WP-06（REUSE-T30 done）、WP-08（REUSE-T31 独验 PASS 归档）、WP-07（REUSE-T52 实施完成）满足；A3 裁决（2026-10-26 所有者指令「A1~A4 全按推荐」＝FD 按 REUSE-T31 提案执行）解阻『所需批准』与阶段 B 新依赖安装（GAP-FD-BUILD-01 §2 提案唯一推荐路径＝vcpkg ode 供给＋sdurwsim_ode 启用，经既有 vcpkg 公共渠道——与 A4 Boost 渠道批准同型）。起始 SHA=e21d61714467d826ab6f919bcb25a94682b64cb4（[WP-07-T52] 收口提交）。上游适配差异四项实核（本包实施批，行号 2026-10-26 现状）：①ODEJoint::setForce 仅转动关节（dJointAddAMotorTorques——ODEJoint.hpp:57-66，dJointAddSliderForce 注释死分支）→移动关节链会话构造 fail-fast；②关节摩擦消费为死代码（ODEJoint.hpp:63 注释/ODESimulator.cpp:1372-1381 注释块）→会话按声明三元组逐子步补偿；③resetScene 清速且 ODEJoint::reset 不回种初速（ODEJoint.cpp TODO 原文在案）→Velocity 伺服单子步播种（静止起点跳过）；④FixedBody 仅静态几何（ODEBody.cpp makeFixedBody 无 dBody）→工具体物理惰性，法兰组合替代承载 tool/负载。runtime 冒烟供给沿 REUSE-T52 工厂 TU 双模式先例（targets/sdurwsim_ode.cmake 导入——RWSIM::sdurwsim_ode 携带 ODE 头/链接面）。dynamics/CMakeLists.txt 零改动（sdurwsim_ode 经 runtime PUBLIC 边传递；门禁 ^sdurwsim 前缀已覆盖）。status=ready 表示实施完成待独验，不冒称通过；独立验收由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不得自签。父任务 REUSE-T03/T04/T05 scope 归位归收口批。【实施批剩余清单（2026-10-26 实施会话收口时在案，交付状态＝实施完成待续批收口）：①reuse/functions/dynamics.json 的 FD 函数行语义重写未完成——旧自持核行（solveLinearSystem/evalAcceleration lambda/rk4Stages 等 sources 区段绑定与 rg 探针行）指向已删除符号，需按本批全文件解决批语义重写为会话消费行（其余矩阵文件已完成：functions/runtime.json 的 runtime/CMakeLists 摘要 191 处级联已同步 56089f01 口径）；②migration.md §13.3 WP-09 行与 §13.2 阻断注登记未落；③validate-docs（当前因 ① 卡 REUSE-FRESHNESS）/commit-lint/verify-task-scope 收口门禁循环未跑；④本地提交未做（工作区改动完整在案）。已验证绿面：集成 dynamics_test 119/119＋contract_test 30/30＋runtime_test 311/311＋DynForward 13/13、ird_gates 零命中、独立冒烟 119/119（build/wp09-smoke）、阶段 B 供给（vcpkg ode 0.16.6＋BUILD_sdurwsim_ode=ON＋sdurwsim_ode 构建）、证据落 traceability/reuse/REUSE-T53/；以上均为实施会话真实执行（非引用）。"
+}

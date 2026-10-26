@@ -170,25 +170,34 @@ if(TARGET sdurw_kinematics)
     # ---- REUSE-T52 增列（WP-07 RNE 消费载体工厂；2026-10-26 所有者构造面
     #      上收裁决——模型构造权归 runtime，dynamics 经登记边消费）----
     target_sources(sdurws_ird_runtime PRIVATE
-        src/RneConsumptionDevice.cpp)   # RNE 可消费一次性设备工厂（公共头
+        src/RneConsumptionDevice.cpp   # RNE 可消费一次性设备工厂（公共头
                                         # RneConsumptionDevice.hpp）：CanonicalModel→
                                         # StateStructure+SerialDevice+RigidDevice
                                         # 载体＋GAP-RNE-FRAME 关节帧换算（A2 裁决
                                         # 薄适配——§8.2/S7 产品映射/modeling 导出
-                                        # 零触碰）；消费方＝WP-07 dynamics（已落
-                                        # 位）、WP-09 FD 预留；rw/rwsim 为 P-RT-3
-                                        # 已登记 L1——与 S6/S7 同因仅集成模式编译
-                                        # （冒烟分支同源供给见 else 段 REUSE-T52 行）
+                                        # 零触碰）；消费方＝WP-07 dynamics（已落位）
+        src/FdEngineSession.cpp)       # REUSE-T53：FD 受控引擎会话工厂（公共头
+                                        # FdEngineSession.hpp）——CanonicalModel→
+                                        # S6/S7 私有物化副本＋ODESimulator 装配
+                                        # ＋摩擦补偿/初速播种（GAP-FD-BUILD-01
+                                        # 阶段 B 适配差异四项，头面在案）；消费方
+                                        # ＝WP-09 dynamics ForwardDynamics（已落
+                                        # 位）；sdurwsim_ode 为增登 L1（见下方链接）；
+                                        # rw/rwsim 为 P-RT-3 已登记 L1——与 S6/S7
+                                        # 同因仅集成模式编译（冒烟分支同源供给见
+                                        # else 段 REUSE-T52/T53 行）
 
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
         sdurw_models
         sdurwsim
+        sdurwsim_ode               # REUSE-T53：ODE 物理引擎（FdEngineSession 消费面
+                                   # ——sdurwsim_ode 为增登 L1，见 P-RT-3 登记行）
         sdurw_loaders               # MA-01：STL/OBJ 解析器（STLFile/LoaderOBJ——
                                     # 网格资源通道消费面）
         sdurw_proximity             # MA-02：碰撞检测编排（CollisionDetector）
         sdurw_proximitystrategies)  # MA-02：PQP 窄相策略（ProximityStrategyPQP）
-    set(IRL_BASELINE_LIBS "sdurw_kinematics, sdurw_models, sdurwsim, sdurw_loaders, sdurw_proximity, sdurw_proximitystrategies")
+    set(IRL_BASELINE_LIBS "sdurw_kinematics, sdurw_models, sdurwsim, sdurwsim_ode, sdurw_loaders, sdurw_proximity, sdurw_proximitystrategies")
 else()
     # 冒烟分支：rw 源码树头路径（模板头；本目录相对仓库根 RobWork/RobWork/src
     # 的固定布局）＋Eigen（vcpkg 提供 Eigen3 配置包；rw 头以 <Eigen/Core> 引用）。
@@ -249,12 +258,36 @@ else()
         include("${IRL_RWSIM_TARGETS_FILE}")
         add_library(sdurwsim ALIAS RWSIM::sdurwsim)
     endif()
+    # sdurwsim_ode（REUSE-T53——FdEngineSession 消费 ODESimulator）：同款直含
+    # 导入目标文件（RWSIM::sdurwsim_ode 携带 rwsimlibs/ode 头路径＋vcpkg
+    # ode_double 链接面）；该目标名匹配门禁 ^sdurwsim 前缀（已知族），非
+    # 集成模式判定符（集成分支见上方 if(TARGET sdurw_kinematics) 块）。
+    set(IRL_RWSIM_ODE_TARGETS_FILE
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWorkSim/cmake/targets/sdurwsim_ode.cmake")
+    if(NOT TARGET sdurwsim_ode)
+        if(NOT EXISTS "${IRL_RWSIM_ODE_TARGETS_FILE}")
+            message(FATAL_ERROR
+                "runtime 冒烟模式：未找到 sdurwsim_ode 导出目标文件（期望 "
+                "${IRL_RWSIM_ODE_TARGETS_FILE}）——REUSE-T53 起引擎会话消费"
+                "集成构建树的 RobWorkSim ODE 导出件，请先在集成树以 "
+                "BUILD_sdurwsim_ode=ON 构建 RobWorkSim")
+        endif()
+        include("${IRL_RWSIM_ODE_TARGETS_FILE}")
+        add_library(sdurwsim_ode ALIAS RWSIM::sdurwsim_ode)
+    endif()
     target_sources(sdurws_ird_runtime PRIVATE
-        src/RneConsumptionDevice.cpp)   # REUSE-T52：工厂 TU 双模式编译（同上）
+        src/RneConsumptionDevice.cpp   # REUSE-T52：工厂 TU 双模式编译（同上）
+        src/FdEngineSession.cpp)       # REUSE-T53：FD 受控引擎会话工厂（公共头
+                                       # FdEngineSession.hpp）——CanonicalModel→
+                                       # S6/S7 私有物化副本＋ODESimulator 装配
+                                       # ＋摩擦补偿/初速播种（GAP-FD-BUILD-01
+                                       # 阶段 B 适配差异四项，头面在案）；消费方
+                                       # ＝WP-09 dynamics ForwardDynamics（已落位）
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_math
         sdurw_models
-        sdurwsim)
+        sdurwsim
+        sdurwsim_ode)                  # REUSE-T53：ODE 引擎导入目标（上方守卫）
 endif()
 
 target_link_libraries(sdurws_ird_runtime PUBLIC sdurws_ird_core)

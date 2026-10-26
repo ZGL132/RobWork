@@ -1,0 +1,75 @@
+{
+  "schemaVersion": "ird-reuse-change/1",
+  "taskId": "REUSE-T53",
+  "taskFile": "RobWork/doc/industrial-robot-design/tasks/REUSE-T53.json",
+  "files": [
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp",
+      "sha256": "16ab18d0fb14247411422b1b670d6531f62e75cdc30f131d8e70ad9b351b5ee6",
+      "capabilities": [
+        "DYN-FD"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "WP-09（migration §13.3）正动力学引擎会话工厂：GAP-FD-BUILD-01 提案执行（A3 裁决）——会话私有载体复用 buildRneConsumptionDevice（H1，其公共头预留 WP-09）＋WorkCell(tree) 采用载体 StateStructure＋ODESimulator（sdurwsim_ode，H1 直接 API）装配；上游适配差异六项为消费边界适配零上游改动（力控仅转动→移动关节 fail-fast／关节摩擦死代码→声明三元组逐子步补偿／初速度不传→伺服迭代播种／设备基座帧身份＋父体回溯沿帧链→载体体挂链帧＋重名前缀设备／零几何 FixedBody 越界→基座占位球／步进时间账目失衡→显式拒绝）；RNE 载体 BodyInfo 关节帧表达 vs ODE 体承载帧解释→FD 会话按规范值直写（适配差异 6）；设备读回钳制→1e300 限速承载读回不钳制"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/FdEngineSession.hpp",
+      "sha256": "de57acd48234314f3ad27b8fcd40e58f8f04b73a43d6553bd2f93e383f8d7517",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "FD 受控引擎会话公共契约头（GAP-FD-BUILD-01 §2 runtime 承接面——业务只提交 SI 广义力/步长，不接触引擎实现类）：会话 API＋FdFlangeOverride 值面＋适配差异与所有权/生命周期契约注释；move-only（拷贝即共享引擎实例——类型层禁止）"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+      "sha256": "5ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "FdEngineSession.cpp 双模式增列＋L1 增登 sdurwsim_ode（集成 PUBLIC 链接＋冒烟 targets/sdurwsim_ode.cmake 导入目标——REUSE-T52 工厂双模式先例同款；门禁 ^sdurwsim 前缀已覆盖零改动）；IRL_BASELINE_LIBS 同步（BuildRedLineTest 子串断言兼容）"
+    },
+    {
+      "mode": "adapter",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/ForwardDynamics.cpp",
+      "sha256": "f6951c8475aaa0a374511c77524bb38af881a882d43d3031fce5802e2d66ccff",
+      "capabilities": [
+        "DYN-FD"
+      ],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "WP-09 换核（全文件解决批）：旧自持核删除全清单（callRneaSample M 提取消费／solveLinearSystem 部分主元消元／RK4 四阶段／massFlat 等重复状态／kSingularPivotRelative）；正向仿真改 runtime::buildFdEngineSession 受控会话（τ_ref 采样保持＋变体重建会话＋逐子步发散检测）；公共输入/结果/单位/错误语义保留（四态判定/诊断码面/F-581 游标）；法兰组合合成与 RNE composeFlangeVariant 同式镜像（T52 镜像先例，合并归后续卫生批）"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp",
+      "sha256": "e9f8da94cbc194bfd57889cdf4f99a4ca7ffd2cb2a657014d89b83e27a4583d5",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "词表增量修订（单元卡 §4.2 程序）：kForwardIntegratorToken rk4-fixed→ode-fixed（rk4-fixed 退役登记）＋kForwardCheckAlgorithmVersion /1→/2（换核不混比——T52 kRnea 先例）；文件头选型登记重写（GOV-T21 治理取代＋GAP-FD-BUILD-01 执行）；请求/结局/配置契约面零变化"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/ForwardDynamicsTest.cpp",
+      "sha256": "ddb6bff4946bbbaee602082796e28ae2acd04c7793d6a8bd310e529957fd0556",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "13 用例 ODE 域适配（断言零放松——解析界按引擎实测钉扎：一阶离散 α·t·h／播种收敛残差＋CFM 软化底噪，C7 测试对照口径）；发散算例改引擎可解域内越界（q̈=2e10、h=1e-4——qd 越检出界于 t≈0.13 s）；质量阵奇异→物性能力缺失同语义面（物化失败文本）"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
+      "sha256": "12fd35dfc75c30024c40ca2ddcd11d6b9f7697617ce191b25321dd44309260f7",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "makeTwoLinkModel 增 provideBasePhysics 缺省参数（FD 引擎会话物性门控要求全连杆齐备——RNE 递推不消费基座物性，缺省 false 既有 RNE 用例模型形态零变化零数值影响）"
+    },
+    {
+      "mode": "business",
+      "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp",
+      "sha256": "932877e246bef8c65a656adebdd215a8f2a4745b8c4088216daea96ec2820a78",
+      "capabilities": [],
+      "verify": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T53/gtest-dynamics-full.log",
+      "boundary": "GOV-T21 约束改写（不删不放宽）：P-DYN-7 零引擎符号钉扎→迁移后真实契约钉扎两向（会话消费符号在位＋旧自持核符号断开——solveLinearSystem/kSingularPivotRelative/callRneaSample/massFlat）；词表/算法版本编译期钉扎 ode-fixed＋/2"
+    }
+  ]
+}

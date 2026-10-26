@@ -841,7 +841,7 @@ NameMap 的 canonical 编码（RT-Codec 子形态 `IRDNAME`）：条目按 (scop
 
 ### 8.1 依赖边界（P-RT-3 登记）
 
-ARCH §2.3 L2 行允许"L1 的 RobWork 数学/运动学类型"，而 §5.1/§7.3 明文要求 runtime 构造 WorkCell/DynamicWorkCell（rw::models／rwsim::dynamics）。本文按后者明文将以下基线库列为 runtime 的 L1 依赖：`sdurw_math`、rw kinematics（Frame/State/StateStructure）、rw models（WorkCell/SerialDevice/Joint）、rwsim dynamics（DynamicWorkCell/RigidDevice 构造）——全部为**零 Qt 的 RobWork 库**（R-3 不受影响）；**不使用**：rw loaders（XML 解析归 io）、rw pathplanners（归 trajectory）、rw proximity（碰撞归 policy）、rws（Studio 层，L3+）。该措辞差异请求架构评审确认（P-RT-3）；确认前按 §7.3 明文实施，不引入任何表外依赖。
+ARCH §2.3 L2 行允许"L1 的 RobWork 数学/运动学类型"，而 §5.1/§7.3 明文要求 runtime 构造 WorkCell/DynamicWorkCell（rw::models／rwsim::dynamics）。本文按后者明文将以下基线库列为 runtime 的 L1 依赖：`sdurw_math`、rw kinematics（Frame/State/StateStructure）、rw models（WorkCell/SerialDevice/Joint）、rwsim dynamics（DynamicWorkCell/RigidDevice 构造）、`sdurwsim_ode`（REUSE-T53 增登——FD 受控引擎会话消费 ODESimulator，sdurwsim_ode 为 RobWorkSim 子系统库，零 Qt）——全部为**零 Qt 的 RobWork 库**（R-3 不受影响）；**不使用**：rw loaders（XML 解析归 io）、rw pathplanners（归 trajectory）、rw proximity（碰撞归 policy）、rws（Studio 层，L3+）。该措辞差异请求架构评审确认（P-RT-3）；确认前按 §7.3 明文实施，不引入任何表外依赖。
 
 **RT-T15 补记（2026-10-12）**：S6 基本图元几何挂接消费基线几何类（`rw::geometry` 的 Cylinder/Box/Geometry——呈现图元构造，§5.2 S6 输出列"Geometry 对象"的承载面）；该头经 sdurw_models 的 **PUBLIC** 依赖 sdurw_geometry 传递可达（models/CMakeLists.txt 实测 `PUBLIC sdurw_core sdurw_kinematics sdurw_math sdurw_geometry`）——**include 边新增、链接清单不扩**（仍＝上列三库面），属 P-RT-3 口径内的传递依赖消费，非表外依赖。
 

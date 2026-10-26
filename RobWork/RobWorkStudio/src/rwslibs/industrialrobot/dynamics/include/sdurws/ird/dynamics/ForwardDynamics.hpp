@@ -19,33 +19,28 @@
  *   - 任务契约 tasks/foundation/WP-17-T05.json（acceptance：响应一致性
  *     检查与异常检测用例通过）
  *
- * ★ 正动力学引擎选型登记（P-DYN-7 落位锁定，2026-10-08——实测结论，详见
- *   单元卡 §1.2 T05 实现登记注与 §15.2 P-DYN-7 行）：
- *   本域正动力学引擎＝**同源 RNEA 质量阵/偏置力提取＋固定步长四阶龙格—
- *   库塔（RK4）积分**（integratorToken 词表锁定值 kForwardIntegratorToken
- *   ＝"rk4-fixed"）。RobWorkSim 物理引擎（rwsim::simulator::PhysicsEngine
- *   工厂形态）经实测不落位，四条依据：
- *   1. 本仓库集成构建缓存 ODE_DIR-NOTFOUND（ODE 引擎依赖未启用，源码树
- *      rwsimlibs/ode 不参与构建）；Bullet 引擎（sdurwsim_bullet）为
- *      RW_ADD_PLUGIN 动态插件注册机制（BtPlugin.cpp 实测），L2 计算库
- *      （进程内评估器、零 Qt 零插件加载器）无合法接入点，直连引擎实现类
- *      （BtSimulator）＝依赖 rwsimlibs 私有实现头，非 rwsim 公共契约；
- *   2. D-DYN-2/CM-0"不自建第二套关节链"：rwsim 引擎消费 DynamicWorkCell
- *      形态模型，工况条件负载（payloads/events）需向引擎场景注入负载体
- *      （运行中 addBody）——rwsim 公共 API 无此消费先例，注入即自建第二
- *      套链；本头经公共 evaluate 接口消费，τ_ref 与正向仿真天然同变体
- *      （§6.1 ⑤共源强制——非法示例"用另一工况的负载做仿真"在本接口面
- *      结构上不可表达）；
- *   3. §10.2 确定性行"同配置同输入→等价误差序列（积分确定）"：固定步长
- *      RK4 为纯确定性数值路径；迭代约束求解器（Bullet LCP）存在容差内
- *      漂移，须按"黄金算例声明对照容差"放宽——与 R1 确定性口径冲突；
- *   4. 冒烟模式纪律（DTB §5.1 双模式；T03 确立的零外联符号面）：rwsim
- *      引擎符号为框架 .cpp 外联，冒烟配置树无框架库可链——本实现全链
- *      零外联符号（只消费已冒烟验证的公共头），双模式同源可构建。
- *   "RobWorkSim 正动力学场景"的承接口径与 DYN-01 的 T03 验收先例同款：
- *   场景本体由 RobWorkSim 刚体模型的编译产物（CanonicalModel——质量/质
- *   心/惯量/轴几何/摩擦/工具偏置全部经它读取）构造，四要素（控制输入/
- *   初始状态/步长/容差）全部显式入 ForwardCheckSettings 与请求。
+ * ★ 正动力学引擎选型（WP-09/REUSE-T53 执行登记，2026-10-26——P-DYN-7
+ *   自持 RK4 约束已被治理取代，见单元卡 §15.2 GOV-T21 行）：
+ *   本域正动力学场景＝**RobWorkSim ODE 物理引擎**（GAP-FD-BUILD-01 提案
+ *   唯一推荐路径——A3 裁决 2026-10-26「A1~A4 全按推荐」放行，integratorToken
+ *   词表值 kForwardIntegratorToken＝"ode-fixed"）。承接面：
+ *   1. 供给（WP-08/REUSE-T31 提案＋阶段 B 实测）：vcpkg ode 0.16.6 经既有
+ *      公共渠道安装（ode_double 双精度在案）→ sdurwsim_ode 启用——规避
+ *      RobWorkSimSetup WIN32 git 网络拉取回退；Bullet/RWPhysics 保留已查
+ *      失败证据（提案 §1），原 RNE-Wrench 只用于逆动力学；
+ *   2. 消费（runtime::FdEngineSession 受控会话——模型构造权归 runtime，
+ *      REUSE-T52 构造面裁决同墙复利）：业务侧只提交 SI 广义力/步长，不
+ *      接触引擎实现类；τ_ref 与正向仿真共用同一 evaluate 入口（⑤共源
+ *      不变），负载变体经会话重建同步（§6.1 变体语义保留）；
+ *   3. 引擎适配差异四项（实核在案，全部消费边界适配、零上游改动）：力控
+ *      仅转动关节（含移动关节链 fail-fast——不再有旧自持核的移动承载）、
+ *      声明摩擦逐子步补偿、初速度伺服播种、工具体静态惰性经法兰组合
+ *      替代承载——详见 runtime/FdEngineSession.hpp 文件头与单元卡登记；
+ *   4. "RobWorkSim 正动力学场景"的承接口径（DYN-01 T03 先例同款）不变：
+ *      场景本体由编译产物（CanonicalModel）经 runtime 编译链物化，四要素
+ *      （控制输入/初始状态/步长/容差）全部显式入 ForwardCheckSettings 与
+ *      请求；请求 gravityBase 经 R_world_base 投影为引擎世界系重力（旧
+ *      request.gravityBase 治理语义保留）。
  *
  * ★ 契约形态微调（诚实登记，DTB §5.4 精神——单元卡 §1.2/§10.2 同步登记）：
  *   1. §10.2 的 IForwardDynamicsValidator 抽象接口落位为域内具体类
@@ -106,13 +101,17 @@ namespace sdurws::ird::dynamics {
 // =====================================================================
 
 /// 正动力学积分器封闭词表的当前锁定值（§4.2 forwardCheck.integratorToken
-/// ——P-DYN-7 落位锁定，2026-10-08；扩展新积分器＝先单元卡 §4.2 增量修订
-/// 词表、再追加常量——既有值不重排，NFR-COR-02 确定性序）。
-inline constexpr std::string_view kForwardIntegratorToken = "rk4-fixed";
+/// ——WP-09 换核登记 2026-10-26："ode-fixed"＝RobWorkSim ODE 引擎固定
+/// 步长推进〔GAP-FD-BUILD-01 提案执行〕；词表增量修订程序已走单元卡
+/// §4.2——历史锁定值 "rk4-fixed" 同批退役登记〔自持核已删除，接受
+/// "rk4-fixed" 输入会以旧词表值冒充新引擎身份〕，NFR-COR-02 确定性序；
+/// 旧词表值的结果与新结果以 kForwardCheckAlgorithmVersion 区分，不混比）。
+inline constexpr std::string_view kForwardIntegratorToken = "ode-fixed";
 
 /// 正动力学一致性检查的算法实现版本 token（§4.4 身份分量——算法语义变更
 /// 〔积分器/误差度量/判定规则〕＝换新 token，旧结果不与新结果混比）。
-inline constexpr std::string_view kForwardCheckAlgorithmVersion = "dyn-forward-check/1";
+/// WP-09 换核（RK4 自持核→ODE 引擎会话）＝实现源变更，/1→/2。
+inline constexpr std::string_view kForwardCheckAlgorithmVersion = "dyn-forward-check/2";
 
 // =====================================================================
 // forwardCheck 分析配置（§4.2 表 forwardCheck.* 六字段的域内 DTO——
@@ -146,10 +145,9 @@ struct ForwardCheckSettings {
                                    ///   至下一参考样本的剩余时长)——子步不跨参考
                                    ///   样本边界（采样保持区间完整性）
     double relTolerance = 0.0;     ///< 积分相对容差（DYN-05"容差明确"；进身份），
-                                   ///   无量纲，必须 >0 且有限。★ 固定步长 RK4
+                                   ///   无量纲，必须 >0 且有限。★ ODE 引擎推进
                                    ///   无自适应容差消费点——本字段为记录性
-                                   ///   身份/审计分量（不进数值路径），如实登记；
-                                   ///   积分器换自适应实现时接手语义
+                                   ///   身份/审计分量（不进数值路径），如实登记
     double toleranceQ = 0.0;       ///< 一致性判定的位置误差阈值（分析配置来源——
                                    ///   附录 D C7）；单位随关节类型（rad 或 m，
                                    ///   §4.5——同型链单一单位，混合链逐元素
@@ -273,23 +271,31 @@ struct ForwardCheckOutcome {
  *      evaluate 逐样本求力矩（同一冻结模型/重力/负载/工况——⑤共源的结构
  *      性强制）；τ_ref 侧的降级/非有限诊断透传至 outcome.diagnostics；
  *   3. 正向仿真（时序图②③）：初始状态 (q₀,q̇₀)＝参考段起点；控制输入
- *      τ_ref 按采样保持（区间 [t_j,t_{j+1}) 内取 τ_ref(t_j) 常量）；固定
- *      步长 RK4（子步不跨参考样本边界）；动力学右端＝M(q)⁻¹·(τ_ctrl −
- *      h_f(q,q̇))，其中 h_f（重力＋科氏＋摩擦）与 M 逐列提取均经公共
- *      evaluate 单样本调用（变体一致性由 evaluate 内部事件时间线在区间
- *      起点时刻生效保证——与 τ_ref 同变体）；
+ *      τ_ref 按采样保持（区间 [t_j,t_{j+1}) 内取 τ_ref(t_j) 常量）；推进
+ *      经 runtime::buildFdEngineSession 受控会话（ODE 引擎——模型构造权
+ *      归 runtime，dynamics 经登记边消费）：会话以 CanonicalModel 私有
+ *      物化副本装配，请求 gravityBase 投影为引擎世界系重力；负载变体
+ *      切换（事件边界）＝以当前 (q,q̇) 重建会话（变体一致性——与 τ_ref
+ *      同变体）；固定步长子步 h＝min(maxStepS, 至区间终点剩余时长)；
  *   4. 误差度量（时序图④）：每个参考样本时刻与 (q_ref,q̇_ref) 逐元素比较，
  *      累计 max/RMS 与首达时刻；中间样本激励非有限→该样本不参与统计＋
  *      DYN-NON-FINITE 素材（样本级处置，§4.6——不阻断检查）；
  *   5. 异常检测（DYN-05 本义）：积分状态非有限或量级超发散检出界→Failed＋
- *      DYN-FD-DIVERGED；质量阵线性求解失败（奇异/病态）→Failed＋
- *      DYN-FD-NUMERIC-ANOMALY；
+ *      DYN-FD-DIVERGED；引擎会话物化失败（物性能力缺失/移动关节链——
+ *      runtime 稳定诊断）→Failed＋DYN-FD-NUMERIC-ANOMALY（"全零物性链
+ *      不可正解积分"旧语义的同面延续——detail 携带会话侧定位）；
  *   6. 判定（时序图④出口）：max|e_q|≤toleranceQ ∧ max|e_qd|≤toleranceQd
  *      →Passed，否则 Failed＋DYN-FD-CONSISTENCY-FAILED（比较型素材）。
  *
  * 发散检出界：状态向量任一分量 |·|>kForwardDivergenceMagnitude（常量 1e10，
  * 单位 rad/m、rad/s、m/s——异常检测判据而非工程判定阈值，值随黄金算例
  * 声明）即判发散（持续积分下双精度饱和前必经此界，检出确定）。
+ *
+ * 引擎精度边界（诚实登记——附录 D C7 测试对照容差声明面）：ODE 推进为
+ *   约束求解数值路径（非旧自持 RK4 的多项式精确性）——恒定加速度下呈
+ *   一阶 O(h) 离散误差（黄金算例给出解析界），关节约束 CFM 引入微小柔度；
+ *   一致性检查的发现力（采样保持/变体切换/数值链路）由对照容差与收敛性
+ *   断言承载，不因引擎更换放宽产品判定语义。
  *
  * 取消语义：每参考样本区间轮询一次宿主取消（§9.3 周期性查询）；观测到
  * 取消即返回（state=NotRun＋cancelled=true，已算误差保留可审计，零错误
@@ -325,15 +331,16 @@ public:
      *         递增——fail-fast，不产出半成品）。mode=Skip 时其余配置字段
      *         不参与校验（短路 NotApplicable）。
      *
-     * 确定性：同 request 同输出（逐位——固定步长 RK4＋纯数值递归）。
-     * 复杂度：O(区间数 × 每区间子步数 × 4 stage × (n+1) 次单样本 RNEA 调用)，
-     * n 为可动关节数；RNEA 每调用含一次模型提取（正确性/同源优先，性能
-     * 基准归 WP-23——R-DYN-1）。
+     * 确定性：同 request 同输出（逐位——ODE 引擎固定迭代求解＋纯确定性
+     *     会话推进；无随机源/时钟/locale 依赖）。
+     * 复杂度：O(区间数 × 每区间子步数 × 引擎单步代价)，n 为可动关节数；
+     *     τ_ref 侧＝样本数 × 1 次 evaluate 调用（T52 上游 RNE 直接 API）；
+     *     会话物化＝变体数 ×（S6+S7 编译＋引擎装配）——正确性/同源优先，
+     *     性能基准归 WP-23——R-DYN-1。
      */
     ForwardCheckOutcome validate(const ForwardCheckRequest& request,
                                  evidence::IEvaluationContext& context) const;
 };
 
 }  // namespace sdurws::ird::dynamics
-
 #endif  // IRD_DYNAMICS_FORWARDDYNAMICS_HPP
