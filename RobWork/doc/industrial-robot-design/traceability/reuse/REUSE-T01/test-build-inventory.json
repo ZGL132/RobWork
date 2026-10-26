@@ -573,8 +573,7 @@
       ],
       "codeGroup": "2f505dfff7ae27dcf8fc44c7230d257e497743229b9905f554a256f47e65303a",
       "cmake": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "2d2ffb5aad1050a80a8fefb3847fc80528abe23dbf6cdb0189f7e918cbec4ac0"
+        $15ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
       }
     },
     {
@@ -1080,8 +1079,7 @@
       ],
       "codeSha256": "b9e4f94147d918d52f3665e0b14a27d1a43500ebb165208331c9e23531c8dc59",
       "input": {
-        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-        "sha256": "2d2ffb5aad1050a80a8fefb3847fc80528abe23dbf6cdb0189f7e918cbec4ac0"
+        $15ef2e38b8e00e67c8889e50f5a09f0146908d2f791d2b52f5d669089313577cd"
       }
     },
     {
