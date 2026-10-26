@@ -1,0 +1,87 @@
+{
+  "taskId": "REUSE-T49",
+  "baseCommit": "f59b0b25e2e6cfbd8bc810923b9fd25fec386fb7",
+  "reviewedCommit": "59d76f8a429231becbd8a61b61053bad1b3a8e80",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T11:30:47+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T49 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-24 /workflow 与 2026-10-25/26 补救落地指令（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T49-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作；重放复核用隔离 .cache 目录与验收目录内副本（未触碰入库 expected/manifest/证据原件）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "F-959 testkit 黄金生成脚本修复落地批（REUSE-T49 解阻）独立验收：送验范围 f59b0b25e2e6cfbd8bc810923b9fd25fec386fb7..59d76f8a429231becbd8a61b61053bad1b3a8e80（冻结范围，单提交 59d76f8a4，19 文件）；①verify-task-scope 显式 Base/Head 落盘；②acceptance 4 条逐项清单式增量复验——F-959 落地批逐行 diff 与生产证据抽验＋隔离重放真实执行、审计批（a982ae959，Base 之前）行级抽查、宿主例外治理批（1cb967892，Base 之前）按 ask 一并核验（治理脚本正负例真实执行＋ARCH 记录＋例外范围）；③红线抽查（H1—H6、架构红线、CLOSURE 冻结、无平行回流、宿主例外未扩越权）；④当前 HEAD 门禁实测 validate-docs -TaskFile 数组全部相关契约（T49＋T41）＋ird_gates 复跑。",
+  "counts": {
+    "failed": 0,
+    "passed": 16,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "16 项验收检查全部本轮亲测（含对比核验类）；C++ 三套件按增量口径引用实施证据未重跑（零产品变更，XML/report 交叉核验一致），引用型另列不计入；integrationTest 计数另列"
+  },
+  "checks": [
+    "现场与范围：git status --short 受跟踪文件零修改（未跟踪仅本验收目录与既有 REUSE-T10/T30 会话目录）；分支 redesign-main；HEAD=59d76f8a429231becbd8a61b61053bad1b3a8e80 即送验 head；送验区间恰 1 提交（59d76f8a4，[WP-19-T49]），19 文件与 git diff --stat 一致；审计批=a982ae959（73c034765..a982ae959 区间 64 行 testkit 定案）、宿主例外治理批=1cb967892，均在 Base 之前按 ask 引用核验。",
+    "①verify-task-scope（显式 Base/Head）：pwsh -NoProfile -File verify-task-scope.ps1 -TaskFile REUSE-T49.json -Base f59b0b25e2e6c… -Head 59d76f8a4292… → PASS，19 个路径全部在允许面（allowedRules=9/forbiddenRules=4）。证据 evidence/verify-task-scope-t49.log。",
+    "F-959 生成脚本 diff 逐行核对（git diff f59b0b25e..59d76f8a4 -- make_import_expectations.mjs）：counts.unsupported 8→3、unsupportedKinds 去 joint-velocity-limit×5、增 mappedVelocityCount=5 与 mappedVelocityNote（F01/{1,1} 速度限位映射锚）、头注不支持清单 8→3 同步——与契约 acceptance④ 及提交正文逐项一致。",
+    "manifest.json integrity 抽验（真实重算）：sha256sum generate/make_import_expectations.mjs = f30a5573a1fd65c784660af65300782547d433ef175f2e43a614353837555813、7491 字节，与 manifest 登记值逐字符一致；history 新增 2026-10-26 条目（F-959 生成器同步、expected 零变化、29 生成器重放逐字节一致、reReviewedBy 注明独立验收另行执行）。",
+    "expected 数据零变化：范围内 19 变更文件中 golden 面仅 generate/*.mjs 与 manifest.json 两件（diffstat 亲证），expected/*.json 与全部 .urdf/.stl 等数据文件零差异；范围内零 C++ 产品代码变更（无任何 .cpp/.hpp/CMakeLists.txt 路径）。",
+    "隔离重放一致性（数值/一致性项真实执行，本验收核心独立复现）：入库 replay 记录 reviewedCommit=f59b0b25e（提交前工作区运行）不能直接证明 Head 脚本一致——验收会话以正确 ROOT（仓库根）副本 replay-generators-t49-acc-r1.mjs（与入库脚本逐行 diff 逻辑全同，仅 ROOT/输出文件名两处替换）在 HEAD 干净工作区真实执行：29 生成器 29/29 exit0、normalizedDriftCount=0、reviewedCommit=59d76f8a4；与入库 landing-generator-replay.json 逐脚本对照（scriptRawSha256＋artifacts 全字段）0 mismatch；mdl-urdf-import 重放产物 3 件（expected/import-report.json、expected/xacro-samples.json、manifest.json）rawEqual=true 原始字节逐位一致。F-959 实质（脚本随 F01 期望面同步、不重产旧错误黄金数据）成立。证据 evidence/replay-generators-t49-acc-r1.mjs、replay-acc-run.log、landing-generator-replay-acc-r1.json。",
+    "测试证据抽验（引用实施原件＋交叉核验）：testkit 121/121、modeling 480/480、contract 17/17——landing-green-*.xml testsuite 头与 <testcase> 计数（121/480/17）、failures=\"0\" 与 *.ird-test-report.json counts（passed/failed/skipped/notRun 分列、decisive=true）三方一致；GoldenImportTest.cpp:439 数据驱动断言消费 counts.mappedVelocityCount、:406-420 断言面从 expected JSON 读计数（钉 F01 映射面）。C++ 三套件未重跑（增量口径，见 limitations）。",
+    "GoldenImportTest.cpp:294-296 既有过期文档注（『不支持 8（…velocity 无落点 5…）』）亲证在位，且范围内该文件零变更（diffstat 无此路径）——契约『不属漂移链本批不改、留独立 cosmetic 缺陷归所有者归类』处置与事实一致。",
+    "foundation-governance.json 全文件解决批两行抽验（摘要真实重算）：fixtureGeneration 行区段 46-154 sha256=87aab7488d0ea6b650e465a1f5a43c1374db4a83552619c3fd65c77865c548a1 与实算一致；scriptHeader 行区段 1-45 登记值 86f35c8975c64247f163e76dbca58716ee41687d75693f357e59d761176ddbf8 与『行 join 不含尾换行』口径实算一致；1-45＋46-154=154 行=全文件（wc -l）——改动文件全行区段覆盖成立；两行均 decision=business-specific/status=migrated，search.command/conclusion 与 differences 登记 F-959 同步内容在案。",
+    "凭证与登记面 diff 核对：changes/REUSE-T49.json 由空 [] 增一件凭证（make_import_expectations.mjs、sha256 与实算一致、mode=business、verify 指向 README）；findings.json F-959 status open→fixed＋fixedAt=2026-10-26＋resolution 追加落地批记录；migration.md §13.2 新增 REUSE-T49 行、§13.3 WP-19 行 F-959 落地更新（删除线保留历史）；契约 REUSE-T49.json allowedFiles/note/acceptance/verify 解阻同步。",
+    "审计批抽查（a982ae959，acceptance①）：73c034765→a982ae959 testkit.json 恰 64 行 decision/status pending→business-specific/migrated（node 逐行对比亲测，无新增 pending）；nonoverlap-testkit.json entries=64、functionId 唯一 64；search-batch.txt SK1（上游 JSON 解析同义物）/SK2（上游子进程封装）exit=0 检索记录在案；不洗绿成立——JsonLite 行明示『Boost.JSON 属新依赖渠道需所有者批准，未批保留』，审计批时点 ui.json pending=20（保持结构墙），F-959 当时 blocked（提交标题登记）本批才解阻 fixed。",
+    "catalog 抽验（acceptance②）：catalog.json MATH-SVD 条目 upstream[0] LinearAlgebra.hpp symbols=[svd,pseudoInverse,inverse]——inverse 补录在位（18e6f3c40，审计批前序提交）；送验范围内零 catalog 变更（diffstat 无 catalog 路径）——『其余批次零 catalog 变化』一致。",
+    "宿主例外治理批核验（1cb967892，ask 指定一并核验）：ARCHITECTURE.md §3.6.2 表增 HOST-WORKBENCH 行（ui/plugin/UiPlugin 精确文件族）＋扩面登记段（范围/理由/退出条件/所有者授权脉络）＋v0.16→v0.17 变更记录；permissions.json hostExceptions 增 HOST-WORKBENCH（恰 UiPlugin.hpp/cpp 两文件、target=sdurws_ird_ui_plugin、permissionRef=ARCH:3.6.2）＋两条首批 host-presentation 精确 grant（hpp categories=host,model/operations=borrow；cpp categories=model,state,graphics,host/operations=write-state，均 exceptionId 绑定 HOST-WORKBENCH）。",
+    "治理脚本正负例（真实执行）：pwsh -NoProfile -File test-reuse-governance.ps1 → exit 0，reuse selftests: passed=157 skipped=0 failed=0（expectedTests 155→157）；grep 亲证 grant-HOST-WORKBENCH-positive : True (exit=0 expected=PASS) 与 ad-host-unknown-id-rejected : True (exit=1 expected=REUSE-PERMISSIONS)——清单外 ID 即使文件面/目标/权限引用合法仍拒，封闭清单机读约束有效。证据 evidence/test-reuse-governance-r1.log。",
+    "红线抽查：H1/H2——范围内零 C++ 产品代码、零上游框架/vcpkg 路径（diffstat＋forbidden 检查 0 路径），无平行实现回流、不恢复 old/；CLOSURE 冻结——范围内 '*closures.json'/'*CLOSURE*' diff 路径计数 0（evidence/redline-closure-commitmsg-r1.log）；架构红线——无产品代码变更、宿主例外仅呈现装配层 borrow/write-state 不授模型构造/结构写入（permissions 登记文本＋自测负例双证）；H5——所有者 2026-10-26 批量批准落地裁决表第 1~4 项（ask 载明授权）；H6——changes 凭证＋foundation-governance 区段凭证＋检索记录三层在案；commit-lint.ps1 -Range f59b0b25e..59d76f8a4 → PASS（1 个提交全部合规）；提交正文六项声称（脚本同步/manifest integrity/重放 29-29/三套件计数/两行收口/GoldenImportTest 不改）与本轮亲测逐项一致。",
+    "④HEAD 门禁实测：pwsh -NoProfile -Command validate-docs.ps1 -TaskFile @('…/tasks/REUSE-T49.json','…/tasks/REUSE-T41.json')（PowerShell 数组，规避 -File 多值位置溢出）→ exit 0：validate-reuse PASS governance only（inventory=1401 units=20 changed=122 DEBT=16 UNRESOLVED=1399，not algorithm compliance）、validate-task PASS (2 tasks)、validate-docs PASS（20 units, 12 trace entries, 424 task files）；REUSE-AD-PENDING 各行为审计批已登记 pending 结构墙提示非阻断（policy/reporting/runtime/ui 与登记一致）；ird_gates 复跑（cmake -DIRD_ROOT=… -P ird_gates.cmake）→ exit 0，自测 17 项正负例通过＋R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中，与实施证据 landing-ird-gates.log 同结论。证据 evidence/validate-docs-t49-t41-r1.log、ird-gates-r1.log。"
+  ],
+  "integrationTest": {
+    "note": "零 C++ 产品变更批次：testkit 121/121＋modeling 480/480＋contract 17/17 引用实施原件（traceability/reuse/REUSE-T49/landing-green-*），本轮交叉核验 XML testsuite 头、<testcase> 计数与 ird-test-report.json counts 三方一致（failures=0、decisive=true）；ird_gates 与治理自测为本轮真实重跑。",
+    "goldenReplay": {
+      "executed": 29,
+      "passed": 29,
+      "failed": 0,
+      "normalizedDriftCount": 0,
+      "reviewedCommit": "59d76f8a429231becbd8a61b61053bad1b3a8e80",
+      "f959ArtifactsRawEqual": true,
+      "committedRecordCrossCheck": "29 脚本 scriptRawSha256 与 artifacts 全字段 0 mismatch",
+      "evidence": "REUSE-T49-20261026-r1/evidence/landing-generator-replay-acc-r1.json"
+    }
+  },
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json -Base f59b0b25e2e6cfbd8bc810923b9fd25fec386fb7 -Head 59d76f8a429231becbd8a61b61053bad1b3a8e80", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/verify-task-scope-t49.log" },
+    { "name": "golden-replay-acc", "command": "D:/software/Nodev/node.exe RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/replay-generators-t49-acc-r1.mjs（入库 replay 脚本副本，仅 ROOT→仓库根与输出文件名两处替换，diff 逻辑全同亲证）", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/replay-acc-run.log；记录=同目录 landing-generator-replay-acc-r1.json" },
+    { "name": "manifest-integrity-recompute", "command": "sha256sum …/golden/mdl-urdf-import/1.0.0/generate/make_import_expectations.mjs ＋ wc -c；foundation-governance 两行区段 sha256 重算（sed -n '46,154p'|sha256sum；node 行 join 不含尾换行口径 1-45）", "exitCode": 0, "passed": true, "note": "f30a5573…/7491、87aab748…（46-154）、86f35c89…（1-45）均与登记一致" },
+    { "name": "audit-batch-diff", "command": "node 逐行对比 git show 73c034765/a982ae959:reuse/functions/testkit.json（64 行 pending→business-specific/migrated）；ui.json pending 审计时点=20；nonoverlap/search-batch 读取", "exitCode": 0, "passed": true },
+    { "name": "governance-selftest", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/test-reuse-governance.ps1", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/test-reuse-governance-r1.log", "note": "157/157；HOST-WORKBENCH 正例 PASS、ad-host-unknown-id-rejected 按预期拒" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/ird-gates-r1.log" },
+    { "name": "validate-docs-taskfile-array", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T41.json') *>&1 | Tee-Object …; exit $LASTEXITCODE\"", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/validate-docs-t49-t41-r1.log", "note": "数组传参规避 -File 多值位置溢出误绑 -RepoRoot（ask 实测教训）；log 内中文因 Tee 编码乱码，判定以 exit 0 与 PASS 行为准" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range f59b0b25e2e6cfbd8bc810923b9fd25fec386fb7..59d76f8a429231becbd8a61b61053bad1b3a8e80", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/commit-lint-r1.log" },
+    { "name": "redline-paths", "command": "git diff --name-only f59b0b25e..59d76f8a4 -- '*closures.json' '*CLOSURE*' 'RobWork/RobWork/src/**' 'RobWork/RobWorkSim/src/**' 'vcpkg/**' | wc -l → 0；git diff --stat 全 19 文件核对", "exitCode": 0, "passed": true, "log": "REUSE-T49-20261026-r1/evidence/redline-closure-commitmsg-r1.log" }
+  ],
+  "issues": [
+    "非阻断·登记归所有者归类（traceability 证据工具缺陷，同 GoldenImportTest cosmetic 缺陷处置先例）：入库版 traceability/reuse/REUSE-T49/replay-generators-t49.mjs 的 ROOT 解析（import.meta.dirname 上溯 5 级=内层 RobWork\\RobWork）使 PREFIX 拼出三层 RobWork 不存在路径，在其入库位置执行必然 ENOENT（验收副本按原代码执行实测复现）；而入库 landing-generator-replay.json 的 isolation=仓库根\\.cache\\t49-golden-replay、command 前缀均为仓库根——实际运行的版本 ROOT=仓库根，与入库脚本代码不自洽（入库 JSON 不可能由入库版脚本从其入库位置产生）。F-959 实质不受影响：验收会话已用正确 ROOT 的逐行等价副本在送验 HEAD 真实重放，29/29 exit0、漂移 0、与入库 JSON 逐脚本 sha256/artifacts 零差异。建议所有者后续归档时统一 ROOT 约定或改用可移植定位，避免证据复现误导。"
+  ],
+  "notRun": [
+    "C++ 三套件（sdurws_ird_testkit_test/modeling_test/modeling_contract_test）未重跑：范围内零 C++ 产品代码变更（diffstat 亲证），按 AGENTS §4 增量范围口径引用实施原件并完成 XML/report 交叉核验（见 checks 第 7 条）；ird_gates、治理自测、golden 重放、validate 三门禁均为本轮真实重跑。"
+  ],
+  "limitations": [
+    "宿主例外治理批（1cb967892）与审计批（a982ae959）在送验 Base 之前，本轮按 ask『一并核验』做定点核验（ARCH/permissions 登记、治理正负例、审计行级抽查），未对两批全量重新验收——T41 独验已于 f59b0b25e 登记（REUSE-T41-20261026-r1.json）。",
+    "Boost.JSON 渠道批准仍为所有者保留裁决项（testkit.json JsonLite 行如实登记未批保留）；GoldenImportTest.cpp:294-296 cosmetic 缺陷归所有者归类——两项均不属本验收判定面。",
+    "契约 status=ready（实施完成待独验）；本记录不修改任务状态，登记/收口由所有者侧步骤执行。"
+  ],
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/verify-task-scope-t49.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/replay-generators-t49-acc-r1.mjs",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/replay-acc-run.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/landing-generator-replay-acc-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/test-reuse-governance-r1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/ird-gates-r1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/validate-docs-t49-t41-r1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/commit-lint-r1.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T49-20261026-r1/evidence/redline-closure-commitmsg-r1.log"
+  ]
+}
