@@ -38,6 +38,15 @@
       ],
       "target": "sdurws_ird_ui_plugin",
       "permissionRef": "ARCH:3.6.2"
+    },
+    {
+      "id": "HOST-WORKBENCH",
+      "files": [
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+        "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp"
+      ],
+      "target": "sdurws_ird_ui_plugin",
+      "permissionRef": "ARCH:3.6.2"
     }
   ],
   "grants": [
@@ -413,6 +422,60 @@
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",
         "sha256": "4865932ad3106e286222a8f638af1c945a1b8f92ae90464422ec13db725b0220"
+      }
+    },
+    {
+      "id": "REUSE-T41-UiPlugin.hpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.hpp",
+        "sha256": "2a5f64a2976e0da725064f53f16a84bf982dfc301a2dfcfbe6b7abf147474636"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "host",
+        "model"
+      ],
+      "operations": [
+        "borrow"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-WORKBENCH",
+      "lifetime": "宿主插件装配体头面（ARCH §3.6.2 HOST-WORKBENCH，2026-10-26 所有者批量批准扩面——REUSE-T41/F-967 落地批，呈现装配层）：host 类别＝RobWorkStudioPlugin 框架基类接入（rws/ include）；model 类别＝open(rw::models::WorkCell*) 借持形参（框架回调签名，只读借用，非构造/非结构写入，borrow 单操作如实限定）。F-967 收口后新增互斥成员与总线接口类型声明不改变受限面。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
+      }
+    },
+    {
+      "id": "REUSE-T41-UiPlugin.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/plugin/UiPlugin.cpp",
+        "sha256": "b6e754fa7f76e52cfb24e526d1cf71be3124315736e07489a516801ea94f8ed4"
+      },
+      "targets": [
+        "sdurws_ird_ui_plugin"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "graphics",
+        "host"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "host-presentation",
+      "exceptionId": "HOST-WORKBENCH",
+      "lifetime": "宿主插件装配体实现面（ARCH §3.6.2 HOST-WORKBENCH，2026-10-26 所有者批量批准扩面——REUSE-T41/F-967 落地批，呈现装配层）：host＝rws/ 框架壳接入；graphics＝rwlibs/opengl 选中几何呈现；model/state＝借持模型指针与既有发布 State 呈现读；write-state 唯一点＝D8 Jog 桥 device->setQ 任务私有 State 写（宿主操纵，非权威模型结构写入——运行时模型 owner 红线不变）。F-967 收口新增面＝构造 execution::DomainEventBusImpl 生产实例与投递线程转接（消费公共头 EventBus.hpp，R-2 公共面，不产生新受限类别）。退出条件＝宿主融合形态撤销或该文件受限类别归零时随 ARCH §3.6.2 同批回收",
+      "permissionRef": "ARCH:3.6.2",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
+        "sha256": "d69309f4e19b01dcb61e1a08f425a0a9befb21cece5c18c28b0504580fe83238"
       }
     }
   ]

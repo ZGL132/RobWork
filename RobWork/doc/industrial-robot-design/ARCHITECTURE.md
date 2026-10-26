@@ -5,7 +5,7 @@
 
 | 字段 | 值 |
 | --- | --- |
-| 文档版本 | v0.16（2026-10-26；§3.6.2.1 测试夹具例外；此前版本见变更记录） |
+| 文档版本 | v0.17（2026-10-26；§3.6.2 增 HOST-WORKBENCH 宿主例外；此前版本见变更记录） |
 | 日期 | 2026-10-22 |
 | 状态 | `Draft`（待评审） |
 | 文档代号 | ARCH |
@@ -265,8 +265,11 @@ workflow 是业务层之上的**编排单元**：消费平台事件（修订产�
 | HOST-PRESENT | ui/plugin/HostPresentationAdapters | HostPresentationView 的挂接、移除、名称投影、已发布模型几何遍历与会话 State 同步 | 视图来自 runtime 工厂；setWorkCell 不变成第二编译链；不修改发布模型结构 |
 | HOST-COMPILE | ui/plugin/HostCompilePort | 调用 runtime 编译器/快照工厂/编译探针，衔接 project 查询与 io 资源 | 仅编排既有公共端口；不能在宿主另写 WC/DWC 构造规则 |
 | HOST-GATEWAY | ui/plugin/HostView3DGateway | 通过受控 TCP Frame/当前 State 读取呈现位姿，拾取与发布网关 | 会话借用按来源保活，不把宿主视图回灌为工程计算真值 |
+| HOST-WORKBENCH | ui/plugin/UiPlugin | 宿主插件装配体（SA-18/B1-SPEC 装配特权边承载者）：框架壳接入（rws 基类）、选中几何呈现（rwlibs/opengl）、借持模型指针（`open(rw::models::WorkCell*)` 框架回调）、D8 Jog 桥任务私有 State 写（`device->setQ`）；F-967 收口起生产装配 execution::DomainEventBusImpl（公共头 EventBus.hpp，R-2 公共面） | 呈现装配层例外：不构造/不改权威模型结构，运行时模型 owner 红线不变；域互不依赖（R-1）不因装配边破坏 |
 
 本表经对应源文件及 ui/CMakeLists.txt 定位登记，**不宣称全部现有宿主接线已经通过权限审计**。其他文件（含壳层装配）如实际需要受限操作，须先登记精确文件/目标/操作、来源与生命周期、原因及退出条件，经架构确认；未列出不自动继承，也不得因此新增通用模型所有者。后续 IRD-GATE-AD 的机读权限记录引用本表 ID，并复核每个操作。
+
+HOST-WORKBENCH 扩面登记（2026-10-26，所有者批量批准复用落地裁决表第 1~4 项——REUSE-T41/F-967 落地批的解阻前置）：UiPlugin.{hpp,cpp} 是宿主插件装配体（L5 应用壳装配层，SA-18 装配特权边承载者），其受限类别（host/model/state/graphics）与操作（borrow/write-state）在基线即存在，仅因 F-967 生产装配收口首次进入门禁变动扫描（"基线后首改才入扫描集"的机器盲区如实登记）。登记范围＝上述表行精确操作；装配体消费的 execution 事件总线实现经公共头（R-2）与目标级装配边（ird_gates IRD_TARGET_LEVEL_EDGES 登记）承载，不新增单元级依赖边；权限授予仍逐文件精确登记（permissions.json 引用本 ID），粒度到操作。退出条件＝宿主融合形态撤销或文件受限类别归零时随本表同批回收。
 
 #### 3.6.2.1 测试夹具例外（test-fixture，2026-10-26 登记）
 
@@ -862,6 +865,7 @@ WP-00～25 为需求文档预留的任务包编号，单元↔WP 对应沿用其
 | v0.14 | 2026-10-12 | O-09 裁决落地（架构所有者；P-PR-5/P-IO-1/O-09 同案——裁决申请 traceability/wp04-t16-adjudication-requests.md）：§3.5 补登 io↔project、io↔runtime 两条**注入式协作边说明**——维持 io 注入式协作形态、不引入静态链接边（编译白名单与 R-1/R-2 门禁零变化），WP-04-T17/T18（project 阶段 B 包/固化）依赖口径随之确定为注入式；消账同步 governance-log §1.6/§1.9/§2 与 io.md/project.md 单元卡。需求语义零变化 |
 | v0.15 | 2026-10-22 | 所有者最终复用方案的文档治理：新增 §3.6 / SA-19（分形态权限、runtime owner、四组宿主精确例外、evidence/diagnostics 与 worker 边界、B/C/D/E 被否备选）；链接逐功能审计/catalog/正向证据及待实现门禁契约。需求及依赖白名单不变，本轮不改产品代码/门禁实现，不批准新核心。 |
 | v0.16 | 2026-10-26 | 新增 §3.6.2.1 测试夹具例外（origin=test-fixture，仅产品树 /test/ 路径合法；仅豁免夹具装配所必需的 construct/mutate-model 授权）：解除非 runtime 单元模型构造型测试文件的 IRD-GATE-AD 死锁（REUSE-T36 F-961 落地实施中发现；WP-04/05/07 测试落地同障碍）。§3.6.1 runtime owner 红线、§3.6.2 宿主例外、worker 边界均不变；需求语义零变化。门禁实现与自测正负例随治理批登记，待所有者追认。 |
+| v0.17 | 2026-10-26 | §3.6.2 宿主例外封闭清单 4→5：新增 HOST-WORKBENCH（ui/plugin/UiPlugin 精确文件族，呈现装配层——宿主插件装配体 SA-18 装配特权边承载者；受限面＝框架壳接入/选中几何呈现/借持模型指针/D8 Jog 桥任务私有 State 写；不授模型构造或结构写入，runtime owner 红线不变）。2026-10-26 所有者批量批准复用落地裁决表第 1~4 项（REUSE-T41/F-967 生产装配落地批）的解阻前置——此前 REUSE-T41 blocked 裁决（2026-10-25）明示扩宿主例外属所有者独立治理批次。门禁机读表（reuse-contract.ps1 $names 恰 5 项）与自测正负例（HOST-WORKBENCH 命中、未知 ID 仍拒）随治理批同批登记；需求语义零变化。 |
 
 
 ## 2026-09-10 文档同步状态

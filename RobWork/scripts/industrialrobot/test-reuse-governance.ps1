@@ -20,7 +20,7 @@ $design = 'RobWork/doc/industrial-robot-design/'
 $reuse = $design+'reuse/'
 $product = 'RobWork/RobWorkStudio/src/rwslibs/industrialrobot/'
 $script:results = @(); $script:restore = @{}
-$driverFailure = ''; $expectedTests = 155
+$driverFailure = ''; $expectedTests = 157
 $driverSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash
 $copiedValidatorSha256='';$copiedHelperSha256=''
 # 首次写入记录原字节；每例结束恢复，避免负例相互污染。
@@ -249,6 +249,14 @@ try {
     & git -C $sandbox -c user.name=ReuseFixture -c user.email=fixture@example.invalid commit --quiet -m 'fixture acceptance only'
     if ($LASTEXITCODE) { throw 'fixture acceptance commit failed' }
     $script:fixtureAcceptanceCommit=(& git -C $sandbox rev-parse HEAD).Trim()
+    # HOST-WORKBENCH 宿主例外（2026-10-26 所有者批量批准扩面，REUSE-T41/F-967
+    # 落地批登记）：门禁代码取工作树、数据面取冻结治理树的隔离口径不变——冻结
+    # 树 e6f06e5b 的 permissions.json 尚无第 5 条宿主例外，本驱动在隔离副本补齐
+    # HOST-WORKBENCH（UiPlugin.{hpp,cpp} 文件面），使全部正反例按当前封闭清单
+    # （恰 5 项）运行；后续逐例改动仍以该状态为恢复基线。
+    $p=GetJson ($reuse+'permissions.json')
+    $p.hostExceptions += [pscustomobject]@{id='HOST-WORKBENCH';files=@(($product+'ui/plugin/UiPlugin.hpp'),($product+'ui/plugin/UiPlugin.cpp'));target='sdurws_ird_ui_plugin';permissionRef='ARCH:3.6.2'}
+    PutJson ($reuse+'permissions.json') $p
     Case 'script-audit-no-fake-target' 'PASS' { PutScriptMatrix (ScriptMatrix) }
     Case 'script-audit-sourced-helper' 'PASS' {
         $m=ScriptMatrix;$path='RobWork/scripts/industrialrobot/reuse-contract.ps1';$text='# audit helper fixture';Put $path $text
@@ -398,7 +406,7 @@ try {
     Case 'closure-changed-function-after-pass' 'REUSE-CLOSURE' { $f=ClosureFixture;$f.matrix.functions[0].differences='changed after acceptance';WriteProduction $f }
     Case 'closure-deletion-missing-replaces' 'REUSE-CLOSURE' { $f=ClosureFixture -Replacement;$f.matrix.functions[0].PSObject.Properties.Remove('replaces');WriteProduction $f }
     Case 'closure-accepted-matrix-missing' 'REUSE-CLOSURE' { [void](ClosureFixture);$c=GetJson ($reuse+'closures.json');$c.files[0].migrationCommit=$script:fixtureReviewedCommit;$c.files[0].acceptance.reviewedCommit=$script:fixtureReviewedCommit;$c.files[0].acceptance.commit=$script:fixtureAcceptanceCommit;$c.files[0].acceptance.path=$design+'traceability/acceptance/GOV-T22-fixture.json';PutJson ($reuse+'closures.json') $c }
-    foreach ($hostId in @('HOST-RENDER','HOST-PRESENT','HOST-COMPILE','HOST-GATEWAY')) {
+    foreach ($hostId in @('HOST-RENDER','HOST-PRESENT','HOST-COMPILE','HOST-GATEWAY','HOST-WORKBENCH')) {
         $currentHost=$hostId
         Case ('grant-'+$hostId+'-positive') 'PASS' {
             $p=GetJson ($reuse+'permissions.json');$h=@($p.hostExceptions | Where-Object { $_.id -eq $currentHost })[0]
@@ -407,6 +415,14 @@ try {
             $g.build.path=$product+'ui/CMakeLists.txt';$g.build.sha256=Hash ([IO.File]::ReadAllText((Join-Path $sandbox $g.build.path)))
             $p.grants=@($g);PutJson ($reuse+'permissions.json') $p
         }
+    }
+    # 封闭清单扩面后负例仍然成立：清单外 ID（HOST-NOPE）即使给出合法文件面与
+    # 目标/权限引用，也必须被机读表拒绝——扩面只能经本脚本 $names 表+ARCH §3.6.2
+    # 登记完成，permissions.json 不能自扩例外。
+    Case 'ad-host-unknown-id-rejected' 'REUSE-PERMISSIONS' {
+        $j=GetJson ($reuse+'permissions.json')
+        $j.hostExceptions += [pscustomobject]@{id='HOST-NOPE';files=@(($product+'ui/plugin/UiPlugin.hpp'),($product+'ui/plugin/UiPlugin.cpp'));target='sdurws_ird_ui_plugin';permissionRef='ARCH:3.6.2'}
+        PutJson ($reuse+'permissions.json') $j
     }
     Case 'grant-runtime-owner-positive' 'PASS' {
         $p=GetJson ($reuse+'permissions.json');$g=Grant 'runtime-owner' @('construct-model','load-model','mutate-model') 'sdurws_ird_runtime';$g.usageRole='owner'

@@ -61,7 +61,14 @@ function CheckPermissions {
     if ($p.schemaVersion -ne 'ird-reuse-permissions/1' -or $p.authority -ne 'ARCH:3.6' -or $p.modelOwner -ne 'runtime' -or
         -not $p.PSObject.Properties['grants']) { Fail 'PERMISSIONS' 'schema/authority/owner/grants' }
     CheckPermissionRef $p.authority
-    $names = @{'HOST-RENDER'='HostView3DPreviewBackend';'HOST-PRESENT'='HostPresentationAdapters';'HOST-COMPILE'='HostCompilePort';'HOST-GATEWAY'='HostView3DGateway'}
+    # 宿主例外封闭清单（ARCH §3.6.2 机读面）：ID 与文件族在此硬编码逐项比对，
+    # permissions.json 只能引用本表 ID 并精确给出对应 .hpp/.cpp 文件面。
+    # HOST-WORKBENCH（UiPlugin.{hpp,cpp}）为 2026-10-26 所有者批量批准的扩面
+    # 登记（REUSE-T41/F-967 生产装配落地批，ARCHITECTURE.md v0.17 同批）：
+    # 宿主插件装配体是 ARCH §3.6.2 呈现装配层（SA-18/B1-SPEC 装配特权边承载
+    # 者），其受限面＝宿主类别 include 与借持模型指针、D8 Jog 桥任务私有
+    # write-state；不授模型构造/结构写入，运行时模型 owner 红线不变。
+    $names = @{'HOST-RENDER'='HostView3DPreviewBackend';'HOST-PRESENT'='HostPresentationAdapters';'HOST-COMPILE'='HostCompilePort';'HOST-GATEWAY'='HostView3DGateway';'HOST-WORKBENCH'='UiPlugin'}
     $hostSeen = @{}
     foreach ($h in $p.hostExceptions) {
         if (-not $names.ContainsKey("$($h.id)") -or $hostSeen.ContainsKey("$($h.id)") -or $h.target -ne 'sdurws_ird_ui_plugin' -or $h.permissionRef -ne 'ARCH:3.6.2') { Fail 'PERMISSIONS' 'unregistered host exception' }
@@ -70,7 +77,7 @@ function CheckPermissions {
         if (@(Compare-Object $expected @($h.files)).Count) { Fail 'PERMISSIONS' "$($h.id): exact files required" }
         foreach ($path in $expected) { [void](ReadText $path) }
     }
-    if ($hostSeen.Count -ne 4) { Fail 'PERMISSIONS' 'host exception coverage' }
+    if ($hostSeen.Count -ne 5) { Fail 'PERMISSIONS' 'host exception coverage' }
     $grants = @{}
     foreach ($g in $p.grants) {
         RequireFields $g @('id','source','targets','categories','operations','origin','lifetime','permissionRef','usageRole') 'PERMISSIONS'
