@@ -1,0 +1,8 @@
+contract-file-count=76
+NOT RUN: »´ø‚÷§æ›À˜“˝…Ûº∆£®∞¥–Ë π”√ -DeepEvidence£ªµ±«∞»ŒŒÒ÷§æ›»‘–Î∫À∂‘£©
+[31;1mWrite-Error: [0mD:\10_Source_Repos\21_robot\RobWork\RobWork\doc\industrial-robot-design\traceability\acceptance\REUSE-T41-20261026-r1\evidence\run-acc-validate-docs-all.ps1:5[0m
+[31;1m[0m[36;1mLine |[0m
+[31;1m[0m[36;1m[36;1m   5 | [0m [36;1m& 'D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobo[0m °≠[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m     | [31;1m ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[31;1m[0m[36;1m[36;1m[0m[36;1m[0m[36;1m[31;1m[31;1m[36;1m     | [31;1mready task has empty or missing field allowedFiles: CORE-T01[0m
+all-tasks-suite-exit=1

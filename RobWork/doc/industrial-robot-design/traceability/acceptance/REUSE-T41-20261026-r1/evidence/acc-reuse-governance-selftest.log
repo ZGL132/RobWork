@@ -1,0 +1,6 @@
+exit=0
+ad-bom-script-frozen-positive : True (exit=0 expected=PASS)
+31-frozen-head : True (exit=0 expected=PASS)
+32-frozen-head-ignores-dirty-tree : True (exit=0 expected=PASS)
+33-frozen-head-repeatable : True (exit=0 expected=PASS)
+reuse selftests: passed=157 skipped=0 failed=0
