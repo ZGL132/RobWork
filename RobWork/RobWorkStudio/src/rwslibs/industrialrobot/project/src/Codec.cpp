@@ -1,36 +1,53 @@
 /**
  * @file   Codec.cpp
- * @brief  project 自有格式 canonical 编解码实现（§4.8）——自含 JSON 引擎。
+ * @brief  project 自有格式 canonical 编解码实现（§4.8）——dump 自持转义
+ *         编码器＋parse 走 Boost.JSON 公共渠道（REUSE-T54）。
  *
  * 设计依据：
  *   - units/project.md §4.8（canonical 编码契约：ASCII、固定字段序、无浮点
  *     ——全字符串身份与整数、parse(dump(x))==x；"JsonLite（testkit）不用于
- *     产品格式"——因此本文件自含读写引擎，不引第三方 JSON 库，依赖红线：
- *     第三方一律经 vcpkg 且先在 DTB 登记，本任务无此登记）、§4.4（字段级
- *     契约与表列序）、§8.11（版本判定：旧格式 format-legacy/未来版本
- *     schema-future＋升级指引数据——PM-06/NFR-DEP-04）；
+ *     产品格式"）、§4.4（字段级契约与表列序）、§8.11（版本判定：旧格式
+ *     format-legacy/未来版本 schema-future＋升级指引数据——PM-06/NFR-DEP-04）；
+ *   - 任务契约 tasks/REUSE-T54.json（P5/T05-project 解析家族迁移批）：
+ *     Boost.JSON 渠道经所有者 2026-10-26 A4 裁决批准（vcpkg 公共依赖，批准
+ *     登记见 traceability/reuse/REUSE-T43/byte-primitives-decision.md §6）；
  *   - 任务契约 tasks/foundation/PRJ-T04.json acceptance 1～4（CR-02：摘要
  *     只经 core ContentDigester——本文件除 contentVersionOf 外无任何哈希
  *     计算，digest 类字段全部透传）。
  *
- * 引擎规则（canonical 落值口径，随实现登记——DTB §5.4）：
- *   1. 输出：紧凑无空白、字段序＝各类型 §4.4 表列序、可选字段空值省略
- *      （空列表/空 map/nullopt 不输出）、整数十进制、字符串按下方转义表；
- *      非 ASCII 字符经 \uXXXX（BMP）或 UTF-16 代理对转义——输出恒为纯
- *      ASCII（§4.8）。
- *   2. 输入：严格 canonical——拒绝任何空白（含换行）、拒绝非 ASCII 原始
- *      字节（0x80+ 须以 \uXXXX 转义出现）、拒绝浮点/指数字面量（§4.8 无
- *      浮点）、拒绝 true/false/null（§4.4 契约无布尔/空字段——缺失即可选）、
- *      拒绝重复键、拒绝前导零整数、拒绝截断与尾随内容。带空白或非
- *      canonical 形态的字节流＝损坏/外部篡改产物，按 store-corrupt 拒绝
- *      （PM-02 读校验精神：宁可拒绝也不猜测）。
- *   3. 转义表（对称）：\" \\ \b \f \n \r \t；其余 <0x20 → \u00xx；0x20～
- *      0x7E 可打印 ASCII 原样；≥0x80 → UTF-8 解码 → \uXXXX/代理对。解析
- *      端对称还原（\uXXXX → UTF-8 字节），保证 parse(dump(x))==x 逐字节
- *      保真（含 4 字节 BMP 外字符与 \u0000）。
- *   4. 非法 UTF-8：dump 侧拒绝（std::invalid_argument——域 canonical 契约
- *      归 core §6.3，调用方错误 fail-fast）；parse 侧因输入限 ASCII＋转义
- *      而天然只能产生合法 UTF-8（孤立代理拒绝）。
+ * 引擎分工（REUSE-T54 落值口径，随实现登记——DTB §5.4）：
+ *   - dump 侧自持（不换）：§4.8 要求输出恒为纯 ASCII（非 ASCII 经小写
+ *     \uXXXX/代理对转义），Boost.JSON 序列化器输出原生 UTF-8（探针实证
+ *     traceability/reuse/REUSE-T54/probe），不满足字节面契约——故编码器
+ *     （appendJsonString/decodeUtf8At/appendUnicodeEscape/appendHexString）
+ *     为产品冻结契约的载体，保持原实现逐字节不变（NFR-COR-02：同值必同
+ *     字节，黄金字节用例钉死字段序与紧凑形态）。
+ *   - parse 侧两段：①canonical 词法门 scanCanonical（自持——Boost.JSON
+ *     是宽容解析器，探针实证其接受结构空白/浮点/bool/null 且把重复键坍缩
+ *     保留后值，这些"非 canonical 即损坏"的判定（PM-02 宁可拒绝不猜测）
+ *     必须由本单元自持；旧 JsonValue/JsonParser 递归下降 DOM 全族就此删除，
+ *     词法门为单遍线性扫描，无 DOM 构建无递归）；②boost::json::parse 构建
+ *     DOM（成熟第三方原语承担结构/转义/整数解析——core.Compare.closeWithin
+ *     Boost 定宽算术同型先例），解析异常一律转 store-corrupt。
+ *   - 词法门规则（§4.8 canonical 落值口径，与被删旧引擎逐条对应）：
+ *       1) 拒绝 ≥0x80 原始字节（磁盘格式 ASCII——GBK 误写/截断拼接防线）
+ *          与 <0x20 裸控制字符（canonical 只允许转义形态）；
+ *       2) 字符串外仅允许结构字符 { } [ ] : , 与 " 与数字/负号——结构空白
+ *          （空格/制表/换行）、浮点（.）、指数（e/E）、true/false/null 字面
+ *          量、一切裸词由此落入默认拒绝（§4.4 契约无布尔/空字段——缺失即
+ *          可选；无浮点）；
+ *       3) 整数：'-'? [0-9]+，前导零拒绝（同值第二字节形态——确定性
+ *          NFR-COR-02），负号后必须有数字；无小数/指数；
+ *       4) 字符串内：可打印 ASCII 原样；转义对称表 \" \\ \/ \b \f \n \r \t
+ *          \uXXXX（hex 大小写均可——解码结果唯一）；孤立代理拒绝（不存在
+ *          合法字符），代理对合成；
+ *       5) 重复键拒绝（同一对象两义性，canonical 不存在——boost 坍缩重复
+ *          键故必须自持：以解码后键文本比对，转义写法的同键同样命中）；
+ *       6) 嵌套深度 ≤64（kMaxDepth——防恶意深嵌套耗尽栈；§4.4 最深结构仅
+ *          4 层，64 已富余两个数量级；boost max_depth 同值双重防线）。
+ *   - 版本判定/未知字段容忍（§8.11/§4.8 次版本兼容）、身份字段 core 单源
+ *     解析（CoreId::tryFromCanonical——身份事实单源 core）、payloadCanonical
+ *     hex 文本编码（UI-T39）语义零变化。
  *
  * 线程安全：全部函数纯函数（无共享可变状态）。
  */
@@ -39,10 +56,20 @@
 
 #include <sdurws/ird/project/StoreTypes.hpp>
 
+#include <boost/json.hpp>
+#include <boost/system/system_error.hpp>
+
+#include <cstdint>
 #include <limits>
 #include <optional>
+#include <set>
 #include <stdexcept>
+#include <string>
+#include <string_view>
 #include <utility>
+#include <vector>
+
+namespace bj = boost::json;
 
 namespace sdurws::ird::project::codec {
 namespace {
@@ -124,189 +151,119 @@ void checkFormatId(const std::string& formatId)
 }
 
 // =====================================================================
-// JSON 值（轻量 DOM，仅自有格式所需四种节点）
+// canonical 词法门（单遍线性扫描——旧 JsonValue/JsonParser 递归下降全族
+// 的替代；只做词法 canonical 判定与重复键/深度防御，DOM 构建归 Boost.JSON）
 // =====================================================================
 
-/// JSON 节点：字符串/整数/对象/数组。无浮点与字面量（true/false/null 在
-/// 词法层即拒绝——§4.8 契约无此类字段）。
-struct JsonValue {
-    enum class Kind { String, Integer, Object, Array };
-
-    Kind kind = Kind::String;
-    std::string str;                                        ///< String 载荷（UTF-8）
-    bool negative = false;                                  ///< Integer 符号
-    std::uint64_t magnitude = 0;                            ///< Integer 绝对值
-    std::vector<std::pair<std::string, JsonValue>> members; ///< Object 成员（保序、无重复）
-    std::vector<JsonValue> items;                           ///< Array 元素（保序）
-};
-
-/// 按名查找对象成员（重复键已在解析层拒绝——每名至多一个成员）。
-const JsonValue* findMember(const JsonValue& obj, std::string_view key)
-{
-    for (const auto& m : obj.members) {
-        if (m.first == key) { return &m.second; }
-    }
-    return nullptr;
-}
-
-// =====================================================================
-// 解析器：递归下降，严格 canonical（无空白/无浮点/ASCII——见文件头规则 2）
-// =====================================================================
-
-/// 解析深度上限（防恶意深嵌套耗尽栈——非法输入防御；§4.4 最深结构仅 4 层，
-/// 64 已富余两个数量级）。
+/// 嵌套深度上限（防恶意深嵌套耗尽栈——非法输入防御；§4.4 最深结构仅 4 层，
+/// 64 已富余两个数量级；与 boost::json parse_options::max_depth 同值双重
+/// 防线——词法门先行给出稳定诊断，boost 层为兜底）。
 constexpr int kMaxDepth = 64;
 
-class JsonParser {
-public:
-    explicit JsonParser(std::string_view text)
-        : p_(text.data()), end_(text.data() + text.size())
-    {
-    }
+/**
+ * @brief 对象/数组栈帧：结构上下文＋已出现键集合（重复键判定载体）。
+ *
+ * keys 存解码后键文本（与被删旧引擎的解码比对语义一致——转义写法的同键
+ * 同样命中；canonical 键均为无需转义的固定字段名，此集合通常极小）。
+ */
+struct ScanFrame {
+    bool isObject = false;
+    std::set<std::string> keys;
+};
 
-    /// 解析整个文档：一个顶层值＋输入必须恰好耗尽（尾随内容＝截断/拼接
-    /// 现场证据，拒绝）。
-    JsonValue parseDocument()
-    {
-        JsonValue v = parseValue(0);
-        if (p_ != end_) {
-            corrupt("trailing content after JSON document（截断或非 canonical 尾部）");
+/// 码点 → UTF-8 追加（标准最短形式；与 dump 侧 decodeUtf8At 互逆——
+/// 转义键文本的解码还原用）。
+void appendUtf8CodePoint(std::string& out, std::uint32_t cp)
+{
+    if (cp <= 0x7F) {
+        out.push_back(static_cast<char>(cp));
+    } else if (cp <= 0x7FF) {
+        out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
+        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+    } else if (cp <= 0xFFFF) {
+        out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
+        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+    } else {
+        out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
+        out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
+        out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
+        out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+    }
+}
+
+/**
+ * @brief 读取 4 位十六进制（JSON \u 语义：大小写均可——dump 端输出小写，
+ *        解析端接受规范 JSON 的两种写法；解码结果唯一，不构成 canonical
+ *        二义；与被删旧引擎 parseHex4 同语义）。
+ *
+ * @param p   [in,out] 扫描位置（前进 4 字节）
+ * @param end [in] 输入末尾哨兵
+ * @return 码元值
+ */
+std::uint32_t scanHex4(const char*& p, const char* end)
+{
+    std::uint32_t v = 0;
+    for (int i = 0; i < 4; ++i) {
+        if (p == end) { corrupt("truncated \\u escape（不足 4 位十六进制）"); }
+        const char c = *p++;
+        v <<= 4;
+        if (c >= '0' && c <= '9') { v |= static_cast<std::uint32_t>(c - '0'); }
+        else if (c >= 'a' && c <= 'f') { v |= static_cast<std::uint32_t>(c - 'a' + 10); }
+        else if (c >= 'A' && c <= 'F') { v |= static_cast<std::uint32_t>(c - 'A' + 10); }
+        else { corrupt("invalid \\u escape（需 4 位十六进制）"); }
+    }
+    return v;
+}
+
+/**
+ * @brief \uXXXX 解码：BMP 直出 UTF-8；高位代理必须跟随低位代理（孤立代理
+ *        拒绝——不存在合法字符，保留将产生无法 round-trip 的悬空字节；
+ *        与被删旧引擎 parseUnicodeEscape 同语义；boost 默认同样拒绝孤立
+ *        代理——探针实证——本层先行给出稳定诊断）。
+ */
+void scanUnicodeEscape(const char*& p, const char* end, std::string& out)
+{
+    const std::uint32_t u1 = scanHex4(p, end);
+    std::uint32_t cp = u1;
+    if (u1 >= 0xD800 && u1 <= 0xDBFF) {
+        // 高位代理：必须是 \uDC00-\uDFFF 低代理续体（JSON surrogate pair）。
+        if (end - p < 2 || p[0] != '\\' || p[1] != 'u') {
+            corrupt("lone high surrogate in \\u escape（缺低位代理续体）");
         }
-        return v;
-    }
-
-private:
-    const char* p_;     ///< 当前扫描位置（耗尽后 peek/next 即报截断）
-    const char* end_;   ///< 输入末尾（哨兵）
-    bool firstDigitWasZero_ = false;  ///< 当前数字字面量首数字是否为 '0'
-
-    /// 输入是否已耗尽。
-    bool atEnd() const { return p_ == end_; }
-
-    /// 读取当前字节（不前进）。耗尽即"截断"——canonical 文档不允许提前结束。
-    char peek()
-    {
-        if (atEnd()) { corrupt("truncated input（文档在结构中间结束）"); }
-        return *p_;
-    }
-
-    /// 消费一个字节并返回。
-    char next()
-    {
-        const char c = peek();
-        ++p_;
-        return c;
-    }
-
-    /// 期望当前字节为 expected，否则拒绝（结构层语法错误）。
-    void expect(char expected)
-    {
-        const char c = next();
-        if (c != expected) {
-            corrupt(std::string("syntax error: expected '") + expected + "' got '"
-                    + printable(c) + "'");
+        p += 2;  // 消费 "\u"
+        const std::uint32_t u2 = scanHex4(p, end);
+        if (u2 < 0xDC00 || u2 > 0xDFFF) {
+            corrupt("invalid low surrogate in \\u escape（越出 DC00-DFFF）");
         }
+        cp = 0x10000 + ((u1 - 0xD800) << 10) + (u2 - 0xDC00);
+    } else if (u1 >= 0xDC00 && u1 <= 0xDFFF) {
+        corrupt("lone low surrogate in \\u escape（缺高位代理前体）");
     }
+    appendUtf8CodePoint(out, cp);
+}
 
-    /// 控制字符/引号的可打印呈现（错误消息防注入——不透传原始字节）。
-    static std::string printable(char c)
-    {
-        if (c >= 0x20 && c < 0x7F) { return std::string{c}; }
-        static constexpr char kHex[] = "0123456789abcdef";
-        const auto u = static_cast<unsigned char>(c);
-        std::string s = "0x";
-        s += kHex[(u >> 4) & 0xF];
-        s += kHex[u & 0xF];
-        return s;
-    }
-
-    /// 值分发：对象/数组/字符串/整数；其余一律拒绝。
-    JsonValue parseValue(int depth)
-    {
-        // 深度上限检查在进入前做（每层 +1——防御在先，不依赖递归自然爆栈）。
-        if (depth > kMaxDepth) { corrupt("nesting depth exceeds limit（非法深嵌套）"); }
-        const char c = peek();
-        switch (c) {
-        case '{': return parseObject(depth);
-        case '[': return parseArray(depth);
-        case '"': {
-            JsonValue v;
-            v.kind = JsonValue::Kind::String;
-            v.str = parseString();
-            return v;
-        }
-        case '-':
-        case '0': case '1': case '2': case '3': case '4':
-        case '5': case '6': case '7': case '8': case '9': {
-            JsonValue v;
-            v.kind = JsonValue::Kind::Integer;
-            parseNumber(v);
-            return v;
-        }
-        default:
-            // true/false/null 与一切裸词在词法层拒绝——§4.4 契约无此类字段，
-            // 缺失即可选，出现即非 canonical（文件头规则 2）。
-            corrupt(std::string("unexpected character '") + printable(c)
-                    + "'（接受：对象/数组/字符串/整数）");
-        }
-    }
-
-    /// 对象：'{' (string ':' value (',' string ':' value)*)? '}'；重复键拒绝。
-    JsonValue parseObject(int depth)
-    {
-        JsonValue v;
-        v.kind = JsonValue::Kind::Object;
-        expect('{');
-        if (peek() == '}') { next(); return v; }
-        for (;;) {
-            const char q = peek();
-            if (q != '"') { corrupt("object key must be a string"); }
-            std::string key = parseString();
-            // 重复键＝同一对象两义性，canonical 格式不存在（文件头规则 2）。
-            for (const auto& m : v.members) {
-                if (m.first == key) { corrupt("duplicate object key '" + key + "'"); }
-            }
-            expect(':');
-            v.members.emplace_back(std::move(key), parseValue(depth + 1));
-            const char sep = next();
-            if (sep == '}') { return v; }
-            if (sep != ',') {
-                corrupt(std::string("syntax error: expected ',' or '}' got '")
-                        + printable(sep) + "'");
-            }
-        }
-    }
-
-    /// 数组：'[' (value (',' value)*)? ']'。
-    JsonValue parseArray(int depth)
-    {
-        JsonValue v;
-        v.kind = JsonValue::Kind::Array;
-        expect('[');
-        if (peek() == ']') { next(); return v; }
-        for (;;) {
-            v.items.push_back(parseValue(depth + 1));
-            const char sep = next();
-            if (sep == ']') { return v; }
-            if (sep != ',') {
-                corrupt(std::string("syntax error: expected ',' or ']' got '")
-                        + printable(sep) + "'");
-            }
-        }
-    }
-
-    /// 字符串：'"' 转义/ASCII 主体 '"'；\uXXXX → UTF-8（代理对合成）。
-    std::string parseString()
-    {
-        expect('"');
-        std::string out;
-        for (;;) {
-            if (atEnd()) { corrupt("truncated string（缺收尾引号）"); }
-            const unsigned char c = static_cast<unsigned char>(next());
-            if (c == '"') { return out; }
-            if (c == '\\') { parseEscape(out); continue; }
+/**
+ * @brief 扫描一个字符串字面量（起点为已定位的开口引号）并产出解码文本。
+ *
+ * 词法规则（文件头规则 4）：可打印 ASCII 原样；转义对称表 \" \\ \/ \b \f
+ * \n \r \t \uXXXX；裸控制字符与非 ASCII 原始字节拒绝（磁盘格式 ASCII）。
+ *
+ * @param p   [in,out] 扫描位置（进入时指向开口引号，返回时越过闭口引号）
+ * @param end [in] 输入末尾哨兵
+ * @param out [out] 解码后的 UTF-8 文本（重复键判定的比对载体）
+ */
+void scanString(const char*& p, const char* end, std::string& out)
+{
+    ++p;  // 越过开口引号
+    out.clear();
+    for (;;) {
+        if (p == end) { corrupt("truncated string（缺收尾引号）"); }
+        const unsigned char c = static_cast<unsigned char>(*p++);
+        if (c == '"') { return; }
+        if (c != '\\') {
             if (c < 0x20) {
-                // 裸控制字符：canonical 输出必转义（文件头规则 3），出现即非规范。
+                // 裸控制字符：canonical 输出必转义（文件头规则 1），出现即非规范。
                 corrupt("raw control character in string（须以转义形式出现）");
             }
             if (c >= 0x80) {
@@ -316,137 +273,184 @@ private:
                         " 须以 \\uXXXX 转义出现）");
             }
             out.push_back(static_cast<char>(c));
+            continue;
         }
-    }
-
-    /// 解析转义序列并追加解码结果到 out。
-    void parseEscape(std::string& out)
-    {
-        if (atEnd()) { corrupt("truncated escape sequence"); }
-        const char e = next();
+        if (p == end) { corrupt("truncated escape sequence"); }
+        const char e = *p++;
         switch (e) {
-        case '"':  out.push_back('"');  return;
-        case '\\': out.push_back('\\'); return;
-        case '/':  out.push_back('/');  return;
-        case 'b':  out.push_back('\b'); return;
-        case 'f':  out.push_back('\f'); return;
-        case 'n':  out.push_back('\n'); return;
-        case 'r':  out.push_back('\r'); return;
-        case 't':  out.push_back('\t'); return;
-        case 'u':  parseUnicodeEscape(out); return;
+        case '"':  out.push_back('"');  break;
+        case '\\': out.push_back('\\'); break;
+        case '/':  out.push_back('/');  break;
+        case 'b':  out.push_back('\b'); break;
+        case 'f':  out.push_back('\f'); break;
+        case 'n':  out.push_back('\n'); break;
+        case 'r':  out.push_back('\r'); break;
+        case 't':  out.push_back('\t'); break;
+        case 'u':  scanUnicodeEscape(p, end, out); break;
         default:
-            corrupt(std::string("invalid escape '\\") + printable(e) + "'");
+            corrupt(std::string("invalid escape '\\") + e + "'");
         }
     }
+}
 
-    /// 读取 4 位十六进制（JSON \u 语义：大小写均可——dump 端输出小写，
-    /// 解析端接受规范 JSON 的两种写法；解码结果唯一，不构成 canonical 二义）。
-    std::uint32_t parseHex4()
-    {
-        std::uint32_t v = 0;
-        for (int i = 0; i < 4; ++i) {
-            const char c = next();
-            v <<= 4;
-            if (c >= '0' && c <= '9') { v |= static_cast<std::uint32_t>(c - '0'); }
-            else if (c >= 'a' && c <= 'f') { v |= static_cast<std::uint32_t>(c - 'a' + 10); }
-            else if (c >= 'A' && c <= 'F') { v |= static_cast<std::uint32_t>(c - 'A' + 10); }
-            else { corrupt("invalid \\u escape（需 4 位十六进制）"); }
+/**
+ * @brief 扫描一个数字字面量（'-'? [0-9]+；前导零拒绝；无小数/指数——
+ *        '.'/'e'/'E' 不在数字体字符集内，数字体结束后的该类字符由主循环
+ *        的字符串外字符集拒绝，与被删旧引擎的词法层拒绝同型——§4.8 无浮点）。
+ *
+ * @param p     [in,out] 扫描位置（进入时指向首字符 '-' 或数字）
+ * @param end   [in] 输入末尾哨兵
+ * @param first [in] 首字符（'-' 或数字）
+ */
+void scanNumber(const char*& p, const char* end, char first)
+{
+    if (first == '-') {
+        ++p;
+        if (p == end || *p < '0' || *p > '9') {
+            corrupt("number requires at least one digit（负号后无数字）");
         }
-        return v;
     }
+    std::size_t digits = 0;
+    bool firstDigitWasZero = false;
+    while (p != end && *p >= '0' && *p <= '9') {
+        if (digits == 0 && *p == '0') { firstDigitWasZero = true; }
+        ++digits;
+        ++p;
+    }
+    // "01" 这类前导零＝同一数值的第二种字节形态，canonical 不允许
+    // （确定性 NFR-COR-02：同值必同字节；boost 层亦拒绝——探针实证）。
+    if (digits > 1 && firstDigitWasZero) {
+        corrupt("leading zero in number（非 canonical）");
+    }
+}
 
-    /// \uXXXX 解码：BMP 直出 UTF-8；高位代理必须跟随低位代理（孤立代理
-    /// 拒绝——不存在合法字符，保留将产生无法 round-trip 的悬空字节）。
-    void parseUnicodeEscape(std::string& out)
-    {
-        const std::uint32_t u1 = parseHex4();
-        std::uint32_t cp = u1;
-        if (u1 >= 0xD800 && u1 <= 0xDBFF) {
-            // 高位代理：必须是 \uDC00-\uDFFF 低代理续体（JSON surrogate pair）。
-            if (p_ + 1 >= end_ || *p_ != '\\' || p_[1] != 'u') {
-                corrupt("lone high surrogate in \\u escape（缺低位代理续体）");
-            }
-            p_ += 2;  // 消费 "\u"
-            const std::uint32_t u2 = parseHex4();
-            if (u2 < 0xDC00 || u2 > 0xDFFF) {
-                corrupt("invalid low surrogate in \\u escape（越出 DC00-DFFF）");
-            }
-            cp = 0x10000 + ((u1 - 0xD800) << 10) + (u2 - 0xDC00);
-        } else if (u1 >= 0xDC00 && u1 <= 0xDFFF) {
-            corrupt("lone low surrogate in \\u escape（缺高位代理前体）");
-        }
-        appendUtf8(out, cp);
-    }
+/**
+ * @brief canonical 词法门主扫描（文件头"词法门规则"全条目；扫描通过后
+ *        输入才交给 boost::json::parse——两段中的第一段）。
+ *
+ * 上下文校验取"足以自持"的最小集：结构配对/成员逗号序等纯结构合法性交
+ * boost 兜底（同为 store-corrupt，仅诊断文案不同）；本层自持的是 boost
+ * 不判定的 canonical 词法面（空白/ASCII/浮点/字面量/重复键/深度）。
+ *
+ * @param text [in] 磁盘字节（整个文档）
+ */
+void scanCanonical(const std::string_view text)
+{
+    const char* p = text.data();
+    const char* const end = text.data() + text.size();
+    std::vector<ScanFrame> stack;
+    std::string lastString;       ///< 最近一个字符串的解码文本（键候选）
+    bool haveLastString = false;  ///< 最近字符串是否可用（防止 "{:" 误判）
 
-    /// 码点 → UTF-8 追加（标准最短形式；与 dump 侧 decodeUtf8At 互逆）。
-    static void appendUtf8(std::string& out, std::uint32_t cp)
-    {
-        if (cp <= 0x7F) {
-            out.push_back(static_cast<char>(cp));
-        } else if (cp <= 0x7FF) {
-            out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else if (cp <= 0xFFFF) {
-            out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else {
-            out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
+    while (p != end) {
+        const char c = *p;
+        if (c == '"') {
+            scanString(p, end, lastString);  // 整段字符串内部前进（含转义）
+            haveLastString = true;
+            continue;
         }
+        const auto u = static_cast<unsigned char>(c);
+        if (u >= 0x80) {
+            // 非 ASCII 原始字节：磁盘格式 ASCII（§4.8）——任何位置拒绝。
+            corrupt("non-ASCII byte outside string（磁盘格式为 ASCII；非 ASCII"
+                    " 须以 \\uXXXX 转义出现）");
+        }
+        if (u < 0x20 || c == ' ') {
+            // 结构空白（空格/制表/换行）与裸控制字符：带空白的字节流＝损坏/
+            // 外部篡改产物（PM-02 读校验精神——宁可拒绝也不猜测；字符串内
+            // 的同类字节已在 scanString 内拒绝，此处只见字符串外）。
+            corrupt("whitespace/control byte outside string（canonical 紧凑"
+                    "无空白——非 canonical 形态拒绝）");
+        }
+        switch (c) {
+        case '{':
+        case '[': {
+            if (static_cast<int>(stack.size()) >= kMaxDepth) {
+                corrupt("nesting depth exceeds limit（非法深嵌套）");
+            }
+            ScanFrame frame;
+            frame.isObject = (c == '{');
+            stack.push_back(std::move(frame));
+            haveLastString = false;
+            break;
+        }
+        case '}':
+        case ']': {
+            if (stack.empty() || stack.back().isObject != (c == '}')) {
+                corrupt(std::string("unbalanced structure: unexpected '") + c + "'");
+            }
+            stack.pop_back();
+            haveLastString = false;
+            break;
+        }
+        case ':': {
+            // 键归属判定＋重复键拒绝（boost 坍缩重复键——必须自持；
+            // 以解码后文本比对，转义写法的同键同样命中）。
+            if (stack.empty() || !stack.back().isObject || !haveLastString) {
+                corrupt("object key must be a string（':' 缺键或非对象上下文）");
+            }
+            const auto inserted = stack.back().keys.insert(lastString);
+            if (!inserted.second) {
+                corrupt("duplicate object key '" + lastString + "'");
+            }
+            haveLastString = false;
+            break;
+        }
+        case ',':
+            break;
+        case '-':
+        case '0': case '1': case '2': case '3': case '4':
+        case '5': case '6': case '7': case '8': case '9':
+            scanNumber(p, end, c);  // 数字体内部前进
+            continue;               // 已前进，跳过下方单字节步进
+        default:
+            // 浮点 '.'、指数 'e/E'、true/false/null 字面量、一切裸词——
+            // §4.4 契约无布尔/空字段（缺失即可选）、无浮点（文件头规则 2）。
+            corrupt(std::string("unexpected character '") + c
+                    + "'（接受：对象/数组/字符串/整数）");
+        }
+        ++p;  // 单字节结构字符统一前进（字符串/数字体已由子函数内部前进）
     }
+    if (!stack.empty()) {
+        corrupt("truncated input（文档在结构中间结束）");
+    }
+}
 
-    /// 整数：'-'? [0-9]+，前导零拒绝，无小数/指数（§4.8 无浮点），范围
-    /// 限 [INT64_MIN, UINT64_MAX]（字段层再做位宽裁剪）。
-    void parseNumber(JsonValue& v)
-    {
-        firstDigitWasZero_ = false;  // 每个数字字面量独立判定前导零
-        if (peek() == '-') {
-            v.negative = true;
-            next();
-            if (atEnd()) { corrupt("truncated number（负号后无数字）"); }
-        }
-        std::size_t digits = 0;
-        std::uint64_t mag = 0;
-        while (!atEnd()) {
-            const char c = *p_;
-            if (c < '0' || c > '9') { break; }
-            if (digits == 0 && c == '0') { firstDigitWasZero_ = true; }
-            ++digits;
-            const unsigned d = static_cast<unsigned>(c - '0');
-            // 溢出检查：mag*10+d 不得超 UINT64_MAX（负数路径另限 2^63）。
-            if (mag > (std::numeric_limits<std::uint64_t>::max() - d) / 10) {
-                corrupt("integer magnitude exceeds uint64 range（越界拒绝）");
-            }
-            mag = mag * 10 + d;
-            ++p_;
-        }
-        if (digits == 0) { corrupt("number requires at least one digit"); }
-        // "01" 这类前导零＝同一数值的第二种字节形态，canonical 不允许
-        // （确定性 NFR-COR-02：同值必同字节）。
-        if (digits > 1 && firstDigitWasZero_) { corrupt("leading zero in number（非 canonical）"); }
-        // §4.8"无浮点"：小数点/指数后继在词法层拒绝（而非把 1.5 截成 1）。
-        if (!atEnd()) {
-            const char c = *p_;
-            if (c == '.' || c == 'e' || c == 'E') {
-                corrupt("float/exponent literal rejected（自有格式无浮点——§4.8）");
-            }
-        }
-        if (v.negative && mag > 0x8000000000000000ULL) {
-            corrupt("integer exceeds int64 range（越界拒绝）");
-        }
-        v.magnitude = mag;
+/**
+ * @brief 两段式解析：canonical 词法门 → boost::json::parse 构建 DOM。
+ *
+ * boost 层（parse_options 显式 max_depth=kMaxDepth，其余默认＝标准 JSON
+ * 严格面：拒绝注释/尾逗号/裸控制字符/孤立代理/无效 UTF-8——探针实证）
+ * 的任何解析失败一律转 store-corrupt（数据侧——磁盘内容损坏/非 canonical
+ * 统一归类，§5.0 错误二分）；不透传 boost 异常类型（错误契约稳定为
+ * StoreError，码语义不变）。
+ *
+ * @param text [in] 磁盘字节（整个文档）
+ * @return 顶层 DOM 值（对象性检查由各 parse 入口自持——顶层非对象的诊断
+ *         带类型名，与被删旧引擎 parseDocument＋入口判定同语义）
+ */
+bj::value parseCanonicalJson(std::string_view text)
+{
+    scanCanonical(text);
+    bj::parse_options options;
+    options.max_depth = static_cast<unsigned>(kMaxDepth);
+    try {
+        return bj::parse(text, bj::storage_ptr(), options);
+    } catch (const boost::system::system_error& e) {
+        corrupt(std::string("boost-json structure rejected: ") + e.code().message()
+                + "（结构层拒绝——截断/拼接/非法结构）");
+    } catch (const std::bad_alloc&) {
+        corrupt("boost-json allocation failed（文档超预算拒绝）");
     }
-};
+}
 
 // =====================================================================
-// dump 侧字符串转义与 UTF-8 严格解码（规则 1/3/4）
+// dump 侧字符串转义与 UTF-8 严格解码（§4.8 纯 ASCII 输出——Boost.JSON
+// 序列化器输出原生 UTF-8 不满足字节面契约，故本侧自持不换，REUSE-T54）
 // =====================================================================
 
 /// 在 s[i] 处解码一个 UTF-8 序列（标准最短形式；代理码点/超 U+10FFFF/超长
-/// 编码均拒绝——与 parse 侧 appendUtf8 互逆）。
+/// 编码均拒绝——与 scanUnicodeEscape 的 UTF-8 合成互逆）。
 ///
 /// @param s [in] UTF-8 字节串
 /// @param i [in] 起始字节下标
@@ -515,7 +519,7 @@ void appendUnicodeEscape(std::string& out, char32_t cp)
 }
 
 /**
- * @brief 把 UTF-8 字符串按 canonical 转义表追加到 out（文件头规则 3）。
+ * @brief 把 UTF-8 字符串按 canonical 转义表追加到 out（§4.8 转义对称表）。
  *
  * @param out       [out] 输出缓冲（追加）
  * @param utf8      [in] 待转义字符串（须为合法 UTF-8）
@@ -588,7 +592,7 @@ void appendHexString(std::string& out, const std::string& bytes)
 }
 
 /// hex 文本解码回字节序列（parse 对称半区——奇数长度/非 hex 字符＝
-/// store-corrupt，不猜测）。
+/// store-corrupt，不猜测；域负载透传通道，hex→bytes 语义不换）。
 std::string decodeHexString(const std::string& hex)
 {
     static constexpr int kInvalid = -1;
@@ -644,68 +648,80 @@ void appendRefPair(std::string& out, const ObjectRefPair& ref)
 }
 
 // =====================================================================
-// parse 复用片段：字段提取（类型不符/缺失/越界/格式非法统一 corrupt）
+// parse 复用片段：字段提取（类型不符/缺失/越界/格式非法统一 corrupt；
+// 载体＝boost::json DOM——语义与被删旧引擎逐字段一致，REUSE-T54）
 // =====================================================================
 
 /// 取必填对象成员（缺失＝截断/写缺——store-corrupt 数据侧）。
-const JsonValue& requireMember(const JsonValue& obj, const char* key)
+const bj::value& requireMember(const bj::value& obj, const char* key)
 {
-    if (const JsonValue* v = findMember(obj, key)) { return *v; }
+    if (obj.is_object()) {
+        const auto& members = obj.get_object();
+        if (const auto it = members.find(key); it != members.end()) { return it->value(); }
+    }
     corrupt(std::string("missing required field '") + key + "'");
 }
 
-/// 必填字符串字段（类型须为 JSON 字符串）。
-std::string requireStringField(const JsonValue& obj, const char* key)
+/// 必填字符串字段（类型须为 JSON 字符串；嵌入 NUL 经 size 保留——\u0000
+/// 往返保真，探针实证 boost 与被删旧引擎同语义）。
+std::string requireStringField(const bj::value& obj, const char* key)
 {
-    const JsonValue& v = requireMember(obj, key);
-    if (v.kind != JsonValue::Kind::String) {
+    const bj::value& v = requireMember(obj, key);
+    if (!v.is_string()) {
         corrupt(std::string("field '") + key + "' must be a string");
     }
-    return v.str;
+    const auto& s = v.get_string();
+    return std::string(s.c_str(), s.size());
 }
 
 /// 可选 core 身份字段的探针：字段是否存在（存在性检查先于类型检查）。
-bool hasMember(const JsonValue& obj, const char* key)
+bool hasMember(const bj::value& obj, const char* key)
 {
-    return findMember(obj, key) != nullptr;
+    return obj.is_object() && obj.get_object().find(key) != obj.get_object().end();
 }
 
-/// 必填整数字段的公共检查：kind==Integer 且落在 [lo, hi]（hi 以 uint64
-/// 承接 2^64-1；负数侧以 int64 下界承接）。
-std::int64_t integerInRange(const JsonValue& obj, const char* key, std::int64_t lo,
+/**
+ * @brief 必填整数字段的公共检查：JSON 整数（int64/uint64 kind）且落在
+ *        [lo, hi]（hi 以 uint64 承接 2^64-1；负数侧以 int64 下界承接）。
+ *
+ * 负数侧约束完全由 n >= lo 表达——与被删旧引擎"绝对值 magLimit = -lo
+ * （INT64_MIN 特例 2^63）"口径等价（magLimit = -lo ⇔ n ≥ lo，含下界特例）；
+ * 越出整数表示的输入（2^64/负 int64 下溢）被 boost 解析为 double kind
+ * （探针实证）——同样拒绝（"must be an integer"），与被删旧引擎的
+ * "越界拒绝"同码不同文案——错误分类（StoreCorrupt）不变。
+ */
+std::int64_t integerInRange(const bj::value& obj, const char* key, std::int64_t lo,
                             std::uint64_t hi)
 {
-    const JsonValue& v = requireMember(obj, key);
-    if (v.kind != JsonValue::Kind::Integer) {
-        corrupt(std::string("field '") + key + "' must be an integer");
-    }
-    if (v.negative) {
-        // 负数路径：绝对值上限 = max(-lo, INT64_MIN 的 2^63 特例)。
-        if (lo >= 0) {
-            corrupt(std::string("field '") + key + "' must be non-negative");
-        }
-        const std::uint64_t magLimit =
-            (lo == std::numeric_limits<std::int64_t>::min())
-                ? 0x8000000000000000ULL                       // INT64_MIN 允许
-                : static_cast<std::uint64_t>(-(lo));          // 其余按 -lo
-        if (v.magnitude > magLimit) {
+    const bj::value& v = requireMember(obj, key);
+    if (v.is_int64()) {
+        const std::int64_t n = v.get_int64();
+        if (n < lo) {
+            // 负数侧约束（与被删旧引擎"绝对值 magLimit = -lo"口径等价——
+            // magLimit = -lo ⇔ n ≥ lo；n ≥ 0 且 lo < 0 的负值不可能小于 lo）。
             corrupt(std::string("field '") + key + "' out of range（越界拒绝）");
         }
-        // magnitude == 2^63 仅在 lo == INT64_MIN 时可达（上一步已裁剪）——
-        // 此时结果恰为 INT64_MIN，直接返回避免有符号取负 UB。
-        if (v.magnitude == 0x8000000000000000ULL) {
-            return std::numeric_limits<std::int64_t>::min();
+        if (n >= 0 && static_cast<std::uint64_t>(n) > hi) {
+            // 正数侧上界（boost 对 ≤INT64_MAX 的整数取 int64 kind——探针
+            // 实证——2^31 等正越界值走此路径，与旧 magnitude>hi 检查同型）。
+            corrupt(std::string("field '") + key + "' exceeds range（越界拒绝）");
         }
-        return -static_cast<std::int64_t>(v.magnitude);
+        return n;
     }
-    if (v.magnitude > hi) {
-        corrupt(std::string("field '") + key + "' exceeds range（越界拒绝）");
+    if (v.is_uint64()) {
+        const std::uint64_t n = v.get_uint64();
+        if (n > hi) {
+            corrupt(std::string("field '") + key + "' exceeds range（越界拒绝）");
+        }
+        // 经 int64 中转与被删旧引擎同型（hi ≤ 2^64-1 时中转有损但
+        // requireUint64Field 原样转回，往返恒等）。
+        return static_cast<std::int64_t>(n);
     }
-    return static_cast<std::int64_t>(v.magnitude);
+    corrupt(std::string("field '") + key + "' must be an integer");
 }
 
 /// 必填 int（int32 范围；schemaVersion 用）。
-int requireIntField(const JsonValue& obj, const char* key)
+int requireIntField(const bj::value& obj, const char* key)
 {
     return static_cast<int>(integerInRange(obj, key, std::numeric_limits<int>::min(),
                                            static_cast<std::uint64_t>(
@@ -713,34 +729,34 @@ int requireIntField(const JsonValue& obj, const char* key)
 }
 
 /// 必填 uint64（revisionSeq/sizeBytes 用；负值/超 2^64-1 拒绝）。
-std::uint64_t requireUint64Field(const JsonValue& obj, const char* key)
+std::uint64_t requireUint64Field(const bj::value& obj, const char* key)
 {
     return static_cast<std::uint64_t>(integerInRange(
         obj, key, 0, std::numeric_limits<std::uint64_t>::max()));
 }
 
 /// 必填 uint32（payloadFormatVersion 用）。
-std::uint32_t requireUint32Field(const JsonValue& obj, const char* key)
+std::uint32_t requireUint32Field(const bj::value& obj, const char* key)
 {
     return static_cast<std::uint32_t>(integerInRange(
         obj, key, 0, static_cast<std::uint64_t>(std::numeric_limits<std::uint32_t>::max())));
 }
 
 /// 必填对象字段（类型须为 JSON 对象）。
-const JsonValue& requireObjectField(const JsonValue& obj, const char* key)
+const bj::value& requireObjectField(const bj::value& obj, const char* key)
 {
-    const JsonValue& v = requireMember(obj, key);
-    if (v.kind != JsonValue::Kind::Object) {
+    const bj::value& v = requireMember(obj, key);
+    if (!v.is_object()) {
         corrupt(std::string("field '") + key + "' must be an object");
     }
     return v;
 }
 
 /// 必填数组字段（类型须为 JSON 数组）。
-const JsonValue& requireArrayField(const JsonValue& obj, const char* key)
+const bj::value& requireArrayField(const bj::value& obj, const char* key)
 {
-    const JsonValue& v = requireMember(obj, key);
-    if (v.kind != JsonValue::Kind::Array) {
+    const bj::value& v = requireMember(obj, key);
+    if (!v.is_array()) {
         corrupt(std::string("field '") + key + "' must be an array");
     }
     return v;
@@ -753,7 +769,7 @@ const JsonValue& requireArrayField(const JsonValue& obj, const char* key)
 /// 字段（超长/控制字符）入库，不收紧语义（词表校验归登记域：模块注册表
 /// PRJ-T12、io 状态机阶段 B）。**不适用于路径类字段**（absolutePath 含
 /// 空格/非 ASCII 完全合法——用 requirePathField）。
-std::string requireTokenField(const JsonValue& obj, const char* key)
+std::string requireTokenField(const bj::value& obj, const char* key)
 {
     const std::string s = requireStringField(obj, key);
     if (s.empty()) { corrupt(std::string("field '") + key + "' must not be empty"); }
@@ -776,7 +792,7 @@ std::string requireTokenField(const JsonValue& obj, const char* key)
 /// 责任划分：解析/存在性/安全归 io，本层只挡结构级失控）。允许空格与
 /// 非 ASCII（Windows 长路径/中文路径均为合法登记对象——UTF-8 经 \uXXXX
 /// 转义承载，§4.8）。
-std::string requirePathField(const JsonValue& obj, const char* key)
+std::string requirePathField(const bj::value& obj, const char* key)
 {
     const std::string s = requireStringField(obj, key);
     if (s.empty()) { corrupt(std::string("field '") + key + "' must not be empty"); }
@@ -796,7 +812,7 @@ std::string requirePathField(const JsonValue& obj, const char* key)
 /// 摘要文本字段：64 个小写十六进制字符（manifestDigest/digest256/
 /// contentHash256/findingDigest/commandDigest——§4.3/§4.4 摘要列口径；
 /// 大写拒绝＝core tryParseDigest 同纪律）。透传不重算（CR-02）。
-std::string requireHex64Field(const JsonValue& obj, const char* key)
+std::string requireHex64Field(const bj::value& obj, const char* key)
 {
     const std::string s = requireStringField(obj, key);
     if (s.size() != 64) {
@@ -814,9 +830,9 @@ std::string requireHex64Field(const JsonValue& obj, const char* key)
 
 /// core 规范文本身份字段的通用提取：解析失败＝格式非法（store-corrupt——
 /// 数据侧；§4.4 约定"身份字段一律 core 规范文本"，tag 错/长度错/大写 hex
-/// 均拒绝）。
+/// 均拒绝；身份事实单源 core——语义零变化，REUSE-T54 红线）。
 template <typename CoreId>
-CoreId requireIdField(const JsonValue& obj, const char* key)
+CoreId requireIdField(const bj::value& obj, const char* key)
 {
     const std::string s = requireStringField(obj, key);
     auto parsed = CoreId::tryFromCanonical(s);
@@ -828,7 +844,7 @@ CoreId requireIdField(const JsonValue& obj, const char* key)
 
 /// 可选 core 身份字段（缺省 nullopt；出现则须合法规范文本）。
 template <typename CoreId>
-std::optional<CoreId> optionalIdField(const JsonValue& obj, const char* key)
+std::optional<CoreId> optionalIdField(const bj::value& obj, const char* key)
 {
     if (!hasMember(obj, key)) { return std::nullopt; }
     return requireIdField<CoreId>(obj, key);
@@ -836,13 +852,13 @@ std::optional<CoreId> optionalIdField(const JsonValue& obj, const char* key)
 
 /// 未知字段处理的前向声明（定义见下方"未知字段处理"块——parseRefPair
 /// 复用它做嵌套对象的键集校验）。
-void rejectUnknownFields(const JsonValue& obj,
+void rejectUnknownFields(const bj::value& obj,
                          const std::initializer_list<const char*>& known, bool tolerate);
 
 /// {objectId, contentVersion} 引用对（metadataRef/supersedes；固定两键）。
 /// tolerate 语义与 rejectUnknownFields 一致（上级次版本文档的嵌套对象同样
 /// 可能追加可选字段——嵌套容忍与顶层一致，§4.8）。
-ObjectRefPair parseRefPair(const JsonValue& obj, bool tolerate)
+ObjectRefPair parseRefPair(const bj::value& obj, bool tolerate)
 {
     ObjectRefPair ref;
     ref.objectId = requireIdField<ObjectId>(obj, "objectId");
@@ -852,7 +868,7 @@ ObjectRefPair parseRefPair(const JsonValue& obj, bool tolerate)
 }
 
 /// 可选引用对字段。
-std::optional<ObjectRefPair> optionalRefPairField(const JsonValue& obj, const char* key,
+std::optional<ObjectRefPair> optionalRefPairField(const bj::value& obj, const char* key,
                                                   bool tolerate)
 {
     if (!hasMember(obj, key)) { return std::nullopt; }
@@ -861,25 +877,27 @@ std::optional<ObjectRefPair> optionalRefPairField(const JsonValue& obj, const ch
 
 /// 时间戳类字段（ISO-8601 UTC 文本，§4.4 约定）：非空可打印 ASCII（语法
 /// 不校验——透传，见 requireTokenField 口径注释）。
-std::string requireTimestampField(const JsonValue& obj, const char* key)
+std::string requireTimestampField(const bj::value& obj, const char* key)
 {
     return requireTokenField(obj, key);
 }
 
 /// 未知字段处理（§4.8 次版本兼容语义的落点）：tolerate=true（上级次版本
 /// 文档）跳过；否则拒绝（当前版本的合法文档不含未知字段——出现即损坏或
-/// 写入器 bug）。
-void rejectUnknownFields(const JsonValue& obj,
+/// 写入器 bug）。boost 对象为插入序向量——成员序即文档序，与被删旧引擎
+/// 的保序成员遍历同型。
+void rejectUnknownFields(const bj::value& obj,
                          const std::initializer_list<const char*>& known, bool tolerate)
 {
-    if (obj.kind != JsonValue::Kind::Object) { return; }
-    for (const auto& m : obj.members) {
+    if (!obj.is_object()) { return; }
+    for (const auto& m : obj.get_object()) {
+        const std::string_view key(m.key_c_str(), m.key().size());
         bool isKnown = false;
         for (const char* k : known) {
-            if (m.first == k) { isKnown = true; break; }
+            if (key == k) { isKnown = true; break; }
         }
         if (!isKnown && !tolerate) {
-            corrupt("unknown field '" + m.first
+            corrupt(std::string("unknown field '") + std::string(key)
                     + "'（当前版本不接受；上级次版本追加字段须以更高次版本号声明——§4.8）");
         }
         // tolerate：静默跳过——已知字段语义不变，未知可选字段不参与
@@ -892,9 +910,9 @@ void rejectUnknownFields(const JsonValue& obj,
 /// 检查（有 formatId 的类型）→ 返回容忍标志。版本判定先于其余字段：未知
 /// schemaVersion 的拒绝优先于一切结构错误（§8.11——版本不符的文档不做
 /// 内容解读）。
-bool parsePreambleVersioned(const JsonValue& root, const char* typeName, bool withFormatId)
+bool parsePreambleVersioned(const bj::value& root, const char* typeName, bool withFormatId)
 {
-    if (root.kind != JsonValue::Kind::Object) {
+    if (!root.is_object()) {
         corrupt(std::string("top-level value must be an object (") + typeName + ")");
     }
     const int docVersion = requireIntField(root, "schemaVersion");
@@ -1163,12 +1181,12 @@ std::string dump(const RunManifest& value)
     return out;
 }
 
-// ---- parse：六类型，严格拒绝＋版本判定 ----
+// ---- parse：六类型，严格拒绝＋版本判定（两段式：scanCanonical 词法门
+// ＋boost DOM；语义提取与被删旧引擎逐字段一致）----
 
 ProjectStaticIdentity parseStaticIdentity(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     const bool tolerate = parsePreambleVersioned(root, "project-static-identity", true);
 
     ProjectStaticIdentity v;
@@ -1185,8 +1203,7 @@ ProjectStaticIdentity parseStaticIdentity(std::string_view text)
 
 HeadRecord parseHeadRecord(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     const bool tolerate = parsePreambleVersioned(root, "head-record", true);
 
     HeadRecord v;
@@ -1205,11 +1222,10 @@ HeadRecord parseHeadRecord(std::string_view text)
 
 RevisionManifest parseRevisionManifest(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     // 无 schemaVersion/formatId 字段（§4.4.2 表）——版本语义由容器判定
     // （PersistenceFormat.hpp 注释），按当前支持版本严格解析。
-    if (root.kind != JsonValue::Kind::Object) {
+    if (!root.is_object()) {
         corrupt("top-level value must be an object (revision-manifest)");
     }
 
@@ -1220,11 +1236,11 @@ RevisionManifest parseRevisionManifest(std::string_view text)
     v.branchId = requireIdField<BranchId>(root, "branchId");
     v.committedAtUtc = requireTimestampField(root, "committedAtUtc");
     v.metadataRef = parseRefPair(requireObjectField(root, "metadataRef"), false);
-    const JsonValue& refs = requireArrayField(root, "objectRefs");
+    const bj::value& refs = requireArrayField(root, "objectRefs");
     // §4.4.2 约束：objectRefs ≥1（完整对象引用集至少含元数据对象本身）。
-    if (refs.items.empty()) { corrupt("objectRefs must not be empty（§4.4.2 ≥1）"); }
-    for (const JsonValue& item : refs.items) {
-        if (item.kind != JsonValue::Kind::Object) {
+    if (refs.get_array().empty()) { corrupt("objectRefs must not be empty（§4.4.2 ≥1）"); }
+    for (const bj::value& item : refs.get_array()) {
+        if (!item.is_object()) {
             corrupt("objectRefs items must be objects");
         }
         ObjectRef r;
@@ -1237,17 +1253,20 @@ RevisionManifest parseRevisionManifest(std::string_view text)
                             false);
         v.objectRefs.push_back(std::move(r));
     }
-    if (const JsonValue* intro = findMember(root, "introducedObjects")) {
-        if (intro->kind != JsonValue::Kind::Array) {
+    if (hasMember(root, "introducedObjects")) {
+        const bj::value& intro = root.get_object().find("introducedObjects")->value();
+        if (!intro.is_array()) {
             corrupt("field 'introducedObjects' must be an array");
         }
-        for (const JsonValue& item : intro->items) {
-            if (item.kind != JsonValue::Kind::String) {
+        for (const bj::value& item : intro.get_array()) {
+            if (!item.is_string()) {
                 corrupt("introducedObjects items must be strings");
             }
-            auto cv = ContentVersion::tryFromCanonical(item.str);
+            const auto& s = item.get_string();
+            auto cv = ContentVersion::tryFromCanonical(std::string(s.c_str(), s.size()));
             if (!cv.has_value()) {
-                corrupt("introducedObjects item is not a canonical cv- text: " + item.str);
+                corrupt("introducedObjects item is not a canonical cv- text: "
+                        + std::string(s.c_str(), s.size()));
             }
             v.introducedObjects.push_back(*cv);
         }
@@ -1261,8 +1280,7 @@ RevisionManifest parseRevisionManifest(std::string_view text)
 
 ProjectMetadataRecord parseMetadataRecord(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     const bool tolerate = parsePreambleVersioned(root, "project-metadata-record", false);
 
     ProjectMetadataRecord v;
@@ -1271,11 +1289,13 @@ ProjectMetadataRecord parseMetadataRecord(std::string_view text)
     v.supersedes = optionalRefPairField(root, "supersedes", tolerate);
     v.projectDisplayName = requireStringField(root, "projectDisplayName");
     v.primaryBranchId = requireIdField<BranchId>(root, "primaryBranchId");
-    const JsonValue& branches = requireArrayField(root, "branches");
+    const bj::value& branches = requireArrayField(root, "branches");
     // §4.4.3 约束：branches ≥1（至少含主分支；INV-M1 唯一性属发布期校验）。
-    if (branches.items.empty()) { corrupt("branches must not be empty（§4.4.3 ≥1）"); }
-    for (const JsonValue& item : branches.items) {
-        if (item.kind != JsonValue::Kind::Object) {
+    if (branches.get_array().empty()) {
+        corrupt("branches must not be empty（§4.4.3 ≥1）");
+    }
+    for (const bj::value& item : branches.get_array()) {
+        if (!item.is_object()) {
             corrupt("branches items must be objects");
         }
         BranchRecord b;
@@ -1290,15 +1310,18 @@ ProjectMetadataRecord parseMetadataRecord(std::string_view text)
                             tolerate);
         v.branches.push_back(std::move(b));
     }
-    if (const JsonValue* labels = findMember(root, "schemeLabels")) {
-        if (labels->kind != JsonValue::Kind::Object) {
+    if (hasMember(root, "schemeLabels")) {
+        const bj::value& labels = root.get_object().find("schemeLabels")->value();
+        if (!labels.is_object()) {
             corrupt("field 'schemeLabels' must be an object");
         }
-        for (const auto& kv : labels->members) {
-            if (kv.second.kind != JsonValue::Kind::String) {
+        for (const auto& kv : labels.get_object()) {
+            if (!kv.value().is_string()) {
                 corrupt("schemeLabels values must be strings");
             }
-            v.schemeLabels.emplace(kv.first, kv.second.str);
+            const auto& s = kv.value().get_string();
+            v.schemeLabels.emplace(std::string(kv.key_c_str(), kv.key().size()),
+                                   std::string(s.c_str(), s.size()));
         }
     }
     rejectUnknownFields(root,
@@ -1310,11 +1333,10 @@ ProjectMetadataRecord parseMetadataRecord(std::string_view text)
 
 CommandRecord parseCommandRecord(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     // 无 schemaVersion/formatId 字段（§4.4.4 表）——同 RevisionManifest，
     // 版本语义由容器（修订/打开协议）判定，按当前支持版本严格解析。
-    if (root.kind != JsonValue::Kind::Object) {
+    if (!root.is_object()) {
         corrupt("top-level value must be an object (command-record)");
     }
 
@@ -1339,26 +1361,27 @@ CommandRecord parseCommandRecord(std::string_view text)
     // 域负载透传（不解释）——hex 文本解码回字节（UI-T39：与 dump 的
     // appendHexString 对称；奇长/非 hex 字符＝store-corrupt 不猜测）。
     v.payloadCanonical = decodeHexString(requireStringField(root, "payloadCanonical"));
-    if (const JsonValue* inv = findMember(root, "inverse")) {
-        if (inv->kind != JsonValue::Kind::Object) {
+    if (hasMember(root, "inverse")) {
+        const bj::value& inv = root.get_object().find("inverse")->value();
+        if (!inv.is_object()) {
             corrupt("field 'inverse' must be an object");
         }
         InverseCommand i;
-        i.commandType = requireTokenField(*inv, "commandType");
-        i.payloadFormatVersion = requireUint32Field(*inv, "payloadFormatVersion");
-        i.payloadCanonical =
-            decodeHexString(requireStringField(*inv, "payloadCanonical"));
-        rejectUnknownFields(*inv,
+        i.commandType = requireTokenField(inv, "commandType");
+        i.payloadFormatVersion = requireUint32Field(inv, "payloadFormatVersion");
+        i.payloadCanonical = decodeHexString(requireStringField(inv, "payloadCanonical"));
+        rejectUnknownFields(inv,
                             {"commandType", "payloadFormatVersion", "payloadCanonical"},
                             false);
         v.inverse = std::move(i);
     }
-    if (const JsonValue* confs = findMember(root, "confirmations")) {
-        if (confs->kind != JsonValue::Kind::Array) {
+    if (hasMember(root, "confirmations")) {
+        const bj::value& confs = root.get_object().find("confirmations")->value();
+        if (!confs.is_array()) {
             corrupt("field 'confirmations' must be an array");
         }
-        for (const JsonValue& item : confs->items) {
-            if (item.kind != JsonValue::Kind::Object) {
+        for (const bj::value& item : confs.get_array()) {
+            if (!item.is_object()) {
                 corrupt("confirmations items must be objects");
             }
             ConfirmationRecord c;
@@ -1373,7 +1396,7 @@ CommandRecord parseCommandRecord(std::string_view text)
             // baseRevisionId＝确认所针对的输入版本——rev- 规范文本（§6.7）。
             c.baseRevisionId =
                 requireIdField<RevisionId>(item, "baseRevisionId").toCanonical();
-            const JsonValue& cred = requireObjectField(item, "credential");
+            const bj::value& cred = requireObjectField(item, "credential");
             c.credential.principal = requireStringField(cred, "principal");
             c.credential.confirmedAtUtc = requireTimestampField(cred, "confirmedAtUtc");
             rejectUnknownFields(cred, {"principal", "confirmedAtUtc"}, false);
@@ -1394,8 +1417,7 @@ CommandRecord parseCommandRecord(std::string_view text)
 
 DraftDocument parseDraftDocument(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     const bool tolerate = parsePreambleVersioned(root, "draft-document", false);
 
     DraftDocument v;
@@ -1405,12 +1427,13 @@ DraftDocument parseDraftDocument(std::string_view text)
     v.moduleId = requireTokenField(root, "moduleId");   // 注册表校验归 PRJ-T12
     v.baseRevisionId = requireIdField<RevisionId>(root, "baseRevisionId");
     v.payload = requireStringField(root, "payload");    // 域负载透传（不解释）
-    if (const JsonValue* refs = findMember(root, "externalRefs")) {
-        if (refs->kind != JsonValue::Kind::Array) {
+    if (hasMember(root, "externalRefs")) {
+        const bj::value& refs = root.get_object().find("externalRefs")->value();
+        if (!refs.is_array()) {
             corrupt("field 'externalRefs' must be an array");
         }
-        for (const JsonValue& item : refs->items) {
-            if (item.kind != JsonValue::Kind::Object) {
+        for (const bj::value& item : refs.get_array()) {
+            if (!item.is_object()) {
                 corrupt("externalRefs items must be objects");
             }
             ExternalRefRecord r;
@@ -1446,12 +1469,11 @@ DraftDocument parseDraftDocument(std::string_view text)
 
 RunManifest parseRunManifest(std::string_view text)
 {
-    JsonParser parser(text);
-    const JsonValue root = parser.parseDocument();
+    const bj::value root = parseCanonicalJson(text);
     // 无 schemaVersion/formatId 字段（§4.4.7 表）——同 RevisionManifest/
     // CommandRecord，版本语义由容器判定，按当前支持版本的结构严格解析
     // （未知字段拒绝——tolerate 恒 false）。
-    if (root.kind != JsonValue::Kind::Object) {
+    if (!root.is_object()) {
         corrupt("top-level value must be an object (run-manifest)");
     }
 
@@ -1460,7 +1482,7 @@ RunManifest parseRunManifest(std::string_view text)
     // ——project/branch/revision/run/attempt）。身份字段一律 core 规范
     // 文本（§4.4 约定），五个身份逐字段严格解析。
     {
-        const JsonValue& task = requireObjectField(root, "taskIdentity");
+        const bj::value& task = requireObjectField(root, "taskIdentity");
         core::TaskIdentity t;
         t.project = requireIdField<core::ProjectId>(task, "project");
         t.branch = requireIdField<core::BranchId>(task, "branch");
@@ -1477,12 +1499,12 @@ RunManifest parseRunManifest(std::string_view text)
         v.taskIdentity = t;
     }
     // items ≥1（§4.4.7 必填（≥1）——空运行不发布 manifest）。
-    const JsonValue& items = requireArrayField(root, "items");
-    if (items.items.empty()) {
+    const bj::value& items = requireArrayField(root, "items");
+    if (items.get_array().empty()) {
         corrupt("items must not be empty（§4.4.7 ≥1）");
     }
-    for (const JsonValue& item : items.items) {
-        if (item.kind != JsonValue::Kind::Object) {
+    for (const bj::value& item : items.get_array()) {
+        if (!item.is_object()) {
             corrupt("items entries must be objects");
         }
         RunManifestItem r;

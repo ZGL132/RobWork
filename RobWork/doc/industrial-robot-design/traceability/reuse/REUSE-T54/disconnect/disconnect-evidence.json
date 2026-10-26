@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "ird-reuse-disconnect-evidence/1",
+  "taskId": "REUSE-T54",
+  "functionId": "project.Codec.public.parseStaticIdentity（canonical 词法门——结构空白规则整体）",
+  "mutation": {
+    "source": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/project/src/Codec.cpp",
+    "originalSha256": "46d0bbf3c2741bf36554577cc5a7d3854e6d04c2a2427099cddfaba7574c1e7a",
+    "description": "canonical 词法门结构空白规则整体放行——两处实现点同步变异（scanCanonical 显式空白检查去掉 c==' ' 分支＋字符串外字符集 switch 增 case ' ' 放行）；真实红例锚点＝CodecMigrationChannel.WhitespaceInValidDocument_Rejected（结构完整仅带空白的合法文档——拒绝不可归因于其他规则）",
+    "note": "变异产物副本存本目录 Codec.cpp.mutated-whitespace-gate-off.cpp（sha256=d3ab12ae90eb42700c5775415d82eb4943cf35c2efd8c4e851868b927a247fa0，治理 Digest 口径：BOM 剥离/CRLF→LF/尾部单换行）；原码副本 Codec.cpp.pristine-copy.cpp 与送验源码摘要逐位一致"
+  },
+  "mutatedSource": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/disconnect/Codec.cpp.mutated-whitespace-gate-off.cpp",
+    "sha256": "d3ab12ae90eb42700c5775415d82eb4943cf35c2efd8c4e851868b927a247fa0"
+  },
+  "red": {
+    "command": "cmake --build build --config Release --target sdurws_ird_project_test && build/RobWorkStudio/bin/Release/sdurws_ird_project_test.exe --gtest_filter=CodecMigrationChannel.WhitespaceInValidDocument_Rejected",
+    "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/disconnect/disconnect-red.log",
+    "exitCode": 1,
+    "failures": 1,
+    "assertion": "期望 StoreError 未抛出（词法门放行后文档被 boost 通道接受——锚点用例真实失败）"
+  },
+  "restored": {
+    "command": "cp build/t54-probe/Codec.cpp.final <产品路径> && cmake --build build --config Release --target sdurws_ird_project_test && build/RobWorkStudio/bin/Release/sdurws_ird_project_test.exe --gtest_filter=CodecMigrationChannel.*",
+    "log": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/disconnect/restore-green.log",
+    "exitCode": 0,
+    "note": "恢复后全量复验＝project_test 290/290＋contract_test 32/32（t54-final-*.log）；恢复态产品源码摘要与 mutation.originalSha256 逐位一致"
+  },
+  "methodNote": "首次变异尝试（仅去显式空白检查）与第二次（仅增 case ' '）均未转红——实证空白拒绝在词法门内为双点防御（显式检查先于 switch，default 字符集兜底；p14 探针在第二次变异态仍报 whitespace 消息＝显式检查未变异成功时先拦），单点变异不构成'规则失效'。最终变异按规则整体放行（两实现点同步）取得真实红例；教训＝断开变异须以'语义规则'为单位而非'代码行'为单位。红例锚点选择教训同期记录：PersistenceFormatReject.WhitespaceInDocument_Rejected 文档缺 schemaVersion，变异态经'缺必填字段'路径仍 StoreCorrupt（用例只认 code 不认 detail）——不可归因，故新增结构完整的锚点用例（CodecMigrationChannel.WhitespaceInValidDocument_Rejected，落位独立文件 test/CodecMigrationChannelTest.cpp 以满足改动文件全行铺面）。实验对最终代码态（46d0bbf3…）执行，红/绿日志与本目录变异副本一致。"
+}

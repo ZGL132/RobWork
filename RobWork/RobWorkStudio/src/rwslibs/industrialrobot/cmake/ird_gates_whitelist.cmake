@@ -435,7 +435,15 @@ set(IRD_THIRDPARTY_ALLOWED_TARGETS
     # Boost::headers：SetCheck 阶段 2 最大匹配内核（REUSE-T19——header-only
     # 接口目标，零运行库/DLL；src/SetCheckMatch.cpp 单 TU 收敛，公共模板头
     # 与消费者编译面零 Boost；依赖契约修订＝units/testkit.md §3.1 同批登记）
-    "Boost::headers")
+    "Boost::headers"
+    # Boost::json：project.Codec 磁盘格式解析 DOM（REUSE-T54——所有者
+    # 2026-10-26 A4 裁决 Boost.Endian/Boost.JSON 消费渠道批准：经 vcpkg
+    # 公共依赖渠道引入，登记见 traceability/reuse/REUSE-T43/
+    # byte-primitives-decision.md §6；project 计算库 PRIVATE，仅
+    # src/Codec.cpp 解析半区消费，canonical 词法门与磁盘契约语义仍归产品
+    # 自持，dump 侧自持编码器零变化；依赖契约修订＝units/project.md §1.4
+    # 同批登记）
+    "Boost::json")
 
 # ---------------------------------------------------------------------
 # IRD_TOOL_TARGET_EDGES —— 开发/演示工具目标的允许链接边（ird_gates 形态
