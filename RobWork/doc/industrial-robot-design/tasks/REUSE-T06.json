@@ -4,7 +4,7 @@
   "unit": "foundation-governance",
   "masterWp": "WP-A",
   "title": "WP-20 全量回归与零债务最终收口——20单元最终模式复核＋删死扫尾＋父任务归位",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "REUSE-T01",
@@ -45,8 +45,8 @@
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T03.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T06.json",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T06/**",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261027-r1.json",
-    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261027-r1/**"
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -83,5 +83,5 @@
     "本包零产品代码变更：不触碰 src/include/CMake/测试代码，验证矩阵为文档/治理门禁＋复用检查，无C++重验义务（AGENTS §4文档行）；发现项如实登记不改矩阵行（CORE-EVENT等16行differences文本F-967滞后字样留登记批处置）",
     "开放面如实移交独验：T42~T48/T50/T52八契约ready实施完成待独验；GAP-IK-01/GAP-FD-BUILD-01/GAP-PRJ-DIAG-BOUNDARY-01/F-966/F-974/F-975及GOV-T21接收待所有者；T04/T05父任务planned保留有据；不以上述未决冒称全局PASS，最终模式及确切版本（本契约allowedFiles内统计三件＋本轮HEAD）交独立验收员执行"
   ],
-  "note": "本包起始SHA=56bc2814064f5824dbd5e9ab9f763915494a7fac（工作区干净核实）。§12.8四项收口对照：①逐文件/逐功能关联证据——final-mode-statistics.json全20单元统计＋closures.json/functions行交叉，最终判断从关闭记录得出（REUSE-T12~T28/T30/T36/T40/T41/T49/T51/T54/GOV-T27独验pass收口done；T42~T48/T50/T52 ready送验在途）；②旧路径/开关/旁路/重复工具/黄金内核检查——dead-core-sweep.md全项实测，独立测试oracle保留不删成同源互证；③最终迁移模式统计/集成回归/冒烟——本包零产品代码变更，集成回归引用各收口包原始证据（REUSE-T30 runtime 309/T51 kinematics 297/T52 dynamics 119/T54 project 290/GOV-T27 297/T41 execution 157+38等），干净检出可构建由T54独立冒烟批与各包独验复跑承载，新增CI检查（ird_gates/commit-lint/verify-task-scope）随登记批实际执行；④unresolved/pending/未批提案/必需测试跳过/未关闭缺陷如实分列阻断面——594 pending三分类不假关，八契约待独验＋六开放裁决项单列，结论限定本轮版本/范围，不声称不存在不可发现语义重复。父任务归位：T02/T03 scope已消费完归位done（引用子任务独验记录），T04（FD实施blocked）/T05（剩余pending三分类待后续包）如实保留planned——dependsOn未全满足为登记事实，最终验收由独验员按§12.8判定阻断面，本包不以清空无关债务为目标（WP-20行原文口径）。CORE-EVENT 16行differences文本含「F967待改」滞后字样（F-967已fixed并独验pass）：属登记滞后非缺陷回潮，生产装配零引用经rg核实，行面刷新留CORE-EVENT审计收口批次，不属本包授权面。独立验收待所有者另开会话执行，实施者不自签。 2026-10-27 独验返回修复批：独验方按 taskFiles 逐文件调 validate-docs/verify-task-scope 契约校验——暴露两点：①收口批 ImplResult.taskFiles 误列证据产物（非契约文件被当契约解析，missing taskId/无效 JSON 基元），重提 taskFiles 收敛为 ready/done 契约三份（T02/T03/T06；T04/T05 planned 不得入 validate-docs -TaskFile——TASK-STATE 硬约束，其改动面由 T06 契约 allowedFiles 全覆盖核验）；②REUSE-T02~T05 契约 allowedFiles 空缺——verify-task-scope 对每个契约要求非空允许面且须覆盖 Base..Head 全部 changed 路径，四契约按本收口批共同登记面补齐 10 条（五契约＋migration＋三 changes＋REUSE-T06 证据目录通配）。收口批事实与统计零变化，本批仅治理面修补。"
+  "note": "本包起始SHA=56bc2814064f5824dbd5e9ab9f763915494a7fac（工作区干净核实）。§12.8四项收口对照：①逐文件/逐功能关联证据——final-mode-statistics.json全20单元统计＋closures.json/functions行交叉，最终判断从关闭记录得出（REUSE-T12~T28/T30/T36/T40/T41/T49/T51/T54/GOV-T27独验pass收口done；T42~T48/T50/T52 ready送验在途）；②旧路径/开关/旁路/重复工具/黄金内核检查——dead-core-sweep.md全项实测，独立测试oracle保留不删成同源互证；③最终迁移模式统计/集成回归/冒烟——本包零产品代码变更，集成回归引用各收口包原始证据（REUSE-T30 runtime 309/T51 kinematics 297/T52 dynamics 119/T54 project 290/GOV-T27 297/T41 execution 157+38等），干净检出可构建由T54独立冒烟批与各包独验复跑承载，新增CI检查（ird_gates/commit-lint/verify-task-scope）随登记批实际执行；④unresolved/pending/未批提案/必需测试跳过/未关闭缺陷如实分列阻断面——594 pending三分类不假关，八契约待独验＋六开放裁决项单列，结论限定本轮版本/范围，不声称不存在不可发现语义重复。父任务归位：T02/T03 scope已消费完归位done（引用子任务独验记录），T04（FD实施blocked）/T05（剩余pending三分类待后续包）如实保留planned——dependsOn未全满足为登记事实，最终验收由独验员按§12.8判定阻断面，本包不以清空无关债务为目标（WP-20行原文口径）。CORE-EVENT 16行differences文本含「F967待改」滞后字样（F-967已fixed并独验pass）：属登记滞后非缺陷回潮，生产装配零引用经rg核实，行面刷新留CORE-EVENT审计收口批次，不属本包授权面。独立验收待所有者另开会话执行，实施者不自签。 2026-10-27 独验返回修复批：独验方按 taskFiles 逐文件调 validate-docs/verify-task-scope 契约校验——暴露两点：①收口批 ImplResult.taskFiles 误列证据产物（非契约文件被当契约解析，missing taskId/无效 JSON 基元），重提 taskFiles 收敛为 ready/done 契约三份（T02/T03/T06；T04/T05 planned 不得入 validate-docs -TaskFile——TASK-STATE 硬约束，其改动面由 T06 契约 allowedFiles 全覆盖核验）；②REUSE-T02~T05 契约 allowedFiles 空缺——verify-task-scope 对每个契约要求非空允许面且须覆盖 Base..Head 全部 changed 路径，四契约按本收口批共同登记面补齐 10 条（五契约＋migration＋三 changes＋REUSE-T06 证据目录通配）。收口批事实与统计零变化，本批仅治理面修补。 2026-10-27 独立验收收口：verdict=pass，记录 traceability/acceptance/REUSE-T06-20261026-r1.json（复跑原件在其同名目录 evidence/），绑定 reviewedCommit=6dc43acc1f95953f9c458397b6ef43e6109d6b08、baseCommit=56bc2814064f5824dbd5e9ab9f763915494a7fac；counts 26 passed/0 failed/0 skipped/3 notRun（含统计全量独立重算、24 份独验记录亲读、9 组 rg 复跑、5 项门禁实跑；零产品变更批无 C++/GUI 重验义务，-DeepEvidence 与 gate-all 按增量口径不跑）；非阻断登记卫生项（gates 两日志滞后于送验 head）随本登记批刷新。授权口径＝所有者另开会话独立验收（UI-T86/T54 等先例同型），实施者不自签。据此本契约登记 done——WP-20/T06 最终收口闭合，migration §13.3 WP-20 行随之收口。"
 }

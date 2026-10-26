@@ -1,0 +1,85 @@
+{
+  "taskId": "REUSE-T06",
+  "baseCommit": "56bc2814064f5824dbd5e9ab9f763915494a7fac",
+  "reviewedCommit": "6dc43acc1f95953f9c458397b6ef43e6109d6b08",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T12:30:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T06 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T06-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未执行任何远程操作（git status 亲证仅本验收目录未跟踪）；所有结论仅依据本人本轮亲跑的命令输出与亲读的原件，登记原件滞后处以本目录替代证据为准。"
+  },
+  "scope": "WP-20/T06 最终收口（REUSE-T06：20单元最终模式统计＋pending 594行三分类＋删死扫尾＋父任务归位，零产品代码变更治理批）独立验收：送验范围 56bc2814064f5824dbd5e9ab9f763915494a7fac..6dc43acc1f95953f9c458397b6ef43e6109d6b08（4 提交 bcfef86d1/9e98b5b6b/90d312c1a/6dc43acc1，18 文件）；①verify-task-scope 逐契约（T02/T03/T06）显式 -Base/-Head 落盘；②终验数据逐项复核——final-mode-statistics.json 以独立 node 脚本对 21 份 functions 矩阵/catalog/inventory 权威原件全量重算逐项对账＋3 行抽样、关闭记录追溯（24 份独验记录 verdict=pass 亲读＋done/ready/planned 状态矩阵＋closures.json 交叉＋migration §13.2/§13.3 终态注记＋594 三分类逐组加总）、dead-core-sweep.md 九项 rg 扫描全项复跑＋permissions.json 22 grant/hostExceptions 清点；③红线全面抽查（forbidden 面/closures·functions·inventory·permissions 冻结面/分支与 main 冻结/零产品代码变更）；④当前 HEAD 五项门禁实测（validate-docs -TaskFile 三契约＋validate-reuse＋ird_gates＋commit-lint）。",
+  "counts": {
+    "failed": 0,
+    "passed": 26,
+    "notRun": 3,
+    "skipped": 0,
+    "unit": "26 项检查全部本轮亲测（含统计全量独立重算、24 份独验记录亲读、9 组 rg 复跑、5 项门禁实跑）；零产品代码变更批无 C++/GUI 重验义务（AGENTS §4 文档行），-DeepEvidence 与 gate-all 按增量口径不跑（见 notRun）"
+  },
+  "checks": [
+    "现场与范围：分支 redesign-main；HEAD=6dc43acc1f95953f9c458397b6ef43e6109d6b08 即送验 head；git status --short 受跟踪文件零修改（未跟踪仅本验收目录）；送验区间恰 4 提交（bcfef86d1 收口主批、9e98b5b6b 登记五项门禁日志、90d312c1a 刷新门禁日志终态、6dc43acc1 独验返回修复批——T02~T05 契约补非空 allowedFiles），18 变更文件与 git diff --stat 一致，全部为文档/治理面，全部在 T06 契约 allowedFiles 面内（与①机器核对互证）。",
+    "①verify-task-scope 逐契约落盘（显式 Base/Head，非主线自比）：pwsh -NoProfile -File verify-task-scope.ps1 -TaskFile tasks/REUSE-T02.json -Base 56bc2814064f… -Head 6dc43acc1f95… → exit 0 PASS「18 个路径全部在允许面内」（allowedRules=10/forbiddenRules=0）；REUSE-T03.json 同参数 → exit 0 PASS（allowedRules=10/forbiddenRules=0）；REUSE-T06.json 同参数 → exit 0 PASS（allowedRules=12/forbiddenRules=4）。三份日志落盘 evidence/verify-task-scope-REUSE-T{02,03,06}.log。收口批修复项（T02~T05 契约 allowedFiles 补非空且覆盖全 changed 面）经 T02/T03 实跑证实闭合。",
+    "②a final-mode-statistics 全量独立对账（acc-stats-reconcile.mjs，node 独立脚本读 reuse/functions/*.json 权威原件重算，非引用送验数字）：21 份单元矩阵逐单元 total/byStatus/byDecision 与快照逐项一致；grandTotal=2231 一致；decision×status 交叉表 7 键一致（pending/pending 594、business-specific/migrated 1594、adapter/migrated 30、proposal/proposal 2、adapter/closed 2、direct/migrated 6、business-specific/audited 3）；派生数字全部复核：migrated 1630＝1594+30+6、closed 2、audited 3、proposal 2、pending 594、1630+2+3+2+594=2231。8/8 PASS（acc-stats-reconcile.log）。",
+    "②a catalog/inventory 对账：catalog.json 独立重算 total=40、verified=17/candidate=23，verified 与 candidate 清单逐 ID 吻合快照；inventory.json 1401 条、classification 分布 audit-required=1383/migration-debt=16/existing-adapter=2 与快照一致（T01 基点冻结面仅统计未回写——范围内 inventory diff=0，见③）。抽样行 3 件核对：kinematics.RigView status=pending/decision=pending/capability=KIN-FK（组A测试替身保留面）、dynamics RNEA 迁移行 status=migrated（dynamics.rnea.test.suite）、foundation-governance 136 行中 pending 恰 123（组A黄金生成器保留）。",
+    "②b 关闭记录追溯：24 份独验记录亲读 verdict 全 pass（T12-r2/T13/T15/T16/T17-r2/T18/T19/T20/T21/T22/T23/T24/T25/T26/T27/T28/T30/T36/T40/T41/T49/T51/T54/GOV-T27，文件均在 traceability/acceptance/ 在库亲证）；状态矩阵亲查——T12~T28/T30/T36/T40/T41/T49/T51/T54/GOV-T27 全 done、T42~T48/T50/T52 全 ready 无独验记录（送验在途如实未冒称收口）、T04/T05 planned、REUSE-T14 无契约（T14 未设包，仅 evidence 目录编号，migration §13.2 原文一致）；closures.json 文件级关闭账 closedFiles=1（modeling/RpyMath.hpp MATH-ROT 双函数，acceptance 指向 REUSE-T11-20261023.json）与门禁输出 closedFiles=1 交叉一致。",
+    "②b migration 终态注记：§13.2 WP-20 blocked 行划线解除并补 2026-10-27 解阻注记（T01 done/T02 T03 归位 done/T04 T05 planned 有据/functions 2231 行 pending 594/inventory 1401 基点冻结口径不变/GOV-T21 r2 pass 在库所有者接收仍待）；§13.3 WP-20 行改「实施完成待独验（2026-10-27，REUSE-T06，起始 56bc28140，零产品代码变更）」并附四项收口内容与移交面；§13.3 另核实 REUSE-T01 收口 done、WP-18 行 T41 独验 PASS、下一包指向更新（在途＝T42~T48/T50/T52 八契约＋WP-20 独验）——与 git diff 逐行亲读一致。",
+    "②b pending 594 三分类逐组加总（pending-retention-classification.json 亲读复算）：A 业务专属自持 15 组加总＝348（123+35+36+42+19+5+11+30+12+4+27+1+1+1+1）；B 待批 8 组＝124（64+19+23+13+1+1+2+1）；C 待后续包 6 组＝122（60+20+23+6+4+9）；合计 594＝classified=594＝functions pending 行数，不冒充关闭成立；migration §13.3 行 B/C 类括号细分（23+64+19+18=124；60+20+23+19=122）与分类文件逐组吻合。",
+    "②c 删死核心 rg 全项复跑（产品源码根全树，acc-dead-core-rerun.log）：RneaChain|buildRneaChain|rneaTorques 零命中（exit=1）；computeGeometry 零命中（exit=1）——T52 删除生效无回流；dampedLeastSquares|DLS（非test）仅剩 Ik.cpp:422 定义＋:1105 唯一调用（e.head(3) 三维仅位置）与注释/Ik.hpp 文档；GOV-T27 §8 五保留函数（dampedLeastSquaresStep:422/constrainedPoseError:336/constrainedDampedLeastSquaresStep:377/nearestToolRollTarget:296/zyxEulerAngles:235）全部在档，GAP-IK-01 blocked 登记在 migration §13.2 原文亲证——待批保留非漏网。",
+    "②c 续：rk4|rungeKutta（非test）命中仅 dynamics/src/ForwardDynamics.cpp（:612-740 RK4 子步循环）与 ForwardDynamics.hpp（:111 kForwardIntegratorToken=\"rk4-fixed\"）及契约测试钉——GAP-FD-BUILD-01 blocked（§13.2 WP-09 行亲证）待批保留；特性开关 feature.?flag|legacy.?fallback|fallback.?path 零命中（exit=1）；#if 0 零命中（exit=1）；TODO|FIXME|XXX（非test）命中行逐条亲读全部为 \\uXXXX 转义说明文本（io/Json.cpp、reporting/Consistency.cpp、testkit/JsonLite.cpp、project/Codec.*、PersistenceFormat.hpp）或 QTemporaryDir \"XXXXXX\" 临时名模板（ui/UiPlugin.cpp），零真实 TODO/FIXME 残留。",
+    "②c 测试/备用路径回流：ReferenceEventBus（非test）命中仅 core 类本体（core/src/Events.cpp:129-171、core/include/.../Events.hpp:166）与四处注释（execution/EventBus.hpp:145、ui/plugin/UiPlugin.hpp:625、UiPlugin.cpp:106/760 均注明非生产组件不再装配）——生产装配零代码引用亲证；RigView 全树 rg -ln 仅 kinematics/test/CollisionPortTest.cpp——测试目标隔离亲证；黄金生成器 make_dyn_two_link_golden.mjs 在 testdata/golden/dyn-two-link-analytic/1.0.0/generate/ 在位（测试数据面独立 oracle，§12.8 明文保留类）。",
+    "②c permissions.json 清点（acc-permissions-audit.log）：grants 恰 22 个，origin=test-fixture 恰 2 个且 source.path 均在 /test/（policy-collision-test-fixture→policy/test/CollisionSessionTest.cpp；REUSE-T52-RneaTest.cpp→dynamics/test/RneaTest.cpp），其余 20 个绑定任务凭证（origins 分布 runtime-owner 8/task-private 8/runtime-borrow 2/test-fixture 2/host-presentation 2）；hostExceptions 恰 5 项（HOST-RENDER/HOST-PRESENT/HOST-COMPILE/HOST-GATEWAY/HOST-WORKBENCH）与 ARCHITECTURE.md §3.6.2 封闭清单表（:265-269，v0.17 4→5 扩面所有者追认）逐项一致。",
+    "③红线批量（acc-redline.log，范围 56bc28140..6dc43acc1）：forbidden 面 diff 路径计数 0（RobWork/RobWork/src/**、RobWork/RobWorkSim/src/**、RobWork/RobWorkStudio/src/**、vcpkg/**——零产品代码变更成立，H2/框架只读成立）；CLOSURE/closures 冻结面 diff 0（§12.8 不改关闭账）；functions 矩阵＋inventory.json 冻结面 diff 0（矩阵行 status/decision 零改动、基点不回写）；permissions.json diff 0（授权面未动）；H1/H5——本批零产品代码、纯治理统计登记，无新增核心/上游扩展面；H3——文档沿用既有 schema 与中文契约；H4/H6——统计三件＋门禁日志原件＋migration 注记在案可追溯。",
+    "③分支与 main 冻结：送验 4 提交全部仅在 redesign-main（git branch --contains 仅 redesign-main）；main 不含送验 head（merge-base --is-ancestor 反证）；main 顶端 49a9e819c 未被本批触碰；未执行任何 fetch/pull/push（全程仅本地 git 读命令）；git status 全程仅本验收目录未跟踪。过程性观察（非阻断，详见 issues）：实施中 06:07:13 曾提交 807602ac1 随即于 06:07:27 reset 丢弃并以 9e98b5b6b/90d312c1a 重落（reflog 亲证），交付历史保持线性、无远程分支受影响。",
+    "④HEAD 门禁实测（全部本轮亲跑，替代证据落盘）：validate-docs.ps1 -TaskFile @('tasks/REUSE-T02.json','tasks/REUSE-T03.json','tasks/REUSE-T06.json')（三契约原文命令）→ exit 0，validate-reuse PASS governance only（inventory=1401 units=20 changed=135 DEBT=16 UNRESOLVED=1399）＋validate-task PASS (3 tasks)＋validate-docs PASS（20 units, 12 trace entries, 429 task files, 30 registered assets, 6 notes, 7 skills, 2 packs, NOT AUDITED evidence）；REUSE-AD-PENDING 九行为 reporting/ui/policy/runtime 已登记结构墙提示（T45/T48 面非阻断）。证据 acc-validate-docs-t02t03t06.log。",
+    "④续：validate-reuse.ps1 独立跑 → exit 0 PASS governance only（acc-validate-reuse.log）；ird_gates（cmake -DIRD_ROOT=… -P cmake/ird_gates.cmake）→ exit 0「全部检查通过：R-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中」＋自测正负例按预期（acc-ird-gates.log）；commit-lint.ps1 -Range 56bc28140…..HEAD → exit 0 PASS 4/4 提交合规（acc-commit-lint.log）。加上①三契约 verify-task-scope，契约 verify 列五项命令全部实测 exit 0。",
+    "送验面与修复批一致性：6dc43acc1 仅改 5 个契约文件（T02/T03/T04 各+14、T05 +62、T06 ±2——补 allowedFiles 与 note 补记），收口批事实与统计零变化；本验收统计对账、rg 复跑、门禁实测均在最终 head 6dc43acc1 现场执行，覆盖修复批后终态。"
+  ],
+  "issues": [
+    "非阻断·登记卫生（门禁日志原件滞后于最终送验 head，归登记批处置）：实施侧登记原件 gates/verify-task-scope.log 绑定 head=807602ac1b6e——该提交在实施中 06:07:27 被「reset: moving to HEAD~1」丢弃重落（reflog 亲证），不在送验历史内；gates/commit-lint.log 仅覆盖 2 提交（9e98b5b6b/bcfef86d1，缺 90d312c1a/6dc43acc1）；90d312c1a 提交信息称「verify-task-scope head=9e98b5b6b PASS」而实际提交内容为 head=807602ac1b6e（信息与内容不符）。因本包零产品代码变更、18 文件变更面前后一致，且本独验已按最终 head 全量重跑五项门禁全绿并落盘替代证据（acc-*.log 五件），事实面不受影响；建议登记批将 gates/ 原件刷新为绑定 6dc43acc1 的终态或注记失效原因。",
+    "非阻断·叙述口径（migration §13.3 WP-20 行 A 类括号细分与分类文件映射不一致）：该行「值契约与事件总线面81/编排·SVD否决·测试替身等16」按 pending-retention-classification.json 严格按组映射应为 77（42+19+5+11）/20（12+4+1+1+1+1），差 4＝execution UTIL-THREAD 组（双优先级调度/命名管道）的叙述归属桶不同；两侧各自加总均为 97，A 类 348 与总数 594 正确。建议随 CORE-EVENT 登记批一并校准措辞。",
+    "非阻断·措辞口径（「20单元」与实际单元键数）：统计快照 byUnit 与 inventory 实含 21 个 unit 键（foundation-governance 为治理伪单元：testdata 黄金生成器＋根 CMake，非产品源码单元）；validate-reuse 输出 units=20 为 validate-reuse.ps1:227 硬编码字面量。项目惯例「20单元」指产品源码单元，数据完整无缺，仅快照 README/契约措辞未注明含伪单元，cosmetic。",
+    "非阻断·登记文件命名（allowedFiles 与实际记录名不一致）：T06 契约 allowedFiles 登记验收记录名 REUSE-T06-20261027-r1.json，本记录按独验指令命名为 REUSE-T06-20261026-r1.json（同一独验轮次 r1）；验收产物不入库、不属送验 diff 面，无实质影响，登记批收口时择一归一即可。",
+    "非阻断·列举不全（dead-core-sweep.md §1.4c）：TODO 扫描命中文件实际另含 io/Json.cpp、testkit/JsonLite.cpp、ui/UiPlugin.cpp（XXXXXX 临时名模板）、project/Codec.hpp、PersistenceFormat.hpp，sweep 仅列举 reporting/Consistency.cpp 与 project/Codec.*；逐条亲读命中性质全部同为 \\uXXXX 转义说明文本或临时名模板，「零真实 TODO 残留」结论成立，仅列举不全。"
+  ],
+  "notRun": [
+    "C++ 构建/测试/GUI 测试未执行：本包零产品代码变更（forbidden 面 diff=0 亲证），契约 acceptance⑤ 明示无 C++ 重验义务（AGENTS §4 文档/治理行），集成回归引用各收口包原始证据（T30 runtime 309/T51 kinematics 297/T52 dynamics 119/T54 project 290/GOV-T27 297/T41 execution 157+38）不重跑。",
+    "validate-docs.ps1 -DeepEvidence 全库深查未跑：按 AGENTS §4 属显式触发项；本验收新增产物必然使任何时点索引出现新过期条目（生成物语义），实施批门禁日志同样登记 NOT RUN。",
+    "gate-all.ps1 整体验证未跑：AGENTS §4 明示其用于整体验证、不要求每包全跑；本包门禁以契约 verify 五项命令逐项实测覆盖。"
+  ],
+  "limitations": [
+    "契约 status=ready（实施完成待独验）；本记录不修改任务状态，登记/收口由所有者侧步骤执行；pass 绑定送验 head 6dc43acc1f95953f9c458397b6ef43e6109d6b08。",
+    "统计对账口径：final-mode-statistics.json 标注 baseline head=56bc28140，本对账在 6dc43acc1 现场重算并逐项一致——两 head 间零产品代码与零矩阵变更（diff 亲证），统计在范围内任一提交等价。",
+    "阻断面如实移交（§12.8 ④，不以上述未决冒称全局 PASS）：T42~T48/T50/T52 八契约 ready 实施完成待独验；GAP-IK-01/GAP-FD-BUILD-01/GAP-PRJ-DIAG-BOUNDARY-01/F-966/F-974/F-975 及 GOV-T21 接收待所有者裁决；T04/T05 父任务 planned 保留有据（亲读 note）；T02/T03 归位 done 的依据链（子任务独验记录）已逐份亲读核真。本 pass 结论限定本轮版本与范围，不声称不存在不可发现的语义重复。"
+  ],
+  "commands": [
+    { "name": "scope-t02", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json -Base 56bc2814064f5824dbd5e9ab9f763915494a7fac -Head 6dc43acc1f95953f9c458397b6ef43e6109d6b08", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T02.log" },
+    { "name": "scope-t03", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json -Base 56bc2814064f5824dbd5e9ab9f763915494a7fac -Head 6dc43acc1f95953f9c458397b6ef43e6109d6b08", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T03.log" },
+    { "name": "scope-t06", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json -Base 56bc2814064f5824dbd5e9ab9f763915494a7fac -Head 6dc43acc1f95953f9c458397b6ef43e6109d6b08", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T06.log" },
+    { "name": "stats-reconcile", "command": "node RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-stats-reconcile.mjs（独立重算 21 份 functions 矩阵/catalog/inventory 并与 final-mode-statistics.json 逐项比对＋3 行抽样）", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-stats-reconcile.{mjs,log}；8/8 PASS" },
+    { "name": "dead-core-rerun", "command": "rg 九项复跑（RneaChain族/computeGeometry/dampedLeastSquares|DLS/rk4|rungeKutta/feature.?flag|legacy.?fallback|fallback.?path/#if 0/TODO|FIXME|XXX/ReferenceEventBus/RigView -g 过滤与 dead-core-sweep.md 原文一致，产品源码根全树）＋GOV-T27 §8 五保留函数定位＋testdata 黄金生成器在位检查", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-dead-core-rerun.log" },
+    { "name": "permissions-audit", "command": "node 清点 reuse/permissions.json：grants=22、test-fixture=2 均在 /test/、hostExceptions=5；对读 ARCHITECTURE.md §3.6.2（:265-269）", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-permissions-audit.log" },
+    { "name": "redline-batch", "command": "git diff --name-only 56bc2814064f…..6dc43acc1f95… -- (forbidden 四面 | closures | functions+inventory | permissions.json) 分别计数全 0；git branch --contains/merge-base --is-ancestor 核分支与 main 冻结；git reflog 核对过程性 reset", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-redline.log" },
+    { "name": "validate-docs", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile @('RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json','RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json')\"", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-validate-docs-t02t03t06.log" },
+    { "name": "validate-reuse", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-reuse.ps1", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-validate-reuse.log" },
+    { "name": "ird-gates", "command": "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-ird-gates.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range 56bc2814064f5824dbd5e9ab9f763915494a7fac..HEAD", "exitCode": 0, "passed": true, "log": "REUSE-T06-20261026-r1/evidence/acc-commit-lint.log；4/4 提交合规" }
+  ],
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T02.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T03.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/verify-task-scope-REUSE-T06.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-stats-reconcile.mjs",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-stats-reconcile.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-dead-core-rerun.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-permissions-audit.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-redline.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-validate-docs-t02t03t06.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-validate-reuse.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-ird-gates.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T06-20261026-r1/evidence/acc-commit-lint.log"
+  ]
+}

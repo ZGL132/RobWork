@@ -1,0 +1,32 @@
+### GOV-T27 §8 旧核保留 5 函数在档核实（Ik.cpp）
+235:std::array<double, 3> zyxEulerAngles(const rw::math::Rotation3D<double>& r)
+296:rw::math::Rotation3D<double> nearestToolRollTarget(
+336:Eigen::Matrix<double,6,1> constrainedPoseError(
+344:        ?nearestToolRollTarget(target.R(),actual.R(),constraint.rollRange):target.R();
+345:    const auto targetRpy=zyxEulerAngles(composeOf(refT,desired));
+346:    const auto actualRpy=zyxEulerAngles(composeOf(refT,actual.R()));
+377:std::optional<Eigen::VectorXd> constrainedDampedLeastSquaresStep(
+396:        const auto ep=constrainedPoseError(request.targetInBase,fp.get().tcpInBase,
+398:        const auto em=constrainedPoseError(request.targetInBase,fm.get().tcpInBase,
+422:Eigen::VectorXd dampedLeastSquaresStep(const std::vector<double>& jacobianRowMajor,
+1062:                        ? constrainedPoseError(request.targetInBase, m.get().tcpInBase,
+1097:                    const auto step=constrainedDampedLeastSquaresStep(request,q,e,differenceFailure);
+1105:                    dq = dampedLeastSquaresStep(m.get().jacobian, dof, e.head(3));
+1181:                constrainedPoseError(request.targetInBase, recheck.get().tcpInBase,
+
+### permissions.json test-fixture grant 清点
+top keys: [
+  'schemaVersion',
+  'authority',
+  'modelOwner',
+  'hostExceptions',
+  'grants'
+]
+grants total: 22
+test-fixture grants: 2
+ - policy-collision-test-fixture -> undefined
+ - REUSE-T52-RneaTest.cpp -> undefined
+test-fixture 非/test/路径数（预期0）: 2
+hostExceptions 数量: 5 ["HOST-RENDER","HOST-PRESENT","HOST-COMPILE","HOST-GATEWAY","HOST-WORKBENCH"]
+非 test-fixture grant 数: 20 （sweep 称其余 20 个绑定任务凭证）
+origins 分布: {"runtime-owner":8,"task-private":8,"runtime-borrow":2,"test-fixture":2,"host-presentation":2}

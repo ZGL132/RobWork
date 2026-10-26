@@ -1,0 +1,101 @@
+## 独验复跑 dead-core-sweep 各项 rg（现场 2026-10-27 HEAD 6dc43acc1）
+
+### 1.1 RneaChain 族
+exit=1 （预期1=零命中）
+
+### 1.1b computeGeometry
+exit=1 （预期1=零命中）
+
+### 1.2 dampedLeastSquares|DLS（非test）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:33: *     API，结束后以任务实际位置/姿态容差独立复核，不另写 DLS"）；
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:73:#include <Eigen/Cholesky>  // LLT——DLS 正规方程 (JJᵀ＋λ²I) 求解（O-40 Eigen PRIVATE；仅位置/约束模式）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:419:///   DLS/正规方程"）。上游仅位置入口（ParallelIKSolver Target 掩码）的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:422:Eigen::VectorXd dampedLeastSquaresStep(const std::vector<double>& jacobianRowMajor,
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:1059:                // 残差（测地——批35 P1-3 迭代/验收分离）供 DLS 步进。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:1105:                    dq = dampedLeastSquaresStep(m.get().jacobian, dof, e.head(3));
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\src\Ik.cpp:1109:                //   步长上限＋DLS 阻尼使跨分支迭代有界可回收）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\include\sdurws\ird\kinematics\Ik.hpp:85:///   束的迭代核由自写 DLS 正规方程（λ=kIkDampingLambda，LLT）迁移为上游
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\include\sdurws\ird\kinematics\Ik.hpp:291: * 目标"牵制，DLS 收敛不到位置容差内，位置存在性被错误判为搜索未果。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\gui_test\KinematicsPanelInputGuiTest.cpp:467:    // 区间对角点——非奇异链 DLS 预算内收敛）。
+exit=0
+
+### 1.3 rk4|rungeKutta（非test）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:4: *         τ_ref 产出、单样本 RNEA 质量阵/偏置力提取、固定步长 RK4 积分、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:16: *   全部数值路径（RK4/高斯消元/误差统计）为自持 double 逐元素算术；模型
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:33: *   - 固定步长 RK4：子步长 h＝min(maxStepS, t_{j+1} − t_current)（子步不跨
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:612:        // RK4 子步循环（h＝min(maxStepS, 剩余时长)——不跨参考样本边界）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:621:            // ---- RK4 四 stage（经典显式格式；全部 stage 共用区间起点
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:633:                anomalyDetail = failReason + "，RK4 stage 1";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:648:                anomalyDetail = failReason + "，RK4 stage 2";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:663:                anomalyDetail = failReason + "，RK4 stage 3";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:678:                anomalyDetail = failReason + "，RK4 stage 4";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:684:            // 状态推进（加权组合 1/6·(k1+2k2+2k3+k4)——RK4 标准格式）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\src\ForwardDynamics.cpp:740:    // 取消观察补偿：RK4 内层 break 的 cancelled 位已置；此处统一出口。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:4: *         同源逆动力学力矩回放、确定性 RK4 积分、误差四元组度量与异常
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:25: *   库塔（RK4）积分**（integratorToken 词表锁定值 kForwardIntegratorToken
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:26: *   ＝"rk4-fixed"）。RobWorkSim 物理引擎（rwsim::simulator::PhysicsEngine
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:40: *      RK4 为纯确定性数值路径；迭代约束求解器（Bullet LCP）存在容差内
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:79: *   产出（固定步长 RK4 纯确定；无随机源/时钟/locale 依赖——§10.0）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:111:inline constexpr std::string_view kForwardIntegratorToken = "rk4-fixed";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:149:                                   ///   无量纲，必须 >0 且有限。★ 固定步长 RK4
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:277: *      步长 RK4（子步不跨参考样本边界）；动力学右端＝M(q)⁻¹·(τ_ctrl −
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\include\sdurws\ird\dynamics\ForwardDynamics.hpp:328:     * 确定性：同 request 同输出（逐位——固定步长 RK4＋纯数值递归）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:4: *         落位选型（本域确定性 RK4 引擎）的产品面静态钉扎（零 rwsim 物理
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:114:// 消费符号（引擎＝本域确定性 RK4；rwsim 引擎接入须先走单元卡增量修订）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:123:    // RNEA＋固定步长 RK4；rwsim 引擎（PhysicsEngine 工厂/BtSimulator/
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:152:                << "）——引擎选型＝本域确定性 RK4，rwsim 接入须先单元卡增量修订";
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:168:    //      一致（"rk4-fixed"——P-DYN-7 落位锁定；字面量在本用例独立书写，
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\dynamics\contract_test\ForwardDynamicsBoundaryContractTest.cpp:175:    EXPECT_STREQ(std::string{kForwardIntegratorToken}.c_str(), "rk4-fixed")
+exit=0
+
+### 1.4a 特性开关/旁路/兜底
+exit=1 （预期1=零命中）
+
+### 1.4b #if 0
+exit=1 （预期1=零命中）
+
+### 1.4c TODO|FIXME|XXX（非test）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\src\Json.cpp:508:     * 落点（§5.9.1 逐行）：长度预算按**解码后码点数**计（\uXXXX 记 1、
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\src\Json.cpp:553:                    // \uXXXX：先取 4 个十六进制位；高代理必须后随 \uDC00-DFFF
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\io\src\Json.cpp:564:                        // 高代理：期望紧随 "\uXXXX" 的低代理。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\src\Consistency.cpp:378: * 数值文法逐项校验（前导零/孤立小数点拒绝）。\\uXXXX 按 UTF-8 编码
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\src\Consistency.cpp:524:    /// 字符串解析（转义全表＋\uXXXX UTF-8 编码；未转义控制字符拒绝）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\reporting\src\Consistency.cpp:560:    /// \\uXXXX→UTF-8（代理对成对——孤立高/低代理拒绝，防非法 UTF-8 入层）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:6142:        QString smokeDirTemplate = QString::fromUtf8("ird-ui-smoke-demo-XXXXXX");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:7200:            QTemporaryDir dir(QDir::tempPath() + "/ird-tour-demo-XXXXXX");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:8719:            QTemporaryDir dir(QDir::tempPath() + "/ird-mtour-demo-XXXXXX");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:255:    // ---- 字符串：标准转义＋\uXXXX（含代理对）；控制字符拒绝 ----
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\testkit\src\JsonLite.cpp:298:    /// \uXXXX 十六进制体解析；高代理后必须紧跟 \uDC00-\uDFFF 低代理（成对合成）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:20: *     \uXXXX/代理对转义），Boost.JSON 序列化器输出原生 UTF-8（探针实证
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:42: *          \uXXXX（hex 大小写均可——解码结果唯一）；孤立代理拒绝（不存在
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:220: * @brief \uXXXX 解码：BMP 直出 UTF-8；高位代理必须跟随低位代理（孤立代理
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:250: * \n \r \t \uXXXX；裸控制字符与非 ASCII 原始字节拒绝（磁盘格式 ASCII）。
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:273:                        " 须以 \\uXXXX 转义出现）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:356:                    " 须以 \\uXXXX 转义出现）");
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:500:/// 非 ASCII 码点 → \uXXXX（BMP）或代理对（追加小写 hex——固定小写＝
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:560:        // 非 ASCII：严格 UTF-8 解码 → \uXXXX/代理对。无效序列＝域负载违反
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:793:/// 非 ASCII（Windows 长路径/中文路径均为合法登记对象——UTF-8 经 \uXXXX
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:1020:    appendJsonString(out, value.projectDisplayName, "projectDisplayName");  // UTF-8 → \uXXXX
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.cpp:1101:    appendJsonString(out, value.summary, "summary");  // 人读摘要：UTF-8 → \uXXXX
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\src\Codec.hpp:108: *         \uXXXX/代理对转义）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\include\sdurws\ird\project\PersistenceFormat.hpp:378:    /// 项目显示名（PM-11 标题栏；UTF-8——磁盘编码时经 \uXXXX 转义保持
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\project\include\sdurws\ird\project\PersistenceFormat.hpp:523:    /// 展示；UTF-8——磁盘经 \uXXXX 转义，§4.8）。
+exit=0
+
+### 2.1 ReferenceEventBus（非test）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.hpp:625:    /// 者 FIFO、RAII 退订、drain on close；core::ReferenceEventBus 是"非生产
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:106:                                              // core::ReferenceEventBus 非生产组件，2026-10-25 起本插件不再装配）
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\ui\plugin\UiPlugin.cpp:760:    // 句柄、析构 drain on close。core::ReferenceEventBus 是测试语义钉子
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\execution\include\sdurws\ird\execution\EventBus.hpp:145:     *             不同：core ReferenceEventBus::removeSink 删除该 sink 的
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:129:    ReferenceSubscription(ReferenceEventBus* bus, IDomainEventSink* sink)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:142:    ReferenceEventBus* bus_;
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:148:void ReferenceEventBus::publish(const DomainEvent& event)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:158:std::unique_ptr<IEventSubscription> ReferenceEventBus::subscribe(IDomainEventSink& sink)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:164:void ReferenceEventBus::removeSink(IDomainEventSink* sink)
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\src\Events.cpp:171:std::size_t ReferenceEventBus::subscriberCount() const noexcept
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\core\include\sdurws\ird\core\Events.hpp:166:class ReferenceEventBus final : public IDomainEventBus {
+exit=0
+
+### 2.3 RigView 全树
+RobWork/RobWorkStudio/src/rwslibs/industrialrobot\kinematics\test\CollisionPortTest.cpp
+exit=0
