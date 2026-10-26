@@ -638,6 +638,34 @@
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
         "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
       }
+    },
+    {
+      "id": "REUSE-T53-ForwardDynamicsBoundaryContractTest.cpp",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp",
+        "sha256": "932877e246bef8c65a656adebdd215a8f2a4745b8c4088216daea96ec2820a78"
+      },
+      "targets": [
+        "sdurws_ird_dynamics_contract_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "simulation"
+      ],
+      "operations": [
+        "query",
+        "construct-model",
+        "mutate-model"
+      ],
+      "origin": "test-fixture",
+      "lifetime": "REUSE-T53 测试夹具例外（/test/ 路径，test-fixture 同 REUSE-T36/T52 形态）：FD 边界契约用例测试侧构造 WorkCell/Device/State 装配任务输入（零生产权限扩散；产品侧引擎会话物化归 runtime FdEngineSession 工厂授权）。",
+      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+        "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
+      }
     }
   ]
 }

@@ -87,11 +87,13 @@ function CheckPermissions {
         $unit = ($path.Substring($product.Length) -split '/')[0]
         if ($g.origin -notin @('runtime-owner','runtime-borrow','task-private','host-presentation','value','test-fixture')) { Fail 'PERMISSIONS' "$path : origin" }
         # 测试夹具例外（2026-10-26 所有者落地授权脉络，REUSE-T36 登记）：产品树
-        # /test/ 路径的测试脚手架构造/装配模型输入（gtest 夹具建 WorkCell 等）
-        # 是任务输入装配而非模型所有权主张——ARCH §3.6/SA-19 的 runtime owner
-        # 红线约束产品代码路径，本例外不放宽之；非 test 路径用 test-fixture 一律
-        # 拒绝，防止借夹具名义洗白生产代码的模型操作。
-        $isTestFixturePath = $path -match '(^|/)test/'
+        # test/ 与 *_test/（contract_test/gui_test 等单元测试目录惯例，与下方
+        # 目标名 _test/_contract_test/_gui_test 约定同口径）路径的测试脚手架
+        # 构造/装配模型输入（gtest 夹具建 WorkCell 等）是任务输入装配而非模型
+        # 所有权主张——ARCH §3.6/SA-19 的 runtime owner 红线约束产品代码路径，
+        # 本例外不放宽之；非测试路径用 test-fixture 一律拒绝，防止借夹具名义
+        # 洗白生产代码的模型操作。
+        $isTestFixturePath = $path -match '(^|/)([a-z0-9]+_)?test/'
         if ($g.origin -eq 'test-fixture' -and -not $isTestFixturePath) { Fail 'AD' "$path : test-fixture origin outside /test/" }
         if (@($g.categories | Where-Object { $_ -in @('host','graphics') }).Count -and $g.origin -ne 'host-presentation') { Fail 'AD' "$path : presentation requires exact host exception" }
         if ($g.origin -eq 'value' -and (@($g.categories | Where-Object { $_ -ne 'value' }).Count -or @($g.operations | Where-Object { $_ -ne 'value' }).Count)) { Fail 'AD' "$path : value is not an ownership bypass" }

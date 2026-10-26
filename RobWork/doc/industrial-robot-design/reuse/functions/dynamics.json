@@ -471,7 +471,7 @@
         "entry": "buildRneConsumptionChain"
       },
       "evidence": {
-        "sha256": "1bee178e6fa6894bf724927a41c47ea2ed91ae183e415d9f14eb7477d1c0872f",
+        "sha256": "b42f7e3be63b0f4e30bf98227429595e65f89436b09e644811b0aaa3be2d8eee",
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/production-dyn-rne-device-build.json"
       }
     },
@@ -600,7 +600,7 @@
         "entry": "solveChannel"
       },
       "evidence": {
-        "sha256": "80fd0d343efec6d2751461c257518e0757cadb56a86138e5398438f822ff5585",
+        "sha256": "81f9277f1d04366a7dcde8a932d7f59a3f51e8e96044dd441e227bf7216cdfbe",
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/production-dyn-rne-solve-channel.json"
       }
     },
@@ -893,6 +893,90 @@
       "nonOverlapEvidence": {
         "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04",
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.fd.contract.boundary",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-02"
+      ],
+      "sources": [
+        {
+          "endLine": 219,
+          "symbol": "ForwardDynamicsBoundaryContractTest",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp",
+          "sha256": "932877e246bef8c65a656adebdd215a8f2a4745b8c4088216daea96ec2820a78",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::ForwardDynamicsBoundaryContractTest"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics_contract_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：kForwardIntegratorToken/ForwardCheckSettings 词表同源与 ODE 引擎会话消费契约在案；本区段语义与职责见 differences",
+        "command": "rg -n \"kForwardIntegratorToken|ForwardCheckSettings|FdEngineSession|PhysicsEngine\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/FdEngineSession.cpp"
+      },
+      "differences": "FD 边界契约静态防线（与 ForwardDynamicsTest 行为 oracle 两层互补）：词表常量/四态枚举消费面契约编译期钉扎＋ODE 引擎会话真实消费路径断开钉扎；测试夹具构造走 test-fixture 授权（REUSE-T53 grant），产品侧引擎会话物化归 runtime FdEngineSession 工厂",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "932877e246bef8c65a656adebdd215a8f2a4745b8c4088216daea96ec2820a78",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/contract_test/ForwardDynamicsBoundaryContractTest.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.fd.header.contract",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-05"
+      ],
+      "sources": [
+        {
+          "endLine": 346,
+          "symbol": "kForwardIntegratorToken",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp",
+          "sha256": "e9f8da94cbc194bfd57889cdf4f99a4ca7ffd2cb2a657014d89b83e27a4583d5",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::kForwardIntegratorToken"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T53 定向实核（migration §13.3 WP-09，A3 按 REUSE-T31 提案）：kForwardIntegratorToken=ode-fixed 词表同步（单元卡 §4.2 增量修订随 units/dynamics.md 入册）与 ForwardCheckSettings/Request DTO 契约在案；本区段语义与职责见 differences",
+        "command": "rg -n \"kForwardIntegratorToken|ForwardCheckSettings|ForwardCheckRequest|ForwardCheckState|ode-fixed\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp"
+      },
+      "differences": "FD 契约头：kForwardIntegratorToken 词表 rk4-fixed→ode-fixed（P-DYN-7 自持约束经 GOV-T21 治理取代，REUSE-T31 提案 ODE 引擎供给落地，所有者 A3 授权脉络）＋kForwardCheckAlgorithmVersion＋ForwardCheckSettings/Request DTO＋ForwardCheckState 四态同源（DynTypes）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "e9f8da94cbc194bfd57889cdf4f99a4ca7ffd2cb2a657014d89b83e27a4583d5",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/ForwardDynamics.hpp"
       }
     }
   ]
