@@ -44,7 +44,8 @@
     "RobWork/doc/industrial-robot-design/reuse/catalog.json",
     "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T51.json",
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
-    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/**"
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -63,7 +64,8 @@
     "测试（test-fixture 例外口径）：模型构造仍经 KinFkFixture 既有授权形态（真实编译 RuntimeSnapshotFactory）；新增/改造＝FullPose 上游路径定向（可达收敛＋独立闭式 oracle）、不可达（内孔）搜索未果、限位过滤（越界解如实入 filteredRecords）、同请求逐位确定性、上游直接对照（同模型同初值直接驱动 JacobianIKSolver 与产品解一致）＋solveLocal 单步/多步轨迹同一性钉、F-746③ 设施失败值面适配（锚缺失→InitialFkEvaluation）、黄金数据集与消费者契约回归真实跑",
     "验证（增量范围）：kinematics 全量套件（集成模式真实执行，passed/failed/skipped/notRun 分列）＋IK 定向消费者契约（TaskPointIkEvaluator contract）＋独立残差 oracle（闭式参考）＋ird_gates；冒烟树不扩权（kinematics 冒烟 test exe 既有 T19 遗留 LNK2019 缺口维持 NOT RUN 原件登记，归 T19 语义/后续包处置，本包不冒称修复）",
     "全文件解决批（Ik.cpp migration-debt 改动即触发）：Ik.cpp 全部功能行 resolved（IkSolver.solve 行 adapter＋ird-reuse-production/1 四套生产证据 normal/disconnected/oracle/upstreamComparison——disconnected 为真实生产变异红例；其余行 business-specific 持 nonOverlapEvidence）＋逐行区段铺面＋JointMapping.hpp 同批（新增逆映射行）＋Ik.hpp 契约面铺面行＋CMake 行区段刷新＋inputs/build 摘要级联同步＋permissions 精确 grant（Ik.cpp model/state/solver+write-state task-private；IkTest.cpp 测试面 grant）＋catalog KIN-IK candidate→verified（能力审查证据文件，T36 COLLISION 先例同型）＋changes/REUSE-T51.json 凭证",
-    "四维验收（policy §1.1.4）：准确性＝闭式独立 oracle＋黄金数据集＋上游直接对照＋双容差独立复核；架构＝runtime owner/上游迭代核/业务编排三层职责唯一、依赖方向经锚+sdurw_invkin 导出目标；简洁性＝删除 FullPose 自写 DLS/正规方程链的实际清单＋必要保留项逐项理由（PositionOnly 引擎/约束模式数学）；运行效果＝确定性逐位、多初值统计真实性、取消响应、消费者契约回归；四维结果关联本 acceptance 并留证 traceability/reuse/REUSE-T51/"
+    "四维验收（policy §1.1.4）：准确性＝闭式独立 oracle＋黄金数据集＋上游直接对照＋双容差独立复核；架构＝runtime owner/上游迭代核/业务编排三层职责唯一、依赖方向经锚+sdurw_invkin 导出目标；简洁性＝删除 FullPose 自写 DLS/正规方程链的实际清单＋必要保留项逐项理由（PositionOnly 引擎/约束模式数学）；运行效果＝确定性逐位、多初值统计真实性、取消响应、消费者契约回归；四维结果关联本 acceptance 并留证 traceability/reuse/REUSE-T51/",
+    "跨批治理卫生修复（T36 acceptance 第 4 项同型）：本包 CMake 链接面变更使 REUSE-T19 的 FK 生产证据 JSON（kinematics.FkEvaluator.evaluate）内 kinematics/CMakeLists.txt 绑定陈旧——validate-reuse FRESHNESS/POSITIVE 必红（证据新鲜度规则：任一相关依赖变化受影响证据过期）；本包单值同步该绑定至现行摘要并级联刷新 functions/kinematics.json 该行 evidence 绑定，证据内容（runs/XML/断言）零改动——FK 路径与本包零因果，不重跑不重验"
   ],
   "note": "migration §13.3 WP-04 精确子任务（REUSE-T03 父任务 planned 下的精确子任务，父任务归位归收口批）。契约编制即本包工作（2026-10-26 起始 SHA=a89776f06c80a0408c4fa28e9e58e32215b74738）。前置准入核清：模型真值项已由 T13 真值记录满足（migration §13.2 末行）、目标文件无 CLOSURE 冻结（functions/kinematics.json 中 Ik.cpp/JointMapping.hpp 全部行为 pending/proposal 或 business-specific/migrated，无 closed 行；closures.json 无本包目标文件条目）。生产实施的独立验收按既有口径由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不得自签；本契约 status=ready 表示实施完成待独验，不冒称通过。WP-05（部分姿态/仅位置/迭代观测扩展）边界不动：GAP-IK-01 扩展提案维持 Draft 未批准，本包不实施 ParallelIKSolver/掩码/真实统计扩展。",
   "governanceAcceptance": {
