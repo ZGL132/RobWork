@@ -1,0 +1,19 @@
+kinematics.json functions=61, schema=ird-reuse-functions/1
+PASS  [A] 区段 sha256 重算 31 段全部一致
+Ik.cpp 总行数=1318，covered=1318，未覆盖=0
+PASS  [B] Ik.cpp 全文件逐行铺面（1..末行全 covered，migrated/closed）
+Ik.cpp 行 status 分布: {"adapter/migrated":1,"business-specific/migrated":18}
+PASS  [C] IkSolver.solve decision=adapter/status=migrated
+PASS  [C1] production 四件套字段  —— {"entry":"IkSolver::solve","upstream":"solveLocal","target":"sdurws_ird_kinematics"}
+PASS  [C2] 证据 schema=ird-reuse-production/1 且 functionId 匹配
+PASS  [C3] normal/disconnected/oracle/upstreamComparison 四套在案  —— keys=schemaVersion,functionId,target,bindings,normal,disconnected,oracle,upstreamComparison,note
+PASS  [C4.normal] exitCode=0（零）＋XML 真实计数
+PASS  [C4.disconnected] exitCode=1（非零）＋XML 真实计数
+PASS  [C4.oracle] exitCode=0（零）＋XML 真实计数
+PASS  [C4.upstreamComparison] exitCode=0（零）＋XML 真实计数
+PASS  [C5] mutation 作用登记生产源码且内容改变
+PASS  [D1] JointMapping.hpp 登记行含 qAuthoritativeFromRuntime 逆映射符号  —— rows=kinematics.qRuntimeFromAuthoritative,kinematics.JointMappingHeader,kinematics.qAuthoritativeFromRuntime
+PASS  [D2] Ik.hpp 登记行 status=migrated/closed  —— rows=kinematics.IkContractHeader/migrated,kinematics.IkInitialValueStrategy/migrated,kinematics.IkCollisionPort/migrated,kinematics.IkRequest/migrated,kinematics.IkOutcome/migrated,kinematics.IIkSolver/migrated,kinematics.IkSolverClass/migrated
+PASS  [D3] CMakeLists.txt 登记行刷新（migrated/closed）  —— rows=kinematics.CMake.ird_add_gtest/migrated,kinematics.CMake.UpstreamLinks/migrated
+PASS  [E] T19 FK 证据 JSON diff 仅 2 行（1 增 1 删——CMake 绑定）  —— ["-   \"sha256\": \"da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80\"","+   \"sha256\": \"6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa\""]
+acc-facade-probe: 全部通过

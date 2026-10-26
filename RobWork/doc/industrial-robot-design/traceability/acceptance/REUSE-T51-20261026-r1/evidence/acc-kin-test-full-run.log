@@ -1,0 +1,8 @@
+[       OK ] KinIk.FullPoseUpstreamDirectComparison_REUSE_T51 (0 ms)
+[ RUN      ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51
+[       OK ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51 (0 ms)
+[----------] 39 tests from KinIk (23 ms total)
+
+[----------] Global test environment tear-down
+[==========] 39 tests from 1 test suite ran. (24 ms total)
+[  PASSED  ] 39 tests.

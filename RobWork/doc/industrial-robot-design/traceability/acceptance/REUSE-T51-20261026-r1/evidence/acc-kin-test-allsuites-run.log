@@ -1,0 +1,8 @@
+[       OK ] KinPanelRotation.MatchesRwMathBothDirections_KIN_F919 (0 ms)
+[----------] 1 test from KinPanelRotation (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 297 tests from 32 test suites ran. (44812 ms total)
+[  PASSED  ] 296 tests.
+[  SKIPPED ] 1 test, listed below:
+[  SKIPPED ] PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1

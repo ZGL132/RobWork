@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-26T15:19:19+08:00",
+  "generatedAt": "2026-10-26T16:14:19+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 25269,
-    "totalBytes": 961577437,
+    "totalFiles": 25294,
+    "totalBytes": 962168721,
     "byKind": {
+      "acceptance-record": 4174,
+      "benchmark": 8,
+      "manual-acceptance": 1,
+      "log": 3219,
+      "markdown-doc": 156,
       "script": 92,
       "pipeline-artifact": 2,
-      "acceptance-record": 4149,
-      "log": 3219,
-      "other": 270,
-      "benchmark": 8,
-      "xml-report": 343,
-      "governance-record": 40,
-      "build-log": 15580,
-      "markdown-doc": 156,
+      "json-data": 1074,
       "gtest-report": 335,
-      "manual-acceptance": 1,
-      "json-data": 1074
+      "governance-record": 40,
+      "other": 270,
+      "build-log": 15580,
+      "xml-report": 343
     },
     "byLifecycle": {
-      "unverified": 16581,
+      "unverified": 16557,
       "current": 29,
       "superseded": 0,
-      "historical": 8659
+      "historical": 8708
     },
-    "associated": 9099,
+    "associated": 9124,
     "unassociated": 16170,
-    "shaComputed": 25239,
+    "shaComputed": 25264,
     "shaSkippedLarge": 30,
-    "duplicateGroupsTotal": 1667,
+    "duplicateGroupsTotal": 1668,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -38960,6 +38960,259 @@
       ],
       "bytes": 171,
       "sha256": "707438371da72628bb33075edda059d84299f82ef3eeaea5e6c95f08cfeed30e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 24207,
+      "sha256": "0037032c94ecdf6ec91368d13ef2775ac1ec7e640b8f9ea41fd79c60b219f7a8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-build-targets.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 19690,
+      "sha256": "6dc5ace5c4d0b81078d6715771a4e3910f50630b38c21f781d9700b7e725bdef",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-facade-probe.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 2021,
+      "sha256": "f8b861a5870124a65fb610bfda592b6d3a46d5604031172fdd98705f532608a4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-facade-probe.mjs",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 8049,
+      "sha256": "d7d131cc5d9a6ce1f65c9d959a7d9de12f9d11164b4b3ddc7c6d926c0e20cf60",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 47279,
+      "sha256": "2381b06b39bd212c2d1a3b1160fb73b73938cee99bf598c5d3c8db47bc1f5c6b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full-run.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 443,
+      "sha256": "e75417d270b231f1c4a6d4c018fe478616ec18acf5fe0ce3dbe3369169f1c49a",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 10396,
+      "sha256": "e03d7a5108288f58805d7ee73e821b5012827a7e9f433c1bf9c35a0e73637e80",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 21161,
+      "sha256": "2f008c76bd11efe828e827285bc4b78ac0edcca81d91af41d68b654478488a09",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 245700,
+      "sha256": "2c73d96639a3f9a0289b56692df8de050c8a73b621e41452167087d7f8334d83",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites-run.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 376,
+      "sha256": "7130b0291691298fc1c73fdab2b65bb4103601cc218423d024c280534b8590b2",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 48838,
+      "sha256": "2d59c5a9df6e64ab78f1c6e5a45bba0d7b19cd48b22ee599ef56961b1df0e8d5",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 98318,
+      "sha256": "cf16a488c8f176296e64377f6370f88aa938fee2b7c369a8af285e0838211e7b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 31775,
+      "sha256": "3a26a759cd6b7ce3934fa915f597df8f7f76c6982bec05746e35b6abed9d4f6c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full-run.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 397,
+      "sha256": "830fcd749d2f7e572e7f5340020e43395759198a068993bcdf3ea8f393874721",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 5650,
+      "sha256": "b6ca23158100a2fa503276c95a7a30d3f1312bfc38fa86c20049bf8831db335d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 11935,
+      "sha256": "a4eac300c591943cad5d0ee302c876b4333fc596519571010eb5fa913c939115",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-numeric-probe.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 1061,
+      "sha256": "a678a81c1cbe0cea353ece4f33433790a6550d4e4055fa36da0318a308e91632",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-numeric-probe.mjs",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 4863,
+      "sha256": "f70f278ad89f886e8758700efa6616914595093bac65d886030faf75789b3734",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/acc-run-tests.ps1",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 1094,
+      "sha256": "283166f0e6ff240a13fc421ed794d6bce3555902f675ddd653ee8f8711c691d7",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 135,
+      "sha256": "a1bd2539cdcb9822c29a8d3b17e268c2f1d5a972b2e8fb75166085cb711e6d6b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T17.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51",
+        "REUSE-T17"
+      ],
+      "bytes": 1931,
+      "sha256": "3595be0788a60ae5c5be129ced3260e33025873a076d76270514e5034ac621b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T18.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51",
+        "REUSE-T18"
+      ],
+      "bytes": 1931,
+      "sha256": "3595be0788a60ae5c5be129ced3260e33025873a076d76270514e5034ac621b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T19.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51",
+        "REUSE-T19"
+      ],
+      "bytes": 1931,
+      "sha256": "3595be0788a60ae5c5be129ced3260e33025873a076d76270514e5034ac621b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T51.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 1931,
+      "sha256": "3595be0788a60ae5c5be129ced3260e33025873a076d76270514e5034ac621b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/REUSE-T51-20261026-r1/evidence/verify-task-scope-t51.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "REUSE-T51"
+      ],
+      "bytes": 172,
+      "sha256": "ca6c6b77d8d4c4cb0fbe1c5be73fba831e6a759f305ac9d6c34ea65b8e85af9a",
       "lifecycle": "historical"
     },
     {
@@ -220225,7 +220478,7 @@
       ],
       "bytes": 1954,
       "sha256": "a38c4a001dc49cea19f0d486234da6340d0e350888aabf97a72219a84f205f94",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/disconnected-upstream.log",
@@ -220235,7 +220488,7 @@
       ],
       "bytes": 1406,
       "sha256": "fc0459b8bae4a127ebdec2c2c6b2b33e4ac6c27720912f74fbfaa4bb60fb2765",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/disconnected-upstream.xml",
@@ -220245,7 +220498,7 @@
       ],
       "bytes": 2217,
       "sha256": "d6fa7c151fbaee136e0f286c9f8a47140f6c13644b22b0244547dcb62e29b578",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-contract-report.json",
@@ -220255,7 +220508,7 @@
       ],
       "bytes": 47280,
       "sha256": "5e0672b1b513d6c8d9fe02d1cc81549f4d23d78597d7f1e4cef51d6353b869d3",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-contract.log",
@@ -220265,7 +220518,7 @@
       ],
       "bytes": 10398,
       "sha256": "186508bb31c33ff8a25fa0efbb0db22f0446106368b700d35a70ca626093eeca",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-contract.xml",
@@ -220275,7 +220528,7 @@
       ],
       "bytes": 21165,
       "sha256": "4c487a32f3220eb8745c1899976e4b32f2e9e072c13dd549a7b8e248965cc428",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-recheck-report.json",
@@ -220285,7 +220538,7 @@
       ],
       "bytes": 245704,
       "sha256": "6ab9374f6431d780c2f215763a0607a19ce022337ef25c990dccd0fcaf2bac9d",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-recheck.log",
@@ -220295,7 +220548,7 @@
       ],
       "bytes": 48841,
       "sha256": "2f2a5398c473b3c2b17cbf4b9855315bc64c94ddb4f03dbdc495424539000020",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/final-recheck.xml",
@@ -220305,7 +220558,7 @@
       ],
       "bytes": 98281,
       "sha256": "d21db100c0759dab59e8b64b589f17e7f1aa4754c30241f15a99d16871c1439a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/ik-capability-review.json",
@@ -220315,7 +220568,7 @@
       ],
       "bytes": 4426,
       "sha256": "785ab253b8608d55d6cc8c023a03ce2c2ccf8b7197b24d8cb74bf576457e1b8f",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/normal-kinik-report.json",
@@ -220325,7 +220578,7 @@
       ],
       "bytes": 31776,
       "sha256": "3c58d5b6de2feb81b34bda9e42ff2d3580cb1a8442703bd5a39c6fad36ac3b41",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/normal-kinik.log",
@@ -220335,7 +220588,7 @@
       ],
       "bytes": 5651,
       "sha256": "ed9ada9be14a1b9a9b94a9c20d3b5404d12a649ba92d1772e8e374fca01e0ffc",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/normal-kinik.xml",
@@ -220345,7 +220598,7 @@
       ],
       "bytes": 11937,
       "sha256": "014eecfdbf081a94ad3171ffcc88ae85d2ce6d371d0a7f7a495ee4ad91f6ae14",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/oracle-closedform-report.json",
@@ -220355,7 +220608,7 @@
       ],
       "bytes": 3859,
       "sha256": "7567b9138438569eeb139c9e9333e3cc466514e0822b79e6d0f9deeaf809961a",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/oracle-closedform.log",
@@ -220365,7 +220618,7 @@
       ],
       "bytes": 1118,
       "sha256": "46c056aafb53dbf29dfc5dea6df0ef887c96a12154dbf2eb0c055a97d48e8cf2",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/oracle-closedform.xml",
@@ -220375,7 +220628,7 @@
       ],
       "bytes": 1743,
       "sha256": "5f0171fc885dabd468f8d9a9c2e3f4285caa74d6a232d999e2a4fdc370f8a979",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/production-ik-solver-solve.json",
@@ -220385,7 +220638,7 @@
       ],
       "bytes": 8153,
       "sha256": "6c662bf1e4681cd4126560873a85534c094c0968788d7b5ca5f335362dd9a6fe",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/production/Ik.mutated.cpp",
@@ -220395,7 +220648,7 @@
       ],
       "bytes": 72512,
       "sha256": "83d8990c3cae90e7aea9440006717b73ce153e2c35b46e925e4234d190e42555",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/README.md",
@@ -220405,7 +220658,7 @@
       ],
       "bytes": 7553,
       "sha256": "d53f6363c0ce63cb2c308b9029fc4e050bc3fb992855b34a322b6931d7e178ac",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/run-contract.ps1",
@@ -220415,7 +220668,7 @@
       ],
       "bytes": 848,
       "sha256": "64721358cb31e5b56feaef60d31f84dc1881069d353a4e7f125c034d466dd03b",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/run-tests.ps1",
@@ -220425,7 +220678,7 @@
       ],
       "bytes": 968,
       "sha256": "3dc9e2dce199b171c175d26a221bfb7f9addf31b97dddfcfb9797b24742b1b77",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/upstream-comparison-report.json",
@@ -220435,7 +220688,7 @@
       ],
       "bytes": 1857,
       "sha256": "0e94fb311bd5f6d78f9401406d6d39ff02b130e15ed58f6b9178680786fdc7d7",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/upstream-comparison.log",
@@ -220445,7 +220698,7 @@
       ],
       "bytes": 714,
       "sha256": "82e69184561cf3eeccdcb467e27355df1bfe0b2c248a2c98296dfb369d52b85c",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/REUSE-T51/upstream-comparison.xml",
@@ -220455,7 +220708,7 @@
       ],
       "bytes": 931,
       "sha256": "219e704778c9aafe23fef2233e2aa2899a4f90232265d1e473cf73df2b1a84dd",
-      "lifecycle": "unverified"
+      "lifecycle": "historical"
     },
     {
       "path": "reuse/validation-batch/20261023-recheck/batch-docs-t13-t15-t16-r2.log",

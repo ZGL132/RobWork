@@ -1,0 +1,8 @@
+[       OK ] KinPoseMetricsEval.StructuredErrorMaterialNoTcp_WP15T03_ACC3 (0 ms)
+[ RUN      ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4
+[       OK ] KinPoseMetricsEval.DeterministicBytesAcrossCallsAndModes_WP15T03_ACC4 (0 ms)
+[----------] 6 tests from KinPoseMetricsEval (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 57 tests from 8 test suites ran. (56 ms total)
+[  PASSED  ] 57 tests.

@@ -1,0 +1,96 @@
+{
+  "taskId": "REUSE-T51",
+  "baseCommit": "a89776f06c80a0408c4fa28e9e58e32215b74738",
+  "reviewedCommit": "b69e79f9f672f4bdd0157af0e165ecfd9826ef3a",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-26T16:10:00+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "REUSE-T51 独立验收会话（单次验收子智能体，未参与实施）",
+    "authorization": "所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型）；实施者不得自签——本记录由独立验收会话出具，实施提交不等于独验通过。",
+    "constraints": "只验收不修复；除写入本验收产物目录（REUSE-T51-20261026-r1/）与本记录外未修改任何受跟踪文件、未提交、未切分支、未建工作树、未远程操作（git status 亲证仅本验收目录未跟踪）；测试重跑用验收目录内隔离执行器副本（输出指向验收 evidence/，未覆盖入库 REUSE-T51 证据原件）；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "WP-04 普通位姿 IK 迁移上游 JacobianIKSolver（完整位姿普通模式）与 Ik.cpp/JointMapping.hpp 全文件解决批（REUSE-T51）独立验收：送验范围 a89776f06c80a0408c4fa28e9e58e32215b74738..b69e79f9f672f4bdd0157af0e165ecfd9826ef3a（冻结范围，4 提交 554fa6f7a/c0003cc69/06aa8779e/b69e79f9f，37 文件）；①verify-task-scope 显式 -Base/-Head 落盘；②acceptance 9 项逐项清单式增量复验——数值迁移核独立 oracle 真实执行（test exe 内闭式 oracle 用例＋验收会话 node 独立实现复算 14 项）与关键数值抽查、全文件解决批核 31 区段 sha256 真实重算＋Ik.cpp 1318 行逐行铺面＋生产证据四套交叉、旧核删除 rg 无回流；③红线抽查（H1—H6、L2 零 Qt、runtime 唯一模型 owner、CLOSURE 冻结、无平行实现回流、test-fixture 未越界）；④当前 HEAD 门禁实测 validate-docs -TaskFile 全部相关契约单值逐个（T51/T17/T18/T19）＋ird_gates＋commit-lint。",
+  "counts": {
+    "failed": 0,
+    "passed": 18,
+    "notRun": 4,
+    "skipped": 0,
+    "unit": "18 项验收检查全部本轮亲测（含构建、双测试 exe 真实执行、独立数值复算、区段哈希重算）；C++ 全量 test exe 297 与 contract 57 为本轮真实执行非引用；gui_test 与 -DeepEvidence 按增量口径不重跑（见 notRun/limitations）"
+  },
+  "checks": [
+    "现场与范围：分支 redesign-main；HEAD=b69e79f9f672f4bdd0157af0e165ecfd9826ef3a 即送验 head；git status --short 受跟踪文件零修改（未跟踪仅本验收目录）；送验区间恰 4 提交（554fa6f7a 产品批收口、c0003cc69 契约补登记跨批卫生项、06aa8779e 全库证据索引重建、b69e79f9f 契约补登记索引卫生项），37 变更文件与 git diff --stat 一致且全部属契约 allowedFiles 面（与①机器核对互证）。",
+    "①verify-task-scope（显式 Base/Head）：pwsh -NoProfile -File verify-task-scope.ps1 -TaskFile REUSE-T51.json -Base a89776f06c80… -Head b69e79f9f672… → exit 0，PASS「37 个路径全部在允许面内」（allowedRules=14/forbiddenRules=4）。证据 evidence/verify-task-scope-t51.log。",
+    "②acceptance① 设计判断 diff 逐行核（Ik.cpp，+518/−若干）：完整位姿普通模式（fullPosePlain＝FullPose 且无 taskConstraint，Ik.cpp:800-801 附近）上游装配段逐行在案——锚 request.modelView->runtimeModelView()（受控视图，缺失→IkFacilityFailure/InitialFkEvaluation 值面）、设备按 chain().deviceName 精确 findDevice（不拼名/不扫描兜底）、DOF 防御、foi 两分（默认 TCP＝名称端口解析编译产物帧；命名 TCP＝法兰＋T_flange_target＝T_tcp_target·tcpOffset⁻¹ 一次逆偏置）、JacobianIKSolver 构造于解析 foi＋makeState()，三默认显式（setSolverType(SVD)/setClampToBounds(false)/setCheckJointLimits(false)）；保留面核实在案——请求校验/fail-fast 轨、makeInitialValues 初值编排、解析界限结局 5、硬过滤①②③、去重/稳定排序/统计、取消探针、五类结局词表全部保留；装配异常/迭代异常均转 makeFacilityFailure 值面（不抛承诺不破，无旧核 fallback——diff 与 rg 双证）。",
+    "②acceptance① 续——单步循环与独立复核：solveLocal(bTed, min(posTol,oriTol), state, 1) 单步循环驱动（每调用＝上游循环体恰一次；取消探针按 kIkCancellationProbeInterval 周期；迭代数逐步实测）；上游收敛后 q_rw→q_auth 单点逆映射回权威角，再经 FkEvaluator 独立 FK 复算按产品双容差 convergedForTask(FullPose,…) 逐项复核——预算耗尽而残差入双容差仍放行（对齐既有预算语义）、不过判＝该初值未收敛不产候选（D-KIN-7 词表不扩）；maxError=min(两容差) 仅作上游停判据不承担验收语义——与 GAP-IK-01 §1『优先原API，结束后以任务实际位置/姿态容差独立复核』逐字对应。",
+    "②acceptance① 续——删除/收缩与保留链：dampedLeastSquaresStep 去除 taskDim 参数、固定 kTaskDim=3（仅位置专用）；PositionOnly 与 taskConstraint 模式走既有链（else 分支保留 constrainedDampedLeastSquaresStep/步长上限/原几何 Jacobian 路径）；JointMapping.hpp 新增 qAuthoritativeFromRuntime（q_rw＋zeroOffset）与既有 qRuntimeFromAuthoritative 同头互逆；Ik.hpp kIkSolverContractVersion 4→5（CON-04 注：换核改变同请求数值结果、解集不假借同一身份——A06 同款）；CMakeLists.txt 集成分支增链 sdurw_invkin 真实目标、冒烟分支同名 ALIAS（该名非集成判定符）。",
+    "②acceptance② 上游符号定向核：sed 实读 JacobianIKSolver.hpp:110-135——两构造 Device+State（~117）与 Device+foi+State（~127）在 117-129 区段、solve(baseTend,state)→vector<Q> 在案；JacobianIKSolver.cpp:35-42——_useJointClamping(false)/_checkJointLimits(false)/_solverType(SVD)/setMaxIterations(15) 全中；cpp:89-131——solveLocal 循环 normInf(b_eXed)<=maxError 停判（6 维旋量混合单位）＋每循环恰一次 SVD 伪逆步（LinearAlgebra::pseudoInverse）逐符号与契约引用一致。",
+    "②acceptance③ 旧核删除 rg 无回流（真实执行）：rg taskDim 全库零命中（参数已去除）；dampedLeastSquaresStep 仅剩定义（Ik.cpp:422，3 维）＋唯一调用点（Ik.cpp:1105，仅位置 else 分支 e.head(3)）；Eigen LLT 仅剩 Ik.cpp:408（约束模式专用，契约允许保留）与 Ik.cpp:442（仅位置 3 维专用）两处；FullPose 不再进入任何 DLS/正规方程调用链；上游 JacobianIKSolver 源文件零改动（forbidden 面 diff 0——无复制/无平行实现）。",
+    "②acceptance④⑤ 测试真实执行（本轮亲测非引用）：cmake --build build --config Release --target sdurws_ird_kinematics sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test ird_gates → exit 0（证据 acc-build-targets.log）；验收隔离执行器（acc-run-tests.ps1，与入库 run-tests.ps1 机制逐行同构、仅输出指向验收目录）真实运行 sdurws_ird_kinematics_test.exe 无 filter 全量＝297 tests/32 suites、296 PASSED＋1 SKIPPED（PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1——GUI 呈现注册环境登记，与实施 final-recheck/ik-capability-review/migration 三方声称逐字一致，44.8s 真实执行）；contract_test 全量 57/57 PASSED（含 KinTaskPointIkEval 11/11 消费者契约——确定性/设施失败/取消/解析界限用例亲验 XML testcase 节点）。6 个 REUSE-T51 新用例全绿：FullPoseUpstreamClosedFormOracle／FullPoseUpstreamLimitViolationFiltered／FullPoseUpstreamUnreachableNoFalseSuccess／FullPoseUpstreamDirectComparison／SolveLocalSingleStepLoopTrajectoryIdentity＋F-746③ 值面收缩适配。证据 acc-kin-test-allsuites.{xml,log,-report.json}、acc-kin-contract-full.{xml,log,-report.json}。",
+    "②数值 oracle 独立执行与关键数值抽查（本验收核心）：测试内闭式参考 twoLinkClosedForm/threeLinkPoseBranches 亲读——教科书余弦定理＋肘上/肘下双支公式，与产品实现零共享（KinFkFixture referenceFk 亦独立直算）；验收会话另以 node 独立实现 FK＋闭式 IK 复算 14 项全过（acc-numeric-probe.mjs/.log）：FK(0.3,−0.5)=(1.736916742527, 0.186003695771, −0.2)、两位置分支回代自洽 ≤2.78e-17、完整位姿解支唯一且＝golden 构型 (0.3,−0.5)（往返闭合 1e-12）、初值 (0.35,−0.45) 距解支 0.05 rad（iterations>0 前提成立）、限位用例几何前提（两分支 q₁=−0.0866/0.3 均不在收窄区间 [0.35,2.97]）、不可达用例内孔前提（0.2<|L1−L2|=0.4 且闭式无实分支）——oracle 断言的载体几何全部独立核实，非循环论证。",
+    "②acceptance⑥ 全文件解决批机器独立复核（acc-facade-probe.mjs，Digest 口径与 validate-reuse.ps1 一致亲读源码实现）：31 区段 sha256 真实重算全一致（Ik.cpp/JointMapping.hpp/Ik.hpp/CMakeLists.txt 全部登记区段，含 symbol 在区段内校验）；Ik.cpp 全文件逐行铺面＝1318/1318 行零缺口（19 行全部 status=migrated：adapter 1＋business-specific 18）；IkSolver.solve 行 decision=adapter/status=migrated＋production{entry:IkSolver::solve,upstream:solveLocal,target:sdurws_ird_kinematics}＋evidence=ird-reuse-production/1 四套运行在案；四套交叉核验——normal exit 0（XML tests=39 failures=0）、disconnected exit 1（XML tests=2 failures=2 真实失败断言在案：产品独立复核将上游假成功拦截为非 SolutionsFound——mutation 作用于登记生产源码 Ik.cpp、originalSha256 与实算一致、mutatedSource 内容确变）、oracle exit 0、upstreamComparison exit 0（同模型同初值直接上游消费 2/2）；JointMapping.hpp 登记行含 qAuthoritativeFromRuntime 逆映射（3 行）、Ik.hpp 7 行 migrated、CMake 2 行 migrated。证据 acc-facade-probe.{mjs,log}。",
+    "②acceptance⑥ 续——治理登记面：permissions.json 精确 grant 两件（REUSE-T51-Ik.cpp：categories=model,state,solver/operations=write-state/origin=task-private/permissionRef=ARCH:3.6.1；REUSE-T51-IkTest.cpp 同构测试面）亲读在案；catalog.json KIN-IK review.status=verified（candidate→verified，evidence=ik-capability-review.json，upstream 绑定 JacobianIKSolver.hpp sha 3084ff3b…＋target sdurw_invkin）；changes/REUSE-T51.json 5 件凭证（Ik.cpp adapter＋JointMapping/Ik.hpp/CMake/IkTest business）逐件 sha256 按 Digest 口径复算 5/5 一致；migration.md §13.3 WP-04 行由『T03 精确子任务待编制』更新为 REUSE-T51 已实施待独验行（297/296+1 skip、四套证据、1318 行铺面、边界声明与实施事实一致）。",
+    "②acceptance⑧ 跨批卫生修复（T19 FK 证据绑定）：git diff 实测 traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json 在送验范围内恰 2 行变更（1 增 1 删）——仅 inputs 中 kinematics/CMakeLists.txt 的 sha256 绑定刷新（da65df52…→6acac3ef…，后者与现行 CMake 实算一致）；runs/XML/断言零改动——『FK 路径与本包零因果、不重跑不重验、单值同步绑定』处置与事实一致。",
+    "②acceptance⑨ 全库证据索引重建：06aa8779e 单提交仅 evidence-index.json（78043 增/68823 删）；契约所称首条 mismatch 条目 acceptance/REUSE-T10-20261026-r1.json 已入索引（rg 14 处命中）；b69e79f9f 契约补登记该卫生项与允许面。索引为生成物零手工改动（diff 全为重生成形态）。",
+    "③红线批量（真实执行）：CLOSURE 冻结——范围内 '*closures.json'/'*CLOSURE*' diff 路径计数 0；H2/框架只读——'RobWork/RobWork/src/**'+'RobWork/RobWorkSim/src/**'+'vcpkg/**' diff 计数 0（无复制、无上游改动）；L2 零 Qt——kinematics/src/ 全部 .cpp/.hpp 零 Qt include；test-fixture 未越界——生产 src/ 零 KinFkFixture 引用（fixture 仅 test 面，产品经 runtimeModelView() 锚消费真实编译产物）；old/ 回流 0；runtime 唯一模型 owner——Ik.cpp 对模型仅经锚受控视图消费、Device::setQ 仅写每初值 makeState() 任务私有 State（permissions task-private grant 与 SA-19 允许面一致），模型构造/结构写入权未越；H1/H5——迁移范围仅完整位姿普通模式（migration §13.3 批准行＋所有者 2026-10-26『A1~A4 全按推荐』授权脉络）；H3——命名空间/类型/构建/测试规范沿用；H4/H6——functions/permissions/catalog/changes/production 证据五层在案（见上）。",
+    "④HEAD 门禁实测（validate-docs 单值逐个传参，规避 -File 多值误绑）：pwsh -NoProfile -Command validate-docs.ps1 -TaskFile <tasks/REUSE-T51.json|T17|T18|T19>（四次独立调用）→ 四次全 exit 0，各自 validate-reuse PASS governance only（inventory=1401 units=20 changed=124 DEBT=16 UNRESOLVED=1399）＋validate-task PASS (1 tasks)＋validate-docs PASS（20 units, 12 trace entries, 425 task files）。证据 validate-docs-REUSE-T{51,17,18,19}.log。ird_gates 已随构建真实执行 exit 0（自测项＋A-1/R-2/R-3/R-4/R-5/T-1/T-2/SUB/GRAPH/LIB/SA02 零命中，REUSE-AD-PENDING 各行为已登记 pending 结构墙提示非阻断）。commit-lint.ps1 -Range a89776f06…..b69e79f9f… → PASS（4 个提交全部合规）。",
+    "数据真实性交叉核验：实施侧四套生产证据 XML/日志（normal-kinik 39/0、final-recheck 297=296+1 envUnavailable、final-contract 57/0、upstream-comparison 2/0、disconnected-upstream 2/2 带真实失败断言文本）与本轮亲测同口径三方一致；ird-test-report.json counts 分列（allsuites passed=296/failed=0/skipped=0/notRun=0/decisive=false 因 1 环境登记项；contract passed=57/failed=0/decisive=true）如实分列不冒称全绿。"
+  ],
+  "issues": [
+    "非阻断·cosmetic（IkTest.cpp 注释笔误，归所有者归类，同 GoldenImportTest cosmetic 缺陷处置先例）：FullPoseUpstreamClosedFormOracle_REUSE_T51 用例注释称『初值取分支 1 近旁的 (0.35,−0.45)』——按该测试内 twoLinkClosedForm 分支顺序（sign∈{1,−1}：分支 1=(−0.0866,+0.5) 肘上、分支 2=(0.3,−0.5) 肘下），初值实际近分支 2（距 0.05 rad vs 0.95 rad，本验收 node 独立复算亲证）。不影响断言有效性（断言为『解落两分支任一 1e-4 内』＋iterations>0，且完整位姿解支唯一＝分支 2 恰为期望解）；仅注释分支编号笔误。",
+    "非阻断·生成物语义（登记归后续治理批）：本验收记录与 evidence/ 目录为索引重建（06aa8779e）之后的新增产物，evidence-index.json 尚未包含 REUSE-T51-20261026-r1 条目（rg 零命中亲证）——证据索引对验收会话产物过期属索引生成物语义，非本包缺陷；建议下一治理批随验收登记一并刷新（同 T10/T30 先例处理方式）。"
+  ],
+  "notRun": [
+    "kinematics_gui_test（GUI 真实交互）未重跑：本包零 GUI 变更（diffstat 亲证 37 文件中无 GUI 路径），不在契约 verify 目标与受影响面；GUI 呈现注册以 SKIPPED 登记项形态在 test exe 全量中如实存在（PluginPanelLinks.KinGuiPresentationRegisteredNotExecuted_ACC1）。",
+    "validate-docs.ps1 -DeepEvidence 全库深查未重跑：实施批 06aa8779e 已实测重建并复跑 PASS（契约 acceptance⑨ 登记）；按 AGENTS §4 增量口径引用该原件，且本验收新增产物必然使任何时点的深查出现新过期条目（生成物语义，见 issues）。",
+    "冒烟树 kinematics test exe 既有 T19 遗留 LNK2019 缺口维持 NOT RUN 原件登记：契约 acceptance⑤ 明示归 T19 语义/后续包处置，本包不冒称修复、本验收未验冒烟树。",
+    "其他单元/Debug 配置/黄金数据集外的全库构建未执行：增量范围口径（AGENTS §4）——本包受影响面为 kinematics 单元双测试＋库目标＋ird_gates，均已真实执行。"
+  ],
+  "limitations": [
+    "契约 status=ready（实施完成待独验）；本记录不修改任务状态，登记/收口由所有者侧步骤执行；pass 绑定送验 head b69e79f9f672f4bdd0157af0e165ecfd9826ef3a。",
+    "验收重跑使用主集成 build 树增量构建（实施批已配置 RWS_BUILD_INDUSTRIALROBOT=ON，CMakeCache 亲证）；未做 fresh 全量重配置——增量口径下 HEAD 源码→目标真实重建并执行，链接面（sdurw_invkin）经构建成功与 ird_gates 双证。",
+    "上游 SUITABILITY（verified 能力 git show 版本摘要一致）由 validate-reuse 门禁在四契约调用中真实执行（validate-reuse PASS governance only 含 catalog upstream 摘要核对），本验收未另行单跑 SUITABILITY 定向命令。"
+  ],
+  "commands": [
+    { "name": "scope", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T51.json -Base a89776f06c80a0408c4fa28e9e58e32215b74738 -Head b69e79f9f672f4bdd0157af0e165ecfd9826ef3a", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/verify-task-scope-t51.log" },
+    { "name": "build-targets", "command": "cmake --build build --config Release --target sdurws_ird_kinematics sdurws_ird_kinematics_test sdurws_ird_kinematics_contract_test ird_gates", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/acc-build-targets.log" },
+    { "name": "kin-test-allsuites", "command": "pwsh -NoProfile -File …/REUSE-T51-20261026-r1/evidence/acc-run-tests.ps1 -RepoRoot D:/10_Source_Repos/21_robot/RobWork -Label acc-kin-test-allsuites（无 filter 全量；执行器与入库 run-tests.ps1 机制同构、输出隔离至验收目录）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites.{xml,log,-report.json}；297 tests＝296 passed＋1 skipped" },
+    { "name": "kin-contract", "command": "pwsh -NoProfile -File …/acc-run-tests.ps1 -RepoRoot … -Label acc-kin-contract-full -Filter * -Exe build/RobWorkStudio/bin/Release/sdurws_ird_kinematics_contract_test.exe", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/acc-kin-contract-full.{xml,log,-report.json}；57/57" },
+    { "name": "numeric-probe", "command": "D:/software/Nodev/node.exe …/REUSE-T51-20261026-r1/evidence/acc-numeric-probe.mjs（独立实现 FK＋闭式双支 IK＋几何前提核算，与产品/测试代码零共享）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/acc-numeric-probe.{mjs,log}；14 项全过" },
+    { "name": "facade-probe", "command": "D:/software/Nodev/node.exe …/acc-facade-probe.mjs（31 区段 sha256 重算＋1318 行铺面＋生产证据四套交叉＋T19 绑定 diff；Digest 口径亲读 validate-reuse.ps1:40-45 对齐）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/acc-facade-probe.{mjs,log}" },
+    { "name": "validate-docs-t51", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T51.json'\"（单值）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T51.log" },
+    { "name": "validate-docs-t17", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T17.json'\"（单值）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T17.log" },
+    { "name": "validate-docs-t18", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T18.json'\"（单值）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T18.log" },
+    { "name": "validate-docs-t19", "command": "pwsh -NoProfile -Command \"& 'RobWork/scripts/industrialrobot/validate-docs.ps1' -TaskFile 'RobWork/doc/industrial-robot-design/tasks/REUSE-T19.json'\"（单值）", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T19.log" },
+    { "name": "commit-lint", "command": "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range a89776f06c80a0408c4fa28e9e58e32215b74738..b69e79f9f672f4bdd0157af0e165ecfd9826ef3a", "exitCode": 0, "passed": true, "log": "REUSE-T51-20261026-r1/evidence/commit-lint.log", "note": "4 个提交全部合规" },
+    { "name": "redline-paths", "command": "git diff --name-only a89776f06…..b69e79f9f… -- '*closures.json' '*CLOSURE*' 'RobWork/RobWork/src/**' 'RobWork/RobWorkSim/src/**' 'vcpkg/**' | wc -l → 0；rg taskDim/KinFkFixture(src)/Qt-include(kinematics src)/old-(Ik.cpp) 全零命中", "exitCode": 0, "passed": true }
+  ],
+  "newFiles": [
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/verify-task-scope-t51.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-build-targets.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-run-tests.ps1",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-allsuites-run.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-test-full-run.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full.xml",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full-report.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-kin-contract-full-run.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-numeric-probe.mjs",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-numeric-probe.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-facade-probe.mjs",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/acc-facade-probe.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T51.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T17.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T18.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/validate-docs-REUSE-T19.log",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/evidence/commit-lint.log"
+  ]
+}

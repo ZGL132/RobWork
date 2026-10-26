@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-A",
   "title": "WP-04 普通位姿 IK 迁移上游 JacobianIKSolver（完整位姿普通模式）与 Ik.cpp/JointMapping.hpp 全文件解决批",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "REUSE-T17",
@@ -46,7 +46,9 @@
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/**",
     "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
-    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json"
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T51-20261026-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -69,7 +71,7 @@
     "跨批治理卫生修复（T36 acceptance 第 4 项同型）：本包 CMake 链接面变更使 REUSE-T19 的 FK 生产证据 JSON（kinematics.FkEvaluator.evaluate）内 kinematics/CMakeLists.txt 绑定陈旧——validate-reuse FRESHNESS/POSITIVE 必红（证据新鲜度规则：任一相关依赖变化受影响证据过期）；本包单值同步该绑定至现行摘要并级联刷新 functions/kinematics.json 该行 evidence 绑定，证据内容（runs/XML/断言）零改动——FK 路径与本包零因果，不重跑不重验",
     "全库证据索引重建（-DeepEvidence 实测前置）：本包收口应答要求 -DeepEvidence 实测，暴露证据索引过期 951 条 mismatch（首条 acceptance/REUSE-T10-20261026-r1.json——先于本包存在的历史批次登记未入索引）；按工具提示重跑 index-evidence.ps1 重建（25269 files/917MB，sha computed=25239 skippedLarge=30）后 -DeepEvidence 复跑 PASS（25269 audited evidence）；索引为生成物零手工改动，覆盖面为全库历史批次而非本包增量"
   ],
-  "note": "migration §13.3 WP-04 精确子任务（REUSE-T03 父任务 planned 下的精确子任务，父任务归位归收口批）。契约编制即本包工作（2026-10-26 起始 SHA=a89776f06c80a0408c4fa28e9e58e32215b74738）。前置准入核清：模型真值项已由 T13 真值记录满足（migration §13.2 末行）、目标文件无 CLOSURE 冻结（functions/kinematics.json 中 Ik.cpp/JointMapping.hpp 全部行为 pending/proposal 或 business-specific/migrated，无 closed 行；closures.json 无本包目标文件条目）。生产实施的独立验收按既有口径由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不得自签；本契约 status=ready 表示实施完成待独验，不冒称通过。WP-05（部分姿态/仅位置/迭代观测扩展）边界不动：GAP-IK-01 扩展提案维持 Draft 未批准，本包不实施 ParallelIKSolver/掩码/真实统计扩展。",
+  "note": "migration §13.3 WP-04 精确子任务（REUSE-T03 父任务 planned 下的精确子任务，父任务归位归收口批）。契约编制即本包工作（2026-10-26 起始 SHA=a89776f06c80a0408c4fa28e9e58e32215b74738）。前置准入核清：模型真值项已由 T13 真值记录满足（migration §13.2 末行）、目标文件无 CLOSURE 冻结（functions/kinematics.json 中 Ik.cpp/JointMapping.hpp 全部行为 pending/proposal 或 business-specific/migrated，无 closed 行；closures.json 无本包目标文件条目）。生产实施的独立验收按既有口径由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型），实施者不得自签；本契约 status=ready 表示实施完成待独验，不冒称通过。WP-05（部分姿态/仅位置/迭代观测扩展）边界不动：GAP-IK-01 扩展提案维持 Draft 未批准，本包不实施 ParallelIKSolver/掩码/真实统计扩展。【验收登记（2026-10-26 收口）】独立验收 PASS：记录 traceability/acceptance/REUSE-T51-20261026-r1.json（复跑证据原件在其同名目录 evidence/ 25 件：验收隔离执行器双测试 exe 全量真实执行、node 独立数值探针 14 项、31 区段 sha256 重算＋1318 行铺面＋生产证据四套交叉、validate-docs 单值逐契约×4、verify-task-scope 显式 Base/Head、commit-lint、红线批量），verdict=pass（18 项检查 failed=0/skipped=0/notRun=4——gui_test/-DeepEvidence/冒烟树/非受影响全库按增量口径不重跑；测试计数另列互不相加：test exe 297=296 passed＋1 既有环境 skip、contract 57/57，均为验收会话本轮亲测非引用），绑定送验 reviewedCommit=b69e79f9f672f4bdd0157af0e165ecfd9826ef3a（base=a89776f06c80a0408c4fa28e9e58e32215b74738，冻结范围恰 4 提交：554fa6f7a 产品批收口＋c0003cc69/06aa8779e/b69e79f9f 治理三批）；授权口径＝所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。据此登记 status=done。非阻断两条随批在案（验收记录 issues 原文）：①IkTest.cpp FullPoseUpstreamClosedFormOracle 注释分支编号笔误（初值实近分支 2——node 独立复算亲证；断言有效性不受影响），归所有者归类（GoldenImportTest cosmetic 先例同型）；②本验收记录与 evidence/ 为索引重建（06aa8779e）之后新增产物，证据索引对验收产物过期属生成物语义，随本登记批一并刷新（同 T10/T30 先例）。遗留（不属本包退出条件）：PositionOnly/约束模式迁移归 WP-05（GAP-IK-01 扩展提案维持 Draft 未批准）；冒烟 kinematics test exe T19 遗留缺口维持 NOT RUN 原件登记。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
