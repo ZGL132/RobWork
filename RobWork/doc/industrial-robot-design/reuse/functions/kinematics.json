@@ -30,7 +30,7 @@
         "command": "rg -n \"solveLocal|setSolverType|DLS|JacobianIKSolver\" RobWork/RobWork/src/rw/invkin RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
         "conclusion": "REUSE-T51 定向实核（migration §13.3 WP-04）：JacobianIKSolver.hpp:117-129 两构造/solve/solveLocal＋.cpp:35-167 SVD 步/默认面逐符号核对在案；本区段为产品业务面——上游无对应物（值面/编排/过滤/统计为业务职责），nonOverlap 成立"
       },
-      "differences": "REUSE-T51（migration §13.3 WP-04）：完整位姿普通模式迭代核迁移上游 JacobianIKSolver（T17 锚→SerialDevice/任务私有 State；solveLocal(bTed,min(posTol,oriTol),state,1) 单步循环逐步实测迭代数——与单次多步调用轨迹同一性有测试钉；SVD/不钳限位/不查限位默认显式登记，限位归硬过滤②契约区间直比）。保留＝请求校验/初值编排/解析界限结局5/硬过滤①②③/去重/稳定排序/统计/取消探针/五类结局；上游停判据不承担验收——收敛解经 FkEvaluator 独立 FK 复算双容差逐项判定（GAP-IK-01 §1），假成功被拦截（disconnected 红例实证）；q_rw↔q_auth 单点映射经 src/JointMapping.hpp。契约版本 4→5（CON-04）。PositionOnly/约束模式仍走本单元链（上游掩码入口待 runtime 视图权限审查——WP-05）",
+      "differences": "REUSE-T51（migration §13.3 WP-04）：完整位姿普通模式迭代核迁移上游 JacobianIKSolver（T17 锚→SerialDevice/任务私有 State；solveLocal(bTed,min(posTol,oriTol),state,1) 单步循环逐步实测迭代数——与单次多步调用轨迹同一性有测试钉；SVD/不钳限位/不查限位默认显式登记，限位归硬过滤②契约区间直比）。保留＝请求校验/初值编排/解析界限结局5/硬过滤①②③/去重/稳定排序/统计/取消探针/五类结局；上游停判据不承担验收——收敛解经 FkEvaluator 独立 FK 复算双容差逐项判定（GAP-IK-01 §1），假成功被拦截（disconnected 红例实证）；q_rw↔q_auth 单点映射经 src/JointMapping.hpp。契约版本 4→5（CON-04）。PositionOnly/约束模式仍走本单元链（WP-05/GOV-T27 分审定案 2026-10-26：上游唯一掩码入口 ParallelIKSolver 为 EAA 行且构造要求 ParallelDevice——产品编译产物 SerialDevice 无该视图，实质缺口 GAP-IK-01 blocked 登记待所有者裁决，既有链保留）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
@@ -75,7 +75,7 @@
         "command": "rg -n \"nearestToolRollTarget|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
       },
-      "differences": "工具 Z 轴扭转族最近合法目标选择（A-16——自由滚转约束的业务语义）；上游无 roll 族/区间投影对应物（GAP-IK-01 §1 部分姿态行：EAA 掩码不可套用），约束模式专用，归 WP-05",
+      "differences": "工具 Z 轴扭转族最近合法目标选择（A-16——自由滚转约束的业务语义）；上游无 roll 族/区间投影对应物（GAP-IK-01 §1 部分姿态行：EAA 掩码不可套用），约束模式专用（WP-05/GOV-T27 分审定案：实质缺口 GAP-IK-01 blocked 待所有者裁决，保留链）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
@@ -545,7 +545,7 @@
         "command": "rg -n \"zyxEulerAngles|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "参考系 ZYX 欧拉提取（万向锁 ±90° 两分支同号——批34 F3 修复）；上游无参考系欧拉分量接口（GAP-IK-01 §1：EAA 行≠Euler 行，probe-r2 反例在案）——约束模式专用数学，归 WP-05",
+      "differences": "参考系 ZYX 欧拉提取（万向锁 ±90° 两分支同号——批34 F3 修复）；上游无参考系欧拉分量接口（GAP-IK-01 §1：EAA 行≠Euler 行，probe-r2 反例在案）——约束模式专用数学（WP-05/GOV-T27 分审定案：实质缺口 GAP-IK-01 blocked 待所有者裁决，保留链）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
@@ -623,7 +623,7 @@
         "command": "rg -n \"constrainedPoseError|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "参考系六分量掩码残差（A-16 唯一契约构造——求得的解与验收语义同源）；上游 ParallelIKSolver Target 掩码为 EAA 坐标行且消费被 runtime ParallelDevice 视图权限审查阻断（GAP-IK-01 §1），约束模式保留链，归 WP-05",
+      "differences": "参考系六分量掩码残差（A-16 唯一契约构造——求得的解与验收语义同源）；上游 ParallelIKSolver Target 掩码为 EAA 坐标行且消费被 runtime ParallelDevice 视图权限审查阻断（GAP-IK-01 §1），约束模式保留链（WP-05/GOV-T27 分审定案：实质缺口 GAP-IK-01 blocked 待所有者裁决）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
@@ -662,7 +662,7 @@
         "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "约束差分 Jacobian＋固定阻尼步（A-16；真实 FK 中心差分——差分整个残差含参考系投影/欧拉提取/掩码导数）；上游无任意任务残差行注入公开入口（GAP-IK-01 §2 扩展提案 Draft 未批准）——约束模式专用，归 WP-05；本批零改动（区段随批铺面实审）",
+      "differences": "约束差分 Jacobian＋固定阻尼步（A-16；真实 FK 中心差分——差分整个残差含参考系投影/欧拉提取/掩码导数）；上游无任意任务残差行注入公开入口（GAP-IK-01 §2 扩展提案 Draft 未批准）——约束模式专用（WP-05/GOV-T27 分审定案：实质缺口 GAP-IK-01 blocked 待所有者裁决，保留链）；本批零改动（区段随批铺面实审）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
@@ -705,7 +705,7 @@
         "command": "rg -n \"dampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
         "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
       },
-      "differences": "REUSE-T51 起收缩为仅位置模式专用 3 维位置子块 DLS（taskDim 参数删除——完整位姿 6 维正规方程链随上游迁移删除）；保留理由＝仅位置模式唯一迭代核，上游 JacobianIKSolver 无任务子空间、ParallelIKSolver Target 掩码消费被 runtime 视图权限审查阻断（GAP-IK-01 §1）——归 WP-05 处置，非隐藏 fallback（调用点唯一：IkSolver::solve 的 PositionOnly 分支）",
+      "differences": "REUSE-T51 起收缩为仅位置模式专用 3 维位置子块 DLS（taskDim 参数删除——完整位姿 6 维正规方程链随上游迁移删除）；保留理由＝仅位置模式唯一迭代核，上游 JacobianIKSolver 无任务子空间、ParallelIKSolver Target 掩码消费被 runtime 视图权限审查阻断（GAP-IK-01 §1）——WP-05/GOV-T27 分审定案：实质缺口 GAP-IK-01 blocked 待所有者裁决，本函数保留非隐藏 fallback（调用点唯一：IkSolver::solve 的 PositionOnly 分支）",
       "inputs": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
         "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"

@@ -2,15 +2,17 @@
 
 状态：**Draft / 未批准，不得实施 patch 或新增 IK 核心**。本提案不是 REUSE-T01 退出证明，也未声称已检尽上游。需求与架构不改：KIN-02/13、UX-03，任务约束语义见 units/kinematics.md 的受限 IK 接口；ARCH §3.6 / SA-19 继续约束模型所有权。检索、版本与摘要见同目录 `proposal-search.json`，运行反例在 `traceability/reuse/REUSE-T01/probe-r3/`。
 
+> WP-05 分审补强（2026-10-26，GOV-T27 实施批——分审记录 traceability/reuse/GOV-T27/README.md）：完整位姿普通模式已由 REUSE-T51 迁移上游 JacobianIKSolver 并独验收口 done；仅位置/部分姿态两模式经 rw/invkin 全目录（13 入口）读码审计确认**无产品可消费上游入口**（实质缺口，blocked 登记待所有者裁决）；§1 表各行已补行级证据。**提案批准状态不变：仍为 Draft，本补强只登记分审实测证据，不构成任何批准。**
+
 ## 1. 已证实差异及仍可直接复用的部分
 
 | 功能 | 原库事实与证据 | 边界 |
 | --- | --- | --- |
-| 完整位姿 | JacobianIKSolver::solveLocal 接收 State、maxIter、单一 maxError；公开 setSolverType/setClampToBounds 可用 | 优先原API，结束后以任务实际位置/姿态容差独立复核，不另写DLS |
-| 仅位置 | ParallelIKSolver::Target 有6行掩码；同一帧链单leg XYZ探测通过 | 不谎称原库无掩码；ParallelDevice视图的构造权限须在runtime侧审查，不能在业务自建链 |
-| 部分姿态 | Target::enabled 明确是 EAA x/y/z；产品含 referenceInBase 下 Euler 分量和自由工具滚转 | EAA行不是Euler行；probe-r2中固定Euler yaw/pitch但改变roll仍产生不同EAA已选分量，不可直接套掩码 |
-| 结果正确性 | Jacobian局部求解不可达Rx(pi)可误报成功；ParallelIK预算耗尽后可返回半径残差1m的候选 | 非空vector/成功bool均需独立任务残差校验；这些保护可在薄适配完成，无需为此单独patch |
-| 取消/统计 | IterativeIK只有最大次数配置；solveLocal给bool及最终State，没有真实执行次数/停止原因回传 | 不能用配置上限伪造实际迭代数；每次maxIter=1反复调用改变内部算法边界，不能先验宣称等价 |
+| 完整位姿 | JacobianIKSolver::solveLocal 接收 State、maxIter、单一 maxError；公开 setSolverType/setClampToBounds 可用。**〔WP-05 补强〕该模式已由 REUSE-T51 按"优先原API＋独立复核"迁移落地并独验收口 done（solveLocal 单步循环驱动＋双容差逐项复核），本行不再是缺口** | 优先原API，结束后以任务实际位置/姿态容差独立复核，不另写DLS |
+| 仅位置 | ParallelIKSolver::Target 有6行掩码；同一帧链单leg XYZ探测通过。**〔WP-05 补强〕序列设备求解器恒全6维任务：JacobianIKSolver::solveLocal 误差＝完整速度旋量＋normInf 单标量停判（JacobianIKSolver.cpp:81-93）、CCDSolver ep/eo 同对单 maxError（CCDSolver.cpp:313/330）；唯一掩码入口构造形参＝`const rw::models::ParallelDevice*`（ParallelIKSolver.hpp:69），ParallelDevice 由 legs/junctions 构造（ParallelDevice.cpp:108/117）——产品编译产物为 SerialDevice（runtime/src/WorkCellCompiler.cpp:799-800），该入口对当前编译产物形态不可达** | 不谎称原库无掩码；ParallelDevice视图的构造权限须在runtime侧审查，不能在业务自建链。**〔WP-05 定案〕消费须 runtime 新增 ParallelDevice 视图能力（模型能力扩展）或走本提案 §2 patch 路径——实质缺口 blocked 待所有者裁决；业务自建＝SA-19 越权** |
+| 部分姿态 | Target::enabled 明确是 EAA x/y/z；产品含 referenceInBase 下 Euler 分量和自由工具滚转。**〔WP-05 补强〕掩码语义行级证据＝ParallelIKSolver.hpp:132-141/166-168（"x, y, z and EAA x, y, z directions"）；产品约束契约＝参考系 ZYX Euler 分量＋allowToolRoll/rollRange 自由滚转目标族（Ik.cpp constrainedPoseError/nearestToolRollTarget）** | EAA行不是Euler行；probe-r2中固定Euler yaw/pitch但改变roll仍产生不同EAA已选分量，不可直接套掩码。**〔WP-05 定案〕该入口同样要求 ParallelDevice（同仅位置行不可达）——实质缺口 blocked 待所有者裁决；后过滤不冒充约束求解（§4 被否表）** |
+| 结果正确性 | Jacobian局部求解不可达Rx(pi)可误报成功；ParallelIK预算耗尽后可返回半径残差1m的候选。**〔WP-05 补强〕完整位姿路径的假成功拦截已由 REUSE-T51 落地并经 disconnected 变异红例实证** | 非空vector/成功bool均需独立任务残差校验；这些保护可在薄适配完成，无需为此单独patch |
+| 取消/统计 | IterativeIK只有最大次数配置；solveLocal给bool及最终State，没有真实执行次数/停止原因回传。**〔WP-05 补强〕完整位姿路径已按单步循环模式消费（solveLocal(maxIter=1) 逐步实测迭代数，与单次多步调用轨迹同一性有测试钉——REUSE-T51 独验 PASS 先例）** | 不能用配置上限伪造实际迭代数；每次maxIter=1反复调用改变内部算法边界，不能先验宣称等价。**〔WP-05 补强〕单步循环等价性经真实测试钉实证后消费（非先验宣称），该先例为后续路径的登记模式** |
 
 QPController::solve 接收固定6D VelocityScrew，IKQPSolver内部performLocalSearch私有。它们保留为备选，但当前公开头未提供任意任务残差/行Jacobian注入；尚未据此宣称全部算法库无此能力。
 
@@ -31,7 +33,7 @@ QPController::solve 接收固定6D VelocityScrew，IKQPSolver内部performLocalS
 
 runtime继续拥有WC/DWC与名称、offset/关节/TCP映射。求解会话持快照保活的受控视图，State和solver任务私有；如需单leg模型视图，由runtime既有工厂或经T02审查的最小能力提供。业务禁止new/load/clone WorkCell。worker只传冻结描述与身份，在进程内物化，不跨进程传Frame/State指针。
 
-产品接线起点为 `kinematics/src/Ik.cpp` 的 IkSolver::solve、constrainedPoseError、constrainedDampedLeastSquaresStep、nearestToolRollTarget；替换后删除自持DLS/差分核心，保留初值编排、碰撞硬条件、关节空间去重/稳定排序、payload/provenance。evidence负责结果包络，diagnostics负责稳定码。公共产品请求/结果契约若因真实统计口径变化须同步版本和缓存身份，不能默默复用旧结果。
+产品接线起点为 `kinematics/src/Ik.cpp` 的 IkSolver::solve、constrainedPoseError、constrainedDampedLeastSquaresStep、nearestToolRollTarget；替换后删除自持DLS/差分核心，保留初值编排、碰撞硬条件、关节空间去重/稳定排序、payload/provenance。**〔WP-05 补强：REUSE-T51 后该清单收缩——完整位姿自写 6 维 DLS/正规方程链已随迁移删除，dampedLeastSquaresStep 收缩为仅位置 3 维专用（Ik.cpp:422-444）；现余自持核心＝仅位置 3 维 DLS＋约束差分链（constrainedPoseError/constrainedDampedLeastSquaresStep/nearestToolRollTarget/zyxEulerAngles）——其删除前置（所有消费者迁移后）现不满足，待本提案裁决后的实施批处置。**evidence负责结果包络，diagnostics负责稳定码。公共产品请求/结果契约若因真实统计口径变化须同步版本和缓存身份，不能默默复用旧结果。
 
 API新增符号需重编 `sdurw_invkin` 及产品依赖；不更换vcpkg/Eigen或许可证。继承Apache-2.0头与原目录风格。回调每迭代增加一次间接调用，其耗时、分配与取消延迟须计入对照，不预先承诺无性能损耗。最终patch须登记 `industrialrobot/patches/PATCHES.md` 并保存基点/摘要；本提案阶段不修改框架或PATCHES登记为已批准。
 
