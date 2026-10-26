@@ -4,7 +4,7 @@
  "unit": "project",
  "masterWp": "WP-A",
  "title": "P5/T05-project project.Codec JSON 解析家族迁移 Boost.JSON 渠道——手写 JsonParser 家族删除与全文件解决批",
- "status": "ready",
+ "status": "done",
  "branch": "redesign-main",
  "dependsOn": [
   "REUSE-T05"
@@ -47,7 +47,9 @@
   "RobWork/doc/industrial-robot-design/reuse/permissions.json",
   "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T54.json",
   "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T54/**",
-  "RobWork/doc/industrial-robot-design/traceability/evidence-index.json"
+  "RobWork/doc/industrial-robot-design/traceability/evidence-index.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T54-20261026-r1.json",
+  "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T54-20261026-r1/**"
  ],
  "forbiddenFiles": [
   "RobWork/RobWork/src/**",
@@ -67,7 +69,7 @@
   "全文件解决批：Codec.cpp/Codec.hpp 逐非空行矩阵覆盖（功能行 migrated＋audit 铺面行，68 条 project.Codec.* pending 全部收口，JsonParser/JsonValue/findMember 删除行随批移除）；inputs 摘要级联（project CMakeLists/Codec.hpp/Codec.cpp/PersistenceFormatTest 变更后所有引用矩阵逐绑定刷新）；changes/REUSE-T54.json 逐文件凭证；REUSE-T05 父任务 scope 消费记录登记（父任务状态收口批归位，本包不改）；units/project.md §1.4/§3.4/§4.8 与新依赖渠道同步",
   "验证分列：project_test 全量（改动前后两次真实运行）、contract_test 全量、ird_gates 双形态零命中、commit-lint、verify-task-scope 显式 Base/Head 全绿；PASS/FAIL/SKIP/NOT RUN 如实分列，证据（构建日志/gtest XML/ird-test-report.json）落 traceability/reuse/REUSE-T54/"
  ],
- "note": "本包起始SHA=e21d617141607d2cf13ef3a4ca92325a9dfeaaf0（工作区干净核实）。渠道授权=所有者2026-10-26 A4裁决「Boost.Endian/Boost.JSON 渠道已批准——经 vcpkg 公共依赖渠道引入，不新增本仓 vendored 依赖」（登记 traceability/reuse/REUSE-T43/byte-primitives-decision.md §6）；本包按该记录第 5 节三件套执行（渠道批准＋旧实现行为基线＋逐用例对照＋断开红转绿；JSON 场景基线载体＝PersistenceFormatTest 黄金字节与拒绝矩阵，报告编码无既有字节 fixture 的缺口不适用本包）。Boost.JSON 探针实证（installed 1.92，探针原件 traceability/reuse/REUSE-T54/probe/）：重复键解析坍缩保留后值（size=1）——重复键拒绝必须由本包 canonical 词法门自持；结构空白/浮点指数/bool/null 均被 boost 接受（对应 kind 正常返回）——词法门自持拒绝；前导零/裸控制字符/尾随内容/BOM boost 自拒；\\u 孤立代理默认拒绝、代理对合成、\\u0000 保留 NUL 字节；越界整数（2^64/负 int64 下溢）落 double kind（字段层拒绝，码不变）；max_depth 默认 32（显式设 64 保持 kMaxDepth 语义——64 层 OK/65 层 too deep）；serialize 输出原生 UTF-8（dump 侧纯 ASCII \\uXXXX 编码器不换的实证）；boost::system::system_error 为 parse 异常载体（产品侧全程转 StoreError）。首版探针可执行文件曾以 0xC0000409 退出——根因＝bash heredoc 经工具链 JSON 转义把 \\uXXXX 写成原始控制字节＋尾部无 catch 的未捕获异常，与库行为无关，改用文件工具直写后逐案跑通（事故记录见 probe/README）。契约编号 T54＝T53 已被 FD 在途任务占用（编排现场快照）。普通修正级验证矩阵＋复用全文件解决批；不授权新核心/上游扩展/其他单元改动。独立验收待所有者另开会话执行，实施者不自签。 2026-10-27 独立冒烟补验（AGENTS §4 CMake/依赖变化行）：cmake -S industrialrobot -B build/t54-smoke（vcpkg toolchain＋RobWork_DIR＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME，GOV-T24 参数先例）配置零错＋sdurws_ird_project/sdurws_ird_project_test/sdurws_ird_project_contract_test 构建零错——find_package(Boost CONFIG COMPONENTS json) 冒烟形态解析实证；冒烟套件 project_test 290/290＋contract 32/32 全绿（smoke/ 目录原件）。",
+ "note": "本包起始SHA=e21d617141607d2cf13ef3a4ca92325a9dfeaaf0（工作区干净核实）。渠道授权=所有者2026-10-26 A4裁决「Boost.Endian/Boost.JSON 渠道已批准——经 vcpkg 公共依赖渠道引入，不新增本仓 vendored 依赖」（登记 traceability/reuse/REUSE-T43/byte-primitives-decision.md §6）；本包按该记录第 5 节三件套执行（渠道批准＋旧实现行为基线＋逐用例对照＋断开红转绿；JSON 场景基线载体＝PersistenceFormatTest 黄金字节与拒绝矩阵，报告编码无既有字节 fixture 的缺口不适用本包）。Boost.JSON 探针实证（installed 1.92，探针原件 traceability/reuse/REUSE-T54/probe/）：重复键解析坍缩保留后值（size=1）——重复键拒绝必须由本包 canonical 词法门自持；结构空白/浮点指数/bool/null 均被 boost 接受（对应 kind 正常返回）——词法门自持拒绝；前导零/裸控制字符/尾随内容/BOM boost 自拒；\\u 孤立代理默认拒绝、代理对合成、\\u0000 保留 NUL 字节；越界整数（2^64/负 int64 下溢）落 double kind（字段层拒绝，码不变）；max_depth 默认 32（显式设 64 保持 kMaxDepth 语义——64 层 OK/65 层 too deep）；serialize 输出原生 UTF-8（dump 侧纯 ASCII \\uXXXX 编码器不换的实证）；boost::system::system_error 为 parse 异常载体（产品侧全程转 StoreError）。首版探针可执行文件曾以 0xC0000409 退出——根因＝bash heredoc 经工具链 JSON 转义把 \\uXXXX 写成原始控制字节＋尾部无 catch 的未捕获异常，与库行为无关，改用文件工具直写后逐案跑通（事故记录见 probe/README）。契约编号 T54＝T53 已被 FD 在途任务占用（编排现场快照）。普通修正级验证矩阵＋复用全文件解决批；不授权新核心/上游扩展/其他单元改动。独立验收待所有者另开会话执行，实施者不自签。 2026-10-27 独立冒烟补验（AGENTS §4 CMake/依赖变化行）：cmake -S industrialrobot -B build/t54-smoke（vcpkg toolchain＋RobWork_DIR＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME，GOV-T24 参数先例）配置零错＋sdurws_ird_project/sdurws_ird_project_test/sdurws_ird_project_contract_test 构建零错——find_package(Boost CONFIG COMPONENTS json) 冒烟形态解析实证；冒烟套件 project_test 290/290＋contract 32/32 全绿（smoke/ 目录原件）。 2026-10-27 独立验收收口：verdict=pass，记录 traceability/acceptance/REUSE-T54-20261026-r1.json（复跑原件在同名目录：acc-build/acc-project-test 290/290/acc-contract-test 32/32/acc 独立冒烟/commit-lint/ird-gates-standalone/validate-docs-t54/oracle），绑定 reviewedCommit=88d7d180fea80a16f3b631cc9a976711ed2c1efb；授权口径＝所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不自签。据此本契约登记 done。",
  "governanceAcceptance": {
   "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
   "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
