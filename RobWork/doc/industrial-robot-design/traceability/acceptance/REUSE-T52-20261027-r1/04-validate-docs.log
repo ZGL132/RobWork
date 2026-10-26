@@ -1,0 +1,10 @@
+NOT RUN: 全库证据索引审计（按需使用 -DeepEvidence；当前任务证据仍须核对）
+REUSE-FRESHNESS : RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt
+D:\10_Source_Repos\21_robot\RobWork\RobWork\scripts\industrialrobot\validate-docs.ps1 : H1-H6 task reuse contract faile
+d
+所在位置 行:1 字符: 50
++ ... ing]::UTF8; & 'RobWork/scripts/industrialrobot/validate-docs.ps1' -Ta ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [Write-Error], WriteErrorException
+    + FullyQualifiedErrorId : Microsoft.PowerShell.Commands.WriteErrorException,validate-docs.ps1
+ 

@@ -1,0 +1,64 @@
+{
+  "taskId": "REUSE-T52",
+  "baseCommit": "bf682893ff174d759a93e905889458d2f4e80e21",
+  "reviewedCommit": "e21d617141607d2cf13ef3a4ca92325a9dfeaaf0",
+  "branch": "redesign-main",
+  "verdict": "pass",
+  "createdAt": "2026-10-27T07:33:37+08:00",
+  "independence": {
+    "implementationParticipation": false,
+    "reviewer": "主会话补救批独立验收（REUSE-T52/WP-07 单次验收子智能体）",
+    "authorization": "所有者 2026-10-26 A1~A4 指令及补救授权脉络（GOV-T23/T24 单次验收子智能体先例同型）；本次验收任务由所有者于 2026-10-27 单独派发。",
+    "constraints": "未参与实施；除写入本验收产物目录与本记录外未修改任何文件、未提交、未切分支、未改动他人 REUSE-T53 在途 WIP、未远程操作；临时 worktree（冻结 HEAD 检出，仅用于门禁干净现场复跑）用后即删，主工作树零残留；所有结论仅依据本人亲自重跑的命令输出与亲自读取的原件。"
+  },
+  "scope": "独立复验 bf682893f..e21d61714 送验实现（恰单收口提交，冻结范围 91 路径）：显式 Base/Head 范围核验、dynamics 旧核删除 rg 复扫零回流、oracle 三件套（弯曲构型叉积/能量平衡/黄金拉格朗日）证据与实现数值抽查、三路断开实验（工厂换算行/零位偏置/setGravity）逐路变异点与失败日志对应、runtime 工厂三文件未越权扩面、modeling/§8.2 canonical 断言与门禁目录零触碰、T30 CLOSURE 冻结零触碰、消费实现审阅（solve 按关节类型投影/setGravity 显式/solveMotorTorques 不用/DOF+1 项不读）、测试证据分列（全量/契约/runtime 消费者/冒烟/基线/上游对照/ird_gates）、矩阵与四笔授权凭证抽查、commit-lint、validate-docs 冻结树干净现场复核（主工作树现场被后续批次 REUSE-T53 落地提交与在途 WIP 污染，已归因非本包缺陷）。",
+  "counts": {
+    "passed": 12,
+    "failed": 0,
+    "notRun": 0,
+    "skipped": 0,
+    "unit": "12 项验收检查；测试计数另列（testCounts：dynamics 全量 119、contract 30、runtime 消费者 312、冒烟 119、基线 116/30/312、oracle 8、断开 2+1+1 真实失败），互不相加"
+  },
+  "checks": [
+    "范围：verify-task-scope 显式 -Base bf682893ff174d759a93e905889458d2f4e80e21 -Head e21d617141607d2cf13ef3a4ca92325a9dfeaaf0 exit 0——changed=91 全部在允许面（allowedRules=27/forbiddenRules=4），无上游 RobWork/RobWorkSim/vcpkg/main 路径（01-scope.log）。",
+    "旧核删除复扫：rg 'RneaChain|buildRneaChain|computeGeometry|rneaTorques' 在产品树 industrialrobot/ 零命中（exit 1）；SampleGeometry 仅 InverseDynamics.cpp:104 注释留痕（非代码）；dynamics 无自持 Vec3/Mat3 定义（exit 1）——migration §13.3 WP-07 行删除清单逐项落实零回流（02-oldcore-rg-sweep.log）。",
+    "oracle 三件套证据：oracle.xml tests=8 failures=0；oracle-report.json ird-test-report/1 schema 8/8 passed decisive=true；过滤运行含 DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52＋DynRnea.QuasiStaticEnergyBalancePotentialDelta_REUSE_T52＋DynGolden 黄金数据集 6 项（oracle.log/oracle.xml 原件）。",
+    "oracle 实现数值抽查（RneaTest.cpp:589-685 实读）：①弯曲构型（q1=0.3,q2=0.9）全手算叉积期望 τ1=−g·(m1·x1+m2·x2+mp·xp)、τ2=−g·(m2·c2+mp·p)·cos(q1+q2)（x 分量力臂，基座系 r×F 展开），期望式不引用被测实现、不引用拉格朗日形式，另带『弯曲≠伸直力矩差 >1 N·m』判别裕度断言＝GAP-RNE-FRAME bent==rest 失败形态定向探针；②能量平衡＝独立手算势能 potential()（U=−g·[m1·c1·sin q1+m2·(L1·sin q1+c2·sin(q1+q2))]）差 ΔU 对 τ·q̇ 梯形积分（200 步、容差 5e-4 J 宽于 O(dt²) 误差量级）＋关节 2 非零离心矩×零速度＝零功率 DOUBLE_EQ 钉；③黄金数据集（拉格朗日独立参考）全量保持。禁自比成立。",
+    "三路断开实验逐路对应：①工厂换算行去除（变异件 RneConsumptionDevice.cpp 变异行 info.masscenter=com——MUTATION-T52 薄适配断开）→ disconnected.xml 恰 2 项真实失败（BentConfiguration＋StaticGravityTwoLinkAnalytic＝GAP-RNE-FRAME 复现）；②dynamics 零位偏置提取置 0（变异行 jm.zeroOffset=0.0）→ disconnected-devbuild.xml 1 项失败（NonZeroZeroOffsetSnapshotUsesAuthoritativeAngle_R3_A8＝T13 语义链复现）；③setGravity 注释（变异行 solver->setGravity 注释掉）→ disconnected-solve.xml 1 项失败（静态重力实得 0、期望 −1.4715＝T30 次要发现①复现）；三路变异各绑自身文件内变异、断开→真实失败→恢复复验（full-suite.xml 119/0）链完整。",
+    "runtime 工厂未越权扩面：产品侧改动恰 7 文件＝dynamics 4（CMakeLists/InverseDynamics.hpp/.cpp/RneaTest.cpp）＋runtime 3（RneConsumptionDevice.hpp 新增/RneConsumptionDevice.cpp 新增/CMakeLists.txt 增列）——runtime 改动严格限于契约允许的工厂三文件，零其他 runtime 内容触碰；T30 冻结文件（DynamicWorkCellCompiler.cpp/Adapter.hpp/Snapshot.hpp）git diff --exit-code 零差异。",
+    "§8.2 canonical 断言与门禁零改动：git diff --exit-code bf682893f..e21d61714 对 modeling/（含 CanonicalBridgeTest §8.2 断言）与 industrialrobot/cmake/（门禁引擎）双双退出 0 零差异；A2 裁决三处零触碰（S7/§8.2/modeling 导出）实证成立。",
+    "消费实现审阅（H1/H3 薄适配）：RneConsumptionDevice 工厂＝GAP-RNE-FRAME 单点换算（masscenter=R_alignᵀ·com、inertia=R_alignᵀ·I·R_align、zeroOffset 烘焙 setFixedTransform(getTransform(offset))、连杆帧尾巴 R_alignᵀ、axisAlignmentRotation 与 S6 WorkCellCompiler 同源）；InverseDynamics.cpp solveChannel 按关节类型投影（旋转 dot(torque,z_i)/移动 dot(force,z_i)，z_i=frameTframe(base,joint).R().getCol(2)）、solveMotorTorques 不用（上游缺陷注释引用 RecursiveNewtonEuler.cpp:249-259）、setGravity 逐通道显式传递、DOF+1 工具项不读、setPayload 通道不消费（负载并入法兰 BodyInfo）——契约 acceptance 第 1/2 条逐项相符。",
+    "测试证据真实分列：dynamics 全量 full-suite 119/119 passed（119=基线 116＋新增 oracle 2＋上游对照 1）；contract 30/0；runtime 消费者回归 312/0（与基线 312 全同＝WP-06 消费者零跨包影响）；独立冒烟 118＋119 两轮全过；基线（bf682893f）dynamics 116/0、contract 30/0、runtime 312/0 原件在 baseline/；ird_gates 零命中（R-1~SA02 共 11 类＋自测正负例，gates.log）；ird-test-report.json summary 分列 passed/failed/skipped/notRun 齐备（119/0/0/0 decisive=true）。",
+    "矩阵/凭证同步抽查：permissions.json 四笔授权在案（REUSE-T52-RneConsumptionDevice.cpp/.hpp runtime-owner 工厂、RneaTest.cpp test-fixture /test/ 路径、dynamics task-private 会话 lifetime——evaluate 内一次性载体、零共享快照）；catalog.json DYN-RNE 绑定 RecursiveNewtonEuler.hpp 上游符号与 REUSE-T52 定向实核结论；functions/runtime.json 增工厂行（buildRneConsumptionDevice symbol/qualifiedSymbol）；functions/dynamics.json 换绑消费边界（构造与换算归 runtime 工厂、dynamics 侧纯值验证/提取区段归属）；migration.md §13.3 WP-07 行与 units/runtime.md 同步登记。",
+    "提交与门禁：commit-lint -Range bf682893f..e21d61714 PASS（1 个提交全部合规，03-commit-lint.log）；validate-docs 于冻结树干净现场（临时 worktree @ e21d61714＋补齐 2 个登记绑定的 vcpkg 头文件）复跑全绿——validate-task PASS(1 tasks)、validate-reuse PASS governance only（inventory=1401 units=20 changed=131 DEBT=16 UNRESOLVED=1399）、validate-docs PASS（20 units, 427 task files）；REUSE-AD-PENDING 为 AD 审计既有 pending 提示非本包阻断（GOV-T24 先例同口径）（04-validate-docs-clean-worktree.log）。",
+    "现场归因：主工作树现场复跑唯一失败项 REUSE-FRESHNESS(runtime/CMakeLists.txt) 经 diff 归因＝送验冻结后合法后续批次对该文件的改动（409e34223 治理批跨批摘要重钉＋011f45ab8 [WP-09-T53] FD 落地＋工作树未提交 T53 WIP）——冻结树同位置零差异、干净现场门禁全绿，失败非本包送验内容缺陷；worktree 首轮 REUSE-MISSING/REUSE-PATH(vcpkg) 为临时现场环境缺供（vcpkg installed 不入 git、junction 被 ReparsePoint 反逃逸检查拒绝），按登记绑定清单补齐恰 2 个文件（SelfAdjointEigenSolver.h/Quaternion.h）后消除，归因留痕（04-validate-docs.log 主仓库现场/04-validate-docs-clean-worktree.log 冻结树现场）。"
+  ],
+  "testCounts": {
+    "dynamicsFullSuite": { "tests": 119, "passed": 119, "failed": 0, "skipped": 0, "notRun": 0, "xml": "traceability/reuse/REUSE-T52/full-suite.xml" },
+    "dynamicsContract": { "tests": 30, "passed": 30, "failed": 0, "skipped": 0, "notRun": 0, "xml": "traceability/reuse/REUSE-T52/contract.xml" },
+    "runtimeConsumerRegression": { "tests": 312, "passed": 312, "failed": 0, "skipped": 0, "notRun": 0, "xml": "traceability/reuse/REUSE-T52/runtime-consumer.xml" },
+    "oracle": { "tests": 8, "passed": 8, "failed": 0, "xml": "traceability/reuse/REUSE-T52/oracle.xml" },
+    "smoke": { "tests": "118＋119 两轮", "failed": 0, "xml": "traceability/reuse/REUSE-T52/smoke/ 下两 XML" },
+    "baseline_bf682893f": { "dynamics": "116/0", "contract": "30/0", "runtime": "312/0", "dir": "traceability/reuse/REUSE-T52/baseline/" },
+    "disconnectedExperiments": "①工厂换算行 2 真实失败／②零位偏置 1 真实失败／③setGravity 1 真实失败／恢复复验 119 passed",
+    "reviewNote": "以上计数全部为送验时实施方真实执行的原件证据（XML/ird-test-report.json），本验收为证据原件核证＋实现/断言实读抽查，未重建构建树重跑 C++ 测试（冻结范围内容以门禁与凭证机器核查约束，与 GOV-T24 先例同口径）。"
+  },
+  "commands": [
+    { "name": "scope", "command": "powershell -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json -Base bf682893ff174d759a93e905889458d2f4e80e21 -Head e21d617141607d2cf13ef3a4ca92325a9dfeaaf0", "exitCode": 0, "passed": true, "log": "01-scope.log" },
+    { "name": "oldcore-rg-sweep", "command": "rg -n 'RneaChain|buildRneaChain|computeGeometry|rneaTorques' RobWork/RobWorkStudio/src/rwslibs/industrialrobot/（及 SampleGeometry/Vec3/Mat3 定义扫描）", "exitCode": 1, "passed": true, "log": "02-oldcore-rg-sweep.log" },
+    { "name": "modeling-cmake-zero-diff", "command": "git diff --exit-code bf682893f..e21d61714 -- industrialrobot/modeling/ industrialrobot/cmake/ ＋ T30 冻结三文件", "exitCode": 0, "passed": true },
+    { "name": "commit-lint", "command": "powershell -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range bf682893f..e21d61714", "exitCode": 0, "passed": true, "log": "03-commit-lint.log" },
+    { "name": "validate-docs-clean-worktree", "command": "powershell -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json（临时 worktree @ e21d617141607d2cf13ef3a4ca92325a9dfeaaf0 干净现场，用后即删）", "exitCode": 0, "passed": true, "log": "04-validate-docs-clean-worktree.log" },
+    { "name": "validate-docs-main-worktree", "command": "同上于主工作树现场（HEAD=18bc8d138a8714a79c4066397f6cc883adc1c885＋T53 在途 WIP）", "exitCode": 1, "passed": false, "log": "04-validate-docs.log", "note": "唯一失败 REUSE-FRESHNESS(runtime/CMakeLists.txt) 已归因后续批次 REUSE-T53 落地提交 011f45ab8 与未提交 WIP——非本包缺陷，冻结树同检查 PASS" }
+  ],
+  "issues": [
+    {
+      "severity": "non-blocking",
+      "item": "migration.md §13.3 WP-07 行登记『净 −137 行』与权威口径不符",
+      "detail": "实测 InverseDynamics.cpp 净删除＝618−334＝284 行，契约 acceptance『dynamics 净-284 行』与 REUSE-T52/README『净 −284 行』均与实测精确一致；§13.3 表格行『（净 −137 行）』为文档数字漂移（疑为旧稿残值）。不影响红线与验收结论，建议后续治理批将该行数字订正为 −284。",
+      "evidence": "git diff --numstat bf682893f..e21d61714 -- dynamics/src/InverseDynamics.cpp（334 insertions/618 deletions）；traceability/reuse/REUSE-T52/README.md:8"
+    }
+  ],
+  "notRun": [],
+  "limitations": "PASS 仅绑定送验范围 bf682893f..e21d61714（恰单收口提交 e21d61714）。validate-reuse 为 governance only 口径（DEBT=16、UNRESOLVED=1399），不构成算法替换（migration §11）或 REUSE-T02 收口放行；GAP-RNE-FRAME 上游缺口本体按 A2 裁决以薄适配闭合消费面、缺口登记不关闭，WP-09 FD 消费者按其自身阶段处理。集成/冒烟 C++ 测试未由验收现场重建重跑（testCounts 为送验原件核证；工作树含他人 REUSE-T53 在途改动，重配将污染他人现场且超出『只重跑受影响项』口径）；门禁复核在冻结树临时 worktree 干净现场完成。主工作树现场 validate-docs 的 REUSE-FRESHNESS 失败已归因后续批次，随 REUSE-T53 收口批门禁自然消解。"
+}
