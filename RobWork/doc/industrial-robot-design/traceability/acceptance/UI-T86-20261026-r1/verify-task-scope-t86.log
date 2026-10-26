@@ -1,0 +1,2 @@
+verify-task-scope: UI-T86 base=28973eeee43b head=e536adc1079e changed=17 allowedRules=10 forbiddenRules=7
+verify-task-scope: PASS UI-T86 —— 17 个路径全部在允许面内
