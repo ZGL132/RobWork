@@ -417,7 +417,7 @@
         "mutate-model"
       ],
       "origin": "test-fixture",
-      "lifetime": "测试夹具装配任务输入（gtest 会话内构造 WorkCell/FakeDevice 驱动解析链；ARCH §3.6.2.1——2026-10-26 所有者落地授权脉络批准，待追认）",
+      "lifetime": "测试夹具装配任务输入（gtest 会话内构造 WorkCell/FakeDevice 驱动解析链；ARCH §3.6.2.1——2026-10-26 所有者落地授权脉络批准，同日已追认：指令原文「A1~A4 全按推荐」）",
       "permissionRef": "ARCH:3.6",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/policy/CMakeLists.txt",

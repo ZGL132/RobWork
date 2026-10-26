@@ -1,0 +1,13 @@
+verify-task-scope: REUSE-T10 base=e453006ea6fd head=54f0beda6fa6 changed=90 allowedRules=20 forbiddenRules=2
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1-20261023.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/check-known-gaps.mjs（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/file-diff.mjs（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/known-gaps-status.tsv（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/numeric-core-candidates.tsv（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/numeric-scan.mjs（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/uncovered-files.tsv（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r1/unit-stats.tsv（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r2-20261023.md（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r2/r2-gap-tiers.mjs（未命中任何 allowedFiles 模式）
+  [out-of-scope] RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/coverage-sweep-r2/r2-gap-tiers.tsv（未命中任何 allowedFiles 模式）
+verify-task-scope: FAIL REUSE-T10 —— 11 个路径越界/命中禁止面（补契约 allowedFiles 或撤回改动，不得带病提交）
