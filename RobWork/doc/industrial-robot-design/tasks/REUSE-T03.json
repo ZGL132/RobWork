@@ -37,5 +37,17 @@
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
     "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
   },
-  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 2026-10-27 WP-20/T06收口批归位done：本父任务scope（§12.7 T03-A FK/Jacobian＋T03-B 普通与受限IK）已被子任务全部消费——T03-A＝REUSE-T19（done，独验pass REUSE-T19-20261025-r1，Fk.cpp经T17锚消费上游setQ/baseTframe/baseJframe并删除kinematics自建链乘积/Jacobian）；T03-B普通IK＝REUSE-T51（done，独验pass REUSE-T51-20261026-r1送验b69e79f9f，完整位姿普通模式迁移上游JacobianIKSolver、删除自写6维DLS/正规方程链、Ik.cpp 1318行全文件铺面）；T03-B受限面＝GOV-T27四模式分审（done，独验pass GOV-T27-20261026-r1送验44d6fe8c4）——仅位置与部分姿态经rw/invkin全目录13入口读码审计确认无产品可消费上游入口＝实质缺口，GAP-IK-01 blocked登记待所有者三选一裁决（原库最小扩展patch／runtime ParallelDevice视图能力／否决保留），旧核心5函数按GOV-T27 §8清单保留（删除前置不满足），提案维持Draft不因分审自批。归位依据＝可实施面全部替换收口、缺口面已定案blocked登记（§13.4受阻只停相关改动并登记），父任务为占位契约未编译执行。"
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 2026-10-27 WP-20/T06收口批归位done：本父任务scope（§12.7 T03-A FK/Jacobian＋T03-B 普通与受限IK）已被子任务全部消费——T03-A＝REUSE-T19（done，独验pass REUSE-T19-20261025-r1，Fk.cpp经T17锚消费上游setQ/baseTframe/baseJframe并删除kinematics自建链乘积/Jacobian）；T03-B普通IK＝REUSE-T51（done，独验pass REUSE-T51-20261026-r1送验b69e79f9f，完整位姿普通模式迁移上游JacobianIKSolver、删除自写6维DLS/正规方程链、Ik.cpp 1318行全文件铺面）；T03-B受限面＝GOV-T27四模式分审（done，独验pass GOV-T27-20261026-r1送验44d6fe8c4）——仅位置与部分姿态经rw/invkin全目录13入口读码审计确认无产品可消费上游入口＝实质缺口，GAP-IK-01 blocked登记待所有者三选一裁决（原库最小扩展patch／runtime ParallelDevice视图能力／否决保留），旧核心5函数按GOV-T27 §8清单保留（删除前置不满足），提案维持Draft不因分审自批。归位依据＝可实施面全部替换收口、缺口面已定案blocked登记（§13.4受阻只停相关改动并登记），父任务为占位契约未编译执行。",
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T04.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T06/**"
+  ]
 }

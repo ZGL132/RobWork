@@ -1,27 +1,39 @@
 {
- "schemaVersion": "ird-task/1",
- "taskId": "REUSE-T05",
- "unit": "foundation-governance",
- "masterWp": "WP-A",
- "title": "清理其余单元重复实现",
- "status": "planned",
- "branch": "reuse-t05",
- "dependsOn": [
-  "GOV-T21",
-  "GOV-T22"
- ],
- "requirements": [
-  "DYN-01",
-  "DYN-05",
-  "KIN-01"
- ],
- "designRefs": [
-  "reuse/migration.md",
-  "reuse/policy.md",
-  "reuse/extensions/required-proposals.md"
- ],
- "verify": [
-  "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
- ],
- "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 所有者2026-10-23批准migration §12.11能力准入；父任务仍planned，具体能力须精确子契约/审计/权限/生产证据/整包独验。未批准缺口仅阻断相关能力；不操作远程。 2026-10-23 F-958进展：testkit监听器所有权精确子任务REUSE-T18（codex/reuse-testkit-listener）——实施fbd51e765与定向测试经acceptance-sub1独立验收（实施与测试层面通过），协调批落地29处消费者注释订正、lsnchild工具边白名单/DTB §4.5登记、功能矩阵行覆盖与逐文件凭证后ird_gates复跑；整体准入由所有者裁决。父任务与testkit单元不因此标完成；单元整体清理（其余重复实现）仍待后续精确子任务。 2026-10-27 REUSE-T54（P5/T05-project）scope 消费登记：project.Codec JSON 解析家族迁移 Boost.JSON 渠道（A4 裁决渠道批准——REUSE-T43 byte-primitives-decision §6）实施完成待独验——JsonParser/JsonValue 全族删除＋canonical 词法门自持＋Boost.JSON DOM；project.Codec 68 行 pending 全收口（51 重锚＋17 删除）＋词法门族新行＋全文件铺面；project_test 290/290＋contract 32/32＋断开红转绿（traceability/reuse/REUSE-T54/）。父任务状态不变（收口批归位）。 2026-10-27 WP-20/T06收口批核对登记：scope大部分消费、剩余面保留planned——已消费：kinematics FK/Jacobian（T19 done）、modeling数值族（T12/T13/T16/T26/T27/T28 done）、core/io工具（T15/T21/T37/T38/T39 done）、trajectory（T26/T32 done）、testkit SetCheck（T20 done）、policy（T36 done）、project（T40/T54 done）、execution/ui装配（T41 done）、testkit审计（T49 done）、runtime映射（T30 done）、完整位姿IK（T51 done）、RNE（T52 ready待独验）、WP-19九批requirements~drivetrain（T42~T48/T50 ready待独验）、IK分审（GOV-T27 done）。剩余＝functions矩阵594行pending（终态分类登记 traceability/reuse/REUSE-T06/pending-retention-classification.json：A业务专属自持348行——测试独立oracle/稳定码与单位与策略与写协议权威/T34候选否决保留；B待批124行——GAP-DIGEST-01未批准SHA族23、reporting AD结构墙64、ui宿主呈现墙19、GAP-IK-01/FD/PTP候选3关联面等；C待后续包122行——Boost.Endian字节原语60（A4渠道已批）、rw::math直接运算MATH-ROT族20、modeling DH/惯量/XML面23等），均逐组有保留理由，不冒充关闭；前置满足后按精确子任务继续。"
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T05",
+  "unit": "foundation-governance",
+  "masterWp": "WP-A",
+  "title": "清理其余单元重复实现",
+  "status": "planned",
+  "branch": "reuse-t05",
+  "dependsOn": [
+    "GOV-T21",
+    "GOV-T22"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-05",
+    "KIN-01"
+  ],
+  "designRefs": [
+    "reuse/migration.md",
+    "reuse/policy.md",
+    "reuse/extensions/required-proposals.md"
+  ],
+  "verify": [
+    "pwsh -File RobWork/scripts/industrialrobot/validate-reuse.ps1"
+  ],
+  "note": "未编译执行契约：先核验GOV-T21独立pass；按逐功能审计细化精确范围/命令/验收，不批准任何扩展核心。 所有者2026-10-23批准migration §12.11能力准入；父任务仍planned，具体能力须精确子契约/审计/权限/生产证据/整包独验。未批准缺口仅阻断相关能力；不操作远程。 2026-10-23 F-958进展：testkit监听器所有权精确子任务REUSE-T18（codex/reuse-testkit-listener）——实施fbd51e765与定向测试经acceptance-sub1独立验收（实施与测试层面通过），协调批落地29处消费者注释订正、lsnchild工具边白名单/DTB §4.5登记、功能矩阵行覆盖与逐文件凭证后ird_gates复跑；整体准入由所有者裁决。父任务与testkit单元不因此标完成；单元整体清理（其余重复实现）仍待后续精确子任务。 2026-10-27 REUSE-T54（P5/T05-project）scope 消费登记：project.Codec JSON 解析家族迁移 Boost.JSON 渠道（A4 裁决渠道批准——REUSE-T43 byte-primitives-decision §6）实施完成待独验——JsonParser/JsonValue 全族删除＋canonical 词法门自持＋Boost.JSON DOM；project.Codec 68 行 pending 全收口（51 重锚＋17 删除）＋词法门族新行＋全文件铺面；project_test 290/290＋contract 32/32＋断开红转绿（traceability/reuse/REUSE-T54/）。父任务状态不变（收口批归位）。 2026-10-27 WP-20/T06收口批核对登记：scope大部分消费、剩余面保留planned——已消费：kinematics FK/Jacobian（T19 done）、modeling数值族（T12/T13/T16/T26/T27/T28 done）、core/io工具（T15/T21/T37/T38/T39 done）、trajectory（T26/T32 done）、testkit SetCheck（T20 done）、policy（T36 done）、project（T40/T54 done）、execution/ui装配（T41 done）、testkit审计（T49 done）、runtime映射（T30 done）、完整位姿IK（T51 done）、RNE（T52 ready待独验）、WP-19九批requirements~drivetrain（T42~T48/T50 ready待独验）、IK分审（GOV-T27 done）。剩余＝functions矩阵594行pending（终态分类登记 traceability/reuse/REUSE-T06/pending-retention-classification.json：A业务专属自持348行——测试独立oracle/稳定码与单位与策略与写协议权威/T34候选否决保留；B待批124行——GAP-DIGEST-01未批准SHA族23、reporting AD结构墙64、ui宿主呈现墙19、GAP-IK-01/FD/PTP候选3关联面等；C待后续包122行——Boost.Endian字节原语60（A4渠道已批）、rw::math直接运算MATH-ROT族20、modeling DH/惯量/XML面23等），均逐组有保留理由，不冒充关闭；前置满足后按精确子任务继续。",
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T04.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T05.json",
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T02.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T03.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T06.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T06/**"
+  ]
 }
