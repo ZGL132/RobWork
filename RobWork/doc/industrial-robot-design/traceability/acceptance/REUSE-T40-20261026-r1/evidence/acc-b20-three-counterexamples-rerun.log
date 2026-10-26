@@ -1,0 +1,24 @@
+# REUSE-T40 独立验收复跑：B20 三反例过滤跑（acc 复跑，2026-10-26T08:14:05+08:00）
+Note: Google Test filter = *RecoveryScan_WrongHeadDigest_StoreCorrupt:*RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt:*RecoveryScan_HeadManifestMissing_StoreCorrupt:*RecoveryScan_TamperThenRestore_ScanGreen:*Open_WrongHeadManifestDigest_Rejected
+[==========] Running 5 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from TxEngineTest
+[ RUN      ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_WrongHeadDigest_StoreCorrupt (24 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_LegalManifestByteTamper_StaleDigest_StoreCorrupt (20 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt
+[       OK ] TxEngineTest.RecoveryScan_HeadManifestMissing_StoreCorrupt (11 ms)
+[ RUN      ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen
+[       OK ] TxEngineTest.RecoveryScan_TamperThenRestore_ScanGreen (23 ms)
+[----------] 4 tests from TxEngineTest (79 ms total)
+
+[----------] 1 test from ProjectStoreTest
+[ RUN      ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected
+[       OK ] ProjectStoreTest.Open_WrongHeadManifestDigest_Rejected (43 ms)
+[----------] 1 test from ProjectStoreTest (43 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 2 test suites ran. (128 ms total)
+[  PASSED  ] 5 tests.
+EXIT=0
