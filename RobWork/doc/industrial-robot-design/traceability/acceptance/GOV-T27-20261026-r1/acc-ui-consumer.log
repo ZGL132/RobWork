@@ -1,0 +1,306 @@
+Note: Google Test filter = KinEvaluationChannel.*
+[==========] Running 28 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 28 tests from KinEvaluationChannel
+[ RUN      ] KinEvaluationChannel.Submit_RejectsWhenSnapshotUnbound_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RejectsWhenSnapshotUnbound_UI_T64 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RejectsIncompleteBackgroundRequests_KIN_P4
+[       OK ] KinEvaluationChannel.Submit_RejectsIncompleteBackgroundRequests_KIN_P4 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RejectsEmptyPlanSlice_UI_T64 (0 ms)
+[ RUN      ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64
+[       OK ] KinEvaluationChannel.Submit_RunsAndRecordsCoverage_UI_T64 (17 ms)
+[ RUN      ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65
+[       OK ] KinEvaluationChannel.MapSampleStateToCell_TableDriven_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.View3DTintFromCoverage_TableDriven_UI_T65
+[       OK ] KinEvaluationChannel.View3DTintFromCoverage_TableDriven_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65
+[       OK ] KinEvaluationChannel.RegionTint_FollowsPositionAxisNotMixed_UI_T65 (0 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_WorldToBaseTranslation_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_WorldToBaseTranslation_KIN_P1 (30 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_InvertedBasePreset_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_InvertedBasePreset_KIN_P1 (12 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_WallBasePreset_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_WallBasePreset_KIN_P1 (15 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1
+[       OK ] KinEvaluationChannel.ProjectPlan_ModelFrameAxisPermutingRotation_KIN_P1 (30 ms)
+[ RUN      ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21
+[       OK ] KinEvaluationChannel.ProjectPlan_ArbitraryRotatedFrame_REQ03_A21 (30 ms)
+[ RUN      ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64
+[       OK ] KinEvaluationChannel.Rebind_ClearsAccountAndDropsLateResult_UI_T64 (15 ms)
+[ RUN      ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03
+[       OK ] KinEvaluationChannel.CoverageProgressAndDetachStopRealComputation_MA03 (19512 ms)
+[ RUN      ] KinEvaluationChannel.SolveChannel_BackgroundRealSolve_KIN_P4
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1110): error: Value of: result->ok
+  Actual: false
+Expected: true
+姹傝В璁炬柦澶辫触锛堥潪缁撳眬鈥斺€旀眰瑙ｄ腑閫?FK 澶嶇畻澶辫触锛岃瑙佽瘎浼拌瘖鏂級
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1111): error: Value of: result->solutionSet != nullptr
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinEvaluationChannel.SolveChannel_BackgroundRealSolve_KIN_P4 (1 ms)
+[ RUN      ] KinEvaluationChannel.SolveChannel_RebindCancelsInflight_KIN_P4
+[       OK ] KinEvaluationChannel.SolveChannel_RebindCancelsInflight_KIN_P4 (1 ms)
+[ RUN      ] KinEvaluationChannel.BatchChannel_RealComputationAndOutcomes_KIN_P4
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1188): error: Expected equality of these values:
+  outcome.outcomeState
+    Which is: "not-run"
+  "completed"
+瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1189): error: Value of: outcome.requiredCoverageDone
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinEvaluationChannel.BatchChannel_RealComputationAndOutcomes_KIN_P4 (0 ms)
+[ RUN      ] KinEvaluationChannel.BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1249): error: Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+闈為浂娣峰悎RPY涓庢棆杞弬鑰冪郴搴旇繕鍘熼浂浣峊CP锛岃€岄潪浣跨敤鍙傝€冪郴鏃嬭浆
+
+[  FAILED  ] KinEvaluationChannel.BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23 (0 ms)
+[ RUN      ] KinEvaluationChannel.BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1292): error: Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 1
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1292): error: Expected equality of these values:
+  results.begin()->second.outcomeState
+    Which is: "not-run"
+  "completed"
+Google Test trace:
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1259): 2
+
+[  FAILED  ] KinEvaluationChannel.BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23 (26 ms)
+[ RUN      ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1358): error: Expected equality of these values:
+  result->position.reached
+    Which is: 0
+  4u
+    Which is: 4
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1364): error: Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1364): error: Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1364): error: Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1364): error: Expected equality of these values:
+  sample.state
+    Which is: 1-byte object <02>
+  (sample.regionObjectId != ws.regions.entries.front().objectId && sample.regionObjectId != ws.regions.entries[2].objectId) ? KinChannelSampleState::Reached : KinChannelSampleState::Unreachable
+    Which is: 1-byte object <00>
+
+[  FAILED  ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21 (14 ms)
+[ RUN      ] KinEvaluationChannel.BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP宸ヤ綅1 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP宸ヤ綅2 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP宸ヤ綅3 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP宸ヤ綅4 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "failed"
+TCP宸ヤ綅1 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1444): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  point.objectId == wrong.objectId ? "failed" : "completed"
+    Which is: "completed"
+TCP宸ヤ綅1 瑙?0 涓?1 宸ュ喌
+
+[  FAILED  ] KinEvaluationChannel.BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15 (15 ms)
+[ RUN      ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫0 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫1 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫2 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫3 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫4 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "completed"
+鍒嗛噺绾︽潫5 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1499): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  i == 6 ? "failed" : "completed"
+    Which is: "failed"
+鍒嗛噺绾︽潫6 瑙?0 涓?1 宸ュ喌
+
+[  FAILED  ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16 (16 ms)
+[ RUN      ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1560): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "completed"
+鍏佽宸ュ叿婊氳浆 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1560): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+鍥哄畾濮挎€佸鐓?瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1560): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+鎸囧悜鐩爣鍙嶄緥 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1560): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  expectCompleted ? "completed" : "failed"
+    Which is: "failed"
+瀵归綈娉曞悜鍙嶄緥 瑙?0 涓?1 宸ュ喌
+
+[  FAILED  ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16 (13 ms)
+[ RUN      ] KinEvaluationChannel.OppositeDirectionRejected_REQ09_WP14T12
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1623): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "failed"
+鏂瑰悜杈圭晫鎸囧悜 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1623): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "failed"
+鏂瑰悜杈圭晫娉曞悜 瑙?0 涓?1 宸ュ喌
+
+[  FAILED  ] KinEvaluationChannel.OppositeDirectionRejected_REQ09_WP14T12 (1 ms)
+[ RUN      ] KinEvaluationChannel.DirectionCorrectionFromZero_REQ09_WP14T12
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1623): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "completed"
+鏂瑰悜杈圭晫鎸囧悜 瑙?0 涓?1 宸ュ喌
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1623): error: Expected equality of these values:
+  it->second.outcomeState
+    Which is: "not-run"
+  opposite?"failed":"completed"
+    Which is: "completed"
+鏂瑰悜杈圭晫娉曞悜 瑙?0 涓?1 宸ュ喌
+
+[  FAILED  ] KinEvaluationChannel.DirectionCorrectionFromZero_REQ09_WP14T12 (1 ms)
+[ RUN      ] KinEvaluationChannel.BatchDirectionRulesFreeToolRoll_WP14T12
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1675): error: Expected equality of these values:
+  outcome.outcomeState
+    Which is: "not-run"
+  "completed"
+瑙?0 涓?1 宸ュ喌锛堟柟鍚戣鍒欎笉寰楅澶栧浐瀹氬伐鍏锋粴杞級
+
+[  FAILED  ] KinEvaluationChannel.BatchDirectionRulesFreeToolRoll_WP14T12 (11 ms)
+[ RUN      ] KinEvaluationChannel.PolicyRebindClearsFinishedSolve_ARC05_A23
+[       OK ] KinEvaluationChannel.PolicyRebindClearsFinishedSolve_ARC05_A23 (0 ms)
+[ RUN      ] KinEvaluationChannel.EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\ui\test\KinEvaluationChannelTest.cpp(1712): error: Value of: result->solutionSet
+  Actual: false
+Expected: true
+
+[  FAILED  ] KinEvaluationChannel.EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23 (0 ms)
+[----------] 28 tests from KinEvaluationChannel (19773 ms total)
+
+[----------] Global test environment tear-down
+[==========] 28 tests from 1 test suite ran. (19773 ms total)
+[  PASSED  ] 16 tests.
+[  FAILED  ] 12 tests, listed below:
+[  FAILED  ] KinEvaluationChannel.SolveChannel_BackgroundRealSolve_KIN_P4
+[  FAILED  ] KinEvaluationChannel.BatchChannel_RealComputationAndOutcomes_KIN_P4
+[  FAILED  ] KinEvaluationChannel.BatchFixedMixedRpyWithRotatedFrames_REQ09_AT23
+[  FAILED  ] KinEvaluationChannel.BatchAlignFrameResolvesTargetAndRejectsDangling_REQ09_AT23
+[  FAILED  ] KinEvaluationChannel.RegionNamedTcpAndMissingKey_REQ01_A21
+[  FAILED  ] KinEvaluationChannel.BatchNamedTcpRealNumericsAndRejectsDangling_REQ01_A15
+[  FAILED  ] KinEvaluationChannel.BatchHonorsEveryConstraintMask_REQ01_A16
+[  FAILED  ] KinEvaluationChannel.BatchDirectionRulesDoNotFallBackToFixed_REQ09_A16
+[  FAILED  ] KinEvaluationChannel.OppositeDirectionRejected_REQ09_WP14T12
+[  FAILED  ] KinEvaluationChannel.DirectionCorrectionFromZero_REQ09_WP14T12
+[  FAILED  ] KinEvaluationChannel.BatchDirectionRulesFreeToolRoll_WP14T12
+[  FAILED  ] KinEvaluationChannel.EnabledCollisionWithoutFacilityRemainsInsufficient_ARC05_A23
+
+12 FAILED TESTS

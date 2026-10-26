@@ -4,7 +4,7 @@
   "unit": "kinematics",
   "masterWp": "WP-A",
   "title": "WP-05 同 IK 入口分审（仅位置/部分姿态/双容差/取消与迭代观测）与 GAP blocked 登记",
-  "status": "ready",
+  "status": "done",
   "branch": "redesign-main",
   "dependsOn": [
     "REUSE-T51"
@@ -37,7 +37,9 @@
     "RobWork/doc/industrial-robot-design/reuse/migration.md",
     "RobWork/doc/industrial-robot-design/reuse/changes/GOV-T27.json",
     "RobWork/doc/industrial-robot-design/traceability/reuse/GOV-T27/**",
-    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp"
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T27-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T27-20261026-r1/**"
   ],
   "forbiddenFiles": [
     "RobWork/RobWork/src/**",
@@ -58,7 +60,7 @@
     "零产品代码变更纪律：本包不触碰 kinematics/src、include 与 CMake（Ik.cpp/Ik.hpp 面零 diff——分审结论为 blocked 登记而非迁移实施）；GAP-IK-01.md 仅补强分审实测证据与 WP-04 后现状（状态维持 Draft/未批准，不因分审自批提案）；migration.md §13.1/§13.3 WP-05 行同步分审结论；kIkSolverContractVersion 维持 5（行为集零变化）",
     "治理门禁全绿：ird_gates 零命中、validate-docs（含全量复用检查）、commit-lint、verify-task-scope 显式 -Base 4f83917e91bc3987e9ee257b326e58cd80a8b268 -Head HEAD；独立验收仍由所有者另开会话或人工执行，实施者不自签——两 GAP 的处置（批准 GAP-IK-01 扩展/runtime ParallelDevice 视图能力审查/否决保留）全部留待所有者裁决，本包不预支任何批准"
   ],
-  "note": "migration §13.3 WP-05 行精确子任务（『WP-05 / GAP-IK-01 相关子任务』），依赖 P1（WP-04/REUSE-T51 已收口 done）满足。起始 SHA=4f83917e91bc3987e9ee257b326e58cd80a8b268。本包为分审与登记包（migration §13.3『同 IK 入口分审……实质缺口先提案批准；不另写 DLS/差分』），预期产出＝四模式分审记录＋两模式 GAP blocked 登记＋状态同步＋验证证据；产品代码零变更（仅位置/约束两模式经全上游目录审计无产品可消费入口——实质缺口如实 blocked，提案 GAP-IK-01 维持 Draft 交所有者裁决）。IkTest.cpp 列入 allowedFiles 仅为潜在定向验证补充预留，若零测试变更则该文件零 diff。【分审定案（2026-10-26 实施批）】四模式结论：完整位姿已收口（REUSE-T51）；双容差与取消/迭代观测＝薄适配组合已验收模式登记，无新增迁移面；仅位置与部分姿态两模式＝实质缺口（上游唯一掩码入口 ParallelIKSolver 为 EAA 行且要求 ParallelDevice——产品 SerialDevice 编译产物无该视图，业务自建＝SA-19 越权），GAP-IK-01 blocked 登记待所有者裁决；旧核心删除前置（所有消费者迁移后）不满足，五函数全部保留。验证证据 traceability/reuse/GOV-T27/。本契约 status=ready 表示分审实施完成待独验，不冒称通过；独立验收由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型）。",
+  "note": "migration §13.3 WP-05 行精确子任务（『WP-05 / GAP-IK-01 相关子任务』），依赖 P1（WP-04/REUSE-T51 已收口 done）满足。起始 SHA=4f83917e91bc3987e9ee257b326e58cd80a8b268。本包为分审与登记包（migration §13.3『同 IK 入口分审……实质缺口先提案批准；不另写 DLS/差分』），预期产出＝四模式分审记录＋两模式 GAP blocked 登记＋状态同步＋验证证据；产品代码零变更（仅位置/约束两模式经全上游目录审计无产品可消费入口——实质缺口如实 blocked，提案 GAP-IK-01 维持 Draft 交所有者裁决）。IkTest.cpp 列入 allowedFiles 仅为潜在定向验证补充预留，若零测试变更则该文件零 diff。【分审定案（2026-10-26 实施批）】四模式结论：完整位姿已收口（REUSE-T51）；双容差与取消/迭代观测＝薄适配组合已验收模式登记，无新增迁移面；仅位置与部分姿态两模式＝实质缺口（上游唯一掩码入口 ParallelIKSolver 为 EAA 行且要求 ParallelDevice——产品 SerialDevice 编译产物无该视图，业务自建＝SA-19 越权），GAP-IK-01 blocked 登记待所有者裁决；旧核心删除前置（所有消费者迁移后）不满足，五函数全部保留。验证证据 traceability/reuse/GOV-T27/。本契约 status=ready 表示分审实施完成待独验，不冒称通过；独立验收由所有者另开会话、人工或所有者明确指令的单次验收子智能体执行（GOV-T23/T24 先例同型）。【验收登记（2026-10-26 收口）】独立验收 PASS：记录 traceability/acceptance/GOV-T27-20261026-r1.json，verdict=pass（issues 空），复跑证据原件在其同名目录（acc-full-suite 297 ran＝296 passed＋1 既有环境 skip 与实施批同名单、acc-contract 57/57、acc-ui-consumer 消费通道定向子集、ird-gates 零命中、commit-lint、validate-docs 逐契约、verify-task-scope 显式 Base/Head PASS 18 路径全在允许面），绑定送验 reviewedCommit=44d6fe8c448dfab528db9fb99f67624df10c7f29（base=4f83917e91bc3987e9ee257b326e58cd80a8b268，冻结范围恰 1 提交）；授权口径＝所有者 2026-10-26 指令「A1~A4 全按推荐」及 2026-10-24 /workflow 授权脉络（GOV-T23/T24 单次验收子智能体先例同型），实施者不得自签。据此登记 status=done。遗留（不属本包退出条件）：仅位置/部分姿态两模式迁移＝实质缺口 GAP-IK-01 blocked 登记待所有者裁决（三选一处置见分审记录 §9），迁移完成后删除余下旧核心。",
   "governanceAcceptance": {
     "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
     "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
