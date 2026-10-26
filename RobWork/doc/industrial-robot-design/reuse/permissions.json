@@ -210,7 +210,7 @@
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-        "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
       }
     },
     {
@@ -235,7 +235,7 @@
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-        "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
       }
     },
     {
@@ -260,7 +260,7 @@
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-        "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
       }
     },
     {
@@ -476,6 +476,58 @@
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
         "sha256": "2555c4a5895b56058199557cc0ed977ab74cb23870b704939cec20df310cee6a"
+      }
+    },
+    {
+      "id": "REUSE-T51-Ik.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      },
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "solver"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T51 完整位姿普通模式上游迭代核（migration §13.3 WP-04）：solver＝rw::invkin::JacobianIKSolver（经 T17 锚的已编译 WorkCell 构造，每请求一次，SVD/不钳限位/不查限位默认显式登记）；write-state 仅及每初值经锚 makeState() 取得的任务私有 State 副本（Device::setQ/getQ，初值间零共享——§8.7/§9.2）；模型消费经 runtimeModelView 受控视图（findDevice/findFrame 只读查询）；无 WC 构造、无 DWC、无发布面、无隐藏 fallback（锚缺失→IkFacilityFailure 值面）。",
+      "permissionRef": "ARCH:3.6.1",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
+    },
+    {
+      "id": "REUSE-T51-IkTest.cpp",
+      "usageRole": "adapter",
+      "source": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+        "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+      },
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "categories": [
+        "model",
+        "state",
+        "solver"
+      ],
+      "operations": [
+        "write-state"
+      ],
+      "origin": "task-private",
+      "lifetime": "REUSE-T51 上游直接对照与轨迹同一性用例（IRD_HAVE_RUNTIME_COMPILE 门控，仅测试目标）：write-state 仅及测试内经锚 makeState() 取得的任务私有 State 副本（直接 Device::setQ/getQ 与产品路径同语义对照——REUSE-T19-FkTest 先例同型）；solver＝直接构造 JacobianIKSolver 作上游对照 oracle；模型消费经真实编译快照受控视图（模型构造在 runtime owner 产品路径内——夹具授予面不变），不授予生产权限、不授予模型构造/写入。",
+      "permissionRef": "ARCH:3.6.1",
+      "build": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
       }
     }
   ]

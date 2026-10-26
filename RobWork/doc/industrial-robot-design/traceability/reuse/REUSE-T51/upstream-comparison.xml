@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="2" failures="0" disabled="0" errors="0" time="0.002" timestamp="2026-10-26T14:04:52.959" name="AllTests">
+  <testsuite name="KinIk" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0.001" timestamp="2026-10-26T14:04:52.959">
+    <testcase name="FullPoseUpstreamDirectComparison_REUSE_T51" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1790" status="run" result="completed" time="0.001" timestamp="2026-10-26T14:04:52.959" classname="KinIk" />
+    <testcase name="SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1846" status="run" result="completed" time="0." timestamp="2026-10-26T14:04:52.960" classname="KinIk" />
+  </testsuite>
+</testsuites>

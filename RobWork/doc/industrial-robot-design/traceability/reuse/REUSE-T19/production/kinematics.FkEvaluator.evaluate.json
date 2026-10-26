@@ -9,7 +9,7 @@
   },
   {
    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-   "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+   "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
   },
   {
    "path": "RobWork/RobWork/src/rw/models/Device.hpp",

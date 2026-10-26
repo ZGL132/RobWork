@@ -260,10 +260,13 @@ target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
 # ${_ird_kin_rw_*} 判为未知目标族（IRD-GATE-LIB 三命中——静态扫描不展开
 # 变量，实际链接成功不代替门禁通过，见 REUSE-T19/integration-20261024/
 # a-build.log）。改为条件分支显式合法目标名链接（门禁代码/词表零改动）：
-#   - 集成分支＝sdurw_math/sdurw_kinematics/sdurw_models 三真实目标，
-#     与原变量解析结果逐字相同（集成链接面零变化）；
-#   - 冒烟分支＝sdurw_math/sdurw_models 两同名 ALIAS（modeling REUSE-T07
-#     ／drivetrain REUSE-T12 既有先例形态）；sdurw_kinematics 不单列——
+#   - 集成分支＝sdurw_math/sdurw_kinematics/sdurw_models/sdurw_invkin 四
+#     真实目标（前三与原变量解析结果逐字相同；REUSE-T51 增链 sdurw_invkin
+#     ——src/Ik.cpp 完整位姿模式迭代核迁移上游 JacobianIKSolver，H1 直接
+#     API，无新外部依赖）；
+#   - 冒烟分支＝sdurw_math/sdurw_models/sdurw_invkin 三同名 ALIAS
+#     （modeling REUSE-T07／drivetrain REUSE-T12 既有先例形态；REUSE-T51
+#     增 invkin 同款）；sdurw_kinematics 不单列——
 #     ★ 禁止建立名为 sdurw_kinematics 的冒烟别名（runtime/policy/
 #     trajectory/dynamics/optimization/ui/modeling/requirements 与本文件
 #     均以"TARGET sdurw_kinematics"作集成模式判定，该目标名必须只在集成
@@ -273,7 +276,7 @@ target_link_libraries(sdurws_ird_kinematics PRIVATE Eigen3::Eigen)
 #     已知目标族（^sdurw）内。
 if(TARGET sdurw_kinematics)
     target_link_libraries(sdurws_ird_kinematics PRIVATE
-        sdurw_math sdurw_kinematics sdurw_models)
+        sdurw_math sdurw_kinematics sdurw_models sdurw_invkin)
 else()
     # 冒烟分支（集成判定符＝TARGET sdurw_kinematics 只在集成配置树存在，
     # 与 runtime/policy 等单元同款口径）：导出包加载守卫沿用 modeling
@@ -293,6 +296,16 @@ else()
     if(NOT TARGET sdurw_models)
         add_library(sdurw_models ALIAS RW::sdurw_models)
     endif()
+    # sdurw_invkin（REUSE-T51——src/Ik.cpp 完整位姿模式消费上游
+    # JacobianIKSolver）：冒烟分支同款同名 ALIAS（导出包 targets/
+    # sdurw_invkin.cmake 原生携带 RW::sdurw_invkin，INTERFACE 链经
+    # sdurw_core/math/kinematics 传递）；该目标名未被任何单元用作集成
+    # 模式判定符（全库 rg 实核零命中），不触 "TARGET sdurw_kinematics"
+    # 判定符禁令；PRIVATE 仅符号链接（src/Ik.cpp 直用——公共头零
+    # invkin 类型，门禁词表 ^sdurw 已知族）。
+    if(NOT TARGET sdurw_invkin)
+        add_library(sdurw_invkin ALIAS RW::sdurw_invkin)
+    endif()
     # sdurw_math 用 PUBLIC：集成模式下本库消费者（plugin/测试——公共头含
     # rw/math 类型）经 runtime 的 PUBLIC 框架链获得上游 include 面；冒烟
     # 模式 runtime 无框架链（TARGET sdurw_kinematics 判定为假），由本库
@@ -302,7 +315,7 @@ else()
     # 此处复用导出包接口面不加手写路径）。sdurw_models 保持 PRIVATE——
     # 仅符号链接，无向下游传播的用法需求。
     target_link_libraries(sdurws_ird_kinematics PUBLIC sdurw_math)
-    target_link_libraries(sdurws_ird_kinematics PRIVATE sdurw_models)
+    target_link_libraries(sdurws_ird_kinematics PRIVATE sdurw_models sdurw_invkin)
 endif()
 
 # ---- Qt6 接入（WP-15-T12——插件目标的 Qt 载体面，R-3 唯一例外面）----

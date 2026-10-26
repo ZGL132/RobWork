@@ -81,7 +81,17 @@ inline constexpr char kTaskPointIkEvaluationKey[] = "kin-task-point-ik";
 ///   同 seed 序列整体改变 ⇒ 同请求可产出不同初值/不同解 ⇒ 修复前后的
 ///   解集不可假借同一版本比较（审查 A06 明确要求：不能让新旧算法假借
 ///   同一身份）；JointGrid/ReferenceQ 两策略不消费 seed、数值逐位不变。
-inline constexpr std::uint32_t kIkSolverContractVersion = 4U;
+/// ★ v5（REUSE-T51——WP-04 完整位姿普通模式换核）：FullPose 且无任务约
+///   束的迭代核由自写 DLS 正规方程（λ=kIkDampingLambda，LLT）迁移为上游
+///   rw::invkin::JacobianIKSolver（SVD 伪逆步，solveLocal 单步循环驱动，
+///   migration §13.3 WP-04 批准范围内的直接 API——H1）。同请求的收敛解/迭代数可不同（上游停判据为
+///   混合单位旋量无穷范数、步进算法整体不同——解集不可假借同一身份比
+///   较，A06 同款纪律）；请求词表/结局词表/统计口径零变化。PositionOnly
+///   与任务约束两模式仍走既有链（GAP-IK-01：ParallelIK 掩码消费待
+///   runtime 视图权限审查、Euler≠EAA 掩码反例在案——归 WP-05）。上游不
+///   回传真实迭代数——本实现经 solveLocal(maxIter=1) 单步循环逐步实测
+///   （与上游内部循环体逐步同构，轨迹同一性有测试钉），不伪造迭代统计。
+inline constexpr std::uint32_t kIkSolverContractVersion = 5U;
 
 /// 阻尼最小二乘的阻尼系数 λ（无量纲设计默认——Δq＝Jᵀ(JJᵀ＋λ²I₆)⁻¹e；
 /// λ²＝1e-6 在米级工作半径下近伪逆、近奇异处抑振荡；随黄金数据集锁定

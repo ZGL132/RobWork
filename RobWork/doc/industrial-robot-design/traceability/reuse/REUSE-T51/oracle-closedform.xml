@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" disabled="0" errors="0" time="0.012" timestamp="2026-10-26T14:04:51.850" name="AllTests">
+  <testsuite name="KinGoldenIkDedup" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.012" timestamp="2026-10-26T14:04:51.850">
+    <testcase name="V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="597" status="run" result="completed" time="0.005" timestamp="2026-10-26T14:04:51.850" classname="KinGoldenIkDedup" />
+    <testcase name="V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="650" status="run" result="completed" time="0.003" timestamp="2026-10-26T14:04:51.855" classname="KinGoldenIkDedup" />
+    <testcase name="ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\GoldenKinTest.cpp" line="682" status="run" result="completed" time="0.003" timestamp="2026-10-26T14:04:51.859" classname="KinGoldenIkDedup" />
+  </testsuite>
+  <testsuite name="KinIk" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-26T14:04:51.862">
+    <testcase name="FullPoseUpstreamClosedFormOracle_REUSE_T51" file="D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\kinematics\test\IkTest.cpp" line="1662" status="run" result="completed" time="0." timestamp="2026-10-26T14:04:51.862" classname="KinIk" />
+  </testsuite>
+</testsuites>

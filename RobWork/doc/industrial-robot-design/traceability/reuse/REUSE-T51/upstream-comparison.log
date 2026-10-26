@@ -1,0 +1,13 @@
+Note: Google Test filter = KinIk.FullPoseUpstreamDirectComparison_REUSE_T51:KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from KinIk
+[ RUN      ] KinIk.FullPoseUpstreamDirectComparison_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamDirectComparison_REUSE_T51 (1 ms)
+[ RUN      ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51
+[       OK ] KinIk.SolveLocalSingleStepLoopTrajectoryIdentity_REUSE_T51 (0 ms)
+[----------] 2 tests from KinIk (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (2 ms total)
+[  PASSED  ] 2 tests.

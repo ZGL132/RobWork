@@ -221,8 +221,12 @@
         "query"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/ik-capability-review.json",
+          "sha256": "785ab253b8608d55d6cc8c023a03ce2c2ccf8b7197b24d8cb74bf576457e1b8f"
+        }
       },
       "tests": [
         {

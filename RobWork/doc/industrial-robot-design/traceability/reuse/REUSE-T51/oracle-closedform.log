@@ -1,0 +1,20 @@
+Note: Google Test filter = KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51:KinGoldenIkDedup.*
+[==========] Running 4 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 3 tests from KinGoldenIkDedup
+[ RUN      ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_SolutionSetEquivalentToClosedForm_WP15T13_ACC1 (5 ms)
+[ RUN      ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1
+[       OK ] KinGoldenIkDedup.V04_StableOrderMatchesReferenceKeys_WP15T13_ACC1 (3 ms)
+[ RUN      ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5
+[       OK ] KinGoldenIkDedup.ACC5_RepeatSolveBitwiseIdentical_WP15T13_ACC5 (3 ms)
+[----------] 3 tests from KinGoldenIkDedup (12 ms total)
+
+[----------] 1 test from KinIk
+[ RUN      ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51
+[       OK ] KinIk.FullPoseUpstreamClosedFormOracle_REUSE_T51 (0 ms)
+[----------] 1 test from KinIk (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 2 test suites ran. (12 ms total)
+[  PASSED  ] 4 tests.

@@ -1,1979 +1,2705 @@
 {
- "schemaVersion": "ird-reuse-functions/1",
- "unit": "kinematics",
- "functions": [
-  {
-   "functionId": "kinematics.IkSolver.solve",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+  "schemaVersion": "ird-reuse-functions/1",
+  "unit": "kinematics",
+  "functions": [
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "IkSolver::solve",
-     "qualifiedSymbol": "sdurws::ird::kinematics::IkSolver::solve",
-     "startLine": 565,
-     "endLine": 1044,
-     "sha256": "304f416fada8ee3c5c6c979fd940c5cbe746729ae3d7cb98c68614bc2e182e93"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"IkSolver::solve|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
-   },
-   "differences": "自持求解迭代；区分普通/位置/roll约束、取消和真实统计；单leg探测不等同生产迁移",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
-  },
-  {
-   "functionId": "kinematics.nearestToolRollTarget",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "nearestToolRollTarget",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::nearestToolRollTarget",
-     "startLine": 255,
-     "endLine": 280,
-     "sha256": "65d55db3c915719b573a8d78e539917a3fc048c412f25c852948992304b3ddee"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"nearestToolRollTarget|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-    "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
-   },
-   "differences": "自由roll目标选择不能直接等同固定参考系EAA行掩码；保留反例与候选边界",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
-  },
-  {
-   "functionId": "kinematics.orientBoxPoint",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "orientBoxPoint",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
-     "startLine": 87,
-     "endLine": 96,
-     "sha256": "60e011e53950c6eacac20e7299052c5b7894d50584876961345a3c2000d9a669"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"orientBoxPoint|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.orientSampleRotation",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "orientSampleRotation",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
-     "startLine": 105,
-     "endLine": 113,
-     "sha256": "a6f296f0f196345632be4b57f230a4e51f2da8faa39e3c3c29d004fcb26b2bdf"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"orientSampleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.poseFromDirectionRoll",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "poseFromDirectionRoll",
-     "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
-     "startLine": 359,
-     "endLine": 418,
-     "sha256": "83eba6da69459484a2282c07444cf0fb416b17c587f8120d4a1006a56f66ce40"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"poseFromDirectionRoll|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.validateBoxOrientation",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "validateBoxOrientation",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
-     "startLine": 56,
-     "endLine": 78,
-     "sha256": "38377ca04a86950a492fdf1bf380f070d0c9164122edba7ecb43a9c76285c3e8"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"validateBoxOrientation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.generateRandomPositions",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "generateRandomPositions",
-     "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
-     "startLine": 308,
-     "endLine": 328,
-     "sha256": "199821dbedf3c4d19e0b608734a6986df3d87b1a7e345b7520b499f63516ed1f"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"generateRandomPositions|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "固定样本序/64位种子/盒体心与分片语义不能因API替换漂移；Random是全局32位源，未认定可直接复用",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.generateGridPositions",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "generateGridPositions",
-     "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
-     "startLine": 261,
-     "endLine": 305,
-     "sha256": "8566c06f93c2fca8dc68f43b151a1f1807405aaa8f6f31cb9c60aac47cd10a7a"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n -i \"grid|fibonacci|latin|halton|sobol\" RobWork/RobWork/src/rwlibs/algorithms RobWork/RobWork/src/rw/pathplanning RobWork/RobWork/src/rw/math -g \"*Sampler*\" -g \"*Grid*\" -g \"*Random*\"",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "确定性体心网格枚举，不使用随机数；保留x慢/z快顺序、旋转盒、零计数及乘积回卷拒绝。相邻QSampler/HyperSphere不是相同枚举契约，继续核工具复用，不错误绑定Random或提前判business-specific",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.generateDirections",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-04"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
-     "symbol": "generateDirections",
-     "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
-     "startLine": 330,
-     "endLine": 344,
-     "sha256": "416314cae75131fd0fe48d4a509f4a1f0402c9812fa7784b1d7718bdff7788d1"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "GEOM-SPHERE-SAMPLING",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"generateDirections|uniformDistributionCartesian|uniformDistributionSpherical\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "固定N斐波那契方向集与delta分辨率球面分布不同；不以分布近似掩盖样本数量/身份改变",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.splitmix64",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-13"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
-     "symbol": "splitmix64",
-     "qualifiedSymbol": "sdurws::ird::kinematics::kseed::splitmix64",
-     "startLine": 34,
-     "endLine": 41,
-     "sha256": "20cb6960ed85c226852da4f6c3379f0b0d3e1ebb1bd6af795c320bb27aceefb8"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"splitmix64|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S2/S4r/S7（rw::math::Random全表面、rw 64位随机反证、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：上游rw::math::Random为进程级全局boost::mt19937单例（Random.cpp:31）且seed(unsigned)入参32位截断（Random.cpp:53），无任务私有64位流/LHS——本函数64位任务私有流无上游直接等价入口"
-   },
-   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：64位种子空间（上游seed(unsigned)天然32位，A06缺陷同型）、任务私有确定性序列（§3.4——全局单流被任意reseed污染）、多消费流独立——维持pending，实施归WP-19/后续精确子任务",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
-     "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+      "functionId": "kinematics.IkSolver.solve",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "IkSolver::solve",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IkSolver::solve",
+          "startLine": 606,
+          "endLine": 1316,
+          "sha256": "d6a3cdbf2ca3898a9f8fb9b7dd85c8ee0523b50f2eda98360c17d8d8026d28b6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"solveLocal|setSolverType|DLS|JacobianIKSolver\" RobWork/RobWork/src/rw/invkin RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 定向实核（migration §13.3 WP-04）：JacobianIKSolver.hpp:117-129 两构造/solve/solveLocal＋.cpp:35-167 SVD 步/默认面逐符号核对在案；本区段为产品业务面——上游无对应物（值面/编排/过滤/统计为业务职责），nonOverlap 成立"
+      },
+      "differences": "REUSE-T51（migration §13.3 WP-04）：完整位姿普通模式迭代核迁移上游 JacobianIKSolver（T17 锚→SerialDevice/任务私有 State；solveLocal(bTed,min(posTol,oriTol),state,1) 单步循环逐步实测迭代数——与单次多步调用轨迹同一性有测试钉；SVD/不钳限位/不查限位默认显式登记，限位归硬过滤②契约区间直比）。保留＝请求校验/初值编排/解析界限结局5/硬过滤①②③/去重/稳定排序/统计/取消探针/五类结局；上游停判据不承担验收——收敛解经 FkEvaluator 独立 FK 复算双容差逐项判定（GAP-IK-01 §1），假成功被拦截（disconnected 红例实证）；q_rw↔q_auth 单点映射经 src/JointMapping.hpp。契约版本 4→5（CON-04）。PositionOnly/约束模式仍走本单元链（上游掩码入口待 runtime 视图权限审查——WP-05）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "production": {
+        "entry": "IkSolver::solve",
+        "upstream": "solveLocal",
+        "consumer": "IkSolver::solve",
+        "target": "sdurws_ird_kinematics"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T51/production-ik-solver-solve.json",
+        "sha256": "6c662bf1e4681cd4126560873a85534c094c0968788d7b5ca5f335362dd9a6fe"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
-     "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
-  },
-  {
-   "functionId": "kinematics.streamSeedFor",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-13"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
-     "symbol": "streamSeedFor",
-     "qualifiedSymbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
-     "startLine": 61,
-     "endLine": 69,
-     "sha256": "7fb6c98bd15ed4e30c9ca680a57fef281720f747db6277dbebecc0407017b836"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"streamSeedFor|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S3/S4r/S7（QSampler种子面、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw::pathplanning::QSampler无种子参数（QSampler.cpp:104走Math::ranQ全局均匀采样），无任务私有64位流派生入口——(seed,index)二元组流种子派生无上游直接等价"
-   },
-   "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：流隔离（随机初值/采样/包络探针各自独立流，全局态互耦）、64位种子avalanche（A06）、§3.4确定性——维持pending，实施归WP-19/后续精确子任务",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
-     "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+      "functionId": "kinematics.nearestToolRollTarget",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "nearestToolRollTarget",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::nearestToolRollTarget",
+          "startLine": 284,
+          "endLine": 322,
+          "sha256": "3d8c6f7089d84ec379c9abd2426a6d1a9cc8351dc4338494b10b3efb7b0e578d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"nearestToolRollTarget|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
+        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
+      },
+      "differences": "工具 Z 轴扭转族最近合法目标选择（A-16——自由滚转约束的业务语义）；上游无 roll 族/区间投影对应物（GAP-IK-01 §1 部分姿态行：EAA 掩码不可套用），约束模式专用，归 WP-05",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
-     "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
-  },
-  {
-   "functionId": "kinematics.transposeOf",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "transposeOf",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
-     "startLine": 221,
-     "endLine": 225,
-     "sha256": "055338aeb134a298ea76e82738ca21dc425a4def33832793bf03952402b52397"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"transposeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.composeOf",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "composeOf",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
-     "startLine": 228,
-     "endLine": 241,
-     "sha256": "598917da5e8914f091756f7c477869aa9b4cb69191c54ba7a35d42257f83dc09"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"composeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.zyxEulerAngles",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "zyxEulerAngles",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
-     "startLine": 194,
-     "endLine": 212,
-     "sha256": "2c8ffce2e21fb485d7e4fbab6a0578e030eb9a95ad85b0705c88e34eed29d590"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"zyxEulerAngles|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.poseError",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "poseError",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
-     "startLine": 150,
-     "endLine": 183,
-     "sha256": "f7f80349534a530691d31b2d61681ad7b13e26e908f623496a3d923ab1a2deff"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-ROT",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"poseError|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "手写转置/旋转组合/Euler或姿态误差；核RPY奇异分支和EAA主值；不得从值类型复用推导受限求解器已合规",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.constrainedPoseError",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "constrainedPoseError",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
-     "startLine": 295,
-     "endLine": 322,
-     "sha256": "7e6817364f1f0bc4a3039d6aceb8dbe5b4be08559547c46b2f666d0c2102022f"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"constrainedPoseError|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.constrainedDampedLeastSquaresStep",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "constrainedDampedLeastSquaresStep",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
-     "startLine": 336,
-     "endLine": 368,
-     "sha256": "50f918ccd6886abc35cb9b4448607e5d78b0ec1bc4ed026c37e872203609f6d1"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "KIN-IK",
-   "decision": "proposal",
-   "status": "proposal",
-   "search": {
-    "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
-   "proposal": {
-    "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-IK-01.md",
-    "sha256": "d13d1d45dadefa75acdf0acf91105b65ee4b2cf2029619ce700ec48aacf6ad28"
-   }
-  },
-  {
-   "functionId": "kinematics.dampedLeastSquaresStep",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "dampedLeastSquaresStep",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
-     "startLine": 379,
-     "endLine": 401,
-     "sha256": "c40ff9fd480009336e53de69a7c812acaca2f7cf00482354bc4677f51e4bc328"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"dampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "自持约束误差差分/DLS；ParallelIK现有EAA掩码不是Euler掩码，QPController无公开行投影。缺口先提最小扩展，不保留平行迭代核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.makeInitialValues",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-02"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
-     "symbol": "makeInitialValues",
-     "qualifiedSymbol": "sdurws::ird::kinematics::makeInitialValues",
-     "startLine": 503,
-     "endLine": 559,
-     "sha256": "439a3f5ca92341936ca91e7814cf91cfc4669d3d161138748511912fe8faad2b"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6.1",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"makeInitialValues|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
-   },
-   "differences": "Reference/JointGrid/64位SeededRandom按实际策略分别审计，不能整函数标业务专属；候选QSampler有限序列/随机边界仍待核",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
-  },
-  {
-   "functionId": "kinematics.rodrigues",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01",
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-     "symbol": "rodrigues",
-     "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
-     "startLine": 560,
-     "endLine": 577,
-     "sha256": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
-    "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
-   },
-   "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-    "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
-   },
-   "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
-   "designRefs": [
-    "reuse/audit-contract.md §6"
-   ]
-  },
-  {
-   "functionId": "kinematics.mul4",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01",
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-     "symbol": "mul4",
-     "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
-     "startLine": 588,
-     "endLine": 599,
-     "sha256": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
-    "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
-   },
-   "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-    "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
-   },
-   "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
-   "designRefs": [
-    "reuse/audit-contract.md §6"
-   ]
-  },
-  {
-   "functionId": "kinematics.referenceFk",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01",
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-     "symbol": "referenceFk",
-     "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
-     "startLine": 609,
-     "endLine": 698,
-     "sha256": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
-    "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
-   },
-   "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-    "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
-   },
-   "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
-   "designRefs": [
-    "reuse/audit-contract.md §6"
-   ]
-  },
-  {
-   "functionId": "kinematics.IKinRuntimeView",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "ARC-03",
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
-     "symbol": "IKinRuntimeView",
-     "qualifiedSymbol": "sdurws::ird::kinematics::IKinRuntimeView",
-     "startLine": 1,
-     "endLine": 491,
-     "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
-   },
-   "differences": "仅model/worldToBase；缺编译产物消费面，先复用IRuntimeModelView，ABI/消费者必须同步",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
-     "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      "functionId": "kinematics.orientBoxPoint",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "orientBoxPoint",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientBoxPoint",
+          "startLine": 87,
+          "endLine": 96,
+          "sha256": "60e011e53950c6eacac20e7299052c5b7894d50584876961345a3c2000d9a669"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"orientBoxPoint|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
-     "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+      "functionId": "kinematics.orientSampleRotation",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "orientSampleRotation",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::orientSampleRotation",
+          "startLine": 105,
+          "endLine": 113,
+          "sha256": "a6f296f0f196345632be4b57f230a4e51f2da8faa39e3c3c29d004fcb26b2bdf"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"orientSampleRotation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
-     "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      "functionId": "kinematics.poseFromDirectionRoll",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "poseFromDirectionRoll",
+          "qualifiedSymbol": "sdurws::ird::kinematics::poseFromDirectionRoll",
+          "startLine": 359,
+          "endLine": 418,
+          "sha256": "83eba6da69459484a2282c07444cf0fb416b17c587f8120d4a1006a56f66ce40"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"poseFromDirectionRoll|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
-     "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
-    "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
-   },
-   "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
-  },
-  {
-   "functionId": "kinematics.AnchorRuntimeView",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "CON-06",
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
-     "symbol": "AnchorRuntimeView",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::AnchorRuntimeView",
-     "startLine": 1,
-     "endLine": 2355,
-     "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_plugin"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
-   },
-   "differences": "只复制规范模型值和世界变换；IK/workspace后台改为快照锚的最薄冻结，不允许业务重建WC",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
-     "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      "functionId": "kinematics.validateBoxOrientation",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "validateBoxOrientation",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::validateBoxOrientation",
+          "startLine": 56,
+          "endLine": 78,
+          "sha256": "38377ca04a86950a492fdf1bf380f070d0c9164122edba7ecb43a9c76285c3e8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"validateBoxOrientation|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "手写R*v/矩阵乘/Rodrigues或SO(3)判定；优先现有运算与EAA(v1,v2)/isProperRotation。反向方向必须保留明确半周分支及体心索引",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
-     "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+      "functionId": "kinematics.generateRandomPositions",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateRandomPositions",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateRandomPositions",
+          "startLine": 308,
+          "endLine": 328,
+          "sha256": "199821dbedf3c4d19e0b608734a6986df3d87b1a7e345b7520b499f63516ed1f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"generateRandomPositions|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "固定样本序/64位种子/盒体心与分片语义不能因API替换漂移；Random是全局32位源，未认定可直接复用",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
-     "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      "functionId": "kinematics.generateGridPositions",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateGridPositions",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateGridPositions",
+          "startLine": 261,
+          "endLine": 305,
+          "sha256": "8566c06f93c2fca8dc68f43b151a1f1807405aaa8f6f31cb9c60aac47cd10a7a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n -i \"grid|fibonacci|latin|halton|sobol\" RobWork/RobWork/src/rwlibs/algorithms RobWork/RobWork/src/rw/pathplanning RobWork/RobWork/src/rw/math -g \"*Sampler*\" -g \"*Grid*\" -g \"*Random*\"",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "确定性体心网格枚举，不使用随机数；保留x慢/z快顺序、旋转盒、零计数及乘积回卷拒绝。相邻QSampler/HyperSphere不是相同枚举契约，继续核工具复用，不错误绑定Random或提前判business-specific",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
-     "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
-    "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
-   },
-   "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
-  },
-  {
-   "functionId": "kinematics.TestView",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-     "symbol": "TestView",
-     "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::TestView",
-     "startLine": 1,
-     "endLine": 718,
-     "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
-   },
-   "differences": "REUSE-T17：锚能力入口懒构造同源。REUSE-T19：集成模式经 RuntimeSnapshotFactory 真实编译（FixtureModelCompiler＝S1–S5 替身注入点＋S6–S10 产品路径），冒烟保持 T17 值锚；FK 消费的真实业务路径由真实编译产物承载",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
-     "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      "functionId": "kinematics.generateDirections",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-04"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp",
+          "symbol": "generateDirections",
+          "qualifiedSymbol": "sdurws::ird::kinematics::generateDirections",
+          "startLine": 330,
+          "endLine": 344,
+          "sha256": "416314cae75131fd0fe48d4a509f4a1f0402c9812fa7784b1d7718bdff7788d1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "GEOM-SPHERE-SAMPLING",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"generateDirections|uniformDistributionCartesian|uniformDistributionSpherical\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Sampling.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "固定N斐波那契方向集与delta分辨率球面分布不同；不以分布近似掩盖样本数量/身份改变",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
-     "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+      "functionId": "kinematics.splitmix64",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-13"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+          "symbol": "splitmix64",
+          "qualifiedSymbol": "sdurws::ird::kinematics::kseed::splitmix64",
+          "startLine": 34,
+          "endLine": 41,
+          "sha256": "20cb6960ed85c226852da4f6c3379f0b0d3e1ebb1bd6af795c320bb27aceefb8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"splitmix64|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S2/S4r/S7（rw::math::Random全表面、rw 64位随机反证、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：上游rw::math::Random为进程级全局boost::mt19937单例（Random.cpp:31）且seed(unsigned)入参32位截断（Random.cpp:53），无任务私有64位流/LHS——本函数64位任务私有流无上游直接等价入口"
+      },
+      "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：64位种子空间（上游seed(unsigned)天然32位，A06缺陷同型）、任务私有确定性序列（§3.4——全局单流被任意reseed污染）、多消费流独立——维持pending，实施归WP-19/后续精确子任务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+          "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+          "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
-     "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      "functionId": "kinematics.streamSeedFor",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-13"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp",
+          "symbol": "streamSeedFor",
+          "qualifiedSymbol": "sdurws::ird::kinematics::kseed::streamSeedFor",
+          "startLine": 61,
+          "endLine": 69,
+          "sha256": "7fb6c98bd15ed4e30c9ca680a57fef281720f747db6277dbebecc0407017b836"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"streamSeedFor|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/SeedMix.hpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest；REUSE-T36补检S1/S3/S4r/S7（QSampler种子面、LHS词边界反证、产品消费点，命令与输出见REUSE-T36/random-lhs-search.md）",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限；REUSE-T36定向复核：rw::pathplanning::QSampler无种子参数（QSampler.cpp:104走Math::ranQ全局均匀采样），无任务私有64位流派生入口——(seed,index)二元组流种子派生无上游直接等价"
+      },
+      "differences": "自持PRNG/派生流；四消费点共用私有头仍不是上游复用。需继续查任务私有64位候选，序列变化须身份版本迁移；REUSE-T36复核保留理由：流隔离（随机初值/采样/包络探针各自独立流，全局态互耦）、64位种子avalanche（A06）、§3.4确定性——维持pending，实施归WP-19/后续精确子任务",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/random-lhs-search.md",
+          "sha256": "339443e1599bc63e0ac0f23833787dd481244a7605a3b63e6903da2f9ec2167c"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T36/README.md",
+          "sha256": "9c532b71d5f10c6c720206ba5cfcd57c92da21a0689284d87c337f901646930f"
+        }
+      ],
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；REUSE-T36为独立审查零生产改动，维持pending"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
-     "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
-    "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
-   },
-   "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
-  },
-  {
-   "functionId": "kinematics.MidSolveDegradedView",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
-     "symbol": "MidSolveDegradedView",
-     "qualifiedSymbol": "::MidSolveDegradedView",
-     "startLine": 241,
-     "endLine": 264,
-     "sha256": "fc40f3bfb56e65951d04f50f51517e08eff36bb8f5afd8a3ecf8a2a16d4a2bfb"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
-   },
-   "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
-     "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      "functionId": "kinematics.transposeOf",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "transposeOf",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::transposeOf",
+          "startLine": 261,
+          "endLine": 267,
+          "sha256": "8060a071303961f76d90a3e5608071519980b99eb07a0fdafc479859ee52c279"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"transposeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "旋转转置值面（独立冒烟无框架库外联符号——A-16 纪律的头内实现）；上游 Rotation3D::inverse 为外联/接口面差异，此处为确定性纯函数副本语义，不构成平行核心（三行算术）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
-     "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+      "functionId": "kinematics.composeOf",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "composeOf",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::composeOf",
+          "startLine": 268,
+          "endLine": 283,
+          "sha256": "09765b7d598dc4dcac2f29a2a678457ddb2338398b710eb83a8530ae0126b815"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"composeOf|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "逐项旋转复合（独立冒烟可链接——避免框架库外联符号）；语义＝上游 Rotation3D 复合定义，仅实现形态差异（冒烟链接约束），集成模式不新增第二语义",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
-     "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      "functionId": "kinematics.zyxEulerAngles",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "zyxEulerAngles",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::zyxEulerAngles",
+          "startLine": 225,
+          "endLine": 254,
+          "sha256": "b9e0ca5f8ce1ec0f8a51d34211a1ac91c8095c55ebd9a812fb5387ec5b599127"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"zyxEulerAngles|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "参考系 ZYX 欧拉提取（万向锁 ±90° 两分支同号——批34 F3 修复）；上游无参考系欧拉分量接口（GAP-IK-01 §1：EAA 行≠Euler 行，probe-r2 反例在案）——约束模式专用数学，归 WP-05",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
-     "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
-    }
-   ],
-   "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
-    "sha256": "619115f0be3ca98ca0a90e24c2eb84ad65ce64c6a3a13e4449c98c6a1443ce0e"
-   }
-  },
-  {
-   "functionId": "kinematics.RigView",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-05"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
-     "symbol": "RigView",
-     "qualifiedSymbol": "(anonymous namespace)::RigView",
-     "startLine": 191,
-     "endLine": 202,
-     "sha256": "51789a09bedb821c0ff650c0d3c6bac6cb9137b8b009a334bc0c33318c323265"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
-   },
-   "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
-     "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+      "functionId": "kinematics.poseError",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "poseError",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::poseError",
+          "startLine": 188,
+          "endLine": 224,
+          "sha256": "aa13b67eab719a2ad7cf82fcba3214deb6179899d69f472b81c3f6ac16c30874"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-ROT",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"poseError|toRotation3D\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "产品双容差验收残差（位置 m 欧氏＋姿态 rad 旋转向量测地角）——上游 JacobianIKSolver 停判据为混合单位旋量无穷范数单标量，无双容差分解；本函数为独立复核唯一残差源（阶段①与上游收敛后复核共用），业务验收语义不可让渡",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
-     "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+      "functionId": "kinematics.constrainedPoseError",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "constrainedPoseError",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedPoseError",
+          "startLine": 323,
+          "endLine": 364,
+          "sha256": "e322797191a3430263c569325824db46a4df073504c123489dd438cf8a3dbdc9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"constrainedPoseError|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "参考系六分量掩码残差（A-16 唯一契约构造——求得的解与验收语义同源）；上游 ParallelIKSolver Target 掩码为 EAA 坐标行且消费被 runtime ParallelDevice 视图权限审查阻断（GAP-IK-01 §1），约束模式保留链，归 WP-05",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
-     "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+      "functionId": "kinematics.constrainedDampedLeastSquaresStep",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "constrainedDampedLeastSquaresStep",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::constrainedDampedLeastSquaresStep",
+          "startLine": 365,
+          "endLine": 410,
+          "sha256": "4c10ababbd27e147eca0823b70a7abb096714254854086cb2c636b83b2e5d867"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"constrainedDampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "约束差分 Jacobian＋固定阻尼步（A-16；真实 FK 中心差分——差分整个残差含参考系投影/欧拉提取/掩码导数）；上游无任意任务残差行注入公开入口（GAP-IK-01 §2 扩展提案 Draft 未批准）——约束模式专用，归 WP-05；本批零改动（区段随批铺面实审）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
+      "proposal": {
+        "path": "RobWork/doc/industrial-robot-design/reuse/extensions/GAP-IK-01.md",
+        "sha256": "d13d1d45dadefa75acdf0acf91105b65ee4b2cf2029619ce700ec48aacf6ad28"
+      },
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
-     "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
-    }
-   ],
-   "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
-  },
-  {
-   "functionId": "kinematics.contract_test.ContractTestMain.main",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 19,
-     "endLine": 26,
-     "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_contract_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "TEST-HARNESS",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      "functionId": "kinematics.dampedLeastSquaresStep",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "dampedLeastSquaresStep",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::dampedLeastSquaresStep",
+          "startLine": 411,
+          "endLine": 445,
+          "sha256": "3e03b09c3cc91b3916a4bd9786ed01d64ebff552416ee2fb859faa582d9a434e"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"dampedLeastSquaresStep|solveLocal|setSolverType|DLS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "REUSE-T51 起收缩为仅位置模式专用 3 维位置子块 DLS（taskDim 参数删除——完整位姿 6 维正规方程链随上游迁移删除）；保留理由＝仅位置模式唯一迭代核，上游 JacobianIKSolver 无任务子空间、ParallelIKSolver Target 掩码消费被 runtime 视图权限审查阻断（GAP-IK-01 §1）——归 WP-05 处置，非隐藏 fallback（调用点唯一：IkSolver::solve 的 PositionOnly 分支）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+      "functionId": "kinematics.makeInitialValues",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-02"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "makeInitialValues",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::makeInitialValues",
+          "startLine": 546,
+          "endLine": 605,
+          "sha256": "27e0c6f3d644e0e356c200bf426a61b9fa14544a84b7a1d9937f8e130ec55681"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6.1",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"makeInitialValues|seed|ran|ranI\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批定向阅读定位，差异明确但完整调用链/候选排除/运行适用性未结项；不授予变动源码权限"
+      },
+      "differences": "三初值策略（ReferenceQ/SeededRandom 全 64 位种子派生/JointGrid 对角）＋评价区间采样——上游 JacobianIKSolver 单初值无策略编排；产品多初值语义/确定性序列（splitmix64）/初值序＝排序 sourceInitIndex 序源，业务编排不可让渡",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅登记实际定位的功能；未覆盖函数及其他文件仍待审，不冒充全量审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      "functionId": "kinematics.rodrigues",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "rodrigues",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::rodrigues",
+          "startLine": 560,
+          "endLine": 577,
+          "sha256": "25d97002fedf815cda19b6b48b34d359c2df72d1c057a51087a18a753bc5cf01"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+      },
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      "functionId": "kinematics.mul4",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "mul4",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::mul4",
+          "startLine": 588,
+          "endLine": 599,
+          "sha256": "6af2a1ed244ee7c5da6d38a9346b9adacd371de29dc969a82f52c70d65df40f4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+      },
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-  },
-  {
-   "functionId": "kinematics.gui_test.TestMainReport.main",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 34,
-     "endLine": 47,
-     "sha256": "1e59b2759d01897a5da8747ec64b693f8d0c78fcdecd96c74d87c8f6852e5654"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_gui_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "TEST-HARNESS",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      "functionId": "kinematics.referenceFk",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01",
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "referenceFk",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::referenceFk",
+          "startLine": 609,
+          "endLine": 698,
+          "sha256": "ce2ff5946b2f0b0d1d66358d86b47c09f7d9a7e8b6182c9e3c64228a423d62d7"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"KinFkFixture.hpp|referenceFk|rodrigues|mul4\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot -g \"*.cpp\" -g \"*.hpp\"",
+        "conclusion": "已审列明源区段及候选差异；生产调用链/全部消费者与适用性未结项"
+      },
+      "differences": "独立解析FK/几何Jacobian测试参照；生产替代指向上游Device/Kinematics，不删除独立oracle以免只与被测库互证。仅测试目标可消费，现有ui/kinematics GUI/contract消费者仍须分别核CMake，不发展生产核心",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+      },
+      "auditBoundary": "独立测试参照的三处功能，不将测试保留原则用作生产豁免；列明target仅FK测试主目标，跨目标消费仍待核",
+      "designRefs": [
+        "reuse/audit-contract.md §6"
+      ]
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+      "functionId": "kinematics.IKinRuntimeView",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "ARC-03",
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+          "symbol": "IKinRuntimeView",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IKinRuntimeView",
+          "startLine": 1,
+          "endLine": 491,
+          "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "仅model/worldToBase；缺编译产物消费面，先复用IRuntimeModelView，ABI/消费者必须同步",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/KinTypes.hpp",
+        "sha256": "f34f07c2432c64827e6d5ec16a7845a7e95e947f366064648a1489dfb3c2e7bc"
+      },
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      "functionId": "kinematics.AnchorRuntimeView",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "CON-06",
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+          "symbol": "AnchorRuntimeView",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::AnchorRuntimeView",
+          "startLine": 1,
+          "endLine": 2355,
+          "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_plugin"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "只复制规范模型值和世界变换；IK/workspace后台改为快照锚的最薄冻结，不允许业务重建WC",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/plugin/KinematicsPanelWidget.cpp",
+        "sha256": "27ce94d4049d1ed356921f4576ef9b33a6b6c17f95ae12b104368dc638f798ac"
+      },
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      "functionId": "kinematics.TestView",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+          "symbol": "TestView",
+          "qualifiedSymbol": "sdurws::ird::kinematics::testfixture::TestView",
+          "startLine": 1,
+          "endLine": 718,
+          "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "REUSE-T17：锚能力入口懒构造同源。REUSE-T19：集成模式经 RuntimeSnapshotFactory 真实编译（FixtureModelCompiler＝S1–S5 替身注入点＋S6–S10 产品路径），冒烟保持 T17 值锚；FK 消费的真实业务路径由真实编译产物承载",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/KinFkFixture.hpp",
+        "sha256": "41415875f2cee84dbd5e116e5f7abb934f94cb4065b4f418f7774ac3c4e0d303"
+      },
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-  },
-  {
-   "functionId": "kinematics.test.TestMainReport.main",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
-     "symbol": "main",
-     "qualifiedSymbol": "::main",
-     "startLine": 1,
-     "endLine": 43,
-     "sha256": "8572bb58c95fcac9bc8f0ca7ffaf08cc3b1f762345ad2118dbfaccd17d8ee491"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
-   },
-   "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      "functionId": "kinematics.MidSolveDegradedView",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+          "symbol": "MidSolveDegradedView",
+          "qualifiedSymbol": "sdurws::ird::kinematics::KinIkSuite::MidSolveDegradedView",
+          "startLine": 244,
+          "endLine": 276,
+          "sha256": "1abd2e8f106f06d5cebf3c2e10317333dd4240b3818825a84b732c4b8379eb10"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "F-746③ 故障注入替身——REUSE-T51 注释面同步（完整位姿上游装配段在同一替身上先触发无锚设施失败，值面语义不变）；断言零放松",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+        "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+      "functionId": "kinematics.RigView",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-05"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/CollisionPortTest.cpp",
+          "symbol": "RigView",
+          "qualifiedSymbol": "(anonymous namespace)::RigView",
+          "startLine": 191,
+          "endLine": 202,
+          "sha256": "51789a09bedb821c0ff650c0d3c6bac6cb9137b8b009a334bc0c33318c323265"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+      },
+      "differences": "test-only视图替身，不当生产快照；保留错误/退化/取消观察，接口迁移逐一同步，真实生产正向测试另行提供",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch9-search.json",
+          "sha256": "2ed3be1fac6cfe137bbb389cf2254ba579633af13d49a943f793a6177503c2e0"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-boundary-audit.md",
+          "sha256": "ef3d2f1f856cc63d57f8f1f38a7a8673cf20b97330761377fd3ea9625d662a43"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+          "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/red/ird-test-report.json",
+          "sha256": "92f3438d01647303b19038919e01f75d8fc5967ff961359707c50b03296a9b90"
+        }
+      ],
+      "auditBoundary": "仅本接口/功能。访问器组不包含本类之外算法，不授予新权限，不证明T01完整或迁移完成"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      "functionId": "kinematics.contract_test.ContractTestMain.main",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/contract_test/ContractTestMain.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 19,
+          "endLine": 26,
+          "sha256": "1598906f62781a0b59179083789a8d7decb310f8525bfab2611639ca0e1fd3a5"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      "functionId": "kinematics.gui_test.TestMainReport.main",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/gui_test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 34,
+          "endLine": 47,
+          "sha256": "1e59b2759d01897a5da8747ec64b693f8d0c78fcdecd96c74d87c8f6852e5654"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_gui_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。Widgets进程；Windows平台一次一exe。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "nonOverlapEvidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
-    "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
-   },
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
-  },
-  {
-   "functionId": "kinematics.CMake.ird_add_gtest",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "NFR-COR-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "symbol": "ird_add_gtest",
-     "qualifiedSymbol": "ird_add_gtest",
-     "startLine": 570,
-     "endLine": 582,
-     "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test",
-    "sdurws_ird_kinematics_gui_test",
-    "sdurws_ird_kinematics_contract_test"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "TEST-HARNESS",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-    "conclusion": "构建注册宏区段随 REUSE-T19 行号刷新；目标注册/报告机制不变（business-specific——零上游重叠）"
-   },
-   "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T19：区段行号随上游链接段插入刷新（内容逐字节未变）；GOV-T24：上游链接段重接线使区段随行刷新至 570-582，宏内容仍逐字节未变。",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-     "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+      "functionId": "kinematics.test.TestMainReport.main",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/TestMainReport.cpp",
+          "symbol": "main",
+          "qualifiedSymbol": "::main",
+          "startLine": 1,
+          "endLine": 43,
+          "sha256": "8572bb58c95fcac9bc8f0ca7ffaf08cc3b1f762345ad2118dbfaccd17d8ee491"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+      },
+      "differences": "GTest与现有testkit薄入口；保留原生JSON/XML/退出码，禁止双main或强接RobWork全局环境。仅QCoreApplication，不要求GUI插件。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "nonOverlapEvidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
+        "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
+      },
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-     "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+      "functionId": "kinematics.CMake.ird_add_gtest",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "NFR-COR-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "symbol": "ird_add_gtest",
+          "qualifiedSymbol": "sdurws::ird::kinematics::CMake.ird_add_gtest",
+          "startLine": 583,
+          "endLine": 595,
+          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test",
+        "sdurws_ird_kinematics_gui_test",
+        "sdurws_ird_kinematics_contract_test"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
+        "conclusion": "构建注册宏区段随 REUSE-T19 行号刷新；目标注册/报告机制不变（business-specific——零上游重叠）"
+      },
+      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台 REUSE-T19：区段行号随上游链接段插入刷新（内容逐字节未变）；GOV-T24：上游链接段重接线使区段随行刷新至 570-582，宏内容仍逐字节未变。",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
+          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
+          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
+          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
+          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
+        }
+      ],
+      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-     "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
+      "functionId": "kinematics.Envelope.probeSeedFor",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "probeSeedFor",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
+          "startLine": 63,
+          "endLine": 66,
+          "sha256": "f5216eee1e556cab7e4808df7400c80bde14b8311cebdf5ccc2fcde75017f0c8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "MATH-RANDOM",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"probeSeedFor|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "仅委托既有64位流派生，Random全局32位不能直接替换；种子核债保留",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-     "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
+      "functionId": "kinematics.Envelope.failCaller",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "failCaller",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+          "startLine": 69,
+          "endLine": 72,
+          "sha256": "d2a733b11c2b333b7d29892edc1e6f94e6569363328b6623b2bade7bff6bc91c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"failCaller|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "调用方错误抛invalid_argument的域上下文，非稳定诊断码权威",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-     "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-    }
-   ],
-   "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-   }
-  },
-  {
-   "functionId": "kinematics.Envelope.probeSeedFor",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-10"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
-     "symbol": "probeSeedFor",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeSeedFor",
-     "startLine": 63,
-     "endLine": 66,
-     "sha256": "f5216eee1e556cab7e4808df7400c80bde14b8311cebdf5ccc2fcde75017f0c8"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "MATH-RANDOM",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"probeSeedFor|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "仅委托既有64位流派生，Random全局32位不能直接替换；种子核债保留",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+      "functionId": "kinematics.Envelope.probeReachability",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "probeReachability",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
+          "startLine": 127,
+          "endLine": 209,
+          "sha256": "e30675246a0c8892e3991f2fad45079179541e7a998cd2af687f9fb2c96bc891"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"probeReachability|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "PositionOnly请求→注入或默认IK→四态，计数只在调用推进；沿上游IK薄适配，保留取消/设施失败/搜索未果语义",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
-     "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+      "functionId": "kinematics.Envelope.computeApproximateEnvelope",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-10"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
+          "symbol": "computeApproximateEnvelope",
+          "qualifiedSymbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
+          "startLine": 217,
+          "endLine": 481,
+          "sha256": "7ade2c0c735829fa2fc644c337c469cdb6029fbf0a291c488efe47caa1c992a4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "pending",
+      "status": "pending",
+      "search": {
+        "command": "rg -n \"computeApproximateEnvelope|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
+        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+      },
+      "differences": "近似方向搜索/二分委托IK探针，AABB非可达包络；仍需上游IK适配及真实生产调用核验，不新增workspace求解核",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        },
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
+          "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
+        }
+      ],
+      "auditEvidence": [
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
+          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
+          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
+          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+        },
+        {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
+          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
+        }
+      ],
+      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+      "functionId": "kinematics.FkEvaluator.evaluate",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+          "symbol": "FkEvaluator::evaluate",
+          "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator.evaluate",
+          "startLine": 1,
+          "endLine": 504,
+          "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "adapter",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "adapter",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"setQ|baseTframe|baseJframe|LinearAlgebra::svd\" RobWork/RobWork/src/rw/models/Device.hpp RobWork/RobWork/src/rw/math/LinearAlgebra.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
+        "conclusion": "上游 FK/Jacobian/SVD 消费已定位并逐符号核对（行义/列序/降序/T_base 读法）；删除自建链后本功能为薄适配——q 映射/TCP 选择/指标链/错误面为业务边界（非重叠见差异列与生产证据）"
+      },
+      "differences": "REUSE-T19：手写链式 FK/几何雅可比/JacobiSVD 直调全删；消费 Device::setQ（任务私有 State，q_rw＝q_auth−zeroOffset——src/JointMapping.hpp）＋baseTframe（默认 TCP＝编译产物帧含偏置；命名 TCP＝法兰位姿·偏置一次复合）＋baseJframe（行 0-2 线/3-5 角已与 Jacobian::addPosition/addRotation 源码核对；命名 TCP 参考点移轴）＋LinearAlgebra::svd（降序）；条件数/可操作度/裕量/IRDPM01 编码逐字节保留；锚缺失/设备未命中→NoDevice 值面",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "production": {
+        "entry": "FkEvaluator::evaluate",
+        "upstream": "baseTframe",
+        "consumer": "FkEvaluator::evaluate",
+        "target": "sdurws_ird_kinematics"
+      },
+      "evidence": {
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
+        "sha256": "93b55b6b745a9d8b973b6e90ce944f8bd3caf5d5859663506dc77716d40396d7"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+      "functionId": "kinematics.qRuntimeFromAuthoritative",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+          "symbol": "qRuntimeFromAuthoritative",
+          "qualifiedSymbol": "sdurws::ird::kinematics::jointmapping::qRuntimeFromAuthoritative",
+          "startLine": 32,
+          "endLine": 49,
+          "sha256": "aac8b61bf21b82820ca161095a12d2776d32146a8382586884827e3e82453f67"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"zeroOffset\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src",
+        "conclusion": "H1 检索在案：全库无既有 q_auth↔q_rw 公共转换入口（dynamics 为快照透传不参与计算；runtime 映射归编译器 owner）——三行纯算术按薄适配落位单元私有头"
+      },
+      "differences": "q_rw＝q_auth−zeroOffset（CanonicalModel §5.1 与编译链烘焙互为逆映射）；不建缓存/不建跨单元共享面；REUSE-T51 起与 qAuthoritativeFromRuntime 同头互逆（单点 q 映射唯一权威点）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+        "sha256": "ab4c3b1c1785df2f830d807dff362d91630c47a59925bb5dfb1d3a542bd10825"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
-  },
-  {
-   "functionId": "kinematics.Envelope.failCaller",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-10"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
-     "symbol": "failCaller",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
-     "startLine": 69,
-     "endLine": 72,
-     "sha256": "d2a733b11c2b333b7d29892edc1e6f94e6569363328b6623b2bade7bff6bc91c"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "NONE",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"failCaller|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "调用方错误抛invalid_argument的域上下文，非稳定诊断码权威",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+      "functionId": "kinematics.PoseMetrics",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
+          "symbol": "PoseMetrics",
+          "qualifiedSymbol": "sdurws::ird::kinematics::PoseMetrics",
+          "startLine": 1,
+          "endLine": 254,
+          "sha256": "3018963378de6c290c5e7bc5aa4001b271be082d83a08d190f3d3315a4210736"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"PoseMetrics|IFkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include RobWork/RobWork/src/rw/models/Device.hpp",
+        "conclusion": "公共契约面零 API 变化：PoseMetrics/IFkEvaluator/编码签名不动；@pre 补锚要求注释、NoDevice 语义面扩登记、实现要点上游化"
+      },
+      "differences": "REUSE-T19 仅注释同步（D-KIN-2 行义/列序上游核对结论入档）——值模型与接口逐字节兼容",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
+        "sha256": "3018963378de6c290c5e7bc5aa4001b271be082d83a08d190f3d3315a4210736"
+      }
     },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
-     "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+      "functionId": "kinematics.KinFkSuite",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+          "symbol": "UpstreamDirectDeviceComparison_REUSE_T18",
+          "qualifiedSymbol": "sdurws::ird::kinematics::KinFkSuite",
+          "startLine": 1,
+          "endLine": 715,
+          "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
+        "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
+      },
+      "differences": "REUSE-T19：权威 q 双模型断言改容差（偏置映射相消——载体变化，语义保留）；新增 AnchorlessViewRejectedAsNoDevice／CrossViewIsolationRealSnapshots／UpstreamDirectDeviceComparison 三用例（生产证据 oracle/upstreamComparison 面载体）",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
+        "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+      "functionId": "kinematics.KinGoldenSuite",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
+          "symbol": "KinGoldenFk",
+          "qualifiedSymbol": "sdurws::ird::kinematics::KinGoldenSuite",
+          "startLine": 1,
+          "endLine": 1268,
+          "sha256": "b8e984facd7928a3750edaa6d01c13c9d7924de003200810ea0c039d11ba6db6"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
+        "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
+      },
+      "differences": "KinGoldenFk 四用例经 IRD_HAVE_RUNTIME_COMPILE 门控（真实编译产物 FK）——kin-ik-dedup/outcomes/coverage 值面黄金两模式保留",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
+        "sha256": "b8e984facd7928a3750edaa6d01c13c9d7924de003200810ea0c039d11ba6db6"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+      "functionId": "kinematics.KinIkSuite",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+          "symbol": "KinIk",
+          "qualifiedSymbol": "sdurws::ird::kinematics::KinIkSuite",
+          "startLine": 1,
+          "endLine": 1905,
+          "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
+        "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
+      },
+      "differences": "REUSE-T51：既有用例断言零放松（引擎无关面）；新增 FullPose 上游路径组（闭式 oracle/限位过滤/不可达无假成功/上游直接对照/solveLocal 单步循环轨迹同一性）＋F-746③ 注释面同步——模型构造仍经 KinFkFixture 既有授权形态",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
+        "sha256": "1f5abeb77da3ef34cad133cf9ff59f3990591c368f66be7d65e6e54d064dc39b"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
-  },
-  {
-   "functionId": "kinematics.Envelope.probeReachability",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-10"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
-     "symbol": "probeReachability",
-     "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::probeReachability",
-     "startLine": 127,
-     "endLine": 209,
-     "sha256": "e30675246a0c8892e3991f2fad45079179541e7a998cd2af687f9fb2c96bc891"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"probeReachability|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "PositionOnly请求→注入或默认IK→四态，计数只在调用推进；沿上游IK薄适配，保留取消/设施失败/搜索未果语义",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+      "functionId": "kinematics.KinWorkspaceSuite",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
+          "symbol": "KinWorkspace",
+          "qualifiedSymbol": "sdurws::ird::kinematics::KinWorkspaceSuite",
+          "startLine": 1,
+          "endLine": 1348,
+          "sha256": "e131f3a4b55a5b8141f4196a3dda179a8c6bb50d723074002baa8e4a77faba60"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
+        "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
+      },
+      "differences": "KIN-P5 关节模式三用例（网格解析/随机确定性/FK 错误面）经 IRD_HAVE_RUNTIME_COMPILE 门控——产品路径经 FkEvaluator 消费真实编译产物",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
+        "sha256": "e131f3a4b55a5b8141f4196a3dda179a8c6bb50d723074002baa8e4a77faba60"
+      }
     },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
-     "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+      "functionId": "kinematics.CMake.UpstreamLinks",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "symbol": "sdurw_invkin",
+          "qualifiedSymbol": "sdurws::ird::kinematics::CMake.UpstreamLinks",
+          "startLine": 1,
+          "endLine": 775,
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics",
+        "sdurws_ird_kinematics_test",
+        "sdurws_ird_kinematics_contract_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-FK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"find_package\\(RobWork|RW::sdurw|IRD_HAVE_RUNTIME_COMPILE\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
+        "conclusion": "REUSE-T07/T12 先例同机制：集成链真实 sdurw_math/kinematics/models 目标，冒烟 find_package(RobWork CONFIG)→RW:: 导出包（绝不源码复制/备用算法，绝不建 sdurw_kinematics 冒烟别名——集成判定依赖该名）；FkTest/KinP4FlowsTest/PoseMetricsContract 移入集成块（真实编译产物依赖），IRD_HAVE_RUNTIME_COMPILE 定义随集成树注入；GOV-T24：三局部变量选名改条件分支显式合法目标（集成分支三目标名不变；冒烟经 sdurw_math/sdurw_models 同名 ALIAS＋RW::sdurw_models 接口传递覆盖 sdurw_kinematics），IRD-GATE-LIB 阻断消除、门禁零改动"
+      },
+      "differences": "REUSE-T51 增链 sdurw_invkin（集成真实目标＋冒烟 RW::sdurw_invkin 同名 ALIAS——T07/T12 先例形态；该名非集成模式判定符，全库 rg 零命中）：src/Ik.cpp 完整位姿模式消费上游 JacobianIKSolver（H1 直接 API，无新外部依赖）；门禁词表 ^sdurw 已知族，零门禁改动",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+      "functionId": "kinematics.IkTranslationUnitHeader",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "Ik.cpp",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(translation unit)",
+          "startLine": 1,
+          "endLine": 95,
+          "sha256": "fa3575f3d4c503a54bf9158056cf21bb377eaa765cd8a9aff32089377a3b1b04"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "翻译单元头（REUSE-T51 上游复用边界登记：迭代核/solveLocal 单步循环/停判据不承担验收/任务私有 State/假成功拦截/两模式链接纪律）＋include 面——非算法区段",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+      "functionId": "kinematics.failCaller",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "failCaller",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::failCaller",
+          "startLine": 96,
+          "endLine": 146,
+          "sha256": "aba0f0af56b7c78504158938416141f18183a572f76a5f3abe286511aae1fd7a"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "请求错误面 helper（failCaller 出口/设施失败值面组装 makeFacilityFailure/数值全有限校验 firstNonFinite/targetAllFinite——F-746③ 值面语义载体，业务错误面）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
-  },
-  {
-   "functionId": "kinematics.Envelope.computeApproximateEnvelope",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-10"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp",
-     "symbol": "computeApproximateEnvelope",
-     "qualifiedSymbol": "sdurws::ird::kinematics::computeApproximateEnvelope",
-     "startLine": 217,
-     "endLine": 481,
-     "sha256": "7ade2c0c735829fa2fc644c337c469cdb6029fbf0a291c488efe47caa1c992a4"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-IK",
-   "decision": "pending",
-   "status": "pending",
-   "search": {
-    "command": "rg -n \"computeApproximateEnvelope|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Envelope.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-    "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
-   },
-   "differences": "近似方向搜索/二分委托IK探针，AABB非可达包络；仍需上游IK适配及真实生产调用核验，不新增workspace求解核",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
+      "functionId": "kinematics.resolveTcpOrThrow",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "resolveTcpOrThrow",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::resolveTcpOrThrow",
+          "startLine": 147,
+          "endLine": 187,
+          "sha256": "76b55e986c8b0478fa81261dd7f405594252b9e509188ab19c714ce6c731ccdc"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "TCP 解析（KIN-NO-TCP 两分/FrameUnresolved——KinTypes 解析规则的 Ik 侧执行面，业务身份语义）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Envelope.hpp",
-     "sha256": "5314d9034fa4fd0e03b2f8668c8f8a5b6ee3f05263a3afa651997c1fb284368d"
-    }
-   ],
-   "auditEvidence": [
-    {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-     "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
+      "functionId": "kinematics.convergedForTask",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "convergedForTask",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::convergedForTask",
+          "startLine": 446,
+          "endLine": 460,
+          "sha256": "b44284342902573d56d08b1657f16dd2b64662fb3327a412a8a412ae2f01210b"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "收敛判据（任务维度感知——PositionOnly 位置残差/FullPose 双残差逐项；REUSE-T51 起 FullPose 分支调用点＝上游收敛后的独立复核）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-     "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
+      "functionId": "kinematics.makeFilteredRecord",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "makeFilteredRecord",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::makeFilteredRecord",
+          "startLine": 461,
+          "endLine": 479,
+          "sha256": "f8f822b2602dfe81cbd7a460d28d79bea8de7c4655b9c97c83046470fabb6d99"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "硬过滤记录构造（构型级指标照抄解草稿——§6.1 诊断价值承载，业务记录面）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-     "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
+      "functionId": "kinematics.evaluationIntervals",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "evaluationIntervals",
+          "qualifiedSymbol": "sdurws::ird::kinematics::evaluationIntervals",
+          "startLine": 480,
+          "endLine": 510,
+          "sha256": "f68490c05fbb6cd6c66ccd5c559a4a66798c838b7ca8195904d1bd1d545ac5f4"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "逐自由度评价区间三态唯一实现点（bounds/workingRange/无分析限位——§6.1，初值生成与限位过滤同源真值）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     },
     {
-     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-     "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-    }
-   ],
-   "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
-  },
-  {
-   "functionId": "kinematics.FkEvaluator.evaluate",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.axisRange",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "axisRange",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::axisRange",
+          "startLine": 511,
+          "endLine": 545,
+          "sha256": "b7df8dc0cc5d499aedc6f652bdb735026d7ffb7ec9d4f429a9cb950a035f61d2"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "种子派生采样 helper（kseed using 收拢/unitFromU64 53 位归一/名义区间常量/单轴区间——确定性序列面）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
-     "symbol": "FkEvaluator::evaluate",
-     "qualifiedSymbol": "sdurws::ird::kinematics::FkEvaluator.evaluate",
-     "startLine": 1,
-     "endLine": 504,
-     "sha256": "c54affbf288991261dc3c073b976d8cf785ea9b38904def274a1a92a717f2361"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "adapter",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "adapter",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"setQ|baseTframe|baseJframe|LinearAlgebra::svd\" RobWork/RobWork/src/rw/models/Device.hpp RobWork/RobWork/src/rw/math/LinearAlgebra.hpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Fk.cpp",
-    "conclusion": "上游 FK/Jacobian/SVD 消费已定位并逐符号核对（行义/列序/降序/T_base 读法）；删除自建链后本功能为薄适配——q 映射/TCP 选择/指标链/错误面为业务边界（非重叠见差异列与生产证据）"
-   },
-   "differences": "REUSE-T19：手写链式 FK/几何雅可比/JacobiSVD 直调全删；消费 Device::setQ（任务私有 State，q_rw＝q_auth−zeroOffset——src/JointMapping.hpp）＋baseTframe（默认 TCP＝编译产物帧含偏置；命名 TCP＝法兰位姿·偏置一次复合）＋baseJframe（行 0-2 线/3-5 角已与 Jacobian::addPosition/addRotation 源码核对；命名 TCP 参考点移轴）＋LinearAlgebra::svd（降序）；条件数/可操作度/裕量/IRDPM01 编码逐字节保留；锚缺失/设备未命中→NoDevice 值面",
-   "inputs": [
+      "functionId": "kinematics.IkNamespaceClose",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "sdurws::ird::kinematics",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(namespace close)",
+          "startLine": 1317,
+          "endLine": 1318,
+          "sha256": "9c03b87a341f36674b63e8d02cff5bdb9e6038b3051748159f4e291365bff1f9"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "命名空间收尾（非算法区段——全文件铺面覆盖义务）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
-   "production": {
-    "entry": "FkEvaluator::evaluate",
-    "upstream": "baseTframe",
-    "consumer": "FkEvaluator::evaluate",
-    "target": "sdurws_ird_kinematics"
-   },
-   "evidence": {
-    "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T19/production/kinematics.FkEvaluator.evaluate.json",
-    "sha256": "7fd466a8928f64665ba95f5c9069f3a097c9efa0fbfaa67ab4ea1b7fcaa623d1"
-   }
-  },
-  {
-   "functionId": "kinematics.qRuntimeFromAuthoritative",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.JointMappingHeader",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+          "symbol": "JointMapping.hpp",
+          "qualifiedSymbol": "sdurws::ird::kinematics::jointmapping::(unit header)",
+          "startLine": 1,
+          "endLine": 31,
+          "sha256": "68427a5ca5e5ac94c9b2d168bbf594eef649f7a3d1c840b4f2fd9fcce19851f0"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "单元私有头（REUSE-T18/T51 设计依据＋单点 q 映射唯一权威点登记）——非算法区段",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+        "sha256": "ab4c3b1c1785df2f830d807dff362d91630c47a59925bb5dfb1d3a542bd10825"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
-     "symbol": "qRuntimeFromAuthoritative",
-     "qualifiedSymbol": "sdurws::ird::kinematics::qRuntimeFromAuthoritative",
-     "startLine": 1,
-     "endLine": 49,
-     "sha256": "d6b8ee7d3964e54084cc02e3da6f7074ac2cd74fc9a5b0a4f7eacf52fd0838e1"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"zeroOffset\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src",
-    "conclusion": "H1 检索在案：全库无既有 q_auth↔q_rw 公共转换入口（dynamics 为快照透传不参与计算；runtime 映射归编译器 owner）——三行纯算术按薄适配落位单元私有头"
-   },
-   "differences": "q_rw＝q_auth−zeroOffset（CanonicalModel §5.1 与编译链烘焙互为逆映射）；不建缓存/不建跨单元共享面",
-   "inputs": [
+      "functionId": "kinematics.qAuthoritativeFromRuntime",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+          "symbol": "qAuthoritativeFromRuntime",
+          "qualifiedSymbol": "sdurws::ird::kinematics::jointmapping::qAuthoritativeFromRuntime",
+          "startLine": 50,
+          "endLine": 75,
+          "sha256": "492e8210f5888831f4e833b01b457706145e3264b49f760d1a2ca17ec21c049d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "REUSE-T51 表尾追加：q_auth＝q_rw＋zeroOffset——上游收敛解（Device::getQ 于任务私有 State）回权威角的唯一互逆方向（与 qRuntimeFromAuthoritative 同头单点映射）；三行纯算术薄适配（H1——全库无既有公共转换入口，T18 检索在案）；不建缓存/不建跨单元共享面",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
+        "sha256": "ab4c3b1c1785df2f830d807dff362d91630c47a59925bb5dfb1d3a542bd10825"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/JointMapping.hpp",
-    "sha256": "d6b8ee7d3964e54084cc02e3da6f7074ac2cd74fc9a5b0a4f7eacf52fd0838e1"
-   }
-  },
-  {
-   "functionId": "kinematics.PoseMetrics",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.IkContractHeader",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "kIkSolverContractVersion",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(contract header)",
+          "startLine": 1,
+          "endLine": 104,
+          "sha256": "ffe99c4a27c952e38ab44230e4b9248625c322a77fe7235e2b9c51ef373f271d"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "文件头（契约面设计依据/不抛承诺/版本史）＋域常量（kTaskPointIkEvaluationKey/kIkSolverContractVersion v4→5〔CON-04——REUSE-T51 换核升版〕/kIkDampingLambda/kIkCancellationProbeInterval 唯一书写点）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
-     "symbol": "PoseMetrics",
-     "qualifiedSymbol": "sdurws::ird::kinematics::PoseMetrics",
-     "startLine": 1,
-     "endLine": 254,
-     "sha256": "3018963378de6c290c5e7bc5aa4001b271be082d83a08d190f3d3315a4210736"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"PoseMetrics|IFkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include RobWork/RobWork/src/rw/models/Device.hpp",
-    "conclusion": "公共契约面零 API 变化：PoseMetrics/IFkEvaluator/编码签名不动；@pre 补锚要求注释、NoDevice 语义面扩登记、实现要点上游化"
-   },
-   "differences": "REUSE-T19 仅注释同步（D-KIN-2 行义/列序上游核对结论入档）——值模型与接口逐字节兼容",
-   "inputs": [
+      "functionId": "kinematics.IkInitialValueStrategy",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "InitialValueStrategy",
+          "qualifiedSymbol": "sdurws::ird::kinematics::InitialValueStrategy",
+          "startLine": 105,
+          "endLine": 192,
+          "sha256": "c9bd1897d796b30a676812363dd79f1b3af84ff773e4893af8403802c8306521"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "初值策略词表＋JointInterval 值模型＋evaluationIntervals/makeInitialValues 声明（§5.3/§6.1 请求契约面——值语义纯结构）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Fk.hpp",
-    "sha256": "3018963378de6c290c5e7bc5aa4001b271be082d83a08d190f3d3315a4210736"
-   }
-  },
-  {
-   "functionId": "kinematics.KinFkSuite",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.IkCollisionPort",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "IKinCollisionSession",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IKinCollisionSession",
+          "startLine": 193,
+          "endLine": 306,
+          "sha256": "8443a20c48b2f2c8af05ad401085dd0bded04996de88b3f86ffb08c0ba1cdf6c"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "碰撞会话最小消费端口（④端口句柄域侧投影——三态词表/判定值/生命周期线程约束；P-KIN-7 处置面）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
-     "symbol": "UpstreamDirectDeviceComparison_REUSE_T18",
-     "qualifiedSymbol": "sdurws::ird::kinematics::KinFkSuite",
-     "startLine": 1,
-     "endLine": 715,
-     "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
-    "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
-   },
-   "differences": "REUSE-T19：权威 q 双模型断言改容差（偏置映射相消——载体变化，语义保留）；新增 AnchorlessViewRejectedAsNoDevice／CrossViewIsolationRealSnapshots／UpstreamDirectDeviceComparison 三用例（生产证据 oracle/upstreamComparison 面载体）",
-   "inputs": [
+      "functionId": "kinematics.IkRequest",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "IkRequest",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IkRequest",
+          "startLine": 307,
+          "endLine": 396,
+          "sha256": "0a30ba757b22be85d8ce641aa71d5519bbd56d45662afc1aab3d716f818690f8"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "任务空间模式词表（FullPose/PositionOnly——KIN-P2/A02）＋求解请求值模型（§5.3 字段表/所有权与生命周期/输入义务）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/FkTest.cpp",
-    "sha256": "efad6cfdfce504fb9a5a125ce53984dbf12b71c9589ad21b364e31d2ab9a73b2"
-   }
-  },
-  {
-   "functionId": "kinematics.KinGoldenSuite",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.IkOutcome",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "IkOutcome",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IkOutcome",
+          "startLine": 397,
+          "endLine": 521,
+          "sha256": "dae41a4c42202b0e126a4b267a83e57133ae998fc036d5aef28d713f9c70aead"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "设施失败三值词表＋失败形态＋求解结果（按序判读铁律/五类结局绑定/证据缺失标记——§5.4/§8.1/F-746③ 契约面）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
-     "symbol": "KinGoldenFk",
-     "qualifiedSymbol": "sdurws::ird::kinematics::KinGoldenSuite",
-     "startLine": 1,
-     "endLine": 1268,
-     "sha256": "b8e984facd7928a3750edaa6d01c13c9d7924de003200810ea0c039d11ba6db6"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
-    "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
-   },
-   "differences": "KinGoldenFk 四用例经 IRD_HAVE_RUNTIME_COMPILE 门控（真实编译产物 FK）——kin-ik-dedup/outcomes/coverage 值面黄金两模式保留",
-   "inputs": [
+      "functionId": "kinematics.IIkSolver",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "IIkSolver",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IIkSolver",
+          "startLine": 522,
+          "endLine": 558,
+          "sha256": "c837e00df098ed72d6b869b2dcf4fe9e5a57fff14995c089e7bc627f7662b65f"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "求解接口契约（§9.2——@pre/@post/@取消/@设施失败/@确定性/fail-fast 轨原文展开）",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/GoldenKinTest.cpp",
-    "sha256": "b8e984facd7928a3750edaa6d01c13c9d7924de003200810ea0c039d11ba6db6"
-   }
-  },
-  {
-   "functionId": "kinematics.KinIkSuite",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
+      "functionId": "kinematics.IkSolverClass",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+          "symbol": "IkSolver",
+          "qualifiedSymbol": "sdurws::ird::kinematics::IkSolver",
+          "startLine": 559,
+          "endLine": 569,
+          "sha256": "e1d9dc506f466a75403ff2e8e9e765287e57e9fa18e3272689295b3044db5cd1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"<symbol>|toRotation3D|EAA|ParallelIKSolver\" RobWork/RobWork/src/rw RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游无本区段语义对应物（差异列给出具体边界）；完整位姿可迁面已迁 JacobianIKSolver，本区段保留为业务边界（非平行核心）"
+      },
+      "differences": "无状态实现类（§3.4 纯函数服务——实现要点纲）＋include guard",
+      "inputs": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+        "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+      },
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/include/sdurws/ird/kinematics/Ik.hpp",
+        "sha256": "fceafb70716ec186ae4e48cf5e848708d0bc61c91ccba40de64ac46c0cd7a32a"
+      }
+    },
     {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
-     "symbol": "KinIk",
-     "qualifiedSymbol": "sdurws::ird::kinematics::KinIkSuite",
-     "startLine": 1,
-     "endLine": 1629,
-     "sha256": "619115f0be3ca98ca0a90e24c2eb84ad65ce64c6a3a13e4449c98c6a1443ce0e"
+      "functionId": "kinematics.wrapAngle",
+      "ownerUnit": "kinematics",
+      "requirements": [
+        "KIN-01"
+      ],
+      "sources": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+          "symbol": "wrapAngle",
+          "qualifiedSymbol": "sdurws::ird::kinematics::(anonymous namespace)::wrapAngle",
+          "startLine": 255,
+          "endLine": 260,
+          "sha256": "7d96d0831a27459bec9471c3ee12f0ad840a927a8973f8ef7c4180c5716548e1"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_kinematics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "KIN-IK",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "command": "rg -n \"wrapAngle|atan2\" RobWork/RobWork/src/rw/math RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "conclusion": "REUSE-T51 同批复核：上游 rw::math 无跨周最短角差自由函数（EAA/rotvec 为整角表示，非 [-pi,pi] 逐元素 wrap）——本函数为残差/差分角展开的业务确定性口径，保留"
+      },
+      "differences": "跨周最短角差（[-pi,pi] 归一——残差与约束差分角展开共用）；上游无对应自由函数，业务数值口径",
+      "inputs": [
+        {
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
+          "sha256": "6acac3ef8982e7d135f353b653944418055ee686d02e99003dfd758fc66f1faa"
+        }
+      ],
+      "auditBoundary": "仅本区段（全文件解决批铺面——migration-debt 文件改动触发逐行覆盖义务）；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/src/Ik.cpp",
+        "sha256": "ee5dd33be309207d7f12ec41e66725d583e6116577896073552b359f67d6961c"
+      }
     }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
-    "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
-   },
-   "differences": "IK 核心值面用例不动；FK 独立复验两块（已知解 sanity＋解 q 复验）经 IRD_HAVE_RUNTIME_COMPILE 门控",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/IkTest.cpp",
-    "sha256": "619115f0be3ca98ca0a90e24c2eb84ad65ce64c6a3a13e4449c98c6a1443ce0e"
-   }
-  },
-  {
-   "functionId": "kinematics.KinWorkspaceSuite",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
-     "symbol": "KinWorkspace",
-     "qualifiedSymbol": "sdurws::ird::kinematics::KinWorkspaceSuite",
-     "startLine": 1,
-     "endLine": 1348,
-     "sha256": "e131f3a4b55a5b8141f4196a3dda179a8c6bb50d723074002baa8e4a77faba60"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics_test"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"IRD_HAVE_RUNTIME_COMPILE|runtimeModelView|FkEvaluator\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test",
-    "conclusion": "测试面变更与门控边界已实审；产品断言零放松（黄金容差/独立 oracle/字节确定性全部保留）"
-   },
-   "differences": "KIN-P5 关节模式三用例（网格解析/随机确定性/FK 错误面）经 IRD_HAVE_RUNTIME_COMPILE 门控——产品路径经 FkEvaluator 消费真实编译产物",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本测试文件；不声称其余测试/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/test/WorkspaceTest.cpp",
-    "sha256": "e131f3a4b55a5b8141f4196a3dda179a8c6bb50d723074002baa8e4a77faba60"
-   }
-  },
-  {
-   "functionId": "kinematics.CMake.UpstreamLinks",
-   "ownerUnit": "kinematics",
-   "requirements": [
-    "KIN-01"
-   ],
-   "sources": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "symbol": "ird_add_gtest",
-     "qualifiedSymbol": "sdurws::ird::kinematics::CMake.UpstreamLinks",
-     "startLine": 1,
-     "endLine": 762,
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "targets": [
-    "sdurws_ird_kinematics",
-    "sdurws_ird_kinematics_test",
-    "sdurws_ird_kinematics_contract_test"
-   ],
-   "usageRole": "owner",
-   "permissionRef": "ARCH:3.6",
-   "capabilityId": "KIN-FK",
-   "decision": "business-specific",
-   "status": "migrated",
-   "search": {
-    "command": "rg -n \"find_package\\(RobWork|RW::sdurw|IRD_HAVE_RUNTIME_COMPILE\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/drivetrain/CMakeLists.txt RobWork/RobWorkStudio/src/rwslibs/industrialrobot/modeling/CMakeLists.txt",
-    "conclusion": "REUSE-T07/T12 先例同机制：集成链真实 sdurw_math/kinematics/models 目标，冒烟 find_package(RobWork CONFIG)→RW:: 导出包（绝不源码复制/备用算法，绝不建 sdurw_kinematics 冒烟别名——集成判定依赖该名）；FkTest/KinP4FlowsTest/PoseMetricsContract 移入集成块（真实编译产物依赖），IRD_HAVE_RUNTIME_COMPILE 定义随集成树注入；GOV-T24：三局部变量选名改条件分支显式合法目标（集成分支三目标名不变；冒烟经 sdurw_math/sdurw_models 同名 ALIAS＋RW::sdurw_models 接口传递覆盖 sdurw_kinematics），IRD-GATE-LIB 阻断消除、门禁零改动"
-   },
-   "differences": "Fk.cpp 消费上游框架符号的两模式链接承载；FK 用例 gating 边界（冒烟树无 runtime 编译器）；GOV-T24 重接线＝静态可核查链接面（两模式字面名均在门禁已知目标族）",
-   "inputs": [
-    {
-     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-     "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-    }
-   ],
-   "auditBoundary": "仅本文件对应区段；不声称其余文件/单元已审计",
-   "nonOverlapEvidence": {
-    "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/kinematics/CMakeLists.txt",
-    "sha256": "da65df52dc70e8b42f577ea91c5130f23e8a73e008bed3f2337ae92edf7c8e80"
-   }
-  }
- ]
+  ]
 }
