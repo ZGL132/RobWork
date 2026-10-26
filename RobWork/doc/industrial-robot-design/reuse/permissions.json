@@ -167,7 +167,7 @@
       "id": "REUSE-T17-KinEvaluationChannelTest.cpp",
       "source": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/test/KinEvaluationChannelTest.cpp",
-        "sha256": "48c6a19deb1949bf1bca7128d906ef3cb327ec1aaa028e774443013b2675e485"
+        "sha256": "91d9a2df6b549cc3338352d2d486a4116da7e833cf290ba32305a44d2e91e811"
       },
       "targets": [
         "sdurws_ird_ui_test"
@@ -180,12 +180,12 @@
         "write-state"
       ],
       "origin": "task-private",
-      "lifetime": "REUSE-T17锚语义executor级用例：write-state仅及任务私有State（device->setQ于makeState副本，证明跨任务State隔离）；模型消费经runtime编译快照受控视图；仅测试目标，无生产权限。",
+      "lifetime": "REUSE-T17锚语义executor级用例＋UI-T86（F-973诊断返工）锚能力迁移登记：write-state仅及任务私有State（device->setQ于makeState副本，证明跨任务State隔离）；模型消费经runtime编译快照受控视图；FixtureView自UI-T86起覆盖runtimeModelView()——经kinematics/test夹具compileRealSnapshot以本替身CanonicalModel走RuntimeSnapshotFactory S6-S10产品路径（WC构造在runtime owner产品路径内，替身只注入模型值并调用工厂），供真实FK/IK用例锚消费；仅测试目标，无生产权限、无模型所有权主张。",
       "permissionRef": "ARCH:3.6.1",
       "usageRole": "adapter",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "2555c4a5895b56058199557cc0ed977ab74cb23870b704939cec20df310cee6a"
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
       }
     },
     {
@@ -447,7 +447,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "2555c4a5895b56058199557cc0ed977ab74cb23870b704939cec20df310cee6a"
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
       }
     },
     {
@@ -475,7 +475,7 @@
       "permissionRef": "ARCH:3.6.2",
       "build": {
         "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/ui/CMakeLists.txt",
-        "sha256": "2555c4a5895b56058199557cc0ed977ab74cb23870b704939cec20df310cee6a"
+        "sha256": "5395c6f2599b2609f21e61c4630daccdde053c26ea22cf43c5566c35db3e632c"
       }
     },
     {

@@ -431,6 +431,15 @@ if(TARGET sdurws)
         # 两连杆黄金模型——执行器用例的真实计算面供数；测试面私有 include，
         # 产品目标零消费）。
         ${CMAKE_CURRENT_SOURCE_DIR}/../kinematics/test)
+    # UI-T86（F-973 诊断返工）——IRD_HAVE_RUNTIME_COMPILE＝夹具真实编译锚的
+    # 编译期开关（kinematics_test 先例同款机制）：本块源集内
+    # KinEvaluationChannelTest.cpp 的 FixtureView 经 KinFkFixture 的
+    # compileRealSnapshot 走 RuntimeSnapshotFactory 真实编译（REUSE-T18 起
+    # 产品 FK/IK 只经锚消费已编译 WorkCell）。仅集成树定义——本守卫块整体
+    # 冒烟树不注册，冒烟面零影响；ui_test 链接面经 modeling_plugin PUBLIC
+    # 六边已到达 runtime 编译器实现 TU（Snapshot.cpp 系仅集成模式编译）。
+    target_compile_definitions(sdurws_ird_ui_test PRIVATE
+        IRD_HAVE_RUNTIME_COMPILE=1)
     # 传递链接面（contract_test 同款测试面边）：modeling_plugin 的 PUBLIC
     # 六边携带 modeling/runtime/policy（include 目录＋符号——被测 TU 与
     # 测试 TU 的消费面）；sdurws＝框架库（rws/RobWorkStudio.hpp——挂接

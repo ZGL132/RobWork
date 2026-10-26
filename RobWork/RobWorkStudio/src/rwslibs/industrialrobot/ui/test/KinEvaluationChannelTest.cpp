@@ -83,6 +83,12 @@ namespace {
  * runtime 权威面，测试替身按 runtime 语义原样返回该值：接口名
  * worldToBase() 的**值语义是 T_world_base**（Snapshot.hpp §6.4 行），
  * 替身不做任何二次换算）。
+ *
+ * UI-T86（F-973 诊断返工）：REUSE-T18 起 FK/IK 只经 runtimeModelView 锚
+ * 消费已编译 WorkCell（锚缺失＝NoDevice 值面，无隐藏 fallback——T17 契约
+ * 红线），本视图覆盖 runtimeModelView() 经真实编译快照供给锚（同文件
+ * KinAnchorCapture 用例与 kinematics TestView 先例同款）；无锚值替身的
+ * 能力缺席语义由 AnchorlessValueView（文件尾部）单独承载，两者不混同。
  */
 class FixtureView final : public IKinRuntimeView {
 public:
@@ -119,10 +125,31 @@ public:
     {
         return m_tWorldBase;  // 值语义＝T_world_base（runtime §6.4 接口注）
     }
+    /**
+     * @brief 真实求解用例的锚能力（UI-T86——REUSE-T18 在案模式的 ui 消费侧
+     *        迁移）：懒编译缓存，经 testfixture::compileRealSnapshot 以本
+     *        夹具模型值走 S1-S5 注入＋RuntimeSnapshotFactory S6-S10 产品
+     *        路径（kinematics TestView 同款；WC 构造在 runtime owner 产品
+     *        路径内，替身只注入 CanonicalModel 并调用工厂——不伪造编译
+     *        能力）。T18 起产品 FK/IK 只经锚消费已编译 WorkCell
+     *        （Fk.cpp 锚缺失＝NoDevice 值面），纯值视图按 T17 契约无真实
+     *        数值能力；本夹具供真实数值链用例，必须提供同源锚。
+     *        时序纪律与 T18 TestView 相同：用例经 drain() 单任务排空，
+     *        懒构造无并发首调；多次取用同源（同一快照）。
+     */
+    std::shared_ptr<const runtime::IRuntimeModelView> runtimeModelView() const override
+    {
+        if (!m_anchor) {
+            m_anchor = compileRealSnapshot(m_model);
+        }
+        return m_anchor;
+    }
 
 private:
     runtime::CanonicalModel m_model;              // 值持有（构造一次——并发只读）
     rw::math::Transform3D<double> m_tWorldBase;   // 基座安放真值（世界系→基座系读法 core §4.6）
+    mutable std::shared_ptr<const runtime::IRuntimeModelView>
+        m_anchor;  ///< 锚缓存（懒编译一次——同源复用，同 T18 TestView 纪律）
 };
 
 /**
