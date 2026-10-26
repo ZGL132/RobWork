@@ -1043,12 +1043,12 @@
       ],
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "KIN-FK",
+      "capabilityId": "RUNTIME-WC-MODEL",
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
+        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
@@ -1098,12 +1098,12 @@
       ],
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "KIN-FK",
+      "capabilityId": "RUNTIME-WC-MODEL",
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
+        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
@@ -1208,12 +1208,12 @@
       ],
       "usageRole": "owner",
       "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "KIN-FK",
+      "capabilityId": "RUNTIME-WC-MODEL",
       "decision": "pending",
       "status": "pending",
       "search": {
-        "command": "rg -n \"setQ|baseTframe|baseJframe\" RobWork/RobWork/src/rw/models/Device.hpp",
-        "conclusion": "真实视图/State/名称/偏置消费链已审读，本批仍未实施生产接线或全生命周期回归"
+        "command": "rg -n \"getDefaultState|findFrame|findDevice\" RobWork/RobWork/src/rw/models/WorkCell.hpp",
+        "conclusion": "快照WC访问器＝受控视图/任务私有State工厂转发面（WorkCellConstView.defaultState→WorkCell::getDefaultState值拷贝、findFrame/findDevice直转发，WorkCell.hpp:251/306实测命中）；原KIN-FK/setQ|baseTframe|baseJframe检索系T01批历史错配（REUSE-T30评审缺口7同族），capabilityId更正为RUNTIME-WC-MODEL（catalog边界含受控视图，WorkCellConstView兄弟行同判）；decision保持pending不假关，修正登记见traceability/reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md"
       },
       "differences": "复用已有视图/任务State入口；legacy非const非持有句柄仅为碰撞签名兼容，不许扩散或绕过快照保活",
       "inputs": [
