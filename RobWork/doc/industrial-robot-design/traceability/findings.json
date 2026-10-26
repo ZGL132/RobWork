@@ -9669,11 +9669,12 @@
       "id": "F-959",
       "source": "traceability/reuse/REUSE-T01/test-helpers-golden-audit.md / generator-replay.json",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedAt": "2026-10-26",
       "registeredAt": "2026-10-23",
       "title": "URDF导入黄金生成脚本未随速度限制F01映射更新，再生会回退正确黄金数据且缺消费字段",
       "owner": "modeling/testdata / REUSE-T05",
-      "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。"
+      "resolution": "29脚本隔离运行全部exit0，但91个dataset JSON对照中import-report.json实质漂移；另一全新目录复现同输出。旧脚本unsupported=8含5个joint-velocity-limit，入库正确数据unsupported=3并有mappedVelocityCount=5。T05只同步生成脚本及注释/回归，不用重产旧错误数据洗绿；本批未运行产品C++消费者。2026-10-26 REUSE-T49落地批（所有者批量批准落地裁决表第1~4项，原blocked解阻）：make_import_expectations.mjs随F01期望面同步（unsupported 8→3、去joint-velocity-limit×5、增mappedVelocityCount=5与说明，头注计数约定同步）＋manifest.json integrity/history重登记——expected数据零变化；重放一致性收口＝replay-generators-t49.mjs隔离执行29生成器29/29 exit0、规范化对照漂移0、mdl-urdf-import两份expected原始字节逐位一致（landing-generator-replay.json）；受影响消费者testkit 121/121＋modeling 480/480（MdlGoldenImport消费mappedVelocityCount钉F01映射面）＋contract 17/17＋ird_gates零命中。GoldenImportTest.cpp:294-296既有过期文档注（T16创建时即有，断言面数据驱动正确）不属漂移链未改，留独立cosmetic缺陷归所有者归类。实施完成待独验。"
     },
     {
       "id": "F-960",

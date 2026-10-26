@@ -3,7 +3,7 @@
  "taskId": "REUSE-T49",
  "unit": "testkit",
  "masterWp": "WP-A",
- "title": "WP-19批次八·testkit单元审计收口：JsonLite/Check/ProcessRunner/Dataset定案＋F-959 blocked登记",
+ "title": "WP-19批次八·testkit单元审计收口：JsonLite/Check/ProcessRunner/Dataset定案＋F-959落地批收口",
  "status": "ready",
  "branch": "redesign-main",
  "dependsOn": [
@@ -22,15 +22,18 @@
  "verify": [
   "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-task.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json",
   "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
-  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json -Base 73c0347658f86b8341e74c504f2ef7a8d0d7a133 -Head <送验SHA>"
+  "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json -Base f59b0b25e -Head <送验SHA>"
  ],
  "allowedFiles": [
   "RobWork/doc/industrial-robot-design/tasks/REUSE-T49.json",
   "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T49.json",
   "RobWork/doc/industrial-robot-design/reuse/functions/testkit.json",
+  "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
   "RobWork/doc/industrial-robot-design/reuse/migration.md",
+  "RobWork/doc/industrial-robot-design/traceability/findings.json",
   "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T49/**",
-  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-GEN/**"
+  "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-GEN/**",
+  "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testdata/golden/mdl-urdf-import/**"
  ],
  "forbiddenFiles": [
   "RobWork/RobWork/src/**",
@@ -39,15 +42,16 @@
   "main"
  ],
  "outputs": [
-  "testkit.json 64 行 pending 全量收口（business-specific）＋F-959 blocked 登记"
+  "testkit.json 64 行 pending 全量收口（business-specific）＋F-959 黄金生成脚本修复落地（.mjs＋manifest 两件数据面，expected 零变化）与全文件解决批收口"
  ],
  "interUnit": false,
  "acceptance": [
-  "零产品变更审计收口：pending 行按族判定（字节身份契约/业务协议保留/上游无同义物/测试骨架定案）处置为 business-specific，逐 functionId nonOverlap 条目＋检索记录在案；不洗绿（ui 20 行/testkit F-959 保持 pending/blocked 并登记结构墙与解阻路径）",
+  "零产品变更审计收口：pending 行按族判定（字节身份契约/业务协议保留/上游无同义物/测试骨架定案）处置为 business-specific，逐 functionId nonOverlap 条目＋检索记录在案；不洗绿（ui 20 行/testkit F-959 保持 pending/blocked 并登记结构墙与解阻路径）——2026-10-25 审计批已按此收口",
   "catalog 同步（如涉本批）：REUSE-T50 MATH-SVD LinearAlgebra.hpp symbols 补 inverse（T12 §5.1 建议落实，符号在位实证）；其余批次零 catalog 变化",
-  "门禁：validate-docs -TaskFile（含全量复用检查）与 verify-task-scope 显式 Base/Head 全绿；ird_gates 零命中（零产品变更无构建扩大面）"
+  "门禁：validate-docs -TaskFile（含全量复用检查）与 verify-task-scope 显式 Base/Head 全绿；ird_gates 零命中（零产品变更无构建扩大面）",
+  "F-959 落地批（所有者 2026-10-26 批量批准落地裁决表第 1~4 项，原 blocked 解阻；落地批起始 f59b0b25e，§13.3 原包边界扩至全文件解决批）：黄金生成脚本 make_import_expectations.mjs 随 F01 期望面同步（unsupported 8→3、去 joint-velocity-limit×5、增 mappedVelocityCount=5，头注同步）＋manifest.json integrity/history 登记——expected 数据零变化、零C++产品代码变化；隔离重放 29/29 exit0、规范化漂移 0、mdl-urdf-import 两份 expected 原始字节逐位一致（landing-generator-replay.json）；testkit 121/121＋modeling 480/480＋contract 17/17＋ird_gates 零命中；foundation-governance 行 business-specific/migrated（fixtureGeneration 区段重铺＋manifest 摘要级联＋scriptHeader 载体行）＋changes 凭证；GoldenImportTest.cpp 既有过期文档注不属漂移链未改，留独立 cosmetic 缺陷归所有者"
  ],
- "note": "migration §13.3 WP-19 批次（testkit）。masterWp=WP-A 按 T29/T30 先例。起始 SHA=73c0347658f86b8341e74c504f2ef7a8d0d7a133（上一批次收口提交）。范围＝§13.3 WP-19 行 testkit 面。JsonLite 21 行（上游无 JSON 库；Boost.JSON 属新依赖渠道需所有者批准，未批保留）、Check 7 行、ProcessRunner 11 行（Win32 薄封装）、Dataset 24 行、测试骨架/构建宏——全部 business-specific 收口；F-959（黄金生成脚本 make_import_expectations.mjs 写 unsupported:8/joint-velocity-limit:5 而入库 expected 为 unsupported:3+mappedVelocityCount:5，生成器自 15437a8da 后未改、expected 由 7a9f05168 更新）按 §13.3「先修契约再审差异，不能洗绿」保持 blocked，未获批不实施；零产品变更。。所有者保留裁决项：F-959 黄金生成脚本修复契约（§13.3 明令先修契约再审差异，未获批不得自批——blocked 登记）与 Boost.JSON 渠道批准。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
+ "note": "migration §13.3 WP-19 批次（testkit）。masterWp=WP-A 按 T29/T30 先例。审计批起始 SHA=73c0347658f86b8341e74c504f2ef7a8d0d7a133（上一批次收口提交）；F-959 落地批起始 SHA=f59b0b25e。范围＝§13.3 WP-19 行 testkit 面＋F-959 全文件解决批（所有者 2026-10-26 批量批准，原包边界相应扩大）。审计批（2026-10-25，零产品变更）：JsonLite 21 行（上游无 JSON 库；Boost.JSON 属新依赖渠道需所有者批准，未批保留）、Check 7 行、ProcessRunner 11 行（Win32 薄封装）、Dataset 24 行、测试骨架/构建宏——全部 business-specific 收口。F-959 落地批（2026-10-26）：黄金生成脚本 make_import_expectations.mjs 随 F01 期望面同步（unsupported 8→3、去 joint-velocity-limit×5、增 mappedVelocityCount=5，头注同步）＋manifest.json integrity/history 重登记——expected 数据零变化，不重产旧错误黄金数据洗绿；隔离重放 29/29 exit0、规范化漂移 0（replay-generators-t49.mjs→landing-generator-replay.json）；testkit 全量 121/121＋受影响消费者 modeling 480/480＋contract 17/17＋ird_gates 零命中（landing-* 原件）；foundation-governance 两行 business-specific/migrated（fixtureGeneration 区段重铺＋manifest 摘要级联＋scriptHeader 载体行）＋changes/REUSE-T49.json 凭证；GoldenImportTest.cpp:294-296 既有过期文档注（T16 创建时即有，断言面数据驱动正确）不属漂移链本批不改，留独立 cosmetic 缺陷归所有者归类。F-959 改 fixed。所有者保留裁决项余 Boost.JSON 渠道批准。实施完成待独验；独立验收由所有者另开会话，实施者不自签。",
  "governanceAcceptance": {
   "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
   "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
