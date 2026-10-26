@@ -1,0 +1,214 @@
+{
+ "totalPending": 594,
+ "classified": 594,
+ "summary": {
+  "A业务专属自持": 348,
+  "B待批": 124,
+  "C待后续包": 122
+ },
+ "groups": [
+  {
+   "scope": "foundation-governance",
+   "capability": "NONE",
+   "lines": 123,
+   "class": "A",
+   "reason": "测试黄金生成器/独立oracle（testdata/golden，拉格朗日封闭式零共享代码）——§12.8 明确保留真正独立测试oracle"
+  },
+  {
+   "scope": "diagnostics",
+   "capability": "NONE",
+   "lines": 35,
+   "class": "A",
+   "reason": "稳定码/文案键/去重权威由diagnostics承载（架构红线：单位/文案归core/diagnostics）——上游PropertyTree词法差异已核不替代受限文法"
+  },
+  {
+   "scope": "core",
+   "capability": "UTIL-UNITS",
+   "lines": 36,
+   "class": "A",
+   "reason": "量纲/冻结token由core权威承载（架构红线）——最小math常量候选与产品契约分开，C4/F-966反例在册"
+  },
+  {
+   "scope": "core",
+   "capability": "NONE(b28值契约)",
+   "lines": 42,
+   "class": "A",
+   "reason": "Provenance/Evaluation/DiagData公开值契约/语法/封装（FNV token/规范文本权威）——原语候选与业务值契约区别，不整文件豁免"
+  },
+  {
+   "scope": "core",
+   "capability": "NONE(b32事件payload)",
+   "lines": 19,
+   "class": "A",
+   "reason": "DomainEvent payload/Comparative/DiagnosticRecord等值契约面——行differences文本仍含F-967待改字样（F-967已fixed，行登记滞后列入发现）"
+  },
+  {
+   "scope": "core",
+   "capability": "CORE-EVENT",
+   "lines": 5,
+   "class": "A",
+   "reason": "core::ReferenceEventBus类本体——T41后生产装配零引用（rg核实仅测试语义钉子），行登记滞后同上"
+  },
+  {
+   "scope": "execution",
+   "capability": "CORE-EVENT",
+   "lines": 11,
+   "class": "A",
+   "reason": "execution总线契约头/生命周期面——T41换核DomainEventBusImpl落地并独验PASS，保留面"
+  },
+  {
+   "scope": "policy",
+   "capability": "NONE+COLLISION+MODEL-BOUNDS",
+   "lines": 30,
+   "class": "A",
+   "reason": "policy域权威/业务规则（共享策略归policy红线）——闭区间原语不替代业务裕量"
+  },
+  {
+   "scope": "execution",
+   "capability": "NONE",
+   "lines": 12,
+   "class": "A",
+   "reason": "worker物化/受理预算/登记编排（execution权威）——core工厂/稳定码复用已查"
+  },
+  {
+   "scope": "execution",
+   "capability": "UTIL-THREAD",
+   "lines": 4,
+   "class": "A",
+   "reason": "双优先级调度/Win32作业对象隔离/命名管道五元组——ThreadPool无进程隔离能力，非可替代"
+  },
+  {
+   "scope": "project",
+   "capability": "NONE+UTIL-FILE",
+   "lines": 27,
+   "class": "A",
+   "reason": "project写协议权威（CAS发布/摘要核验/原子协议/fsync防覆盖）——IOUtil仅底层工具不提供契约"
+  },
+  {
+   "scope": "runtime",
+   "capability": "MATH-SVD",
+   "lines": 1,
+   "class": "A",
+   "reason": "singularValuesOneSidedJacobi——REUSE-T34候选实测2.6/2.2/1.9倍退化按预声明性能规则不落，业务保留"
+  },
+  {
+   "scope": "dynamics",
+   "capability": "MATH-STATS",
+   "lines": 1,
+   "class": "A",
+   "reason": "时间加权RMS契约（tau²梯形＋有效全跨度归一）——上游样本mean/variance不等价"
+  },
+  {
+   "scope": "dynamics",
+   "capability": "TRAJ-LINEAR",
+   "lines": 1,
+   "class": "A",
+   "reason": "回放业务插值（帧命中/越界nullopt/双指针对齐）——上游标量无越界守卫"
+  },
+  {
+   "scope": "kinematics",
+   "capability": "KIN-FK",
+   "lines": 1,
+   "class": "A",
+   "reason": "RigView test-only视图替身——仅CollisionPortTest消费，不进生产目标（rg核实）"
+  },
+  {
+   "scope": "reporting",
+   "capability": "UTIL-BINARCHIVE",
+   "lines": 64,
+   "class": "B",
+   "reason": "AD结构墙（ReportCodec.cpp:127借用rw::kinematics::State只读指针，权限表无reporting授权）＋Boost.Endian字节基线前置（REUSE-T45登记）"
+  },
+  {
+   "scope": "ui",
+   "capability": "HOST-SCENE+HOST-LINES+HOST-FRAME+KIN-FK",
+   "lines": 19,
+   "class": "B",
+   "reason": "宿主呈现REUSE-AD结构墙（T48批次七登记20行中19行pending面）——宿主例外/权限表无对应授权，解阻待所有者裁决"
+  },
+  {
+   "scope": "core",
+   "capability": "NONE(Digest族)",
+   "lines": 23,
+   "class": "B",
+   "reason": "自持SHA-256核心——GAP-DIGEST-01未批准（提案Draft：成熟API适配边界/ABI重编译/黄金回归三前置待所有者逐项确认），REUSE-T39 audit-only同渠道供给已核"
+  },
+  {
+   "scope": "modeling",
+   "capability": "NONE",
+   "lines": 13,
+   "class": "B",
+   "reason": "自持数值拟合/差分/消元/秩判定——LM/差分缺口不直接新写（提案面待批），其余待精确子任务"
+  },
+  {
+   "scope": "dynamics",
+   "capability": "DYN-FD",
+   "lines": 1,
+   "class": "B",
+   "reason": "solveLinearSystem质量阵消元——WP-09 GAP-FD-BUILD-01 blocked（供给未批准），不能仅换通用消元宣称接入PhysicsEngine"
+  },
+  {
+   "scope": "trajectory",
+   "capability": "TRAJ-LINEAR",
+   "lines": 1,
+   "class": "B",
+   "reason": "interpolateJointLinear——PTP候选3（SA-02）A4裁决维持登记不实施"
+  },
+  {
+   "scope": "kinematics",
+   "capability": "KIN-IK",
+   "lines": 2,
+   "class": "B",
+   "reason": "Envelope探针/近似包络——沿上游IK薄适配，受GAP-IK-01（仅位置/部分姿态实质缺口）同链待所有者裁决"
+  },
+  {
+   "scope": "kinematics",
+   "capability": "GEOM-SPHERE-SAMPLING",
+   "lines": 1,
+   "class": "B",
+   "reason": "固定N斐波那契方向集vs delta分辨率球面分布——样本数量/身份改变不因API替换漂移，候选登记"
+  },
+  {
+   "scope": "execution+runtime+policy",
+   "capability": "UTIL-BINARCHIVE",
+   "lines": 60,
+   "class": "C",
+   "reason": "小端字节原语族——Boost.Endian渠道经A4裁决批准（vcpkg公共依赖），逐单元按REUSE-T43决策三件套前置落地（字节基线/探针/铺面）"
+  },
+  {
+   "scope": "modeling+runtime+kinematics+requirements",
+   "capability": "MATH-ROT",
+   "lines": 20,
+   "class": "C",
+   "reason": "手写矩阵乘/Rodrigues/旋转判定——rw::math直接运算（EAA/Rotation3D/isProperRotation），待精确子任务；requirements 1行另有4165行面板铺面墙（REUSE-T42登记）"
+  },
+  {
+   "scope": "modeling",
+   "capability": "MATH-DH+MATH-INERTIA+UTIL-XML+KIN-FK",
+   "lines": 23,
+   "class": "C",
+   "reason": "DH段拼接核标准/改进约定、URDF惯量RIR^T复用、XacroExpand文本面、zeroConfigFK优先runtime FK端口——待精确子任务"
+  },
+  {
+   "scope": "kinematics",
+   "capability": "MATH-RANDOM+NONE",
+   "lines": 6,
+   "class": "C",
+   "reason": "splitmix64流隔离/64位种子——T36复核维持pending（上游Random全局32位无任务私有流）；generateGridPositions确定性枚举契约——实施归后续精确子任务"
+  },
+  {
+   "scope": "runtime",
+   "capability": "RUNTIME-WC-MODEL+RUNTIME-DWC-MODEL",
+   "lines": 4,
+   "class": "C",
+   "reason": "快照WC/DWC访问器转发面（受控视图/任务私有State工厂直转发，GOV-T27定向复用审查更正cap）——复用已有视图，行收口待精确子任务"
+  },
+  {
+   "scope": "core+io+kinematics+modeling+execution+policy",
+   "capability": "TEST-HARNESS",
+   "lines": 9,
+   "class": "C",
+   "reason": "ird_add_gtest同形薄宏/ContractTestMain薄入口——上游宏非CONFIG导出，后续原样共享一个产品CMake include（T32定案在案口径）"
+  }
+ ]
+}
