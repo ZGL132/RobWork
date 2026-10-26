@@ -167,6 +167,19 @@ if(TARGET sdurw_kinematics)
                                         # 私有头 src/CompilerImpl.hpp ＋
                                         # src/SnapshotAssembler.hpp 提升）
 
+    # ---- REUSE-T52 增列（WP-07 RNE 消费载体工厂；2026-10-26 所有者构造面
+    #      上收裁决——模型构造权归 runtime，dynamics 经登记边消费）----
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/RneConsumptionDevice.cpp)   # RNE 可消费一次性设备工厂（公共头
+                                        # RneConsumptionDevice.hpp）：CanonicalModel→
+                                        # StateStructure+SerialDevice+RigidDevice
+                                        # 载体＋GAP-RNE-FRAME 关节帧换算（A2 裁决
+                                        # 薄适配——§8.2/S7 产品映射/modeling 导出
+                                        # 零触碰）；消费方＝WP-07 dynamics（已落
+                                        # 位）、WP-09 FD 预留；rw/rwsim 为 P-RT-3
+                                        # 已登记 L1——与 S6/S7 同因仅集成模式编译
+                                        # （冒烟分支同源供给见 else 段 REUSE-T52 行）
+
     target_link_libraries(sdurws_ird_runtime PUBLIC
         sdurw_kinematics
         sdurw_models
@@ -204,6 +217,44 @@ else()
             "runtime 冒烟模式：未找到 Eigen3（vcpkg eigen3）——rw 数学头依赖"
             " <Eigen/Core>（RT-T03 冒烟 header-only 机制）")
     endif()
+
+    # ---- REUSE-T52 冒烟供给（RNE 载体工厂双模式——消费方 dynamics 冒烟
+    #      链接面依赖本单元导出工厂符号）：按 REUSE-T51 同款形态解析真实框
+    #      架导入目标（导出包加载守卫＝modeling 先例；供给前置绑定 core/
+    #      CMakeLists.txt 尾段——本单元配置序在 core 之后，前置已就位）。
+    #      sdurw_kinematics 不单列（判定符禁令——符号经 sdurwsim 导入目标
+    #      INTERFACE 链传递）；sdurwsim 直含 targets/sdurwsim.cmake（非安装
+    #      树 RobWorkSimConfig 无条件 REQUIRED RobWorkStudio 且其 sdurws 验
+    #      证链冒烟解析不了——REUSE-T52 冒烟探针在案；该目标名非集成判定
+    #      符，全库 "TARGET sdurwsim" 零命中）。工厂 TU 双模式编译＝单一实
+    #      现（不冒烟降级、不另写备用路径）。
+    if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    if(NOT TARGET sdurw_math)
+        add_library(sdurw_math ALIAS RW::sdurw_math)
+    endif()
+    if(NOT TARGET sdurw_models)
+        add_library(sdurw_models ALIAS RW::sdurw_models)
+    endif()
+    set(IRL_RWSIM_TARGETS_FILE
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../RobWorkSim/cmake/targets/sdurwsim.cmake")
+    if(NOT TARGET sdurwsim)
+        if(NOT EXISTS "${IRL_RWSIM_TARGETS_FILE}")
+            message(FATAL_ERROR
+                "runtime 冒烟模式：未找到 sdurwsim 导出目标文件（期望 "
+                "${IRL_RWSIM_TARGETS_FILE}）——REUSE-T52 起工厂实现消费集成"
+                "构建树的 RobWorkSim 导出件，请先在集成树构建 RobWorkSim")
+        endif()
+        include("${IRL_RWSIM_TARGETS_FILE}")
+        add_library(sdurwsim ALIAS RWSIM::sdurwsim)
+    endif()
+    target_sources(sdurws_ird_runtime PRIVATE
+        src/RneConsumptionDevice.cpp)   # REUSE-T52：工厂 TU 双模式编译（同上）
+    target_link_libraries(sdurws_ird_runtime PUBLIC
+        sdurw_math
+        sdurw_models
+        sdurwsim)
 endif()
 
 target_link_libraries(sdurws_ird_runtime PUBLIC sdurws_ird_core)

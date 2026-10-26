@@ -1,0 +1,36 @@
+Note: Google Test filter = DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52:DynRnea.StaticGravityTwoLinkAnalytic
+[==========] Running 2 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 2 tests from DynRnea
+[ RUN      ] DynRnea.StaticGravityTwoLinkAnalytic
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 3.9240000000000013, which exceeds tol, where
+actual evaluates to -6.3765000000000001,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+鍏宠妭 1 闈欐€侀噸鍔涚煩锛堝疄寰?-6.3765000000000001锛屾湡鏈?-10.300500000000001锛?
+
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 3.9240000000000013, which exceeds tol, where
+actual evaluates to -6.3765000000000001,
+expected evaluates to -10.300500000000001, and
+tol evaluates to 1.0300500000000002e-08.
+鍏宠妭 1 闈欐€佹€诲姏鐭╋紙瀹炲緱 -6.3765000000000001锛屾湡鏈?-10.300500000000001锛?
+
+[  FAILED  ] DynRnea.StaticGravityTwoLinkAnalytic (1 ms)
+[ RUN      ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52
+D:\10_Source_Repos\21_robot\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\dynamics\test\RneaTest.cpp(135): error: The difference between actual and expected is 2.5891190923897813, which exceeds tol, where
+actual evaluates to -10.753128993710742,
+expected evaluates to -13.342248086100524, and
+tol evaluates to 1.3342248086100524e-08.
+寮洸鏋勫瀷鍏宠妭 1 骞宠　鐭╋紙鍚礋杞斤級锛堝疄寰?-10.753128993710742锛屾湡鏈?-13.342248086100524锛?
+
+[  FAILED  ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52 (0 ms)
+[----------] 2 tests from DynRnea (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 2 tests from 1 test suite ran. (1 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] DynRnea.StaticGravityTwoLinkAnalytic
+[  FAILED  ] DynRnea.BentConfigurationStaticEquilibriumCrossProduct_REUSE_T52
+
+ 2 FAILED TESTS

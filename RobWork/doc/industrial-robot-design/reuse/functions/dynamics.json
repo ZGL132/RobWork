@@ -3,117 +3,6 @@
   "unit": "dynamics",
   "functions": [
     {
-      "functionId": "dynamics.buildRneaChain",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
-          "symbol": "buildRneaChain",
-          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::buildRneaChain",
-          "startLine": 458,
-          "endLine": 620,
-          "sha256": "64bcc75c7cd6e560ea39ffc81748e72cd43cb1565187c1a63dc97d6249385cad"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "DYN-RNE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"buildRneaChain|solve|setGravity|setPayload\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
-      },
-      "differences": "自建链/固定段/惯量聚合；优先runtime DWC/RigidDevice事实，不在业务另建模型",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        }
-      ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
-    },
-    {
-      "functionId": "dynamics.computeGeometry",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
-          "symbol": "computeGeometry",
-          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::computeGeometry",
-          "startLine": 747,
-          "endLine": 800,
-          "sha256": "f6f8b22d4bb9136cfd9b4b3dc480012340f50a1574876269cabfaddbc97d7026"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "KIN-FK",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"computeGeometry|setQ|baseTframe|baseJframe\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
-      },
-      "differences": "重复几何链；通过同runtime模型State查上游关节位姿，dynamics不建第二真值",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        }
-      ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
-    },
-    {
-      "functionId": "dynamics.rneaTorques",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-01"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
-          "symbol": "rneaTorques",
-          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::rneaTorques",
-          "startLine": 836,
-          "endLine": 916,
-          "sha256": "d60d7e4af72014854f14781cbb8a1f9b402a8ae28b9831ebbb89c2ec04a79d70"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "DYN-RNE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "rg -n \"rneaTorques|solve|setGravity|setPayload\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已定位重复/适配候选，首批局部审读，完整调用链与业务契约尚未结项；不授予权限"
-      },
-      "differences": "手写RNE递推；solve Wrench后按关节类型投影，核DOF+1与载荷摩擦唯一计入",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        }
-      ],
-      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
-    },
-    {
       "functionId": "dynamics.solveLinearSystem",
       "ownerUnit": "dynamics",
       "requirements": [
@@ -145,7 +34,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计"
@@ -182,7 +71,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditBoundary": "本功能定向登记，不是文件/单元全部覆盖；不授予源码修改权，不关闭库存；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
@@ -223,7 +112,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditBoundary": "source保留真实外层函数符号/摘要；本行只审内部612-692积分功能，不构成整个函数已审计或文件闭合；具体提案未批准，依赖迁移阻塞，不授予上游扩展/新核心权限",
@@ -271,7 +160,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditBoundary": "定向功能登记，非整文件/单元结项，不关闭库存或批准新核心",
@@ -326,7 +215,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditBoundary": "仅登记指定功能，非文件/单元全部审计；不消除存量或授予新算法许可"
@@ -363,7 +252,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditEvidence": [
@@ -388,7 +277,7 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
@@ -426,7 +315,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26"
         }
       ],
       "auditEvidence": [
@@ -451,87 +340,234 @@
           "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
         }
       ],
-            "nonOverlapEvidence": {
+      "nonOverlapEvidence": {
         "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T05/listener-ownership/acceptance-sub1/ACCEPTANCE.md",
         "sha256": "bdfa8fac06e14323f1776ec355f34603a3fd6a68a1280160c65db5b4f547d31e"
       },
       "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
     },
     {
-      "functionId": "dynamics.CMake.ird_add_gtest",
+      "functionId": "dynamics.module.header",
       "ownerUnit": "dynamics",
       "requirements": [
-        "NFR-COR-01"
+        "DYN-01"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "symbol": "ird_add_gtest",
-          "qualifiedSymbol": "ird_add_gtest",
-          "startLine": 482,
-          "endLine": 494,
-          "sha256": "a956da06c3077c742704a541522a62d0dc95e3ec3f4d3f9abcbed6dc18278aba"
+          "endLine": 113,
+          "symbol": "InverseDynamics.cpp",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "c117a3cab1993de120246200e5e0f7b7156e1c335a8c433690da5212ec9491f6",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::InverseDynamics.cpp"
         }
       ],
       "targets": [
-        "sdurws_ird_dynamics_test",
-        "sdurws_ird_dynamics_contract_test",
-        "sdurws_ird_dynamics_gui_test"
+        "sdurws_ird_dynamics"
       ],
-      "usageRole": "adapter",
+      "usageRole": "owner",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "TEST-HARNESS",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "rg -n \"main\\(|InitGoogleTest|AddGlobalTestEnvironment|RobWork::init|TestSuiteConfig|sdurw-gtest-main|ADD_RW_GTEST\" RobWork/RobWork/gtest/test-main.cpp RobWork/RobWork/gtest/TestEnvironment.cpp RobWork/RobWork/gtest/CMakeLists.txt",
-        "conclusion": "核上游测试main/环境/宏及产品真实消费；薄入口不等于平行测试内核，未完成迁移验收"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "20单元同形薄宏；上游宏非CONFIG导出，后续原样共享一个产品CMake include，不另建测试构建平台",
+      "differences": "文件头设计依据/上游复用边界/算法总览注释（WP-07 换核登记）：上游 RecursiveNewtonEuler 消费＋GAP-RNE-FRAME 薄适配边界＋T30 次要发现处置（setGravity 显式/setPayload 不消费/solveMotorTorques 不盲用）；零可执行语义",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch10-search.json",
-          "sha256": "e52a5307a187dbd671092b9816c492186ed2f4ebd136a7a3eda807f48bee8a58"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
-          "sha256": "6c993a7ff3da836ccd305377cb0a4978c0f0634406cd50b297e819084ae647c4"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-audit.md",
-          "sha256": "58f6764256c71d570e14737ae651f9d56811e9a900b6fc2aaf663058659c0f32"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/environment-artifacts.json",
-          "sha256": "e2e371ddde377bc189bc00a997c65f5ceca0d9c8f82eee331804f3bb9aae2f2a"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r10/ird-test-report.json",
-          "sha256": "5a7503c292bdf8156920c66d044e97379f7ee555f1f36ac4c533ee3320538295"
-        }
-      ],
-      "auditBoundary": "仅本测试入口/构建宏/监听器，test-only，不扩展产品权限；不以少量main代替完整单元"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
     },
     {
-      "functionId": "dynamics.PowerEnergy.PowerEnergyCalculator.compute",
+      "functionId": "dynamics.dto.types",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-01",
+        "DYN-02"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp",
-          "symbol": "PowerEnergyCalculator::compute",
-          "qualifiedSymbol": "sdurws::ird::dynamics::PowerEnergyCalculator::compute",
-          "startLine": 63,
-          "endLine": 186,
-          "sha256": "ee09039027629be8c659336797263084934ce15e523c1f3ef299673287ffc836"
+          "endLine": 153,
+          "symbol": "JointFriction",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "d84ef1e0724c825e1bc17b880f93ab4e58bf80f15f7aa29221700aef5e63008d",
+          "startLine": 114,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::JointFriction"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "摩擦三元组四态/关节行元数据/末端组成件值类型——产品业务数据模型，上游无对应物（BodyInfo 为关节帧物性承载，不承载摩擦四态与 Provenance 降级语义）；nonOverlap＝上游 rwsim::dynamics 无摩擦四态/估算标记等价类型（REUSE-T30 §4 摩擦承载边界在案）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.property.recheck",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-02",
+        "NFR-COR-03"
+      ],
+      "sources": [
+        {
+          "endLine": 218,
+          "symbol": "assertPropertiesFiniteAndSymmetric",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "61625f568dfe508165925e9e085b35982c608fec7bec3ae7822a8e6030386ecc",
+          "startLine": 154,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::assertPropertiesFiniteAndSymmetric"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "物性有限性＋对称性相对 1e-12 防御复检（F-645 真相对口径）：产品防御面，建模侧 MDL-06 SPD 断言前置——本域不重复 SPD 判定；上游无对应物",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.endComponent.extract",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-02",
+        "DYN-06"
+      ],
+      "sources": [
+        {
+          "endLine": 300,
+          "symbol": "extractEndComponent",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "778b9a8f93f9565471e72c247d55671c2986c27511e27d9287e60ff64f7506c5",
+          "startLine": 219,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::extractEndComponent"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "工具/负载物性四态解析＋保守估算（D-DYN-6：com 缺失→安装点、惯量缺失→点质量、GeometricEstimate 计数）：§5.4/§5.5 产品语义，上游 setPayload 单通道无四态/估算对应物；mass 必填 fail-fast（MDL-06 分域）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.rne.chain.types",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "endLine": 337,
+          "symbol": "RneConsumptionChain",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "c4f74df6676851603d5f1fdb892665714928bd1c75a78efc1825138e905d013b",
+          "startLine": 301,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::RneConsumptionChain"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "RNE 消费面集合（rne 载体句柄/solver/摩擦与变体保留面）：evaluate 内一次性计算载体的生命周期描述，零产品面名称/真值出口（CM-0 登记语义，REUSE-T52 契约 acceptance 1）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
+    },
+    {
+      "functionId": "dynamics.rne.device.build",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "endLine": 500,
+          "symbol": "buildRneConsumptionChain",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "8a19a3a2e64b0a97a5f7d890fa9d0798fffded4dfc32a54b9b153fc7b2a24790",
+          "startLine": 338,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::buildRneConsumptionChain"
         }
       ],
       "targets": [
@@ -539,574 +575,451 @@
       ],
       "usageRole": "adapter",
       "permissionRef": "ARCH:3.6",
-      "capabilityId": "MATH-TRAPEZOID",
-      "decision": "pending",
-      "status": "pending",
+      "capabilityId": "DYN-RNE",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
-        "command": "rg -n \"compute|RRT|QSampler|TrapMethod|Optimizer\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/PowerEnergy.cpp RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest",
-        "conclusion": "本批完整阅读列明定义并比对相邻上游；审计建议在differences/审计说明，生产迁移与权限尚未结项"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "时间序正负分项梯形可查TrapMethod(M=2)，但顺序/溢出、缺口/NaN/首峰与供给未解决；calcEnergy非序列积分，不能用无同名豁免",
+      "differences": "验证提取＋工厂调用（2026-10-26 所有者构造面上收裁决——模型构造权归 runtime）：本区段纯值验证/提取（链词表/轴单位/零位偏置防御复检、物性有限性＋对称性 F-645、摩擦四态 MDL-16/F-632、估算计数、工具面——DynamicsError 语义保持）；设备构造与 GAP-RNE-FRAME 关节帧换算归 runtime::buildRneConsumptionDevice（dynamics->runtime 登记边；R_align 知识回归模型 owner 本位）",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/PowerEnergy.hpp",
-          "sha256": "baaa75286ebf24c999e679e18c9370f5947bbc95adf3fac235dc1b28002e6606"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch11-search.json",
-          "sha256": "f35b0a27470da808359c4ad5d40be03d07c255d442d6099552d0441ab18dabfe"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/planning-computation-audit.md",
-          "sha256": "c0bb8fac0da0227c999b5d64bb2fe7301487df2ce3b0bdba7b07f157c45435e7"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/environment-artifacts.json",
-          "sha256": "711c12da438220d6cc504e4d6e160c8f4170b177b89fb61e504a52181dc0f67e"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/probe-r11/ird-test-report.json",
-          "sha256": "6658085611bb0024880c0863dbb0fe61ea96533fabddb55ebd6edf5ebbdc99d5"
-        }
-      ],
-      "auditBoundary": "仅列明功能，32位/全局随机、供给及生产接线待核；本批非全T01退出"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "production": {
+        "upstream": "RecursiveNewtonEuler",
+        "consumer": "buildRneConsumptionChain",
+        "target": "sdurws_ird_dynamics",
+        "entry": "buildRneConsumptionChain"
+      },
+      "evidence": {
+        "sha256": "1bee178e6fa6894bf724927a41c47ea2ed91ae183e415d9f14eb7477d1c0872f",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/production-dyn-rne-device-build.json"
+      }
     },
     {
-      "functionId": "dynamics.StatisticsTest.expectNearRel",
+      "functionId": "dynamics.flange.compose",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-02"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "expectNearRel",
-          "qualifiedSymbol": "(global anonymous namespace)::expectNearRel",
-          "startLine": 103,
-          "endLine": 108,
-          "sha256": "fc5d00fd505bcb1d705377e65657812bfcc6440d1a4f94751dde59cfb6923b42"
+          "endLine": 583,
+          "symbol": "composeFlangeVariant",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "67fbf19524d25036a8f47663fc01a4d5f97392f650a62cc5fd59c51dcbd41316",
+          "startLine": 501,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::composeFlangeVariant"
         }
       ],
       "targets": [
-        "sdurws_ird_dynamics_test"
+        "sdurws_ird_dynamics"
       ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "max(1e-15,1e-12*abs(expected))测试容差，非core C4的absolute+relative；保留独立测试口径，不能机械替换",
+      "differences": "工具＋挂载负载平行轴合成进法兰体（§5.4 变体语义）＋薄适配回写（R_alignᵀ·com、R_alignᵀ·I·R_align 相似变换写回末连杆 BodyInfo）：上游 setPayload 通道因 getJointForces 工具条目 payload 力矩臂符号与手算物理相反（T30 次要发现②，本批代数复核在案）不消费——合成体并入法兰 BodyInfo 为产品语义等价承载",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
     },
     {
-      "functionId": "dynamics.StatisticsTest.rowAt",
+      "functionId": "dynamics.friction.term",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-02"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "rowAt",
-          "qualifiedSymbol": "(global anonymous namespace)::rowAt",
-          "startLine": 113,
-          "endLine": 139,
-          "sha256": "b3800c72aa96663e738d373ba193b038246138f097421a77e4170759d5da8e1f"
+          "endLine": 620,
+          "symbol": "frictionTerm",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "8a072035b6cd5ab8a23475bde7d615d405083749be02183cea399a39ecf765f2",
+          "startLine": 584,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::frictionTerm"
         }
       ],
       "targets": [
-        "sdurws_ird_dynamics_test"
+        "sdurws_ird_dynamics"
       ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "统计DTO输入：五分项零但tauTotal由调用方给，注释恒等式不准确；统计器不查分项，不能冒充RNEA物理自洽输出",
+      "differences": "τ_fric=fv·q̇+fc·sgn₀(q̇)+bias（§5.5 sgn₀(0)=0）：产品摩擦模型——上游 RNE 无逐关节摩擦一职（REUSE-T30 §4 边界），叠加在产品层、不入上游",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
     },
     {
-      "functionId": "dynamics.StatisticsTest.makeIdentity",
+      "functionId": "dynamics.solve.channel",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-01"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "makeIdentity",
-          "qualifiedSymbol": "(global anonymous namespace)::makeIdentity",
-          "startLine": 143,
-          "endLine": 159,
-          "sha256": "3977a4423f4565b3babc7cc84a7a17079e736079adc9115a12c004f6638e7e63"
+          "endLine": 647,
+          "symbol": "solveChannel",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "ec2736b9d5f927e0dba25b405c095446b40b6ab63665471932aa41133dde4e6d",
+          "startLine": 621,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::solveChannel"
         }
       ],
       "targets": [
-        "sdurws_ird_dynamics_test"
+        "sdurws_ird_dynamics"
       ],
       "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "DYN-RNE",
+      "decision": "adapter",
+      "status": "migrated",
       "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "复用TwoLinkFixture digestOf/idFrom；dynConfigDigest为测试字符串，不声称真实配置摘要",
+      "differences": "单通道求解：setGravity 显式传递（T30 次要发现①）→上游 solve（DOF+1 Wrench，base 系）→按关节类型投影（转动 dot(torque,z)／移动 dot(force,z)——solveMotorTorques 对移动关节也投影 torque 且末元素复用陈旧 z（上游缺陷），不盲用自行投影，migration §13.3 WP-07 行）；z_i=frameTframe(base,joint_i).R() 第 2 列；第 DOF+1 项按 R1 恒零不读",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "production": {
+        "upstream": "solve",
+        "consumer": "solveChannel",
+        "target": "sdurws_ird_dynamics",
+        "entry": "solveChannel"
+      },
+      "evidence": {
+        "sha256": "80fd0d343efec6d2751461c257518e0757cadb56a86138e5398438f822ff5585",
+        "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/production-dyn-rne-solve-channel.json"
+      }
     },
     {
-      "functionId": "dynamics.StatisticsTest.prismAxialForce",
+      "functionId": "dynamics.evaluate.entry",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-01",
+        "DYN-02"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "prismAxialForce",
-          "qualifiedSymbol": "(global anonymous namespace)::prismAxialForce",
-          "startLine": 192,
-          "endLine": 192,
-          "sha256": "6c362b2210f99d32ce01d2f57debd13235c1c6d361d71d8d2984693a78da0097"
+          "endLine": 1064,
+          "symbol": "InverseDynamicsEvaluator::evaluate",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+          "sha256": "952df63ec604f04dc57c565edbd4aada1edd2f3863938edb5d3e104659442807",
+          "startLine": 648,
+          "qualifiedSymbol": "sdurws::ird::dynamics::(anonymous namespace)::InverseDynamicsEvaluator::evaluate"
         }
       ],
       "targets": [
-        "sdurws_ird_dynamics_test"
+        "sdurws_ird_dynamics"
       ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
       "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "测试独立解析(m1+m2)g，单位N，移动静止/回转水平限定；不替代上游生产RNE",
+      "differences": "评估主入口编排：前置校验/维度时间轴/负载池/诊断素材/事件时间线/变体重合成/逐样本四通道（共享 State 位形）→摩擦叠加/功率能量/样本行组装/有效性摘要——§5.2 分项图产品语义，上游无编排对应物；接口面（请求/结局 DTO）零变化（kInverseDynContractVersion=1）",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "aec4cb276310792b2ab529c65c681da07eb90b7a0753701f38f3a1e3af874b0f",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      }
     },
     {
-      "functionId": "dynamics.StatisticsTest.revTorque",
+      "functionId": "dynamics.idyn.header.contract",
       "ownerUnit": "dynamics",
       "requirements": [
-        "DYN-03"
+        "DYN-01"
       ],
       "sources": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "revTorque",
-          "qualifiedSymbol": "(global anonymous namespace)::revTorque",
-          "startLine": 194,
-          "endLine": 197,
-          "sha256": "0b6fbec3da6fd95594e146da2844d1a1c1ffdc6bdeace83b26a78847e13c2802"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-      },
-      "differences": "测试独立解析(Iself+m*r²)*alpha，单位N·m，轴平行重力；不覆盖任意刚体动力学",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
-    },
-    {
-      "functionId": "dynamics.StatisticsTest.makePrismRevModel",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "makePrismRevModel",
-          "qualifiedSymbol": "(global anonymous namespace)::makePrismRevModel",
-          "startLine": 201,
-          "endLine": 293,
-          "sha256": "7c2f873a8e9f0a679b292effbc6476ec54af86bdb658c9e64e8ebcad9da95e6b"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-      },
-      "differences": "真实CanonicalModelBuilder直构两关节/三连杆与值类型惯量，仅测试供数；不创建上游WorkCell或授业务模型构造权",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/TwoLinkFixture.hpp",
-          "sha256": "fd876e3fee5ca2e51351f986c6d3cfb5266172c0e6ebdc011aa57588616760f2"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
-    },
-    {
-      "functionId": "dynamics.StatisticsTest.cancellationRequested",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "cancellationRequested",
-          "qualifiedSymbol": "(global anonymous namespace)::FakeContext::cancellationRequested",
-          "startLine": 85,
-          "endLine": 85,
-          "sha256": "f4b9c4f82420e27285d19eb20fc072205551feb730af036bf53e9194a9c0b9f1"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-      },
-      "differences": "只返可控bool，不含调度器",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
-          "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
-    },
-    {
-      "functionId": "dynamics.StatisticsTest.reportProgress",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "reportProgress",
-          "qualifiedSymbol": "(global anonymous namespace)::FakeContext::reportProgress",
-          "startLine": 86,
-          "endLine": 86,
-          "sha256": "46436c2625dfb6c1b5304831abd70ffc2db055018ba6d2c71f06c44b2a4149c9"
-        }
-      ],
-      "targets": [
-        "sdurws_ird_dynamics_test"
-      ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
-      "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
-      },
-      "differences": "no-op，仅此测试宿主，不证明进度集成",
-      "inputs": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
-          "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
-        }
-      ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
-    },
-    {
-      "functionId": "dynamics.StatisticsTest.tryObjectBytes",
-      "ownerUnit": "dynamics",
-      "requirements": [
-        "DYN-03"
-      ],
-      "sources": [
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "symbol": "tryObjectBytes",
-          "qualifiedSymbol": "(global anonymous namespace)::FakeContext::tryObjectBytes",
-          "startLine": 87,
           "endLine": 91,
-          "sha256": "cb679788050fa489b8bf24514f93a6ed86d786c9f490eafe0f4c777f01ba3a87"
+          "symbol": "kRneaAlgorithmVersion",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+          "sha256": "bd0821a21ba60f6756b7b5d039a9c91a7dde69b0253187a2e937980aca7e15e0",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::kRneaAlgorithmVersion"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "契约头设计依据/上游复用边界注释＋kInverseDynContractVersion=1（接口面零变化）＋kRneaAlgorithmVersion 1→2（CON-04：换核＝数值实现源变更，旧结果不与新结果混比）",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "12e2964ecb801b8a7730276dd35d8c80d81b0d08930db83253f382e87de04a59",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp"
+      }
+    },
+    {
+      "functionId": "dynamics.idyn.request.dto",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-02"
+      ],
+      "sources": [
+        {
+          "endLine": 182,
+          "symbol": "InverseDynRequest",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+          "sha256": "82b31276f0f14322456377834bb104dd8cbffe8c09194131fb2af9890fbd8112",
+          "startLine": 92,
+          "qualifiedSymbol": "sdurws::ird::dynamics::InverseDynRequest"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "请求 DTO（样本激励/负载池/事件时间线/模型只读引用/基座系重力）：§4.3/§5.3 契约面，零字段变化；上游无对应物",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "12e2964ecb801b8a7730276dd35d8c80d81b0d08930db83253f382e87de04a59",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp"
+      }
+    },
+    {
+      "functionId": "dynamics.idyn.outcome.dto",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "endLine": 207,
+          "symbol": "InverseDynOutcome",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+          "sha256": "1b9d9de64ab70684396d9b56221958cfa04bef24ba08b44b53f3da7a0f6e46c4",
+          "startLine": 183,
+          "qualifiedSymbol": "sdurws::ird::dynamics::InverseDynOutcome"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "结局 DTO（样本行/有效性/诊断/取消位）：§4.4 契约面，零字段变化；上游无对应物",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "12e2964ecb801b8a7730276dd35d8c80d81b0d08930db83253f382e87de04a59",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp"
+      }
+    },
+    {
+      "functionId": "dynamics.idyn.evaluator.class",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "endLine": 273,
+          "symbol": "InverseDynamicsEvaluator",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+          "sha256": "b10c0824475eb7867d6362e4738342d961c58acd252e33c727c0e881dc423d41",
+          "startLine": 208,
+          "qualifiedSymbol": "sdurws::ird::dynamics::InverseDynamicsEvaluator"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "NONE",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "评估器类注释（职责执行序/分项口径）：WP-07 换核后步骤 2/3 注释同步（RNE 消费面构建/四通道经上游 solve）；接口零变化",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "12e2964ecb801b8a7730276dd35d8c80d81b0d08930db83253f382e87de04a59",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp"
+      }
+    },
+    {
+      "functionId": "dynamics.cmake.targets",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01"
+      ],
+      "sources": [
+        {
+          "endLine": 789,
+          "symbol": "sdurwsim",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::sdurwsim"
+        }
+      ],
+      "targets": [
+        "sdurws_ird_dynamics",
+        "sdurws_ird_dynamics_test"
+      ],
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
+      "search": {
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
+      },
+      "differences": "dynamics 构建脚本：集成分支零改动（sdurw_math/kinematics/models/sdurwsim＋Eigen3 PRIVATE 既有登记）；冒烟分支 WP-07 起补框架供给（REUSE-T51 同款 find_package(RobWork)＋同名 ALIAS；sdurwsim 直含 targets/sdurwsim.cmake 导入目标——RobWorkSimConfig 对非安装树无条件 REQUIRED RobWorkStudio 且其 sdurws 验证链冒烟解析不了，探针在案；sdurwsim 非集成判定符全库零命中，不触 sdurw_kinematics 禁令）；门禁词表零改动",
+      "inputs": [
+        {
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+        }
+      ],
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
+      }
+    },
+    {
+      "functionId": "dynamics.rnea.test.suite",
+      "ownerUnit": "dynamics",
+      "requirements": [
+        "DYN-01",
+        "DYN-02"
+      ],
+      "sources": [
+        {
+          "endLine": 1289,
+          "symbol": "DynRnea",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+          "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04",
+          "startLine": 1,
+          "qualifiedSymbol": "sdurws::ird::dynamics::DynRnea"
         }
       ],
       "targets": [
         "sdurws_ird_dynamics_test"
       ],
-      "usageRole": "adapter",
-      "permissionRef": "ARCH:3.6.1",
-      "capabilityId": "NONE",
-      "decision": "pending",
-      "status": "pending",
+      "usageRole": "owner",
+      "permissionRef": "ARCH:3.6",
+      "capabilityId": "TEST-HARNESS",
+      "decision": "business-specific",
+      "status": "migrated",
       "search": {
-        "command": "见batch16-search.json的实际检索、generator-replay.json运行和本批语义审读",
-        "conclusion": "测试供数/独立oracle与生产复用区分；具体上游限制及现有成熟工具见differences，未以零命中批准新核心"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench/setGravity 显式传递/getJointForces payload 差异登记）在案；本区段语义与职责见 differences",
+        "command": "rg -n \"RecursiveNewtonEuler|solve|setGravity|setPayload|SerialDevice|RigidDevice\" RobWork/RobWorkSim/src/rwsim/util RobWork/RobWorkSim/src/rwsim/dynamics RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp"
       },
-      "differences": "固定nullopt，无真实资源加载",
+      "differences": "测试面：既有 116 项 oracle 断言零放松全绿（y 轴静态/F580 移动关节滑移臂/倒挂反号/偏置权威角/工具负载合成/四通道恒等/黄金拉格朗日数据集）；REUSE-T52 增测——任意构型平衡叉积＋准静态能量平衡（独立物理 oracle 禁自比）＋上游直接对照（同模型同 State 内联同构设备直连 solve 逐位一致）＋断开实验负例承载（工厂薄适配换算去除→y 轴静态与弯曲平衡真实失败）",
       "inputs": [
         {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
-          "sha256": "d0138efbafde59c0d06d927abc4b8e20cd644036e0523cce4ba96207723a7462"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
-          "sha256": "0b3340cc531a35e6b536413da004556363fdc36ee6bdacfb64b2a5c85708a2c9"
-        },
-        {
-          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/StatisticsTest.cpp",
-          "sha256": "3cb8b156fde832f3ef719e4d2aa47c5ab7754d6eb9d8995eecd43e3cb413526d"
+          "sha256": "4700c32bb7092755c72b3f64aef34cd4fafc3349250b1327aa999ee409ea5d26",
+          "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt"
         }
       ],
-      "auditEvidence": [
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/batch16-search.json",
-          "sha256": "b09c517128274a66989e2b1b5e027c7d7fd78456f954be9b6b5ea9a40dd4cb15"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/generator-replay.json",
-          "sha256": "38528012b07d65c6749a50d95dd26136d20327530412bb0ef76196959032b157"
-        },
-        {
-          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-helpers-golden-audit.md",
-          "sha256": "6514e48c5c8910485680432e6c9db485dcb0cfc1d321665032ddbef8a3387dd0"
-        }
-      ],
-      "auditBoundary": "只限登记定义/三份测试helper和两个生成器函数及URDF顶层fixture；其余生成器仅执行与JSON对照，尚未语义审计，不授grant/T02"
+      "auditBoundary": "仅本功能源区段；不声称其余文件/单元已审计",
+      "nonOverlapEvidence": {
+        "sha256": "39b298bba8bd1e55a8d91af869f332cfcfdba326a61423a724fd992d2ba6af04",
+        "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp"
+      }
     }
   ]
 }

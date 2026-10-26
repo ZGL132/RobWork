@@ -250,6 +250,7 @@ workflow 是业务层之上的**编排单元**：消费平台事件（修订产�
 | runtime 受控视图/借持 | 计算库通过 runtime 公共契约取得模型/名称视图；业务适配器可持任务私有 State、IKSolver、仿真会话 | 不构造第二条权威模型链、不改已发布 WC/DWC 拓扑/物性、不让借持句柄逃逸生命周期；会话写入与权威结构写入分开审查 |
 | 宿主呈现例外 | 仅 §3.6.2 登记的 ui/plugin 文件可接宿主图形/呈现对象 | 仅呈现 State、挂接和绘制；不是领域计算真值、结果身份或新的模型构造规则 |
 | runtime owner | 编译/物化 WC、DWC、Device/Frame、名称映射及发布；各进程实例复用同一构造规则 | 不是全局共享可变 State；policy 仍拥有碰撞语义，execution 仍拥有调度与结果接纳 |
+| runtime 构造面工厂（RNE 载体，2026-10-26 登记） | `runtime::buildRneConsumptionDevice(CanonicalModel)`（runtime 单元公共工厂）为业务单元产出**一次性计算载体**（StateStructure/SerialDevice/RigidDevice/State），所有权随返回值移交、随调用栈消亡、零产品面名称/真值出口；消费者＝dynamics（WP-07 已落位）/FD（WP-09 预留），经 dynamics→runtime 登记边 | 业务单元产品代码仍零模型构造（construct-model/mutate-model 授权面不变——载体构造权归 runtime owner）；载体帧树为私有命名空间（ird-rne/*）不入产品名称权威；GAP-RNE-FRAME 关节帧换算在该工厂单点（§8.2 canonical 逐字断言/S7 产品映射/modeling 导出零触碰） |
 
 头分类含 `rw/math` 值、`rw/models`、`rw/kinematics` 模型/State、invkin/trajectory/pathplanning/proximity、`rwsim`、loaders、graphics/rwlibs/rws；**按具体类型/操作授权，不按整个前缀一刀切**。Device::setQ 对任务私有 State 的更新不同于改模型结构。直接 rw/rwsim 算法可在权限允许的私有业务适配器中调用，无需把全部算法迁入 runtime。
 

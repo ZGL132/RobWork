@@ -196,11 +196,11 @@ target_link_libraries(sdurws_ird_dynamics PUBLIC
 # L1 基线表明文登记 dynamics（WP-17-T02）为 sdurwsim 消费方（DynamicWorkCell/
 # 刚体动力学——T03 RNEA 输入参数面，本任务仅链接不消费：P-RPT-9 先例）。
 # Eigen3（卡 §3.2 L1 基线"参照 kinematics O-40 先例 PRIVATE 链"）＝RNEA
-# 矩阵运算预备面：T02 源码零 Eigen 消费，随 T03 逐码路径启用——PRIVATE
-# 仅本计算库实现消费（公共头契约面零 Eigen 类型，不向下游传播）。
-# 冒烟模式：T02 源码集（DiagCodes.cpp）零 rw/rwsim/Eigen 消费，零框架
-# 链接（L1 清单空）——T03 引入 rw 头消费时照 runtime RT-T03 先例补冒烟
-# 侧 rw 源码树头路径。
+# 矩阵运算预备面：T02 源码零 Eigen 消费，WP-07 迁移后亦未启用（上游 RNE
+# 经 rw::math 完成全部运算）——PRIVATE 链保留登记形态，不向下游传播。
+# 冒烟模式：WP-07（REUSE-T52）起 src/InverseDynamics.cpp 消费上游
+# rwsim::util::RecursiveNewtonEuler（sdurwsim 外联符号）——框架链接成为
+# 本库冒烟硬依赖，按 REUSE-T51 同款同名 ALIAS 形态供给（见下方 else 分支）。
 if(TARGET sdurw_kinematics)
     target_link_libraries(sdurws_ird_dynamics PUBLIC
         sdurw_math
@@ -209,6 +209,60 @@ if(TARGET sdurw_kinematics)
         sdurwsim)
     find_package(Eigen3 CONFIG REQUIRED)
     target_link_libraries(sdurws_ird_dynamics PRIVATE Eigen3::Eigen)
+else()
+    # 冒烟分支（WP-07/REUSE-T52）：导出包加载守卫沿用 modeling 先例
+    # （add_subdirectory 序先于本单元——供给前置绑定 core/CMakeLists.txt
+    # 尾段〔Threads/synchronization＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME 配置
+    # 参数〕，REUSE-T19/GOV-T24 在案；kinematics REUSE-T51 同款单元配置序
+    # 兼容）。导出目标仅加同名别名，保持两模式可静态核查的链接面，不包装
+    # 构建基础；RW:: 前缀不匹配门禁 ^sdurw 已知族词表，故链接语句一律写
+    # 同名目标（门禁代码/词表零改动）。sdurw_kinematics 不单列——
+    # ★ 禁止建立名为 sdurw_kinematics 的冒烟别名（本文件即以
+    #   "TARGET sdurw_kinematics"作集成模式判定，该目标名必须只在集成配置
+    #   树存在），其符号经 sdurwsim 导入目标的 INTERFACE_LINK_LIBRARIES
+    #   （RW::sdurw_models→RW::sdurw_kinematics 全链）传递可达。
+    # sdurwsim 非集成模式判定符（全库 "TARGET sdurwsim" 实核零命中），
+    # 不触判定符禁令；RobWorkSim 导入目标命名空间为 RWSIM::sdurwsim
+    # （targets/sdurwsim.cmake 实测）。独立冒烟配置参数：RobWork_DIR 指向
+    # 框架源码树 cmake 目录＋VCPKG_OVERRIDE_FIND_PACKAGE_NAME=
+    # vcpkg_find_package（REUSE-T52 契约 verify 登记完整命令与日志证据）。
+    if(NOT TARGET sdurw_math AND NOT TARGET RW::sdurw_math)
+        find_package(RobWork CONFIG REQUIRED)
+    endif()
+    if(NOT TARGET sdurw_math)
+        add_library(sdurw_math ALIAS RW::sdurw_math)
+    endif()
+    if(NOT TARGET sdurw_models)
+        add_library(sdurw_models ALIAS RW::sdurw_models)
+    endif()
+    # sdurwsim（WP-07/REUSE-T52——src/InverseDynamics.cpp 消费上游
+    # rwsim::util::RecursiveNewtonEuler）：直含框架构建期写回源树的导出
+    # 目标文件（targets/sdurwsim.cmake——RWSIM::sdurwsim IMPORTED，绝对
+    # 位置指向集成构建树，与 find_package(RobWork) 同一"本机构建树在位"
+    # 前提；.placeholder 占位为 git 跟踪锚）。不走 find_package(RobWorkSim)
+    # ——其 RobWorkSimConfig.cmake:105-116 对非安装树无条件 REQUIRED
+    # RobWorkStudio，而 RobWorkStudio 的 sdurws 元库验证链在冒烟配置解析
+    # 不了（"Looking for sdurws - not found"，REUSE-T52 冒烟探针在案）。
+    # 前置＝find_package(RobWork) 已建全量 RW::* 目标（sdurwsim 的
+    # INTERFACE_LINK_LIBRARIES 引用链在此解析）；守卫与 fail-fast 同
+    # runtime IRL_RW_SRC_DIR 先例。sdurwsim 非集成模式判定符（全库
+    # "TARGET sdurwsim" 实核零命中），不触 sdurw_kinematics 判定符禁令。
+    set(IRL_RWSIM_TARGETS_FILE
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../../RobWork/RobWorkSim/cmake/targets/sdurwsim.cmake")
+    if(NOT TARGET sdurwsim)
+        if(NOT EXISTS "${IRL_RWSIM_TARGETS_FILE}")
+            message(FATAL_ERROR
+                "dynamics 冒烟模式：未找到 sdurwsim 导出目标文件（期望 "
+                "${IRL_RWSIM_TARGETS_FILE}）——WP-07 起上游 RNE 消费需集成"
+                "构建树的 RobWorkSim 导出件，请先在集成树构建 RobWorkSim")
+        endif()
+        include("${IRL_RWSIM_TARGETS_FILE}")
+        add_library(sdurwsim ALIAS RWSIM::sdurwsim)
+    endif()
+    target_link_libraries(sdurws_ird_dynamics PUBLIC
+        sdurw_math
+        sdurw_models
+        sdurwsim)
 endif()
 
 # 别名（集成模式）：供其余单元以 RWS::ird::dynamics 消费；冒烟模式无

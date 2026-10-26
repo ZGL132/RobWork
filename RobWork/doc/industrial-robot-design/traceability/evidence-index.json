@@ -1,7 +1,7 @@
 {
   "schemaVersion": "ird-evidence-index/1",
   "contentBasis": "text-crlf-to-lf-v1",
-  "generatedAt": "2026-10-26T16:14:19+08:00",
+  "generatedAt": "2026-10-26T22:50:40+08:00",
   "generatedBy": "index-evidence.ps1（治理 Task 7）",
   "lifecycleRules": {
     "current": "被 open finding 引用或 pipeline 机器维护载体（state.json/b1 manifest）",
@@ -10,34 +10,34 @@
     "unverified": "无法自动判定当前性（默认；含未关联任务与任务未完成的证据）"
   },
   "summary": {
-    "totalFiles": 25294,
-    "totalBytes": 962168721,
+    "totalFiles": 25459,
+    "totalBytes": 964867898,
     "byKind": {
-      "acceptance-record": 4174,
-      "benchmark": 8,
-      "manual-acceptance": 1,
-      "log": 3219,
-      "markdown-doc": 156,
-      "script": 92,
-      "pipeline-artifact": 2,
-      "json-data": 1074,
+      "acceptance-record": 4268,
       "gtest-report": 335,
-      "governance-record": 40,
-      "other": 270,
+      "benchmark": 8,
+      "json-data": 1089,
+      "manual-acceptance": 1,
+      "other": 271,
       "build-log": 15580,
-      "xml-report": 343
+      "xml-report": 359,
+      "governance-record": 40,
+      "script": 105,
+      "pipeline-artifact": 2,
+      "markdown-doc": 160,
+      "log": 3241
     },
     "byLifecycle": {
-      "unverified": 16557,
-      "current": 29,
       "superseded": 0,
-      "historical": 8708
+      "historical": 8801,
+      "unverified": 16629,
+      "current": 29
     },
-    "associated": 9124,
+    "associated": 9289,
     "unassociated": 16170,
-    "shaComputed": 25264,
+    "shaComputed": 25429,
     "shaSkippedLarge": 30,
-    "duplicateGroupsTotal": 1668,
+    "duplicateGroupsTotal": 1671,
     "duplicateGroupsListed": 100
   },
   "duplicateGroups": [
@@ -7002,6 +7002,1021 @@
       ],
       "bytes": 2757,
       "sha256": "d2060df7e09f662316c40fd4f957262cf4f3b6deb8963dec2d7ab63f95046195",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 15073,
+      "sha256": "3402b82948d769063f03d524b958236510152a864d21fc3a4441a1407037bc04",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-contract-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 47279,
+      "sha256": "f9d474beffc1c91fa7d716223a40dbb3a68d81271e37dc71248c50a27dfc6c4f",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-contract.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 10396,
+      "sha256": "1bf7879df668394a55418b7075e027942832b683c59244805e15a88edfd17325",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-contract.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 21163,
+      "sha256": "239c2c391ef4369aa6976babab8c2baf478439fe56a7fde9bdbaa750cf41b0b0",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-full-suite-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 245700,
+      "sha256": "bae0e6cefce051e4c9780cd51c497285e00d3fb6b644c90d64dfa4f764fd26e5",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-full-suite.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 48833,
+      "sha256": "63fcaad55f844dcbc7eeca6fd3c7db674e329fd83f442ebd9032438766ad4c89",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-full-suite.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 98270,
+      "sha256": "54484ae58232f4087c622675be424b1cd77a54319cce124b3e2873d4d6b9ef46",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-ui-consumer-report.json",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 24312,
+      "sha256": "ee85973c99980cb39c9a397dd5d30e97fbc841c062f352b1f25ac44a84f2a39c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-ui-consumer.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 17749,
+      "sha256": "d217aa5d825e2c87546326810e000359a3cfdfebe1e3404e44f97981549af615",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/acc-ui-consumer.xml",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 35948,
+      "sha256": "4fe2ea04cfa3e8523846bf53a6566f4b0f0e319835b92674220de72d9702af19",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/build.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 19690,
+      "sha256": "6dc5ace5c4d0b81078d6715771a4e3910f50630b38c21f781d9700b7e725bdef",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/commit-lint.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 69,
+      "sha256": "d0925ae2ebfb85d5020e2d6affe2d673e44e626080f840ad883181cd9119b714",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/ird-gates.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1438,
+      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-GOV-T27.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1906,
+      "sha256": "1525a5827a58f976e03375f59549917ea9c0a40a9b14ef22cd8e8137ebbff343",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T01.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T01"
+      ],
+      "bytes": 1906,
+      "sha256": "379db492c1f61866b17ccf4fd8c7c4bbe941f715d42644e2518468e3588a34e8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T02.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T02"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T03.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T03"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T04.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T04"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T05.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T05"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T06.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T06"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T07.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T07"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T08.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T08"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T09.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T09"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T10.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T10"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T11.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T11"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T12.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T12"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T13.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T13"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T14.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T14"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T15.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T15"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/DOC-T16.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "DOC-T16"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/FOUNDATION-CR-01.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/foundation-tasks.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 191,
+      "sha256": "3789785d8be57d8e69cf61df247f5246f4481edef3892e65d9b3a850135e199d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T21.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T21"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T22.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T22"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T23.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T23"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T24.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T24"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T25.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T25"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T26.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "GOV-T26"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/GOV-T27.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T01.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T01"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T02.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T02"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T03.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T03"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T04.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T04"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T05.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T05"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T06.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T06"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T07.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T07"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T08.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T08"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T09.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T09"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T10.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T10"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T11.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T11"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T12.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T12"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T13.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T13"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T15.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T15"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T16.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T16"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T17.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T17"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T18.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T18"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T19.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T19"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T20.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T20"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T21.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T21"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T22.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T22"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T23.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T23"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T24.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T24"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T25.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T25"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T26.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T26"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T27.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T28.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T28"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T29.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T29"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T30.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T30"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T31.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T31"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T32.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T32"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T33.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T33"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T34.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T34"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T36.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T36"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T37.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T37"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T38.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T38"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T39.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T39"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T40.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T40"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T41.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T41"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T42.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T42"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T43.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T43"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T44.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T44"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T45.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T45"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T46.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T46"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T47.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T47"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T48.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T48"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T49.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T49"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T50.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T50"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/REUSE-T51.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27",
+        "REUSE-T51"
+      ],
+      "bytes": 1931,
+      "sha256": "abf0a2685637a94ab3a65f58198fd03da4f08eedf195a8b6b2cc4fc9ad9b1515",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/WP-00-T01.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-00-T01",
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/WP-00-T02.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-00-T02",
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/WP-01-T01.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-01-T01",
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-per-contract/WP-01-T02.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "WP-01-T02",
+        "GOV-T27"
+      ],
+      "bytes": 1931,
+      "sha256": "d2c0dd55f157b42e021937abd1ebae39259990ba56a317962d658071d357416e",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/validate-docs-summary.txt",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1303,
+      "sha256": "72b9b3b6aed1c124023e915fc4b7a254dc5cc78e00732b58511a23e686bd61a4",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "acceptance/GOV-T27-20261026-r1/verify-task-scope.log",
+      "kind": "acceptance-record",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 167,
+      "sha256": "5f06e9088ed7c9a819dc413028ad8903fcd8218e22933c5ce1dc410c19d55e88",
       "lifecycle": "historical"
     },
     {
@@ -171604,6 +172619,136 @@
       "lifecycle": "unverified"
     },
     {
+      "path": "reuse/GOV-T27/contract-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 47279,
+      "sha256": "c95d0569ada73f5560b1d523b6db46d58ca763d2d5d7ce8dd959f6287a32bd48",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/contract.log",
+      "kind": "log",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 10396,
+      "sha256": "be57c5ac0acce14386a7ed75d124d2afc00478c789a1f561e7ccd03941fd3a68",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/contract.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 21164,
+      "sha256": "682bd15c78c78e4215a5456f7a23e51d2b8567ebb1f997fb9a4fe9fb77f5dde3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/full-suite-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 245699,
+      "sha256": "c4aaeafabbe91bf4bcabd8cc919b8252e06421bc26a1ce52e00939fb871eeae8",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/full-suite.log",
+      "kind": "log",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 48836,
+      "sha256": "07e526c0b4bed9de177ee5cf457577f497b1da11f54c097b184971ee39cdebbf",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/full-suite.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 98313,
+      "sha256": "ef3cc7c0f9eedada5958987299203c2fe8951c0d9eae084cc0def78eeb9b0f9d",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/README.md",
+      "kind": "markdown-doc",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 18038,
+      "sha256": "789b9d981056896f271ac3bf57238518e26131bc31484301d6666b95fd0db1a6",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/run-consumer.ps1",
+      "kind": "script",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1171,
+      "sha256": "731f3773112e46e48b2cfe16e15f3f2ee3cb07c9c1f631bd3b6c00b1d49942b3",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/run-contract.ps1",
+      "kind": "script",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1153,
+      "sha256": "06696eb090b6ac145a84143aa3b40af69f2bce43b6192d081b3f2b1f56e0b1f0",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/run-tests.ps1",
+      "kind": "script",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 1145,
+      "sha256": "806cc1922909622ec32ddf0c392d24c25910e3f90f720a573d19866a9975f550",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/ui-consumer-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 24315,
+      "sha256": "816ae314189b3650e9f501aab9d1caa4ea5b88a9364ad9252bd4ea13eac4e8d2",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/ui-consumer.log",
+      "kind": "log",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 17752,
+      "sha256": "50dd412925bf6a66540fe71199d2f0818aae4b7074f68dde64abd5d17245e80b",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/GOV-T27/ui-consumer.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "GOV-T27"
+      ],
+      "bytes": 35958,
+      "sha256": "9f5a063cf102041a3f3bb6ded25d901361b8629912ccc1afb767e2d4a746d15d",
+      "lifecycle": "historical"
+    },
+    {
       "path": "reuse/REUSE-GEN/gen-contracts-b5-9.js",
       "kind": "other",
       "taskIds": [],
@@ -202257,7 +203402,7 @@
         "REUSE-T01"
       ],
       "bytes": 2737,
-      "sha256": "405d6727a8bf403e84f2f5ff6ae328d9e81536e90f8a93fa0079fd3195ce051d",
+      "sha256": "f7fcc54006d8906376a90f2eab737a1e602f20a2f00bdbee0f87bcd11eca93f5",
       "lifecycle": "historical"
     },
     {
@@ -202327,7 +203472,7 @@
         "REUSE-T01"
       ],
       "bytes": 49940,
-      "sha256": "cd1f0b4675869fd22f22aa648a411607caea999d9678097f361d6c11c7f7cfc8",
+      "sha256": "52e6784a0729ec876f02d14900ebe7c3a935733fcfa2abdb509b2678be50cf32",
       "lifecycle": "historical"
     },
     {
@@ -211417,7 +212562,7 @@
         "REUSE-T13"
       ],
       "bytes": 7711,
-      "sha256": "829b6c98a67efd25ab1037ea81d906ccb19bff26578b6aaacbd920f018dd1b5b",
+      "sha256": "24f52b7f2a634d92a3f0e04fb4dcb48f889183825442290d7c8ea1283da84c8d",
       "lifecycle": "historical"
     },
     {
@@ -211427,7 +212572,7 @@
         "REUSE-T13"
       ],
       "bytes": 7753,
-      "sha256": "c36b9818860fd419274ade5aa6054626e410c396166e25a6ec77ef381be7eaa9",
+      "sha256": "cd44fa0548f01579850d9cb1d5e031a533d230bfeb59e6a11dc1ad69654865e5",
       "lifecycle": "historical"
     },
     {
@@ -211437,7 +212582,7 @@
         "REUSE-T13"
       ],
       "bytes": 6921,
-      "sha256": "92461ae22b2f3597cb1e440e2675b46b6693ac0c2e7a1da69f4a731283a10d7d",
+      "sha256": "f152f8b6284e08a52fd5381f342a814641bf4eae672e1c0b9925c79ee4b64deb",
       "lifecycle": "historical"
     },
     {
@@ -211447,7 +212592,7 @@
         "REUSE-T13"
       ],
       "bytes": 8367,
-      "sha256": "3a80d1052afa9ab1587012217ed926b1d295898318d85c8a4bd4bf84ebf3c9e3",
+      "sha256": "290486808778451f9367bba94fdec4feb3220563afd214205ac7edbe360ed7a3",
       "lifecycle": "historical"
     },
     {
@@ -211457,7 +212602,7 @@
         "REUSE-T13"
       ],
       "bytes": 7747,
-      "sha256": "06585635cb20fd560b342e8addfbb4fcdab525737ab65bf38517a5264d22ebe3",
+      "sha256": "07b18a30c88e99bf2dc24fde4efa85c87e62038f071adb2b4567781d269ddcf2",
       "lifecycle": "historical"
     },
     {
@@ -211467,7 +212612,7 @@
         "REUSE-T13"
       ],
       "bytes": 6913,
-      "sha256": "00cedfe9d81d4c59af478addd745f2e81632b05efb407b6ce04805d7eaca0960",
+      "sha256": "d54be11a9773fa56bcaa4fcabff105fb8318a9f8099aba79aa547c938e72a173",
       "lifecycle": "historical"
     },
     {
@@ -211477,7 +212622,7 @@
         "REUSE-T13"
       ],
       "bytes": 8382,
-      "sha256": "438dd79eabe7e261a013216fc065b7cea8f650441810dcf0dff0c8529188de78",
+      "sha256": "d4abc1653d10df291aef399dca8c0bdeb87b9668b21459174db1ac04bc4f4d70",
       "lifecycle": "historical"
     },
     {
@@ -211487,7 +212632,7 @@
         "REUSE-T13"
       ],
       "bytes": 8380,
-      "sha256": "19b8f9dd261aa16a4805402265dbc4c716fcf4b20646da006daab23b447941fd",
+      "sha256": "9fcea8b6c992d576351f0963ea3dccea1babcc6a024681ddb54f31d11a90d4a9",
       "lifecycle": "historical"
     },
     {
@@ -211497,7 +212642,7 @@
         "REUSE-T13"
       ],
       "bytes": 8379,
-      "sha256": "4b1f3376f30ce83388e3f16af7233f58a67818c6d3c488ac7a6fb45a03d262ae",
+      "sha256": "3454aa8a8b865c928e4d3726263dded86afe13a2920b0ef58611b8572145d3bf",
       "lifecycle": "historical"
     },
     {
@@ -211507,7 +212652,7 @@
         "REUSE-T13"
       ],
       "bytes": 8380,
-      "sha256": "aa32fc4aedadb8b019d34ca73743f10df61836cd1173bf48c0defcb91ef73a61",
+      "sha256": "9ce6321237117495a62c5766bf27809296232ee91952e24d66eca739d35760f3",
       "lifecycle": "historical"
     },
     {
@@ -216447,7 +217592,7 @@
         "REUSE-T29"
       ],
       "bytes": 11176,
-      "sha256": "05028f282082c5a3a268f3a874710e04e86d6a30011fcaf7f8b636434f096035",
+      "sha256": "ff70674dd4034ed32576577c674af4780a0cd100123e6ed5b834e1eda496bc46",
       "lifecycle": "unverified"
     },
     {
@@ -216517,7 +217662,7 @@
         "REUSE-T30"
       ],
       "bytes": 8456,
-      "sha256": "b5e2de8e0b659891c7cb1ce61014933869646d0fb16bc490d3c851fe2b9535b4",
+      "sha256": "c5a0f94eff566daa2eb8444aa2c3aa87facc764c8ca7ec37881fee174a3b93ed",
       "lifecycle": "historical"
     },
     {
@@ -216527,7 +217672,7 @@
         "REUSE-T30"
       ],
       "bytes": 8077,
-      "sha256": "23676cf6f3759a1778ad4b17d4d7dc855fdcf06ced809dfb276ca26fa8b9f3d4",
+      "sha256": "23b7e13fa904635181ead193a494b8b390371afddc07dce5fa82b926f1d21105",
       "lifecycle": "historical"
     },
     {
@@ -216558,6 +217703,16 @@
       ],
       "bytes": 105463,
       "sha256": "d10c65116d27fb197b6f80ff39824f950e1d778f8f81d72dda1544905faf3a22",
+      "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/REUSE-T30/snapshot-capability-mismatch-fix-20261026.md",
+      "kind": "markdown-doc",
+      "taskIds": [
+        "REUSE-T30"
+      ],
+      "bytes": 3030,
+      "sha256": "af1b3649920dcd7036dc6c09f9ee398f212014efccabe1246058ff6c99e29ff6",
       "lifecycle": "historical"
     },
     {
@@ -217517,7 +218672,7 @@
         "REUSE-T34"
       ],
       "bytes": 4389,
-      "sha256": "d35c5c370c6b91439851a4e7fdcb0d9a26bf7cc23b74bfbb68d96b01ad70d0a9",
+      "sha256": "cbd5bea578c2b84dc92e4315bf71291a82e21ce32995bde2b32251757cc7f26d",
       "lifecycle": "historical"
     },
     {
@@ -220709,6 +221864,576 @@
       "bytes": 931,
       "sha256": "219e704778c9aafe23fef2233e2aa2899a4f90232265d1e473cf73df2b1a84dd",
       "lifecycle": "historical"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/dynamics-contract-baseline.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 5967,
+      "sha256": "c85b5faf13076d4c4d3cdffcf62edd7031c79f92c4bd174fa0d90cc4fb1f1ccd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/dynamics-contract-baseline.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 11902,
+      "sha256": "283bfbbfd74e0ec304c80b0583a11f9a3f36f566440d084ef24175500d8f7abc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/dynamics-test-baseline.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 18488,
+      "sha256": "f76d026576f399f47eb83a6dddd8d17c6e0ecfca539421dd34e40a50fec81698",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/dynamics-test-baseline.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 39188,
+      "sha256": "1c21a82e2d86ed7c7c18b2eb967a339fc146347ea2352ecc895a57e063512c8c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/runtime-baseline.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 52143,
+      "sha256": "8e82dc066d80f441ed63b316081cc3511478dc0476730559f2069e310609013e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/baseline/runtime-baseline.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 107223,
+      "sha256": "cffc1b3f46cd203fd76d708cdc75e8ae28c5987ccbaff48f99282a53660d8d6f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/contract-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 25114,
+      "sha256": "893af52dc157423992fbaed473aa5cdeadb49d7b39b337bd8e90b52593e598cd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/contract.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 5968,
+      "sha256": "163bdc4698b85c3b90fc938b651d573642897647fc804a102ba55c03bfc3af02",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/contract.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 11902,
+      "sha256": "95adcc2dba23feee1cfdb651b0dbc920d725c9e7b9d05d7ed72035a546ae3c59",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-devbuild-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1140,
+      "sha256": "9f6b6e7c14a58440415df97ee96e9438bcec42cf4d85e40c3a64e8b63efba0fa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-devbuild.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1693,
+      "sha256": "6d2eb6c3e0f4b09d1a6458181eb0b819ec34e8be3f517112c73bb61122408314",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-devbuild.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 2647,
+      "sha256": "f4869532defcdbfce19cf25f8454346c19583e7d5b209f6cd88af992b11c56e6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-mutated-InverseDynamics-setgravity.cpp.txt",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 63613,
+      "sha256": "cc487c2d833e58a2f3e29c908f1fe18fa438fcaf3ab30e6ec27b309caffba4be",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-mutated-InverseDynamics-zeroffset.cpp.txt",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 63580,
+      "sha256": "30e0d24b76337ec34d02f8724f2ed1df641df0f0a765a86a72f475b86fa41aab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-mutated-RneConsumptionDevice.cpp.txt",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 72351,
+      "sha256": "f3d4876946ed4445f17bb375a8cb473a35fe2f4978d75f194c83bca4edb275fc",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1984,
+      "sha256": "fb9e8da82b1fe2529f1471ac5257c0a97d05a6cca867c691485298eb0e34f049",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-solve-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1098,
+      "sha256": "af0bebef84c4ae074f4d87dfb6bcdf1fae93a79f3d25d5279a2a64e1e95a15df",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-solve.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 2167,
+      "sha256": "23c3c01e90bc73a79acd15d17ab5bc1b5e40100b51a84a4aac7d9b24327ccb32",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected-solve.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 3929,
+      "sha256": "3a8a3cc93da5549ee21aca604a9a0a8b7d1fa5d688d3d7e01b71ab6303772f3d",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 2270,
+      "sha256": "c916b76186aea8101350cf8ac899920c8161969f1e69780429e4dcd146b64b72",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/disconnected.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 3794,
+      "sha256": "a7960ad06830edda1013d0200a84ca1fd6a85a904dc7584c94680817175f96a0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/full-suite-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 96888,
+      "sha256": "ceb5674f06b749bafdb44ce638264fe851bdd9f1246959ea4f9bf651671e8e24",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/full-suite.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 18925,
+      "sha256": "dd402a04af234427c28bad4d3bd4d0f6846410532606a3105c0b8492108e7621",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/full-suite.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 40103,
+      "sha256": "f8255ee884167bf4a298dc2f3eb8cb5898977e3d3ce94f18dcf4529f045a6986",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gates.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1438,
+      "sha256": "fa594dd1b297db71cbc670b3df70556dd0feb41614a6e73c7df9d98380ad344c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-catalog-permissions.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 9369,
+      "sha256": "938c5f9ac089ad6e92a6bccc7efd9f21719f72d72001f185bca76db4abf75c81",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-matrix.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 23976,
+      "sha256": "7c9f0256d80d3d7572c9b54b2d793e24c42f20ddc00f462df07b009968d404eb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-permissions2.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 5359,
+      "sha256": "e5fb9be2abf30039d8dfe88931e13c687cb6ed0b3f73fa4067ecb3c146e58faa",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-permissions3.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 4335,
+      "sha256": "4f43db85d5bb000ca92c364029e92307a21db4b2060670872e9518707f67522c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-permissions4.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 4020,
+      "sha256": "a743b866862e12d14e36248e3a401d2bd9996eeffbef2e43b51aa43d5b2687cb",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/gen-production.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 7701,
+      "sha256": "ee8f36f704e13a7857215008878606911813deccc1be7f206abb58fa02fb04ba",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/oracle-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 7637,
+      "sha256": "03aa1758dd97d8e7410159dedb0aa3ac36fdc6cd2ef8cf7807c5357988f2adba",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/oracle.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1658,
+      "sha256": "99059f9f1f8b75344b586bb59613e52be33b33b434e90881dbed15ca393b9e05",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/oracle.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 2958,
+      "sha256": "80f8fe847151ebc45c90b5cdd67438f8ed5281cbfbeb4b4cd7ee69938e5db893",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/production-dyn-rne-device-build.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 6068,
+      "sha256": "a3612ecd6ea0d866f40f3f080f4619cf54de7101c49a8ef2f951f273f7a37618",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/production-dyn-rne-solve-channel.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 6040,
+      "sha256": "83e3abdbad5bf24765cd6d15fa8989f27944a286ba218b0c4431e71d40d563ab",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/production-runtime-rne-device-factory.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 6152,
+      "sha256": "8d54fac074b24db88011c34a7fda56601955d7c4433b135198cec73c50079c36",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/README.md",
+      "kind": "markdown-doc",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 7174,
+      "sha256": "d8291075fb7e6e7dc99341c34e2118e4baa5794874116ae757526a59673811b6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/run-contract.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 845,
+      "sha256": "dbadb5f0769879dd0fa080ac64b323c2de9b29426a91a5ad584f1f6df725f3c9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/run-dynamics.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1190,
+      "sha256": "ff63ddaa6c19ed2fc20b37f264924752b0ec2c3205404dd2d63fb3d3f4b0ef9e",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/run-runtime.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 923,
+      "sha256": "d0a4ed9b55131c5328cf398501f0f6dcf28d005b688bd47b031df2fe469c6dc0",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/run-smoke.ps1",
+      "kind": "script",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1011,
+      "sha256": "9544c209b4a824148e2de72333ec1a8230eccc4cea06a3513319e490a0e5e5a6",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/runtime-consumer-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 242508,
+      "sha256": "76a6e1c141173237d698577c23e8901f5cd7bb0ca540fc512b177d95a653b403",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/runtime-consumer.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 52165,
+      "sha256": "ba2020549e1cfc854a457fef59984493eb446e450f7b3002de3325c07697823b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/runtime-consumer.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 107201,
+      "sha256": "5088069deec2db69e056135f1e149807d390a45ef2c29cbf2dcbf9da148014f1",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke-build.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 2757,
+      "sha256": "f0c0a2053a8e1b597171ae5ee771f43a748ca3219d814666e6eb834ae630d219",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke-configure.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 6188,
+      "sha256": "51040f1764231ce85f22ce0ce777120e3d024eda860c294279c6eae4dabaa58f",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/dynamics-test-smoke.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 18806,
+      "sha256": "3308206818a86e5700a26d3529bc1cad9940e17754bb48ded2c5d97d394a630a",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/dynamics-test-smoke.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 39812,
+      "sha256": "6d1bdf5e0c533ccb7589f2a43d028e7d599fbdefadaf9f7a144971cce6a5057b",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/run-smoke-test.cmd",
+      "kind": "other",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 679,
+      "sha256": "1ef7171d7553f0899a48ce2a38646477011a75ee601651b6a72e7609db6a1461",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/smoke-full-suite-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 96888,
+      "sha256": "c90e3b1ad6c17a877a08d286a19aaca7b1eee627132090956e9b1535963c8eee",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/smoke-full-suite.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 18925,
+      "sha256": "c9e7ecd51e134af9c2b7f4657669e83faf5d6327faa7efb42755de770fd3df96",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/smoke/smoke-full-suite.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 40102,
+      "sha256": "9ca6169b4476b0a060ae9645c0025e4106fb9e8af28bdb795d78db666b1e20d7",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/suitability.md",
+      "kind": "markdown-doc",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 6702,
+      "sha256": "c52d836d003d38d0aaf5a69936731a9d5c66266856e4fe22c51cc4ac48d042bd",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/upstream-comparison-report.json",
+      "kind": "json-data",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 1017,
+      "sha256": "1e12ba70b0303ea1f17de63beeff55c644c443d76383b2b550804e654ee718b9",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/upstream-comparison.log",
+      "kind": "log",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 485,
+      "sha256": "9f812731e7b9ce94416324d47b72fac936e9a65118c2330a8c8daf3d10610a1c",
+      "lifecycle": "unverified"
+    },
+    {
+      "path": "reuse/REUSE-T52/upstream-comparison.xml",
+      "kind": "xml-report",
+      "taskIds": [
+        "REUSE-T52"
+      ],
+      "bytes": 613,
+      "sha256": "040a9ddd1f05b591b190debbebd550837d1674947f9620460c2d94f2c66b8cd7",
+      "lifecycle": "unverified"
     },
     {
       "path": "reuse/validation-batch/20261023-recheck/batch-docs-t13-t15-t16-r2.log",

@@ -15,11 +15,17 @@
  *     DYN-06 降级）、MDL-22（基座—世界变换单一消费——重力投影）、
  *     DYN-04（关节侧结果与候选传动无关——映射归 drivetrain）、MDL-16
  *     （摩擦参数输入链）
- *   - 决策 D-DYN-2（RNEA 本域自实现，输入取自编译产物，不自建第二套
- *     关节链）、D-DYN-3（重力投影唯一消费 gravityBase，全卡零二次旋转）、
+ *   - 上游复用（WP-07/REUSE-T52——H1 直接 API＋消费边界薄适配）：计算核
+ *     ＝rwsim::util::RecursiveNewtonEuler（sdurwsim）；消费边界把 Canonical
+ *     Model 权威链值物化为一次性 RNE 面设备并按 GAP-RNE-FRAME 薄适配换算
+ *     BodyInfo 质心/惯量至关节帧表达（A2 裁决批准落点——S7 映射/§8.2
+ *     断言/modeling 导出零触碰；实现文件头有完整推导与缺口引用）
+ *   - 决策 D-DYN-3（重力投影唯一消费 gravityBase，全卡零二次旋转）、
  *     D-DYN-5（dynamics 不内嵌 drivetrain 映射调用）、D-DYN-7（摩擦
- *     sgn₀(0)=0）
- *   - 任务契约 tasks/foundation/WP-17-T03.json（三条 acceptance 的实现面）
+ *     sgn₀(0)=0）；D-DYN-2 的"本域自实现"半边由 WP-07 迁移取代（输入
+ *     取自编译产物、不自建第二套产品关节链的 CM-0 半边保留——RNE 面设备
+ *     为 evaluate 内一次性计算载体，零产品面名称/真值出口）
+ *   - 任务契约 tasks/REUSE-T52.json（migration §13.3 WP-07——迁移面）
  *
  * ★ 契约形态微调（诚实登记，DTB §5.4 精神——单元卡 §1.2/§12 同步登记）：
  *   1. §10.1 的 IInverseDynamicsEvaluator::evaluate(request, context) 中
@@ -78,8 +84,10 @@ inline constexpr std::uint32_t kInverseDynContractVersion = 1;
 
 /// RNEA 算法实现版本 token（§4.4 DynamicsSeries.algorithmVersion 分量；
 /// 算法语义变更〔公式/符号约定/降级规则〕＝换新 token——旧结果不与新
-/// 结果混比）。
-inline constexpr std::string_view kRneaAlgorithmVersion = "dyn-rnea/1";
+/// 结果混比）。v2＝WP-07（REUSE-T52）换核：自写 RNEA 递推→上游
+/// rwsim::util::RecursiveNewtonEuler＋消费边界薄适配——数值定义不变、
+/// 运算序与实现源变更（容差级位型差异），故旧结果不混比。
+inline constexpr std::string_view kRneaAlgorithmVersion = "dyn-rnea/2";
 
 // =====================================================================
 // 评估输入（§5.3 输入覆盖清单的域内 DTO 形态）。
@@ -208,14 +216,16 @@ struct InverseDynOutcome {
  * 职责（一次 evaluate 的执行序——与单元卡 §5 分项图逐步对应）：
  *   1. 前置校验（§10.1 前置行的防御面：模型/工况/维度/时间/物性——调用
  *      方错误即 DynamicsError fail-fast，见 Errors.hpp 触发面清单）；
- *   2. 模型提取：从 CanonicalModel 读取链参数（关节类型/轴/origin/零位
- *      偏置/连杆物性/摩擦三元组/工具偏置）为内部纯数值形态——零 rw 外联
- *      符号（冒烟 header-only 纪律，同 runtime RT-T03 先例）；摩擦四态
+ *   2. RNE 消费面构建：从 CanonicalModel 读取链参数（关节类型/轴/origin/
+ *      零位偏置/连杆物性/摩擦三元组/工具偏置），物化为一次性 StateStructure
+ *      ＋SerialDevice＋RigidDevice 并按 GAP-RNE-FRAME 薄适配换算 BodyInfo
+ *      （见实现文件头——上游 RecursiveNewtonEuler 消费边界）；摩擦四态
  *      检查即 MDL-16 输入链闭环（任一 NotProvided→frictionMissing＋
  *      DYN-FRICTION-MISSING 素材，分项按 0 计入但证据不包装精确——§5.5）；
  *   3. 逐样本：负载变体切换（事件保守边界）→末端体合成（工具＋已挂负载，
- *      平行轴定理）→共享几何递推→RNEA 四通道（重力/惯性/科氏/全量）→
- *      摩擦叠加→功率/能量累积→样本行组装；
+ *      平行轴定理，合成值经薄适配换算回写设备末连杆 BodyInfo）→四通道
+ *      （重力/惯性/科氏/全量，各经上游 solve＋按关节类型投影）→摩擦叠加
+ *      →功率/能量累积→样本行组装；
  *   4. 逐样本轮询取消（§9.3"长评估必须周期性查询"——每样本一次，成本
  *      一次虚调用）；观测到取消即返回部分产出（cancelled=true，非错误）。
  *
@@ -223,7 +233,7 @@ struct InverseDynOutcome {
  * tauInertia/tauCoriolisCentrifugal 分别取 (q̇=0,q̈=0)/(g=0,q̇=0)/(g=0,
  * q̈=0) 三通道——动力学 M(q)q̈＋C(q,q̇)q̇＋G(q) 对 q̈ 线性、对 q̇ 二次、
  * 重力线性，无交叉项，故三通道之和恒等于全量通道（黄金算例 V-03 校验）；
- * 同一样本四通道共享一次几何递推（成本 4×RNEA 力学段、1×几何段）。
+ * 同一样本四通道共享同一设备与 State 位形（各调一次上游 solve）。
  */
 class InverseDynamicsEvaluator {
 public:
@@ -254,7 +264,8 @@ public:
                                evidence::IEvaluationContext& context) const;
 
     // 复杂递推的实现集中于 InverseDynamics.cpp（私有实现头不外置——本头
-    // 即唯一公共契约面；src 内匿名命名空间承载 Vec3/Mat3 纯数值助手）。
+    // 即唯一公共契约面；src 内匿名命名空间承载 RNE 消费面构造/变体合成/
+    // 按关节类型投影——上游 RecursiveNewtonEuler 的宿主层）。
 };
 
 }  // namespace sdurws::ird::dynamics

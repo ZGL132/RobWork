@@ -13,7 +13,7 @@
     },
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
-      "sha256": "cfc423760f269ea647f2040bbab9676ccc6425e39d55ae1f045b5ddda64a13d3"
+      "sha256": "2d2ffb5aad1050a80a8fefb3847fc80528abe23dbf6cdb0189f7e918cbec4ac0"
     },
     {
       "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/WorkCellCompiler.cpp",

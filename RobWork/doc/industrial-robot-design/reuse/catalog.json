@@ -341,13 +341,14 @@
       "search": {
         "command": "rg -n \"solve|setGravity|setPayload\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
         "baseline": "b12e8503cc1c2a1acc040f506842a02e126b9515",
-        "conclusion": "已读公共接口；适配等价性仍须REUSE-T01验证"
+        "conclusion": "REUSE-T52 定向实核（migration §13.3 WP-07）：RecursiveNewtonEuler.hpp/.cpp 公共 API 逐行实读（solve DOF+1 Wrench、setGravity 显式传递、getJointForces payload 力矩臂符号与手算物理相反〔次要发现②〕、solveMotorTorques 移动关节同投影 torque 缺陷）；生产消费与四段证据见 REUSE-T52"
       },
       "boundary": "SerialDevice、Body坐标、DOF+1、移动关节力投影",
       "upstream": [
         {
           "path": "RobWork/RobWorkSim/src/rwsim/util/RecursiveNewtonEuler.hpp",
           "symbols": [
+            "RecursiveNewtonEuler",
             "solve",
             "setGravity",
             "setPayload"
@@ -366,6 +367,14 @@
       },
       "usages": [
         {
+          "consumerUnit": "runtime",
+          "usageRole": "owner",
+          "permissionRef": "ARCH:3.6.1",
+          "operations": [
+            "construct"
+          ]
+        },
+        {
           "consumerUnit": "dynamics",
           "usageRole": "adapter",
           "permissionRef": "ARCH:3.6",
@@ -375,24 +384,29 @@
         }
       ],
       "limits": {
-        "semantics": "SerialDevice、Body坐标、DOF+1、移动关节力投影",
-        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话",
-        "determinism": "按需求与功能探测，未验证不得宣称确定性"
+        "semantics": "SerialDevice、Body坐标、DOF+1、移动关节力投影；GAP-RNE-FRAME 消费边界薄适配（A2 裁决＋2026-10-26 构造面上收裁决）——BodyInfo 按关节帧解释，runtime 工厂 buildRneConsumptionDevice 单点换算 R_alignᵀ·com／R_alignᵀ·I·R_align；setPayload 工具条目力矩臂符号与手算物理相反，产品不消费（合成体并入法兰 BodyInfo）；getGravity ctor 默认零，须 setGravity 显式传递",
+        "lifetime": "按ARCH 3.6区分owner/受控视图/任务私有会话；runtime 工厂构造一次性 RNE 载体（所有权随返回值移交，task-private 消费，随 evaluate 调用栈消亡，零产品面名称/真值出口）",
+        "determinism": "REUSE-T52 实测：同输入逐位确定（上游纯 double 递推＋ReproBenchmark 确定性套件全绿）；无随机源/时钟/locale 依赖"
       },
       "ownerUnit": "dynamics",
       "examples": [],
       "docs": [],
       "operations": [
-        "query"
+        "query",
+        "construct"
       ],
       "review": {
-        "status": "candidate",
-        "version": "b12e8503cc1c2a1acc040f506842a02e126b9515"
+        "status": "verified",
+        "version": "bf682893ff174d759a93e905889458d2f4e80e21",
+        "evidence": {
+          "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/suitability.md",
+          "sha256": "c52d836d003d38d0aaf5a69936731a9d5c66266856e4fe22c51cc4ac48d042bd"
+        }
       },
       "tests": [],
       "resourceSearch": {
         "command": "rg -n \"solve|setGravity|setPayload\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWork/gtest RobWork/RobWorkSim/gtest",
-        "conclusion": "已核对所列资源；REUSE-T01 首批公共API探测见 traceability/reuse/REUSE-T01；candidate保持未结项，未运行原上游完整测试集"
+        "conclusion": "上游无 RNE 单元测试（REUSE-T30 §2 在案）；产品 oracle 与上游对照证据＝traceability/reuse/REUSE-T52/（full-suite 119＋oracle＋upstream-comparison＋disconnected 四段）"
       }
     },
     {

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "REUSE-T52",
+  "unit": "dynamics",
+  "masterWp": "WP-A",
+  "title": "WP-07 逆动力学 RNE 迁移（消费边界薄适配）——InverseDynamics.cpp 消费上游 RecursiveNewtonEuler 与旧核删除",
+  "status": "ready",
+  "branch": "redesign-main",
+  "dependsOn": [
+    "REUSE-T30"
+  ],
+  "requirements": [
+    "DYN-01",
+    "DYN-02",
+    "DYN-06",
+    "NFR-COR-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "reuse/migration.md#13.3",
+    "reuse/migration.md#13.4",
+    "reuse/policy.md#1.1",
+    "units/dynamics.md#5",
+    "traceability/reuse/REUSE-T30/suitability.md#6"
+  ],
+  "verify": [
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json",
+    "cmake -DIRD_ROOT=D:/10_Source_Repos/21_robot/RobWork/RobWork/RobWorkStudio/src/rwslibs/industrialrobot -P RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates.cmake",
+    "cmake --build build --config Release --target sdurws_ird_dynamics sdurws_ird_dynamics_test sdurws_ird_dynamics_contract_test sdurws_ird_runtime_test ird_gates",
+    "RobWork/build/bin/Release/sdurws_ird_dynamics_test.exe（gtest 全量＋XML/ird-test-report 落 traceability/reuse/REUSE-T52/）",
+    "RobWork/build/bin/Release/sdurws_ird_dynamics_contract_test.exe（契约面全量）",
+    "RobWork/build/bin/Release/sdurws_ird_runtime_test.exe（WP-06 消费者回归——runtime 产品零改动，回归证明零跨包影响）",
+    "独立冒烟：cmake -S RobWork/RobWorkStudio/src/rwslibs/industrialrobot -B build/wp07-smoke -G \"Visual Studio 17 2022\" -A x64 -DCMAKE_TOOLCHAIN_FILE=\"$PWD/vcpkg/scripts/buildsystems/vcpkg.cmake\" -DCMAKE_PREFIX_PATH=D:/software/Qt/6.11.1/msvc2022_64 -DRobWork_DIR=\"$PWD/RobWork/RobWork/cmake\" -DVCPKG_OVERRIDE_FIND_PACKAGE_NAME=vcpkg_find_package ＋ --build --target sdurws_ird_dynamics sdurws_ird_dynamics_test（REUSE-T51 同款 RW:: 同名 ALIAS 供给；sdurwsim 经直含 targets/sdurwsim.cmake 导入目标——绕开 RobWorkSimConfig 对 RobWorkStudio 的非安装树 REQUIRED 强依赖，探针在案）",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/commit-lint.ps1 -Range bf682893f..HEAD",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/verify-task-scope.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json -Base bf682893ff174d759a93e905889458d2f4e80e21 -Head HEAD"
+  ],
+  "allowedFiles": [
+    "RobWork/doc/industrial-robot-design/tasks/REUSE-T52.json",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/src/InverseDynamics.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/include/sdurws/ird/dynamics/InverseDynamics.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/dynamics/test/RneaTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/include/sdurws/ird/runtime/RneConsumptionDevice.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/src/RneConsumptionDevice.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/runtime/CMakeLists.txt",
+    "RobWork/doc/industrial-robot-design/units/runtime.md",
+    "RobWork/doc/industrial-robot-design/ARCHITECTURE.md",
+    "RobWork/doc/industrial-robot-design/reuse/functions/dynamics.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/runtime.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/foundation-governance.json",
+    "RobWork/doc/industrial-robot-design/reuse/catalog.json",
+    "RobWork/doc/industrial-robot-design/reuse/permissions.json",
+    "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T52.json",
+    "RobWork/doc/industrial-robot-design/reuse/migration.md",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T13/production/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T29/verification.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T30/production/**",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T34/verification.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/test-build-inventory.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T01/runtime-probe/environment-artifacts.json",
+    "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T52/**",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T52-20261026-r1.json",
+    "RobWork/doc/industrial-robot-design/traceability/acceptance/REUSE-T52-20261026-r1/**",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-index.json"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**",
+    "main"
+  ],
+  "outputs": [
+    "InverseDynamics.cpp 上游 RNE 迁移实现（消费边界薄适配＋GAP-RNE-FRAME 注释引用）与旧核删除（Vec3/Mat3/RneaChain/buildRneaChain/computeGeometry/rneaTorques/SampleGeometry 全删）；独立物理 oracle 增测（任意构型解析静力＋能量平衡）；dynamics 冒烟框架供给（REUSE-T51 同款）；矩阵/catalog/inventory/migration 同步与原始验证证据"
+  ],
+  "interUnit": false,
+  "acceptance": [
+    "policy §1.1 设计判断（保留/删除/适配/职责）：保留＝请求/结局 DTO 面与 evaluate 语义（§5.2 四通道恒等式、§5.4 负载变体保守边界、§5.5 摩擦 sgn₀(0)=0 与三层降级、§5.6 失败语义、§4.5 量纲）零变化；删除＝自持 Vec3/Mat3 算术、axisRotation、SampleGeometry/computeGeometry、RneaChain/buildRneaChain、rneaTorques（自写 RNEA 核全删——migration §13.3 WP-07 行删除清单逐项落实）；适配＝消费边界薄适配（A2 裁决批准落点）：runtime 公共工厂 buildRneConsumptionDevice 单点换算 GAP-RNE-FRAME（关节帧 tAligned=origin·R_align＋zeroOffset 烘焙＋连杆帧 R_alignᵀ 按 S6 同源语义，BodyInfo 质心/惯量换算为关节帧表达 R_alignᵀ·com 与 R_alignᵀ·I·R_align），dynamics 经已登记 dynamics->runtime 边消费、请求 DTO 零变化、S7/§8.2 canonical 断言/modeling 导出零触碰；删除量＝dynamics 净-284 行；职责＝runtime 唯一模型 owner（工厂构造 runtime-owner 授权）、摩擦/降级/诊断归 dynamics 既有层、摩擦不经上游（上游无逐关节摩擦一职——REUSE-T30 §4 边界）",
+    "上游消费核（migration §13.3 WP-07 行逐项）：solve 返回 DOF+1 Wrench（RecursiveNewtonEuler.cpp:227-235→getBodyMotion/getBodyNetForces/getJointForces）——前 DOF 项为各关节传递 wrench（base 系、矩对关节原点），参考系/索引经解析对照核（旋转关节 τ=dot(res[i].torque(),z_i)、移动关节 τ=dot(res[i].force(),z_i)——z_i=frameTframe(base, joints[i], state).R().getCol(2)）；禁止盲用 solveMotorTorques（其 RecursiveNewtonEuler.cpp:249-259 对移动关节同样投影 torque 且末元素复用陈旧 z——按关节类型自行投影，移动关节反例 F580 用例保持解析通过）；重力 setGravity(g_base) 显式传递（T30 次要发现①——ctor 默认零，测试含显式设值读回钉）；getJointForces payload 力矩臂符号与手算物理不符（T30 次要发现②——本批 getJointForces 代数复核：内向递推项 cross(com,F)+cross(dr−com,F_next) 恒等成立，工具条目 −cross(rCOM,F) 与物理 +cross 反号）——生产接线不消费 setPayload 通道，工具/负载合成体并入法兰 BodyInfo（§5.4 既有 compose 语义原样，避开上游缺陷路径），res[DOF] 工具项按 R1 ExternalWrench 恒零语义不读不用，差异按 §13.2 归档核于本契约 note 与 README",
+    "独立物理 oracle（禁自比）：①任意构型解析静力——y 轴二连杆弯曲构型（q2≠0）全手算叉积期望（配置相关项显式断言——GAP-RNE-FRAME『bent==rest』失败形态的定向探针，权威轴≠z 薄适配核心面）；②能量平衡——准静态扫掠 τ_total=G(q) 的机械功率梯形积分＝独立手算势能差 ΔU=m·g·Δh（能量守恒闭环，不引用被测实现）；③既有 y 轴静态/F580 移动关节滑移臂/倒挂反号/工具负载合成/四通道恒等式/黄金数据集（拉格朗日独立参考）全量保持通过，断言零放松",
+    "构造面裁决执行（2026-10-26 escalate）：runtime 公共工厂三文件最小面（公共头/src/CMakeLists 集成 target_sources＋冒烟分支框架供给增列）——工厂 TU 集成与冒烟双模式编译＝单一实现（REUSE-T51 同款 find_package(RobWork)＋同名 ALIAS；sdurwsim 直含 targets/sdurwsim.cmake——非安装树 RobWorkSimConfig REQUIRED RobWorkStudio 探针在案；sdurwsim 非集成判定符全库零命中，rg 实核）；runtime 改动仅限工厂三文件（独立验收核对未越权扩面）；dynamics 侧零模型构造（扫描面：task-private 授权仅 query/write-state）",
+    "验证真实执行分列：dynamics 全量（gtest 全套含新增 oracle）＋contract 全量＋runtime 全量（消费者回归）＋ird_gates 零命中＋独立冒烟构建通过；passed/failed/skipped/notRun 如实分列，证据（构建日志/XML/ird-test-report.json）落 traceability/reuse/REUSE-T52/；数值迁移对照锚＝迁移前 HEAD bf682893f 的 dynamics 全量基线（同输入逐用例对照，容差级一致、逐项差异可归因于运算序）",
+    "矩阵/凭证同步（audit-contract 口径）：functions/dynamics.json 换绑为消费边界薄适配实况（改动文件每非空行有区段归属；三 adapter 行 production/evidence 四段证据——断开实验各绑自身文件内变异，business 行 nonOverlap 在案；inputs 全链摘要按治理 Digest 刷新）；functions/runtime.json 增工厂三行（契约头 business＋工厂 adapter 四段证据＋CMake business）；catalog.json DYN-RNE 从 candidate 提升 verified（review 绑定 suitability.md＋基线版本，upstream symbols 增补 RecursiveNewtonEuler，usages＝runtime owner 构造＋dynamics adapter 查询，operations 增 construct，limits 登记工厂换算单点/工具通道不消费/确定性实测）；permissions.json 四笔授权（runtime-owner 工厂 src＋hpp、dynamics task-private query/write-state、RneaTest test-fixture /test/ 路径内联对照构造）；两单元 CMake 摘要变更的跨批次活绑定刷新（REUSE-T36/T40 全文件解决批先例——functions/runtime.json 187 行 inputs＋permissions build 绑定＋T13/T30/T34/T29/T01 生产证据绑定）；inventory.json 零改动（baselineBlob＝基线提交树事实、分类不可变）；migration.md §13.1/§13.2/§13.3、units/runtime.md（§3.1 行＋§15.4 v0.27）、ARCHITECTURE.md §3.6.1 消费边界行、changes/REUSE-T52.json 七文件凭证",
+    "治理门禁全绿：ird_gates 零命中、validate-docs（含全量复用检查）、commit-lint -Range bf682893f..HEAD、verify-task-scope 显式 -Base bf682893f -Head HEAD 全部 PASS；独立验收由所有者另开会话或人工执行（GOV-T23/T24 先例同型），实施者不自签——本包 status=ready 表示实施完成待独验；GAP-RNE-FRAME 缺口本体（上游缺陷）按 A2 裁决以薄适配闭合消费面，上游代码仍不动、缺口登记不关闭，WP-09 FD 消费者按其自身阶段处理"
+  ],
+  "note": "migration §13.3 WP-07 / T04 RNE 子任务（父任务 REUSE-T04 不在本包归位——收口批统一处理）。依赖 WP-06（REUSE-T30 独验 PASS 收口 done，2026-10-26）满足；A2 裁决（2026-10-26：RNE 消费缺口＝薄适配方案，B1 不批）解阻原『缺陷处置前不得实施依赖部分』条款。起始 SHA=bf682893f（bf682893ff174d759a93e905889458d2f4e80e21，GOV-T27 收口提交）。【构造面裁决（2026-10-26 escalate，所有者答复）】首版实施在 dynamics 内一次性物化 RNE 载体（消费边界薄适配的字面落点），被 IRD-GATE-AD 模型所有权机器门禁拒绝（reuse-contract.ps1:108——construct-model/mutate-model 仅 runtime-owner 可授权；审计契约 §5『kinematics 自建 WorkCell 拒绝』同款红线）；所有者裁决＝方案(b)构造面上收 runtime 公共工厂（门禁零改动；否决治理例外方案——模型所有权红线为承重墙不开例外，WP-09 FD 同墙复利），并明确授权本契约 allowedFiles 纳入 runtime 工厂公共头/src/CMakeLists＋units/runtime.md＋functions/runtime.json＋ARCHITECTURE.md（最小面，禁止顺带改 runtime 其他内容；forbiddenFiles 仅对工厂路径解除）。执行要点：工厂＝buildRneConsumptionDevice(CanonicalModel)（R_align/关节帧换算知识回归模型 owner 本位，GAP-RNE-FRAME 单点，A2 的 S7/§8.2/modeling 零触碰约束继续有效；ARCHITECTURE §3.6.1 消费边界落点行＋units/runtime.md §3.1/§15.4 v0.27 已登记）；dynamics 经 dynamics->runtime 登记边消费、请求/结局 DTO 零变化、既有测试零重做；断开实验改对工厂（换算行去除→y 轴静态/弯曲平衡真实失败）＋dynamics 两行各自文件内变异（零位偏置提取/setGravity）共三路。设计判断核心＝RNE 面设备来源裁决：请求面维持纯值 CanonicalModel 不变（公共接口零变化——现消费面全为测试与 ForwardDynamics 编译引用，装配面未落），dynamics 经 runtime 工厂 buildRneConsumptionDevice 取得 RNE 载体（构造权归 runtime——见上方构造面裁决；帧树语义在工厂单点、经独立 oracle 钉住），不用 S7 DWC 设备（其 BodyInfo 为权威连杆系且 const 不可换算——GAP-RNE-FRAME 薄适配数学上要求新构 BodyInfo）；CM-0『不自建第二套关节链』的登记语义＝不建产品面第二真值（本设备零名称/零持久化/零出口，链条语义由 oracle 与黄金数据集独立钉住，镜像漂移会以数值红暴露），轴对齐公式回归 runtime 本位（本单元内工厂与 WorkCellCompiler.cpp 同源——最小授权面镜像）。kRneaAlgorithmVersion 1→2（换核＝数值结果实现源变更，旧结果不与新结果混比——DynTypes.hpp 常量注释口径）。若实施中发现实质缺口（如上游其他消费假设错配）则置 blocked 登记原因与受影响消费者，不强推。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/REUSE-T52.json"
+  }
+}
