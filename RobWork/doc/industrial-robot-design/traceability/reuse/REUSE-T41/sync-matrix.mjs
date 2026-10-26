@@ -119,7 +119,7 @@ for (const name of fs.readdirSync(ROOT + '/' + FN)) {
     conclusion: '上游Event原语不采用（同步listener表，无RAII/线程/队列/drain——CORE-EVENT维持candidate）；既有execution总线为生产实现，F-967 线程/退订差异经宿主投递线程转接修正后收口',
   };
   row.differences = 'F967 收口（REUSE-T41）：生产装配由越界的 core::ReferenceEventBus（非生产组件）换 execution::DomainEventBusImpl；回调自投递线程到达——适配器快照经 m_eventAdapterMutex 互斥读取、显式 Qt::QueuedConnection 转 UI 线程，迟到守卫（adapter==source/isClosed/projectId）与『事务发布持写锁不同步回查』语义不变；关停/析构＝句柄退订→waitForIdle→总线 drain join';
-  row.auditBoundary = 'REUSE-T41 实施完成待独验：生产装配链四区段实改；GUI 真实路径（IRD_UI_PLUGIN_SMOKE 修订事件双 sink 投递）与受影响目标回归在案；不关闭 T01、不升级 CORE-EVENT、不关闭 F-967（独验归所有者）';
+  row.auditBoundary = 'REUSE-T41 落地实施完成待独验（2026-10-26 所有者批量批准落地裁决表第 1~4 项，治理前置批解阻宿主例外）：生产装配链四区段实改；受影响目标回归在案（landing 批复跑 execution 157+38、ui_contract 63、core 74 全绿）；GUI 真实路径（修订事件双 sink 投递）NOT RUN——HEAD 既有启动段错误阻断（findings F-974，归所有者归类处置）；F-967 随落地批改 fixed（独立验收另行执行）；不关闭 T01、不升级 CORE-EVENT';
   row.nonOverlapEvidence = { path: P.readme, sha256: readmeDigest };
   row.inputs = row.inputs.map((b) => (b.path in changedDigests ? { ...b, sha256: changedDigests[b.path] } : b));
   saveJson(rel, j, crlf);
@@ -213,7 +213,7 @@ for (const name of fs.readdirSync(ROOT + '/' + FN)) {
     ],
     auditEvidence: [{ path: P.readme, sha256: readmeDigest }],
     nonOverlapEvidence: { path: P.readme, sha256: readmeDigest },
-    auditBoundary: '宿主装配体业务定性（SA-18/B1-SPEC 装配层）；不授新权限、不证明 T01 完整或迁移完成',
+    auditBoundary: '宿主装配体业务定性（SA-18/B1-SPEC 装配层）；本行为行覆盖载体不授权限（宿主受限面授权归 ARCH §3.6.2 HOST-WORKBENCH 治理批与 permissions.json 逐文件精确 grant）；不证明 T01 完整或迁移完成',
   });
   saveJson(rel, j, crlf);
 }

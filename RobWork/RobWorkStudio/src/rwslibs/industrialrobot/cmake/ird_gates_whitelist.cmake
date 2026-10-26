@@ -579,6 +579,13 @@ set(IRD_TEST_TARGET_EDGES
 #     层（ui_plugin）按上述三先例消费三域装配门面（公共 assembly/ 头，
 #     域私有头零触碰）的目标级登记边；ui_plugin 链接段源面修改归 ui 宿主
 #     面批次（本批只登记边数据——边是放行面，提前登记零命中）。
+#   - sdurws_ird_ui_plugin->sdurws_ird_execution：WP-18/F-967 收口批
+#     （2026-10-25，migration §13.3 批准方向"优先 execution 现有总线与
+#     订阅生命周期"）——宿主装配层消费 execution 事件总线实现
+#     DomainEventBusImpl（公共头 EventBus.hpp，R-2 公共面；ui 产品库
+#     sdurws_ird_ui 零 execution 红线 O-31/C-3/4/5 不动，仅 plugin 装配
+#     目标链接面；登记与源面修改同批——ASM-PLUG 先例）。登记册见
+#     traceability/wp18-t41-gate-registrations.md。
 # （ui->ui 自边两处——ui_app/ui_plugin 链接本单元产品库——由引擎同单元
 # 装配自边豁免承载，不入本表。）
 # ---------------------------------------------------------------------
@@ -590,4 +597,5 @@ set(IRD_TARGET_LEVEL_EDGES
     "sdurws_ird_ui_plugin->sdurws_ird_kinematics_plugin"
     "sdurws_ird_ui_plugin->sdurws_ird_dynamics_plugin"      # ASM-PLUG 收口批（2026-10-10）——宿主装配层消费三域门面（ui_plugin 链接面修改归 ui 宿主面批次）
     "sdurws_ird_ui_plugin->sdurws_ird_selection_plugin"     # ASM-PLUG 收口批（2026-10-10）——同款
-    "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin") # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_plugin->sdurws_ird_optimization_plugin"  # ASM-PLUG 收口批（2026-10-10）——同款
+    "sdurws_ird_ui_plugin->sdurws_ird_execution")           # WP-18/F-967 收口批（2026-10-25）——宿主装配层消费 execution 事件总线实现（EventBus.hpp 公共头；ui 产品库零 execution 红线不动）

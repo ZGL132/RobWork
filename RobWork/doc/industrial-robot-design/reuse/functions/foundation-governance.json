@@ -34,7 +34,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -79,7 +79,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -124,7 +124,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -169,7 +169,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -214,7 +214,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -259,7 +259,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -304,7 +304,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -349,7 +349,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -394,7 +394,7 @@
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",
@@ -419,8 +419,8 @@
           "symbol": "IRD_TARGET_LEVEL_EDGES",
           "qualifiedSymbol": "IRD_TARGET_LEVEL_EDGES",
           "startLine": 580,
-          "endLine": 593,
-          "sha256": "b64f202acf3c5070fe8501bebf169367e390f0a1aec038d871a39b51427a2bb7"
+          "endLine": 601,
+          "sha256": "4fcdaca8e2be689a7b9e1dbdabb92e8a5e556274ddd6741612df862daaa2bd9c"
         }
       ],
       "targets": [
@@ -435,11 +435,11 @@
         "command": "rg -n \"IRD_TOOL_TARGET_EDGES|IRD_T1_EXEMPT_TARGETS\" RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
         "conclusion": "ird_gates 数据面白名单分段登记；本段为既登记例外/允许面的静态数据，非产品算法"
       },
-      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；其余段零变化",
+      "differences": "ird_gates 依赖红线门禁数据面静态登记（本批 F-958 段＝IRD_TOOL_TARGET_EDGES/T1 豁免增列 lsnchild 工具边，testdata_lint 同型，非放宽）；REUSE-T41 增段＝ui_plugin→sdurws_ird_execution 目标级装配边（WP-18/F-967，ASM-PLUG 先例——登记与源面修改同批）",
       "inputs": [
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/cmake/ird_gates_whitelist.cmake",
-          "sha256": "63f82e85d55d99534db7af6493ae320331bb9917d5aedf1c3a48325e98171064"
+          "sha256": "5015ba9d78a16a2fa2424fb8b3d8d6da47f2c6e8cd21b992723443b3c5510cd7"
         },
         {
           "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/testkit/CMakeLists.txt",

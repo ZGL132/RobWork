@@ -980,6 +980,12 @@ if(TARGET sdurws)
     #     create*PluginAssembly/registerWithHostRegistrar 激活路径，域私
     #     有头零触碰；selection 注册被宿主权威拒绝〔P-SEL-3 待裁决——
     #     InvalidDescriptor 如实透传，§11.3 隔离承载〕）；
+    #   - sdurws_ird_execution＝WP-18/F-967 事件总线装配边（ird_gates_
+    #     whitelist IRD_TARGET_LEVEL_EDGES 2026-10-25 同批登记——宿主装配
+    #     层构造 execution::DomainEventBusImpl 注入 core::IDomainEventBus
+    #     端口〔§10.4/§13 交接：UI 线程 marshaling 归宿主 sink〕；消费面仅
+    #     公共头 EventBus.hpp——R-2 公共面；ui 产品库 sdurws_ird_ui 零
+    #     execution 红线 O-31/C-3/4/5 不动，仅本 MODULE 装配目标链接面）；
     #   - sdurws＝框架 RobWorkStudio 库（RobWorkStudioPlugin 基类；DTB §4.6
     #     框架基线白名单 "sdurw" 前缀族）；
     #   - Qt 三件套＝plugin 分类面（Qt 链接合法——ird_gates R-3 仅查
@@ -987,6 +993,7 @@ if(TARGET sdurws)
     target_link_libraries(sdurws_ird_ui_plugin PRIVATE
         sdurws_ird_ui
         sdurws_ird_project
+        sdurws_ird_execution
         sdurws_ird_modeling_plugin
         sdurws_ird_requirements_plugin
         sdurws_ird_kinematics_plugin

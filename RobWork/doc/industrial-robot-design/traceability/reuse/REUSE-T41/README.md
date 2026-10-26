@@ -1,8 +1,8 @@
-# REUSE-T41：F-967 ReferenceEventBus 生产装配核验换 execution 现有总线（blocked——候选留存）
+# REUSE-T41：F-967 ReferenceEventBus 生产装配核验换 execution 现有总线（2026-10-26 已落地——候选留存→落地批收口）
 
 实施日期：2026-10-25；分支 redesign-main（主工作树串行）；起始 SHA `41a59c67005ad0b0f45ccd32b3a6809fb4258154`。
 任务契约：[REUSE-T41](../../../tasks/REUSE-T41.json)（WP-18 残包——F-964 已由 [REUSE-T23](../REUSE-T23/README.md) 实施待独验，本包零触碰 RunRegistry 及其测试）。
-**状态＝blocked（所有者 2026-10-25 escalate 裁决：采 T33/T36/T40 先例收口，产品树 HEAD 零改动，候选留存；F-967 保持 open，实施者不自签、不假关）。**
+**状态＝已落地（2026-10-26 所有者批量批准复用落地裁决表第 1~4 项，解阻原 blocked；候选态 blocked 登记与 2026-10-25 escalate 裁决原文保留作历史，见下文与 [landing 章节](#落地批2026-10-26候选原样落地收口)）。**
 
 ## 问题（B32 审计在案的 F-967）
 
@@ -60,3 +60,26 @@ REUSE-AD : ui/plugin/UiPlugin.cpp : restricted upstream use needs exact file/tar
 ## 移交
 
 blocked 收口：候选留存待宿主例外治理批次落地；findings F-967 保持 open（现 HEAD 生产装配仍是越界 core::ReferenceEventBus＋同步回调读非原子状态）；F-964 独验仍归所有者另开会话。独验/落地批核对点：候选 diff 与本 README/verification 计数、门禁正负例原件、blocked 机制三方约束引用、解阻治理批次的 ARCH 审查记录。
+
+## 落地批（2026-10-26：候选原样落地收口）
+
+**授权与解阻**：所有者 2026-10-26 批量批准复用落地裁决表第 1~4 项（含本包＝F-967 ui 宿主装配候选落地，随批扩宿主例外），§13.3 原包边界相应扩至全文件解决批。治理前置批（独立提交 `1cb967892`，落地起始 SHA `cf00a7dc9`）：宿主例外封闭清单 4→5（HOST-WORKBENCH＝UiPlugin.{hpp,cpp}，ARCH §3.6.2 v0.17 登记）＋permissions.json 首批 host-presentation 精确 grant（hpp＝categories{host,model}/borrow——门禁 AuditOnly 实测 categories 含 model 来自 `open(rw::models::WorkCell*)` 框架回调借持形参，候选时代"hpp categories=host"记录不完整随治理批如实更正；cpp＝{model,state,graphics,host}/write-state＝D8 Jog 桥任务私有 setQ）＋治理自测正负例（157/157）。产品批按本包 candidate/ 六件 diff 对 `cf00a7dc9` 干净应用——六文件 post-blob 与 diff index 头逐位一致（9ccf33f23/de2b38445/72c24df31/ac5e93dc4/45bad6709/8a5309db4）。
+
+**落地批复跑（真实执行，landing-* 原件在本目录；分列如实）**：
+
+| 检查 | passed / failed / skipped | 结果 | 原件 |
+| --- | --- | --- | --- |
+| sdurws_ird_execution_test | 157 / 0 / 0 | exit 0 | landing-sdurws_ird_execution_test.{log,xml,-ird-test-report.json} |
+| sdurws_ird_execution_contract_test | 38 / 0 / 0 | exit 0 | landing-sdurws_ird_execution_contract_test.* |
+| sdurws_ird_core_test | 74 / 0 / 0 | exit 0 | landing-sdurws_ird_core_test.* |
+| sdurws_ird_ui_contract_test（含 AssemblyManifest wiredAnchor 行级核对） | 63 / 0 / 0 | exit 0 | landing-sdurws_ird_ui_contract_test.* |
+| sdurws_ird_ui_test（重建后真实复跑） | 331 / 14 / 0 | exit 1（14 项失败与候选态逐项同名单——#1 F-560 预存＋#2~#14 主线真实数值链 F-973，与本包零因果，归所有者归类，不修复） | landing-sdurws_ird_ui_test.* |
+| ird_gates 正例（11 类） | — | exit 0 零命中 | landing-ird-gates-positive.log |
+| ird_gates 负例（撤登记探针——仅移除边数据保留 set 闭合） | — | exit 1 恰一条真实 `IRD-GATE-SUB: 表外依赖边 ui->execution（sdurws_ird_ui_plugin → sdurws_ird_execution）不在 ARCH §3.5 白名单`（其余为门禁自测预期行，与候选负例日志同形状） | landing-ird-gates-negative-unregistered.log |
+| ird_gates 恢复复验 | — | exit 0 零命中 | landing-ird-gates-positive-recheck.log |
+| GUI 真实生产路径（修订事件双 sink 投递） | — | **NOT RUN**——HEAD 既有启动段错误（findings F-974）未解，归所有者；替代证据＝execution 总线契约用例＋ui_contract_test 63 | — |
+| 治理脚本正负例（治理批） | 157 / 0 / 0 | exit 0 | landing-reuse-governance-selftest-report.json（157/157，complete=true；.cache/reuse-tests 运行时原件同内容） |
+
+**随批同步**：矩阵同步器 [sync-matrix.mjs](sync-matrix.mjs) 原样复用（仅三处候选时代陈述按落地批实况修正：productionWiring auditBoundary 的 GUI 声明改如实 NOT RUN、F-967 处置改 fixed 待独验；IrdWorkbenchHostPlugin 行 auditBoundary 权限表述对齐治理批）——productionWiring 迁移态/business-specific+migrated、UiPlugin 与 ui-CMake/EventBus.hpp 整文件覆盖行（ui.IrdWorkbenchHostPlugin/ui.CMake.targetWiring/execution.EventBusContractHeader 新增）、ui.CMake.ird_add_gtest 按 REUSE-T32 定案在案口径刷新 differences、L10 区段重定位（start=580 不变、post-diff total 601）、全矩阵 inputs/auditEvidence 摘要重钉＋permissions.json 绑定级联（两条 UiPlugin grant 与 ui/CMakeLists.txt build 绑定随 diff 后摘要刷新）。装配边登记正本落位 [traceability/wp18-t41-gate-registrations.md](../../wp18-t41-gate-registrations.md)（候选登记册原文＋落地批前言）。changes/REUSE-T41.json 六文件 sha256 凭证；契约 REUSE-T41 解阻（status=ready 待独验）；findings F-967 改 fixed（实证范围＝生产装配越界用非生产组件、投递线程数据竞争、RAII 退订/关停 drain 序缺口的收口；不声称 GUI 端到端验证）；migration §13.1/§13.2/§13.3 更新。
+
+**待所有者裁决残留（不变，未获批不实施）**：①core ReferenceSubscription RAII 恢复＋EventsTest FIFO 用例句柄持有契约纠正；②execution/EventBus.cpp:66-67 失实注释更正；③BuildRedLineTest 增 ReferenceEventBus 禁入产品目标扫描；④F-973（ui_test 13 项真实数值链失败）与 F-974（HEAD studio 启动段错误）归类处置。独立验收按 §6.4 另行执行（跨单元接线＋宿主装配层）。
