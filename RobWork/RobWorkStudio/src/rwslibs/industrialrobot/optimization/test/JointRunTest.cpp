@@ -187,7 +187,8 @@ core::ContentIdentity makeContentIdentity(unsigned char seed)
 }
 
 /// 构造冻结快照（SnapshotBuilder 唯一合法生产者——身份为 builder 计算值）。
-evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& cases)
+evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& cases,
+    const OptimizationConfiguration* configuration=nullptr)
 {
     evidence::SnapshotBuilder builder;
     builder.setIdentity(core::ProjectId::generate(), core::BranchId::generate(),
@@ -212,6 +213,7 @@ evidence::AnalysisSnapshot makeSnapshot(const std::vector<evidence::CaseEntry>& 
     repro.productVersion = "test";
     repro.evidenceContractVersion = "1";
     builder.setReproduction(repro);
+    if(configuration) builder.addConfiguration({"opt.config",optimization::canonicalizeRunConfiguration(*configuration),{}});
     return builder.build(AllPresentClosure{});
 }
 
@@ -532,16 +534,17 @@ struct JointFixture {
     }
 
     /// 就绪联合请求（快照/覆盖/任务面就绪＋候选预算——正例基线）。
-    JointRunRequest readyRequest(const OptimizationConfiguration& config) const
+    JointRunRequest readyRequest(const OptimizationConfiguration& config)
     {
+        snapshotHolder=makeSnapshot(makeTwoMandatoryCases(),&config); // EV-T13：配置与冻结输入同源。
         JointRunRequest req;
         req.config = config;
         req.baselineRoot = core::ObjectId::generate();
         req.baselineCv = core::ContentVersion::fromCanonical(
             "cv-00000000000000000000000000000000000000000000000000000000000000cc");
         req.snapshot = snapshotHolder;
-        req.task = {core::ProjectId::generate(), core::BranchId::generate(),
-                    core::RevisionId::generate(), core::RunId::generate(),
+        req.task = {snapshotHolder.project, snapshotHolder.branch,
+                    snapshotHolder.revision, core::RunId::generate(),
                     core::AttemptId{1U}};
         req.coverage = makeCoverage(snapshotHolder);
         return req;
@@ -1101,6 +1104,7 @@ TEST(OptJointRun, CheckpointResumeStatisticsNeverDuplicated_WP21T04_ACC3)
 
     // 恢复（真协调器 restore——Restored 规格；新 AttemptId＝宿主 +1 语义）。
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = ckptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;
@@ -1206,6 +1210,7 @@ TEST(OptJointRun, CheckpointCorruptRejectedByCoordinator_WP21T04_ACC2)
     }
 
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = ckptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;
@@ -1250,6 +1255,7 @@ TEST(OptJointRun, CheckpointVersionIncompatibleNoMigration_WP21T04_ACC2)
 
     // 恢复请求携带漂移后的契约版本（变更 codec 后恢复——判定第三条件）。
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = ckptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion
@@ -1435,6 +1441,7 @@ TEST(OptJointRun, ResumeAfterPauseStatsAndIdentityNeverDuplicated_WP21T07_OPTVER
     const execution::CheckpointId ckptId
         = env.writeState(paused.checkpointStates.back(), env.task, snapshotId, sliceId, 1);
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = ckptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;
@@ -1557,6 +1564,7 @@ TEST(OptJointRun, CancelAfterPauseKeepsCheckpointResumable_WP21T07_OPTVER231)
     // 腿 2：续跑（AttemptId+1）＋批 1 界协作取消（批 0 重推进 24 次层查询
     // 放行后，第 25 次＝批 1 派发的批间查询即取消——批 0 不重记账）。
     execution::CheckpointRestoreRequest restoreReq;
+    restoreReq.requestEvaluatorKey = std::string(optimization::kOptJointFullKey);
     restoreReq.checkpointId = pauseCkptId;
     restoreReq.requestSliceId = sliceId;
     restoreReq.requestContractVersion = optimization::kOptJointFullContractVersion;

@@ -414,6 +414,7 @@ enum class DependencyIssueCode : std::uint8_t {
     UpstreamResultPayloadInvalid,///< UpstreamResult 载荷字段非法（键语法/空 sliceId）
     EnvironmentPayloadInvalid,   ///< Environment 载荷字段非法（空 token/valueToken）
     AppliedReasonInconsistent,   ///< applied/notAppliedReason 配对矛盾（§4.2.1）
+    UnknownVocabulary, ///< EV-T13：kind/requiredness 词表外位型
 };
 
 /**
@@ -475,6 +476,10 @@ inline std::vector<DependencyIssue> validateDependencyDeclarations(
     // 逐声明检查（下标随 issue 一起返回——注册拒绝消息可就地定位）。
     for (std::size_t i = 0; i < declarations.size(); ++i) {
         const DependencyDeclaration& d = declarations[i];
+        if (static_cast<std::uint8_t>(d.kind) > static_cast<std::uint8_t>(DependencyKind::Environment)
+            || static_cast<std::uint8_t>(d.requiredness) > static_cast<std::uint8_t>(DependencyRequiredness::Conditional)) {
+            issues.push_back({DependencyIssueCode::UnknownVocabulary, d.key, i, "未知依赖类别或必需性"});
+        }
         // 规则 1：键语法（编码安全＋词表形态闸门）。
         if (!isValidDependencyKey(d.key)) {
             issues.push_back({DependencyIssueCode::DeclarationKeySyntax, d.key, i,
@@ -581,6 +586,9 @@ inline std::vector<DependencyIssue> validateDependencyEntries(
     // 逐条目检查（载荷按 kind 分派——variant 下标必须与 kind 对应）。
     for (std::size_t i = 0; i < entries.size(); ++i) {
         const DependencyEntry& e = entries[i];
+        if (static_cast<std::uint8_t>(e.kind) > static_cast<std::uint8_t>(DependencyKind::Environment)) {
+            issues.push_back({DependencyIssueCode::UnknownVocabulary, e.key, i, "未知依赖类别"});
+        }
         // 规则 2：键语法（与声明同闸门）。
         if (!isValidDependencyKey(e.key)) {
             issues.push_back({DependencyIssueCode::EntryKeySyntax, e.key, i,

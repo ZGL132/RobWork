@@ -110,6 +110,7 @@ CacheHitQuery checkpointRequest()
     CacheHitQuery q;
     q.requestedMode = core::EvaluationMode::Verified;   // 故意取非对齐值——断言模式不参与
     q.requestSliceId = cid(kHex64A);
+    q.requestEvaluatorKey = "kin-batch-ik";
     q.requestContractVersion = 3;
     q.requestProfileIdentity = cid(kHex64B);
     return q;

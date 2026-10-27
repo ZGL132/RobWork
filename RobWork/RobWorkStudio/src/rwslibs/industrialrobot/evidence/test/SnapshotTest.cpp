@@ -591,15 +591,16 @@ TEST(EvidenceSnapshotBuilder, ConfigEntryInvariants_EV_SNAP)
         expectEvidenceThrow([&b, &source] { b.build(source); },
                             EvidenceErrorCode::SnapshotIncomplete);
     }
-    // 反例 2：内容身份零值。
+    // EV-T13：调用方身份不是权威；零值由冻结字节计算。
     {
         ConfigEntry c = validConfig("kin.ik-config");
         c.contentIdentity = core::ContentIdentity{};
         SnapshotBuilder b = baseBuilder();
         b.addObjectRef(e);
         b.addConfiguration(c);
-        expectEvidenceThrow([&b, &source] { b.build(source); },
-                            EvidenceErrorCode::SnapshotIncomplete);
+        const auto frozen = b.build(source);
+        core::ContentDigester d; d.update(c.canonicalBytes.data(),c.canonicalBytes.size());
+        EXPECT_EQ(frozen.configurationRefs[0].contentIdentity.bytes,d.finalize());
     }
     // 反例 3：同一种类配置两条引用（I-3 唯一性）。
     {

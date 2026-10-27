@@ -1,5 +1,7 @@
 # 工业机械臂设计软件 · execution 单元详细设计（阶段 A）
 
+> EV-T13（2026-10-27，实施待独验）：ResumeQuery 与 CheckpointRestoreRequest 表尾追加 requestEvaluatorKey，查询/恢复必须透传实际请求评估键；缺失或与检查点键错配时 evidence 返回 Incompatible，不从检查点头反推请求事实。未改检查点磁盘格式、恢复调度或归档 owner。验证见 [evidence 实施记录](../traceability/evidence-review-r1/README.md)。
+
 > 上游复用与最小上下文执行根 AGENTS.md §0.1/§1；权限唯一见 [ARCH §3.6 / SA-19](../ARCHITECTURE.md#36-上游使用权限与纯净性sa-19)，逐功能/catalog/生产证据及待实现门禁见 [audit-contract](../reuse/audit-contract.md)，阶段见 [migration §11](../reuse/migration.md#11-最终方案补充阶段门2026-10-22)。本单元全部功能受审计，不限于 16 个已知重复文件；不恢复 old/ 不等于重写上游，只按本任务相关章节取用。
 
 SA-19 重申 worker 边界：通道传冻结输入/物化数据、值与身份，不传 WC/DWC/State 指针或借持句柄；runtime 在各进程按同一规则物化，execution 管调度/取消/结果接纳；不链接宿主呈现/Widgets。任务私有 State/solver/engine 不跨任务共享写。

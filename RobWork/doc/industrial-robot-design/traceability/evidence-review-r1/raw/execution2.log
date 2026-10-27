@@ -1,0 +1,18 @@
+Note: Google Test filter = CheckpointCoordinatorTest.RequestedEvaluatorMismatchRejected_EV_T13:RunRegistryAdmissionTest.*EV_T13
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from RunRegistryAdmissionTest
+[ RUN      ] RunRegistryAdmissionTest.UnconditionalNaCannotArchiveFeasible_EV_T13
+[       OK ] RunRegistryAdmissionTest.UnconditionalNaCannotArchiveFeasible_EV_T13 (42 ms)
+[ RUN      ] RunRegistryAdmissionTest.SearchExhaustionStaysCompletedDataInsufficient_EV_T13
+[       OK ] RunRegistryAdmissionTest.SearchExhaustionStaysCompletedDataInsufficient_EV_T13 (34 ms)
+[----------] 2 tests from RunRegistryAdmissionTest (77 ms total)
+
+[----------] 1 test from CheckpointCoordinatorTest
+[ RUN      ] CheckpointCoordinatorTest.RequestedEvaluatorMismatchRejected_EV_T13
+[       OK ] CheckpointCoordinatorTest.RequestedEvaluatorMismatchRejected_EV_T13 (4 ms)
+[----------] 1 test from CheckpointCoordinatorTest (4 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (88 ms total)
+[  PASSED  ] 3 tests.

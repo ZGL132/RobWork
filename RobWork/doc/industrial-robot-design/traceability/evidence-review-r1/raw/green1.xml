@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="32" failures="3" disabled="0" errors="0" time="0.001" timestamp="2026-10-27T23:12:37.986" name="AllTests">
+  <testsuite name="ReviewR1_Controls" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.986">
+    <testcase name="ValidFeasibleAndIncomplete" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="27" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Controls" />
+  </testsuite>
+  <testsuite name="ReviewR1_Identity" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.986">
+    <testcase name="UnrelatedRevisionKeepsSlice" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="28" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Identity" />
+    <testcase name="BudgetChangeKeepsBaseline" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="29" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Identity" />
+    <testcase name="ForgedSnapshotIsRejectedAtSliceBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="30" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Identity" />
+    <testcase name="ForeignPolicyRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Identity" />
+  </testsuite>
+  <testsuite name="ReviewR1_Dependency" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.986">
+    <testcase name="UnknownEnumsRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="32" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Dependency" />
+  </testsuite>
+  <testsuite name="ReviewR1_Profile" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.986">
+    <testcase name="DuplicateAndCrossDomainRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="33" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Profile" />
+  </testsuite>
+  <testsuite name="ReviewR1_Verdict" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.986">
+    <testcase name="UnconditionalRequiredCannotBeNA" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="34" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+    <testcase name="SatisfiedWithoutArtifactCannotPass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+    <testcase name="ForeignManifestSnapshotCannotPass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+    <testcase name="DuplicateEvidenceOrderIndependent" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+    <testcase name="SearchInsufficientCanBeEnveloped" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="38" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+    <testcase name="ProofCannotBypassMissingPolicyIdentity" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.986" classname="ReviewR1_Verdict" />
+  </testsuite>
+  <testsuite name="ReviewR1_Envelope" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="ProfileMismatchRejectedByStrongBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="41" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Envelope" />
+    <testcase name="TaskRevisionMismatchRejectedByStrongBoundary" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="42" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Envelope" />
+  </testsuite>
+  <testsuite name="ReviewR1_Codec" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="IndependentInvalidSnapshotVectorRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="43" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Codec" />
+    <testcase name="InvalidSliceEntryRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="44" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Codec" />
+    <testcase name="F64IndependentByteVector" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Codec" />
+  </testsuite>
+  <testsuite name="ReviewR1_Compatibility" tests="3" failures="3" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="MissingIdentitiesCannotFullHit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="46" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:46&#x0A;Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:46
+Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+]]></failure>
+    </testcase>
+    <testcase name="PreviewCannotFullHit" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="47" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:47&#x0A;Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0&#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:47
+Expected: (judgeCacheHit(q,s).verdict) != (CacheHitResult::FullHit), actual: \0 vs \0
+]]></failure>
+    </testcase>
+    <testcase name="CheckpointKeyMustMatchRequestedEvaluator" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_Compatibility">
+      <failure message="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:48&#x0A;Expected equality of these values:&#x0A;  judgeCheckpointCompatibility(q,s).verdict&#x0A;    Which is: \0&#x0A;  CheckpointCompatibilityResult::Incompatible&#x0A;    Which is: &#x0A;" type=""><![CDATA[C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp:48
+Expected equality of these values:
+  judgeCheckpointCompatibility(q,s).verdict
+    Which is: \0
+  CheckpointCompatibilityResult::Incompatible
+    Which is: 
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalProfile" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="DuplicateSingleDomainRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="52" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalProfile" />
+    <testcase name="RequiredListRejectsSuggestedClass" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="53" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalProfile" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalProof" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="EmptyPreconditionsRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="54" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalProof" />
+    <testcase name="EmptyClaimAndSubjectRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="55" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalProof" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalSnapshot" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="ConfigIdentityComputedFromBytes" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalSnapshot" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalSlice" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="ConfigurationMustBelongToSnapshot" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="57" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalSlice" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalEnvelope" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="UnknownModeRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="58" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalEnvelope" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalEvaluator" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="UnknownSupportedModeRejected" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="59" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalEvaluator" />
+  </testsuite>
+  <testsuite name="ReviewR1_AdditionalVerdict" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="EmptyDomainResultsAreNotComplete" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_AdditionalVerdict" />
+  </testsuite>
+  <testsuite name="ReviewR1_ReviewChain" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-27T23:12:37.987">
+    <testcase name="MissingProofPreconditionsCannotQualifyAsFormalReview" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="61" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_ReviewChain" />
+    <testcase name="InvalidIndependentSnapshotBytesCannotProduceFrozenSlice" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\evidence\test\ReviewRegressionTest.cpp" line="79" status="run" result="completed" time="0." timestamp="2026-10-27T23:12:37.987" classname="ReviewR1_ReviewChain" />
+  </testsuite>
+</testsuites>

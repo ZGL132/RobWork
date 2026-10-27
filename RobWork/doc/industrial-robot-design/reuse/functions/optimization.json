@@ -1506,6 +1506,92 @@
     "path": "RobWork/doc/industrial-robot-design/traceability/reuse/REUSE-T44/nonoverlap-optimization.json",
     "sha256": "6372533719cbfec76d1868a0d0752e97cc4cd56ac77bb2561dcee2c3f2426896"
    }
+  },
+  {
+   "functionId": "optimization.EV_T13.perf.test.OptRunTimeBenchmarkTest.cpp",
+   "ownerUnit": "optimization",
+   "requirements": [
+    "CON-01",
+    "CON-02",
+    "CON-05",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/OptRunTimeBenchmarkTest.cpp",
+     "symbol": "StandardRunTimeLimit",
+     "startLine": 1,
+     "endLine": 2216,
+     "sha256": "f985ab0c553b19e738d44e34ab0827630d281f03d6d0deaf6fb74697f3dc06bb"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_optimization_perf_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"AnalysisSnapshot|InputSlice|RequiredEvidenceProfile|ContentDigester|BINArchive\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+    "conclusion": "快照/切片/证据是产品协议；摘要复用core唯一供给；BINArchive格式不兼容冻结字节。未引入新算法/依赖。"
+   },
+   "differences": "EV-T13：合法输入经真实builder重冻结；反例oracle来自需求/独立字节，替身仅在既有查询端口。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+    }
+   ],
+   "auditBoundary": "本行覆盖该文件的既有契约/实现或测试夹具，保留原逐符号行；它是本轮实施凭证，不是T47独验、全项目算法验收或权限批准。",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md",
+    "sha256": "e25186853e12fc1341cd75ae7270645b017cbcf64e1aedd88f8c416e5b80bd66"
+   }
+  },
+  {
+   "functionId": "optimization.EV_T13.test.JointRunTest.cpp",
+   "ownerUnit": "optimization",
+   "requirements": [
+    "CON-01",
+    "CON-02",
+    "CON-05",
+    "NFR-COR-03"
+   ],
+   "sources": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/JointRunTest.cpp",
+     "symbol": "OptJointRun",
+     "startLine": 1,
+     "endLine": 1651,
+     "sha256": "bd87215466176a10e64470b5193b105d9b82a62c5777713e642d670a2b727c84"
+    }
+   ],
+   "targets": [
+    "sdurws_ird_optimization_test"
+   ],
+   "usageRole": "owner",
+   "permissionRef": "ARCH:3.6.1",
+   "capabilityId": "NONE",
+   "decision": "business-specific",
+   "status": "migrated",
+   "search": {
+    "command": "rg -n \"AnalysisSnapshot|InputSlice|RequiredEvidenceProfile|ContentDigester|BINArchive\" RobWork/RobWork/src RobWork/RobWorkSim/src RobWork/RobWorkStudio/src/rwslibs/industrialrobot/core",
+    "conclusion": "快照/切片/证据是产品协议；摘要复用core唯一供给；BINArchive格式不兼容冻结字节。未引入新算法/依赖。"
+   },
+   "differences": "EV-T13：合法输入经真实builder重冻结；反例oracle来自需求/独立字节，替身仅在既有查询端口。",
+   "inputs": [
+    {
+     "path": "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/CMakeLists.txt",
+     "sha256": "69d0b3a7a459e91578235a1ca7db9bf16363a8c02dc414355a2809cd5b56b0e6"
+    }
+   ],
+   "auditBoundary": "本行覆盖该文件的既有契约/实现或测试夹具，保留原逐符号行；它是本轮实施凭证，不是T47独验、全项目算法验收或权限批准。",
+   "nonOverlapEvidence": {
+    "path": "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/README.md",
+    "sha256": "e25186853e12fc1341cd75ae7270645b017cbcf64e1aedd88f8c416e5b80bd66"
+   }
   }
  ]
 }

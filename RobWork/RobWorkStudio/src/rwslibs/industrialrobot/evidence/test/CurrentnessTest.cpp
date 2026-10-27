@@ -147,7 +147,7 @@ public:
  */
 AnalysisSnapshot makeSnapshot(core::ProjectId project, core::BranchId branch,
                               core::RevisionId revision,
-                              core::ContentVersion robotCv, core::ContentVersion costCv)
+                              core::ContentVersion robotCv, core::ContentVersion costCv, std::uint8_t budget=1)
 {
     SnapshotBuilder b;
     b.setIdentity(project, branch, revision, 7);
@@ -158,6 +158,8 @@ AnalysisSnapshot makeSnapshot(core::ProjectId project, core::BranchId branch,
     r.evidenceContractVersion = "evidence-contract/1";
     r.codecVersions = {"snapshot-codec/1", "slice-codec/1"};
     b.setReproduction(r);
+    b.addConfiguration({"ik-solver-budget",{budget},{}});
+    b.addSamplingPlan({oid(kHex32C),cid(kHex64A),1,1,cid(kHex64C)});
     // 机器人对象进闭包（切片 Object 条目子集校验的事实面）。
     ObjectRefEntry robot;
     robot.objectId = robotObject();
@@ -226,7 +228,9 @@ DependencyEntry configEntry(const std::string& key, std::vector<std::uint8_t> by
     ConfigurationDependencyPayload p;
     p.configKindToken = "ik-solver-budget";
     p.canonicalBytes = std::move(bytes);
-    p.contentIdentity = identity;
+    core::ContentDigester digest; digest.update(p.canonicalBytes.data(),p.canonicalBytes.size());
+    p.contentIdentity.bytes = digest.finalize();
+    (void)identity; // 旧调用参数不再充当内容身份权威。
     e.payload = p;
     e.applied = true;
     return e;
@@ -423,7 +427,7 @@ TEST(EvidenceCurrentness, NewSessionSameContentStaysCurrent_EV_CUR_1)
     // 新会话：新修订 id（rev2）＋同样的对象内容（cvA）——内容身份不依赖
     // 会话/修订载体（CON-05）。
     const AnalysisSnapshot reopenSnapshot
-        = makeSnapshot(projectA(), branchA(), revision2(), cv(kHex64A), cv(kHex64B));
+        = makeSnapshot(projectA(), branchA(), revision2(), cv(kHex64A), cv(kHex64B), 5);
     MapFactSource facts;
     facts.table["model.robot-design"]
         = objectEntry("model.robot-design", robotObject(), cv(kHex64A), "robot-design");
@@ -785,10 +789,8 @@ TEST(EvidenceCurrentness, EvaluationKeyMismatchIsCrossContext_I_7)
     EXPECT_NE(out.diagnostics[0].cause.find("评估键"), std::string::npos);
 }
 
-/** 身份摘要形态降级（I-8）：结果切片条目不可得时，sliceId 全值比较——
- *  跨修订（快照锚差异）保守判 Superseded＋SliceContentChanged，绝不误判
- *  Current。 */
-TEST(EvidenceCurrentness, IdentityOnlyFormDegradesConservatively_I_8)
+/** EV-T13/I-8：无历史条目时按 v2 计算身份比较，无关修订不使依赖失效。 */
+TEST(EvidenceCurrentness, IdentityOnlyV2PreservesUnchangedDependencies_I_8)
 {
     const AnalysisSnapshot archiveSnapshot
         = makeSnapshot(projectA(), branchA(), revision1(), cv(kHex64A), cv(kHex64B));
@@ -798,7 +800,7 @@ TEST(EvidenceCurrentness, IdentityOnlyFormDegradesConservatively_I_8)
     const ResultRef result = makeResultRef(archived, validTask());
 
     // HEAD 前进：目标快照锚定 rev2——条目内容与归档一致（robot 未变），
-    // 但身份摘要形态无法做条目级对比，sliceId 全值（含快照锚）不等。
+    // v2 身份摘要按消费内容对比，不含整个快照锚。
     const AnalysisSnapshot headSnapshot
         = makeSnapshot(projectA(), branchA(), revision2(), cv(kHex64A), cv(kHex64D));
     MapFactSource facts;
@@ -811,15 +813,9 @@ TEST(EvidenceCurrentness, IdentityOnlyFormDegradesConservatively_I_8)
                              makeSources(headSnapshot, facts,
                                          robotOnlyDeclarations(), nullptr));
     ASSERT_TRUE(out.status.has_value());
-    EXPECT_EQ(*out.status, CurrentnessStatus::Superseded);
-    ASSERT_EQ(out.reasons.size(), 1u);
-    EXPECT_EQ(out.reasons[0].kind, InvalidationKind::SliceContentChanged);
-    // detail 注明降级原因与补救路径（提供切片可执行条目级判定）。
-    EXPECT_NE(out.reasons[0].detail.find("身份摘要形态"), std::string::npos);
-    // F-807 回归钉：身份级兜底的 dependencyKey 为空串（Currentness.hpp
-    // :343-344「契约版本变化与身份级兜底为空串——无具体涉事条目」——修复
-    // 前误填 evaluationKey，按依赖键对账的调用方误归因到不存在的条目）。
-    EXPECT_EQ(out.reasons[0].dependencyKey, std::string{});
+    EXPECT_EQ(*out.status, CurrentnessStatus::Current);
+    EXPECT_TRUE(out.reasons.empty());
+
 }
 
 // =====================================================================
@@ -843,7 +839,7 @@ TEST(EvidenceCurrentness, BudgetChangeSupersedesWithBaselineUnchanged_AT_05)
 
     // 复评时刻：仅扩大求解预算（v2）——模型对象未变。
     const AnalysisSnapshot revisitSnapshot
-        = makeSnapshot(projectA(), branchA(), revision2(), cv(kHex64A), cv(kHex64B));
+        = makeSnapshot(projectA(), branchA(), revision2(), cv(kHex64A), cv(kHex64B),5);
     MapFactSource facts;
     facts.table["model.robot-design"]
         = objectEntry("model.robot-design", robotObject(), cv(kHex64A), "robot-design");
@@ -861,8 +857,8 @@ TEST(EvidenceCurrentness, BudgetChangeSupersedesWithBaselineUnchanged_AT_05)
     ASSERT_EQ(out.reasons.size(), 1u);
     EXPECT_EQ(out.reasons[0].dependencyKey, "solve.budget");
     EXPECT_EQ(out.reasons[0].kind, InvalidationKind::ConfigurationChanged);
-    EXPECT_NE(out.reasons[0].detail.find(cid(kHex64A).toCanonical()), std::string::npos);
-    EXPECT_NE(out.reasons[0].detail.find(cid(kHex64B).toCanonical()), std::string::npos);
+    EXPECT_NE(out.reasons[0].detail.find(std::get<ConfigurationDependencyPayload>(archived.entries.back().payload).contentIdentity.toCanonical()), std::string::npos);
+    EXPECT_NE(out.reasons[0].detail.find(std::get<ConfigurationDependencyPayload>(facts.table["solve.budget"].payload).contentIdentity.toCanonical()), std::string::npos);
 
     // §4.2.4 的双层身份断言：求解类 Configuration 不进基准身份（§5.1
     // 排除面/D-1）——在同一快照上仅改预算冻结的两个切片：sliceId 不等
@@ -876,7 +872,7 @@ TEST(EvidenceCurrentness, BudgetChangeSupersedesWithBaselineUnchanged_AT_05)
         b.addEntry(objectEntry("model.robot-design", robotObject(), cv(kHex64A),
                                "robot-design"));
         b.addEntry(configEntry("solve.budget", {0x05}, cid(kHex64B)));
-        baselineUnchanged = b.build(archiveSnapshot);
+        baselineUnchanged = b.build(revisitSnapshot);
     }
     EXPECT_FALSE(archived.sliceId == baselineUnchanged.sliceId) << "预算变化必须改变 sliceId";
     EXPECT_TRUE(archived.inputBaselineId == baselineUnchanged.inputBaselineId)
@@ -953,7 +949,7 @@ TEST(EvidenceCurrentness, ConditionFlipAndVanishedEntryReasons_EV_CUR_1)
     const InputSlice archived = freezeSlice(
         archiveSnapshot, {robotDecl, guardDecl, sampleDecl},
         {objectEntry("model.robot-design", robotObject(), cv(kHex64A), "robot-design"),
-         policyEntry("policy.collision-guard", cid(kHex64D), true, nullptr),
+         policyEntry("policy.collision-guard", cid(kHex64A), true, nullptr),
          samplePayload});
     const ResultRef result = makeResultRef(archived, validTask());
 
@@ -965,7 +961,7 @@ TEST(EvidenceCurrentness, ConditionFlipAndVanishedEntryReasons_EV_CUR_1)
     facts.table["model.robot-design"]
         = objectEntry("model.robot-design", robotObject(), cv(kHex64A), "robot-design");
     facts.table["policy.collision-guard"]
-        = policyEntry("policy.collision-guard", cid(kHex64D), false, "策略停用碰撞");
+        = policyEntry("policy.collision-guard", cid(kHex64A), false, "策略停用碰撞");
 
     const CurrentnessResult out
         = computeCurrentness(result, makeTarget(projectA(), branchA()),

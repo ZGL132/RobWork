@@ -340,7 +340,7 @@ TEST_F(CacheJudgeContractTest, EX_CKP_2_RestoreVerdictEqualsDirectEvidenceJudge)
 
     // --- 失配请求（契约版本 8）：协调器路径。
     const CheckpointRestoreResult viaCoordinator = m_checkpoints->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 8});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 8, "kin-batch-ik"});
     ASSERT_EQ(viaCoordinator.outcome, CheckpointRestoreResult::Outcome::Incompatible);
     EXPECT_TRUE(m_sink->hasReportCode("EX-CHECKPOINT-INCOMPATIBLE"));
 
@@ -348,6 +348,7 @@ TEST_F(CacheJudgeContractTest, EX_CKP_2_RestoreVerdictEqualsDirectEvidenceJudge)
     ev::CacheHitQuery judgeRequest;
     judgeRequest.requestSliceId = cid(kHex64C);
     judgeRequest.requestContractVersion = 8;
+    judgeRequest.requestEvaluatorKey = "kin-batch-ik";
     ev::CheckpointSummary summary;
     summary.evaluatorKey = "kin-batch-ik";
     summary.sliceId = cid(kHex64C);
@@ -365,9 +366,10 @@ TEST_F(CacheJudgeContractTest, EX_CKP_2_RestoreVerdictEqualsDirectEvidenceJudge)
 
     // --- 兼容请求（契约版本 7）：两路同为 Resumeable。
     const CheckpointRestoreResult compatible = m_checkpoints->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(compatible.outcome, CheckpointRestoreResult::Outcome::Restored);
     judgeRequest.requestContractVersion = 7;
+    judgeRequest.requestEvaluatorKey = "kin-batch-ik";
     EXPECT_EQ(ev::judgeCheckpointCompatibility(judgeRequest, summary).verdict,
               ev::CheckpointCompatibilityResult::Resumeable);
 }
@@ -388,7 +390,7 @@ TEST_F(CacheJudgeContractTest, EX_CKP_3_NotResumableRefusalWiring)
     }
 
     const CheckpointRestoreResult result = m_checkpoints->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::NotResumable);
 
     // 磁盘断言：目录内容不变（原检查点完整保留）。
@@ -436,6 +438,7 @@ TEST_F(CacheJudgeContractTest, EX_CCH_1_LookupVerdictEqualsDirectEvidenceJudge)
     verifiedQuery.requestedMode = core::EvaluationMode::Verified;
     verifiedQuery.requestSliceId = cid(kHex64C);
     verifiedQuery.requestContractVersion = 7;
+    verifiedQuery.requestEvaluatorKey = "kin-batch-ik";
     verifiedQuery.requestProfileIdentity = cid(kHex64A);
     const ev::CacheHitResult directVerified = ev::judgeCacheHit(verifiedQuery, entrySummary);
 

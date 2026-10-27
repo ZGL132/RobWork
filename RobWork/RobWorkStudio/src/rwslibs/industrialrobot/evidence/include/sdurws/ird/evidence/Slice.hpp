@@ -12,8 +12,8 @@
  *     snapshotId）、§4.2.3（声明—解析—冻结协议：②冻结期＝SliceBuilder
  *     解析对账＋Object 条目快照子集校验）、§4.2.4（改求解预算复评——
  *     新 sliceId 旧 inputBaseline 的直接消费场景）、§5.1（双层身份表：
- *     sliceId＝SliceCodec 全部冻结条目＋Environment 版本要素的 SHA-256；
- *     inputBaselineId＝SliceCodec 的子集——基准类条目＋快照身份块；D-04
+ *     sliceId＝v2 计算身份投影的 SHA-256（全部冻结依赖，不含 snapshotId）；
+ *     inputBaselineId＝基准类条目投影（v1 另含快照身份块）；D-04
  *     决策）、§5.2（canonical 编码规则表：magic IRDSLCE1/大端/长度前缀/
  *     presence 字节/浮点 IEEE754 位模式＋NaN±Inf 编码入口拒绝/版本化/
  *     纯函数可重入）、§3.1 组成表（Slice.hpp｜InputSlice/SliceBuilder/
@@ -42,8 +42,8 @@
  *   这既是 AT-05 失效矩阵精准性的实现基础，也使"漏声明"成为唯一的失效
  *   风险（防线＝注册期闭包校验〔Dependency.hpp〕＋冻结期子集校验〔本头〕）。
  *
- * 实现形态说明：InputSlice 为聚合值类型（公共成员＋成对 ==/!=，无 setter
- * ——冻结后不可变由 SliceBuilder::build() 唯一生产者保证，EV-T02
+ * 实现形态说明：InputSlice 为聚合值类型（公共成员＋成对 ==/!=，公共字段按冻结协议使用
+ * ——由 SliceBuilder::build() 校验冻结，调用方随后按只读值使用，EV-T02
  * DependencyEntry/EV-T03 AnalysisSnapshot 同款纪律）；builder/codec 的
  * 非平凡逻辑在 src/Slice.cpp（本头只放契约与纯声明＋轻量 inline 校验器）。
  *
@@ -169,7 +169,7 @@ using InputBaselineId = core::ContentIdentity;
  *        sliceId 后不可变"）。
  *
  * 生命周期与冻结纪律：由 SliceBuilder::build() 一次性校验、计算双层身份
- * 并返回；此后无任何修改途径——本结构不提供 setter，调用方按只读值对待
+ * 并返回；此后调用方须按只读值使用——本结构不提供 setter，调用方按只读值对待
  * （EV-T03 AnalysisSnapshot 同款不可变承诺）。同输入不同契约版本＝不同
  * 切片（CON-04）；同一切片可多次运行（重试）；同一 inputBaseline 可有
  * 多个切片（改求解配置复评——§4.2.4）。
@@ -189,15 +189,17 @@ struct InputSlice {
     /// 冻结时规范化；每条 Object 条目已在冻结期通过快照子集校验）。
     std::vector<DependencyEntry> entries;
     /// 来源快照身份（切片 ⊆ 快照内容——§4.2.2；取自 build() 入参快照，
-    /// 非调用方申报）。同时进入 inputBaselineId 编码（§5.1"快照身份块"）。
+    /// 非调用方申报）。v2 仅用于溯源；v1 同时进入两层身份编码。
     core::ContentIdentity snapshotId;
-    /// 切片内容身份＝SHA-256 over SliceCodec full 形态编码（§5.1——缓存键
+    /// 切片内容身份＝SHA-256 over v2 身份投影（v1 为 full 编码；缓存键
     /// 与失效判据，CON-05；builder 计算，非申报值）。
     core::ContentIdentity sliceId;
     /// 输入基准身份＝SHA-256 over SliceCodec baseline-projection 形态编码
-    /// （§5.1 D-04：仅基准类条目＋快照身份块参与——完整冻结输入复评
+    /// （§5.1 D-04、EV-T13：v2 仅基准类条目，v1 另含快照锚——完整冻结输入复评
     /// （C5）的凭据；跨设计共同基准另见Verdict.hpp，builder计算，非申报值）。
     core::ContentIdentity inputBaselineId;
+    /// EV-T13：新切片 v2，历史 v1 保持原身份可读。
+    std::uint8_t codecVersion = 2;
 
     /// 全字段成员精确等值（测试/codec 往返核对用；身份判定以 sliceId 为准
     /// ——§5.1 字节等值）。
@@ -206,7 +208,7 @@ struct InputSlice {
         return evaluationKey == o.evaluationKey
             && evaluatorContractVersion == o.evaluatorContractVersion
             && entries == o.entries && snapshotId == o.snapshotId
-            && sliceId == o.sliceId && inputBaselineId == o.inputBaselineId;
+            && sliceId == o.sliceId && inputBaselineId == o.inputBaselineId && codecVersion == o.codecVersion;
     }
     bool operator!=(const InputSlice& o) const { return !(*this == o); }
 };
@@ -313,12 +315,14 @@ private:
  *        presence 字节＋浮点位模式＋NaN±Inf 拒绝＋摘要唯一经
  *        core::ContentDigester）。
  *
- * 双形态与双层身份（§5.1）：
- *   - full 形态（身份形态——sliceId 对它计算）：评估面＋快照身份块＋
+ * 交换形态、身份投影与双层身份（§5.1、EV-T13）：
+ *   - full 形态（交换/追溯载体）：评估面＋快照身份块＋
  *     全部冻结条目（含 Environment 版本要素与未适用的条件条目——§4.2.1
  *     "其条件输入仍在身份里"）；
+ *   - v2 identity-projection（内部形态 2）：full 体删除 snapshotId，
+ *     其余字段不变，sliceId 对此投影计算；v1 sliceId 仍对 full 计算；
  *   - baseline-projection 形态（身份形态——inputBaselineId 对它计算）：
- *     快照身份块＋基准类条目子集（实现口径：全部 Object＋SampleSet＋
+ *     v1 含快照身份块，v2 仅基准类条目子集（实现口径：全部 Object＋SampleSet＋
  *     NameMap＋Environment 的基准类保留 token 条目；排除求解类
  *     Configuration、Policy、UpstreamResult 与 Environment 非基准版本
  *     ——§5.1/§4.2.2"仅模型/需求/工况集/冻结样本集条目参与"＋CR-05
@@ -342,10 +346,10 @@ public:
     static constexpr std::string_view kMagic{"IRDSLCE1"};
     /// 本实现 codec 版本（写入编码第 9 字节；升版＝全体切片身份变化——
     /// 破坏性变更走设计变更评审并同步缓存治理登记，§5.2 版本化行）。
-    static constexpr std::uint8_t kCodecVersion = 1;
+    static constexpr std::uint8_t kCodecVersion = 2;
 
     /**
-     * @brief full 形态编码（sliceId 的摘要对象；EV-ID-1 的往返载体）。
+     * @brief full 形态编码（EV-ID-1 往返载体；v1 同时作摘要对象）。
      *
      * @param slice [in] 冻结切片（builder 产出；未冻结手改值编码出的字节
      *              与其 sliceId 不再对应——契约：只编码冻结切片）
@@ -362,7 +366,7 @@ public:
      *        非往返载体——仅作身份计算与测试钉住排除字段用）。
      *
      * @param slice [in] 冻结切片（同 encodeFull 契约）
-     * @return 规范字节（快照身份块＋基准类条目子集——排除面见类注释）
+     * @return 规范字节（v2 基准类条目子集；v1 另含快照锚，排除面见类注释）
      *
      * @throws EvidenceError（SliceIncomplete）同 encodeFull
      */

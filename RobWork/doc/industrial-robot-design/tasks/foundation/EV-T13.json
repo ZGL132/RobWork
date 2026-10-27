@@ -1,0 +1,112 @@
+{
+  "schemaVersion": "ird-task/1",
+  "taskId": "EV-T13",
+  "unit": "evidence",
+  "masterWp": "WP-C",
+  "title": "evidence首轮评审整改：证据门禁、输入身份与兼容消费边界",
+  "status": "ready",
+  "branch": "codex/core-review-fixes",
+  "dependsOn": [],
+  "requirements": [
+    "CON-01",
+    "CON-02",
+    "CON-04",
+    "CON-05",
+    "EVI-01",
+    "EVI-02",
+    "TASK-02",
+    "NFR-COR-03"
+  ],
+  "designRefs": [
+    "units/evidence.md#4",
+    "units/evidence.md#5",
+    "units/evidence.md#6",
+    "units/evidence.md#7",
+    "units/evidence.md#8",
+    "reuse/policy.md#1"
+  ],
+  "allowedFiles": [
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/CMakeLists.txt",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Compatibility.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Dependency.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Envelope.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evaluator.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Evidence.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Slice.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/include/sdurws/ird/evidence/Snapshot.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Compatibility.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Envelope.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evaluator.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Evidence.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Slice.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Snapshot.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/src/Verdict.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/CompatibilityTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/CurrentnessTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/EvaluatorPortSuiteTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/EvidenceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/FreezeFixture.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/ReviewRegressionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SliceFixtureContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SliceTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/SnapshotTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/evidence/test/VerdictTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/contract_test/CacheJudgeContractTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/include/sdurws/ird/execution/Checkpoint.hpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/src/Checkpoint.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/CheckpointCacheTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/execution/test/RunRegistryAdmissionTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/perf_test/OptRunTimeBenchmarkTest.cpp",
+    "RobWork/RobWorkStudio/src/rwslibs/industrialrobot/optimization/test/JointRunTest.cpp",
+    "RobWork/doc/industrial-robot-design/reuse/changes/EV-T13.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/evidence.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/execution.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/optimization.json",
+    "RobWork/doc/industrial-robot-design/reuse/functions/ui.json",
+    "RobWork/doc/industrial-robot-design/tasks/foundation/EV-T13.json",
+    "RobWork/doc/industrial-robot-design/traceability/evidence-review-r1/**",
+    "RobWork/doc/industrial-robot-design/units/evidence.md",
+    "RobWork/doc/industrial-robot-design/units/execution.md"
+  ],
+  "forbiddenFiles": [
+    "RobWork/RobWork/src/**",
+    "RobWork/RobWorkSim/src/**",
+    "vcpkg/**"
+  ],
+  "outputs": [
+    "E01～E10整改实现、正式回归、真实日志/XML/原生报告及复用凭证；本地提交待所有者另会话独验"
+  ],
+  "verify": [
+    "cmake --build build --config Release --target sdurws_ird_evidence_test_report",
+    "cmake --build build --config Release --target sdurws_ird_evidence_contract_test_report",
+    "cmake --build build/core-smoke --config Release --target sdurws_ird_evidence_test sdurws_ird_evidence_contract_test",
+    "pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EV-T13.json"
+  ],
+  "interUnit": true,
+  "acceptance": [
+    "证据实例与条件NA/字段必填、数据不足明细、交叉绑定和非法词表反例先红后绿；真实CompletedDI接纳归档不转Failed",
+    "快照与切片来源一致；v2切片按消费依赖失效、预算复评同基准；v1独立黄金字节可读且身份不改写",
+    "缓存缺失身份/Preview与检查点请求评估键错配拒绝，execution/optimization消费和双模式冒烟按实际结果留痕",
+    "不扩权限/依赖/算法owner，不改历史/T47状态，不自签独验；实施提交由所有者另会话独验"
+  ],
+  "note": "所有者最新授权“按照上述审核结果进行修改”。指定当前工作树/分支优先于旧redesign-main要求。起始SHA=4c5e4301f62977f62f33f344c93f678d50d85efe；前序core/TK-T13/project成果保留；本契约仅为本包凭证/范围验证所需，ready不代表独验通过。v2身份投影修复E09，保留v1读取和旧摘要，消费者必须重编译。",
+  "governanceAcceptance": {
+    "commit": "5c358c0fc7d76d1dcc9c8ac55823160b6891944d",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T21-20261022-r2.json",
+    "reviewedCommit": "6eab38df81473b3d5248464f3f06d26b6f062fbc"
+  },
+  "reuseGateAcceptance": {
+    "commit": "ff3472721cd78bbefbe5e1c6dd75bdd349a649be",
+    "path": "RobWork/doc/industrial-robot-design/traceability/acceptance/GOV-T22-20261022-r3.json",
+    "reviewedCommit": "e6f06e5b9451357b10001a4677b10b4ad9e454a6"
+  },
+  "reuse": {
+    "policy": "H1-H6",
+    "manifest": "RobWork/doc/industrial-robot-design/reuse/changes/EV-T13.json"
+  },
+  "knownPitfalls": [
+    "P-EV-7",
+    "P-EV-8",
+    "P-EX-9"
+  ]
+}

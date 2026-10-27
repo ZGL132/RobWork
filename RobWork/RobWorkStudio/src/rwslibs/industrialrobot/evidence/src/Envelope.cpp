@@ -130,6 +130,11 @@ std::vector<EnvelopeIssue> validateCombination(const ResultEnvelopeDraft& draft)
 {
     std::vector<EnvelopeIssue> issues;
 
+    if ((draft.mode != core::EvaluationMode::Preview && draft.mode != core::EvaluationMode::Quick && draft.mode != core::EvaluationMode::Verified)
+        || (draft.outcome != core::TaskOutcome::Completed && draft.outcome != core::TaskOutcome::Canceled && draft.outcome != core::TaskOutcome::Failed && draft.outcome != core::TaskOutcome::Interrupted)
+        || (draft.engineeringStatus != core::EngineeringStatus::Feasible && draft.engineeringStatus != core::EngineeringStatus::EngineeringInfeasible && draft.engineeringStatus != core::EngineeringStatus::DataInsufficient && draft.engineeringStatus != core::EngineeringStatus::NotApplicable)) {
+        issues.push_back({EnvelopeIssueCode::VocabularyInvalid, "结果模式/执行/工程状态存在未知词表值"});
+    }
     // ---- 第①段：无条件边界（先于组合行核对——表 3 行 4"任意×Preview"
     // 是最外层的模式边界：Preview 根本不产生结果对象〔表 1/EVI-01〕，
     // 因此无论其余字段为何值，mode==Preview 一票拒绝且排首位——保证
@@ -204,6 +209,10 @@ std::vector<EnvelopeIssue> validateCombination(const ResultEnvelopeDraft& draft)
             const bool caseScopeOk = !draft.caseScope.caseIds.empty();
             const bool profileOk = isValidProfileRef(draft.profile);
             const bool manifestOk = isManifestTripleValid(draft.evidence);
+            if (draft.profile.profileId != draft.evidence.profileId || draft.profile.version != draft.evidence.profileVersion
+                || draft.profile.contentIdentity != draft.evidence.profileContentIdentity) {
+                issues.push_back({EnvelopeIssueCode::ProfileBindingMismatch, "包络与证据清单 Profile 绑定不一致"});
+            }
             if (!caseScopeOk || !profileOk || !manifestOk) {
                 std::ostringstream what;
                 what << "Completed 必含证据清单与工况标识（表 3 行 1）：";
@@ -354,6 +363,10 @@ std::vector<EnvelopeIssue> validateCombination(const ResultEnvelopeDraft& draft,
         return issues;
     }
 
+    if (draft.task.project != snapshot.project || draft.task.branch != snapshot.branch
+        || draft.task.revision != snapshot.revision || draft.snapshotId != snapshot.snapshotId) {
+        issues.push_back({EnvelopeIssueCode::SnapshotBindingMismatch, "任务三元组/快照身份与来源快照不一致"});
+    }
     // ---- 工况子集核对（§7.1 caseScope 注释"⊆ 快照 caseSet"）：逐条
     // 核对覆盖工况是否在来源快照冻结必验工况集内；越界 id 逐条点名
     // （可定位——错误工况引用的观测面，EV-COV-2 同源纪律）。 ----

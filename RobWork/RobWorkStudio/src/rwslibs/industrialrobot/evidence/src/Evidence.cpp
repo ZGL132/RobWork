@@ -36,6 +36,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
+#include <set>
+#include <tuple>
 #include <string>
 #include <utility>
 #include <vector>
@@ -176,10 +178,18 @@ std::vector<ProfileIssue> validateEvidenceProfile(const RequiredEvidenceProfile&
 
     // ---- 项级：required∪suggested 合并序列逐项（先 required 后 suggested
     // ——index 语义与契约头一致）；每项内按枚举检查序产出。----
+    std::vector<std::string> seenIds;
     std::size_t mergedIndex = 0;
     for (const std::vector<EvidenceProfileItem>* list : {&profile.required, &profile.suggested}) {
         for (const EvidenceProfileItem& item : *list) {
             const std::size_t idx = mergedIndex++;
+            if (std::find(seenIds.begin(), seenIds.end(), item.itemId) != seenIds.end()
+                || (list == &profile.required && item.itemClass != EvidenceItemClass::Required)
+                || (list == &profile.suggested && item.itemClass != EvidenceItemClass::Suggested)) {
+                issues.push_back({ProfileIssueCode::ItemDefinitionConflict, item.itemId, idx,
+                                  "证据项重复或类别与 required/suggested 列表冲突（EV-T13）"});
+            }
+            seenIds.push_back(item.itemId);
             // 项 id 词形（"<域>.<项>"——isValidProfileItemId）。
             if (!isValidProfileItemId(item.itemId)) {
                 issues.push_back({ProfileIssueCode::ItemIdSyntax, item.itemId, idx,
@@ -263,8 +273,19 @@ core::ContentIdentity computeProfileContentIdentity(const RequiredEvidenceProfil
 std::vector<EvidenceItemIssue> validateEvidenceItems(const std::vector<EvidenceItem>& items)
 {
     std::vector<EvidenceItemIssue> issues;
+    using Instance = std::tuple<std::string, std::optional<core::ObjectId>, std::optional<std::vector<CaseId>>>;
+    std::set<Instance> instances;
     for (std::size_t i = 0; i < items.size(); ++i) {
         const EvidenceItem& item = items[i];
+        if (static_cast<std::uint8_t>(item.status) > static_cast<std::uint8_t>(EvidenceItemStatus::NotApplicable)) {
+            issues.push_back({EvidenceItemIssueCode::StatusInvalid, item.itemId, i, "未知证据状态"});
+        }
+        // 逐点/工况允许同名行；同一实例重复则歧义，不能首条采信。
+        auto scope = item.caseScope;
+        if (scope) std::sort(scope->begin(), scope->end());
+        if (!instances.emplace(item.itemId,item.subject,std::move(scope)).second) {
+            issues.push_back({EvidenceItemIssueCode::DuplicateInstance,item.itemId,i,"证据实例重复"});
+        }
         // 规则 1：itemId 与 Profile 项同词形（证据按 itemId 对应 Profile 项
         // ——词形分叉会让"对应"关系无法机械核对）。
         if (!isValidProfileItemId(item.itemId)) {
@@ -315,6 +336,10 @@ validateEvidenceManifestBinding(const EvidenceManifest& manifest, const Analysis
                           "profileId 须为五域词表、profileVersion 须非空无 NUL）"});
     }
 
+    if (manifest.snapshotId != snapshot.snapshotId) {
+        issues.push_back({ManifestBindingIssueCode::ManifestIdentityInvalid, {}, ManifestBindingIssue::npos,
+                          "证据清单 snapshotId 与来源快照不一致"});
+    }
     // ---- 逐项绑定：caseScope ⊆ 快照冻结必验工况集、subject ∈ 对象闭包
     // （§6.2 原文——防错误工况/对象引用，EV-COV-2 同源；汇总器采信清单
     // 前调用）。----
@@ -366,50 +391,36 @@ EvidenceCompletenessResult checkEvidenceCompleteness(const RequiredEvidenceProfi
 {
     EvidenceCompletenessResult result;
 
-    // 清单按 itemId 的首个匹配索引（清单构造方保证 id 唯一——重复项为
-    // 构造方违约，此处取首个匹配并保持确定性；不额外判定重复）。
-    const auto findItem = [&manifest](const std::string& itemId) -> const EvidenceItem* {
-        for (const EvidenceItem& item : manifest.items) {
-            if (item.itemId == itemId) {
-                return &item;
-            }
-        }
-        return nullptr;
+    // EV-T13：全部实例共同满足同一必需项；顺序不参与工程裁定。
+    // 适用性条件的真实求值仍归域，不能借 NA 豁免无条件必需项。
+    const auto itemIssues = validateEvidenceItems(manifest.items);
+    std::vector<bool> valid(manifest.items.size(),true);
+    for (const auto& issue:itemIssues) valid[issue.index]=false;
+    const auto satisfied = [](const EvidenceItem& item, const EvidenceProfileItem& expected) {
+        return item.status==EvidenceItemStatus::Satisfied
+            || (item.status==EvidenceItemStatus::NotApplicable && expected.applicability.has_value());
     };
-
-    // 必需项逐项核对：未出现→Missing；NotApplicable→不计缺失（EV-VER-7：
-    // "整体不因该缺项降级"由本行保证）；Satisfied→满足；其余三态
-    // （Missing/Invalid/Unverified）→不满足、全量列出（不短路——表 2 ④）。
-    for (const EvidenceProfileItem& required : profile.required) {
-        const EvidenceItem* item = findItem(required.itemId);
-        if (item == nullptr) {
-            result.requiredGaps.push_back({required.itemId, EvidenceItemStatus::Missing});
-            continue;
+    for (const auto& required:profile.required) {
+        bool found=false;
+        for (std::size_t i=0;i<manifest.items.size();++i) {
+            const auto& item=manifest.items[i];
+            if (item.itemId!=required.itemId) continue;
+            found=true;
+            if (valid[i] && satisfied(item,required)) continue;
+            const auto status=valid[i] && (item.status==EvidenceItemStatus::Missing || item.status==EvidenceItemStatus::Unverified)
+                ? item.status : EvidenceItemStatus::Invalid;
+            result.requiredGaps.push_back({required.itemId,status,i});
         }
-        switch (item->status) {
-        case EvidenceItemStatus::Satisfied:
-        case EvidenceItemStatus::NotApplicable:
-            break;  // 满足／不适用不计缺失（C2/ERR-01）
-        case EvidenceItemStatus::Missing:
-        case EvidenceItemStatus::Invalid:
-        case EvidenceItemStatus::Unverified:
-            result.requiredGaps.push_back({required.itemId, item->status});
-            break;
-        }
+        if (!found) result.requiredGaps.push_back({required.itemId,EvidenceItemStatus::Missing});
     }
-
-    // 建议项：缺失不阻断、单独标注（表 4"建议证据项"列语义）；同样
-    // NotApplicable 不计入。
-    for (const EvidenceProfileItem& suggested : profile.suggested) {
-        const EvidenceItem* item = findItem(suggested.itemId);
-        if (item == nullptr) {
-            result.suggestedGaps.push_back(suggested.itemId);
-            continue;
+    for (const auto& suggested:profile.suggested) {
+        bool found=false,complete=true;
+        for (std::size_t i=0;i<manifest.items.size();++i) {
+            const auto& item=manifest.items[i];
+            if (item.itemId!=suggested.itemId) continue;
+            found=true; complete=complete && valid[i] && satisfied(item,suggested);
         }
-        if (item->status != EvidenceItemStatus::Satisfied
-            && item->status != EvidenceItemStatus::NotApplicable) {
-            result.suggestedGaps.push_back(suggested.itemId);
-        }
+        if (!found || !complete) result.suggestedGaps.push_back(suggested.itemId);
     }
     return result;
 }
@@ -423,6 +434,10 @@ std::vector<SnapshotModeIssue> validateSnapshotForMode(const AnalysisSnapshot& s
 {
     std::vector<SnapshotModeIssue> issues;
 
+    try { SnapshotCodec::validate(snapshot); }
+    catch (const EvidenceError& error) {
+        issues.push_back({SnapshotModeIssueCode::SnapshotInvalid, SnapshotModeIssue::npos, error.what()});
+    }
     // Verified 前置①：被消费外部资源全部固化（CON-03/PM-01——未固化即
     // 阻断正式结论，证据不足口径；逐条列出涉事资源便于定位）。Quick/
     // Preview 不强制固化（表 1：其产物本就不支撑正式结论）。
@@ -459,6 +474,12 @@ std::vector<ProofIssue> validateProof(const DeterministicInfeasibilityProof& pro
 {
     std::vector<ProofIssue> issues;
 
+    // EV-T13：字段级证明契约；只验绑定/存在性，不代替领域数学依据。
+    if ((proof.claimToken.empty() || containsNul(proof.claimToken)) || !proof.subject.isValid()
+        || (proof.preconditions.empty() || containsNul(proof.preconditions))) {
+        issues.push_back({ProofIssueCode::CommonFieldMissing, "claimToken/subject/preconditions",
+                          ProofIssue::npos, "证明通用必填字段缺失或含 NUL"});
+    }
     // ---- ①类别合法（三类之外即"证明"不成立——EV-VER-2/3/4 的拒绝面：
     // "多初值全发散"等搜索未果情形不得冒充证明，走 SearchExhaustedRecord
     // →DataInsufficient 口径）。枚举值域外只能经非法转换到达——防御性
@@ -593,6 +614,10 @@ CoverageCheckResult validateCaseCoverageMatrix(const CaseCoverageMatrix& matrix,
         const CaseCoverageEntry& entry = matrix.entries[i];
         const std::string caseIdText = entry.caseId.isValid() ? entry.caseId.toCanonical()
                                                               : std::string{};
+        if (static_cast<std::uint8_t>(entry.status) > static_cast<std::uint8_t>(CaseExecutionStatus::Failed)) {
+            result.matrixLegal = false;
+            result.issues.push_back({CoverageIssueCode::StatusInvalid, caseIdText, i, "未知工况执行状态"});
+        }
         // 条目身份保留值（无法对账——先于其余检查）。
         if (!entry.caseId.isValid()) {
             result.matrixLegal = false;

@@ -1,0 +1,18 @@
+# EV-T13 已执行命令；均在 C:/Users/zgl18/.codex/worktrees/core-review-fixes/RobWork。
+# 实际构建入口见同目录 .cmd；各脚本先进入 VS x64 开发环境。
+cmake --build build --config Release --target sdurws_ird_evidence_test_report sdurws_ird_evidence_contract_test_report
+cmake --build build/core-smoke --config Release --target sdurws_ird_evidence_test sdurws_ird_evidence_contract_test
+cmake --build build --config Release --target sdurws_ird_execution_test sdurws_ird_execution_contract_test sdurws_ird_optimization_test
+cmake --build build --config Release --target sdurws_ird_optimization_test sdurws_ird_optimization_perf_test
+cmake --build build --config Release --target sdurws_ird_evidence_test sdurws_ird_evidence_contract_test ird_gates
+$env:PATH="$PWD/build/RobWorkStudio/bin/Release;$PWD/build/RobWork/bin/Release;D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin;"+$env:PATH
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_evidence_test.exe" '--gtest_filter=ReviewR1_*.*' '--gtest_output=xml:build/evidence-fix-r1/red.xml' '--ird_report=build/evidence-fix-r1/red.json'
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_execution_test.exe" '--gtest_filter=RunRegistryAdmissionTest.*:CheckpointCoordinatorTest.*:CacheCoordinatorTest.*' '--gtest_output=xml:build/evidence-fix-r1/execution1.xml' '--ird_report=build/evidence-fix-r1/execution1.json'
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_execution_test.exe" '--gtest_filter=CheckpointCoordinatorTest.RequestedEvaluatorMismatchRejected_EV_T13:RunRegistryAdmissionTest.*EV_T13' '--gtest_output=xml:build/evidence-fix-r1/execution2.xml' '--ird_report=build/evidence-fix-r1/execution2.json'
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_execution_contract_test.exe" '--gtest_filter=*CacheJudge*.*' '--gtest_output=xml:build/evidence-fix-r1/execution-contract.xml' '--ird_report=build/evidence-fix-r1/execution-contract.json'
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_optimization_test.exe" '--gtest_filter=OptJointRun.*Checkpoint*:OptJointRun.*Resume*:OptJointRun.PauseAtBatchBoundary*' '--gtest_output=xml:build/evidence-fix-r1/optimization3.xml' '--ird_report=build/evidence-fix-r1/optimization3.json'
+& "$PWD/build/RobWorkStudio/bin/Release/sdurws_ird_optimization_perf_test.exe" '--gtest_filter=OptRunTimeBenchmark.SameVersionCheckpointRecovery_WP23T08_B07' '--gtest_output=xml:build/evidence-fix-r1/perf.xml' '--ird_report=build/evidence-fix-r1/perf.json'
+$env:PATH="$PWD/build/core-smoke/evidence/Release;$PWD/build/core-smoke/core/Release;D:/10_Source_Repos/21_robot/RobWork/vcpkg/installed/x64-windows/bin;"+$env:PATH
+& "$PWD/build/core-smoke/evidence/Release/sdurws_ird_evidence_test.exe" '--gtest_filter=ReviewR1_*.*' '--gtest_output=xml:build/evidence-fix-r1/smoke.xml' '--ird_report=build/evidence-fix-r1/smoke.json'
+& "$PWD/build/core-smoke/evidence/Release/sdurws_ird_evidence_contract_test.exe" '--gtest_output=xml:build/evidence-fix-r1/smoke-contract.xml' '--ird_report=build/evidence-fix-r1/smoke-contract.json'
+pwsh -NoProfile -File RobWork/scripts/industrialrobot/validate-docs.ps1 -TaskFile RobWork/doc/industrial-robot-design/tasks/foundation/EV-T13.json

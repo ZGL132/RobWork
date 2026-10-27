@@ -1349,4 +1349,37 @@ TEST_F(RunRegistryAdmissionTest, InvalidArrivalIdentityFailsFast)
     EXPECT_THROW(admission.admitResult(std::move(bad)), ExecutionError);
 }
 
+/** EV-T13：无条件 NA 仅形成数据不足，真实接纳仍 Completed 并可留存诊断。 */
+TEST_F(RunRegistryAdmissionTest, UnconditionalNaCannotArchiveFeasible_EV_T13)
+{
+    const auto task=makeIdentity(); (void)registerStandardRun(task);
+    auto output=feasibleOutput();
+    output.evidence[0].status=ev::EvidenceItemStatus::NotApplicable;
+    output.evidence[0].artifactDigest=std::nullopt;
+    output.evidence[0].notApplicableReason="没有计算";
+    m_decoder->enqueue(std::move(output));
+    auto admission=makeAdmission();
+    const auto result=admission.admitResult(makeArrival(task,ResultKind::FinalEnvelope));
+    ASSERT_TRUE(result.envelope);
+    EXPECT_EQ(result.taskStateAfter,core::TaskState::Completed);
+    EXPECT_EQ(result.envelope->engineeringStatus,core::EngineeringStatus::DataInsufficient);
+    EXPECT_FALSE(result.envelope->missingItems.empty());
+    EXPECT_EQ(result.archivePhaseAfter,ArchivePhase::Archived);
+}
+/** EV-T13：搜索失败不是执行失败或已证不可行，完整明细通过真实包络/归档。 */
+TEST_F(RunRegistryAdmissionTest, SearchExhaustionStaysCompletedDataInsufficient_EV_T13)
+{
+    const auto task=makeIdentity(); (void)registerStandardRun(task);
+    auto output=feasibleOutput(); output.searchRecord=ev::SearchExhaustedRecord{10,2,{}};
+    m_decoder->enqueue(std::move(output)); auto admission=makeAdmission();
+    const auto result=admission.admitResult(makeArrival(task,ResultKind::FinalEnvelope));
+    ASSERT_TRUE(result.envelope);
+    EXPECT_EQ(result.taskStateAfter,core::TaskState::Completed);
+    EXPECT_EQ(result.envelope->outcome,core::TaskOutcome::Completed);
+    EXPECT_EQ(result.envelope->engineeringStatus,core::EngineeringStatus::DataInsufficient);
+    EXPECT_FALSE(result.envelope->missingItems.empty());
+    EXPECT_EQ(result.archivePhaseAfter,ArchivePhase::Archived);
+    EXPECT_TRUE(fs::exists(m_dir/"results"/task.run.toCanonical()/"manifest.json"));
+}
+
 }  // namespace

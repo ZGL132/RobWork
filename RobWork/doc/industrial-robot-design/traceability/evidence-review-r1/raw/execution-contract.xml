@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="0" disabled="0" errors="0" time="0.011" timestamp="2026-10-27T23:30:10.189" name="AllTests">
+  <testsuite name="CacheJudgeContractTest" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-27T23:30:10.190">
+    <testcase name="EX_CKP_2_RestoreVerdictEqualsDirectEvidenceJudge" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp" line="337" status="run" result="completed" time="0.003" timestamp="2026-10-27T23:30:10.190" classname="CacheJudgeContractTest" />
+    <testcase name="EX_CKP_3_NotResumableRefusalWiring" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp" line="380" status="run" result="completed" time="0.003" timestamp="2026-10-27T23:30:10.194" classname="CacheJudgeContractTest" />
+    <testcase name="EX_CCH_1_LookupVerdictEqualsDirectEvidenceJudge" file="C:\Users\zgl18\.codex\worktrees\core-review-fixes\RobWork\RobWork\RobWorkStudio\src\rwslibs\industrialrobot\execution\contract_test\CacheJudgeContractTest.cpp" line="417" status="run" result="completed" time="0." timestamp="2026-10-27T23:30:10.198" classname="CacheJudgeContractTest" />
+  </testsuite>
+</testsuites>

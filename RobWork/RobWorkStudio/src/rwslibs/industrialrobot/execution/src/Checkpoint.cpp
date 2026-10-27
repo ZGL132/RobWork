@@ -495,6 +495,7 @@ CheckpointRestoreResult CheckpointCoordinator::restore(
     //      P-EX-9：区间外/任一失配一律 Incompatible 拒绝，不迁移）。
     evidence::CacheHitQuery judgeRequest;
     judgeRequest.requestSliceId = request.requestSliceId;
+    judgeRequest.requestEvaluatorKey = request.requestEvaluatorKey;
     judgeRequest.requestContractVersion = request.requestContractVersion;
     evidence::CheckpointSummary summary;
     summary.evaluatorKey = record.evaluatorKey;
@@ -587,6 +588,7 @@ std::vector<CheckpointCandidate> CheckpointCoordinator::listCompatible(
         // restore 的磁盘级重校验仍是权威，两级不互替）。
         evidence::CacheHitQuery judgeRequest;
         judgeRequest.requestSliceId = query.requestSliceId;
+        judgeRequest.requestEvaluatorKey = query.requestEvaluatorKey;
         judgeRequest.requestContractVersion = query.requestContractVersion;
         if (evidence::judgeCheckpointCompatibility(judgeRequest, summary).verdict
             == evidence::CheckpointCompatibilityResult::Resumeable) {

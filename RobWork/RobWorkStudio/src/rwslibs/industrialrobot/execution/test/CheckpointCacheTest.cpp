@@ -394,6 +394,7 @@ TEST_F(CheckpointCoordinatorTest, WriteStampsCurrentEnvelopeVersion)
     ResumeQuery query;
     query.requestSliceId = cid(kHex64C);
     query.requestContractVersion = 7;
+    query.requestEvaluatorKey = "kin-batch-ik";
     const auto candidates = m_coordinator->listCompatible(query);
     ASSERT_EQ(candidates.size(), 1u);
     EXPECT_EQ(candidates[0].summary.checkpointFormatVersion, 1u);
@@ -480,7 +481,7 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_1_TamperedByteRejectedAndFilePreserved)
     const auto before = snapshotDir(request.archiveDir);
 
     const CheckpointRestoreResult result = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
 
     // 拒绝恢复＋稳定码诊断（观测点：诊断）。
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::Corrupt);
@@ -491,13 +492,14 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_1_TamperedByteRejectedAndFilePreserved)
     EXPECT_EQ(snapshotDir(request.archiveDir), before);
     // 损坏检查点废弃（会话内标记）——重复恢复走 Discarded，不再装载。
     const CheckpointRestoreResult again = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(again.outcome, CheckpointRestoreResult::Outcome::Discarded);
     EXPECT_EQ(snapshotDir(request.archiveDir), before);
     // 废弃项不出兼容候选。
     ResumeQuery query;
     query.requestSliceId = cid(kHex64C);
     query.requestContractVersion = 7;
+    query.requestEvaluatorKey = "kin-batch-ik";
     EXPECT_TRUE(m_coordinator->listCompatible(query).empty());
 }
 
@@ -512,7 +514,7 @@ TEST_F(CheckpointCoordinatorTest, MissingBatchFileTreatedAsCorrupt)
     const auto before = snapshotDir(request.archiveDir);
 
     const CheckpointRestoreResult result = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::Corrupt);
     EXPECT_TRUE(m_sink->hasReportCode("EX-CHECKPOINT-CORRUPT"));
     EXPECT_EQ(snapshotDir(request.archiveDir), before);
@@ -532,7 +534,7 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_2_VersionMismatchIncompatibleWithReason
 
     // 请求契约版本 8——judgeCheckpointCompatibility 的第三条件失配。
     const CheckpointRestoreResult result = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 8});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 8, "kin-batch-ik"});
 
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::Incompatible);
     // reasons＝evidence 稳定 token 词表（"contract-mismatch"——token 只能
@@ -546,7 +548,7 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_2_VersionMismatchIncompatibleWithReason
 
     // 同版本重试恢复成功（对照——拒绝面只对失配请求生效）。
     const CheckpointRestoreResult ok = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(ok.outcome, CheckpointRestoreResult::Outcome::Restored);
 }
 
@@ -559,7 +561,7 @@ TEST_F(CheckpointCoordinatorTest, SliceMismatchIncompatible)
               CheckpointWriteResult::Outcome::Published);
 
     const CheckpointRestoreResult result = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64B), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64B), 7, "kin-batch-ik"});
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::Incompatible);
     ASSERT_EQ(result.reasons.size(), 1u);
     EXPECT_EQ(result.reasons[0], "slice-mismatch");
@@ -579,7 +581,7 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_3_NotResumableRefusedAndPreserved)
 
     // 判定面全绿（同切片同契约版本）但域申报不可续——仅供诊断。
     const CheckpointRestoreResult result = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(result.outcome, CheckpointRestoreResult::Outcome::NotResumable);
     // 原检查点完整保留（磁盘断言——不删除、不降级；任务可再试或全量重跑）。
     EXPECT_EQ(snapshotDir(request.archiveDir), before);
@@ -588,6 +590,7 @@ TEST_F(CheckpointCoordinatorTest, EX_CKP_3_NotResumableRefusedAndPreserved)
     ResumeQuery query;
     query.requestSliceId = cid(kHex64C);
     query.requestContractVersion = 7;
+    query.requestEvaluatorKey = "kin-batch-ik";
     EXPECT_EQ(m_coordinator->listCompatible(query).size(), 1u);
 }
 
@@ -613,6 +616,7 @@ TEST_F(CheckpointCoordinatorTest, ListCompatibleFiltersAndOrders)
     ResumeQuery all;
     all.requestSliceId = cid(kHex64C);
     all.requestContractVersion = 7;
+    all.requestEvaluatorKey = "kin-batch-ik";
     const auto candidates = m_coordinator->listCompatible(all);
     ASSERT_EQ(candidates.size(), 2u);
     EXPECT_TRUE(candidates[0].id < candidates[1].id);
@@ -622,6 +626,7 @@ TEST_F(CheckpointCoordinatorTest, ListCompatibleFiltersAndOrders)
     scoped.run = m_identity.run;
     scoped.requestSliceId = cid(kHex64C);
     scoped.requestContractVersion = 7;
+    scoped.requestEvaluatorKey = "kin-batch-ik";
     ASSERT_EQ(m_coordinator->listCompatible(scoped).size(), 1u);
     EXPECT_EQ(m_coordinator->listCompatible(scoped)[0].id.run, m_identity.run);
 
@@ -629,6 +634,7 @@ TEST_F(CheckpointCoordinatorTest, ListCompatibleFiltersAndOrders)
     ResumeQuery stale;
     stale.requestSliceId = cid(kHex64C);
     stale.requestContractVersion = 8;
+    stale.requestEvaluatorKey = "kin-batch-ik";
     EXPECT_TRUE(m_coordinator->listCompatible(stale).empty());
 
     // 显式废弃：出候选＋恢复拒绝（磁盘不动——阶段 A 不做 GC，§10.6）。
@@ -636,7 +642,7 @@ TEST_F(CheckpointCoordinatorTest, ListCompatibleFiltersAndOrders)
     EXPECT_EQ(m_coordinator->listCompatible(scoped).size(), 0u);
     const auto before = snapshotDir(r1.archiveDir);
     const CheckpointRestoreResult refused = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 1}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(refused.outcome, CheckpointRestoreResult::Outcome::Discarded);
     EXPECT_EQ(snapshotDir(r1.archiveDir), before);
 }
@@ -645,7 +651,7 @@ TEST_F(CheckpointCoordinatorTest, UnknownCheckpointAndContractViolations)
 {
     // 未知主键＝结构化 UnknownCheckpoint（跨会话重建归恢复扫描，§5.4）。
     const CheckpointRestoreResult unknown = m_coordinator->restore(
-        CheckpointRestoreRequest{CheckpointId{m_identity.run, 9}, cid(kHex64C), 7});
+        CheckpointRestoreRequest{CheckpointId{m_identity.run, 9}, cid(kHex64C), 7, "kin-batch-ik"});
     EXPECT_EQ(unknown.outcome, CheckpointRestoreResult::Outcome::UnknownCheckpoint);
     // 主键无效＝调用方契约违约 fail-fast。
     CheckpointRestoreRequest invalid;
@@ -1104,6 +1110,21 @@ TEST_F(CacheCoordinatorTest, LookupContractViolationsFailFast)
     EXPECT_THROW((void)m_coordinator->lookup(bad), ExecutionError);
     EXPECT_THROW(m_coordinator->noteDispatchStarted(bad, core::RunId::generate()),
                  ExecutionError);
+}
+
+/** EV-T13：同 slice/契约的不同显式评估键必须在真实协调器恢复边界拒绝。 */
+TEST_F(CheckpointCoordinatorTest, RequestedEvaluatorMismatchRejected_EV_T13)
+{
+    const auto request=makeWriteRequest();
+    ASSERT_EQ(m_coordinator->writeCheckpoint(request).outcome,CheckpointWriteResult::Outcome::Published);
+    const auto result=m_coordinator->restore(CheckpointRestoreRequest{
+        CheckpointId{m_identity.run,1},cid(kHex64C),7,"dyn-other"});
+    EXPECT_EQ(result.outcome,CheckpointRestoreResult::Outcome::Incompatible);
+    ASSERT_EQ(result.reasons.size(),1);
+    EXPECT_EQ(result.reasons[0],"evaluator-key-mismatch");
+    ResumeQuery query; query.requestSliceId=cid(kHex64C);query.requestContractVersion=7;
+    query.requestEvaluatorKey="dyn-other";
+    EXPECT_TRUE(m_coordinator->listCompatible(query).empty());
 }
 
 }  // namespace
